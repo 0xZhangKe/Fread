@@ -1,0 +1,103 @@
+ext {
+    minSdkVersion = 22
+    targetSdkVersion = 31
+    compileSdkVersion = 31
+
+    kotlin_version = "1.6.20"
+
+    androidx_core = "1.7.0"
+    fragment_version = "1.4.1"
+    activity_version = "1.4.0"
+    preference_version = "1.2.0"
+    collection_version = "1.2.0"
+    room_version = "2.4.1"
+    lifecycle_version = "2.4.1"
+
+    compose_version = '1.2.0-alpha08'
+
+    coroutine_version = "1.3.9"
+
+    retrofit2_version = "2.9.0"
+
+    okhttp_version = "4.9.3"
+}
+
+ext {
+    support = [
+            'core'                  : "androidx.core:core:${androidx_core}",
+            'core-ktx'              : "androidx.core:core-ktx:${androidx_core}",
+            'appcompat'             : 'androidx.appcompat:appcompat:1.4.1',
+            'material'              : 'com.google.android.material:material:1.5.0',
+            'annotations'           : "androidx.annotation:annotation:1.3.0",
+            'fragment'              : "androidx.fragment:fragment:${fragment_version}",
+            'fragment-ktx'          : "androidx.fragment:fragment-ktx:${fragment_version}",
+            'activity'              : "androidx.activity:activity:${activity_version}",
+            'activity-ktx'          : "androidx.activity:activity-ktx:${activity_version}",
+            'activity-compose'      : "androidx.activity:activity-compose:${activity_version}",
+            'preference'            : "androidx.preference:preference:$preference_version",
+            'preference-ktx'        : "androidx.preference:preference-ktx:$preference_version",
+            'multidex'              : 'androidx.multidex:multidex:2.0.1',
+            'constraintlayout'      : 'androidx.constraintlayout:constraintlayout:2.1.3',
+            'collection'            : "androidx.collection:collection:${collection_version}",
+            'collection-ktx'        : "androidx.collection:collection-ktx:${collection_version}",
+            'coordinatorlayout'     : 'androidx.coordinatorlayout:coordinatorlayout:1.2.0',
+            'viewpage2'             : 'androidx.viewpager2:viewpager2:1.0.0',
+            'room'                  : "androidx.room:room-runtime:${room_version}",
+            'room-ktx'              : "androidx.room:room-ktx:${room_version}",
+            'room-compiler'         : "androidx.room:room-compiler:${room_version}",
+            'datastore-preferences' : "androidx.datastore:datastore-preferences:1.0.0",
+            'datastore'             : "androidx.datastore:datastore:1.0.0",
+    ]
+
+    compose = [
+            'material3'                 : "androidx.compose.material3:material3:1.0.0-alpha06",
+            'compiler'                  : "androidx.compose.compiler:compiler:${compose_version}",
+            'ui'                        : "androidx.compose.ui:ui:${compose_version}",
+            'ui-tooling'                : "androidx.compose.ui:ui-tooling:${compose_version}",
+            'ui-util'                   : "androidx.compose.ui:ui-util:${compose_version}",
+            'ui-viewbinding'            : "androidx.compose.ui:ui-viewbinding:${compose_version}",
+            'foundation'                : "androidx.compose.foundation:foundation:${compose_version}",
+            'foundation-layout'         : "androidx.compose.foundation:foundation-layout:${compose_version}",
+            'material'                  : "androidx.compose.material:material:${compose_version}",
+            'material-icons-core'       : "androidx.compose.material:material-icons-core:${compose_version}",
+            'material-icons-extended'   : "androidx.compose.material:material-icons-extended:${compose_version}",
+            'runtime'                   : "androidx.compose.runtime:runtime:${compose_version}",
+            'runtime-livedata'          : "androidx.compose.runtime:runtime-livedata:${compose_version}",
+            'constraintlayout-compose'  : "androidx.constraintlayout:constraintlayout-compose:1.0.0-beta02"
+    ]
+
+    kotlin_libs = [
+            'stdlib'                : "org.jetbrains.kotlin:kotlin-stdlib:$kotlin_version",
+    ]
+
+    arch = [:]
+    arch.lifecycle =  [
+            'viewmodel-ktx'         : "androidx.lifecycle:lifecycle-viewmodel-ktx:$lifecycle_version",
+            'viewmodel-compose'     : "androidx.lifecycle:lifecycle-viewmodel-compose:$lifecycle_version",
+            'livedata-ktx'          : "androidx.lifecycle:lifecycle-livedata-ktx:$lifecycle_version",
+            'viewmodel-savedstate'  : "androidx.lifecycle:lifecycle-viewmodel-savedstate:$lifecycle_version",
+            'compiler'              : "androidx.lifecycle:lifecycle-compiler:$lifecycle_version",
+            'common-java8'          : "androidx.lifecycle:lifecycle-common-java8:$lifecycle_version",
+            'process'               : "androidx.lifecycle:lifecycle-process:$lifecycle_version",
+            'reactivestreams-ktx'   : "androidx.lifecycle:lifecycle-reactivestreams-ktx:$lifecycle_version",
+    ]
+
+    coroutine = [
+            'core'   : "org.jetbrains.kotlinx:kotlinx-coroutines-core:$coroutine_version",
+            'android': "org.jetbrains.kotlinx:kotlinx-coroutines-android:$coroutine_version"
+    ]
+
+    thirdparty = [
+            'okhttp3'                       : "com.squareup.okhttp3:okhttp:${okhttp_version}",
+            'okhttp3-logging'               : "com.squareup.okhttp3:logging-interceptor:${okhttp_version}",
+            'rxjava3'                       : "io.reactivex.rxjava3:rxjava:3.1.3",
+            'rxandroid3'                    : "io.reactivex.rxjava3:rxandroid:3.0.0",
+            'retrofit'                      : "com.squareup.retrofit2:retrofit:${retrofit2_version}",
+            'retrofit-converter-gson'       : "com.squareup.retrofit2:converter-gson:${retrofit2_version}",
+            'gson'                          : "com.google.code.gson:gson:2.9.0",
+            'swiperefresh'                  : "com.google.accompanist:accompanist-swiperefresh:0.24.7-alpha",
+            'coil'                          : "io.coil-kt:coil:2.0.0-rc03",
+            'coil-compose'                  : "io.coil-kt:coil-compose:2.0.0-rc03",
+            'coil-gif'                      : "io.coil-kt:coil-gif:2.0.0-rc03",
+    ]
+}

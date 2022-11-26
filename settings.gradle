@@ -3,6 +3,12 @@ pluginManagement {
         gradlePluginPortal()
         google()
         mavenCentral()
+        maven {
+            url 'https://jitpack.io'
+        }
+        maven {
+            url "https://plugins.gradle.org/m2/"
+        }
     }
 }
 dependencyResolutionManagement {
@@ -14,3 +20,5 @@ dependencyResolutionManagement {
 }
 rootProject.name = "Utopia"
 include ':app'
+include ':framework'
+include ':activitypub'

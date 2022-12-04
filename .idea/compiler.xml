@@ -3,6 +3,7 @@
   <component name="CompilerConfiguration">
     <bytecodeTargetLevel target="1.8">
       <module name="Utopia.app" target="16" />
+      <module name="Utopia.blogprovider" target="16" />
       <module name="Utopia.framework" target="16" />
     </bytecodeTargetLevel>
   </component>

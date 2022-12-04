@@ -10,3 +10,4 @@ rootProject.name = "Utopia"
 include ':app'
 include ':framework'
 include ':activitypub'
+include ':blogprovider'

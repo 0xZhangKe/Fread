@@ -47,6 +47,8 @@ ext {
             'room-compiler'         : "androidx.room:room-compiler:${room_version}",
             'datastore-preferences' : "androidx.datastore:datastore-preferences:1.0.0",
             'datastore'             : "androidx.datastore:datastore:1.0.0",
+            'browser'               : "androidx.browser:browser:1.4.0"
+
     ]
 
     compose = [

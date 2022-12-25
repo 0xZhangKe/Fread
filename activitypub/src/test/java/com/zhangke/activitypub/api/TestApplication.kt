@@ -5,15 +5,21 @@ import com.zhangke.activitypub.ActivityPubApplication
 /**
  * Created by ZhangKe on 2022/12/4.
  */
-
+//{"id":"100075",
+// "name":"utopia",
+// "website":"https://0xzhangke.github.io/",
+// "redirect_uri":"utopia://oauth.utopia",
+// "client_id":"KHGSFM7oZY2_ZhaQRo25DfBRNwERZy7_iqZ_HjA5Sp8",
+// "client_secret":"S0KKhfTQjEN-OZhJCHJYVl2OMYvz1wQiBoy8VDtfSzI",
+// "vapid_key":"BOtsUyc0M779KJ0j-AAsv_wANoDuLkh6tTh6l1muA8OY3xVs34iGsUichN7VXNxcMoGKdSbyIEZsnsbJf6e46DA"}
 val mastodonUtopiaApplication = ActivityPubApplication(
-    id = "1563275",
+    id = "100075",
     name = "utopia",
     website = "https://0xzhangke.github.io/",
-    redirectUri = "https://0xzhangke.github.io/",
-    clientId = "_RUAjDpEsX2r-XIGPdx6matQNpPqb53vhP3e_3GnPQY",
-    clientSecret = "nnoiysicDthQkFo_oKeD7-TTGqqmI679b7gndJPwQnc",
-    vapidKey = "BCk-QqERU0q-CfYZjcuB6lnyyOYfJ2AifKqfeGIm7Z-HiTU5T9eTG5GxVA0_OH5mMlI4UkkDTpaZwozy0TzdZ2M=",
+    redirectUri = "utopia://oauth.utopia",
+    clientId = "KHGSFM7oZY2_ZhaQRo25DfBRNwERZy7_iqZ_HjA5Sp8",
+    clientSecret = "S0KKhfTQjEN-OZhJCHJYVl2OMYvz1wQiBoy8VDtfSzI",
+    vapidKey = "BOtsUyc0M779KJ0j-AAsv_wANoDuLkh6tTh6l1muA8OY3xVs34iGsUichN7VXNxcMoGKdSbyIEZsnsbJf6e46DA",
 )
 
 //m.cmx.im

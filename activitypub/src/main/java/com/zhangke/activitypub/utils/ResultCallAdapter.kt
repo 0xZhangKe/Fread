@@ -6,7 +6,6 @@ import com.zhangke.activitypub.exception.ActivityPubHttpException
 import okhttp3.Request
 import okio.Timeout
 import retrofit2.*
-import java.lang.RuntimeException
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
@@ -46,6 +45,11 @@ private class ResultCallAdapter(private val gson: Gson, private val type: Type) 
     }
 }
 
+private val unauthorizedCode = listOf(
+    401,
+    422
+)
+
 private class ResultCall<S>(private val delegate: Call<S>, private val gson: Gson) :
     Call<Result<S>> {
 
@@ -68,6 +72,10 @@ private class ResultCall<S>(private val delegate: Call<S>, private val gson: Gso
                             }
                         }
                     val exception: Exception = when (code) {
+                        in unauthorizedCode -> ActivityPubHttpException.UnauthorizedException(
+                            errorEntry,
+                            errorMessage
+                        )
                         in 400..499 -> ActivityPubHttpException.RequestIllegalException(
                             errorEntry,
                             errorMessage
@@ -78,7 +86,10 @@ private class ResultCall<S>(private val delegate: Call<S>, private val gson: Gso
                         )
                         else -> RuntimeException(errorMessage, null)
                     }
-                    callback.onResponse(this@ResultCall, Response.success(Result.failure(exception)))
+                    callback.onResponse(
+                        this@ResultCall,
+                        Response.success(Result.failure(exception))
+                    )
                 }
             }
 

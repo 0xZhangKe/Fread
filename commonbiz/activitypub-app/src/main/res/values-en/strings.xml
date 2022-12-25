@@ -1,0 +1,11 @@
+<resources>
+    <string name="cancel">Cancel</string>
+
+    <string name="ok">OK</string>
+
+    <string name="login">Login</string>
+
+    <string name="login_page_title">This function requires login to use</string>
+
+    <string name="login_page_auth_failed_title">Login status is invalid, please login again.</string>
+</resources>

@@ -1,0 +1,74 @@
+plugins {
+    id 'com.android.library'
+    id 'org.jetbrains.kotlin.android'
+}
+
+android {
+    namespace 'com.zhangke.utopia.activitypubapp'
+    compileSdk rootProject.ext.compileSdkVersion
+
+    defaultConfig {
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        consumerProguardFiles "consumer-rules.pro"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
+        }
+    }
+    compileOptions {
+        sourceCompatibility JavaVersion.VERSION_1_8
+        targetCompatibility JavaVersion.VERSION_1_8
+    }
+    kotlinOptions {
+        jvmTarget = '1.8'
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.ext.compose_version
+        kotlinCompilerVersion = rootProject.ext.kotlin_version
+    }
+}
+
+dependencies {
+
+    testImplementation 'junit:junit:4.13.2'
+    androidTestImplementation 'androidx.test.ext:junit:1.1.4'
+    androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
+
+    implementation project(path: ':framework')
+    implementation project(path: ':activitypub')
+
+    implementation support.activity
+    implementation support.'activity-ktx'
+    implementation support.'activity-compose'
+    implementation support.fragment
+    implementation support.'fragment-ktx'
+    implementation support.appcompat
+    implementation support.core
+    implementation support.'core-ktx'
+    implementation support.material
+    implementation support.browser
+
+    implementation compose.material3
+    implementation compose.compiler
+    implementation compose.ui
+    implementation compose.'ui-tooling'
+    implementation compose.'ui-util'
+    implementation compose.'ui-viewbinding'
+    implementation compose.runtime
+    implementation compose.material
+    implementation compose.'material-icons-core'
+    implementation compose.'material-icons-extended'
+    implementation compose.foundation
+    implementation compose.'foundation-layout'
+    implementation compose.'runtime-livedata'
+    implementation compose.'constraintlayout-compose'
+}

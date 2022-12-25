@@ -5,12 +5,12 @@ plugins {
 }
 
 android {
-    compileSdk 33
+    compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
         applicationId "com.zhangke.utopia"
-        minSdk 22
-        targetSdk 33
+        minSdk rootProject.ext.minSdkVersion
+        targetSdk rootProject.ext.targetSdkVersion
         versionCode 1
         versionName "1.0"
 
@@ -30,11 +30,30 @@ android {
     kotlinOptions {
         jvmTarget = '1.8'
     }
+
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
+    buildFeatures {
+        compose true
+    }
+    composeOptions {
+        kotlinCompilerExtensionVersion = rootProject.ext.compose_version
+        kotlinCompilerVersion = rootProject.ext.kotlin_version
+    }
+    bundle {
+        language {
+            enableSplit = false
+        }
+    }
 }
 
 dependencies {
     implementation project(path: ':framework')
     implementation project(path: ':activitypub')
+    implementation project(path: ':commonbiz:activitypub-app')
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

@@ -9,9 +9,12 @@ import com.zhangke.activitypub.entry.ActivityPubErrorEntry
 sealed class ActivityPubHttpException(message: String?, e: Throwable?) :
     RuntimeException(message, e) {
 
-    class ServerInternalException(errorEntry: ActivityPubErrorEntry?, errorMessage: String?) :
+    class ServerInternalException(val errorEntry: ActivityPubErrorEntry?, errorMessage: String?) :
         ActivityPubHttpException(errorEntry?.error ?: errorMessage, null)
 
-    class RequestIllegalException(errorEntry: ActivityPubErrorEntry?, errorMessage: String?) :
+    class RequestIllegalException(val errorEntry: ActivityPubErrorEntry?, errorMessage: String?) :
+        ActivityPubHttpException(errorEntry?.error ?: errorMessage, null)
+
+    class UnauthorizedException(val errorEntry: ActivityPubErrorEntry?, errorMessage: String?) :
         ActivityPubHttpException(errorEntry?.error ?: errorMessage, null)
 }

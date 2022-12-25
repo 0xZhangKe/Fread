@@ -2,6 +2,10 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.zhangke.utopia">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+
     <application
         android:name=".UtopiaApplication"
         android:allowBackup="true"
@@ -22,6 +26,12 @@
         </activity>
 
         <activity
+            android:name=".activitypub.oauth.OauthActivity"
+            android:exported="false"
+            android:launchMode="singleTask"
+            android:theme="@style/Theme.Utopia.Transparent" />
+
+        <activity
             android:name=".activitypub.ActivityPubOAuthRedirectActivity"
             android:exported="true">
             <intent-filter>
@@ -31,8 +41,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="notionauth.zhangkenotion.net"
-                    android:scheme="https" />
+                    android:host="oauth.utopia"
+                    android:scheme="utopia" />
             </intent-filter>
         </activity>
     </application>

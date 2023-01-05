@@ -1,0 +1,52 @@
+package com.zhangke.utopia.feeds
+
+import android.os.Bundle
+import android.view.LayoutInflater
+import android.view.View
+import android.view.ViewGroup
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.ComposeView
+import androidx.compose.ui.unit.dp
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.viewModels
+import com.zhangke.framework.architect.theme.UtopiaTheme
+import com.zhangke.utopia.blogprovider.Status
+import com.zhangke.utopia.composable.UtopiaStatusComposable
+
+class FeedsFragment : Fragment() {
+
+    private val viewModel: FeedsViewModel by viewModels()
+
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View {
+        return ComposeView(requireContext()).apply {
+            setContent {
+                UtopiaTheme {
+                    val feeds = viewModel.feeds.collectAsState(initial = emptyList()).value
+                    FeedPage(feeds)
+                }
+            }
+        }
+    }
+
+    @Composable
+    fun FeedPage(status: List<Status>) {
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(vertical = 10.dp),
+            content = {
+                items(status) { item ->
+                    UtopiaStatusComposable(status = item)
+                }
+            })
+    }
+}

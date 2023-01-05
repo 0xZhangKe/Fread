@@ -7,7 +7,7 @@ import java.io.Serializable
  *
  * Created by ZhangKe on 2022/12/22.
  */
-class UtopiaUser<T: Serializable>(
+open class UtopiaUser(
     /**
      * Where this user belong to.
      */
@@ -17,11 +17,11 @@ class UtopiaUser<T: Serializable>(
 
     val id: String,
 
-    val token: T,
-
     val avatar: String?,
 
     val description: String?,
 
     val homePage: String?,
+
+    val selected: Boolean,
 )

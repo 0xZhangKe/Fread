@@ -25,26 +25,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name=".activitypub.oauth.OauthActivity"
-            android:exported="false"
-            android:launchMode="singleTask"
-            android:theme="@style/Theme.Utopia.Transparent" />
-
-        <activity
-            android:name=".activitypub.ActivityPubOAuthRedirectActivity"
-            android:exported="true">
-            <intent-filter>
-                <action android:name="android.intent.action.VIEW" />
-
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.BROWSABLE" />
-
-                <data
-                    android:host="oauth.utopia"
-                    android:scheme="utopia" />
-            </intent-filter>
-        </activity>
     </application>
 
 </manifest>

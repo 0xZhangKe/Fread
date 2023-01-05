@@ -8,6 +8,9 @@ android {
     compileSdk rootProject.ext.compileSdkVersion
 
     defaultConfig {
+        configurations.all {
+            resolutionStrategy { force support.'core-ktx' }
+        }
         applicationId "com.zhangke.utopia"
         minSdk rootProject.ext.minSdkVersion
         targetSdk rootProject.ext.targetSdkVersion
@@ -54,6 +57,7 @@ dependencies {
     implementation project(path: ':framework')
     implementation project(path: ':activitypub')
     implementation project(path: ':commonbiz:activitypub-app')
+    implementation project(path: ':commonbiz:blog-provider')
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'

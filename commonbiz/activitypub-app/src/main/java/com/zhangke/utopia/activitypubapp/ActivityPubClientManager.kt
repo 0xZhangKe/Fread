@@ -34,6 +34,7 @@ object ActivityPubClientManager {
     ): ActivityPubClient {
         return ActivityPubClient(
             application = app,
+            baseUrl = MASTDON,
             newRetrofit(domain),
             gson = globalGson,
             onAuthorizeFailed = {

@@ -9,4 +9,5 @@
 
     <string name="login_page_auth_failed_title">登录状态失效，请重新登录。</string>
 
+    <string name="login_exception">认证状态异常</string>
 </resources>

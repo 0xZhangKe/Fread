@@ -8,4 +8,6 @@
     <string name="login_page_title">This function requires login to use</string>
 
     <string name="login_page_auth_failed_title">Login status is invalid, please login again.</string>
+
+    <string name="login_exception">OAuthor state exception!</string>
 </resources>

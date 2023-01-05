@@ -11,21 +11,20 @@ sealed class Status(
 ) {
 
     data class NewBlog(
-        override val author: BlogAuthor,
-        override val supportedAction: List<StatusAction>,
-        val title: String?,
-        val content: String,
-        val mediaList: List<BlogMedia>?,
-        val date: Date,
-        val forwardCount: Int?,
-        val likeCount: Int?
-    ) : Status(author, supportedAction)
+        val blog: Blog
+    ) : Status(blog.author, blog.supportedAction)
 
     data class Forward(
         override val author: BlogAuthor,
         override val supportedAction: List<StatusAction>,
         val forwardComment: String?,
         val source: Forward?,
-        val blog: NewBlog
+        val originBlog: Blog
+    ) : Status(author, supportedAction)
+
+    data class Comment(
+        override val author: BlogAuthor,
+        override val supportedAction: List<StatusAction>,
+        val originBlog: Blog
     ) : Status(author, supportedAction)
 }

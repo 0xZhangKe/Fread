@@ -6,7 +6,7 @@ import com.zhangke.activitypub.exception.ActivityPubHttpException
 /**
  * Created by ZhangKe on 2022/12/14.
  */
-abstract class ActivityPubRepo(private val client: ActivityPubClient) {
+abstract class ActivityPubRepo(protected val client: ActivityPubClient) {
 
     protected fun <T> createApi(clazz: Class<T>): T {
         return client.retrofit.create(clazz)

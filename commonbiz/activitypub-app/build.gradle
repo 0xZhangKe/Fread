@@ -44,6 +44,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
     implementation project(path: ':framework')
+    implementation project(path: ':commonbiz:blog-provider')
     implementation project(path: ':activitypub')
 
     implementation support.activity
@@ -56,6 +57,8 @@ dependencies {
     implementation support.'core-ktx'
     implementation support.material
     implementation support.browser
+    implementation support.room
+    implementation support.'room-ktx'
 
     implementation compose.material3
     implementation compose.compiler
@@ -71,4 +74,7 @@ dependencies {
     implementation compose.'foundation-layout'
     implementation compose.'runtime-livedata'
     implementation compose.'constraintlayout-compose'
+
+    implementation thirdparty.retrofit
+    implementation thirdparty.gson
 }

@@ -12,6 +12,9 @@ import retrofit2.http.Query
  */
 private interface AccountsApi {
 
+    @GET("/api/v1/accounts/verify_credentials")
+    suspend fun verifyCredentials(): Result<ActivityPubAccount>
+
     @GET("/api/v1/accounts/lookup")
     suspend fun lookup(@Query("acct") acct: String): Result<ActivityPubAccount>
 
@@ -28,6 +31,10 @@ private interface AccountsApi {
 class AccountsRepo(client: ActivityPubClient) : ActivityPubRepo(client) {
 
     private val api = createApi(AccountsApi::class.java)
+
+    suspend fun verifyCredentials(): Result<ActivityPubAccount>{
+        return api.verifyCredentials()
+    }
 
     suspend fun lookup(acct: String): Result<ActivityPubAccount> {
         return api.lookup(acct).collectAuthorizeFailed()

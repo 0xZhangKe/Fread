@@ -21,6 +21,13 @@ import com.zhangke.utopia.composable.UtopiaStatusComposable
 
 class FeedsFragment : Fragment() {
 
+    companion object{
+
+        fun newInstance(): FeedsFragment{
+            return FeedsFragment()
+        }
+    }
+
     private val viewModel: FeedsViewModel by viewModels()
 
     override fun onCreateView(

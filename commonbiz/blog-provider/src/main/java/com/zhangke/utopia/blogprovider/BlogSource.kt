@@ -1,3 +1,7 @@
 package com.zhangke.utopia.blogprovider
 
-interface BlogSource
+class BlogSource(
+    val url: String
+){
+
+}

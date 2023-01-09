@@ -11,7 +11,7 @@ class ActivityPubTimelineProvider(
     private val client: ActivityPubClient
 ) : StatusProvider {
 
-    override suspend fun requestStatuses(): List<Status> {
-        return emptyList()
+    override suspend fun requestStatuses(): Result<List<Status>> {
+        return client.timelinesRepo.localTimelines().map { it.map { item -> item.toStatus(client.application.domain) } }
     }
 }

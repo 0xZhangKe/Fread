@@ -10,5 +10,6 @@ data class Blog(
     val mediaList: List<BlogMedia>?,
     val date: Date,
     val forwardCount: Int?,
-    val likeCount: Int?
+    val likeCount: Int?,
+    val repliesCount: Int?,
 )

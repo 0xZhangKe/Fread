@@ -5,6 +5,6 @@ package com.zhangke.utopia.blogprovider
  */
 interface StatusProvider {
 
-    suspend fun requestStatuses(): List<Status>
+    suspend fun requestStatuses(): Result<List<Status>>
 
 }

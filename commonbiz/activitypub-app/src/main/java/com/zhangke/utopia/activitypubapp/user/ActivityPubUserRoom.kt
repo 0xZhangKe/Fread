@@ -44,7 +44,7 @@ internal interface ActivityPubUserDao {
     suspend fun nukeTable()
 }
 
-@Database(entities = [ActivityPubUserEntry::class], version = DB_VERSION)
+@Database(entities = [ActivityPubUserEntry::class], version = DB_VERSION, exportSchema = false)
 internal abstract class ActivityPubUserDatabase : RoomDatabase() {
 
     abstract fun getActivityPubUserDao(): ActivityPubUserDao

@@ -1,10 +1,13 @@
 package com.zhangke.utopia.activitypubapp.user
 
 import com.zhangke.activitypub.entry.ActivityPubToken
+import kotlinx.coroutines.runBlocking
 
 object ActivityPubUserRepo {
 
     private val userDao: ActivityPubUserDao get() = ActivityPubUserDatabase.instance.getActivityPubUserDao()
+
+    private var currentUser: ActivityPubUser? = null
 
     /**
      * Get all the logged users.
@@ -13,13 +16,21 @@ object ActivityPubUserRepo {
         return userDao.queryAll().map { it.toUser() }
     }
 
-    suspend fun getCurrentUser(): ActivityPubUser? {
-        return userDao.queryAll()
-            .firstOrNull { it.selected }
-            ?.toUser()
+    fun getCurrentUser(): ActivityPubUser? {
+        var user = currentUser
+        if (user == null) {
+            user = runBlocking {
+                userDao.queryAll()
+                    .firstOrNull { it.selected }
+                    ?.toUser()
+            }
+        }
+        return user
     }
 
-    suspend fun updateCurrentUser(user: ActivityPubUser) {
+    suspend fun setCurrentUser(user: ActivityPubUser) {
+        if (!user.selected) throw IllegalArgumentException("Current user is not select!")
+        this.currentUser = user
         userDao.queryAll()
             .let { list ->
                 if (list.firstOrNull { it.id == user.id } == null) {
@@ -34,7 +45,8 @@ object ActivityPubUserRepo {
             .let { userDao.insert(it) }
     }
 
-    suspend fun insertUser(user: ActivityPubUser) {
+    suspend fun setNormalUser(user: ActivityPubUser) {
+        if (user.selected) throw IllegalArgumentException("Normal user is selected!")
         userDao.insert(user.toEntry())
     }
 

@@ -17,7 +17,7 @@ class ActivityPubStatusProvider(
     private val oauthor: ActivityPubOAuthor
 ) : StatusProvider {
 
-    override suspend fun requestStatuses(): List<Status> {
-        return emptyList()
+    override suspend fun requestStatuses(): Result<List<Status>> {
+        return Result.success(emptyList())
     }
 }

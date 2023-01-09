@@ -7,4 +7,9 @@
 
     <string name="login">登录</string>
 
+    <string name="add">添加</string>
+
+    <string name="add_provider_page_title">添加服务</string>
+
+    <string name="add_provider_page_confirm_button">确定添加</string>
 </resources>

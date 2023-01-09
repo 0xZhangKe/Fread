@@ -57,7 +57,8 @@ fun PreviewBlogContentComposable() {
         mediaList = null,
         date = Date(),
         forwardCount = 10321,
-        likeCount = 38747
+        likeCount = 38747,
+        repliesCount = 10,
     )
     BlogContentComposable(blog = blog)
 }

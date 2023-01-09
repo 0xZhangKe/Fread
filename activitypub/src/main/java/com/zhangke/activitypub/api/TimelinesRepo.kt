@@ -22,7 +22,7 @@ private interface TimelinesApi {
 
 }
 
-class TimelinesRepo(client: ActivityPubClient) : ActivityPubRepo(client) {
+class TimelinesRepo(client: ActivityPubClient) : ActivityPubBaseRepo(client) {
 
     private val api = createApi(TimelinesApi::class.java)
 

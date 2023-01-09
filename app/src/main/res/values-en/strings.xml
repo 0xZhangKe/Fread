@@ -6,4 +6,10 @@
     <string name="ok">OK</string>
 
     <string name="login">Login</string>
+
+    <string name="add">Add</string>
+
+    <string name="add_provider_page_title">Add Server</string>
+
+    <string name="add_provider_page_confirm_button">Confirm Add</string>
 </resources>

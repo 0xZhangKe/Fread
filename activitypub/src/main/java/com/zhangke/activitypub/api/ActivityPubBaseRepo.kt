@@ -6,7 +6,7 @@ import com.zhangke.activitypub.exception.ActivityPubHttpException
 /**
  * Created by ZhangKe on 2022/12/14.
  */
-abstract class ActivityPubRepo(protected val client: ActivityPubClient) {
+abstract class ActivityPubBaseRepo(protected val client: ActivityPubClient) {
 
     protected fun <T> createApi(clazz: Class<T>): T {
         return client.retrofit.create(clazz)
@@ -15,13 +15,17 @@ abstract class ActivityPubRepo(protected val client: ActivityPubClient) {
     protected fun <T> Result<T>.collectAuthorizeFailed(): Result<T> {
         return onFailure {
             if (it is ActivityPubHttpException.UnauthorizedException) {
-                client.onAuthorizeFailed(client.buildOAuthUrl())
+                client.onAuthorizeFailed(client.buildOAuthUrl(), client)
             }
         }
     }
 
     protected fun getAuthorizationHeader(): String {
-        val accessToken = client.token?.accessToken
-        return if (accessToken.isNullOrEmpty()) "" else "Bearer $accessToken"
+        val accessToken = client.tokenProvider()?.accessToken
+        return if (accessToken.isNullOrEmpty()) "" else buildAuthorizationHeader(accessToken)
+    }
+
+    protected fun buildAuthorizationHeader(accessToken: String): String {
+        return "Bearer $accessToken"
     }
 }

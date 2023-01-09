@@ -4,6 +4,7 @@ import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entry.ActivityPubAccount
 import com.zhangke.activitypub.entry.ActivityPubStatus
 import retrofit2.http.GET
+import retrofit2.http.Header
 import retrofit2.http.Path
 import retrofit2.http.Query
 
@@ -13,7 +14,7 @@ import retrofit2.http.Query
 private interface AccountsApi {
 
     @GET("/api/v1/accounts/verify_credentials")
-    suspend fun verifyCredentials(): Result<ActivityPubAccount>
+    suspend fun verifyCredentials(@Header("Authorization") authorization: String): Result<ActivityPubAccount>
 
     @GET("/api/v1/accounts/lookup")
     suspend fun lookup(@Query("acct") acct: String): Result<ActivityPubAccount>
@@ -28,12 +29,12 @@ private interface AccountsApi {
     ): Result<List<ActivityPubStatus>>
 }
 
-class AccountsRepo(client: ActivityPubClient) : ActivityPubRepo(client) {
+class AccountsRepo(client: ActivityPubClient) : ActivityPubBaseRepo(client) {
 
     private val api = createApi(AccountsApi::class.java)
 
-    suspend fun verifyCredentials(): Result<ActivityPubAccount>{
-        return api.verifyCredentials()
+    suspend fun verifyCredentials(accessToken: String): Result<ActivityPubAccount>{
+        return api.verifyCredentials(buildAuthorizationHeader(accessToken)).collectAuthorizeFailed()
     }
 
     suspend fun lookup(acct: String): Result<ActivityPubAccount> {

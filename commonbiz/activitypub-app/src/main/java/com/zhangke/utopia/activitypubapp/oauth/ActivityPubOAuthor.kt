@@ -1,11 +1,11 @@
 package com.zhangke.utopia.activitypubapp.oauth
 
-import android.app.Activity
+import android.content.Context
+import android.content.Intent
 import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
-import com.zhangke.activitypub.ActivityPubApplication
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.activitypub.entry.ActivityPubAccount
@@ -31,13 +31,13 @@ object ActivityPubOAuthor {
         return oauthFlow
     }
 
-    fun startOauth(activity: Activity, client: ActivityPubClient) {
-        openOauthPage(activity, client.application)
+    fun startOauth(oauthUrl: String, client: ActivityPubClient) {
+        openOauthPage(oauthUrl)
         ApplicationScope.launch {
             val code = oauthCodeFlow.first()
             val user = try {
                 val token = client.oauthRepo.getToken(code, ActivityPubScope.ALL).getOrThrow()
-                val account = client.accountRepo.verifyCredentials().getOrThrow()
+                val account = client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
                 account.toUser(client.baseUrl, token)
             } catch (e: Exception) {
                 Log.e("ActivityPubOAuthor", "OAuth failed", e)
@@ -46,8 +46,7 @@ object ActivityPubOAuthor {
             }
             if (user != null) {
                 oauthFlow.emit(user)
-                ActivityPubUserRepo.insertUser(user)
-                ActivityPubUserRepo.insertUser(user)
+                ActivityPubUserRepo.setCurrentUser(user)
             }
         }
     }
@@ -56,21 +55,11 @@ object ActivityPubOAuthor {
         ApplicationScope.launch { oauthCodeFlow.emit(code) }
     }
 
-    private fun openOauthPage(activity: Activity, app: ActivityPubApplication) {
-//        val oauthUrl = "https://m.cmx.im/oauth/authorize" +
-//                "?response_type=code" +
-//                "&client_id=KHGSFM7oZY2_ZhaQRo25DfBRNwERZy7_iqZ_HjA5Sp8" +
-//                "&redirect_uri=utopia://oauth.utopia" +
-//                "&scope=read+write+follow+push"
-        val oauthUrl = "https://m.cmx.im/oauth/authorize" +
-                "?response_type=code" +
-                "&client_id=${app.clientId}" +
-                "&redirect_uri=${app.redirectUri}" +
-                "&scope=read+write+follow+push"
-
+    private fun openOauthPage(oauthUrl: String) {
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
-        customTabsIntent.launchUrl(activity, Uri.parse(oauthUrl))
+        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        customTabsIntent.launchUrl(appContext, Uri.parse(oauthUrl))
     }
 
     private fun ActivityPubAccount.toUser(
@@ -85,7 +74,7 @@ object ActivityPubOAuthor {
             avatar = avatar,
             description = note,
             homePage = url,
-            selected = false,
+            selected = true,
         )
     }
 }

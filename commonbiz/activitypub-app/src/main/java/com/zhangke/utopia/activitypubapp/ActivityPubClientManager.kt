@@ -16,30 +16,32 @@ object ActivityPubClientManager {
 
     private val clients = mutableMapOf<String, ActivityPubClient>()
 
-    fun getMastodonClient(): ActivityPubClient {
-        return clients.getOrPut(MASTDON) {
-            buildActivityPubClient(mastodonUtopiaApplication, MASTDON)
-        }
-    }
+//    fun getMastodonClient(): ActivityPubClient {
+//        return clients.getOrPut(MASTDON) {
+//            buildActivityPubClient(mastodonUtopiaApplication, MASTDON)
+//        }
+//    }
 
-    fun getCmxImClient(): ActivityPubClient {
-        return clients.getOrPut(MASTDON) {
-            buildActivityPubClient(cmimUtopiaApplication, CMX_IM)
-        }
-    }
-
-    private fun buildActivityPubClient(
-        app: ActivityPubApplication,
-        domain: String,
-    ): ActivityPubClient {
-        return ActivityPubClient(
-            application = app,
-            baseUrl = MASTDON,
-            newRetrofit(domain),
-            gson = globalGson,
-            onAuthorizeFailed = {
-
-            }
-        )
-    }
+//    fun getCmxImClient(): ActivityPubClient {
+//        return clients.getOrPut(MASTDON) {
+//            buildActivityPubClient(cmimUtopiaApplication, CMX_IM)
+//        }
+//    }
+//
+//    private fun buildActivityPubClient(
+//        app: ActivityPubApplication,
+//        domain: String,
+//    ): ActivityPubClient {
+//        return ActivityPubClient(
+//            application = app,
+//            newRetrofit(domain),
+//            gson = globalGson,
+//            tokenProvider = {
+//
+//            },
+//            onAuthorizeFailed = {
+//
+//            }
+//        )
+//    }
 }

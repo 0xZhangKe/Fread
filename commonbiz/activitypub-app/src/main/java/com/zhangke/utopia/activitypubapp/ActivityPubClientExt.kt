@@ -4,6 +4,7 @@ import com.zhangke.activitypub.ActivityPubApplication
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.framework.architect.http.newRetrofit
 import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.oauth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUserRepo
 
@@ -16,7 +17,7 @@ internal fun newActivityPubClient(app: ActivityPubApplication): ActivityPubClien
             ActivityPubUserRepo.getCurrentUser()?.token
         },
         onAuthorizeFailed = { url, client ->
-            ActivityPubOAuthor.startOauth(url, client)
+            ActivityPubOAuthor.openOauthTipPage(url, client, true)
         }
     )
 }

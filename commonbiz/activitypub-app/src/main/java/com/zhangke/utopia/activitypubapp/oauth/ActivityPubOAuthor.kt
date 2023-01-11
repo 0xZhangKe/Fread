@@ -31,6 +31,14 @@ object ActivityPubOAuthor {
         return oauthFlow
     }
 
+    fun openOauthTipPage(oauthUrl: String, client: ActivityPubClient, isOauthFailed: Boolean) {
+        OauthTipActivity.open(appContext, isOauthFailed) { confirm ->
+            if (confirm) {
+                startOauth(oauthUrl, client)
+            }
+        }
+    }
+
     fun startOauth(oauthUrl: String, client: ActivityPubClient) {
         openOauthPage(oauthUrl)
         ApplicationScope.launch {
@@ -55,7 +63,7 @@ object ActivityPubOAuthor {
         ApplicationScope.launch { oauthCodeFlow.emit(code) }
     }
 
-    private fun openOauthPage(oauthUrl: String) {
+    fun openOauthPage(oauthUrl: String) {
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

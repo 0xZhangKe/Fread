@@ -16,7 +16,7 @@
         android:theme="@style/Theme.Utopia">
 
         <activity
-            android:name=".MainActivity"
+            android:name=".pages.main.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.Material3.DayNight.NoActionBar">
             <intent-filter>
@@ -25,9 +25,5 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".feeds.FeedsActivity"
-            android:theme="@style/Theme.Material3.DayNight.NoActionBar" />
     </application>
 </manifest>

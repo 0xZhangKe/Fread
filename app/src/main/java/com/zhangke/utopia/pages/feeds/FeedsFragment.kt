@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds
+package com.zhangke.utopia.pages.feeds
 
 import android.os.Bundle
 import android.view.LayoutInflater
@@ -21,10 +21,16 @@ import com.zhangke.utopia.composable.UtopiaStatusComposable
 
 class FeedsFragment : Fragment() {
 
-    companion object{
+    companion object {
 
-        fun newInstance(): FeedsFragment{
-            return FeedsFragment()
+        private const val ARG_FEEDS_ID = "arg_feeds_id"
+
+        fun newInstance(id: Int): FeedsFragment {
+            return FeedsFragment().apply {
+                arguments = Bundle().apply {
+                    putInt(ARG_FEEDS_ID, id)
+                }
+            }
         }
     }
 
@@ -35,6 +41,7 @@ class FeedsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
+        viewModel.feedsId = arguments!!.getInt(ARG_FEEDS_ID)
         return ComposeView(requireContext()).apply {
             setContent {
                 UtopiaTheme {

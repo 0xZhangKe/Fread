@@ -8,6 +8,9 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import com.zhangke.framework.utils.initApplication
+import com.zhangke.utopia.blogprovider.BlogProviderManager
+import com.zhangke.utopia.blogprovider.StatusProviderClient
+import java.util.*
 
 /**
  * Created by ZhangKe on 2022/11/27.
@@ -18,6 +21,7 @@ class UtopiaApplication : MultiDexApplication() {
         super.onCreate()
         initApplication(this)
         initCoil(this)
+        BlogProviderManager.prepare()
     }
 
     private fun initCoil(context: Context) {
@@ -32,4 +36,5 @@ class UtopiaApplication : MultiDexApplication() {
             .build()
         Coil.setImageLoader(imageLoader)
     }
+
 }

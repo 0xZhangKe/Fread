@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypubapp.oauth
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.compose.setContent
@@ -8,7 +9,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.*
+import androidx.compose.material.Card
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,19 +26,31 @@ import com.zhangke.utopia.activitypubapp.R
 /**
  * Created by ZhangKe on 2022/12/14.
  */
-class OauthActivity : AppCompatActivity() {
+class OauthTipActivity : AppCompatActivity() {
 
     companion object {
 
-        private const val ARG_OAUTH_FAILED = "arg_login_failed"
+        private val callbacks = mutableMapOf<String, (confirm: Boolean) -> Unit>()
 
-        fun open(activity: AppCompatActivity, isOauthFailed: Boolean = false) {
-            activity.startActivity(Intent(activity, OauthActivity::class.java).apply {
+        private const val ARG_OAUTH_FAILED = "arg_login_failed"
+        private const val ARG_OAUTH_CODE = "arg_login_code"
+
+        fun open(
+            context: Context,
+            isOauthFailed: Boolean = false,
+            callback: (confirm: Boolean) -> Unit
+        ) {
+            context.startActivity(Intent(context, OauthTipActivity::class.java).apply {
                 putExtra(ARG_OAUTH_FAILED, isOauthFailed)
+                addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
                 addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION)
             })
+            val code = System.currentTimeMillis()
+            callbacks[code.toString()] = callback
         }
     }
+
+    private var confirm: Boolean = false
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -52,6 +65,7 @@ class OauthActivity : AppCompatActivity() {
                         finish()
                     },
                     onLoginClick = {
+                        confirm = true
                         finish()
                     }
                 )
@@ -59,12 +73,17 @@ class OauthActivity : AppCompatActivity() {
         }
     }
 
+    override fun finish() {
+        super.finish()
+        val code = intent.getStringExtra(ARG_OAUTH_CODE)!!
+        callbacks.remove(code)?.invoke(confirm)
+    }
+
     override fun onPause() {
         super.onPause()
         overridePendingTransition(0, 0) // disable activity finish animation
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     fun OauthPage(
         isOauthFailed: Boolean,

@@ -53,6 +53,7 @@ dependencies {
     implementation support.material
     implementation support.fragment
     implementation support.'fragment-ktx'
+    implementation support.room
 
     implementation arch.lifecycle.process
     kapt           arch.lifecycle.compiler

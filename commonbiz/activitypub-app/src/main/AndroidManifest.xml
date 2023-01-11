@@ -4,7 +4,7 @@
     <application>
 
         <activity
-            android:name=".oauth.OauthActivity"
+            android:name=".oauth.OauthTipActivity"
             android:exported="false"
             android:launchMode="singleTask"
             android:theme="@style/Theme.Utopia.Transparent" />

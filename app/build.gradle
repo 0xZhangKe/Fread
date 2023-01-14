@@ -55,8 +55,8 @@ android {
 
 dependencies {
     implementation project(path: ':framework')
-    implementation project(path: ':activitypub')
-    implementation project(path: ':commonbiz:activitypub-app')
+    runtimeOnly project(path: ':activitypub')
+    runtimeOnly project(path: ':commonbiz:activitypub-app')
     implementation project(path: ':commonbiz:blog-provider')
 
     testImplementation 'junit:junit:4.+'

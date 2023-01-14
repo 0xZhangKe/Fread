@@ -1,16 +1,15 @@
 package com.zhangke.utopia.activitypubapp.oauth
 
-import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import android.widget.Toast
 import androidx.browser.customtabs.CustomTabsIntent
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.activitypub.entry.ActivityPubAccount
 import com.zhangke.activitypub.entry.ActivityPubToken
 import com.zhangke.framework.architect.coroutines.ApplicationScope
+import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUser
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUserRepo
@@ -49,7 +48,7 @@ object ActivityPubOAuthor {
                 account.toUser(client.baseUrl, token)
             } catch (e: Exception) {
                 Log.e("ActivityPubOAuthor", "OAuth failed", e)
-                Toast.makeText(appContext, e.message, Toast.LENGTH_SHORT).show()
+                toast(e.message)
                 null
             }
             if (user != null) {

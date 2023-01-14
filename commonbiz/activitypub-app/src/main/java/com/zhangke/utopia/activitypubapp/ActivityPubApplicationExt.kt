@@ -2,9 +2,9 @@ package com.zhangke.utopia.activitypubapp
 
 import com.zhangke.activitypub.ActivityPubApplication
 
-fun newActivityPubApplication(domain: String): ActivityPubApplication {
+fun newActivityPubApplication(host: String): ActivityPubApplication {
     return ActivityPubApplication(
-        domain = domain,
+        host = host,
         id = "100075",
         name = "utopia",
         website = "https://0xzhangke.github.io/",

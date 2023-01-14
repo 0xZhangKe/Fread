@@ -5,7 +5,7 @@ package com.zhangke.activitypub
  */
 
 data class ActivityPubApplication(
-    val domain: String,
+    val host: String,
     val id: String,
     val name: String,
     val website: String,

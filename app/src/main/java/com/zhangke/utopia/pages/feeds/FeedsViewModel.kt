@@ -1,11 +1,9 @@
 package com.zhangke.utopia.pages.feeds
 
-import android.widget.Toast
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.mapFirst
-import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypubapp.providers.ActivityPubProviderFactory
+import com.zhangke.framework.toast.toast
 import com.zhangke.utopia.blogprovider.BlogProviderManager
 import com.zhangke.utopia.blogprovider.Status
 import com.zhangke.utopia.blogprovider.db.BlogSourceRepo
@@ -38,7 +36,7 @@ class FeedsViewModel : ViewModel() {
                     feeds.emit(it)
                 }
                 .onFailure {
-                    Toast.makeText(appContext, it.message, Toast.LENGTH_SHORT).show()
+                    toast(it.message)
                 }
         }
     }

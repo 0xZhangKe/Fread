@@ -35,7 +35,7 @@ class ActivityPubClient(
 
     val timelinesRepo: TimelinesRepo by lazy { TimelinesRepo(this) }
 
-    val baseUrl: String = buildBaseUrl(application.domain)
+    val baseUrl: String = buildBaseUrl(application.host)
 
     internal fun buildOAuthUrl(): String {
         //https://m.cmx.im/oauth/authorize?response_type=code&client_id=KHGSFM7oZY2_ZhaQRo25DfBRNwERZy7_iqZ_HjA5Sp8&redirect_uri=utopia://oauth.utopia&scope=read+write+follow+push
@@ -47,7 +47,7 @@ class ActivityPubClient(
                 "&scope=read+write+follow+push"
     }
 
-    private fun buildBaseUrl(domain: String): String {
-        return "https://$domain"
+    private fun buildBaseUrl(host: String): String {
+        return "https://$host"
     }
 }

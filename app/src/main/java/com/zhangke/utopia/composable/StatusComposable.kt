@@ -1,5 +1,7 @@
 package com.zhangke.utopia.composable
 
+import android.text.Html
+import android.widget.TextView
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -11,7 +13,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.zhangke.utopia.blogprovider.Blog
 import com.zhangke.utopia.blogprovider.BlogAuthor
@@ -31,7 +35,7 @@ fun UtopiaStatusComposable(
         is Status.Forward -> status.originBlog
         is Status.Comment -> status.originBlog
     }
-    BlogContentComposable(blog = blog)
+    BlogContentComposable(modifier, blog = blog)
 }
 
 @Preview
@@ -124,9 +128,16 @@ fun BlogContentComposable(
                 fontSize = 12.sp,
             )
         }
-        Text(
+        AndroidView(
             modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 8.dp, bottom = 10.dp),
-            text = blog.content
+            factory = {
+                TextView(it).apply {
+                    textSize = 14F
+                }
+            },
+            update = {
+                it.text = HtmlCompat.fromHtml(blog.content, Html.FROM_HTML_MODE_LEGACY)
+            }
         )
     }
 }

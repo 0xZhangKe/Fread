@@ -1,12 +1,16 @@
 package com.zhangke.utopia.blogprovider.db
 
 import androidx.room.*
+import com.google.gson.JsonObject
+import com.zhangke.framework.room.JsonObjectStringConverter
 import com.zhangke.framework.room.ListStringConverter
 import com.zhangke.framework.security.Md5
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.blogprovider.BlogFeeds
 import com.zhangke.utopia.blogprovider.BlogFeedsShell
 import com.zhangke.utopia.blogprovider.BlogSource
+import com.zhangke.utopia.blogprovider.MetaSourceInfo
+import java.io.FileDescriptor
 
 // FeedsSource 表示一个 Feeds 的源；
 // BlogSource 表示单一 blog 源；
@@ -48,6 +52,12 @@ private data class BlogSourceEntry(
     val sourceName: String?,
     val sourceDescription: String?,
     val avatar: String?,
+    val extra: JsonObject?,
+    val metaSourceUrl: String,
+    val metaSourceName: String,
+    val metaSourceThumbnail: String?,
+    val metaSourceDescription: String?,
+    val metaSourceExtra: JsonObject?,
 )
 
 @Dao
@@ -77,7 +87,7 @@ private interface BlogSourceDao {
     version = DB_VERSION,
     exportSchema = false
 )
-@TypeConverters(ListStringConverter::class)
+@TypeConverters(ListStringConverter::class, JsonObjectStringConverter::class)
 private abstract class BlogSourceDatabase : RoomDatabase() {
 
     abstract fun getFeedsSourceDao(): FeedsSourceDao
@@ -103,11 +113,11 @@ object BlogSourceRepo {
     private val blogSourceDao: BlogSourceDao
         get() = BlogSourceDatabase.instance.getBlogSourceDao()
 
-    suspend fun insertFeeds(feeds: BlogFeeds) {
-        val blogSourceEntryList = feeds.sourceList.map { it.toEntry() }
+    suspend fun insertFeeds(name: String, sourceList: List<BlogSource>) {
+        val blogSourceEntryList = sourceList.map { it.toEntry() }
         blogSourceDao.insert(blogSourceEntryList)
         val feedsEntry = FeedsEntry(
-            name = feeds.name,
+            name = name,
             sourceList = blogSourceEntryList.map { it.id }
         )
         feedsSourceDao.insert(feedsEntry)
@@ -142,7 +152,13 @@ object BlogSourceRepo {
             sourceServer = sourceServer,
             sourceDescription = sourceDescription,
             protocol = protocol,
-            avatar = avatar
+            avatar = avatar,
+            extra = extra,
+            metaSourceUrl = metaSourceInfo.url,
+            metaSourceName = metaSourceInfo.name,
+            metaSourceDescription = metaSourceInfo.description,
+            metaSourceThumbnail = metaSourceInfo.thumbnail,
+            metaSourceExtra = metaSourceInfo.extra,
         )
     }
 
@@ -152,7 +168,19 @@ object BlogSourceRepo {
             sourceServer = sourceServer,
             sourceDescription = sourceDescription,
             protocol = protocol,
-            avatar = avatar
+            avatar = avatar,
+            extra = extra,
+            metaSourceInfo = toMetaSourceInfo()
+        )
+    }
+
+    private fun BlogSourceEntry.toMetaSourceInfo(): MetaSourceInfo {
+        return MetaSourceInfo(
+            url = metaSourceUrl,
+            name = metaSourceName,
+            description = metaSourceDescription,
+            thumbnail = metaSourceThumbnail,
+            extra = metaSourceExtra,
         )
     }
 

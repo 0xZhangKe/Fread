@@ -30,11 +30,7 @@ class MainActivity : AppCompatActivity() {
             UtopiaTheme {
                 val pageState = viewModel.pageState.collectAsState().value
                 val feedsShellList: List<BlogFeedsShell> =
-                    if (pageState == MainViewModel.PageState.FEEDS) {
-                        viewModel.feedsShellFlow.collectAsState(initial = emptyList()).value
-                    } else {
-                        emptyList()
-                    }
+                    viewModel.feedsShellFlow.collectAsState(initial = emptyList()).value
                 MainPage(
                     pageState = pageState,
                     feedsShellList = feedsShellList,
@@ -61,8 +57,10 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
                 MainViewModel.PageState.FEEDS -> {
-                    FragmentComposable("feeds_fragment") {
-                        FeedsFragment.newInstance(feedsShellList.first().id)
+                    if (feedsShellList.isNotEmpty()) {
+                        FragmentComposable("feeds_fragment") {
+                            FeedsFragment.newInstance(feedsShellList.first().id)
+                        }
                     }
                 }
             }

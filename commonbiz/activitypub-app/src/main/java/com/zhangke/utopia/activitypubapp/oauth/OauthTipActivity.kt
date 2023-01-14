@@ -117,7 +117,7 @@ class OauthTipActivity : AppCompatActivity() {
                 Column {
 
                     val loginMessageResId =
-                        if (isOauthFailed) R.string.login_page_auth_failed_title else R.string.login_page_title
+                        if (isOauthFailed) R.string.activity_pub_login_page_auth_failed_title else R.string.activity_pub_login_page_title
 
                     Text(
                         modifier = Modifier
@@ -139,13 +139,13 @@ class OauthTipActivity : AppCompatActivity() {
                         Button(
                             onClick = onCancelClick
                         ) {
-                            Text(text = getString(R.string.cancel))
+                            Text(text = getString(R.string.activity_pub_cancel))
                         }
                         Button(
                             modifier = Modifier.padding(start = 15.dp),
                             onClick = onLoginClick
                         ) {
-                            Text(text = getString(R.string.login))
+                            Text(text = getString(R.string.activity_pub_login))
                         }
                     }
                 }

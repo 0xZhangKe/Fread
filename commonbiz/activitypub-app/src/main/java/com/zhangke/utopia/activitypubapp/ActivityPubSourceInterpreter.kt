@@ -4,6 +4,7 @@ import com.zhangke.activitypub.entry.ActivityPubInstance
 import com.zhangke.utopia.activitypubapp.source.TimelineSourceInterpreter
 import com.zhangke.utopia.activitypubapp.source.UserSourceInterpreter
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubApplicableUrl
+import com.zhangke.utopia.activitypubapp.utils.toMetaSource
 import com.zhangke.utopia.blogprovider.BlogSource
 import com.zhangke.utopia.blogprovider.BlogSourceGroup
 import com.zhangke.utopia.blogprovider.BlogSourceInterpreter
@@ -77,27 +78,5 @@ object ActivityPubSourceInterpreter : BlogSourceInterpreter {
             .instanceRepo
             .getInstanceInformation()
             .getOrNull()
-    }
-
-    private fun ActivityPubInstance.toSource(): BlogSource {
-        return BlogSource(
-            metaSourceInfo = toMetaSource(),
-            sourceServer = domain,
-            sourceDescription = description,
-            sourceName = title,
-            avatar = thumbnail.url,
-            protocol = ACTIVITY_PUB_PROTOCOL,
-            extra = null,
-        )
-    }
-
-    private fun ActivityPubInstance.toMetaSource(): MetaSourceInfo {
-        return MetaSourceInfo(
-            url = domain,
-            name = title,
-            thumbnail = thumbnail.url,
-            description = description,
-            extra = null
-        )
     }
 }

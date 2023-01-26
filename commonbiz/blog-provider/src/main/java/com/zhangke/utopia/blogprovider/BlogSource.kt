@@ -2,7 +2,7 @@ package com.zhangke.utopia.blogprovider
 
 import com.google.gson.JsonObject
 
-data class BlogSource(
+abstract class BlogSource(
     /**
      * This source`s source or rather this parent source info
      */

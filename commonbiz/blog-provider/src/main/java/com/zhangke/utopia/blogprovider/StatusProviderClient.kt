@@ -4,7 +4,9 @@ interface StatusProviderClient {
 
     val statusProviderFactory: StatusProviderFactory
 
-    val sourceInterpreter: BlogSourceInterpreter
+    val sourceResolver: BlogSourceResolver
 
     val sourceRestorer: BlogSourceRestorer
+
+    val authorizer: StatusProviderAuthorizer
 }

@@ -43,4 +43,3 @@ internal class ActivityPubApplicableUrl(private val url: String) {
         return completenessUrl
     }
 }
-}

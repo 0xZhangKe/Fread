@@ -1,17 +1,17 @@
 package com.zhangke.utopia.activitypubapp
 
+import com.zhangke.utopia.activitypubapp.oauth.ActivityPubAuthorizer
 import com.zhangke.utopia.activitypubapp.providers.ActivityPubProviderFactory
 import com.zhangke.utopia.activitypubapp.source.ActivityPubSourceRestorer
-import com.zhangke.utopia.blogprovider.BlogSourceInterpreter
-import com.zhangke.utopia.blogprovider.BlogSourceRestorer
-import com.zhangke.utopia.blogprovider.StatusProviderClient
-import com.zhangke.utopia.blogprovider.StatusProviderFactory
+import com.zhangke.utopia.blogprovider.*
 
-class ActivityPubStatusProviderClient: StatusProviderClient {
+class ActivityPubStatusProviderClient : StatusProviderClient {
 
     override val statusProviderFactory: StatusProviderFactory = ActivityPubProviderFactory()
 
-    override val sourceInterpreter: BlogSourceInterpreter = ActivityPubSourceInterpreter
+    override val sourceResolver: BlogSourceResolver = ActivityPubSourceResolver()
 
-    override val sourceRestorer: BlogSourceRestorer = ActivityPubSourceRestorer
+    override val sourceRestorer: BlogSourceRestorer = ActivityPubSourceRestorer()
+
+    override val authorizer: StatusProviderAuthorizer = ActivityPubAuthorizer()
 }

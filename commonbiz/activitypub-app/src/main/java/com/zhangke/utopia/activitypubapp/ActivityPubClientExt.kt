@@ -21,8 +21,16 @@ internal fun newActivityPubClient(app: ActivityPubApplication): ActivityPubClien
     )
 }
 
+private val clientCache = mutableMapOf<String, ActivityPubClient>()
+
 internal fun newActivityPubClient(host: String): ActivityPubClient {
-    return newActivityPubClient(newActivityPubApplication(host))
+    return newActivityPubClient(newActivityPubApplication(host)).apply {
+        clientCache[host] = this
+    }
+}
+
+internal fun obtainActivityPubClient(host: String): ActivityPubClient {
+    return clientCache[host] ?: newActivityPubClient(host)
 }
 
 private fun buildBaseUrl(host: String): String {

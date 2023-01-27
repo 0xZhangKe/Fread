@@ -2,11 +2,11 @@ package com.zhangke.utopia.pages.providermanager
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.toast.toast
 import com.zhangke.utopia.blogprovider.BlogProviderManager
 import com.zhangke.utopia.blogprovider.BlogSource
 import com.zhangke.utopia.blogprovider.BlogSourceGroup
-import com.zhangke.utopia.blogprovider.BlogSourceInterpreter
 import com.zhangke.utopia.blogprovider.db.BlogSourceRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,16 +24,13 @@ class AddProviderViewModel : ViewModel() {
     val pageState: StateFlow<PageState> get() = _pageState
 
     private var blogSourceGroup: BlogSourceGroup? = null
-    private var blogSourceInterpreter: BlogSourceInterpreter? = null
 
     private val addedBlogSourceList = mutableListOf<BlogSource>()
 
     fun onSearchClick(content: String) {
         viewModelScope.launch(Dispatchers.IO) {
-            val interpreter = BlogProviderManager.sourceInterpreterList
-                .firstOrNull { it.applicable(content) } ?: return@launch
-            blogSourceGroup = interpreter.createSourceGroup(content)
-            blogSourceInterpreter = interpreter
+            blogSourceGroup = BlogProviderManager.sourceResolverList
+                .mapFirstOrNull { it.resolve(content) } ?: return@launch
             _pageState.emit(PageState.SOURCE_INFO)
         }
     }
@@ -56,8 +53,11 @@ class AddProviderViewModel : ViewModel() {
         viewModelScope.launch(Dispatchers.IO) {
             try {
                 val allSourceIsValidate =
-                    addedBlogSourceList.map { blogSourceInterpreter!!.validate(it) }
-                        .reduce { acc, b -> acc && b }
+                    addedBlogSourceList.map { blogSource ->
+                        BlogProviderManager.authorizerList
+                            .first { it.applicable(blogSource) }
+                            .checkAuthorizer(blogSource)
+                    }.reduce { acc, b -> acc && b }
                 if (!allSourceIsValidate) return@launch
                 BlogSourceRepo.insertFeeds("Placeholder", addedBlogSourceList)
             } catch (e: Exception) {

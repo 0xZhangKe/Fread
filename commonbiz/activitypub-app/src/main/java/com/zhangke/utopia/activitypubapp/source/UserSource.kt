@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypubapp.source
 
 import com.google.gson.JsonObject
+import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entry.ActivityPubInstance
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubApplicableUrl
 import com.zhangke.utopia.blogprovider.BlogSource
@@ -27,16 +28,7 @@ internal class UserSource(
 
     companion object {
 
-        fun newInstance(
-            extra: JsonObject,
-            userSourceExtra: UserSourceExtra,
-            metaSourceInfo: MetaSourceInfo,
-            sourceServer: String,
-            protocol: String,
-            sourceName: String,
-            sourceDescription: String?,
-            avatar: String?,
-        ): UserSource {
+        fun BlogSourceScope.newInstance(userSourceExtra: UserSourceExtra): UserSource {
             return UserSource(
                 userId = userSourceExtra.userId,
                 metaSourceInfo = metaSourceInfo,
@@ -56,23 +48,12 @@ internal class UserSourceExtra(
     val type: ActivityPubSourceType
 )
 
-internal class UserSourceInterpreter : ActivityPubInternalSourceInterpreter {
+internal class UserSourceResolver : ActivityPubSourceInternalResolver {
 
-    override suspend fun applicable(
+    override suspend fun resolve(
         url: ActivityPubApplicableUrl,
         instance: ActivityPubInstance
-    ): Boolean {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun createSource(
-        url: ActivityPubApplicableUrl,
-        instance: ActivityPubInstance
-    ): BlogSource {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun validate(source: BlogSource): Boolean {
-        TODO("Not yet implemented")
+    ): BlogSource? {
+        return null
     }
 }

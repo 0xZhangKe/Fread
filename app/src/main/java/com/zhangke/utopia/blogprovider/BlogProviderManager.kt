@@ -9,7 +9,10 @@ object BlogProviderManager {
     lateinit var providerFactoryList: List<StatusProviderFactory>
         private set
 
-    lateinit var sourceInterpreterList: List<BlogSourceInterpreter>
+    lateinit var sourceResolverList: List<BlogSourceResolver>
+        private set
+
+    lateinit var authorizerList: List<StatusProviderAuthorizer>
         private set
 
     fun prepare() {
@@ -20,6 +23,7 @@ object BlogProviderManager {
         }
         statusProviderClientList = list
         providerFactoryList = statusProviderClientList.map { it.statusProviderFactory }
-        sourceInterpreterList = statusProviderClientList.map { it.sourceInterpreter }
+        sourceResolverList = statusProviderClientList.map { it.sourceResolver }
+        authorizerList = statusProviderClientList.map { it.authorizer }
     }
 }

@@ -2,11 +2,12 @@ package com.zhangke.utopia.activitypubapp.source
 
 import com.google.gson.JsonObject
 import com.zhangke.utopia.activitypubapp.ACTIVITY_PUB_PROTOCOL
+import com.zhangke.utopia.activitypubapp.source.BlogSourceFactory.createBlogSource
 import com.zhangke.utopia.blogprovider.BlogSource
 import com.zhangke.utopia.blogprovider.BlogSourceRestorer
 import com.zhangke.utopia.blogprovider.MetaSourceInfo
 
-object ActivityPubSourceRestorer : BlogSourceRestorer {
+class ActivityPubSourceRestorer : BlogSourceRestorer {
 
     override fun restoreBlogSource(
         metaSourceInfo: MetaSourceInfo,
@@ -18,7 +19,7 @@ object ActivityPubSourceRestorer : BlogSourceRestorer {
         extra: JsonObject?
     ): BlogSource? {
         if (protocol != ACTIVITY_PUB_PROTOCOL) return null
-        return BlogSourceFactory.createBlogSource(
+        val scope = BlogSourceScope(
             metaSourceInfo = metaSourceInfo,
             sourceName = sourceName,
             sourceServer = sourceServer,
@@ -27,5 +28,6 @@ object ActivityPubSourceRestorer : BlogSourceRestorer {
             protocol = protocol,
             extra = extra!!
         )
+        return scope.createBlogSource()
     }
 }

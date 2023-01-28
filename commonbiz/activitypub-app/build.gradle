@@ -46,7 +46,7 @@ dependencies {
 
     implementation project(path: ':framework')
     implementation project(path: ':commonbiz:blog-provider')
-    implementation project(path: ':activitypub')
+    implementation project(path: ':ActivityPub-Kotlin')
 
     implementation support.activity
     implementation support.'activity-ktx'

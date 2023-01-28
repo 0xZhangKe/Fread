@@ -7,6 +7,8 @@ import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.utopia.activitypubapp.oauth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUserRepo
 
+private const val REDIRECT_URI = "utopia://oauth.utopia"
+
 internal fun newActivityPubClient(app: ActivityPubApplication): ActivityPubClient {
     return ActivityPubClient(
         application = app,

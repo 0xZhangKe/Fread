@@ -9,7 +9,7 @@ dependencyResolutionManagement {
 rootProject.name = "Utopia"
 include ':app'
 include ':framework'
-include ':activitypub'
+include ':ActivityPub-Kotlin'
 include ':commonbiz'
 include ':commonbiz:blog-provider'
 include ':commonbiz:activitypub-app'

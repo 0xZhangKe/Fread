@@ -1,0 +1,3 @@
+[submodule "ActivityPub-Kotlin"]
+	path = ActivityPub-Kotlin
+	url = git@github.com:0xZhangKe/ActivityPub-Kotlin.git

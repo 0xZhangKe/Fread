@@ -55,7 +55,7 @@ android {
 
 dependencies {
     implementation project(path: ':framework')
-    runtimeOnly project(path: ':activitypub')
+    runtimeOnly project(path: ':ActivityPub-Kotlin')
     runtimeOnly project(path: ':commonbiz:activitypub-app')
     implementation project(path: ':commonbiz:blog-provider')
 

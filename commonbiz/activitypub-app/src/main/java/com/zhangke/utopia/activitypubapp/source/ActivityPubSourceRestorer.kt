@@ -22,7 +22,7 @@ class ActivityPubSourceRestorer : BlogSourceRestorer {
         val scope = BlogSourceScope(
             metaSourceInfo = metaSourceInfo,
             sourceName = sourceName,
-            sourceServer = sourceServer,
+            uri = sourceServer,
             sourceDescription = sourceDescription,
             avatar = avatar,
             protocol = protocol,

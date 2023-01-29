@@ -5,7 +5,7 @@ import com.zhangke.utopia.blogprovider.MetaSourceInfo
 
 internal class BlogSourceScope(
     val metaSourceInfo: MetaSourceInfo,
-    val sourceServer: String,
+    val uri: String,
     val protocol: String,
     val sourceName: String,
     val sourceDescription: String?,

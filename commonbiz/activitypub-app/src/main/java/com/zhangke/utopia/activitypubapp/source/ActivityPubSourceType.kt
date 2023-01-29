@@ -4,5 +4,7 @@ internal enum class ActivityPubSourceType(val stringValue: String) {
 
     LOCAL_TIMELINE("LocalTimeline"),
     PUBLIC_TIMELINE("PublicTimeline"),
-    USER("User");
+    HOME_TIMELINE("HomeTimeline"),
+    USER_STATUS("UserStatus"),
+    USER_STATUS_EXCLUDE_REPLIES("UserStatusExcludeReplies");
 }

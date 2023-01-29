@@ -2,8 +2,10 @@ package com.zhangke.utopia.activitypubapp
 
 import com.zhangke.activitypub.ActivityPubApplication
 
-fun newActivityPubApplication(host: String): ActivityPubApplication {
-    return ActivityPubApplication(
+private val cachedApplication = mutableMapOf<String, ActivityPubApplication>()
+
+internal fun obtainActivityPubApplication(host: String): ActivityPubApplication {
+    return cachedApplication[host] ?: ActivityPubApplication(
         host = host,
         id = "100075",
         name = "utopia",
@@ -12,7 +14,7 @@ fun newActivityPubApplication(host: String): ActivityPubApplication {
         clientId = "KHGSFM7oZY2_ZhaQRo25DfBRNwERZy7_iqZ_HjA5Sp8",
         clientSecret = "S0KKhfTQjEN-OZhJCHJYVl2OMYvz1wQiBoy8VDtfSzI",
         vapidKey = "BOtsUyc0M779KJ0j-AAsv_wANoDuLkh6tTh6l1muA8OY3xVs34iGsUichN7VXNxcMoGKdSbyIEZsnsbJf6e46DA",
-    )
+    ).also { cachedApplication[host] = it }
 }
 
 //val mastodonUtopiaApplication = ActivityPubApplication(

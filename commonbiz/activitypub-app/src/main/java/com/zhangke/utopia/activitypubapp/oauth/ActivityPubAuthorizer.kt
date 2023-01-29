@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypubapp.oauth
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.UserSource
-import com.zhangke.utopia.activitypubapp.utils.ActivityPubApplicableUrl
+import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.blogprovider.BlogSource
 import com.zhangke.utopia.blogprovider.StatusProviderAuthorizer
 
@@ -26,8 +26,8 @@ class ActivityPubAuthorizer : StatusProviderAuthorizer {
     }
 
     private suspend fun checkTimelineAuthorizer(source: TimelineSource): Boolean{
-        val url = ActivityPubApplicableUrl(source.sourceServer)
-        val timeline = obtainActivityPubClient(url.host!!).timelinesRepo.run {
+        val url = ActivityPubUrl(source.uri)
+        val timeline = obtainActivityPubClient(url.toughHost).timelinesRepo.run {
             if (source.isLocal) {
                 localTimelines()
             } else {

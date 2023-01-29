@@ -14,7 +14,9 @@ internal object BlogSourceFactory {
             ?.runCatching { ActivityPubSourceType.valueOf(this) }?.getOrNull()
             ?: throw IllegalArgumentException("$extra is not a ActivityPubBlogSource!")
         return when (type) {
-            ActivityPubSourceType.PUBLIC_TIMELINE, ActivityPubSourceType.LOCAL_TIMELINE -> {
+            ActivityPubSourceType.PUBLIC_TIMELINE,
+            ActivityPubSourceType.LOCAL_TIMELINE,
+            ActivityPubSourceType.HOME_TIMELINE -> {
                 val timelineExtra = globalGson.fromJson(extra, TimelineSourceExtra::class.java)
                 newInstance(timelineExtra)
             }

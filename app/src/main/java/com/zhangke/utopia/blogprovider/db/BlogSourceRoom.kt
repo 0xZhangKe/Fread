@@ -10,7 +10,6 @@ import com.zhangke.utopia.blogprovider.BlogFeeds
 import com.zhangke.utopia.blogprovider.BlogFeedsShell
 import com.zhangke.utopia.blogprovider.BlogSource
 import com.zhangke.utopia.blogprovider.MetaSourceInfo
-import java.io.FileDescriptor
 
 // FeedsSource 表示一个 Feeds 的源；
 // BlogSource 表示单一 blog 源；
@@ -149,7 +148,7 @@ object BlogSourceRepo {
         return BlogSourceEntry(
             id = generateBlogSourceKey(this),
             sourceName = sourceName,
-            sourceServer = sourceServer,
+            sourceServer = uri,
             sourceDescription = sourceDescription,
             protocol = protocol,
             avatar = avatar,
@@ -165,7 +164,7 @@ object BlogSourceRepo {
     private fun BlogSourceEntry.toSource(): BlogSource {
         return BlogSource(
             sourceName = sourceName,
-            sourceServer = sourceServer,
+            uri = sourceServer,
             sourceDescription = sourceDescription,
             protocol = protocol,
             avatar = avatar,
@@ -185,7 +184,7 @@ object BlogSourceRepo {
     }
 
     private fun generateBlogSourceKey(source: BlogSource): String {
-        val serverMd5 = Md5.md5(source.sourceServer)
+        val serverMd5 = Md5.md5(source.uri)
         return "${source.protocol}:$serverMd5"
     }
 }

@@ -6,9 +6,11 @@ import com.zhangke.framework.utils.RegexFactory
 private const val HTTP_SCHEME_PREFIX = "http://"
 private const val HTTPS_SCHEME_PREFIX = "https://"
 
-internal class ActivityPubApplicableUrl(private val url: String) {
+internal class ActivityPubUrl(private val url: String) {
 
     val host: String? = RegexFactory.getDomainRegex().find(url)?.value
+
+    val toughHost: String get() = host!!
 
     val query: String?
         get() = if (validate()) {

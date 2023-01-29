@@ -7,7 +7,7 @@ abstract class BlogSource(
      * This source`s source or rather this parent source info
      */
     val metaSourceInfo: MetaSourceInfo,
-    val sourceServer: String,
+    val uri: String,
     val protocol: String,
     val sourceName: String,
     val sourceDescription: String?,

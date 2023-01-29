@@ -113,7 +113,7 @@ class AddProviderFragment : Fragment() {
     @Composable
     fun PreviewActivityPubPage() {
         val blogSource = BlogSource(
-            sourceServer = "musician.social",
+            uri = "musician.social",
             protocol = "activity_pub",
             sourceName = "musician",
             sourceDescription = "MUSICIAN.SOCIAL is an server focused on Musicians who create, play, or love #jazz, #rock, #pop, #indie, #classical and all other types of #music",

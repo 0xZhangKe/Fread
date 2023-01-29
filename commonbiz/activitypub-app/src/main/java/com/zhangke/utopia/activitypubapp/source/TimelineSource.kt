@@ -1,21 +1,21 @@
 package com.zhangke.utopia.activitypubapp.source
 
 import com.google.gson.JsonObject
-import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entry.ActivityPubInstance
 import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.utopia.activitypubapp.ACTIVITY_PUB_PROTOCOL
-import com.zhangke.utopia.activitypubapp.newActivityPubClient
+import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.TimelineSource.Companion.newInstance
-import com.zhangke.utopia.activitypubapp.utils.ActivityPubApplicableUrl
-import com.zhangke.utopia.activitypubapp.utils.toMetaSource
+import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.blogprovider.BlogSource
+import com.zhangke.utopia.blogprovider.BlogSourceGroup
+import com.zhangke.utopia.blogprovider.BlogSourceResolver
 import com.zhangke.utopia.blogprovider.MetaSourceInfo
 
 internal class TimelineSource(
     val isLocal: Boolean,
     metaSourceInfo: MetaSourceInfo,
-    sourceServer: String,
+    domain: String,
     protocol: String,
     sourceName: String,
     sourceDescription: String?,
@@ -23,7 +23,7 @@ internal class TimelineSource(
     extra: JsonObject,
 ) : BlogSource(
     metaSourceInfo = metaSourceInfo,
-    sourceServer = sourceServer,
+    uri = domain,
     protocol = protocol,
     sourceName = sourceName,
     sourceDescription = sourceDescription,
@@ -38,7 +38,7 @@ internal class TimelineSource(
             return TimelineSource(
                 isLocal = isLocal,
                 metaSourceInfo = metaSourceInfo,
-                sourceServer = sourceServer,
+                domain = uri,
                 protocol = protocol,
                 sourceName = sourceName,
                 sourceDescription = sourceDescription,
@@ -53,22 +53,48 @@ internal class TimelineSourceExtra(
     val type: ActivityPubSourceType
 )
 
-internal class TimelineSourceResolver(private val isLocal: Boolean) : ActivityPubSourceInternalResolver {
+// This will provides Public/Local/Home timeline sources.
+internal class TimelineSourceResolver : BlogSourceResolver {
 
-    override suspend fun resolve(
-        url: ActivityPubApplicableUrl,
-        instance: ActivityPubInstance
-    ): BlogSource {
-        return instance.toTimelineSource(isLocal)
+    private val instanceCache = mutableMapOf<ActivityPubUrl, ActivityPubInstance>()
+
+    override suspend fun resolve(content: String): BlogSourceGroup? {
+        val url = ActivityPubUrl(content)
+        if (!url.validate()) return null
+        val instance = requestActivityPubInstance(url) ?: return null
+        val sourceList = listOf(
+            instance.toTimelineSource(ActivityPubSourceType.LOCAL_TIMELINE),
+            instance.toTimelineSource(ActivityPubSourceType.PUBLIC_TIMELINE),
+            instance.toTimelineSource(ActivityPubSourceType.HOME_TIMELINE),
+        )
+        return BlogSourceGroup(
+            metaSourceInfo = instance.toMetaSource(),
+            sourceList = sourceList
+        )
     }
 
-    private fun ActivityPubInstance.toTimelineSource(isLocal: Boolean): TimelineSource {
-        val type = if (isLocal) ActivityPubSourceType.LOCAL_TIMELINE
-        else ActivityPubSourceType.PUBLIC_TIMELINE
+    private suspend fun requestActivityPubInstance(url: ActivityPubUrl): ActivityPubInstance? {
+        return instanceCache[url] ?: obtainActivityPubClient(url.toughHost).instanceRepo
+            .getInstanceInformation()
+            .getOrNull()
+            ?.also { instanceCache[url] = it }
+    }
+
+    private fun ActivityPubInstance.toMetaSource(): MetaSourceInfo {
+        return MetaSourceInfo(
+            url = domain,
+            name = title,
+            thumbnail = thumbnail.url,
+            description = description,
+            extra = null
+        )
+    }
+
+    private fun ActivityPubInstance.toTimelineSource(type: ActivityPubSourceType): TimelineSource {
         val extra = TimelineSourceExtra(type)
         val scope = BlogSourceScope(
             metaSourceInfo = toMetaSource(),
-            sourceServer = domain,
+            uri = domain,
             sourceDescription = description,
             sourceName = title,
             avatar = thumbnail.url,

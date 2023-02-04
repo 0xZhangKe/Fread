@@ -1,7 +1,5 @@
 package com.zhangke.utopia.blogprovider.user
 
-import java.io.Serializable
-
 /**
  * description a logged user.
  *

@@ -7,6 +7,7 @@ object ActivityPubUserRepo {
 
     private val userDao: ActivityPubUserDao get() = ActivityPubUserDatabase.instance.getActivityPubUserDao()
 
+    @Volatile
     private var currentUser: ActivityPubUser? = null
 
     /**

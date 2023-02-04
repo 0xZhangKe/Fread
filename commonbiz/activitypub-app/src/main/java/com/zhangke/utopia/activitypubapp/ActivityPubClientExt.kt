@@ -10,6 +10,12 @@ private const val REDIRECT_URI = "utopia://oauth.utopia"
 
 private val clientCache = mutableMapOf<String, ActivityPubClient>()
 
+internal val currentActivityPubClient: ActivityPubClient?
+    get() {
+        val host = ActivityPubUserRepo.getCurrentUser()?.domain ?: return null
+        return obtainActivityPubClient(host)
+    }
+
 internal fun obtainActivityPubClient(host: String): ActivityPubClient {
     return clientCache[host] ?: newActivityPubClient(host)
 }

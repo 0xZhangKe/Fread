@@ -20,7 +20,7 @@ internal object BlogSourceFactory {
                 val timelineExtra = globalGson.fromJson(extra, TimelineSourceExtra::class.java)
                 newInstance(timelineExtra)
             }
-            ActivityPubSourceType.USER -> {
+            ActivityPubSourceType.USER_STATUS, ActivityPubSourceType.USER_STATUS_EXCLUDE_REPLIES -> {
                 val userSourceExtra = globalGson.fromJson(extra, UserSourceExtra::class.java)
                 newInstance(userSourceExtra)
             }

@@ -13,9 +13,9 @@ import com.zhangke.utopia.blogprovider.BlogSourceResolver
 import com.zhangke.utopia.blogprovider.MetaSourceInfo
 
 internal class TimelineSource(
-    val isLocal: Boolean,
+    val type: ActivityPubSourceType,
     metaSourceInfo: MetaSourceInfo,
-    domain: String,
+    val domain: String,
     protocol: String,
     sourceName: String,
     sourceDescription: String?,
@@ -34,9 +34,8 @@ internal class TimelineSource(
     companion object {
 
         fun BlogSourceScope.newInstance(timelineSourceExtra: TimelineSourceExtra): TimelineSource {
-            val isLocal = timelineSourceExtra.type == ActivityPubSourceType.LOCAL_TIMELINE
             return TimelineSource(
-                isLocal = isLocal,
+                type = timelineSourceExtra.type,
                 metaSourceInfo = metaSourceInfo,
                 domain = uri,
                 protocol = protocol,

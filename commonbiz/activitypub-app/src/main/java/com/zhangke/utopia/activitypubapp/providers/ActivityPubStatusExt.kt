@@ -8,6 +8,13 @@ import com.zhangke.utopia.blogprovider.Status
 import org.joda.time.format.ISODateTimeFormat
 import java.util.*
 
+
+internal fun Result<List<ActivityPubStatus>>.toStatus(domain: String): Result<List<Status>> {
+    return map { list ->
+        list.map { it.toStatus(domain) }
+    }
+}
+
 internal fun ActivityPubStatus.toStatus(domain: String): Status {
     //fixme temporary code
     return Status.NewBlog(toBlog(domain))

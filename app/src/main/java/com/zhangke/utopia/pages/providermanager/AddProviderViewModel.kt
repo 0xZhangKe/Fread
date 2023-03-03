@@ -4,10 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.toast.toast
-import com.zhangke.utopia.blogprovider.BlogProviderManager
-import com.zhangke.utopia.blogprovider.BlogSource
-import com.zhangke.utopia.blogprovider.BlogSourceGroup
-import com.zhangke.utopia.blogprovider.db.BlogSourceRepo
+import com.zhangke.utopia.status_provider.BlogProviderManager
+import com.zhangke.utopia.status_provider.StatusSource
+import com.zhangke.utopia.status_provider.BlogSourceGroup
+import com.zhangke.utopia.status_provider.db.BlogSourceRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -25,7 +25,7 @@ class AddProviderViewModel : ViewModel() {
 
     private var blogSourceGroup: BlogSourceGroup? = null
 
-    private val addedBlogSourceList = mutableListOf<BlogSource>()
+    private val addedBlogSourceList = mutableListOf<StatusSource>()
 
     fun onSearchClick(content: String) {
         viewModelScope.launch(Dispatchers.IO) {
@@ -45,7 +45,7 @@ class AddProviderViewModel : ViewModel() {
         }
     }
 
-    fun onAddSourceServer(blogSource: BlogSource) {
+    fun onAddSourceServer(blogSource: StatusSource) {
         addedBlogSourceList += blogSource
     }
 

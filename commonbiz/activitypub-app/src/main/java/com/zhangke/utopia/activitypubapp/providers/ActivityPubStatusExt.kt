@@ -2,9 +2,9 @@ package com.zhangke.utopia.activitypubapp.providers
 
 import com.zhangke.activitypub.entry.ActivityPubAccount
 import com.zhangke.activitypub.entry.ActivityPubStatus
-import com.zhangke.utopia.blogprovider.Blog
-import com.zhangke.utopia.blogprovider.BlogAuthor
-import com.zhangke.utopia.blogprovider.Status
+import com.zhangke.utopia.status_provider.Blog
+import com.zhangke.utopia.status_provider.BlogAuthor
+import com.zhangke.utopia.status_provider.Status
 import org.joda.time.format.ISODateTimeFormat
 import java.util.*
 

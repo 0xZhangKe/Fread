@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypubapp
 import com.zhangke.utopia.activitypubapp.oauth.ActivityPubAuthorizer
 import com.zhangke.utopia.activitypubapp.providers.ActivityPubProviderFactory
 import com.zhangke.utopia.activitypubapp.source.ActivityPubSourceRestorer
-import com.zhangke.utopia.blogprovider.*
+import com.zhangke.utopia.status_provider.*
 
 class ActivityPubStatusProviderClient : StatusProviderClient {
 

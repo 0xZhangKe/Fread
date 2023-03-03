@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.source
 
 import com.google.gson.JsonObject
-import com.zhangke.utopia.blogprovider.MetaSourceInfo
+import com.zhangke.utopia.status_provider.MetaSourceInfo
 
 internal class BlogSourceScope(
     val metaSourceInfo: MetaSourceInfo,

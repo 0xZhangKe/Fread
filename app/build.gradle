@@ -57,7 +57,7 @@ dependencies {
     implementation project(path: ':framework')
     runtimeOnly project(path: ':ActivityPub-Kotlin')
     runtimeOnly project(path: ':commonbiz:activitypub-app')
-    implementation project(path: ':commonbiz:blog-provider')
+    implementation project(path: ':commonbiz:status-provider')
 
     testImplementation 'junit:junit:4.+'
     androidTestImplementation 'androidx.test.ext:junit:1.1.2'
@@ -103,6 +103,7 @@ dependencies {
     implementation support.'room-ktx'
     kapt           support.'room-compiler'
 
+    implementation arch.'hilt'
     implementation arch.lifecycle.'viewmodel-ktx'
     implementation arch.lifecycle.'viewmodel-compose'
     implementation arch.lifecycle.'livedata-ktx'

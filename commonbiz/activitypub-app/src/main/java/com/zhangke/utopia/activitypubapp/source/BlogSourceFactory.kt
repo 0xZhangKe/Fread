@@ -4,11 +4,11 @@ import com.google.gson.JsonPrimitive
 import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.utopia.activitypubapp.source.TimelineSource.Companion.newInstance
 import com.zhangke.utopia.activitypubapp.source.UserSource.Companion.newInstance
-import com.zhangke.utopia.blogprovider.BlogSource
+import com.zhangke.utopia.status_provider.StatusSource
 
 internal object BlogSourceFactory {
 
-    fun BlogSourceScope.createBlogSource(): BlogSource {
+    fun BlogSourceScope.createBlogSource(): StatusSource {
         val type = extra.get("type")
             ?.let { if (it is JsonPrimitive) it.asString else null }
             ?.runCatching { ActivityPubSourceType.valueOf(this) }?.getOrNull()

@@ -3,8 +3,8 @@ package com.zhangke.utopia.activitypubapp
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.activitypubapp.source.TimelineSourceResolver
 import com.zhangke.utopia.activitypubapp.source.UserSourceResolver
-import com.zhangke.utopia.blogprovider.BlogSourceGroup
-import com.zhangke.utopia.blogprovider.BlogSourceResolver
+import com.zhangke.utopia.status_provider.BlogSourceGroup
+import com.zhangke.utopia.status_provider.BlogSourceResolver
 import java.util.*
 
 class ActivityPubSourceResolver : BlogSourceResolver {

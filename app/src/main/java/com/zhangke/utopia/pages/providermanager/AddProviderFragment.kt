@@ -30,9 +30,9 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.architect.coroutines.collectWithLifecycle
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.utopia.R
-import com.zhangke.utopia.blogprovider.BlogSource
-import com.zhangke.utopia.blogprovider.BlogSourceGroup
-import com.zhangke.utopia.blogprovider.MetaSourceInfo
+import com.zhangke.utopia.status_provider.StatusSource
+import com.zhangke.utopia.status_provider.BlogSourceGroup
+import com.zhangke.utopia.status_provider.MetaSourceInfo
 
 class AddProviderFragment : Fragment() {
 
@@ -112,7 +112,7 @@ class AddProviderFragment : Fragment() {
     @Preview
     @Composable
     fun PreviewActivityPubPage() {
-        val blogSource = BlogSource(
+        val blogSource = StatusSource(
             uri = "musician.social",
             protocol = "activity_pub",
             sourceName = "musician",
@@ -149,7 +149,7 @@ class AddProviderFragment : Fragment() {
         pageState: AddProviderViewModel.PageState,
         blogSourceGroup: BlogSourceGroup?,
         onSearchClick: (String) -> Unit,
-        onAddSourceClick: (source: BlogSource) -> Unit,
+        onAddSourceClick: (source: StatusSource) -> Unit,
         onConfirmClick: () -> Unit,
     ) {
         when (pageState) {
@@ -192,7 +192,7 @@ class AddProviderFragment : Fragment() {
     @Composable
     fun BlogSourceInstancePage(
         blogSourceGroup: BlogSourceGroup,
-        onAddSourceClick: (source: BlogSource) -> Unit,
+        onAddSourceClick: (source: StatusSource) -> Unit,
         onConfirmClick: () -> Unit,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {

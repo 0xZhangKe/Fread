@@ -7,10 +7,7 @@ import com.zhangke.utopia.activitypubapp.ACTIVITY_PUB_PROTOCOL
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.UserSource.Companion.newInstance
 import com.zhangke.utopia.activitypubapp.utils.WebFingerUtil
-import com.zhangke.utopia.blogprovider.BlogSource
-import com.zhangke.utopia.blogprovider.BlogSourceGroup
-import com.zhangke.utopia.blogprovider.BlogSourceResolver
-import com.zhangke.utopia.blogprovider.MetaSourceInfo
+import com.zhangke.utopia.status_provider.*
 
 internal class UserSource(
     val userId: String,
@@ -20,16 +17,17 @@ internal class UserSource(
     sourceName: String,
     sourceDescription: String?,
     avatar: String?,
-    extra: JsonObject,
-) : BlogSource(
-    metaSourceInfo = metaSourceInfo,
-    uri = acct,
-    protocol = protocol,
-    sourceName = sourceName,
-    sourceDescription = sourceDescription,
-    avatar = avatar,
-    extra = extra
-) {
+) : StatusSource {
+
+    override val uri: String
+        get() = TODO("Not yet implemented")
+
+    override val provider: StatusProvider
+        get() = TODO("Not yet implemented")
+
+    override suspend fun requestAdd(addFunction: suspend (valid: Boolean) -> Unit) {
+        TODO("Not yet implemented")
+    }
 
     companion object {
 
@@ -86,7 +84,7 @@ internal class UserSourceResolver : BlogSourceResolver {
     private fun ActivityPubAccount.toBlogSource(
         webFinger: String,
         type: ActivityPubSourceType,
-    ): BlogSource {
+    ): StatusSource {
         val extra = UserSourceExtra(userId = id, type = type)
         val scope = BlogSourceScope(
             metaSourceInfo = toMetaSourceInfo(),

@@ -17,10 +17,10 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
-import com.zhangke.utopia.blogprovider.Blog
-import com.zhangke.utopia.blogprovider.BlogAuthor
-import com.zhangke.utopia.blogprovider.Status
-import com.zhangke.utopia.blogprovider.StatusAction
+import com.zhangke.utopia.status_provider.Blog
+import com.zhangke.utopia.status_provider.BlogAuthor
+import com.zhangke.utopia.status_provider.Status
+import com.zhangke.utopia.status_provider.StatusAction
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.getOrSet

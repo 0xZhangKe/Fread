@@ -4,16 +4,16 @@ import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.UserSource
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.blogprovider.BlogSource
-import com.zhangke.utopia.blogprovider.StatusProviderAuthorizer
+import com.zhangke.utopia.status_provider.StatusSource
+import com.zhangke.utopia.status_provider.StatusProviderAuthorizer
 
 class ActivityPubAuthorizer : StatusProviderAuthorizer {
 
-    override fun applicable(source: BlogSource): Boolean {
+    override fun applicable(source: StatusSource): Boolean {
         return source is TimelineSource || source is UserSource
     }
 
-    override suspend fun checkAuthorizer(source: BlogSource): Boolean {
+    override suspend fun checkAuthorizer(source: StatusSource): Boolean {
         return when (source) {
             is TimelineSource -> {
                 checkTimelineAuthorizer(source)

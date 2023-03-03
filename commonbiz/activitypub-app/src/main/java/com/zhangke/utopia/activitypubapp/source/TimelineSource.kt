@@ -7,10 +7,10 @@ import com.zhangke.utopia.activitypubapp.ACTIVITY_PUB_PROTOCOL
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.TimelineSource.Companion.newInstance
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.blogprovider.BlogSource
-import com.zhangke.utopia.blogprovider.BlogSourceGroup
-import com.zhangke.utopia.blogprovider.BlogSourceResolver
-import com.zhangke.utopia.blogprovider.MetaSourceInfo
+import com.zhangke.utopia.status_provider.StatusSource
+import com.zhangke.utopia.status_provider.BlogSourceGroup
+import com.zhangke.utopia.status_provider.BlogSourceResolver
+import com.zhangke.utopia.status_provider.MetaSourceInfo
 
 internal class TimelineSource(
     val type: ActivityPubSourceType,
@@ -21,7 +21,7 @@ internal class TimelineSource(
     sourceDescription: String?,
     avatar: String?,
     extra: JsonObject,
-) : BlogSource(
+) : StatusSource(
     metaSourceInfo = metaSourceInfo,
     uri = domain,
     protocol = protocol,

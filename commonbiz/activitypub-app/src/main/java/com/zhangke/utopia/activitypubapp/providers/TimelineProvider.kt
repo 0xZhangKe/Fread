@@ -3,8 +3,8 @@ package com.zhangke.utopia.activitypubapp.providers
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.ActivityPubSourceType
 import com.zhangke.utopia.activitypubapp.source.TimelineSource
-import com.zhangke.utopia.blogprovider.Status
-import com.zhangke.utopia.blogprovider.StatusProvider
+import com.zhangke.utopia.status_provider.Status
+import com.zhangke.utopia.status_provider.StatusProvider
 
 /**
  * Created by ZhangKe on 2022/12/9.

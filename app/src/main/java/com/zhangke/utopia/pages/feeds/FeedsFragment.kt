@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.zhangke.framework.architect.theme.UtopiaTheme
-import com.zhangke.utopia.blogprovider.Status
+import com.zhangke.utopia.status_provider.Status
 import com.zhangke.utopia.composable.UtopiaStatusComposable
 
 class FeedsFragment : Fragment() {

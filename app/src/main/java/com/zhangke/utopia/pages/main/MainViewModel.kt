@@ -2,8 +2,8 @@ package com.zhangke.utopia.pages.main
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zhangke.utopia.blogprovider.BlogFeedsShell
-import com.zhangke.utopia.blogprovider.db.BlogSourceRepo
+import com.zhangke.utopia.status_provider.BlogFeedsShell
+import com.zhangke.utopia.status_provider.db.BlogSourceRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow

@@ -4,8 +4,8 @@ import com.zhangke.utopia.activitypubapp.currentActivityPubClient
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.UserSource
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.blogprovider.Status
-import com.zhangke.utopia.blogprovider.StatusProvider
+import com.zhangke.utopia.status_provider.Status
+import com.zhangke.utopia.status_provider.StatusProvider
 
 internal class UserStatusProvider(private val source: UserSource) : StatusProvider {
 

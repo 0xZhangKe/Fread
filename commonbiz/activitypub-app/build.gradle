@@ -45,7 +45,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
     implementation project(path: ':framework')
-    implementation project(path: ':commonbiz:blog-provider')
+    implementation project(path: ':commonbiz:status-provider')
     implementation project(path: ':ActivityPub-Kotlin')
 
     implementation support.activity
@@ -76,6 +76,8 @@ dependencies {
     implementation compose.'foundation-layout'
     implementation compose.'runtime-livedata'
     implementation compose.'constraintlayout-compose'
+
+    implementation arch.'hilt'
 
     implementation kotlin_libs.stdlib
     implementation coroutine.core

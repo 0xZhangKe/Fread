@@ -14,7 +14,7 @@ import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
 import com.zhangke.framework.architect.theme.UtopiaTheme
-import com.zhangke.utopia.blogprovider.BlogFeedsShell
+import com.zhangke.utopia.status_provider.BlogFeedsShell
 import com.zhangke.utopia.composable.Toolbar
 import com.zhangke.utopia.pages.feeds.FeedsFragment
 import com.zhangke.utopia.pages.providermanager.AddProviderFragment

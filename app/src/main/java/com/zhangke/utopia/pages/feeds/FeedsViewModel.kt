@@ -4,9 +4,9 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.framework.toast.toast
-import com.zhangke.utopia.blogprovider.BlogProviderManager
-import com.zhangke.utopia.blogprovider.Status
-import com.zhangke.utopia.blogprovider.db.BlogSourceRepo
+import com.zhangke.utopia.status_provider.BlogProviderManager
+import com.zhangke.utopia.status_provider.Status
+import com.zhangke.utopia.status_provider.db.BlogSourceRepo
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch

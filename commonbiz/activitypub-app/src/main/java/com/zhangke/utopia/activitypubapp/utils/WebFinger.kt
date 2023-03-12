@@ -1,80 +1,78 @@
 package com.zhangke.utopia.activitypubapp.utils
 
-internal class WebFinger(content: String) {
+import com.zhangke.framework.utils.RegexFactory
 
-    var value: String? = null
-        private set
+/**
+ * Supported:
+ * - jw@jakewharton.com
+ * - @jw@jakewharton.com
+ * - acct:@jw@jakewharton.com
+ * - https://m.cmx.im/@jw@jakewharton.com
+ * - https://m.cmx.im/@AtomZ
+ * - m.cmx.im/@jw@jakewharton.com
+ * - jakewharton.com/@jw
+ */
+internal class WebFinger private constructor(
+    val name: String,
+    val host: String,
+) {
 
-    var name: String? = null
-        private set
-
-    var host: String? = null
-        private set
-
-    init {
-        value = buildWebFinger(content)
-    }
-
-    private fun buildWebFinger(content: String): String? {
-        if (!symbolValidate(content)) return null
-        val lastAtSymbolIndex = content.lastIndexOf('@')
-        if (lastAtSymbolIndex < 0 || lastAtSymbolIndex > content.length - 2) return null
-        val maybeHost = content.substring(lastAtSymbolIndex + 1, content.length)
-        val host: String =
-            if (maybeHost.contains('.')) {
-                maybeHost
-            } else {
-                return null
-            }
-        if (!hostValidate(host)) return null
-        val name = content.removeSuffix("@$host").removePrefix("@")
-        if (!nameValidate(name)) return null
-        this.name = name
-        this.host = host
+    override fun toString(): String {
         return "@$name@$host"
     }
 
-    private fun symbolValidate(content: String): Boolean {
-        content.toCharArray().forEach {
-            if (!isValidateWebFingerSymbol(it)) return false
+    companion object {
+
+        fun create(content: String): WebFinger? {
+            if (content.isBlank()) return null
+            return createAsAcct(content) ?: createAsUrl(content)
         }
-        return true
-    }
 
-    private fun hostValidate(host: String): Boolean {
-        host.toCharArray().forEach {
-            if (!isValidateHostSymbol(it)) return false
+        private fun createAsAcct(content: String): WebFinger? {
+            val maybeAcct = content
+                .removePrefix("acct:")
+                .removePrefix("@")
+            val split = maybeAcct.split('@')
+            if (split.size != 2) return null
+            val name = split[0]
+            if (!nameValidate(name)) return null
+            val host = split[1]
+            if (!hostValidate(host)) return null
+            return WebFinger(name, host)
         }
-        return true
-    }
 
-    private fun nameValidate(name: String): Boolean {
-        name.toCharArray().forEach {
-            if (!isValidateNameSymbol(it)) return false
+        private fun createAsUrl(content: String): WebFinger? {
+            val maybeUrl = content
+                .removePrefix("http://")
+                .removePrefix("https://")
+            val split = maybeUrl.split('/')
+            if (split.size != 2) return null
+            val urlHost = split[0]
+            if (!hostValidate(urlHost)) return null
+            val maybeAcct = split[1].removePrefix("@")
+            return if (maybeAcct.contains('@')) {
+                createAsAcct(maybeAcct)
+            } else {
+                createAsAcct("$maybeAcct@$urlHost")
+            }
         }
-        return true
-    }
 
-    private fun isValidateWebFingerSymbol(c: Char): Boolean {
-        return isValidateNameSymbol(c)
-                || isValidateHostSymbol(c)
-                || c == '@'
-    }
+        private fun hostValidate(host: String): Boolean {
+            return RegexFactory.getDomainRegex().matches(host)
+        }
 
-    private fun isValidateHostSymbol(symbol: Char): Boolean {
-        return symbol == '_'
-                || symbol == '.'
-                || symbol.isDigit()
-                || symbol.isLetter()
-    }
+        private fun nameValidate(name: String): Boolean {
+            if (name.isEmpty()) return false
+            name.toCharArray().forEach {
+                if (!isValidateNameSymbol(it)) return false
+            }
+            return true
+        }
 
-    private fun isValidateNameSymbol(symbol: Char): Boolean {
-        return symbol == '_'
-                || symbol.isDigit()
-                || symbol.isLetter()
-    }
-
-    fun validate(): Boolean {
-        return !value.isNullOrEmpty()
+        private fun isValidateNameSymbol(symbol: Char): Boolean {
+            return symbol == '_'
+                    || symbol.isDigit()
+                    || symbol.isLetter()
+        }
     }
 }

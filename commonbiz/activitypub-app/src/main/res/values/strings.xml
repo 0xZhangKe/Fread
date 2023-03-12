@@ -11,6 +11,8 @@
 
     <string name="activity_pub_login_exception">认证状态异常</string>
 
+    <string name="activity_pub_home_timeline">主页</string>
+
     <string name="activity_pub_local_timeline">本站时间轴</string>
 
     <string name="activity_pub_public_timeline">跨站时间轴</string>

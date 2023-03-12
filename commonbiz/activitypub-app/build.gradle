@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android' version '2.44' apply false
 }
 
 android {
@@ -35,6 +36,10 @@ android {
     composeOptions {
         kotlinCompilerExtensionVersion = rootProject.ext.compose_version
         kotlinCompilerVersion = rootProject.ext.kotlin_version
+    }
+    // Allow references to generated code
+    kapt {
+        correctErrorTypes true
     }
 }
 
@@ -77,7 +82,12 @@ dependencies {
     implementation compose.'runtime-livedata'
     implementation compose.'constraintlayout-compose'
 
-    implementation arch.'hilt'
+    implementation arch.hilt
+    kapt           arch.'hilt-complier'
+
+    implementation support.room
+    implementation support.'room-ktx'
+    kapt           support.'room-compiler'
 
     implementation kotlin_libs.stdlib
     implementation coroutine.core

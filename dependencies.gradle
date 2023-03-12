@@ -75,7 +75,8 @@ ext {
     ]
 
     arch = [
-            'hilt'                  : "com.google.dagger.hilt.android:version:$hilt_version",
+            'hilt'                  : "com.google.dagger:hilt-android:$hilt_version",
+            'hilt-complier'         : "com.google.dagger:hilt-compiler:$hilt_version",
     ]
 
     arch.lifecycle =  [

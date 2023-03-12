@@ -1,8 +1,8 @@
 package com.zhangke.utopia.activitypubapp.oauth
 
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
-import com.zhangke.utopia.activitypubapp.source.TimelineSource
-import com.zhangke.utopia.activitypubapp.source.UserSource
+import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
+import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.status_provider.StatusSource
 import com.zhangke.utopia.status_provider.StatusProviderAuthorizer
@@ -15,9 +15,9 @@ class ActivityPubAuthorizer : StatusProviderAuthorizer {
 
     override suspend fun checkAuthorizer(source: StatusSource): Boolean {
         return when (source) {
-            is TimelineSource -> {
-                checkTimelineAuthorizer(source)
-            }
+//            is TimelineSource -> {
+//                checkTimelineAuthorizer(source)
+//            }
             is UserSource -> {
                 false
             }
@@ -25,17 +25,17 @@ class ActivityPubAuthorizer : StatusProviderAuthorizer {
         }
     }
 
-    private suspend fun checkTimelineAuthorizer(source: TimelineSource): Boolean{
-        val url = ActivityPubUrl(source.uri)
-        val timeline = obtainActivityPubClient(url.toughHost).timelinesRepo.run {
-            if (source.isLocal) {
-                localTimelines()
-            } else {
-                publicTimelines()
-            }
-        }.getOrNull()
-        return timeline != null
-    }
+//    private suspend fun checkTimelineAuthorizer(source: TimelineSource): Boolean{
+//        val url = ActivityPubUrl.create(source.uri)!!
+//        val timeline = obtainActivityPubClient(url.host).timelinesRepo.run {
+//            if (source.isLocal) {
+//                localTimelines()
+//            } else {
+//                publicTimelines()
+//            }
+//        }.getOrNull()
+//        return timeline != null
+//    }
 
     override fun perform() {
 

@@ -2,8 +2,10 @@ package com.zhangke.utopia.activitypubapp.source
 
 import com.google.gson.JsonPrimitive
 import com.zhangke.framework.architect.json.globalGson
-import com.zhangke.utopia.activitypubapp.source.TimelineSource.Companion.newInstance
-import com.zhangke.utopia.activitypubapp.source.UserSource.Companion.newInstance
+import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource.Companion.newInstance
+import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceExtra
+import com.zhangke.utopia.activitypubapp.source.user.UserSource.Companion.newInstance
+import com.zhangke.utopia.activitypubapp.source.user.UserSourceExtra
 import com.zhangke.utopia.status_provider.StatusSource
 
 internal object BlogSourceFactory {

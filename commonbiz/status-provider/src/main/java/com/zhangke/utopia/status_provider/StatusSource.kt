@@ -4,7 +4,13 @@ interface StatusSource {
 
     val uri: String
 
-    val provider: StatusProvider
+    val nickName: String
 
-    suspend fun requestAdd(addFunction: suspend (valid: Boolean) -> Unit)
+    val description: String
+
+    val thumbnail: String?
+
+    suspend fun saveToLocal()
+
+    suspend fun requestMaintainer(): StatusSourceMaintainer
 }

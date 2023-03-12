@@ -1,47 +1,49 @@
 package com.zhangke.utopia.activitypubapp.utils
 
 import android.net.Uri
+import android.util.Base64
 import com.zhangke.framework.utils.RegexFactory
 
 private const val HTTP_SCHEME_PREFIX = "http://"
 private const val HTTPS_SCHEME_PREFIX = "https://"
 
-internal class ActivityPubUrl(private val url: String) {
+internal class ActivityPubUrl private constructor(
+    val host: String,
+    val path: String?,
+    val query: String?,
+    val completenessUrl: String,
+) {
 
-    val host: String? = RegexFactory.getDomainRegex().find(url)?.value
+    fun encodeToBase64(): String {
+        return completenessUrl.encodeToBase64()
+    }
 
-    val toughHost: String get() = host!!
-
-    val query: String?
-        get() = if (validate()) {
-            Uri.parse(getCompletenessUrl()).query
-        } else {
-            null
-        }
-
-    val path: String?
-        get() = if (validate()) {
-            Uri.parse(getCompletenessUrl()).path
-        } else {
-            null
-        }
-
-    private var completenessUrl: String? = null
-
-    fun validate(): Boolean = !host.isNullOrEmpty()
-
-    fun getCompletenessUrl(): String {
-        if (!validate()) throw IllegalStateException("This url($url) is not validate!")
-        var completenessUrl = completenessUrl
-        if (completenessUrl.isNullOrEmpty()) {
-            completenessUrl =
-                if (url.startsWith(HTTP_SCHEME_PREFIX) || url.startsWith(HTTPS_SCHEME_PREFIX)) {
-                    url
-                } else {
-                    "$HTTPS_SCHEME_PREFIX$url"
-                }
-            this.completenessUrl = completenessUrl
-        }
+    override fun toString(): String {
         return completenessUrl
+    }
+
+    companion object {
+
+        fun create(url: String): ActivityPubUrl? {
+            val host = RegexFactory.getDomainRegex().find(url)?.value
+            if (host.isNullOrEmpty()) return null
+            val completenessUrl = buildCompletenessUrl(url)
+            val uri = Uri.parse(completenessUrl)
+            return ActivityPubUrl(
+                host = host,
+                path = uri.path,
+                query = uri.query,
+                completenessUrl = completenessUrl
+            )
+        }
+
+        private fun buildCompletenessUrl(url: String): String {
+            return if (url.startsWith(HTTP_SCHEME_PREFIX) || url.startsWith(HTTPS_SCHEME_PREFIX)) {
+                url
+            } else {
+                "$HTTPS_SCHEME_PREFIX$url"
+            }
+        }
+
     }
 }

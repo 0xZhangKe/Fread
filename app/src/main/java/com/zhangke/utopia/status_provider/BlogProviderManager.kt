@@ -9,9 +9,6 @@ object BlogProviderManager {
     lateinit var providerFactoryList: List<StatusProviderFactory>
         private set
 
-    lateinit var sourceResolverList: List<BlogSourceResolver>
-        private set
-
     lateinit var authorizerList: List<StatusProviderAuthorizer>
         private set
 
@@ -23,7 +20,6 @@ object BlogProviderManager {
         }
         statusProviderClientList = list
         providerFactoryList = statusProviderClientList.map { it.statusProviderFactory }
-        sourceResolverList = statusProviderClientList.map { it.sourceResolver }
         authorizerList = statusProviderClientList.map { it.authorizer }
     }
 }

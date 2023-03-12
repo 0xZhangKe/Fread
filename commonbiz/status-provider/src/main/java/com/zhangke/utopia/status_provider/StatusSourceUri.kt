@@ -46,7 +46,7 @@ class StatusSourceUri private constructor(
             return StatusSourceUri(host, newPath, query)
         }
 
-        fun fromString(uri: String): StatusSourceUri? {
+        fun create(uri: String): StatusSourceUri? {
             val scheme = findScheme(uri)
             if (scheme != STATUS_SOURCE_SCHEME) return null
             val host = findHost(uri)

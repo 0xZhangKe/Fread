@@ -11,6 +11,8 @@
 
     <string name="activity_pub_login_exception">OAuthor state exception!</string>
 
+    <string name="activity_pub_home_timeline">HomePage</string>
+
     <string name="activity_pub_local_timeline">Local timeline</string>
 
     <string name="activity_pub_public_timeline">Public timeline</string>

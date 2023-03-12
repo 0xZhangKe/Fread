@@ -1,23 +1,24 @@
 package com.zhangke.utopia.activitypubapp
 
-import com.zhangke.framework.collections.mapFirstOrNull
-import com.zhangke.utopia.activitypubapp.source.TimelineSourceResolver
-import com.zhangke.utopia.activitypubapp.source.UserSourceResolver
-import com.zhangke.utopia.status_provider.BlogSourceGroup
-import com.zhangke.utopia.status_provider.BlogSourceResolver
-import java.util.*
+import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceResolver
+import com.zhangke.utopia.activitypubapp.source.user.UserSourceResolver
+import com.zhangke.utopia.status_provider.StatusSource
+import com.zhangke.utopia.status_provider.IStatusSourceResolver
+import com.zhangke.utopia.status_provider.StatusSourceUri
 
-class ActivityPubSourceResolver : BlogSourceResolver {
+class ActivityPubSourceResolver : IStatusSourceResolver {
 
-    private val resolverLinkedList = LinkedList<BlogSourceResolver>()
+    private val resolverList = listOf(
+        UserSourceResolver(),
+        TimelineSourceResolver(),
+    )
 
-    init {
-        // Must keep order.
-        resolverLinkedList += UserSourceResolver()
-        resolverLinkedList += TimelineSourceResolver()
+    override fun applicable(uri: StatusSourceUri): Boolean {
+        return uri.isActivityPubUri()
     }
 
-    override suspend fun resolve(content: String): BlogSourceGroup? {
-        return resolverLinkedList.mapFirstOrNull { it.resolve(content) }
+    override suspend fun resolve(uri: StatusSourceUri): StatusSource? {
+        uri.requireActivityPubUri()
+        return resolverList.firstOrNull { it.applicable(uri) }?.resolve(uri)
     }
 }

@@ -1,14 +1,4 @@
 <resources>
-    <string name="activity_pub_cancel">取消</string>
-
-    <string name="activity_pub_ok">确定</string>
-
-    <string name="activity_pub_login">登录</string>
-
-    <string name="activity_pub_login_page_title">该功能需要登陆后才能使用哦</string>
-
-    <string name="activity_pub_login_page_auth_failed_title">登录状态失效，请重新登录。</string>
-
     <string name="activity_pub_login_exception">认证状态异常</string>
 
     <string name="activity_pub_home_timeline">主页</string>

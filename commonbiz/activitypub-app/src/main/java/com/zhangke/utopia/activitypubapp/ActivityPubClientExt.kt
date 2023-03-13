@@ -5,6 +5,8 @@ import com.zhangke.framework.architect.http.newRetrofit
 import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.utopia.activitypubapp.oauth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUserRepo
+import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
+import com.zhangke.utopia.status_provider.StatusProviderAuthorizer
 
 private const val REDIRECT_URI = "utopia://oauth.utopia"
 
@@ -24,20 +26,18 @@ private fun newActivityPubClient(host: String): ActivityPubClient {
     val application = obtainActivityPubApplication(host)
     return ActivityPubClient(
         application = application,
-        retrofit = newRetrofit(buildBaseUrl(application.host)),
+        retrofit = newRetrofit(ActivityPubUrl.create(host)!!.completenessUrl),
         gson = globalGson,
         redirectUrl = REDIRECT_URI,
         tokenProvider = {
             ActivityPubUserRepo.getCurrentUser()?.token
         },
         onAuthorizeFailed = { url, client ->
-            ActivityPubOAuthor.openOauthTipPage(url, client, true)
+            StatusProviderAuthorizer.onAuthenticationFailure {
+                ActivityPubOAuthor.startOauth(url, client)
+            }
         }
     ).apply {
         clientCache[host] = this
     }
-}
-
-private fun buildBaseUrl(host: String): String {
-    return "https://$host"
 }

@@ -1,14 +1,4 @@
 <resources>
-    <string name="activity_pub_cancel">Cancel</string>
-
-    <string name="activity_pub_ok">OK</string>
-
-    <string name="activity_pub_login">Login</string>
-
-    <string name="activity_pub_login_page_title">This function requires login to use</string>
-
-    <string name="activity_pub_login_page_auth_failed_title">Login status is invalid, please login again.</string>
-
     <string name="activity_pub_login_exception">OAuthor state exception!</string>
 
     <string name="activity_pub_home_timeline">HomePage</string>

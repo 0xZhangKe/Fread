@@ -5,8 +5,10 @@ import com.zhangke.activitypub.entry.ActivityPubStatus
 import com.zhangke.utopia.status_provider.Blog
 import com.zhangke.utopia.status_provider.BlogAuthor
 import com.zhangke.utopia.status_provider.Status
+import org.joda.time.format.DateTimeFormatter
 import org.joda.time.format.ISODateTimeFormat
 import java.util.*
+import kotlin.concurrent.getOrSet
 
 
 internal fun Result<List<ActivityPubStatus>>.toStatus(domain: String): Result<List<Status>> {
@@ -34,12 +36,15 @@ private fun ActivityPubStatus.toBlog(domain: String): Blog {
     )
 }
 
-private val activityPubDateTimeFormatterLocal = ThreadLocal.withInitial {
-    ISODateTimeFormat.dateTime()
-}
+private val activityPubDateTimeFormatterLocal = ThreadLocal<DateTimeFormatter>()
+
+private val activityPubDateTimeFormatter: DateTimeFormatter
+    get() = activityPubDateTimeFormatterLocal.getOrSet {
+        ISODateTimeFormat.dateTime()
+    }
 
 private fun formatActivityPubDate(dateTimeText: String): Date {
-    return activityPubDateTimeFormatterLocal.get()!!.parseDateTime(dateTimeText).toDate()
+    return activityPubDateTimeFormatter.parseDateTime(dateTimeText).toDate()
 }
 
 private fun ActivityPubAccount.toAuthor(domain: String): BlogAuthor {

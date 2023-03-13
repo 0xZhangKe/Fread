@@ -5,7 +5,7 @@ package com.zhangke.utopia.status_provider
  */
 object StatusProvider {
 
-    private val providers: List<IStatusProvider> = ImplementationFinder().findImplementation()
+    private val providers: List<IStatusProvider> = ImplementerFinder().findImplementer()
 
     suspend fun requestStatuses(source: StatusSource): Result<List<Status>> {
         return providers.firstOrNull { it.applicable(source) }

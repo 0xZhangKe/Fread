@@ -3,9 +3,9 @@ package com.zhangke.utopia.status_provider
 import okhttp3.internal.toImmutableList
 import java.util.*
 
-class ImplementationFinder {
+class ImplementerFinder {
 
-    inline fun <reified T> findImplementation(): List<T> {
+    inline fun <reified T> findImplementer(): List<T> {
         return with(mutableListOf<T>()) {
             val list = this
             ServiceLoader.load(T::class.java)

@@ -1,17 +1,25 @@
 package com.zhangke.utopia.status_provider
 
-interface StatusProviderAuthorizer {
+object StatusProviderAuthorizer {
 
-    fun applicable(source: StatusSource): Boolean
+    private val uncertifiedEventProcessorList = mutableSetOf<UncertifiedEventProcessor>()
 
-    /**
-     * check this source need login.
-     * This will perform authorize if necessary.
-     */
-    suspend fun checkAuthorizer(source: StatusSource): Boolean
+    fun onAuthenticationFailure(authenticationPerformer: () -> Unit) {
+        uncertifiedEventProcessorList.forEach {
+            it.onAuthenticationFailure(authenticationPerformer)
+        }
+    }
 
-    /**
-     * Perform authorize
-     */
-    fun perform()
+    fun registerUncertifiedEventProcessor(processor: UncertifiedEventProcessor) {
+        uncertifiedEventProcessorList.add(processor)
+    }
+
+    fun unregisterUncertifiedProcessor(processor: UncertifiedEventProcessor) {
+        uncertifiedEventProcessorList.remove(processor)
+    }
+}
+
+interface UncertifiedEventProcessor {
+
+    fun onAuthenticationFailure(authenticationPerformer: () -> Unit)
 }

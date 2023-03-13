@@ -5,7 +5,7 @@ package com.zhangke.utopia.status_provider
  */
 object StatusSourceResolver {
 
-    private val resolvers: List<IStatusSourceResolver> = ImplementationFinder().findImplementation()
+    private val resolvers: List<IStatusSourceResolver> = ImplementerFinder().findImplementer()
 
     suspend fun resolve(sourceUri: String): StatusSource? {
         val uri = StatusSourceUri.create(sourceUri) ?: return null

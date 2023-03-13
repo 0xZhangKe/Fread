@@ -12,4 +12,8 @@
     <string name="add_provider_page_title">Add Server</string>
 
     <string name="add_provider_page_confirm_button">Confirm Add</string>
+
+    <string name="authentication_page_normal_title">This function requires login to use</string>
+
+    <string name="authentication_page_failed_title">Login status is invalid, please login again.</string>
 </resources>

@@ -6,7 +6,7 @@ package com.zhangke.utopia.status_provider
 object StatusSourceMaintainerResolver {
 
     private val resolvers: List<IStatusSourceMaintainerResolver> =
-        ImplementationFinder().findImplementation()
+        ImplementerFinder().findImplementer()
 
     suspend fun resolve(content: String): StatusSourceMaintainer? {
         val blogSourceByUri = StatusSourceResolver.resolve(content)

@@ -2,7 +2,6 @@ package com.zhangke.utopia.activitypubapp.oauth
 
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import androidx.browser.customtabs.CustomTabsIntent
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.api.ActivityPubScope
@@ -13,7 +12,6 @@ import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUser
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUserRepo
-import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
@@ -23,20 +21,7 @@ import kotlinx.coroutines.launch
  */
 object ActivityPubOAuthor {
 
-    private val oauthFlow: MutableSharedFlow<ActivityPubUser?> = MutableSharedFlow(1)
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
-
-    fun observeUserState(): Flow<ActivityPubUser?> {
-        return oauthFlow
-    }
-
-    fun openOauthTipPage(oauthUrl: String, client: ActivityPubClient, isOauthFailed: Boolean) {
-        OauthTipActivity.open(appContext, isOauthFailed) { confirm ->
-            if (confirm) {
-                startOauth(oauthUrl, client)
-            }
-        }
-    }
 
     fun startOauth(oauthUrl: String, client: ActivityPubClient) {
         openOauthPage(oauthUrl)
@@ -47,12 +32,10 @@ object ActivityPubOAuthor {
                 val account = client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
                 account.toUser(client.baseUrl, token)
             } catch (e: Exception) {
-                Log.e("ActivityPubOAuthor", "OAuth failed", e)
                 toast(e.message)
                 null
             }
             if (user != null) {
-                oauthFlow.emit(user)
                 ActivityPubUserRepo.setCurrentUser(user)
             }
         }
@@ -62,7 +45,7 @@ object ActivityPubOAuthor {
         ApplicationScope.launch { oauthCodeFlow.emit(code) }
     }
 
-    fun openOauthPage(oauthUrl: String) {
+    private fun openOauthPage(oauthUrl: String) {
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)

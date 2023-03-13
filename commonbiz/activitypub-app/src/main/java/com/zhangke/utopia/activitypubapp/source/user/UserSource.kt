@@ -6,10 +6,11 @@ import com.zhangke.utopia.status_provider.StatusSource
 import com.zhangke.utopia.status_provider.StatusSourceMaintainer
 
 internal class UserSource(
+    val userId: String,
+    val webFinger: WebFinger,
     override val nickName: String,
     override val description: String,
     override val thumbnail: String?,
-    val webFinger: WebFinger,
 ) : StatusSource {
 
     override val uri: String = buildUserSourceUri(webFinger).toString()

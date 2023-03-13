@@ -9,6 +9,7 @@ private const val TABLE_NAME = "UserSources"
 @Entity(tableName = TABLE_NAME)
 internal data class UserSourceEntry(
     @PrimaryKey val webFinger: WebFinger,
+    val userId: String,
     val nickName: String,
     val description: String,
     val thumbnail: String?,
@@ -42,6 +43,7 @@ internal object UserSourceRepo {
             webFinger = webFinger,
             description = description,
             thumbnail = thumbnail,
+            userId = userId,
         )
     }
 
@@ -51,6 +53,7 @@ internal object UserSourceRepo {
             webFinger = webFinger,
             description = description,
             thumbnail = thumbnail,
+            userId = userId,
         )
     }
 }

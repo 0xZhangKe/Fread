@@ -31,8 +31,7 @@ import com.zhangke.framework.architect.coroutines.collectWithLifecycle
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.utopia.R
 import com.zhangke.utopia.status_provider.StatusSource
-import com.zhangke.utopia.status_provider.BlogSourceGroup
-import com.zhangke.utopia.status_provider.MetaSourceInfo
+import com.zhangke.utopia.status_provider.StatusSourceMaintainer
 
 class AddProviderFragment : Fragment() {
 
@@ -73,15 +72,9 @@ class AddProviderFragment : Fragment() {
             setContent {
                 UtopiaTheme {
                     val pageState = viewModel.pageState.collectAsState().value
-                    val blogSourceGroup =
-                        if (pageState == AddProviderViewModel.PageState.SOURCE_INFO) {
-                            viewModel.requireBlogSourceGroup()
-                        } else {
-                            null
-                        }
                     AddProviderPage(
                         pageState = pageState,
-                        blogSourceGroup = blogSourceGroup,
+                        statusSourceMaintainer = null,
                         onSearchClick = {
                             viewModel.onSearchClick(it)
                         },
@@ -105,49 +98,49 @@ class AddProviderFragment : Fragment() {
             null,
             onSearchClick = {},
             onAddSourceClick = {},
-                    onConfirmClick = {}
+            onConfirmClick = {}
         )
     }
 
     @Preview
     @Composable
     fun PreviewActivityPubPage() {
-        val blogSource = StatusSource(
-            uri = "musician.social",
-            protocol = "activity_pub",
-            sourceName = "musician",
-            sourceDescription = "MUSICIAN.SOCIAL is an server focused on Musicians who create, play, or love #jazz, #rock, #pop, #indie, #classical and all other types of #music",
-            avatar = "https://proxy.joinmastodon.org/7c9597cc47c440d758735af7c019d1d0c4189763/68747470733a2f2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732e73332e75732d776573742d322e616d617a6f6e6177732e636f6d2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732f736974655f75706c6f6164732f66696c65732f3030302f3030302f3030312f4031782f376364393863306634326331636438632e706e67",
-            extra = null,
-            metaSourceInfo = MetaSourceInfo(
-                url = "musician.social",
-                name = "Mastodon",
-                description = null,
-                thumbnail = null
-            )
-        )
-        val blogSourceGroup = BlogSourceGroup(
-            metaSourceInfo = MetaSourceInfo(
-                url = "musician.social",
-                name = "musician",
-                description = "MUSICIAN.SOCIAL is an server focused on Musicians who create, play, or love #jazz, #rock, #pop, #indie, #classical and all other types of #music",
-                thumbnail = "https://proxy.joinmastodon.org/7c9597cc47c440d758735af7c019d1d0c4189763/68747470733a2f2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732e73332e75732d776573742d322e616d617a6f6e6177732e636f6d2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732f736974655f75706c6f6164732f66696c65732f3030302f3030302f3030312f4031782f376364393863306634326331636438632e706e67",
-            ),
-            sourceList = listOf(blogSource)
-        )
-        AddProviderPage(
-            pageState = AddProviderViewModel.PageState.SOURCE_INFO,
-            blogSourceGroup = blogSourceGroup,
-            onSearchClick = {},
-            onAddSourceClick = {},
-            onConfirmClick = {}
-        )
+//        val blogSource = StatusSource(
+//            uri = "musician.social",
+//            protocol = "activity_pub",
+//            sourceName = "musician",
+//            sourceDescription = "MUSICIAN.SOCIAL is an server focused on Musicians who create, play, or love #jazz, #rock, #pop, #indie, #classical and all other types of #music",
+//            avatar = "https://proxy.joinmastodon.org/7c9597cc47c440d758735af7c019d1d0c4189763/68747470733a2f2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732e73332e75732d776573742d322e616d617a6f6e6177732e636f6d2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732f736974655f75706c6f6164732f66696c65732f3030302f3030302f3030312f4031782f376364393863306634326331636438632e706e67",
+//            extra = null,
+//            metaSourceInfo = MetaSourceInfo(
+//                url = "musician.social",
+//                name = "Mastodon",
+//                description = null,
+//                thumbnail = null
+//            )
+//        )
+//        val blogSourceGroup = BlogSourceGroup(
+//            metaSourceInfo = MetaSourceInfo(
+//                url = "musician.social",
+//                name = "musician",
+//                description = "MUSICIAN.SOCIAL is an server focused on Musicians who create, play, or love #jazz, #rock, #pop, #indie, #classical and all other types of #music",
+//                thumbnail = "https://proxy.joinmastodon.org/7c9597cc47c440d758735af7c019d1d0c4189763/68747470733a2f2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732e73332e75732d776573742d322e616d617a6f6e6177732e636f6d2f66656469686f73742d6d376e2d6d7573696369616e2d6173736574732f736974655f75706c6f6164732f66696c65732f3030302f3030302f3030312f4031782f376364393863306634326331636438632e706e67",
+//            ),
+//            sourceList = listOf(blogSource)
+//        )
+//        AddProviderPage(
+//            pageState = AddProviderViewModel.PageState.SOURCE_INFO,
+//            blogSourceGroup = blogSourceGroup,
+//            onSearchClick = {},
+//            onAddSourceClick = {},
+//            onConfirmClick = {}
+//        )
     }
 
     @Composable
     fun AddProviderPage(
         pageState: AddProviderViewModel.PageState,
-        blogSourceGroup: BlogSourceGroup?,
+        statusSourceMaintainer: StatusSourceMaintainer?,
         onSearchClick: (String) -> Unit,
         onAddSourceClick: (source: StatusSource) -> Unit,
         onConfirmClick: () -> Unit,
@@ -155,7 +148,7 @@ class AddProviderFragment : Fragment() {
         when (pageState) {
             AddProviderViewModel.PageState.INITIALIZE -> InitializePage(onSearchClick = onSearchClick)
             AddProviderViewModel.PageState.SOURCE_INFO -> BlogSourceInstancePage(
-                blogSourceGroup = blogSourceGroup!!,
+                statusSourceMaintainer = statusSourceMaintainer!!,
                 onAddSourceClick = onAddSourceClick,
                 onConfirmClick = onConfirmClick
             )
@@ -191,7 +184,7 @@ class AddProviderFragment : Fragment() {
 
     @Composable
     fun BlogSourceInstancePage(
-        blogSourceGroup: BlogSourceGroup,
+        statusSourceMaintainer: StatusSourceMaintainer,
         onAddSourceClick: (source: StatusSource) -> Unit,
         onConfirmClick: () -> Unit,
     ) {
@@ -211,31 +204,31 @@ class AddProviderFragment : Fragment() {
                         modifier = Modifier
                             .fillMaxWidth()
                             .aspectRatio(1.5F),
-                        model = blogSourceGroup.metaSourceInfo.thumbnail,
+                        model = statusSourceMaintainer.thumbnail,
                         contentDescription = "cover"
                     )
 
                     Text(
                         modifier = Modifier.padding(top = 10.dp),
-                        text = blogSourceGroup.metaSourceInfo.url,
+                        text = statusSourceMaintainer.url,
                         fontSize = 12.sp
                     )
 
                     Text(
                         modifier = Modifier.padding(top = 10.dp),
-                        text = blogSourceGroup.metaSourceInfo.name,
+                        text = statusSourceMaintainer.name,
                         fontWeight = FontWeight.Bold,
                         fontSize = 18.sp
                     )
 
                     Text(
                         modifier = Modifier.padding(top = 10.dp),
-                        text = blogSourceGroup.metaSourceInfo.description.orEmpty(),
+                        text = statusSourceMaintainer.description.orEmpty(),
                         fontSize = 14.sp
                     )
 
                     Column(modifier = Modifier.padding(top = 10.dp)) {
-                        blogSourceGroup.sourceList.forEach { blogSource ->
+                        statusSourceMaintainer.sourceList.forEach { blogSource ->
                             Surface(
                                 modifier = Modifier
                                     .padding(start = 15.dp, end = 15.dp, bottom = 8.dp)
@@ -247,7 +240,7 @@ class AddProviderFragment : Fragment() {
                                         modifier = Modifier
                                             .padding(start = 10.dp)
                                             .align(Alignment.CenterVertically),
-                                        text = blogSource.sourceName
+                                        text = blogSource.nickName
                                     )
                                     Spacer(modifier = Modifier.weight(1F))
                                     Image(

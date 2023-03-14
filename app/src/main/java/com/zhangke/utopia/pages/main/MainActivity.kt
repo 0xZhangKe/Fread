@@ -8,14 +8,15 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
 import androidx.fragment.app.commit
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.rememberNavController
 import com.zhangke.framework.architect.theme.UtopiaTheme
-import com.zhangke.utopia.status_provider.BlogFeedsShell
 import com.zhangke.utopia.composable.Toolbar
+import com.zhangke.utopia.pages.UtopiaRouters
 import com.zhangke.utopia.pages.feeds.FeedsFragment
 import com.zhangke.utopia.pages.providermanager.AddProviderFragment
 
@@ -28,14 +29,19 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             UtopiaTheme {
-                val pageState = viewModel.pageState.collectAsState().value
-                val feedsShellList: List<BlogFeedsShell> =
-                    viewModel.feedsShellFlow.collectAsState(initial = emptyList()).value
-                MainPage(
-                    pageState = pageState,
-                    feedsShellList = feedsShellList,
-                )
+
             }
+        }
+    }
+
+    @Composable
+    private fun MainPage() {
+        val navController = rememberNavController()
+        NavHost(
+            navController = navController,
+            startDestination = UtopiaRouters.Root,
+        ) {
+
         }
     }
 
@@ -43,7 +49,7 @@ class MainActivity : AppCompatActivity() {
     @Composable
     fun MainPage(
         pageState: MainViewModel.PageState,
-        feedsShellList: List<BlogFeedsShell>
+        feedsShellList: List<Int>
     ) {
         Scaffold(
             topBar = {
@@ -59,7 +65,7 @@ class MainActivity : AppCompatActivity() {
                 MainViewModel.PageState.FEEDS -> {
                     if (feedsShellList.isNotEmpty()) {
                         FragmentComposable("feeds_fragment") {
-                            FeedsFragment.newInstance(feedsShellList.first().id)
+                            FeedsFragment.newInstance(feedsShellList.first())
                         }
                     }
                 }

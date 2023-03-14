@@ -1,4 +1,4 @@
-ext {
+rootProject.ext {
     minSdkVersion = 22
     targetSdkVersion = 33
     compileSdkVersion = 33
@@ -22,9 +22,12 @@ ext {
     okhttp_version = "4.9.3"
 
     hilt_version = "2.44"
+
+    nav_version = "2.5.3"
+
 }
 
-ext {
+rootProject.ext {
     support = [
             'core'                  : "androidx.core:core:${androidx_core}",
             'core-ktx'              : "androidx.core:core-ktx:${androidx_core}",
@@ -49,8 +52,10 @@ ext {
             'room-compiler'         : "androidx.room:room-compiler:${room_version}",
             'datastore-preferences' : "androidx.datastore:datastore-preferences:1.0.0",
             'datastore'             : "androidx.datastore:datastore:1.0.0",
-            'browser'               : "androidx.browser:browser:1.4.0"
-
+            'browser'               : "androidx.browser:browser:1.4.0",
+            "navigation-ui-ktx"     : "androidx.navigation:navigation-ui-ktx:$nav_version",
+            "nav_testing"           : "androidx.navigation:navigation-testing:$nav_version",
+            "navigation-compose"    : "androidx.navigation:navigation-compose:$nav_version",
     ]
 
     compose = [

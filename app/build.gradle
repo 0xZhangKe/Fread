@@ -2,6 +2,7 @@ plugins {
     id 'com.android.application'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.dagger.hilt.android'
 }
 
 android {
@@ -101,17 +102,22 @@ dependencies {
     implementation support.browser
     implementation support.room
     implementation support.'room-ktx'
-    kapt           support.'room-compiler'
+    kapt support.'room-compiler'
+    implementation support.'navigation-ui-ktx'
+    implementation support.'nav_testing'
+    implementation support.'navigation-compose'
 
     implementation arch.'hilt'
     implementation arch.lifecycle.'viewmodel-ktx'
     implementation arch.lifecycle.'viewmodel-compose'
     implementation arch.lifecycle.'livedata-ktx'
     implementation arch.lifecycle.'viewmodel-savedstate'
-    kapt           arch.lifecycle.compiler
+    kapt arch.lifecycle.compiler
     implementation arch.lifecycle.'common-java8'
     implementation arch.lifecycle.process
     implementation arch.lifecycle.'reactivestreams-ktx'
+    implementation arch.hilt
+    kapt arch.'hilt-complier'
 
     implementation kotlin_libs.stdlib
     implementation coroutine.core
@@ -125,4 +131,9 @@ dependencies {
     implementation thirdparty.coil
     implementation thirdparty.'coil-compose'
     implementation thirdparty.'coil-gif'
+}
+
+// Allow references to generated code
+kapt {
+    correctErrorTypes true
 }

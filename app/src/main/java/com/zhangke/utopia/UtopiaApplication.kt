@@ -8,18 +8,18 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import com.zhangke.framework.utils.initApplication
-import com.zhangke.utopia.status_provider.BlogProviderManager
+import dagger.hilt.android.HiltAndroidApp
 
 /**
  * Created by ZhangKe on 2022/11/27.
  */
+@HiltAndroidApp
 class UtopiaApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
         initApplication(this)
         initCoil(this)
-        BlogProviderManager.prepare()
     }
 
     private fun initCoil(context: Context) {

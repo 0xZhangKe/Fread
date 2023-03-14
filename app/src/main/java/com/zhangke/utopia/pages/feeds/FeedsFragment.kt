@@ -42,7 +42,7 @@ class FeedsFragment : Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View {
-        viewModel.feedsId = arguments!!.getInt(ARG_FEEDS_ID)
+        viewModel.feedsId = requireArguments().getInt(ARG_FEEDS_ID)
         return ComposeView(requireContext()).apply {
             setContent {
                 UtopiaTheme {

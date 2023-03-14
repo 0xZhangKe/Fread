@@ -29,6 +29,7 @@ internal class UserSourceMaintainerResolver : IStatusSourceMaintainerResolver {
 
     private fun ActivityPubAccount.toUserSource(webFinger: WebFinger): UserSource {
         return UserSource(
+            userId = id,
             nickName = displayName,
             description = note,
             thumbnail = avatar,

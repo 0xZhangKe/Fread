@@ -18,7 +18,9 @@ import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.utopia.composable.Toolbar
 import com.zhangke.utopia.pages.UtopiaRouters
 import com.zhangke.utopia.pages.feeds.FeedsFragment
+import com.zhangke.utopia.pages.feeds.registerFeedsNavigation
 import com.zhangke.utopia.pages.providermanager.AddProviderFragment
+import com.zhangke.utopia.pages.sources.registerSourcesNavigation
 
 class MainActivity : AppCompatActivity() {
 
@@ -37,41 +39,45 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun MainPage() {
         val navController = rememberNavController()
+        val routers = UtopiaRouters
         NavHost(
             navController = navController,
             startDestination = UtopiaRouters.Root,
         ) {
-
-        }
-    }
-
-    @OptIn(ExperimentalMaterial3Api::class)
-    @Composable
-    fun MainPage(
-        pageState: MainViewModel.PageState,
-        feedsShellList: List<Int>
-    ) {
-        Scaffold(
-            topBar = {
-                Toolbar(title = "MainPage")
-            }
-        ) {
-            when (pageState) {
-                MainViewModel.PageState.ADD_SERVER -> {
-                    FragmentComposable("add_server_fragment") {
-                        AddProviderFragment.newInstance()
-                    }
-                }
-                MainViewModel.PageState.FEEDS -> {
-                    if (feedsShellList.isNotEmpty()) {
-                        FragmentComposable("feeds_fragment") {
-                            FeedsFragment.newInstance(feedsShellList.first())
-                        }
-                    }
-                }
+            with(routers) {
+                registerFeedsNavigation()
+                registerSourcesNavigation()
             }
         }
     }
+
+//    @OptIn(ExperimentalMaterial3Api::class)
+//    @Composable
+//    fun MainPage(
+//        pageState: MainViewModel.PageState,
+//        feedsShellList: List<Int>
+//    ) {
+//        Scaffold(
+//            topBar = {
+//                Toolbar(title = "MainPage")
+//            }
+//        ) {
+//            when (pageState) {
+//                MainViewModel.PageState.ADD_SERVER -> {
+//                    FragmentComposable("add_server_fragment") {
+//                        AddProviderFragment.newInstance()
+//                    }
+//                }
+//                MainViewModel.PageState.FEEDS -> {
+//                    if (feedsShellList.isNotEmpty()) {
+//                        FragmentComposable("feeds_fragment") {
+//                            FeedsFragment.newInstance(feedsShellList.first())
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//    }
 
     @Composable
     fun FragmentComposable(

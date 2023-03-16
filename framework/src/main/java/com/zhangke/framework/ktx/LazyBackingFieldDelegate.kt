@@ -1,4 +1,4 @@
-package com.zhangke.rss
+package com.zhangke.framework.ktx
 
 import kotlin.reflect.KProperty
 

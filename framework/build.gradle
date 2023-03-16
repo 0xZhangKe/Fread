@@ -42,6 +42,7 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.3'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
+    implementation platform(compose.bom)
     implementation compose.material
     implementation compose.material3
     implementation compose.compiler

@@ -33,6 +33,7 @@ android {
     }
     kotlinOptions {
         jvmTarget = '1.8'
+        freeCompilerArgs = ["-Xcontext-receivers"]
     }
 
     bundle {
@@ -72,6 +73,7 @@ dependencies {
 //    implementation 'com.google.firebase:firebase-crashlytics-ktx'
 //    implementation 'com.google.firebase:firebase-perf-ktx'
 
+    implementation platform(compose.bom)
     implementation compose.material3
     implementation compose.compiler
     implementation compose.ui

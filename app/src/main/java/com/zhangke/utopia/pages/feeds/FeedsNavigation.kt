@@ -8,10 +8,10 @@ import com.zhangke.utopia.pages.UtopiaRouters
 context (UtopiaRouters)
 fun NavGraphBuilder.registerFeedsNavigation() {
     navigation(
-        startDestination = Feeds.List,
-        route = Feeds.Root
+        startDestination = Feeds.list,
+        route = Feeds.root,
     ) {
-        composable(Feeds.List){
+        composable(Feeds.list){
 
         }
     }

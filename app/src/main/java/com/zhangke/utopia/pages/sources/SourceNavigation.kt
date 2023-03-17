@@ -8,13 +8,13 @@ import com.zhangke.utopia.pages.UtopiaRouters
 context (UtopiaRouters)
 fun NavGraphBuilder.registerSourcesNavigation() {
     navigation(
-        startDestination = Sources.Search,
-        route = Sources.Root,
+        startDestination = Sources.search,
+        route = Sources.root,
     ) {
-        composable(Sources.Search) {
+        composable(Sources.search) {
 
         }
-        composable(Sources.Detail) {
+        composable(Sources.detail) {
 
         }
     }

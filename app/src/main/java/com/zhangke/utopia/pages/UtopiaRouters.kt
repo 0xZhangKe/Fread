@@ -1,6 +1,6 @@
 package com.zhangke.utopia.pages
 
-object UtopiaRouters {
+class UtopiaRouters {
 
-    const val Root = "Utopia"
+    val root = "utopia"
 }

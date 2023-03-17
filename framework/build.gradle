@@ -55,6 +55,8 @@ dependencies {
     implementation support.fragment
     implementation support.'fragment-ktx'
     implementation support.room
+    implementation support.'navigation-ui-ktx'
+    implementation support.'navigation-compose'
 
     implementation arch.lifecycle.process
     kapt           arch.lifecycle.compiler

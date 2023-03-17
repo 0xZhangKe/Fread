@@ -5,10 +5,9 @@ import com.zhangke.utopia.pages.UtopiaRouters
 val UtopiaRouters.Feeds: FeedsRouters
     get() = FeedsRouters(this)
 
-@Suppress("PropertyName")
 class FeedsRouters(utopiaRouters: UtopiaRouters) {
 
-    val Root = "${utopiaRouters.Root}/feeds"
+    val root = "${utopiaRouters.root}/feeds"
 
-    val List: String get() = "$Root/list"
+    val list: String = "$root/list"
 }

@@ -8,6 +8,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -39,12 +40,14 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun MainPage() {
         val navController = rememberNavController()
-        val routers = UtopiaRouters
+        val rootRouters = remember {
+            UtopiaRouters()
+        }
         NavHost(
             navController = navController,
-            startDestination = UtopiaRouters.Root,
+            startDestination = rootRouters.root,
         ) {
-            with(routers) {
+            with(rootRouters) {
                 registerFeedsNavigation()
                 registerSourcesNavigation()
             }

@@ -3,23 +3,23 @@ package com.zhangke.utopia.status_provider
 /**
  * try resolve any String to BlogSourceMaintainer.
  */
-object StatusSourceMaintainerResolver {
+object SourceMaintainerResolver {
 
-    private val resolvers: List<IStatusSourceMaintainerResolver> =
+    private val resolvers: List<ISourceMaintainerResolver> =
         ImplementerFinder().findImplementer()
 
-    suspend fun resolve(content: String): StatusSourceMaintainer? {
-        val blogSourceByUri = StatusSourceResolver.resolve(content)
+    suspend fun resolve(query: String): StatusSourceMaintainer? {
+        val blogSourceByUri = StatusSourceResolver.resolve(query)
         if (blogSourceByUri != null) return blogSourceByUri.requestMaintainer()
         resolvers.forEach {
-            val source = it.resolve(content)
+            val source = it.resolve(query)
             if (source != null) return source
         }
         return null
     }
 }
 
-interface IStatusSourceMaintainerResolver {
+interface ISourceMaintainerResolver {
 
     suspend fun resolve(content: String): StatusSourceMaintainer?
 }

@@ -5,12 +5,12 @@ import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.ActivityPubMaintainer
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import com.zhangke.utopia.status_provider.StatusSourceMaintainer
-import com.zhangke.utopia.status_provider.IStatusSourceMaintainerResolver
+import com.zhangke.utopia.status_provider.ISourceMaintainerResolver
 
 /**
  * Supported url and WebFinger
  */
-internal class UserSourceMaintainerResolver : IStatusSourceMaintainerResolver {
+internal class UserSourceMaintainerResolver : ISourceMaintainerResolver {
 
     override suspend fun resolve(content: String): StatusSourceMaintainer? {
         val webFinger = WebFinger.create(content) ?: return null

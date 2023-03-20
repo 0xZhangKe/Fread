@@ -4,12 +4,12 @@ import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
 import com.zhangke.utopia.activitypubapp.source.ActivityPubMaintainer
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.status_provider.StatusSourceMaintainer
-import com.zhangke.utopia.status_provider.IStatusSourceMaintainerResolver
+import com.zhangke.utopia.status_provider.ISourceMaintainerResolver
 
 /**
  * Supported url
  */
-object TimelineSourceMaintainerResolver : IStatusSourceMaintainerResolver {
+object TimelineSourceMaintainerResolver : ISourceMaintainerResolver {
 
     override suspend fun resolve(content: String): StatusSourceMaintainer? {
         val url = ActivityPubUrl.create(content) ?: return null

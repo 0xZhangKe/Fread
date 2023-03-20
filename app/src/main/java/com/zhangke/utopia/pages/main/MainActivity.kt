@@ -5,8 +5,6 @@ import android.widget.FrameLayout
 import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
@@ -16,11 +14,8 @@ import androidx.fragment.app.commit
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.zhangke.framework.architect.theme.UtopiaTheme
-import com.zhangke.utopia.composable.Toolbar
 import com.zhangke.utopia.pages.UtopiaRouters
-import com.zhangke.utopia.pages.feeds.FeedsFragment
 import com.zhangke.utopia.pages.feeds.registerFeedsNavigation
-import com.zhangke.utopia.pages.providermanager.AddProviderFragment
 import com.zhangke.utopia.pages.sources.registerSourcesNavigation
 
 class MainActivity : AppCompatActivity() {

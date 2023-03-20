@@ -16,4 +16,7 @@
     <string name="authentication_page_normal_title">This function requires login to use</string>
 
     <string name="authentication_page_failed_title">Login status is invalid, please login again.</string>
+
+    <string name="search_page_title">Search</string>
+    <string name="search_result_not_found">No search results found</string>
 </resources>

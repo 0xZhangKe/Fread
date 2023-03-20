@@ -4,12 +4,12 @@ import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceMaintainerResolver
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceMaintainerResolver
 import com.zhangke.utopia.status_provider.StatusSourceMaintainer
-import com.zhangke.utopia.status_provider.IStatusSourceMaintainerResolver
+import com.zhangke.utopia.status_provider.ISourceMaintainerResolver
 import java.util.*
 
-class ActivityPubSourceMaintainerResolver : IStatusSourceMaintainerResolver {
+class ActivityPubSourceMaintainerResolver : ISourceMaintainerResolver {
 
-    private val resolverLinkedList = LinkedList<IStatusSourceMaintainerResolver>()
+    private val resolverLinkedList = LinkedList<ISourceMaintainerResolver>()
 
     init {
         // Must keep order.

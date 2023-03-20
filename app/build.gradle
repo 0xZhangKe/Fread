@@ -110,6 +110,7 @@ dependencies {
     implementation support.'navigation-compose'
 
     implementation arch.'hilt'
+    implementation arch.'hilt-navigation-compose'
     implementation arch.lifecycle.'viewmodel-ktx'
     implementation arch.lifecycle.'viewmodel-compose'
     implementation arch.lifecycle.'livedata-ktx'

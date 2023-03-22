@@ -108,6 +108,7 @@ dependencies {
     implementation support.'navigation-ui-ktx'
     implementation support.'nav_testing'
     implementation support.'navigation-compose'
+    implementation thirdparty.'accompanist-pager'
 
     implementation arch.'hilt'
     implementation arch.'hilt-navigation-compose'

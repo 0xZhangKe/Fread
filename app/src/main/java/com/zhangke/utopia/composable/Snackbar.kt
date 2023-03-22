@@ -22,11 +22,12 @@ fun snackbarHost(hostState: SnackbarHostState): @Composable (() -> Unit) {
 @Composable
 fun ObserveSnackbar(
     hostState: SnackbarHostState,
-    message: String?,
+    messageText: Text?,
     actionLabel: String? = null,
     duration: SnackbarDuration = SnackbarDuration.Short
 ) {
-    if (!message.isNullOrEmpty()) {
+    if (!messageText.isNullOrEmpty()) {
+        val message = textString(text = messageText!!)
         LaunchedEffect(message) {
             hostState.showSnackbar(message, actionLabel, duration)
         }

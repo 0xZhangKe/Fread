@@ -10,6 +10,7 @@ import com.zhangke.utopia.composable.source.maintainer.StatusSourceUiState
 import com.zhangke.utopia.composable.source.maintainer.StatusSourceUiStateAdapter
 import com.zhangke.utopia.composable.textOf
 import com.zhangke.utopia.db.ChannelRepo
+import com.zhangke.utopia.domain.ResolveSourceListByUrisUseCase
 import com.zhangke.utopia.repo.StatusSourceRepo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,10 +24,11 @@ class AddSourceViewModel @Inject constructor(
     private val maintainerUiStateAdapter: SourceMaintainerUiStateAdapter,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val channelRepo: ChannelRepo,
+    private val resolverSourceListByUris: ResolveSourceListByUrisUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialUiState())
-    private val uiState: StateFlow<AddSourceUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<AddSourceUiState> = _uiState.asStateFlow()
 
     fun onSearchClick(content: String) {
         _uiState.update { it.copy(pendingAdd = true) }
@@ -65,14 +67,14 @@ class AddSourceViewModel @Inject constructor(
         return copy(selected = selected)
     }
 
-    fun onConfirmClick() {
+    fun onConfirmClick(channelName: String) {
         val pendingAddSource = _uiState.value.maintainer?.sourceList
         if (pendingAddSource.isNullOrEmpty()) return
         viewModelScope.launch {
             pendingAddSource.forEach {
                 it.onSaveToLocal()
             }
-            channelRepo.insert()
+            channelRepo.insert(channelName, pendingAddSource.map { it.uri })
         }
     }
 

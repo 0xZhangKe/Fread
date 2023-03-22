@@ -9,8 +9,6 @@ class SourcesRouters(routers: UtopiaRouters) {
 
     val root = routers.root.plus("/sources")
 
-    val search = root.plus("/search")
-
     val detail = root.plus("/detail")
 
     val add = root.plus("/add")

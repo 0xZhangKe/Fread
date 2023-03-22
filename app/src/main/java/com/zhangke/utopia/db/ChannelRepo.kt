@@ -52,6 +52,10 @@ class ChannelRepo @Inject constructor(databases: ChannelsDatabases) {
         return channelsDao.queryAll()
     }
 
+    suspend fun insert(channelName: String, uriList: List<String>) {
+        insert(Channel(id = 0, name = channelName, uriList))
+    }
+
     suspend fun insert(channel: Channel) {
         channelsDao.insert(channel)
     }

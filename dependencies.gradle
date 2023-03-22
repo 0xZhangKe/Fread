@@ -112,6 +112,7 @@ rootProject.ext {
             'retrofit-converter-gson': "com.squareup.retrofit2:converter-gson:${retrofit2_version}",
             'gson'                   : "com.google.code.gson:gson:2.9.0",
             'swiperefresh'           : "com.google.accompanist:accompanist-swiperefresh:0.24.7-alpha",
+            'accompanist-pager'      : "com.google.accompanist:accompanist-pager:0.28.0",
             'coil'                   : "io.coil-kt:coil:2.0.0-rc03",
             'coil-compose'           : "io.coil-kt:coil-compose:2.0.0-rc03",
             'coil-gif'               : "io.coil-kt:coil-gif:2.0.0-rc03",

@@ -9,5 +9,5 @@ class FeedsRouters(utopiaRouters: UtopiaRouters) {
 
     val root = "${utopiaRouters.root}/feeds"
 
-    val list: String = "$root/list"
+    val container: String = "$root/container"
 }

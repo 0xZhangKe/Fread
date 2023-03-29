@@ -29,8 +29,14 @@ internal object UserSourceRepo {
 
     private val dao: UserSourceDao get() = ActivityPubDatabases.instance.getUserSourceDao()
 
+    private val webFingerToSourceCache = mutableMapOf<WebFinger, UserSource>()
+
     suspend fun query(webFinger: WebFinger): UserSource? {
-        return dao.query(webFinger)?.toUserSource()
+        val cached = webFingerToSourceCache[webFinger]
+        if (cached != null) return cached
+        return dao.query(webFinger)?.toUserSource()?.also {
+            webFingerToSourceCache[webFinger] = it
+        }
     }
 
     suspend fun save(userSource: UserSource) {

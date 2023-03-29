@@ -1,6 +1,7 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
+    id 'kotlin-kapt'
 }
 
 java {
@@ -19,4 +20,7 @@ dependencies {
     implementation thirdparty.'okhttp3-logging'
     implementation thirdparty.retrofit
     implementation thirdparty.'retrofit-converter-gson'
+
+    implementation arch.hilt
+    kapt           arch.'hilt-complier'
 }

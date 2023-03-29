@@ -1,8 +1,9 @@
 package com.zhangke.utopia.pages.feeds
 
-import com.zhangke.utopia.status_provider.Status
+import com.zhangke.framework.composable.LoadableState
+import com.zhangke.utopia.status.Status
 
 data class FeedsPageUiState(
     val name: String,
-    val feeds: List<Status>,
+    val feeds: LoadableState<List<Status>>,
 )

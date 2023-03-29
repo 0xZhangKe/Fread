@@ -2,7 +2,7 @@ package com.zhangke.utopia.pages.feeds
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zhangke.utopia.status_provider.Status
+import com.zhangke.utopia.status.Status
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch

@@ -5,7 +5,7 @@ import com.zhangke.utopia.activitypubapp.requireActivityPubUri
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypubapp.utils.decodeFromBase64
 import com.zhangke.utopia.activitypubapp.utils.encodeToBase64
-import com.zhangke.utopia.status_provider.StatusSourceUri
+import com.zhangke.utopia.status.source.StatusSourceUri
 
 // LocalTimeline: statussource://activitypub.com/{server_url_base64}/timeline?query=local
 // PublicTimeline: statussource://activitypub.com/{server_url_base64}/timeline?query=public
@@ -21,15 +21,18 @@ private fun buildTimelineSourcePath(host: String): String {
     return "${host.encodeToBase64()}/timeline"
 }
 
-internal fun getServerAndType(uri: StatusSourceUri): Pair<ActivityPubUrl, TimelineSourceType>? {
-    uri.requireActivityPubUri()
-    if (uri.query.isEmpty()) return null
-    val path = uri.path
+internal fun StatusSourceUri.isTimelineSourceUri(): Boolean{
+    return getServerAndType() != null
+}
+
+internal fun StatusSourceUri.getServerAndType(): Pair<ActivityPubUrl, TimelineSourceType>? {
+    requireActivityPubUri()
+    if (query.isEmpty()) return null
     if (!path.endsWith("/timeline")) return null
     val urlBase64 = path.removePrefix("/").removeSuffix("/timeline")
     val urlString = urlBase64.decodeFromBase64()
     val activityPubUrl = ActivityPubUrl.create(urlString) ?: return null
     val type = TimelineSourceType.values()
-        .firstOrNull { it.stringValue == uri.query } ?: return null
+        .firstOrNull { it.stringValue == query } ?: return null
     return activityPubUrl to type
 }

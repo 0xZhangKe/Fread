@@ -1,6 +1,6 @@
 package com.zhangke.utopia.domain
 
-import com.zhangke.utopia.status_provider.StatusSource
+import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
 class ResolveSourceListByUrisUseCase @Inject constructor(

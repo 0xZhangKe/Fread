@@ -1,7 +1,7 @@
 package com.zhangke.utopia.di
 
-import com.zhangke.utopia.status_provider.SourceMaintainerResolver
-import com.zhangke.utopia.status_provider.StatusSourceResolver
+import com.zhangke.utopia.status.resolvers.SourceMaintainerResolver
+import com.zhangke.utopia.status.resolvers.StatusSourceResolver
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

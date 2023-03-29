@@ -21,8 +21,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
-import com.zhangke.utopia.status_provider.StatusSource
-import com.zhangke.utopia.status_provider.StatusSourceMaintainer
+import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.source.StatusSourceMaintainer
 
 @Composable
 fun SourceMaintainer(

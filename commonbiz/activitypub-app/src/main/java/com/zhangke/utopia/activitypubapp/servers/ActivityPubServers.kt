@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypubapp.servers
 
-import com.zhangke.utopia.status_provider.BlogServer
+import com.zhangke.utopia.status.BlogServer
 
 object ActivityPubServers {
 

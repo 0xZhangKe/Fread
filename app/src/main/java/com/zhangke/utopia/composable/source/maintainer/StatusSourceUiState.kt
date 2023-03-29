@@ -1,6 +1,6 @@
 package com.zhangke.utopia.composable.source.maintainer
 
-import com.zhangke.utopia.status_provider.StatusSourceMaintainer
+import com.zhangke.utopia.status.source.StatusSourceMaintainer
 
 data class StatusSourceUiState(
     val uri: String,

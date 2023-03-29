@@ -2,8 +2,8 @@ package com.zhangke.utopia.activitypubapp.source
 
 import com.zhangke.activitypub.entry.ActivityPubInstance
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.status_provider.StatusSource
-import com.zhangke.utopia.status_provider.StatusSourceMaintainer
+import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.source.StatusSourceMaintainer
 
 internal class ActivityPubMaintainer(
     override val name: String,

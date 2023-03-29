@@ -2,8 +2,7 @@ package com.zhangke.utopia.activitypubapp.source.timeline
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.R
-import com.zhangke.utopia.status_provider.StatusSource
-import com.zhangke.utopia.status_provider.StatusSourceMaintainer
+import com.zhangke.utopia.status.source.StatusSource
 
 internal class TimelineSource(
     val host: String,
@@ -20,10 +19,6 @@ internal class TimelineSource(
 
     override suspend fun saveToLocal() {
         TimelineRepo.save(this)
-    }
-
-    override suspend fun requestMaintainer(): StatusSourceMaintainer {
-        return TimelineSourceMaintainerResolver.resolveByHost(host)
     }
 }
 

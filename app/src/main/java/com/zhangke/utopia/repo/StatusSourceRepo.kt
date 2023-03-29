@@ -1,9 +1,9 @@
 package com.zhangke.utopia.repo
 
-import com.zhangke.utopia.status_provider.ISourceMaintainerResolver
-import com.zhangke.utopia.status_provider.StatusSource
-import com.zhangke.utopia.status_provider.StatusSourceMaintainer
-import com.zhangke.utopia.status_provider.StatusSourceResolver
+import com.zhangke.utopia.status.resolvers.ISourceMaintainerResolver
+import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.source.StatusSourceMaintainer
+import com.zhangke.utopia.status.resolvers.StatusSourceResolver
 import javax.inject.Inject
 
 class StatusSourceRepo @Inject constructor(

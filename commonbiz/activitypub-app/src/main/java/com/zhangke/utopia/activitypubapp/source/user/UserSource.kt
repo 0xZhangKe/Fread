@@ -1,9 +1,7 @@
 package com.zhangke.utopia.activitypubapp.source.user
 
-import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceMaintainerResolver
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
-import com.zhangke.utopia.status_provider.StatusSource
-import com.zhangke.utopia.status_provider.StatusSourceMaintainer
+import com.zhangke.utopia.status.source.StatusSource
 
 internal class UserSource(
     val userId: String,
@@ -17,9 +15,5 @@ internal class UserSource(
 
     override suspend fun saveToLocal() {
         UserSourceRepo.save(this)
-    }
-
-    override suspend fun requestMaintainer(): StatusSourceMaintainer {
-        return TimelineSourceMaintainerResolver.resolveByHost(webFinger.host)
     }
 }

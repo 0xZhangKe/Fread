@@ -6,7 +6,7 @@ import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.utopia.activitypubapp.oauth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUserRepo
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.status_provider.StatusProviderAuthorizer
+import com.zhangke.utopia.status.auth.StatusProviderAuthorizer
 
 private const val REDIRECT_URI = "utopia://oauth.utopia"
 

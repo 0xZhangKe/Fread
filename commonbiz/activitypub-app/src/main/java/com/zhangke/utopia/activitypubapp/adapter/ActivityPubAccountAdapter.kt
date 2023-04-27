@@ -10,7 +10,7 @@ internal class ActivityPubAccountAdapter @Inject constructor() {
     fun adapt(account: ActivityPubAccount): UserSource {
         return UserSource(
             userId = account.id,
-            nickName = account.displayName,
+            name = account.displayName,
             description = account.note,
             thumbnail = account.avatar,
             webFinger = WebFinger.create(account.acct)!!,

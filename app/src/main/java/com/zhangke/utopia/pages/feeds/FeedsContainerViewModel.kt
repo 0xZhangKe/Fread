@@ -2,6 +2,7 @@ package com.zhangke.utopia.pages.feeds
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.composable.LoadableState
 import com.zhangke.utopia.db.ChannelRepo
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,7 +24,7 @@ class FeedsContainerViewModel @Inject constructor(
 
     private fun loadTabs() {
         viewModelScope.launch {
-        val s = channelRepo.queryAll()
+            val s = channelRepo.queryAll()
         }
     }
 
@@ -35,7 +36,7 @@ class FeedsContainerViewModel @Inject constructor(
 
     private fun initialState(): FeedsContainerUiState {
         return FeedsContainerUiState(
-            channelList = emptyList(),
+            channelList = LoadableState.loading(),
             tabIndex = -1,
         )
     }

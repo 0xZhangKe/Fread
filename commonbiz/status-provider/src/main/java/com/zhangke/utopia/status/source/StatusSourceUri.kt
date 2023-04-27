@@ -1,5 +1,7 @@
 package com.zhangke.utopia.status.source
 
+import com.zhangke.utopia.protocol.UtopiaScheme
+
 class StatusSourceUri private constructor(
     val host: String,
     val path: String,
@@ -22,7 +24,7 @@ class StatusSourceUri private constructor(
 
     companion object {
 
-        private const val STATUS_SOURCE_SCHEME = "statussource"
+        private const val STATUS_SOURCE_SCHEME = UtopiaScheme
         private const val SCHEME_DIVIDER = "://"
         private const val PATH_DIVIDER = "/"
         private const val QUERY_DIVIDER = "?"

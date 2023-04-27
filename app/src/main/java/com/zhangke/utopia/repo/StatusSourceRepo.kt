@@ -1,6 +1,6 @@
 package com.zhangke.utopia.repo
 
-import com.zhangke.utopia.status.resolvers.ISourceMaintainerResolver
+import com.zhangke.utopia.status.resolvers.IStatusSourceOwnerResolver
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.source.StatusSourceMaintainer
 import com.zhangke.utopia.status.resolvers.StatusSourceResolver
@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class StatusSourceRepo @Inject constructor(
     private val sourceResolver: StatusSourceResolver,
-    private val sourMaintainerResolver: ISourceMaintainerResolver
+    private val sourMaintainerResolver: IStatusSourceOwnerResolver
 ) {
 
     suspend fun resolve(sourceUri: String): Result<StatusSource?> {

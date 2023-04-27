@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypubapp.source.user
 import androidx.room.*
 import com.zhangke.utopia.activitypubapp.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import javax.inject.Inject
 
 private const val TABLE_NAME = "UserSources"
 
@@ -25,9 +26,11 @@ internal interface UserSourceDao {
     suspend fun insert(entry: UserSourceEntry)
 }
 
-internal object UserSourceRepo {
+internal class UserSourceRepo @Inject constructor(
+    private val databases: ActivityPubDatabases,
+) {
 
-    private val dao: UserSourceDao get() = ActivityPubDatabases.instance.getUserSourceDao()
+    private val dao: UserSourceDao get() = databases.getUserSourceDao()
 
     private val webFingerToSourceCache = mutableMapOf<WebFinger, UserSource>()
 
@@ -45,7 +48,7 @@ internal object UserSourceRepo {
 
     private fun UserSourceEntry.toUserSource(): UserSource {
         return UserSource(
-            nickName = nickName,
+            name = nickName,
             webFinger = webFinger,
             description = description,
             thumbnail = thumbnail,
@@ -55,7 +58,7 @@ internal object UserSourceRepo {
 
     private fun UserSource.toEntry(): UserSourceEntry {
         return UserSourceEntry(
-            nickName = nickName,
+            nickName = name,
             webFinger = webFinger,
             description = description,
             thumbnail = thumbnail,

@@ -14,7 +14,7 @@ fun FeedsPage(
 ) {
     LoadableLayout(
         modifier = Modifier.fillMaxSize(),
-        state = uiState.feeds
+        state = uiState.feeds,
     ) { feeds ->
         LazyColumn(modifier = Modifier.fillMaxSize()) {
             items(feeds) { item ->

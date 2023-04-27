@@ -9,6 +9,8 @@
 
     <string name="add">Add</string>
 
+    <string name="search">Search</string>
+
     <string name="add_provider_page_title">Add Server</string>
 
     <string name="add_provider_page_confirm_button">Confirm Add</string>

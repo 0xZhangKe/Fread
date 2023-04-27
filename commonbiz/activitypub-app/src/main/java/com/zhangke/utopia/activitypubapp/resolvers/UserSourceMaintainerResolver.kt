@@ -19,25 +19,30 @@ internal class UserSourceMaintainerResolver @Inject constructor(
     private val accountAdapter: ActivityPubAccountAdapter,
 ) : IActivityPubSourceMaintainerResolver {
 
-    override suspend fun resolve(query: String): StatusSourceMaintainer? {
-        val webFinger = WebFinger.create(query) ?: return null
+    override suspend fun resolve(query: String): Result<StatusSourceMaintainer> {
+        val webFinger = WebFinger.create(query) ?: return Result.failure(
+            IllegalArgumentException("Illegal argument for $query")
+        )
         val client = obtainActivityPubClient(webFinger.host)
         val userSource = resolveByWebFinger(webFinger)
+        if (userSource.isFailure) return Result.failure(userSource.exceptionOrNull()!!)
         return client.instanceRepo
             .getInstanceInformation()
-            .getOrNull()
-            ?.let {
-                ActivityPubMaintainer.fromActivityPubInstance(it, listOf(userSource))
+            .map {
+                ActivityPubMaintainer.fromActivityPubInstance(it, listOf(userSource.getOrThrow()))
             }
     }
 
-    private suspend fun resolveByWebFinger(webFinger: WebFinger): UserSource {
-        userSourceRepo.query(webFinger)?.let { return it }
+    private suspend fun resolveByWebFinger(webFinger: WebFinger): Result<UserSource> {
+        userSourceRepo.query(webFinger)?.let {
+            return Result.failure(
+                IllegalArgumentException("$webFinger not found.")
+            )
+        }
         val client = obtainActivityPubClient(webFinger.host)
         return client.accountRepo
             .lookup(webFinger.toString())
-            .getOrThrow()
-            .let { accountAdapter.adapt(it) }
-            .also { userSourceRepo.save(it) }
+            .map { accountAdapter.adapt(it) }
+            .also { result -> result.getOrNull()?.let { userSourceRepo.save(it) } }
     }
 }

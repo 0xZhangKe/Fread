@@ -49,6 +49,7 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.5.0'
 
     implementation project(path: ':framework')
+    implementation project(path: ':commonbiz')
     implementation project(path: ':commonbiz:status-provider')
     implementation project(path: ':ActivityPub-Kotlin')
 

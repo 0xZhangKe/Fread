@@ -22,7 +22,7 @@ fun snackbarHost(hostState: SnackbarHostState): @Composable (() -> Unit) {
 @Composable
 fun ObserveSnackbar(
     hostState: SnackbarHostState,
-    messageText: Text?,
+    messageText: TextString?,
     actionLabel: String? = null,
     duration: SnackbarDuration = SnackbarDuration.Short
 ) {

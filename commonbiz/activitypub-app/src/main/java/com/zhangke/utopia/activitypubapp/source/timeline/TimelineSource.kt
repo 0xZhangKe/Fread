@@ -11,15 +11,11 @@ internal class TimelineSource(
 
     override val uri: String = buildTimelineSourceUri(host, type).toString()
 
-    override val nickName: String = type.nickName
+    override val name: String = type.nickName
 
     override val description: String = ""
 
     override val thumbnail: String? = null
-
-    override suspend fun saveToLocal() {
-        TimelineRepo.save(this)
-    }
 }
 
 internal enum class TimelineSourceType(val stringValue: String) {

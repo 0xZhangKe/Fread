@@ -13,9 +13,12 @@ class StatusSourceResolver @Inject constructor(
     private val resolvers: List<IStatusSourceResolver>
 ) {
 
-    suspend fun resolve(uri: String): StatusSource? {
-        val uriString = StatusSourceUri.create(uri) ?: return null
-        return resolvers.firstOrNull { it.applicable(uriString) }?.resolve(uriString)
+    suspend fun resolve(uri: String): Result<StatusSource> {
+        val errorResult = Result.failure<StatusSource>(
+            IllegalArgumentException("invalidate $uri")
+        )
+        val uriString = StatusSourceUri.create(uri) ?: return errorResult
+        return resolvers.firstOrNull { it.applicable(uriString) }?.resolve(uriString) ?: errorResult
     }
 }
 
@@ -23,5 +26,5 @@ interface IStatusSourceResolver {
 
     fun applicable(uri: StatusSourceUri): Boolean
 
-    suspend fun resolve(uri: StatusSourceUri): StatusSource?
+    suspend fun resolve(uri: StatusSourceUri): Result<StatusSource>
 }

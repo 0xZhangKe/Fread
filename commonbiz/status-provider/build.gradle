@@ -14,6 +14,8 @@ dependencies {
     testImplementation 'junit:junit:4.+'
     testImplementation coroutine.core
 
+    implementation project(path: ':commonbiz:protocol')
+
     implementation thirdparty.retrofit
     implementation thirdparty.gson
     implementation thirdparty.okhttp3

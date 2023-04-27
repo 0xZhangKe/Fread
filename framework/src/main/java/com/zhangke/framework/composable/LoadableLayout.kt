@@ -14,7 +14,7 @@ sealed class LoadableState<T> {
 
     class Idle<T> : LoadableState<T>()
 
-    class Failed<T>(val exception: Exception) : LoadableState<T>()
+    class Failed<T>(val exception: Throwable) : LoadableState<T>()
 
     class Loading<T>() : LoadableState<T>()
 
@@ -34,7 +34,7 @@ sealed class LoadableState<T> {
             return Loading()
         }
 
-        fun <T> failed(exception: Exception): LoadableState<T> {
+        fun <T> failed(exception: Throwable): LoadableState<T> {
             return Failed(exception)
         }
     }
@@ -44,7 +44,7 @@ sealed class LoadableState<T> {
 fun <T> LoadableLayout(
     modifier: Modifier = Modifier,
     state: LoadableState<T>,
-    failed: (@Composable BoxScope.(Exception) -> Unit)? = null,
+    failed: (@Composable BoxScope.(Throwable) -> Unit)? = null,
     loading: (@Composable BoxScope.() -> Unit)? = null,
     idle: (@Composable BoxScope.() -> Unit)? = null,
     content: @Composable BoxScope.(T) -> Unit,
@@ -79,7 +79,7 @@ fun BoxScope.DefaultLoading(modifier: Modifier = Modifier) {
 @Composable
 fun BoxScope.DefaultFailed(
     modifier: Modifier = Modifier,
-    exception: Exception,
+    exception: Throwable,
 ) {
     Text(
         modifier = modifier

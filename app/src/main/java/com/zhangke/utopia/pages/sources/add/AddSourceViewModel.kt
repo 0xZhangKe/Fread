@@ -2,16 +2,16 @@ package com.zhangke.utopia.pages.sources.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.R
-import com.zhangke.utopia.composable.Text
-import com.zhangke.utopia.composable.source.maintainer.SourceMaintainerUiState
-import com.zhangke.utopia.composable.source.maintainer.SourceMaintainerUiStateAdapter
+import com.zhangke.utopia.composable.TextString
 import com.zhangke.utopia.composable.source.maintainer.StatusSourceUiState
 import com.zhangke.utopia.composable.source.maintainer.StatusSourceUiStateAdapter
 import com.zhangke.utopia.composable.textOf
 import com.zhangke.utopia.db.ChannelRepo
 import com.zhangke.utopia.domain.ResolveSourceListByUrisUseCase
 import com.zhangke.utopia.repo.StatusSourceRepo
+import com.zhangke.utopia.status.domain.CacheSourceUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -21,10 +21,10 @@ import javax.inject.Inject
 
 class AddSourceViewModel @Inject constructor(
     private val statusSourceRepo: StatusSourceRepo,
-    private val maintainerUiStateAdapter: SourceMaintainerUiStateAdapter,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val channelRepo: ChannelRepo,
     private val resolverSourceListByUris: ResolveSourceListByUrisUseCase,
+    private val cacheSourceUseCase: CacheSourceUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialUiState())
@@ -32,7 +32,7 @@ class AddSourceViewModel @Inject constructor(
 
     fun onSearchClick(content: String) {
         _uiState.update { it.copy(pendingAdd = true) }
-        viewModelScope.launch {
+        launchInViewModel {
             statusSourceRepo.searchSourceMaintainer(content)
                 .onSuccess {
                     if (it == null) {
@@ -71,9 +71,9 @@ class AddSourceViewModel @Inject constructor(
         val pendingAddSource = _uiState.value.maintainer?.sourceList
         if (pendingAddSource.isNullOrEmpty()) return
         viewModelScope.launch {
-            pendingAddSource.forEach {
-                it.onSaveToLocal()
-            }
+//            pendingAddSource.forEach {
+//                cacheSourceUseCase(it)
+//            }
             channelRepo.insert(channelName, pendingAddSource.map { it.uri })
         }
     }
@@ -89,7 +89,7 @@ class AddSourceViewModel @Inject constructor(
         }
     }
 
-    private fun errorState(errorMessageText: Text?) {
+    private fun errorState(errorMessageText: TextString?) {
         _uiState.update {
             it.copy(
                 pendingAdd = false,

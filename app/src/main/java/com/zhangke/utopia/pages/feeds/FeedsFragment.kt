@@ -6,7 +6,6 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
@@ -18,7 +17,6 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.viewModels
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.utopia.status.Status
-import com.zhangke.utopia.composable.UtopiaStatusComposable
 
 class FeedsFragment : Fragment() {
 
@@ -60,10 +58,10 @@ class FeedsFragment : Fragment() {
             contentPadding = PaddingValues(vertical = 10.dp, horizontal = 15.dp),
             content = {
                 items(status) { item ->
-                    UtopiaStatusComposable(
-                        modifier = Modifier.padding(bottom = 15.dp),
-                        status = item
-                    )
+//                    UtopiaStatusComposable(
+//                        modifier = Modifier.padding(bottom = 15.dp),
+//                        status = item
+//                    )
                 }
             })
     }

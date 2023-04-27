@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypubapp.source.timeline
 
 import androidx.room.*
 import com.zhangke.utopia.activitypubapp.db.ActivityPubDatabases
+import javax.inject.Inject
 
 private const val TABLE_NAME = "TimelineSources"
 
@@ -21,9 +22,11 @@ internal interface TimelineSourceDao {
     suspend fun insert(entry: TimelineSourceEntry)
 }
 
-internal object TimelineRepo {
+internal class TimelineRepo @Inject constructor(
+    private val databases: ActivityPubDatabases,
+) {
 
-    private val dao: TimelineSourceDao get() = ActivityPubDatabases.instance.getTimelineSourceDao()
+    private val dao: TimelineSourceDao get() = databases.getTimelineSourceDao()
 
     suspend fun query(host: String, type: TimelineSourceType): TimelineSource? {
         return dao.query(host, type)?.toSource()

@@ -8,15 +8,20 @@ import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.source.StatusSourceUri
 import javax.inject.Inject
 
-internal class UserSourceResolver @Inject constructor() : IStatusSourceResolver {
+internal class UserSourceResolver @Inject constructor(
+    private val repo: UserSourceRepo,
+) : IStatusSourceResolver {
 
     override fun applicable(uri: StatusSourceUri): Boolean {
         return uri.isUserSource()
     }
 
-    override suspend fun resolve(uri: StatusSourceUri): StatusSource? {
-        val webFinger = uri.getUserWebFinger()
-            ?: throw IllegalArgumentException("$uri is not a UserSource!")
-        return UserSourceRepo.query(webFinger)
+    override suspend fun resolve(uri: StatusSourceUri): Result<StatusSource> {
+        val webFinger = uri.getUserWebFinger() ?: return Result.failure(
+            IllegalArgumentException("$uri is not a UserSource!")
+        )
+        return repo.query(webFinger)?.let { Result.success(it) } ?: Result.failure(
+            IllegalArgumentException("$uri not found!")
+        )
     }
 }

@@ -1,7 +1,7 @@
 package com.zhangke.utopia.status.resolvers
 
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.source.StatusSourceUri
+import com.zhangke.utopia.status.source.StatusProviderUri
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -17,14 +17,14 @@ class StatusSourceResolver @Inject constructor(
         val errorResult = Result.failure<StatusSource>(
             IllegalArgumentException("invalidate $uri")
         )
-        val uriString = StatusSourceUri.create(uri) ?: return errorResult
+        val uriString = StatusProviderUri.create(uri) ?: return errorResult
         return resolvers.firstOrNull { it.applicable(uriString) }?.resolve(uriString) ?: errorResult
     }
 }
 
 interface IStatusSourceResolver {
 
-    fun applicable(uri: StatusSourceUri): Boolean
+    fun applicable(uri: StatusProviderUri): Boolean
 
-    suspend fun resolve(uri: StatusSourceUri): Result<StatusSource>
+    suspend fun resolve(uri: StatusProviderUri): Result<StatusSource>
 }

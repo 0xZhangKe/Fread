@@ -1,4 +1,4 @@
-package com.zhangke.utopia.pages.search
+package com.zhangke.utopia.pages.sources.search
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,6 +26,8 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.utopia.R
 import com.zhangke.utopia.composable.*
+import com.zhangke.utopia.pages.feeds.shared.composable.StatusSource
+import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.source.StatusSourceOwner
 
@@ -67,8 +69,8 @@ fun SearchPage(
                         modifier = Modifier
                             .align(Alignment.Center)
                             .fillMaxWidth(),
-                        owner = searchedData.data.first,
-                        sourceList = searchedData.data.second,
+                        owner = searchedData.data.owner,
+                        sourceList = searchedData.data.sourceList,
                         onAddSourceClick = onAddSourceClick,
                     )
                 }
@@ -179,60 +181,16 @@ private fun StatusOwnerAndSourceList(
             }
             Box(modifier = Modifier.height(10.dp))
             sourceList.forEach { source ->
-                StatusSourceItem(
+                StatusSource(
                     modifier = Modifier
                         .padding(start = 15.dp, end = 15.dp, bottom = 8.dp)
                         .fillMaxWidth(),
                     source = source,
-                    onAddSourceClick = onAddSourceClick,
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun StatusSourceItem(
-    modifier: Modifier = Modifier,
-    source: StatusSourceUiState,
-    onAddSourceClick: (source: StatusSourceUiState) -> Unit,
-) {
-    Surface(
-        modifier = modifier
-            .padding(start = 15.dp, end = 15.dp, bottom = 8.dp)
-            .fillMaxWidth(),
-        elevation = 5.dp,
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 10.dp, top = 5.dp, end = 10.dp, bottom = 10.dp)
-        ) {
-            Text(
-                modifier = Modifier
-                    .align(Alignment.CenterStart),
-                text = source.name,
-                fontWeight = FontWeight.Bold,
-            )
-            val optionVector = if (source.selected) {
-                Icons.Outlined.Remove
-            } else {
-                Icons.Outlined.Add
-            }
-            Image(
-                modifier = Modifier
-                    .size(20.dp)
-                    .align(Alignment.CenterEnd)
-                    .clickable {
+                    onAddClick = {
                         onAddSourceClick(source)
                     },
-                imageVector = optionVector,
-                contentDescription = if (source.selected) {
-                    "Remove Server"
-                } else {
-                    "Add server"
-                }
-            )
+                )
+            }
         }
     }
 }

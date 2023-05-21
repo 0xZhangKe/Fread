@@ -1,14 +1,13 @@
 package com.zhangke.utopia.status.search
 
 import com.zhangke.utopia.status.utils.collect
+import com.zhangke.utopia.status.utils.findImplementers
 import javax.inject.Inject
 
-class StatusProviderSearchUseCase @Inject constructor(
-    private val useCaseList: List<IStatusProviderSearchUseCase>
-) {
+class StatusProviderSearchUseCase @Inject constructor() {
 
     suspend operator fun invoke(query: String): Result<List<StatusProviderSearchResult>> {
-        return useCaseList.map { it.invoke(query) }.collect()
+        return findImplementers<IStatusProviderSearchUseCase>().map { it.invoke(query) }.collect()
     }
 }
 

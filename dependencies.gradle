@@ -26,6 +26,10 @@ rootProject.ext {
     nav_version = "2.5.3"
 
     bom_version = "2023.01.00"
+
+    auto_service = "1.0.1"
+    ksp_version = "1.8.0-1.0.9"
+    filt_version = "1.0.1"
 }
 
 rootProject.ext {
@@ -116,6 +120,11 @@ rootProject.ext {
             'coil'                   : "io.coil-kt:coil:2.0.0-rc03",
             'coil-compose'           : "io.coil-kt:coil-compose:2.0.0-rc03",
             'coil-gif'               : "io.coil-kt:coil-gif:2.0.0-rc03",
-            'joda-time'              : "joda-time:joda-time:2.12.1"
+            'joda-time'              : "joda-time:joda-time:2.12.1",
+            'auto-service-annotations': "com.google.auto.service:auto-service-annotations:${auto_service}",
+            'auto-service': "com.google.auto.service:auto-service:${auto_service}",
+            'ksp'                     : "com.google.devtools.ksp:${ksp_version}",
+            'filt-annotation'         : "com.github.0xZhangKe.Filt:annotaions:${filt_version}",
+            'filt-compiler'           : "com.github.0xZhangKe.Filt:compiler:${filt_version}",
     ]
 }

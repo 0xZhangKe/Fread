@@ -1,13 +1,12 @@
-package com.zhangke.utopia.pages.search
+package com.zhangke.utopia.pages.sources.search
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.composable.textOf
-import com.zhangke.utopia.status.search.GetOwnerAndSourceFromSearchResultUseCase
+import com.zhangke.utopia.status.search.GetOwnerAndSourceByUriUseCase
 import com.zhangke.utopia.status.search.StatusProviderSearchUseCase
-import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.source.StatusSourceOwner
+import com.zhangke.utopia.status.source.StatusOwnerAndSources
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,7 +17,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchViewModel @Inject constructor(
     private val statusProviderSearchUseCase: StatusProviderSearchUseCase,
-    private val getOwnerAndSourceFromSearchResult: GetOwnerAndSourceFromSearchResultUseCase,
+    private val getOwnerAndSourceFromSearchResult: GetOwnerAndSourceByUriUseCase,
+    private val uiStateAdapter: StatusOwnerAndSourceUiStateAdapter,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -36,10 +36,10 @@ class SearchViewModel @Inject constructor(
             statusProviderSearchUseCase(content)
                 .onSuccess { resultList ->
                     resultList.firstOrNull()?.let {
-                        getOwnerAndSourceFromSearchResult(it)
-                    }?.onSuccess { pair ->
+                        getOwnerAndSourceFromSearchResult(it.uri)
+                    }?.onSuccess { ownerResource ->
                         _uiState.update {
-                            successUiState(pair.first, pair.second)
+                            successUiState(ownerResource)
                         }
                     }?.onFailure { e ->
                         _uiState.update {
@@ -59,24 +59,17 @@ class SearchViewModel @Inject constructor(
     }
 
     private fun successUiState(
-        owner: StatusSourceOwner,
-        sourceList: List<StatusSource>
+        ownerResource: StatusOwnerAndSources,
     ): SearchUiState {
         return SearchUiState(
             errorMessageText = null,
             searchedData = LoadableState.success(
-                owner to sourceList.map { it.toUiState() }
-            )
-        )
-    }
-
-    private fun StatusSource.toUiState(): StatusSourceUiState {
-        return StatusSourceUiState(
-            uri = uri,
-            name = name,
-            description = description,
-            thumbnail = thumbnail,
-            selected = false,
+                uiStateAdapter.adapt(
+                    ownerResource,
+                    addEnabled = true,
+                    removeEnabled = true,
+                )
+            ),
         )
     }
 }

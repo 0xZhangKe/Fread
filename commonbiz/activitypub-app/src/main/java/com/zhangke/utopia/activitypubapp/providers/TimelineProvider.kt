@@ -2,12 +2,12 @@ package com.zhangke.utopia.activitypubapp.providers
 
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
+import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
+import com.zhangke.utopia.activitypubapp.protocol.isTimelineSourceUri
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
-import com.zhangke.utopia.activitypubapp.source.timeline.getServerAndType
-import com.zhangke.utopia.activitypubapp.source.timeline.isTimelineSourceUri
 import com.zhangke.utopia.status.IStatusProvider
 import com.zhangke.utopia.status.Status
-import com.zhangke.utopia.status.source.StatusSourceUri
+import com.zhangke.utopia.status.source.StatusProviderUri
 import javax.inject.Inject
 
 /**
@@ -17,14 +17,14 @@ internal class TimelineProvider @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : IStatusProvider {
 
-    override fun applicable(sourceUri: StatusSourceUri): Boolean {
+    override fun applicable(sourceUri: StatusProviderUri): Boolean {
         return sourceUri.isTimelineSourceUri()
     }
 
     override suspend fun requestStatuses(
-        sourceUri: StatusSourceUri,
+        sourceUri: StatusProviderUri,
     ): Result<List<Status>> {
-        val type = sourceUri.getServerAndType()?.second ?: return Result.failure(
+        val type = sourceUri.parseTimeline()?.second ?: return Result.failure(
             IllegalArgumentException("$sourceUri is not Timeline source uri!")
         )
         val host = sourceUri.host

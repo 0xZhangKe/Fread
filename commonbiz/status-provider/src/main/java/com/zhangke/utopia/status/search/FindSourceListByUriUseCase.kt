@@ -2,14 +2,13 @@ package com.zhangke.utopia.status.search
 
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.utils.collect
+import com.zhangke.utopia.status.utils.findImplementers
 import javax.inject.Inject
 
-class FindSourceListByUriUseCase @Inject constructor(
-    private val useCaseList: List<IFindSourceListByUriUseCase>,
-) {
+class FindSourceListByUriUseCase @Inject constructor() {
 
     suspend operator fun invoke(uri: String): Result<List<StatusSource>> {
-        return useCaseList.map { it.invoke(uri) }.collect()
+        return findImplementers<IFindSourceListByUriUseCase>().map { it(uri) }.collect()
     }
 }
 

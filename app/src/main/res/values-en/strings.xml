@@ -21,4 +21,6 @@
 
     <string name="search_page_title">Search</string>
     <string name="search_result_not_found">No search results found</string>
+
+    <string name="add_feeds_page_title">ADD</string>
 </resources>

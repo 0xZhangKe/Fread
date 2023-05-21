@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import coil.compose.AsyncImage
 import com.zhangke.utopia.status.source.StatusSource
+import javax.inject.Inject
 
 data class StatusSourceUiState(
     val uri: String,
@@ -35,7 +36,7 @@ data class StatusSourceUiState(
     val removeEnabled: Boolean,
 )
 
-class StatusSourceItemUiStateAdapter() {
+class StatusSourceUiStateAdapter @Inject constructor() {
 
     fun adapt(
         source: StatusSource,

@@ -6,5 +6,6 @@ class FeedsPageUiStateAdapter {
 
     fun adapt(feedUris: List<String>): List<Status>{
 
+        return emptyList()
     }
 }

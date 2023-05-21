@@ -2,6 +2,7 @@ plugins {
     id 'com.android.library'
     id 'org.jetbrains.kotlin.android'
     id 'kotlin-kapt'
+    id 'com.google.devtools.ksp'
 }
 
 android {
@@ -42,6 +43,13 @@ android {
     }
 }
 
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        kotlin.srcDir("build/generated/ksp/release/kotlin")
+    }
+}
+
 dependencies {
 
     testImplementation 'junit:junit:4.13.2'
@@ -51,6 +59,7 @@ dependencies {
     implementation project(path: ':framework')
     implementation project(path: ':commonbiz')
     implementation project(path: ':commonbiz:status-provider')
+    implementation project(path: ':commonbiz:protocol')
     implementation project(path: ':ActivityPub-Kotlin')
 
     implementation support.activity
@@ -96,4 +105,10 @@ dependencies {
     implementation thirdparty.retrofit
     implementation thirdparty.gson
     implementation thirdparty.'joda-time'
+
+    compileOnly thirdparty.'auto-service-annotations'
+    kapt        thirdparty.'auto-service'
+
+    compileOnly thirdparty.'filt-annotation'
+    ksp thirdparty.'filt-compiler'
 }

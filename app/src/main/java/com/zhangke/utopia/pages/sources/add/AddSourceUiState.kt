@@ -1,10 +1,9 @@
 package com.zhangke.utopia.pages.sources.add
 
 import com.zhangke.utopia.composable.TextString
+import com.zhangke.utopia.pages.sources.search.StatusOwnerAndSourceUiState
 
 data class AddSourceUiState(
-    val pendingAdd: Boolean,
-    val searching: Boolean,
-    val maintainer: SourceMaintainerUiState?,
+    val sourceList: List<StatusOwnerAndSourceUiState>,
     val errorMessageText: TextString? = null,
 )

@@ -4,11 +4,11 @@ import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypubapp.currentActivityPubClient
 import com.zhangke.utopia.activitypubapp.domain.ResolveUserSourceByWebFingerUseCase
 import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
-import com.zhangke.utopia.activitypubapp.source.user.getUserWebFinger
-import com.zhangke.utopia.activitypubapp.source.user.isUserSource
+import com.zhangke.utopia.activitypubapp.protocol.getUserWebFinger
+import com.zhangke.utopia.activitypubapp.protocol.isUserSource
 import com.zhangke.utopia.status.IStatusProvider
 import com.zhangke.utopia.status.Status
-import com.zhangke.utopia.status.source.StatusSourceUri
+import com.zhangke.utopia.status.source.StatusProviderUri
 import javax.inject.Inject
 
 internal class UserStatusProvider @Inject constructor(
@@ -16,11 +16,11 @@ internal class UserStatusProvider @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : IStatusProvider {
 
-    override fun applicable(sourceUri: StatusSourceUri): Boolean {
+    override fun applicable(sourceUri: StatusProviderUri): Boolean {
         return sourceUri.isUserSource()
     }
 
-    override suspend fun requestStatuses(sourceUri: StatusSourceUri): Result<List<Status>> {
+    override suspend fun requestStatuses(sourceUri: StatusProviderUri): Result<List<Status>> {
         val webFinger = sourceUri.getUserWebFinger() ?: return Result.failure(
             IllegalArgumentException("$sourceUri is not a User source.")
         )

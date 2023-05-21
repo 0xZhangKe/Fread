@@ -3,14 +3,13 @@ package com.zhangke.utopia.status.domain
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.source.StatusSourceOwner
 import com.zhangke.utopia.status.utils.collect
+import com.zhangke.utopia.status.utils.findImplementers
 import javax.inject.Inject
 
-class FetchSourceFromOwnerUseCase @Inject constructor(
-    private val useCaseList: List<IFetchSourceFromOwnerUseCase>,
-) {
+class FetchSourceFromOwnerUseCase @Inject constructor() {
 
     suspend operator fun invoke(owner: StatusSourceOwner): Result<List<StatusSource>> {
-        return useCaseList.map { it.invoke(owner) }.collect()
+        return findImplementers<IFetchSourceFromOwnerUseCase>().map { it.invoke(owner) }.collect()
     }
 }
 

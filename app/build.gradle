@@ -136,6 +136,9 @@ dependencies {
     implementation thirdparty.coil
     implementation thirdparty.'coil-compose'
     implementation thirdparty.'coil-gif'
+
+    compileOnly thirdparty.'auto-service-annotations'
+    kapt        thirdparty.'auto-service'
 }
 
 // Allow references to generated code

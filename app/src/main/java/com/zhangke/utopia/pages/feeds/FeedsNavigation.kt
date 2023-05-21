@@ -2,19 +2,17 @@ package com.zhangke.utopia.pages.feeds
 
 import androidx.compose.runtime.collectAsState
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navigation
-import com.zhangke.utopia.pages.UtopiaRouters
 
-context (UtopiaRouters)
 fun NavGraphBuilder.registerFeedsNavigation() {
+    val sourceRouter = FeedsRouters()
     navigation(
-        startDestination = Feeds.container,
-        route = Feeds.root,
+        startDestination = sourceRouter.container,
+        route = sourceRouter.root,
     ) {
-        composable(Feeds.container) {
+        composable(sourceRouter.container) {
             val viewModel: FeedsContainerViewModel = hiltViewModel()
             FeedsContainerPage(
                 uiState = viewModel.uiState.collectAsState().value,

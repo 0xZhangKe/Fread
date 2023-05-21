@@ -42,10 +42,8 @@ class MainActivity : AppCompatActivity() {
             navController = navController,
             startDestination = rootRouters.root,
         ) {
-            with(rootRouters) {
-                registerFeedsNavigation()
-                registerSourcesNavigation()
-            }
+            registerFeedsNavigation()
+            registerSourcesNavigation(navController)
         }
     }
 

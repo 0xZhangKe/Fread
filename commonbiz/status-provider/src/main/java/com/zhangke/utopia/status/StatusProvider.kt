@@ -1,6 +1,6 @@
 package com.zhangke.utopia.status
 
-import com.zhangke.utopia.status.source.StatusSourceUri
+import com.zhangke.utopia.status.source.StatusProviderUri
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -15,7 +15,7 @@ class StatusProvider @Inject constructor(
     suspend fun requestStatuses(
         sourceUri: String,
     ): Result<List<Status>> {
-        val uri = StatusSourceUri.create(sourceUri) ?: return Result.failure(
+        val uri = StatusProviderUri.create(sourceUri) ?: return Result.failure(
             IllegalArgumentException("$sourceUri is not validate uri!")
         )
         return providers.firstOrNull { it.applicable(uri) }
@@ -28,9 +28,9 @@ class StatusProvider @Inject constructor(
 
 interface IStatusProvider {
 
-    fun applicable(sourceUri: StatusSourceUri): Boolean
+    fun applicable(sourceUri: StatusProviderUri): Boolean
 
     suspend fun requestStatuses(
-        sourceUri: StatusSourceUri,
+        sourceUri: StatusProviderUri,
     ): Result<List<Status>>
 }

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypubapp.source.user
 
+import com.zhangke.utopia.activitypubapp.protocol.buildUserSourceUri
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import com.zhangke.utopia.status.source.StatusSource
 

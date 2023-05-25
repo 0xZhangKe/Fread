@@ -6,12 +6,14 @@ import com.zhangke.utopia.domain.RemoveSourceFromOwnerUseCase
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
 import com.zhangke.utopia.pages.sources.search.StatusOwnerAndSourceUiStateAdapter
 import com.zhangke.utopia.status.search.GetOwnerAndSourceByUriUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
+@HiltViewModel
 class AddSourceViewModel @Inject constructor(
     private val getOwnerAndSourceByUriResult: GetOwnerAndSourceByUriUseCase,
     private val ownerAndSourceAdapter: StatusOwnerAndSourceUiStateAdapter,

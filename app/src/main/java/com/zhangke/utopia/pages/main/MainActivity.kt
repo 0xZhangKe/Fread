@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.viewModels
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.view.ViewCompat
 import androidx.fragment.app.Fragment
@@ -14,10 +13,13 @@ import androidx.fragment.app.commit
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
 import com.zhangke.framework.architect.theme.UtopiaTheme
-import com.zhangke.utopia.pages.UtopiaRouters
+import com.zhangke.utopia.pages.feeds.FeedsRouters
 import com.zhangke.utopia.pages.feeds.registerFeedsNavigation
+import com.zhangke.utopia.pages.sources.SourcesRouters
 import com.zhangke.utopia.pages.sources.registerSourcesNavigation
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class MainActivity : AppCompatActivity() {
 
     private val viewModel: MainViewModel by viewModels()
@@ -27,7 +29,7 @@ class MainActivity : AppCompatActivity() {
 
         setContent {
             UtopiaTheme {
-
+                MainPage()
             }
         }
     }
@@ -35,12 +37,9 @@ class MainActivity : AppCompatActivity() {
     @Composable
     private fun MainPage() {
         val navController = rememberNavController()
-        val rootRouters = remember {
-            UtopiaRouters()
-        }
         NavHost(
             navController = navController,
-            startDestination = rootRouters.root,
+            startDestination = SourcesRouters().root,
         ) {
             registerFeedsNavigation()
             registerSourcesNavigation(navController)

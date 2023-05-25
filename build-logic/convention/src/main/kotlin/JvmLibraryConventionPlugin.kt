@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-import com.google.samples.apps.nowinandroid.configureKotlinJvm
+import com.zhangke.utopia.configureKotlinJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

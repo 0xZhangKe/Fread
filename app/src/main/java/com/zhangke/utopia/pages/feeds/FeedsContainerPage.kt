@@ -1,18 +1,18 @@
 package com.zhangke.utopia.pages.feeds
 
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
-import com.google.accompanist.pager.ExperimentalPagerApi
-import com.google.accompanist.pager.HorizontalPager
-import com.google.accompanist.pager.rememberPagerState
 import com.zhangke.framework.composable.LoadableLayout
 
-@OptIn(ExperimentalPagerApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedsContainerPage(
     uiState: FeedsContainerUiState,
@@ -38,9 +38,9 @@ fun FeedsContainerPage(
                 HorizontalPager(
                     modifier = Modifier.fillMaxSize(),
                     state = pagerState,
-                    count = channelList.size,
+                    pageCount = channelList.size,
                     userScrollEnabled = true,
-                ) {
+                ) { currentPage ->
                     if (currentPageIndex != currentPage) {
                         currentPageIndex = currentPage
                         LaunchedEffect(currentPageIndex) {

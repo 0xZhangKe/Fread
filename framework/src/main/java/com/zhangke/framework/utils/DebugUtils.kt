@@ -1,9 +1,14 @@
 package com.zhangke.framework.utils
 
-import com.zhangke.framework.BuildConfig
+var appDebuggable = false
+    private set
+
+fun initDebuggable(debug: Boolean) {
+    appDebuggable = debug
+}
 
 inline fun ifDebugging(block: () -> Unit) {
-    if (BuildConfig.DEBUG) {
+    if (appDebuggable) {
         block()
     }
 }

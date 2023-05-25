@@ -1,7 +1,7 @@
 package com.zhangke.utopia.domain
 
+import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
 import com.zhangke.utopia.pages.sources.search.StatusOwnerAndSourceUiState
-import com.zhangke.utopia.pages.sources.search.StatusSourceUiState
 import javax.inject.Inject
 
 class RemoveSourceFromOwnerUseCase @Inject constructor() {

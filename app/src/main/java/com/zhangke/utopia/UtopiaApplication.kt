@@ -8,6 +8,7 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import com.zhangke.framework.utils.initApplication
+import com.zhangke.framework.utils.initDebuggable
 import dagger.hilt.android.HiltAndroidApp
 
 /**
@@ -18,6 +19,7 @@ class UtopiaApplication : MultiDexApplication() {
 
     override fun onCreate() {
         super.onCreate()
+        initDebuggable(BuildConfig.DEBUG)
         initApplication(this)
         initCoil(this)
     }

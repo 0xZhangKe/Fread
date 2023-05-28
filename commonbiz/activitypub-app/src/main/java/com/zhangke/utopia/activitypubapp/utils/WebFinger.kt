@@ -12,7 +12,7 @@ import com.zhangke.framework.utils.RegexFactory
  * - m.cmx.im/@jw@jakewharton.com
  * - jakewharton.com/@jw
  */
-internal class WebFinger private constructor(
+class WebFinger private constructor(
     val name: String,
     val host: String,
 ) {

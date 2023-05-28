@@ -1,6 +1,6 @@
 [versions]
 kotlin = "1.8.21"
-kotlin-coroutine = "1.3.9"
+kotlin-coroutine = "1.7.1"
 
 androidxComposeCompiler = "1.4.7"
 
@@ -38,7 +38,7 @@ joda-time = "2.12.1"
 
 auto_service = "1.0.1"
 
-ksp = "1.8.0-1.0.9"
+ksp = "1.8.21-1.0.11"
 
 filt = "1.0.1"
 

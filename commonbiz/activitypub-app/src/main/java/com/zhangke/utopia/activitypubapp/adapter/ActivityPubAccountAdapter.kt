@@ -5,7 +5,7 @@ import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import javax.inject.Inject
 
-internal class ActivityPubAccountAdapter @Inject constructor() {
+class ActivityPubAccountAdapter @Inject constructor() {
 
     fun adapt(account: ActivityPubAccount): UserSource {
         return UserSource(

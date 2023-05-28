@@ -44,7 +44,7 @@ class StatusSourceUriParser {
         return queryPart.split('&')
             .associate {
                 val array = it.split('=')
-                array[0] to array.getOrElse(0) { "" }
+                array[0] to array.getOrElse(1) { "" }
             }
     }
 }

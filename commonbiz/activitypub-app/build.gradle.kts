@@ -70,6 +70,8 @@ dependencies {
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+    implementation(libs.filt.annotaions)
+    ksp(libs.filt.compiler)
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
     implementation(libs.coil)
@@ -81,6 +83,4 @@ dependencies {
     implementation(libs.joda.time)
     implementation(libs.auto.service.annotations)
     kapt(libs.auto.service)
-    implementation(libs.filt.annotaions)
-    kapt(libs.filt.compiler)
 }

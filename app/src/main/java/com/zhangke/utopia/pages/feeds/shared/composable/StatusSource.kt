@@ -1,12 +1,14 @@
 package com.zhangke.utopia.pages.feeds.shared.composable
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
@@ -16,6 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
@@ -23,6 +26,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
@@ -62,31 +66,21 @@ fun StatusSource(
     onRemoveClick: (() -> Unit)? = null,
 ) {
     Card(
-        modifier = modifier,
+        modifier = modifier.padding(start = 15.dp, end = 15.dp, bottom = 12.dp),
     ) {
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
         ) {
-            val (avatar, centerLine, title, desc, options) = createRefs()
-            Box(
-                modifier = Modifier
-                    .height(1.dp)
-                    .fillMaxWidth()
-                    .constrainAs(centerLine) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
-                    }
-            )
+            val (avatar, content, options) = createRefs()
             if (source.thumbnail.isNullOrEmpty()) {
                 Box(
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
                         .width(5.dp)
                         .height(45.dp)
                         .constrainAs(avatar) {
                             start.linkTo(parent.start)
+                            end.linkTo(content.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                         },
@@ -94,11 +88,11 @@ fun StatusSource(
             } else {
                 AsyncImage(
                     modifier = Modifier
-                        .padding(vertical = 8.dp)
                         .size(45.dp)
                         .clip(CircleShape)
                         .constrainAs(avatar) {
                             start.linkTo(parent.start, 15.dp)
+                            end.linkTo(content.start)
                             top.linkTo(parent.top)
                             bottom.linkTo(parent.bottom)
                         },
@@ -106,30 +100,34 @@ fun StatusSource(
                     contentDescription = "Avatar",
                 )
             }
-            Text(
-                modifier = Modifier.constrainAs(title) {
-                    bottom.linkTo(parent.bottom, 3.dp)
-                    start.linkTo(parent.start, 10.dp)
-                    end.linkTo(options.start, 6.dp)
-                },
-                maxLines = 1,
-                text = source.name,
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-            )
-            Text(
+            Column(
                 modifier = Modifier
-                    .padding(bottom = 15.dp)
-                    .constrainAs(desc) {
-                        top.linkTo(parent.top, 3.dp)
-                        start.linkTo(title.start)
-                        end.linkTo(options.start, 8.dp)
+                    .wrapContentHeight()
+                    .constrainAs(content) {
+                        start.linkTo(avatar.end, 10.dp)
+                        top.linkTo(parent.top, 5.dp)
+                        end.linkTo(options.start)
+                        bottom.linkTo(parent.bottom, 8.dp)
+                        width = Dimension.fillToConstraints
                     },
-                text = source.description,
-                fontSize = 14.sp,
-            )
+                horizontalAlignment = Alignment.Start,
+            ) {
+                Text(
+                    maxLines = 1,
+                    text = source.name,
+                    fontSize = 18.sp,
+                    fontWeight = FontWeight.Medium,
+                )
+                Text(
+                    modifier = Modifier
+                        .padding(top = 2.dp),
+                    text = source.description,
+                    fontSize = 14.sp,
+                )
+            }
             Row(
                 modifier = Modifier.constrainAs(options) {
+                    start.linkTo(content.end)
                     end.linkTo(parent.end, 6.dp)
                     top.linkTo(parent.top)
                     bottom.linkTo(parent.bottom)

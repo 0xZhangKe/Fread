@@ -5,21 +5,20 @@ import com.zhangke.utopia.activitypubapp.R
 import com.zhangke.utopia.activitypubapp.protocol.buildTimelineSourceUri
 import com.zhangke.utopia.status.source.StatusSource
 
-internal class TimelineSource(
+class TimelineSource(
     val host: String,
     val type: TimelineSourceType,
+    override val description: String = ""
 ) : StatusSource {
 
     override val uri: String = buildTimelineSourceUri(host, type).toString()
 
     override val name: String = type.nickName
 
-    override val description: String = ""
-
     override val thumbnail: String? = null
 }
 
-internal enum class TimelineSourceType(val stringValue: String) {
+enum class TimelineSourceType(val stringValue: String) {
 
     PUBLIC("public"),
     LOCAL("local"),

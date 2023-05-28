@@ -2,6 +2,7 @@ plugins {
     id("utopia.android.library")
     id("utopia.android.library.compose")
     id("kotlin-kapt")
+    id("com.google.devtools.ksp")
 }
 
 android {
@@ -64,5 +65,5 @@ dependencies {
     implementation(libs.auto.service.annotations)
     kapt(libs.auto.service)
     implementation(libs.filt.annotaions)
-    kapt(libs.filt.compiler)
+    ksp(libs.filt.compiler)
 }

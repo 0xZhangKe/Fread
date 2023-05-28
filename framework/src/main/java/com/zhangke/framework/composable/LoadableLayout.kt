@@ -9,6 +9,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.update
 
 sealed class LoadableState<T> {
 
@@ -54,12 +56,15 @@ fun <T> LoadableLayout(
             is LoadableState.Loading -> {
                 loading?.invoke(this) ?: DefaultLoading()
             }
+
             is LoadableState.Failed -> {
                 failed?.invoke(this, state.exception) ?: DefaultFailed(exception = state.exception)
             }
+
             is LoadableState.Success -> {
                 content(state.data)
             }
+
             is LoadableState.Idle -> {
                 idle?.invoke(this) ?: DefaultIdle()
             }
@@ -94,4 +99,24 @@ fun BoxScope.DefaultIdle(
     modifier: Modifier = Modifier,
 ) {
     Box(modifier = modifier)
+}
+
+fun <T> MutableStateFlow<LoadableState<T>>.updateToSuccess(
+    data: T
+) {
+    update {
+        LoadableState.success(data)
+    }
+}
+
+fun <T> MutableStateFlow<LoadableState<T>>.updateToLoading() {
+    update {
+        LoadableState.loading()
+    }
+}
+
+fun <T> MutableStateFlow<LoadableState<T>>.updateToFailed(e: Exception) {
+    update {
+        LoadableState.failed(e)
+    }
 }

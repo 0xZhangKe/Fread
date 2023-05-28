@@ -5,29 +5,57 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PostAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.*
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.navigation.NavController
+import androidx.navigation.NavGraphBuilder
+import androidx.navigation.compose.composable
+import androidx.navigation.navArgument
 import com.zhangke.utopia.R
 import com.zhangke.utopia.composable.*
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSource
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
-import com.zhangke.utopia.pages.sources.search.StatusOwnerAndSourceUiState
-import com.zhangke.utopia.status.source.StatusSourceOwner
+import com.zhangke.utopia.pages.sources.add.search.searchSourceForAddRouter
+
+const val addSourceRoute = "source/add?addUris={addUris}"
+
+fun NavGraphBuilder.addSourceRoute(navController: NavController) {
+    composable(
+        route = addSourceRoute,
+        arguments = listOf(navArgument("addUris") { defaultValue = "" }),
+    ) {
+        val viewModel: AddSourceViewModel = hiltViewModel()
+        val addUris = it.arguments?.getString("addUris")
+        if (addUris.isNullOrEmpty().not()) {
+            LaunchedEffect(addUris) {
+                viewModel.onAddSources(addUris!!)
+            }
+        }
+        AddSourcePage(
+            uiState = viewModel.uiState.collectAsState().value,
+            onAddSourceClick = {
+                navController.navigate(searchSourceForAddRouter)
+            },
+            onConfirmClick = viewModel::onConfirmClick,
+            onRemoveSourceClick = viewModel::onRemoveSource,
+        )
+    }
+}
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun AddSourcePage(
     uiState: AddSourceUiState,
+    onAddSourceClick: () -> Unit,
     onConfirmClick: (name: String) -> Unit,
     onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
 ) {
@@ -56,8 +84,16 @@ fun AddSourcePage(
             )
         },
         snackbarHost = snackbarHost(snackbarHostState),
+        floatingActionButton = {
+            FloatingActionButton(onClick = onAddSourceClick) {
+                Icon(
+                    painter = rememberVectorPainter(image = Icons.Default.Add),
+                    contentDescription = "Add Source",
+                )
+            }
+        }
     ) { paddings ->
-        Box(
+        Column(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddings)
@@ -65,97 +101,29 @@ fun AddSourcePage(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 50.dp)
+                    .padding(top = 20.dp)
             ) {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
                     value = inputtedText,
-                    onValueChange = { inputtedText = it }
+                    onValueChange = { inputtedText = it },
+                    colors = TextFieldDefaults.textFieldColors(
+                        backgroundColor = Color.Transparent
+                    ),
                 )
             }
 
             LazyColumn {
                 items(uiState.sourceList) { item ->
-                    StatusOwnerAndSource(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(vertical = 15.dp),
-                        uiState = item,
-                        onRemoveClick = onRemoveSourceClick,
+                    StatusSource(
+                        modifier = Modifier.fillMaxWidth(),
+                        source = item,
+                        onRemoveClick = {
+                            onRemoveSourceClick(item)
+                        },
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-private fun StatusOwnerAndSource(
-    modifier: Modifier = Modifier,
-    uiState: StatusOwnerAndSourceUiState,
-    onRemoveClick: (source: StatusSourceUiState) -> Unit,
-) {
-    Card(modifier) {
-        StatusOwner(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(80.dp),
-            owner = uiState.owner,
-        )
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-        ) {
-            uiState.sourceList.forEach {
-                StatusSource(
-                    modifier = Modifier.fillMaxWidth(),
-                    source = it,
-                    onRemoveClick = {
-                        onRemoveClick(it)
-                    }
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun StatusOwner(
-    modifier: Modifier = Modifier,
-    owner: StatusSourceOwner,
-) {
-    Box(
-        modifier = modifier,
-    ) {
-        AsyncImage(
-            modifier = Modifier
-                .fillMaxSize(),
-            model = owner.thumbnail,
-            contentDescription = "thumbnail",
-        )
-        Column(
-            modifier = Modifier.align(Alignment.Center),
-            verticalArrangement = Arrangement.Center,
-        ) {
-            Text(
-                modifier = Modifier,
-                text = owner.name,
-                maxLines = 1,
-                fontSize = 18.sp,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 8.dp),
-                text = owner.uri,
-                maxLines = 1,
-                fontSize = 14.sp,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 8.dp),
-                text = owner.description,
-                maxLines = 1,
-                fontSize = 14.sp,
-            )
         }
     }
 }

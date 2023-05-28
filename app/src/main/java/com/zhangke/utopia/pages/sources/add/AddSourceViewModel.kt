@@ -2,10 +2,10 @@ package com.zhangke.utopia.pages.sources.add
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.utopia.domain.RemoveSourceFromOwnerUseCase
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
-import com.zhangke.utopia.pages.sources.search.StatusOwnerAndSourceUiStateAdapter
-import com.zhangke.utopia.status.search.GetOwnerAndSourceByUriUseCase
+import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiStateAdapter
+import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
+import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,45 +15,53 @@ import javax.inject.Inject
 
 @HiltViewModel
 class AddSourceViewModel @Inject constructor(
-    private val getOwnerAndSourceByUriResult: GetOwnerAndSourceByUriUseCase,
-    private val ownerAndSourceAdapter: StatusOwnerAndSourceUiStateAdapter,
-    private val removeSourceFromOwner: RemoveSourceFromOwnerUseCase,
+    private val resolveSourceUseCase: ResolveSourceByUriUseCase,
+    private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialUiState())
     val uiState: StateFlow<AddSourceUiState> = _uiState.asStateFlow()
 
-    fun onAddSource(uri: String) {
+    fun onAddSources(uris: String) {
         launchInViewModel {
-            getOwnerAndSourceByUriResult(uri)
-                .onSuccess { ownerAndSource ->
-                    _uiState.update {
-                        val newOne = ownerAndSourceAdapter.adapt(
-                            ownerAndSource,
-                            addEnabled = false,
-                            removeEnabled = true,
-                        )
-                        it.copy(
-                            sourceList = it.sourceList.toMutableList().apply {
-                                add(newOne)
-                            }
-                        )
+            val uriArray = uris.split(',')
+            val sourceList = mutableListOf<StatusSource>()
+            uriArray.forEach { uri ->
+                resolveSourceUseCase(uri)
+                    .onSuccess { source ->
+                        source?.let { sourceList += it }
                     }
-                }.onFailure {
-
-                }
+            }
+            _uiState.update {
+                it.copy(
+                    sourceList = sourceList.map { source ->
+                        source.toUiState()
+                    }
+                )
+            }
         }
     }
 
+    private fun StatusSource.toUiState(): StatusSourceUiState {
+        return statusSourceUiStateAdapter.adapt(
+            this,
+            addEnabled = false,
+            removeEnabled = true,
+        )
+    }
+
     fun onRemoveSource(source: StatusSourceUiState) {
-        _uiState.update {
-            it.copy(
-                sourceList = removeSourceFromOwner(it.sourceList, source)
+        _uiState.update { state ->
+            state.copy(
+                sourceList = state.sourceList.toMutableList()
+                    .also { list ->
+                        list.remove(source)
+                    }
             )
         }
     }
 
-    fun onConfirmClick(name: String){
+    fun onConfirmClick(name: String) {
 
     }
 

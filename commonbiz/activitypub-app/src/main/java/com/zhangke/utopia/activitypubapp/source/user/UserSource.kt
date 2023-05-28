@@ -4,7 +4,7 @@ import com.zhangke.utopia.activitypubapp.protocol.buildUserSourceUri
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import com.zhangke.utopia.status.source.StatusSource
 
-internal class UserSource(
+class UserSource(
     val userId: String,
     val webFinger: WebFinger,
     override val name: String,

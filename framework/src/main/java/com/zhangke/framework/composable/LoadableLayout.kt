@@ -14,6 +14,14 @@ import kotlinx.coroutines.flow.update
 
 sealed class LoadableState<T> {
 
+    val isSuccess: Boolean get() = this is Success
+
+    val isFailed: Boolean get() = this is Failed
+
+    val isIdle: Boolean get() = this is Idle
+
+    val isLoading: Boolean get() = this is Loading
+
     class Idle<T> : LoadableState<T>()
 
     class Failed<T>(val exception: Throwable) : LoadableState<T>()
@@ -119,4 +127,8 @@ fun <T> MutableStateFlow<LoadableState<T>>.updateToFailed(e: Exception) {
     update {
         LoadableState.failed(e)
     }
+}
+
+fun <T> LoadableState<T>.requireSuccessData(): T {
+    return (this as LoadableState.Success).data
 }

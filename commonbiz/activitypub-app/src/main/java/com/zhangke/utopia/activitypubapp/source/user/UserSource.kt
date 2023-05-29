@@ -12,5 +12,5 @@ class UserSource(
     override val thumbnail: String?,
 ) : StatusSource {
 
-    override val uri: String = buildUserSourceUri(webFinger).toString()
+    override val uri: String = buildUserSourceUri(webFinger, userId).toString()
 }

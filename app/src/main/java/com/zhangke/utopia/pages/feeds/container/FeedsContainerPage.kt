@@ -1,4 +1,4 @@
-package com.zhangke.utopia.pages.feeds
+package com.zhangke.utopia.pages.feeds.container
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
@@ -6,25 +6,29 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.LoadableLayout
+import com.zhangke.utopia.pages.feeds.FeedsPage
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun FeedsContainerPage(
     uiState: FeedsContainerUiState,
     onTabSelected: (Int) -> Unit,
+    onAddFeedsClick: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
-        LoadableLayout(state = uiState.channelList) { channelList ->
-            if (channelList.isNotEmpty()) {
+        LoadableLayout(state = uiState.pageUiStateList) { feedsList ->
+            if (feedsList.isNotEmpty()) {
                 TabRow(
                     selectedTabIndex = uiState.tabIndex,
                 ) {
-                    channelList.forEachIndexed { index, item ->
+                    feedsList.forEachIndexed { index, item ->
                         Text(
                             modifier = Modifier.clickable { onTabSelected(index) },
                             text = item.name,
@@ -38,7 +42,7 @@ fun FeedsContainerPage(
                 HorizontalPager(
                     modifier = Modifier.fillMaxSize(),
                     state = pagerState,
-                    pageCount = channelList.size,
+                    pageCount = feedsList.size,
                     userScrollEnabled = true,
                 ) { currentPage ->
                     if (currentPageIndex != currentPage) {
@@ -47,7 +51,14 @@ fun FeedsContainerPage(
                             onTabSelected(currentPageIndex)
                         }
                     }
-                    FeedsPage(uiState = channelList[currentPage])
+                    FeedsPage(uiState = feedsList[currentPage])
+                }
+            } else {
+                Button(
+                    modifier = Modifier.align(Alignment.Center),
+                    onClick = onAddFeedsClick,
+                ) {
+                    Text(text = "Add Feeds")
                 }
             }
         }

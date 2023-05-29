@@ -15,3 +15,7 @@ public inline fun <T, R> Iterable<T>.mapFirstOrNull(transform: (T) -> R?): R? {
     }
     return null
 }
+
+fun <T> Iterable<T>.container(predicate: (T) -> Boolean): Boolean {
+    return firstOrNull(predicate) != null
+}

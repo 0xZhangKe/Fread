@@ -22,9 +22,9 @@ internal interface TimelineSourceDao {
     suspend fun insert(entry: TimelineSourceEntry)
 }
 
-internal class TimelineRepo @Inject constructor(
-    private val databases: ActivityPubDatabases,
-) {
+class TimelineRepo @Inject constructor() {
+
+    private val databases = ActivityPubDatabases.instance
 
     private val dao: TimelineSourceDao get() = databases.getTimelineSourceDao()
 

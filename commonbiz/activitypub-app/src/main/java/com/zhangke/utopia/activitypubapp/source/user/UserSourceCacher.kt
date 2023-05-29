@@ -1,10 +1,12 @@
 package com.zhangke.utopia.activitypubapp.source.user
 
+import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.status.source.IStatusSourceCacher
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
-internal class UserSourceCacher @Inject constructor(
+@Filt
+class UserSourceCacher @Inject constructor(
     private val userSourceRepo: UserSourceRepo
 ) : IStatusSourceCacher {
 

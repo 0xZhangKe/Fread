@@ -39,9 +39,9 @@ class MainActivity : AppCompatActivity() {
         val navController = rememberNavController()
         NavHost(
             navController = navController,
-            startDestination = SourcesRouters().root,
+            startDestination = FeedsRouters().root,
         ) {
-            registerFeedsNavigation()
+            registerFeedsNavigation(navController)
             registerSourcesNavigation(navController)
         }
     }

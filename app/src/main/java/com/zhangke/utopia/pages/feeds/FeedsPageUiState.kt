@@ -5,5 +5,6 @@ import com.zhangke.utopia.status.Status
 
 data class FeedsPageUiState(
     val name: String,
+    val sourceList: List<String>,
     val feeds: LoadableState<List<Status>>,
 )

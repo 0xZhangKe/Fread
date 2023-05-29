@@ -1,11 +1,11 @@
 package com.zhangke.utopia.activitypubapp.resolvers
 
-import com.zhangke.utopia.activitypubapp.source.user.UserSourceRepo
-import com.zhangke.utopia.activitypubapp.protocol.getUserWebFinger
 import com.zhangke.utopia.activitypubapp.protocol.isUserSource
+import com.zhangke.utopia.activitypubapp.protocol.parseInfo
+import com.zhangke.utopia.activitypubapp.source.user.UserSourceRepo
 import com.zhangke.utopia.status.resolvers.IStatusSourceResolver
-import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
 internal class UserSourceResolver @Inject constructor(
@@ -17,7 +17,7 @@ internal class UserSourceResolver @Inject constructor(
     }
 
     override suspend fun resolve(uri: StatusProviderUri): Result<StatusSource> {
-        val webFinger = uri.getUserWebFinger() ?: return Result.failure(
+        val (webFinger, userId) = uri.parseInfo() ?: return Result.failure(
             IllegalArgumentException("$uri is not a UserSource!")
         )
         return repo.query(webFinger)?.let { Result.success(it) } ?: Result.failure(

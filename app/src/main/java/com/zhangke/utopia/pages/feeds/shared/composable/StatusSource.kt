@@ -59,7 +59,7 @@ class StatusSourceUiStateAdapter @Inject constructor() {
 }
 
 @Composable
-fun StatusSource(
+fun StatusSourceNode(
     modifier: Modifier = Modifier,
     source: StatusSourceUiState,
     onAddClick: (() -> Unit)? = null,

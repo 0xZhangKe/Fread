@@ -9,7 +9,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class StatusProvider @Inject constructor(
-    private val providers: List<IStatusProvider>,
+    private val providers: Set<@JvmSuppressWildcards IStatusProvider>,
 ) {
 
     suspend fun requestStatuses(

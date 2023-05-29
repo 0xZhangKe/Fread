@@ -1,14 +1,23 @@
 package com.zhangke.utopia.pages.sources.add
 
 import androidx.lifecycle.ViewModel
+import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.utopia.R
+import com.zhangke.utopia.composable.TextString
+import com.zhangke.utopia.composable.textOf
+import com.zhangke.utopia.db.FeedsRepo
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiStateAdapter
+import com.zhangke.utopia.status.domain.CacheSourceUseCase
 import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -17,26 +26,31 @@ import javax.inject.Inject
 class AddSourceViewModel @Inject constructor(
     private val resolveSourceUseCase: ResolveSourceByUriUseCase,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
+    private val feedsRepo: FeedsRepo,
+    private val cacheSourceUseCase: CacheSourceUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialUiState())
     val uiState: StateFlow<AddSourceUiState> = _uiState.asStateFlow()
 
+    private val _errorMessageFlow = MutableSharedFlow<TextString>()
+    val errorMessageFlow: Flow<TextString> = _errorMessageFlow.asSharedFlow()
+
     fun onAddSources(uris: String) {
         launchInViewModel {
             val uriArray = uris.split(',')
-            val sourceList = mutableListOf<StatusSource>()
+            val sourceList = mutableListOf<StatusSourceUiState>()
+            sourceList.addAll(_uiState.value.sourceList)
             uriArray.forEach { uri ->
                 resolveSourceUseCase(uri)
                     .onSuccess { source ->
-                        source?.let { sourceList += it }
+                        source?.takeIf { item -> !sourceList.container { it.uri == item.uri } }
+                            ?.toUiState()?.let { sourceList += it }
                     }
             }
             _uiState.update {
                 it.copy(
-                    sourceList = sourceList.map { source ->
-                        source.toUiState()
-                    }
+                    sourceList = sourceList
                 )
             }
         }
@@ -62,84 +76,19 @@ class AddSourceViewModel @Inject constructor(
     }
 
     fun onConfirmClick(name: String) {
-
+        launchInViewModel {
+            val sourceList = _uiState.value.sourceList
+            if (sourceList.isEmpty()) {
+                _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
+                return@launchInViewModel
+            }
+            feedsRepo.insert(name, sourceList.map { it.uri })
+        }
     }
-
-
-//    fun onSearchClick(content: String) {
-//        _uiState.update { it.copy(pendingAdd = true) }
-//        launchInViewModel {
-//            statusSourceRepo.searchSourceMaintainer(content)
-//                .onSuccess {
-//                    if (it == null) {
-//                        errorState(textOf(R.string.search_result_not_found))
-//                    } else {
-//                        normalState(maintainerUiStateAdapter.adapt(it))
-//                    }
-//                }.onFailure {
-//                    errorState(textOf(it.message.orEmpty()))
-//                }
-//        }
-//    }
-//
-//    fun onAddSourceClick(statusSource: StatusSourceUiState) {
-//        _uiState.update { currentState ->
-//            val sourceList = currentState.maintainer?.sourceList
-//            if (sourceList.isNullOrEmpty()) return@update currentState
-//            val newSourceList = sourceList.map {
-//                if (it.uri == statusSource.uri) {
-//                    it.updateSelected(!it.selected)
-//                } else {
-//                    it
-//                }
-//            }
-//            currentState.copy(
-//                maintainer = currentState.maintainer.copy(sourceList = newSourceList)
-//            )
-//        }
-//    }
-//
-//    private fun StatusSourceUiState.updateSelected(selected: Boolean): StatusSourceUiState {
-//        return copy(selected = selected)
-//    }
-//
-//    fun onConfirmClick(channelName: String) {
-//        val pendingAddSource = _uiState.value.maintainer?.sourceList
-//        if (pendingAddSource.isNullOrEmpty()) return
-//        viewModelScope.launch {
-////            pendingAddSource.forEach {
-////                cacheSourceUseCase(it)
-////            }
-//            channelRepo.insert(channelName, pendingAddSource.map { it.uri })
-//        }
-//    }
-//
-//    private fun normalState(maintainer: SourceMaintainerUiState) {
-//        _uiState.update {
-//            it.copy(
-//                pendingAdd = false,
-//                searching = false,
-//                errorMessageText = null,
-//                maintainer = maintainer,
-//            )
-//        }
-//    }
-//
-//    private fun errorState(errorMessageText: TextString?) {
-//        _uiState.update {
-//            it.copy(
-//                pendingAdd = false,
-//                searching = false,
-//                maintainer = null,
-//                errorMessageText = errorMessageText,
-//            )
-//        }
-//    }
 
     private fun initialUiState(): AddSourceUiState {
         return AddSourceUiState(
             sourceList = emptyList(),
-            errorMessageText = null,
         )
     }
 }

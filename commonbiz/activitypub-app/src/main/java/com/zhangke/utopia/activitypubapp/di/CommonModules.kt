@@ -10,8 +10,4 @@ import dagger.hilt.components.SingletonComponent
 @InstallIn(SingletonComponent::class)
 internal class CommonModules {
 
-    @Provides
-    fun provideActivityPubDatabases(): ActivityPubDatabases {
-        return ActivityPubDatabases.instance
-    }
 }

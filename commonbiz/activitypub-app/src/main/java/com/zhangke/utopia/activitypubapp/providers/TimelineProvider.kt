@@ -1,9 +1,10 @@
 package com.zhangke.utopia.activitypubapp.providers
 
+import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
-import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
+import com.zhangke.utopia.activitypubapp.domain.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.protocol.isTimelineSourceUri
+import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
 import com.zhangke.utopia.status.IStatusProvider
 import com.zhangke.utopia.status.Status
@@ -13,8 +14,10 @@ import javax.inject.Inject
 /**
  * Created by ZhangKe on 2022/12/9.
  */
-internal class TimelineProvider @Inject constructor(
+@Filt
+class TimelineProvider @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
 ) : IStatusProvider {
 
     override fun applicable(sourceUri: StatusProviderUri): Boolean {
@@ -28,7 +31,7 @@ internal class TimelineProvider @Inject constructor(
             IllegalArgumentException("$sourceUri is not Timeline source uri!")
         )
         val host = sourceUri.host
-        val client = obtainActivityPubClient(host)
+        val client = obtainActivityPubClientUseCase(host)
         val timelineRepo = client.timelinesRepo
 
         return when (type) {

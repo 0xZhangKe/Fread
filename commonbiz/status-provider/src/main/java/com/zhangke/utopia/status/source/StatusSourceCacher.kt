@@ -5,7 +5,7 @@ import javax.inject.Singleton
 
 @Singleton
 class StatusSourceCacher @Inject constructor(
-    private val cachers: List<IStatusSourceCacher>
+    private val cachers: Set<@JvmSuppressWildcards IStatusSourceCacher>
 ) {
 
     suspend fun cache(statusSource: StatusSource) {

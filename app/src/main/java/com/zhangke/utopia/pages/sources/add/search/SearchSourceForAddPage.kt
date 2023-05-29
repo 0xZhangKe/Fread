@@ -43,7 +43,7 @@ import androidx.navigation.compose.composable
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.utopia.R
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSource
+import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceNode
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
 import com.zhangke.utopia.pages.sources.add.addSourceRoute
 import java.net.URLEncoder
@@ -154,7 +154,7 @@ fun SearchSourceForAddPage(
                     .padding(top = 15.dp),
             ) {
                 items(it) { item ->
-                    StatusSource(
+                    StatusSourceNode(
                         modifier = Modifier,
                         item,
                         onAddClick = {

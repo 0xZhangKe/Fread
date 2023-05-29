@@ -1,18 +1,18 @@
 package com.zhangke.utopia.activitypubapp.providers
 
+import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypubapp.currentActivityPubClient
-import com.zhangke.utopia.activitypubapp.domain.ResolveUserSourceByWebFingerUseCase
-import com.zhangke.utopia.activitypubapp.obtainActivityPubClient
-import com.zhangke.utopia.activitypubapp.protocol.getUserWebFinger
+import com.zhangke.utopia.activitypubapp.domain.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.protocol.isUserSource
+import com.zhangke.utopia.activitypubapp.protocol.parseInfo
 import com.zhangke.utopia.status.IStatusProvider
 import com.zhangke.utopia.status.Status
 import com.zhangke.utopia.status.source.StatusProviderUri
 import javax.inject.Inject
 
-internal class UserStatusProvider @Inject constructor(
-    private val resolveUserSourceByWebFingerUseCase: ResolveUserSourceByWebFingerUseCase,
+@Filt
+class UserStatusProvider @Inject constructor(
+    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : IStatusProvider {
 
@@ -21,18 +21,12 @@ internal class UserStatusProvider @Inject constructor(
     }
 
     override suspend fun requestStatuses(sourceUri: StatusProviderUri): Result<List<Status>> {
-        val webFinger = sourceUri.getUserWebFinger() ?: return Result.failure(
+        val (webFinger, userId) = sourceUri.parseInfo() ?: return Result.failure(
             IllegalArgumentException("$sourceUri is not a User source.")
         )
-        val userSource = resolveUserSourceByWebFingerUseCase(webFinger) ?: return Result.failure(
-            IllegalArgumentException("$webFinger it not found!")
-        )
-        var client = currentActivityPubClient
-        if (client == null) {
-            client = obtainActivityPubClient(webFinger.host)
-        }
+        val client = obtainActivityPubClientUseCase(webFinger.host)
         return client.accountRepo
-            .getStatuses(userSource.userId)
+            .getStatuses(userId)
             .map { list ->
                 list.map { activityPubStatusAdapter.adapt(it, client.application.host) }
             }

@@ -23,4 +23,8 @@
     <string name="search_result_not_found">No search results found</string>
 
     <string name="add_feeds_page_title">ADD</string>
+
+    <string name="add_feeds_page_empty_name_tips">Please enter a name</string>
+
+    <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>
 </resources>

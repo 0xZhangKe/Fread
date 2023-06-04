@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.providers
 
 import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypubapp.domain.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.protocol.isUserSource
 import com.zhangke.utopia.activitypubapp.protocol.parseInfo
 import com.zhangke.utopia.status.IStatusProvider

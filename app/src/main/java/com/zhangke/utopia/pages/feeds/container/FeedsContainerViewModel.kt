@@ -28,6 +28,7 @@ class FeedsContainerViewModel @Inject constructor(
 
     init {
         loadTabs()
+        onPageChanged(0)
     }
 
     private fun loadTabs() {
@@ -56,28 +57,10 @@ class FeedsContainerViewModel @Inject constructor(
         loadIndexPageStatus(index)
     }
 
-    private fun updateIndexedPageToLoading(index: Int) {
-        if (!_uiState.value.pageUiStateList.isSuccess) return
-        val pageList = _uiState.value.pageUiStateList.requireSuccessData()
-        val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
-            if (i == index) {
-                feedsPageUiState.copy(
-                    feeds = LoadableState.loading()
-                )
-            } else {
-                feedsPageUiState
-            }
-        }
-        _uiState.update {
-            it.copy(
-                pageUiStateList = LoadableState.success(newPageList)
-            )
-        }
-    }
-
     private fun loadIndexPageStatus(index: Int) {
         if (!_uiState.value.pageUiStateList.isSuccess) return
         val pageList = _uiState.value.pageUiStateList.requireSuccessData()
+        if (pageList.isEmpty()) return
         val pageUiState = pageList[index]
         launchInViewModel {
             fetchStatusByUrisUseCase(pageUiState.sourceList)
@@ -97,13 +80,56 @@ class FeedsContainerViewModel @Inject constructor(
                         )
                     }
                 }
+                .onFailure {
+                    updateIndexedPageToFailed(index, it)
+                }
+        }
+    }
+
+    private fun updateIndexedPageToLoading(index: Int) {
+        if (!_uiState.value.pageUiStateList.isSuccess) return
+        val pageList = _uiState.value.pageUiStateList.requireSuccessData()
+        if (pageList.isEmpty()) return
+        val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
+            if (i == index) {
+                feedsPageUiState.copy(
+                    feeds = LoadableState.loading()
+                )
+            } else {
+                feedsPageUiState
+            }
+        }
+        _uiState.update {
+            it.copy(
+                pageUiStateList = LoadableState.success(newPageList)
+            )
+        }
+    }
+
+    private fun updateIndexedPageToFailed(index: Int, exception: Throwable) {
+        if (!_uiState.value.pageUiStateList.isSuccess) return
+        val pageList = _uiState.value.pageUiStateList.requireSuccessData()
+        if (pageList.isEmpty()) return
+        val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
+            if (i == index) {
+                feedsPageUiState.copy(
+                    feeds = LoadableState.failed(exception)
+                )
+            } else {
+                feedsPageUiState
+            }
+        }
+        _uiState.update {
+            it.copy(
+                pageUiStateList = LoadableState.success(newPageList)
+            )
         }
     }
 
     private fun initialState(): FeedsContainerUiState {
         return FeedsContainerUiState(
             pageUiStateList = LoadableState.loading(),
-            tabIndex = -1,
+            tabIndex = 0,
         )
     }
 }

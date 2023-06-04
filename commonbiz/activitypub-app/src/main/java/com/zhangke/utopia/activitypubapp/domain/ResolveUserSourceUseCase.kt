@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypubapp.domain
 
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubAccountAdapter
+import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import javax.inject.Inject

@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.providers
 
 import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypubapp.domain.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.protocol.isTimelineSourceUri
 import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType

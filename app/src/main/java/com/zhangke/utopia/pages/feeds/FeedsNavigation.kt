@@ -23,7 +23,10 @@ fun NavGraphBuilder.registerFeedsNavigation(navController: NavController) {
                 onTabSelected = viewModel::onPageChanged,
                 onAddFeedsClick = {
                     navController.navigate(addSourceRoute)
-                }
+                },
+                onRefresh = {
+                    viewModel.onPageChanged(0)
+                },
             )
         }
     }

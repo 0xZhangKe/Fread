@@ -8,7 +8,7 @@ import javax.inject.Inject
 private const val TABLE_NAME = "UserSources"
 
 @Entity(tableName = TABLE_NAME)
-internal data class UserSourceEntry(
+data class UserSourceEntry(
     @PrimaryKey val webFinger: WebFinger,
     val userId: String,
     val nickName: String,
@@ -17,7 +17,7 @@ internal data class UserSourceEntry(
 )
 
 @Dao
-internal interface UserSourceDao {
+interface UserSourceDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE webFinger=:webFinger")
     suspend fun query(webFinger: WebFinger): UserSourceEntry?

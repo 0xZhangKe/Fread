@@ -7,13 +7,13 @@ import javax.inject.Inject
 private const val TABLE_NAME = "TimelineSources"
 
 @Entity(tableName = TABLE_NAME, primaryKeys = ["host", "type"])
-internal data class TimelineSourceEntry(
+data class TimelineSourceEntry(
     val host: String,
     val type: TimelineSourceType,
 )
 
 @Dao
-internal interface TimelineSourceDao {
+interface TimelineSourceDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE host=:host AND type=:type")
     suspend fun query(host: String, type: TimelineSourceType): TimelineSourceEntry?

@@ -1,22 +1,28 @@
-package com.zhangke.utopia.activitypubapp
+package com.zhangke.utopia.activitypubapp.client
 
 import com.zhangke.activitypub.ActivityPubApplication
+import javax.inject.Inject
 
 private val cachedApplication = mutableMapOf<String, ActivityPubApplication>()
 
-internal fun obtainActivityPubApplication(host: String): ActivityPubApplication {
-    return cachedApplication[host] ?: ActivityPubApplication(
-        host = host,
-        id = "100075",
-        name = "utopia",
-        website = "https://0xzhangke.github.io/",
-        redirectUri = "utopia://oauth.utopia",
-        clientId = "KHGSFM7oZY2_ZhaQRo25DfBRNwERZy7_iqZ_HjA5Sp8",
-        clientSecret = "S0KKhfTQjEN-OZhJCHJYVl2OMYvz1wQiBoy8VDtfSzI",
-        vapidKey = "BOtsUyc0M779KJ0j-AAsv_wANoDuLkh6tTh6l1muA8OY3xVs34iGsUichN7VXNxcMoGKdSbyIEZsnsbJf6e46DA",
-    ).also { cachedApplication[host] = it }
-}
+class ObtainActivityPubApplicationUseCase @Inject constructor() {
 
+    suspend operator fun invoke(host: String): ActivityPubApplication {
+        return obtainActivityPubApplication(host)
+    }
+
+    private fun obtainActivityPubApplication(host: String): ActivityPubApplication {
+        return cachedApplication[host] ?: ActivityPubApplication(
+            host = host,
+            id = "100075",
+            name = "utopia",
+            website = "https://0xzhangke.github.io/",
+            redirectUri = "utopia://oauth.utopia",
+            clientId = "KHGSFM7oZY2_ZhaQRo25DfBRNwERZy7_iqZ_HjA5Sp8",
+            clientSecret = "S0KKhfTQjEN-OZhJCHJYVl2OMYvz1wQiBoy8VDtfSzI",
+            vapidKey = "BOtsUyc0M779KJ0j-AAsv_wANoDuLkh6tTh6l1muA8OY3xVs34iGsUichN7VXNxcMoGKdSbyIEZsnsbJf6e46DA",
+        ).also { cachedApplication[host] = it }
+    }
 //val mastodonUtopiaApplication = ActivityPubApplication(
 //    id = "100075",
 //    name = "utopia",
@@ -37,3 +43,4 @@ internal fun obtainActivityPubApplication(host: String): ActivityPubApplication 
 //    clientSecret = "EM2bIEBGmOMRG4QERTRBx5FfUa496lJ9lJ30kmbZRfs",
 //    vapidKey = "BOtsUyc0M779KJ0j-AAsv_wANoDuLkh6tTh6l1muA8OY3xVs34iGsUichN7VXNxcMoGKdSbyIEZsnsbJf6e46DA",
 //)
+}

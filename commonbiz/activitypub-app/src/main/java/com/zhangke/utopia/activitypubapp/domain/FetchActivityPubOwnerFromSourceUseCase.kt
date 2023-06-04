@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypubapp.domain
 
 import com.google.auto.service.AutoService
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubInstanceOwnerAdapter
+import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.status.domain.IFetchOwnerFromSourceUseCase

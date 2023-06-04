@@ -1,3 +1,3 @@
-package com.zhangke.utopia.status.auth
+package com.zhangke.utopia.status.user
 
 class AuthenticationFailureException(override val message: String?) : RuntimeException(message)

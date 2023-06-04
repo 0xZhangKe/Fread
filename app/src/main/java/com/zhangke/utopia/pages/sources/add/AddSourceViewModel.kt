@@ -9,7 +9,6 @@ import com.zhangke.utopia.composable.textOf
 import com.zhangke.utopia.db.FeedsRepo
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiStateAdapter
-import com.zhangke.utopia.status.domain.CacheSourceUseCase
 import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +26,6 @@ class AddSourceViewModel @Inject constructor(
     private val resolveSourceUseCase: ResolveSourceByUriUseCase,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val feedsRepo: FeedsRepo,
-    private val cacheSourceUseCase: CacheSourceUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialUiState())

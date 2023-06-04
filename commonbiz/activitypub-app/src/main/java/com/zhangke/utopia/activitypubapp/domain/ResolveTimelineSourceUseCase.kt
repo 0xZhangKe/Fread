@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypubapp.domain
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.R
+import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType

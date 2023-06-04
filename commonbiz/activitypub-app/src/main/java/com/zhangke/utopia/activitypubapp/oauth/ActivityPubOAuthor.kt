@@ -11,7 +11,7 @@ import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.user.ActivityPubUser
-import com.zhangke.utopia.activitypubapp.user.ActivityPubUserRepo
+import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch

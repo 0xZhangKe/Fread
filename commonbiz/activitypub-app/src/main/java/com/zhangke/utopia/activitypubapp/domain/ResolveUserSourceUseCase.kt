@@ -16,6 +16,6 @@ class ResolveUserSourceUseCase @Inject constructor(
         val client = obtainActivityPubClientUseCase(webFinger.host)
         return client.accountRepo
             .lookup(webFinger.toString())
-            .map { userSourceAdapter.adapt(it) }
+            .map { userSourceAdapter.createSource(it) }
     }
 }

@@ -5,40 +5,41 @@ import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.api.ActivityPubScope
-import com.zhangke.activitypub.entry.ActivityPubAccount
-import com.zhangke.activitypub.entry.ActivityPubToken
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypubapp.user.ActivityPubUser
+import com.zhangke.utopia.activitypubapp.adapter.ActivityPubAccountAdapter
 import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
+import javax.inject.Singleton
 
 /**
  * Created by ZhangKe on 2022/12/4.
  */
-object ActivityPubOAuthor {
+@Singleton
+class ActivityPubOAuthor(
+    private val repo: ActivityPubUserRepo,
+    private val accountAdapter: ActivityPubAccountAdapter
+) {
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
-    fun startOauth(oauthUrl: String, client: ActivityPubClient) {
+    suspend fun startOauth(oauthUrl: String, client: ActivityPubClient): Boolean {
         openOauthPage(oauthUrl)
-        ApplicationScope.launch {
-            val code = oauthCodeFlow.first()
-            val user = try {
-                val token = client.oauthRepo.getToken(code, ActivityPubScope.ALL).getOrThrow()
-                val account = client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
-                account.toUser(client.baseUrl, token)
-            } catch (e: Exception) {
-                toast(e.message)
-                null
-            }
-            if (user != null) {
-                ActivityPubUserRepo.setCurrentUser(user)
-            }
+        val code = oauthCodeFlow.first()
+        val entity = try {
+            val instance = client.instanceRepo.getInstanceInformation().getOrThrow()
+            val token = client.oauthRepo.getToken(code, ActivityPubScope.ALL).getOrThrow()
+            val account = client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
+            accountAdapter.createEntity(instance, account, token, true)
+        } catch (e: Exception) {
+            toast(e.message)
+            return false
         }
+        repo.updateCurrentUser(entity)
+        return true
     }
 
     internal fun onOauthSuccess(code: String) {
@@ -50,21 +51,5 @@ object ActivityPubOAuthor {
             .build()
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         customTabsIntent.launchUrl(appContext, Uri.parse(oauthUrl))
-    }
-
-    private fun ActivityPubAccount.toUser(
-        domain: String,
-        token: ActivityPubToken
-    ): ActivityPubUser {
-        return ActivityPubUser(
-            domain = domain,
-            name = username,
-            id = id,
-            token = token,
-            avatar = avatar,
-            description = note,
-            homePage = url,
-            selected = true,
-        )
     }
 }

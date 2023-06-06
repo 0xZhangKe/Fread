@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp.user.usecase
+package com.zhangke.utopia.activitypubapp.auth
 
 import com.zhangke.utopia.activitypubapp.client.CreateActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserEntity
@@ -12,7 +12,9 @@ class ActivityPubUserValidationUseCase @Inject constructor(
         val host = userEntity.host
         val client = createActivityPubClientUseCase(
             host = host,
-            tokenProvider = userEntity::token,
+            tokenProvider = {
+                userEntity.token
+            },
             onAuthorizeFailed = { _, _ ->
 
             }

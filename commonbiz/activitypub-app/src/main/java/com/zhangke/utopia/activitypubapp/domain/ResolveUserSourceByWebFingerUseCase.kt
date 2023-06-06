@@ -19,7 +19,7 @@ internal class ResolveUserSourceByWebFingerUseCase @Inject constructor(
         return client.accountRepo
             .lookup(webFinger.toString())
             .getOrThrow()
-            .let { accountAdapter.adapt(it) }
+            .let { accountAdapter.createSource(it) }
             .also { repo.save(it) }
     }
 }

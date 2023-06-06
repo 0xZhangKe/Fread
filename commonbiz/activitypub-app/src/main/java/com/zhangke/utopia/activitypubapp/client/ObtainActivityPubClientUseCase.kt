@@ -21,9 +21,7 @@ class ObtainActivityPubClientUseCase @Inject constructor(
                 userRepo.getCurrentUser()?.token
             },
             onAuthorizeFailed = { url, client ->
-                StatusProviderAuthorizer.onAuthenticationFailure {
-                    ActivityPubOAuthor.startOauth(url, client)
-                }
+                ActivityPubOAuthor.startOauth(url, client)
             }
         ).apply {
             clientCache[host] = this

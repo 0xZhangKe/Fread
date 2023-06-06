@@ -9,7 +9,7 @@ private const val TABLE_NAME = "logged_users"
 @Entity(tableName = TABLE_NAME)
 data class ActivityPubUserEntity(
     /**
-     * it container user id
+     * it will container user id
      */
     @PrimaryKey val uri: String,
     /**
@@ -28,6 +28,9 @@ data class ActivityPubUserEntity(
 
 @Dao
 interface ActivityPubUserDao {
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE active='true'")
+    suspend fun querySelectedUser(): ActivityPubUserEntity?
 
     @Query("SELECT * FROM $TABLE_NAME")
     suspend fun queryAll(): List<ActivityPubUserEntity>

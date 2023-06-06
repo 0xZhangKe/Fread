@@ -14,6 +14,15 @@ class ActivityPubUserRepo @Inject constructor(
         return userDao.queryAll().firstOrNull { it.active }
     }
 
+    suspend fun updateCurrentUser(userEntity: ActivityPubUserEntity) {
+        val insertList = mutableListOf<ActivityPubUserEntity>()
+        userDao.querySelectedUser()
+            ?.copy(active = false)
+            ?.let { insertList += it }
+        insertList += userEntity
+        userDao.insert(insertList)
+    }
+
     suspend fun queryAll(): List<ActivityPubUserEntity> = userDao.queryAll()
 
     suspend fun queryByUri(uri: String): ActivityPubUserEntity? = userDao.queryByUri(uri)

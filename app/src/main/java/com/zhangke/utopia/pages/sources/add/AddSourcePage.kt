@@ -21,6 +21,7 @@ import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.zhangke.framework.ktx.CollectOnComposable
 import com.zhangke.utopia.R
 import com.zhangke.utopia.composable.*
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceNode
@@ -52,6 +53,9 @@ fun NavGraphBuilder.addSourceRoute(navController: NavController) {
             onConfirmClick = viewModel::onConfirmClick,
             onRemoveSourceClick = viewModel::onRemoveSource,
         )
+        viewModel.finishPage.CollectOnComposable {
+            navController.popBackStack()
+        }
     }
 }
 

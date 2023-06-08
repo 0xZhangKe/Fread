@@ -10,9 +10,9 @@ class SourceListAuthValidateUseCase @Inject constructor(
     private val useCases: Set<@JvmSuppressWildcards ISourceListAuthValidateUseCase>,
 ) {
 
-    suspend operator fun invoke(sourceList: List<StatusSource>): Result<Boolean> {
+    suspend operator fun invoke(sourceUriList: List<String>): Result<Boolean> {
         val resultList = useCases.map {
-            it(sourceList)
+            it(sourceUriList)
         }
         resultList.firstOrNull { it.isFailure }?.let { return it }
         return resultList.reduce { acc, result ->
@@ -23,5 +23,5 @@ class SourceListAuthValidateUseCase @Inject constructor(
 
 interface ISourceListAuthValidateUseCase {
 
-    suspend operator fun invoke(sourceList: List<StatusSource>): Result<Boolean>
+    suspend operator fun invoke(sourceUriList: List<String>): Result<Boolean>
 }

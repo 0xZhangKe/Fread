@@ -27,4 +27,8 @@
     <string name="add_feeds_page_empty_name_tips">Please enter a name</string>
 
     <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>
+
+    <string name="auth_success">Login successful</string>
+
+    <string name="auth_failed">Login failed</string>
 </resources>

@@ -21,7 +21,7 @@ class CreateActivityPubClientUseCase @Inject constructor(
         gson: Gson = globalGson,
         redirectUrl: String = REDIRECT_URI,
         tokenProvider: suspend () -> ActivityPubToken?,
-        onAuthorizeFailed: (url: String, client: ActivityPubClient) -> Unit,
+        onAuthorizeFailed: suspend (url: String, client: ActivityPubClient) -> Unit,
     ): ActivityPubClient {
         val application = obtainActivityPubApplicationUseCase(host)
         return ActivityPubClient(

@@ -27,11 +27,10 @@ class TimelineProvider @Inject constructor(
     override suspend fun requestStatuses(
         sourceUri: StatusProviderUri,
     ): Result<List<Status>> {
-        val type = sourceUri.parseTimeline()?.second ?: return Result.failure(
+        val (url, type) = sourceUri.parseTimeline() ?: return Result.failure(
             IllegalArgumentException("$sourceUri is not Timeline source uri!")
         )
-        val host = sourceUri.host
-        val client = obtainActivityPubClientUseCase(host)
+        val client = obtainActivityPubClientUseCase(url.host)
         val timelineRepo = client.timelinesRepo
 
         return when (type) {
@@ -44,7 +43,7 @@ class TimelineProvider @Inject constructor(
                 limit = 50
             )
         }.map { list ->
-            list.map { activityPubStatusAdapter.adapt(it, host) }
+            list.map { activityPubStatusAdapter.adapt(it, url.host) }
         }
     }
 }

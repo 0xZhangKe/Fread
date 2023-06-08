@@ -52,40 +52,45 @@ fun FeedsContainerPage(
         }
         LoadableLayout(state = uiState.pageUiStateList) { feedsList ->
             if (feedsList.isNotEmpty()) {
-                TabRow(
-                    modifier = Modifier
-                        .height(58.dp)
-                        .fillMaxWidth(),
-                    selectedTabIndex = uiState.tabIndex,
-                ) {
-                    feedsList.forEachIndexed { index, item ->
-                        Tab(
-                            selected = uiState.tabIndex == index,
-                            onClick = { onTabSelected(index) },
-                        ) {
-                            Text(
-                                text = item.name,
-                            )
+                Column(modifier = Modifier.fillMaxSize()) {
+                    TabRow(
+                        modifier = Modifier
+                            .height(58.dp)
+                            .fillMaxWidth(),
+                        selectedTabIndex = uiState.tabIndex,
+                    ) {
+                        feedsList.forEachIndexed { index, item ->
+                            Tab(
+                                selected = uiState.tabIndex == index,
+                                onClick = { onTabSelected(index) },
+                            ) {
+                                Text(
+                                    text = item.name,
+                                )
+                            }
                         }
                     }
-                }
-                val pagerState = rememberPagerState(uiState.tabIndex)
-                var currentPageIndex by remember {
-                    mutableStateOf(uiState.tabIndex)
-                }
-                HorizontalPager(
-                    modifier = Modifier.fillMaxSize(),
-                    state = pagerState,
-                    pageCount = feedsList.size,
-                    userScrollEnabled = true,
-                ) { currentPage ->
-                    if (currentPageIndex != currentPage) {
-                        currentPageIndex = currentPage
-                        LaunchedEffect(currentPageIndex) {
-                            onTabSelected(currentPageIndex)
-                        }
+                    val pagerState = rememberPagerState(uiState.tabIndex)
+                    var currentPageIndex by remember {
+                        mutableStateOf(uiState.tabIndex)
                     }
-                    FeedsPage(uiState = feedsList[currentPage])
+                    HorizontalPager(
+                        modifier = Modifier.fillMaxSize(),
+                        state = pagerState,
+                        pageCount = feedsList.size,
+                        userScrollEnabled = true,
+                    ) { currentPage ->
+                        if (currentPageIndex != currentPage) {
+                            currentPageIndex = currentPage
+                            LaunchedEffect(currentPageIndex) {
+                                onTabSelected(currentPageIndex)
+                            }
+                        }
+                        FeedsPage(
+                            modifier = Modifier.fillMaxSize(),
+                            uiState = feedsList[currentPage],
+                        )
+                    }
                 }
             } else {
                 Button(

@@ -4,7 +4,7 @@
     <application>
 
         <activity
-            android:name=".oauth.ActivityPubOAuthRedirectActivity"
+            android:name=".auth.ActivityPubOAuthRedirectActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />

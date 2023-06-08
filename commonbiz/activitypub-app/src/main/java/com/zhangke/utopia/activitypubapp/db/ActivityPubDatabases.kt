@@ -10,6 +10,7 @@ import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceEntry
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceDao
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
 import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserDao
+import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserEntity
 import com.zhangke.utopia.status.utils.UtopiaPlatformTypeConverter
 
 internal const val ACTIVITY_PUB_DB_NAME = "ActivityPubStatusProvider"
@@ -22,7 +23,7 @@ private const val DB_VERSION = 1
     ActivityPubUserTokenConverter::class,
 )
 @Database(
-    entities = [UserSourceEntry::class, TimelineSourceEntry::class],
+    entities = [UserSourceEntry::class, TimelineSourceEntry::class, ActivityPubUserEntity::class],
     version = DB_VERSION,
     exportSchema = false
 )

@@ -9,12 +9,14 @@ import com.zhangke.utopia.composable.textOf
 import com.zhangke.utopia.db.FeedsRepo
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
 import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiStateAdapter
+import com.zhangke.utopia.status.auth.PerformAuthInNecessaryUseCase
 import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -26,6 +28,7 @@ class AddSourceViewModel @Inject constructor(
     private val resolveSourceUseCase: ResolveSourceByUriUseCase,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val feedsRepo: FeedsRepo,
+    private val authInNecessaryUseCase: PerformAuthInNecessaryUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialUiState())
@@ -33,6 +36,9 @@ class AddSourceViewModel @Inject constructor(
 
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: Flow<TextString> = _errorMessageFlow.asSharedFlow()
+
+    private val _finishPage = MutableSharedFlow<Boolean>()
+    val finishPage: SharedFlow<Boolean> get() = _finishPage.asSharedFlow()
 
     fun onAddSources(uris: String) {
         launchInViewModel {
@@ -80,7 +86,15 @@ class AddSourceViewModel @Inject constructor(
                 _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
                 return@launchInViewModel
             }
-            feedsRepo.insert(name, sourceList.map { it.uri })
+            val uriList = sourceList.map { it.uri }
+            val authSuccess = authInNecessaryUseCase(uriList).isSuccess
+            if (authSuccess) {
+                _errorMessageFlow.emit(textOf(R.string.auth_success))
+                feedsRepo.insert(name, uriList)
+                _finishPage.emit(true)
+            } else {
+                _errorMessageFlow.emit(textOf(R.string.auth_failed))
+            }
         }
     }
 

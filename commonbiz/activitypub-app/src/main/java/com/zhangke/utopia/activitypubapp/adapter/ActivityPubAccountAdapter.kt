@@ -3,8 +3,10 @@ package com.zhangke.utopia.activitypubapp.adapter
 import com.zhangke.activitypub.entry.ActivityPubAccount
 import com.zhangke.activitypub.entry.ActivityPubInstance
 import com.zhangke.activitypub.entry.ActivityPubToken
+import com.zhangke.utopia.activitypubapp.domain.ActivityPubAccountToWebFingerUseCase
 import com.zhangke.utopia.activitypubapp.protocol.buildUserSourceUri
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
+import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
 import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserEntity
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
@@ -13,6 +15,7 @@ import javax.inject.Inject
 
 class ActivityPubAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
+    private val accountToWebFinger: ActivityPubAccountToWebFingerUseCase,
 ) {
 
     fun createSource(account: ActivityPubAccount): UserSource {
@@ -21,7 +24,7 @@ class ActivityPubAccountAdapter @Inject constructor(
             name = account.displayName,
             description = account.note,
             thumbnail = account.avatar,
-            webFinger = WebFinger.create(account.acct)!!,
+            webFinger = accountToWebFinger(account),
             uri = account.generateUri(),
         )
     }
@@ -34,7 +37,7 @@ class ActivityPubAccountAdapter @Inject constructor(
     ): ActivityPubUserEntity {
         return ActivityPubUserEntity(
             uri = account.generateUri(),
-            id = WebFinger.create(account.acct)!!.toString(),
+            id = accountToWebFinger(account).toString(),
             platform = instanceAdapter.createPlatform(instance),
             host = ActivityPubUrl.create(instance.domain)!!.host,
             name = account.displayName,
@@ -47,7 +50,7 @@ class ActivityPubAccountAdapter @Inject constructor(
     }
 
     private fun ActivityPubAccount.generateUri(): String {
-        return buildUserSourceUri(WebFinger.create(acct)!!, id).toString()
+        return buildUserSourceUri(accountToWebFinger(this), id).toString()
     }
 
     fun toEntity(
@@ -84,6 +87,27 @@ class ActivityPubAccountAdapter @Inject constructor(
             homepage = entity.homepage,
             active = entity.active,
             validate = validate,
+        )
+    }
+
+    fun fromUserSourceEntity(entity: UserSourceEntry): UserSource {
+        return UserSource(
+            uri = entity.webFinger.toString(),
+            name = entity.nickName,
+            webFinger = entity.webFinger,
+            description = entity.description,
+            thumbnail = entity.thumbnail,
+            userId = entity.userId,
+        )
+    }
+
+    fun toSourceEntityEntry(source: UserSource): UserSourceEntry {
+        return UserSourceEntry(
+            nickName = source.name,
+            webFinger = source.webFinger,
+            description = source.description,
+            thumbnail = source.thumbnail,
+            userId = source.userId,
         )
     }
 }

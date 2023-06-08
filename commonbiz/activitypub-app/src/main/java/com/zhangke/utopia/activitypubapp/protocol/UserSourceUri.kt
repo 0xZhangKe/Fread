@@ -20,7 +20,7 @@ internal fun StatusProviderUri.isUserSource(): Boolean {
     return path == userPath
 }
 
-internal fun StatusProviderUri.parseInfo(): Pair<WebFinger, String>? {
+internal fun StatusProviderUri.parseUserInfo(): Pair<WebFinger, String>? {
     requireActivityPubUri()
     if (path != userPath) return null
     val finger = queries["finger"]?.let { WebFinger.create(it) } ?: return null

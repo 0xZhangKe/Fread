@@ -3,6 +3,7 @@ plugins {
     id("utopia.android.library.compose")
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
+    id("com.google.dagger.hilt.android")
 }
 
 android {

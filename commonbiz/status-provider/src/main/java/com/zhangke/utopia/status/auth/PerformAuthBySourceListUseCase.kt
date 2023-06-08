@@ -7,8 +7,8 @@ class PerformAuthBySourceListUseCase @Inject constructor(
     private val useCases: Set<@JvmSuppressWildcards IPerformAuthBySourceListUseCase>,
 ) {
 
-    suspend operator fun invoke(sourceList: List<StatusSource>): Result<Boolean> {
-        return useCases.map { it(sourceList).isSuccess }
+    suspend operator fun invoke(sourceUriList: List<String>): Result<Boolean> {
+        return useCases.map { it(sourceUriList).isSuccess }
             .reduce { acc, b -> acc && b }
             .let { Result.success(it) }
     }
@@ -16,6 +16,6 @@ class PerformAuthBySourceListUseCase @Inject constructor(
 
 interface IPerformAuthBySourceListUseCase {
 
-    suspend operator fun invoke(sourceList: List<StatusSource>): Result<Boolean>
+    suspend operator fun invoke(sourceUriList: List<String>): Result<Boolean>
 
 }

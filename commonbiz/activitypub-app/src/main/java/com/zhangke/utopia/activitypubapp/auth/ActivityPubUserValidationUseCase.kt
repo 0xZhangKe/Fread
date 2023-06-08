@@ -16,7 +16,7 @@ class ActivityPubUserValidationUseCase @Inject constructor(
                 userEntity.token
             },
             onAuthorizeFailed = { _, _ ->
-
+                // ignore
             }
         )
         val success = client.timelinesRepo.homeTimeline(

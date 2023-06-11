@@ -7,7 +7,6 @@ import javax.inject.Singleton
 /**
  * Created by ZhangKe on 2022/12/9.
  */
-@Singleton
 class StatusProvider @Inject constructor(
     private val providers: Set<@JvmSuppressWildcards IStatusProvider>,
 ) {

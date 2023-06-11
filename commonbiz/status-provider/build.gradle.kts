@@ -7,6 +7,12 @@ android {
     namespace = "com.zhangke.utopia.commonbiz.status.provider"
 }
 
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+}
+
 dependencies {
 
     testImplementation("junit:junit:4.+")

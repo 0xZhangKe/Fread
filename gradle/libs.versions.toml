@@ -40,7 +40,7 @@ auto_service = "1.0.1"
 
 ksp = "1.8.21-1.0.11"
 
-filt = "1.0.1"
+filt = "1.0.3"
 
 
 androidGradlePlugin = "8.0.1"

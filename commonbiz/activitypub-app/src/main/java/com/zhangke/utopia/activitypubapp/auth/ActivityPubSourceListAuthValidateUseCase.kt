@@ -5,7 +5,6 @@ import com.zhangke.utopia.activitypubapp.protocol.isActivityPubUri
 import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserRepo
 import com.zhangke.utopia.status.auth.ISourceListAuthValidateUseCase
 import com.zhangke.utopia.status.source.StatusProviderUri
-import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
 @Filt

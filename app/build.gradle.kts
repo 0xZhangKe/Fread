@@ -45,6 +45,12 @@ android {
     }
 }
 
+kotlin {
+    sourceSets.main {
+        kotlin.srcDir("build/generated/ksp/main/kotlin")
+    }
+}
+
 dependencies {
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":framework"))

@@ -4,7 +4,7 @@ import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.protocol.isActivityPubUri
 import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserRepo
 import com.zhangke.utopia.status.auth.ISourceListAuthValidateUseCase
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
 @Filt

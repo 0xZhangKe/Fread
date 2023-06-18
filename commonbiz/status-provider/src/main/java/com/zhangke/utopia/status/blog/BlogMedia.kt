@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status
+package com.zhangke.utopia.status.blog
 
 data class BlogMedia(
     val url: String,

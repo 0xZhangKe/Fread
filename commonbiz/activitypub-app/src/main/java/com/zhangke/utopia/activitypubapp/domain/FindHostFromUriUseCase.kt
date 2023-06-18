@@ -5,7 +5,7 @@ import com.zhangke.utopia.activitypubapp.protocol.isTimelineSourceUri
 import com.zhangke.utopia.activitypubapp.protocol.isUserSource
 import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
 import com.zhangke.utopia.activitypubapp.protocol.parseUserInfo
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
 class FindHostFromUriUseCase @Inject constructor() {

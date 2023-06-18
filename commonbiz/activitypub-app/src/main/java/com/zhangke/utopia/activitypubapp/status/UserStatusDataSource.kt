@@ -1,0 +1,43 @@
+package com.zhangke.utopia.activitypubapp.status
+
+import com.zhangke.framework.feeds.fetcher.LoadParams
+import com.zhangke.framework.feeds.fetcher.StatusDataSource
+import com.zhangke.framework.feeds.fetcher.StatusSourceData
+import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.status.status.Status
+
+class UserStatusDataSource(
+    private val host: String,
+    private val userId: String,
+    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
+    private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+) : StatusDataSource<String, Status> {
+
+    override suspend fun load(
+        params: LoadParams<String>
+    ): Result<StatusSourceData<String, Status>> {
+        if (params.pageKey == null) return Result.success(
+            StatusSourceData(data = emptyList(), null)
+        )
+        val client = obtainActivityPubClientUseCase(host)
+        return client.accountRepo
+            .getStatuses(
+                userId,
+                limit = params.loadSize,
+                minId = params.pageKey,
+            )
+            .map { list ->
+                list.map { activityPubStatusAdapter.adapt(it, client.application.host) }
+            }.map {
+                StatusSourceData(
+                    data = it,
+                    nextPageKey = it.lastOrNull()?.dataId,
+                )
+            }
+    }
+
+    override fun getRefreshKey(): String {
+        return ""
+    }
+}

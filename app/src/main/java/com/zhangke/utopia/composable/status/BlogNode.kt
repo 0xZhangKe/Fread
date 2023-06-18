@@ -16,9 +16,9 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
-import com.zhangke.utopia.status.Blog
-import com.zhangke.utopia.status.BlogAuthor
-import com.zhangke.utopia.status.StatusAction
+import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.blog.BlogAuthor
+import com.zhangke.utopia.status.status.StatusAction
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.getOrSet
@@ -116,6 +116,7 @@ fun PreviewBlogContentComposable() {
     )
 
     val blog = Blog(
+        id = "",
         author = author,
         supportedAction = listOf(
             StatusAction.Forawrd(),

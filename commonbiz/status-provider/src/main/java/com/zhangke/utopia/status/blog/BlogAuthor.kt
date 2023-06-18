@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status
+package com.zhangke.utopia.status.blog
 
 /**
  * Created by ZhangKe on 2022/12/4.

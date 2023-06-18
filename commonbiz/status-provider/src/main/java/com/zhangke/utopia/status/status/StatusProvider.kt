@@ -1,8 +1,7 @@
-package com.zhangke.utopia.status
+package com.zhangke.utopia.status.status
 
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
-import javax.inject.Singleton
 
 /**
  * Created by ZhangKe on 2022/12/9.

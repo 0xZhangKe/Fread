@@ -1,10 +1,9 @@
-package com.zhangke.utopia.activitypubapp.resolvers
+package com.zhangke.utopia.activitypubapp.source.user
 
 import com.zhangke.utopia.activitypubapp.protocol.isUserSource
 import com.zhangke.utopia.activitypubapp.protocol.parseUserInfo
-import com.zhangke.utopia.activitypubapp.source.user.UserSourceRepo
 import com.zhangke.utopia.status.resolvers.IStatusSourceResolver
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 

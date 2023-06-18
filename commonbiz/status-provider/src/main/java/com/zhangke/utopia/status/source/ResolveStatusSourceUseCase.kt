@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.domain
+package com.zhangke.utopia.status.source
 
 import com.zhangke.utopia.status.resolvers.StatusSourceResolver
 import com.zhangke.utopia.status.source.StatusSource

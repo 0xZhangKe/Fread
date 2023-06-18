@@ -2,7 +2,7 @@ package com.zhangke.utopia.composable.status
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.utopia.status.Status
+import com.zhangke.utopia.status.status.Status
 
 @Composable
 fun StatusNode(

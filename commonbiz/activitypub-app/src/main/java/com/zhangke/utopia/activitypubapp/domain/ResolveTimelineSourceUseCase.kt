@@ -6,7 +6,7 @@ import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
 class ResolveTimelineSourceUseCase @Inject constructor(

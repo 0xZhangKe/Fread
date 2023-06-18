@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp.providers
+package com.zhangke.utopia.activitypubapp.status
 
 import com.zhangke.framework.feeds.fetcher.LoadParams
 import com.zhangke.framework.feeds.fetcher.StatusDataSource
@@ -6,7 +6,7 @@ import com.zhangke.framework.feeds.fetcher.StatusSourceData
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
-import com.zhangke.utopia.status.Status
+import com.zhangke.utopia.status.status.Status
 
 class TimelineStatusDataSource(
     private val host: String,
@@ -18,6 +18,9 @@ class TimelineStatusDataSource(
     override suspend fun load(
         params: LoadParams<String>
     ): Result<StatusSourceData<String, Status>> {
+        if (params.pageKey == null) {
+            return Result.success(StatusSourceData(data = emptyList(), nextPageKey = null))
+        }
         val client = obtainActivityPubClientUseCase(host)
         val timelineRepo = client.timelinesRepo
 
@@ -45,7 +48,7 @@ class TimelineStatusDataSource(
         }
     }
 
-    override fun getRefreshKey(): String? {
-        return null
+    override fun getRefreshKey(): String {
+        return ""
     }
 }

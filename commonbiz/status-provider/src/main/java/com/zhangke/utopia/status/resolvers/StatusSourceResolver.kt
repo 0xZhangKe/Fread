@@ -1,7 +1,7 @@
 package com.zhangke.utopia.status.resolvers
 
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 import javax.inject.Singleton
 

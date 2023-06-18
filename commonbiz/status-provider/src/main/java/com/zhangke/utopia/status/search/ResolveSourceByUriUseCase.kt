@@ -1,6 +1,6 @@
 package com.zhangke.utopia.status.search
 
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 

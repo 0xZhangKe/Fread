@@ -1,8 +1,10 @@
-package com.zhangke.utopia.status
+package com.zhangke.utopia.status.blog
 
+import com.zhangke.utopia.status.status.StatusAction
 import java.util.*
 
 data class Blog(
+    val id: String,
     val author: BlogAuthor,
     val supportedAction: List<StatusAction>,
     val title: String?,

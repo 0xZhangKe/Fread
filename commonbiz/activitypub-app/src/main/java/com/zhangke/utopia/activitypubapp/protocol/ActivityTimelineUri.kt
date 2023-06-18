@@ -4,7 +4,7 @@ import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypubapp.utils.decodeFromBase64
 import com.zhangke.utopia.activitypubapp.utils.encodeToBase64
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 
 // /timeline/?host={server_url_base64}&type=local|public|home
 

@@ -1,8 +1,6 @@
 package com.zhangke.utopia.status.utils
 
-import com.zhangke.utopia.status.source.StatusProviderUri
-
-class StatusSourceUriParser {
+class StatusProviderUriParser {
 
     fun parse(uriString: String): Triple<String, String, Map<String, String>>? {
         val scheme = findScheme(uriString)

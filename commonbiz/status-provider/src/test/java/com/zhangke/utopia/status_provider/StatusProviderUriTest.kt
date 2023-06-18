@@ -1,6 +1,6 @@
 package com.zhangke.utopia.status_provider
 
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import org.junit.Test
 
 class StatusProviderUriTest {

@@ -1,11 +1,10 @@
-package com.zhangke.utopia.activitypubapp.resolvers
+package com.zhangke.utopia.activitypubapp.source.timeline
 
 import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
 import com.zhangke.utopia.activitypubapp.protocol.isTimelineSourceUri
-import com.zhangke.utopia.activitypubapp.source.timeline.TimelineRepo
 import com.zhangke.utopia.status.resolvers.IStatusSourceResolver
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
 internal class TimelineSourceResolver @Inject constructor(

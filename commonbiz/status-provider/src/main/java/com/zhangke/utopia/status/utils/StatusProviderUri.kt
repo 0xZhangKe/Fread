@@ -1,7 +1,6 @@
-package com.zhangke.utopia.status.source
+package com.zhangke.utopia.status.utils
 
 import com.zhangke.utopia.protocol.UtopiaScheme
-import com.zhangke.utopia.status.utils.StatusSourceUriParser
 
 class StatusProviderUri private constructor(
     val host: String,
@@ -50,7 +49,7 @@ class StatusProviderUri private constructor(
         }
 
         fun create(uri: String): StatusProviderUri? {
-            val (host, path, queries) = StatusSourceUriParser().parse(uri) ?: return null
+            val (host, path, queries) = StatusProviderUriParser().parse(uri) ?: return null
             return StatusProviderUri(host, path, queries)
         }
     }

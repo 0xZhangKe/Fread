@@ -1,5 +1,8 @@
 package com.zhangke.framework.utils
 
+import com.zhangke.framework.toast.toast
+import java.lang.Exception
+
 var appDebuggable = false
     private set
 
@@ -12,3 +15,15 @@ inline fun ifDebugging(block: () -> Unit) {
         block()
     }
 }
+
+fun throwInDebug(message: String?, throwable: Throwable? = null) {
+    if (appDebuggable) {
+        toast("Non-fatal error! ${message ?: throwable?.message}")
+        if (throwable != null) throw throwable
+        throw ThrowInDebugException(message)
+    } else {
+        // TODO report to server
+    }
+}
+
+class ThrowInDebugException(message: String?) : RuntimeException(message)

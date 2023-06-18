@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypubapp.protocol
 
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 
 private const val ACTIVITY_PUB_HOST = "activitypub.com"
 

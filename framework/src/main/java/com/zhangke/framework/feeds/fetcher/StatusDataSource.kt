@@ -4,7 +4,7 @@ interface StatusDataSource<Key, Value: StatusData> {
 
     suspend fun load(params: LoadParams<Key>): Result<StatusSourceData<Key, Value>>
 
-    fun getRefreshKey(): Key?
+    fun getRefreshKey(): Key
 }
 
 data class LoadParams<Key>(
@@ -20,6 +20,8 @@ data class StatusSourceData<Key, Value>(
 )
 
 interface StatusData {
+
+    val dataId: String
 
     val datetime: Long
 

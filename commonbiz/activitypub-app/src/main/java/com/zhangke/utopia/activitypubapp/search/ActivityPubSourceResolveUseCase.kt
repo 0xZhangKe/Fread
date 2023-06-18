@@ -4,7 +4,7 @@ import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.domain.ResolveTimelineSourceUseCase
 import com.zhangke.utopia.activitypubapp.domain.ResolveUserSourceUseCase
 import com.zhangke.utopia.status.search.IResolveSourceByUriUseCase
-import com.zhangke.utopia.status.source.StatusProviderUri
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 

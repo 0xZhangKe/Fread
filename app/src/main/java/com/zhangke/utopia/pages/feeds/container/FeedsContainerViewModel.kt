@@ -7,7 +7,8 @@ import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.db.FeedsRepo
 import com.zhangke.utopia.pages.feeds.adapter.FeedsPageUiStateAdapter
-import com.zhangke.utopia.status.domain.FetchStatusByUrisUseCase
+import com.zhangke.utopia.status.status.FetchStatusByUrisUseCase
+import com.zhangke.utopia.status.status.GetStatusFeedsByUrisUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +21,7 @@ import javax.inject.Inject
 class FeedsContainerViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val feedsPageUiStateAdapter: FeedsPageUiStateAdapter,
-    private val fetchStatusByUrisUseCase: FetchStatusByUrisUseCase,
+    private val getStatusFeedsByUrisUseCase: GetStatusFeedsByUrisUseCase,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(initialState())
@@ -63,7 +64,7 @@ class FeedsContainerViewModel @Inject constructor(
         if (pageList.isEmpty()) return
         val pageUiState = pageList[index]
         launchInViewModel {
-            fetchStatusByUrisUseCase(pageUiState.sourceList)
+            getStatusFeedsByUrisUseCase(pageUiState.sourceList, 20)
                 .onSuccess { statusList ->
                     val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
                         if (i == index) {

@@ -6,10 +6,10 @@ import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
 class GetStatusDataSourceByUrisUseCase @Inject constructor(
-    private val useCaseList: List<IGetStatusDataSourceByUriUseCase>,
+    private val useCaseList: Set<@JvmSuppressWildcards IGetStatusDataSourceByUriUseCase>,
 ) {
 
-    suspend operator fun invoke(
+    operator fun invoke(
         uris: List<String>
     ): List<StatusDataSource<*, Status>> {
         return uris
@@ -20,5 +20,5 @@ class GetStatusDataSourceByUrisUseCase @Inject constructor(
 
 interface IGetStatusDataSourceByUriUseCase {
 
-    suspend operator fun invoke(uri: StatusProviderUri): StatusDataSource<*, Status>?
+    operator fun invoke(uri: StatusProviderUri): StatusDataSource<*, Status>?
 }

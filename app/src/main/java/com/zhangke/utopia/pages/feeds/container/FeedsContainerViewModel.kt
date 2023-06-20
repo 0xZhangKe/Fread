@@ -4,11 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.feeds.fetcher.FeedsFetcher
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.db.FeedsRepo
+import com.zhangke.utopia.pages.feeds.FeedsPageUiState
 import com.zhangke.utopia.pages.feeds.adapter.FeedsPageUiStateAdapter
-import com.zhangke.utopia.status.status.FetchStatusByUrisUseCase
 import com.zhangke.utopia.status.status.GetStatusFeedsByUrisUseCase
+import com.zhangke.utopia.status.status.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -23,6 +25,8 @@ class FeedsContainerViewModel @Inject constructor(
     private val feedsPageUiStateAdapter: FeedsPageUiStateAdapter,
     private val getStatusFeedsByUrisUseCase: GetStatusFeedsByUrisUseCase,
 ) : ViewModel() {
+
+    private val pagedFetchers = mutableMapOf<Int, FeedsFetcher<Status>>()
 
     private val _uiState = MutableStateFlow(initialState())
     val uiState: StateFlow<FeedsContainerUiState> = _uiState.asStateFlow()
@@ -39,12 +43,15 @@ class FeedsContainerViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            val feeds = feedsRepo.queryAll().map {
-                feedsPageUiStateAdapter.adapt(it)
+            pagedFetchers.clear()
+            val pageStates = feedsRepo.queryAll().mapIndexed { index, feeds ->
+                val fetcher = getStatusFeedsByUrisUseCase(feeds.sourceList, 20)
+                pagedFetchers[index] = fetcher
+                feedsPageUiStateAdapter.adapt(feeds, fetcher.dataFlow)
             }
             _uiState.update {
                 it.copy(
-                    pageUiStateList = LoadableState.success(feeds)
+                    pageUiStateList = LoadableState.success(pageStates)
                 )
             }
         }
@@ -54,7 +61,7 @@ class FeedsContainerViewModel @Inject constructor(
         _uiState.update {
             it.copy(tabIndex = index)
         }
-        updateIndexedPageToLoading(index)
+        updateIndexedPageToRefreshing(index)
         loadIndexPageStatus(index)
     }
 
@@ -62,60 +69,53 @@ class FeedsContainerViewModel @Inject constructor(
         if (!_uiState.value.pageUiStateList.isSuccess) return
         val pageList = _uiState.value.pageUiStateList.requireSuccessData()
         if (pageList.isEmpty()) return
-        val pageUiState = pageList[index]
+        val fetcher = pagedFetchers[index]!!
+
+        updateIndexedPageToLoading(index)
         launchInViewModel {
-            getStatusFeedsByUrisUseCase(pageUiState.sourceList, 20)
-                .onSuccess { statusList ->
-                    val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
-                        if (i == index) {
-                            feedsPageUiState.copy(
-                                feeds = LoadableState.success(statusList)
-                            )
-                        } else {
-                            feedsPageUiState
-                        }
-                    }
-                    _uiState.update { containerState ->
-                        containerState.copy(
-                            pageUiStateList = LoadableState.success(newPageList)
-                        )
-                    }
-                }
-                .onFailure {
-                    updateIndexedPageToFailed(index, it)
+            fetcher.loadNextPage()
+                .onSuccess {
+                    updateIndexedPageToData(index)
+                }.onFailure {
+                    updateIndexedPageToData(index)
                 }
         }
     }
 
-    private fun updateIndexedPageToLoading(index: Int) {
-        if (!_uiState.value.pageUiStateList.isSuccess) return
-        val pageList = _uiState.value.pageUiStateList.requireSuccessData()
-        if (pageList.isEmpty()) return
-        val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
-            if (i == index) {
-                feedsPageUiState.copy(
-                    feeds = LoadableState.loading()
-                )
-            } else {
-                feedsPageUiState
-            }
-        }
-        _uiState.update {
+    private fun updateIndexedPageToRefreshing(index: Int) {
+        updateIndexedPage(index) {
             it.copy(
-                pageUiStateList = LoadableState.success(newPageList)
+                refreshing = true,
+                loading = false,
             )
         }
     }
 
-    private fun updateIndexedPageToFailed(index: Int, exception: Throwable) {
+    private fun updateIndexedPageToLoading(index: Int) {
+        updateIndexedPage(index) {
+            it.copy(
+                refreshing = false,
+                loading = true,
+            )
+        }
+    }
+
+    private fun updateIndexedPageToData(index: Int) {
+        updateIndexedPage(index) {
+            it.copy(
+                refreshing = false,
+                loading = false,
+            )
+        }
+    }
+
+    private fun updateIndexedPage(index: Int, block: (FeedsPageUiState) -> FeedsPageUiState) {
         if (!_uiState.value.pageUiStateList.isSuccess) return
         val pageList = _uiState.value.pageUiStateList.requireSuccessData()
         if (pageList.isEmpty()) return
         val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
             if (i == index) {
-                feedsPageUiState.copy(
-                    feeds = LoadableState.failed(exception)
-                )
+                block(feedsPageUiState)
             } else {
                 feedsPageUiState
             }

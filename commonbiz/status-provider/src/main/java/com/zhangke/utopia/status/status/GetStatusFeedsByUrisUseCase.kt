@@ -9,7 +9,7 @@ class GetStatusFeedsByUrisUseCase @Inject constructor(
     private val generator: FeedsGenerator<Status>,
 ) {
 
-    suspend operator fun invoke(
+    operator fun invoke(
         uris: List<String>,
         pageSize: Int,
     ): FeedsFetcher<Status> {

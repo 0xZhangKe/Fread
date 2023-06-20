@@ -11,14 +11,15 @@ import com.zhangke.utopia.activitypubapp.protocol.parseUserInfo
 import com.zhangke.utopia.status.status.IGetStatusDataSourceByUriUseCase
 import com.zhangke.utopia.status.status.Status
 import com.zhangke.utopia.status.utils.StatusProviderUri
+import javax.inject.Inject
 
 @Filt
-class GetUserStatusDataSourceFromUriUseCase(
+class GetUserStatusDataSourceFromUriUseCase @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
 ) : IGetStatusDataSourceByUriUseCase {
 
-    override suspend fun invoke(uri: StatusProviderUri): StatusDataSource<*, Status>? {
+    override fun invoke(uri: StatusProviderUri): StatusDataSource<*, Status>? {
         getUserDataSource(uri)?.let { return it }
         getTimelineDataSource(uri)?.let { return it }
         return null

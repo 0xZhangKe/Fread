@@ -4,9 +4,9 @@ import com.zhangke.activitypub.entry.ActivityPubAccount
 import com.zhangke.activitypub.entry.ActivityPubInstance
 import com.zhangke.activitypub.entry.ActivityPubToken
 import com.zhangke.utopia.activitypubapp.domain.ActivityPubAccountToWebFingerUseCase
-import com.zhangke.utopia.activitypubapp.protocol.buildUserSourceUri
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
+import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
 import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserEntity
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
@@ -25,7 +25,6 @@ class ActivityPubAccountAdapter @Inject constructor(
             description = account.note,
             thumbnail = account.avatar,
             webFinger = accountToWebFinger(account),
-            uri = account.generateUri(),
         )
     }
 
@@ -50,7 +49,7 @@ class ActivityPubAccountAdapter @Inject constructor(
     }
 
     private fun ActivityPubAccount.generateUri(): String {
-        return buildUserSourceUri(accountToWebFinger(this), id).toString()
+        return ActivityPubUserUri.create(id, accountToWebFinger(this)).toString()
     }
 
     fun toEntity(
@@ -92,7 +91,6 @@ class ActivityPubAccountAdapter @Inject constructor(
 
     fun fromUserSourceEntity(entity: UserSourceEntry): UserSource {
         return UserSource(
-            uri = entity.webFinger.toString(),
             name = entity.nickName,
             webFinger = entity.webFinger,
             description = entity.description,

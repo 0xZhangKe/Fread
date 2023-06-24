@@ -1,4 +1,4 @@
-package com.zhangke.utopia.composable
+package com.zhangke.framework.composable
 
 import androidx.compose.material.SnackbarDuration
 import androidx.compose.material.SnackbarHost

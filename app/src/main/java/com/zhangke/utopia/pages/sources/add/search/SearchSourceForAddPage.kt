@@ -43,8 +43,8 @@ import androidx.navigation.compose.composable
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.utopia.R
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceNode
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
+import com.zhangke.utopia.pages.feeds.shared.source.StatusSourceNode
+import com.zhangke.utopia.pages.feeds.shared.source.StatusSourceUiState
 import com.zhangke.utopia.pages.sources.add.addSourceRoute
 import java.net.URLEncoder
 
@@ -110,7 +110,7 @@ fun SearchSourceForAddPage(
                     }
                 }
                 var inputtedValue by remember {
-                    mutableStateOf("m.cmx.im")
+                    mutableStateOf("")
                 }
                 TextField(
                     modifier = Modifier

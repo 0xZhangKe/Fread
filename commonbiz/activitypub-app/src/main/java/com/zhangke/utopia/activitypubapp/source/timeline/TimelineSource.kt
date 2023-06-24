@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.source.timeline
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.R
-import com.zhangke.utopia.activitypubapp.protocol.buildTimelineSourceUri
+import com.zhangke.utopia.activitypubapp.uri.timeline.ActivityTimelineUri
 import com.zhangke.utopia.status.source.StatusSource
 
 class TimelineSource(
@@ -11,7 +11,7 @@ class TimelineSource(
     override val description: String = ""
 ) : StatusSource {
 
-    override val uri: String = buildTimelineSourceUri(host, type).toString()
+    override val uri: String = ActivityTimelineUri.create(host, type).toString()
 
     override val name: String = type.nickName
 

@@ -1,25 +1,27 @@
 package com.zhangke.utopia.activitypubapp.source.user
 
-import com.zhangke.utopia.activitypubapp.protocol.isUserSource
-import com.zhangke.utopia.activitypubapp.protocol.parseUserInfo
+import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUriValidateUseCase
+import com.zhangke.utopia.activitypubapp.uri.user.ParseUriToUserUriUseCase
 import com.zhangke.utopia.status.resolvers.IStatusSourceResolver
-import com.zhangke.utopia.status.utils.StatusProviderUri
 import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
 internal class UserSourceResolver @Inject constructor(
     private val repo: UserSourceRepo,
+    private val userUriValidateUseCase: ActivityPubUserUriValidateUseCase,
+    private val parseUriToUserUriUseCase: ParseUriToUserUriUseCase,
 ) : IStatusSourceResolver {
 
     override fun applicable(uri: StatusProviderUri): Boolean {
-        return uri.isUserSource()
+        return userUriValidateUseCase(uri)
     }
 
     override suspend fun resolve(uri: StatusProviderUri): Result<StatusSource> {
-        val (webFinger, userId) = uri.parseUserInfo() ?: return Result.failure(
+        val userUri = parseUriToUserUriUseCase(uri) ?: return Result.failure(
             IllegalArgumentException("$uri is not a UserSource!")
         )
-        return repo.query(webFinger)?.let { Result.success(it) } ?: Result.failure(
+        return repo.query(userUri.finger)?.let { Result.success(it) } ?: Result.failure(
             IllegalArgumentException("$uri not found!")
         )
     }

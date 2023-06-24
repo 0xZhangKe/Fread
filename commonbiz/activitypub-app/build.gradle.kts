@@ -39,7 +39,6 @@ dependencies {
     implementation(project(path = ":framework"))
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-provider"))
-    implementation(project(path = ":commonbiz:protocol"))
     implementation(project(path = ":ActivityPub-Kotlin"))
 
     implementation(libs.bundles.kotlin)

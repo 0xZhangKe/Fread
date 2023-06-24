@@ -1,15 +1,18 @@
 package com.zhangke.utopia.pages.sources.add
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.ktx.map
 import com.zhangke.utopia.R
-import com.zhangke.utopia.composable.TextString
-import com.zhangke.utopia.composable.textOf
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.textOf
 import com.zhangke.utopia.db.FeedsRepo
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiStateAdapter
-import com.zhangke.utopia.status.auth.PerformAuthInNecessaryUseCase
+import com.zhangke.utopia.pages.feeds.shared.adapter.StatusSourceUiStateAdapter
+import com.zhangke.utopia.pages.feeds.shared.source.StatusSourceUiState
+import com.zhangke.utopia.status.auth.LaunchAuthBySourceListUseCase
+import com.zhangke.utopia.status.auth.SourceListAuthValidateUseCase
 import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +22,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -28,11 +30,13 @@ class AddSourceViewModel @Inject constructor(
     private val resolveSourceUseCase: ResolveSourceByUriUseCase,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val feedsRepo: FeedsRepo,
-    private val authInNecessaryUseCase: PerformAuthInNecessaryUseCase,
+    private val sourceListAuthValidateUseCase: SourceListAuthValidateUseCase,
+    private val launchAuthBySourceListUseCase: LaunchAuthBySourceListUseCase,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(initialUiState())
-    val uiState: StateFlow<AddSourceUiState> = _uiState.asStateFlow()
+    private val viewModelState = MutableStateFlow(initialViewModelState())
+
+    val uiState: StateFlow<AddSourceUiState> = viewModelState.map(viewModelScope) { it.toUiState() }
 
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: Flow<TextString> = _errorMessageFlow.asSharedFlow()
@@ -43,64 +47,127 @@ class AddSourceViewModel @Inject constructor(
     fun onAddSources(uris: String) {
         launchInViewModel {
             val uriArray = uris.split(',')
-            val sourceList = mutableListOf<StatusSourceUiState>()
-            sourceList.addAll(_uiState.value.sourceList)
+            val sourceList = mutableListOf<StatusSource>()
+            sourceList.addAll(viewModelState.value.sourceList)
             uriArray.forEach { uri ->
                 resolveSourceUseCase(uri)
                     .onSuccess { source ->
                         source?.takeIf { item -> !sourceList.container { it.uri == item.uri } }
-                            ?.toUiState()?.let { sourceList += it }
+                            ?.let { sourceList += it }
                     }
             }
-            _uiState.update {
-                it.copy(
-                    sourceList = sourceList
-                )
+            viewModelState.update {
+                it.copy(sourceList = sourceList)
             }
         }
     }
 
-    private fun StatusSource.toUiState(): StatusSourceUiState {
-        return statusSourceUiStateAdapter.adapt(
-            this,
-            addEnabled = false,
-            removeEnabled = true,
-        )
-    }
-
     fun onRemoveSource(source: StatusSourceUiState) {
-        _uiState.update { state ->
+        viewModelState.update { state ->
             state.copy(
-                sourceList = state.sourceList.toMutableList()
-                    .also { list ->
-                        list.remove(source)
-                    }
+                sourceList = state.sourceList.filter { it.uri != source.uri }
             )
         }
     }
 
-    fun onConfirmClick(name: String) {
+    fun onSourceNameInput(name: String) {
+        viewModelState.update {
+            it.copy(sourceName = name)
+        }
+    }
+
+    fun onConfirmClick() {
         launchInViewModel {
-            val sourceList = _uiState.value.sourceList
+            val currentState = viewModelState.value
+            if (currentState.sourceName.isEmpty()) {
+                _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_name_tips))
+                return@launchInViewModel
+            }
+            val sourceList = currentState.sourceList
             if (sourceList.isEmpty()) {
                 _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
                 return@launchInViewModel
             }
-            val uriList = sourceList.map { it.uri }
-            val authSuccess = authInNecessaryUseCase(uriList).isSuccess
-            if (authSuccess) {
-                _errorMessageFlow.emit(textOf(R.string.auth_success))
-                feedsRepo.insert(name, uriList)
-                _finishPage.emit(true)
-            } else {
-                _errorMessageFlow.emit(textOf(R.string.auth_failed))
-            }
+            sourceListAuthValidateUseCase(sourceList)
+                .onFailure {
+                    _errorMessageFlow.emit(textOf(it.message.orEmpty()))
+                }.onSuccess {
+                    if (it.invalidateList.isEmpty()) {
+                        onReadyToAdd()
+                    } else {
+                        viewModelState.update { state ->
+                            state.copy(
+                                showChooseSourceDialog = true,
+                                invalidateSourceList = it.invalidateList,
+                            )
+                        }
+                    }
+                }
         }
     }
 
-    private fun initialUiState(): AddSourceUiState {
-        return AddSourceUiState(
+    fun onAuthItemClick(source: StatusSourceUiState) {
+        val sourceModel = viewModelState.value.invalidateSourceList.first { it.uri == source.uri }
+        launchInViewModel {
+            launchAuthBySourceListUseCase(sourceModel)
+                .onSuccess {
+                    _errorMessageFlow.emit(textOf(R.string.auth_success))
+                    onConfirmClick()
+                }.onFailure {
+                    _errorMessageFlow.emit(textOf(R.string.auth_failed))
+                }
+        }
+    }
+
+    fun onChooseDialogDismissRequest() {
+        viewModelState.update {
+            it.copy(showChooseSourceDialog = false)
+        }
+    }
+
+    private fun onReadyToAdd() {
+        val currentState = viewModelState.value
+        val sourceUriList = currentState.sourceList.map { it.uri }
+        val sourceName = currentState.sourceName
+        launchInViewModel {
+            feedsRepo.insert(sourceName, sourceUriList)
+            _finishPage.emit(true)
+        }
+    }
+
+    private fun initialViewModelState(): AddSourceViewModelState {
+        return AddSourceViewModelState(
             sourceList = emptyList(),
+            sourceName = "",
+            showChooseSourceDialog = false,
+            invalidateSourceList = emptyList(),
+        )
+    }
+
+    private fun AddSourceViewModelState.toUiState(): AddSourceUiState {
+        return AddSourceUiState(
+            sourceList = sourceList.map { it.toUiState() },
+            sourceName = sourceName,
+            showChooseSourceDialog = showChooseSourceDialog,
+            invalidateSourceList = invalidateSourceList.map { it.toUiState(removeEnabled = false) }
+        )
+    }
+
+    private fun StatusSource.toUiState(
+        addEnabled: Boolean = false,
+        removeEnabled: Boolean = true,
+    ): StatusSourceUiState {
+        return statusSourceUiStateAdapter.adapt(
+            this,
+            addEnabled = addEnabled,
+            removeEnabled = removeEnabled,
         )
     }
 }
+
+data class AddSourceViewModelState(
+    val sourceList: List<StatusSource>,
+    val sourceName: String,
+    val showChooseSourceDialog: Boolean,
+    val invalidateSourceList: List<StatusSource>,
+)

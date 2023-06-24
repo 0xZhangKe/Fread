@@ -3,8 +3,8 @@ package com.zhangke.utopia.pages.sources.add.search
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiStateAdapter
+import com.zhangke.utopia.pages.feeds.shared.source.StatusSourceUiState
+import com.zhangke.utopia.pages.feeds.shared.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.status.search.SearchStatusSourceUseCase
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel

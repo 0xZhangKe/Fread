@@ -28,7 +28,10 @@
 
     <string name="add_feeds_page_empty_source_tips">请添加信息源</string>
 
+    <string name="add_feeds_choose_auth_dialog_title">请选择要登录的服务器</string>
+
     <string name="auth_success">登录成功</string>
 
     <string name="auth_failed">登录失败</string>
+
 </resources>

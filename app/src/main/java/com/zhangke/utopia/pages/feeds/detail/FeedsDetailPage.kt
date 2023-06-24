@@ -6,7 +6,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.utopia.composable.Toolbar
+import com.zhangke.framework.composable.Toolbar
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable

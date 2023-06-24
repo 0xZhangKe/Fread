@@ -1,8 +1,7 @@
 package com.zhangke.utopia.pages.sources.add.search
 
 import com.zhangke.framework.composable.LoadableState
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
-import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.pages.feeds.shared.source.StatusSourceUiState
 
 data class SearchSourceForAddUiState(
     val addedSourceUriList: List<String>,

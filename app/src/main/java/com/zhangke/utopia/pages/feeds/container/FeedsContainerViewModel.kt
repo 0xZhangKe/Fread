@@ -33,7 +33,6 @@ class FeedsContainerViewModel @Inject constructor(
 
     init {
         loadTabs()
-        onPageChanged(0)
     }
 
     private fun loadTabs() {

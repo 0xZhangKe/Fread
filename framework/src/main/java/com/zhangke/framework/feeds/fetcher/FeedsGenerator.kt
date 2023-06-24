@@ -7,7 +7,9 @@ class FeedsGenerator<Value : StatusData> @Inject constructor() {
     fun generate(
         paramsList: List<GenerateParams<Value>>,
     ): GenerateResult<Value> {
-        val minDatetime = paramsList.map { it.statusList }.minOf { it.last().datetime }
+        val minDatetime = paramsList.mapNotNull {
+            it.statusList.takeIf { list -> list.isNotEmpty() }
+        }.minOf { it.last().datetime }
         val resultList = mutableListOf<Value>()
         val pagingToEndId = HashMap<StatusPagingSource<*, *>, String>()
         paramsList.forEach { param ->

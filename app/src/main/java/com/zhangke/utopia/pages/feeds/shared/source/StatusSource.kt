@@ -1,4 +1,4 @@
-package com.zhangke.utopia.pages.feeds.shared.composable
+package com.zhangke.utopia.pages.feeds.shared.source
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -28,35 +28,6 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
-import com.zhangke.utopia.status.source.StatusSource
-import javax.inject.Inject
-
-data class StatusSourceUiState(
-    val uri: String,
-    val name: String,
-    val description: String,
-    val thumbnail: String?,
-    val addEnabled: Boolean,
-    val removeEnabled: Boolean,
-)
-
-class StatusSourceUiStateAdapter @Inject constructor() {
-
-    fun adapt(
-        source: StatusSource,
-        addEnabled: Boolean,
-        removeEnabled: Boolean,
-    ): StatusSourceUiState {
-        return StatusSourceUiState(
-            uri = source.uri,
-            name = source.name,
-            description = source.description,
-            thumbnail = source.thumbnail,
-            addEnabled = addEnabled,
-            removeEnabled = removeEnabled,
-        )
-    }
-}
 
 @Composable
 fun StatusSourceNode(

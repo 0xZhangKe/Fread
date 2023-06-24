@@ -1,5 +1,6 @@
 package com.zhangke.utopia.pages.sources.add
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -13,22 +14,29 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.compose.composable
 import androidx.navigation.navArgument
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.UtopiaDialog
+import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.snackbarHost
+import com.zhangke.framework.composable.textString
 import com.zhangke.framework.ktx.CollectOnComposable
 import com.zhangke.utopia.R
 import com.zhangke.utopia.composable.*
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceNode
-import com.zhangke.utopia.pages.feeds.shared.composable.StatusSourceUiState
+import com.zhangke.utopia.pages.feeds.shared.source.StatusSourceNode
+import com.zhangke.utopia.pages.feeds.shared.source.StatusSourceUiState
 import com.zhangke.utopia.pages.sources.add.search.searchSourceForAddRouter
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.launch
 
 const val addSourceRoute = "source/add?addUris={addUris}"
 
@@ -51,7 +59,10 @@ fun NavGraphBuilder.addSourceRoute(navController: NavController) {
                 navController.navigate(searchSourceForAddRouter)
             },
             onConfirmClick = viewModel::onConfirmClick,
+            onNameInputValueChanged = viewModel::onSourceNameInput,
             onRemoveSourceClick = viewModel::onRemoveSource,
+            onChooseSourceItemClick = viewModel::onAuthItemClick,
+            onChooseSourceDialogDismissRequest = viewModel::onChooseDialogDismissRequest,
         )
         viewModel.finishPage.CollectOnComposable {
             navController.popBackStack()
@@ -65,16 +76,14 @@ fun AddSourcePage(
     uiState: AddSourceUiState,
     errorMessageFlow: Flow<TextString>,
     onAddSourceClick: () -> Unit,
-    onConfirmClick: (name: String) -> Unit,
+    onConfirmClick: () -> Unit,
+    onNameInputValueChanged: (String) -> Unit,
     onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
+    onChooseSourceItemClick: (StatusSourceUiState) -> Unit,
+    onChooseSourceDialogDismissRequest: () -> Unit,
 ) {
     val snackbarHostState = rememberSnackbarHostState()
     ConsumeSnackbarFlow(snackbarHostState, errorMessageFlow)
-    var inputtedText by remember {
-        mutableStateOf("")
-    }
-    val scope = rememberCoroutineScope()
-    val context = LocalContext.current
     Scaffold(
         topBar = {
             Toolbar(
@@ -82,17 +91,7 @@ fun AddSourcePage(
                 actions = {
                     IconButton(
                         modifier = Modifier.size(24.dp),
-                        onClick = {
-                            if (inputtedText.isNotEmpty()) {
-                                onConfirmClick(inputtedText)
-                            } else {
-                                scope.launch {
-                                    val errorTip =
-                                        context.getString(R.string.add_feeds_page_empty_name_tips)
-                                    snackbarHostState.showSnackbar(errorTip)
-                                }
-                            }
-                        },
+                        onClick = onConfirmClick,
                     ) {
                         Icon(
                             painter = rememberVectorPainter(image = Icons.Default.PostAdd),
@@ -124,8 +123,8 @@ fun AddSourcePage(
             ) {
                 TextField(
                     modifier = Modifier.fillMaxWidth(),
-                    value = inputtedText,
-                    onValueChange = { inputtedText = it },
+                    value = uiState.sourceName,
+                    onValueChange = onNameInputValueChanged,
                     colors = TextFieldDefaults.textFieldColors(
                         backgroundColor = Color.Transparent
                     ),
@@ -147,4 +146,43 @@ fun AddSourcePage(
             }
         }
     }
+    if (uiState.showChooseSourceDialog && uiState.invalidateSourceList.isNotEmpty()) {
+        ChooseSourceDialog(
+            uiState.invalidateSourceList,
+            onChooseSourceItemClick,
+            onChooseSourceDialogDismissRequest,
+        )
+    }
+}
+
+@Composable
+private fun ChooseSourceDialog(
+    sourceList: List<StatusSourceUiState>,
+    onSourceItemClick: (StatusSourceUiState) -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+    UtopiaDialog(
+        onDismissRequest = onDismissRequest,
+        title = stringResource(id = R.string.add_feeds_choose_auth_dialog_title),
+        content = {
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .heightIn(max = screenHeight)
+            ) {
+                items(sourceList) { item ->
+                    StatusSourceNode(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable {
+                                onSourceItemClick(item)
+                            },
+                        source = item,
+                    )
+                }
+            }
+        }
+    )
 }

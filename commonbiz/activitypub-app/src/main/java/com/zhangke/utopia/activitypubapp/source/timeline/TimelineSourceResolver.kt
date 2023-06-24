@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.source.timeline
 
-import com.zhangke.utopia.activitypubapp.protocol.parseTimeline
-import com.zhangke.utopia.activitypubapp.protocol.isTimelineSourceUri
+import com.zhangke.utopia.activitypubapp.uri.timeline.ParseUriToTimelineUriUseCase
+import com.zhangke.utopia.activitypubapp.uri.timeline.TimelineUriValidateUseCase
 import com.zhangke.utopia.status.resolvers.IStatusSourceResolver
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.utils.StatusProviderUri
@@ -9,16 +9,19 @@ import javax.inject.Inject
 
 internal class TimelineSourceResolver @Inject constructor(
     private val repo: TimelineRepo,
+    private val timelineUriValidateUseCase: TimelineUriValidateUseCase,
+    private val parseUriToTimelineUriUseCase: ParseUriToTimelineUriUseCase,
 ) : IStatusSourceResolver {
 
     override fun applicable(uri: StatusProviderUri): Boolean {
-        return uri.isTimelineSourceUri()
+        return timelineUriValidateUseCase(uri)
     }
 
     override suspend fun resolve(uri: StatusProviderUri): Result<StatusSource> {
-        val (serverUrl, type) = uri.parseTimeline()
+        val timelineUri = parseUriToTimelineUriUseCase(uri)
             ?: throw IllegalArgumentException("$uri is not a timeline source!")
-        return repo.query(serverUrl.host, type)?.let { Result.success(it) } ?: Result.failure(
+        return repo.query(timelineUri.timelineServerHost, timelineUri.type)
+            ?.let { Result.success(it) } ?: Result.failure(
             IllegalArgumentException("Unresolved $uri")
         )
     }

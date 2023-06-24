@@ -71,8 +71,8 @@ fun FeedsContainerPage(
                         }
                     }
                     val pagerState = rememberPagerState(uiState.tabIndex)
-                    var currentPageIndex by remember {
-                        mutableStateOf(uiState.tabIndex)
+                    var currentPageIndex: Int? by remember {
+                        mutableStateOf(null)
                     }
                     HorizontalPager(
                         modifier = Modifier.fillMaxSize(),
@@ -82,8 +82,11 @@ fun FeedsContainerPage(
                     ) { currentPage ->
                         if (currentPageIndex != currentPage) {
                             currentPageIndex = currentPage
-                            LaunchedEffect(currentPageIndex) {
-                                onTabSelected(currentPageIndex)
+                            val localPageIndex = currentPageIndex
+                            if (localPageIndex != null) {
+                                LaunchedEffect(localPageIndex) {
+                                    onTabSelected(localPageIndex)
+                                }
                             }
                         }
                         FeedsPage(

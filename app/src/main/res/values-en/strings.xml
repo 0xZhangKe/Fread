@@ -28,6 +28,8 @@
 
     <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>
 
+    <string name="add_feeds_choose_auth_dialog_title">Please select login server</string>
+
     <string name="auth_success">Login successful</string>
 
     <string name="auth_failed">Login failed</string>

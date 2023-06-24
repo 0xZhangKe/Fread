@@ -1,7 +1,5 @@
 package com.zhangke.utopia.status.utils
 
-import com.zhangke.utopia.protocol.UtopiaScheme
-
 class StatusProviderUri private constructor(
     val host: String,
     /**
@@ -24,7 +22,7 @@ class StatusProviderUri private constructor(
 
     companion object {
 
-        const val SCHEME = UtopiaScheme
+        const val SCHEME = "utopiaapp"
 
         fun build(
             host: String,

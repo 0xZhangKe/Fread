@@ -18,7 +18,6 @@ dependencies {
     testImplementation("junit:junit:4.+")
     testImplementation(libs.bundles.kotlin)
 
-    implementation(project(path = ":commonbiz:protocol"))
     implementation(project(path = ":framework"))
 
     implementation(libs.bundles.kotlin)

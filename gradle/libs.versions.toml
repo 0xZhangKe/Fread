@@ -23,6 +23,8 @@ androidx-hilt-nav-compose = "1.0.0"
 androidx-compose-bom = "2023.01.00"
 androidx-constraintlayout-compose = "1.0.0-beta02"
 androidx-lifecycle = "2.4.1"
+androidx-paging = "3.1.1"
+androidx-paging-compose = "3.2.0-rc01"
 
 hilt = "2.44"
 
@@ -105,6 +107,8 @@ androidx-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycl
 androidx-lifecycle-compiler = { group = "androidx.lifecycle", name = "lifecycle-compiler", version.ref = "androidx.lifecycle" }
 androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecycle-common-java8", version.ref = "androidx.lifecycle" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidx.lifecycle" }
+androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidx.paging"}
+androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx.paging.compose"}
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin.coroutine" }

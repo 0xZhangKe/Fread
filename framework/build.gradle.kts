@@ -66,4 +66,6 @@ dependencies {
     kapt(libs.auto.service)
     implementation(libs.filt.annotaions)
     ksp(libs.filt.compiler)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
 }

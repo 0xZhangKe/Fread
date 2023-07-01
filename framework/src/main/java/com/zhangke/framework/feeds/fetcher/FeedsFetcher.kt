@@ -22,10 +22,11 @@ class FeedsFetcher<Value : StatusData>(
         _dataFlow.tryEmit(emptyList())
     }
 
-    suspend fun refresh() {
+    suspend fun refresh(): Result<Unit> {
         _dataFlow.emit(emptyList())
         pagingList.forEach { it.refresh() }
         pagingToStartId.clear()
+        return loadNextPage()
     }
 
     suspend fun loadNextPage(): Result<Unit> {

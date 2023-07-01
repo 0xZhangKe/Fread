@@ -27,6 +27,7 @@ fun NavGraphBuilder.registerFeedsNavigation(navController: NavController) {
                 onRefresh = {
                     viewModel.onPageChanged(0)
                 },
+                onLoadMore = viewModel::onLoadMore,
             )
         }
     }

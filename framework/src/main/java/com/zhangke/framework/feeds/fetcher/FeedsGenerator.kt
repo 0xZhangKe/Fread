@@ -7,20 +7,20 @@ class FeedsGenerator<Value : StatusData> @Inject constructor() {
     fun generate(
         paramsList: List<GenerateParams<Value>>,
     ): GenerateResult<Value> {
-        val minDatetime = paramsList.mapNotNull {
+        val maxLastDatetime = paramsList.mapNotNull {
             it.statusList.takeIf { list -> list.isNotEmpty() }
-        }.minOf { it.last().datetime }
+        }.maxOf { it.last().datetime }
         val resultList = mutableListOf<Value>()
         val pagingToEndId = HashMap<StatusPagingSource<*, *>, String>()
         paramsList.forEach { param ->
             val statusList = param.statusList
-            val lastOne = statusList.lastOrNull { it.datetime <= minDatetime } ?: return@forEach
+            val lastOne = statusList.lastOrNull { it.datetime >= maxLastDatetime } ?: return@forEach
             val lastIndex = statusList.indexOf(lastOne)
             resultList += statusList.subList(0, lastIndex + 1)
             pagingToEndId[param.pagingSource] = lastOne.dataId
         }
         return GenerateResult(
-            list = resultList.sortedBy { it.datetime },
+            list = resultList.sortedByDescending { it.datetime },
             pagingToEndId = pagingToEndId,
         )
     }

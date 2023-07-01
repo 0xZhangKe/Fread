@@ -17,7 +17,6 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
@@ -29,7 +28,6 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
-import com.zhangke.framework.composable.textString
 import com.zhangke.framework.ktx.CollectOnComposable
 import com.zhangke.utopia.R
 import com.zhangke.utopia.composable.*

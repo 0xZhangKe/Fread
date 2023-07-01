@@ -1,6 +1,5 @@
 package com.zhangke.utopia.pages.feeds.adapter
 
-import com.zhangke.framework.composable.LoadableState
 import com.zhangke.utopia.domain.Feeds
 import com.zhangke.utopia.pages.feeds.FeedsPageUiState
 import com.zhangke.utopia.status.status.Status
@@ -16,9 +15,11 @@ class FeedsPageUiStateAdapter @Inject constructor() {
         return FeedsPageUiState(
             name = feeds.name,
             sourceList = feeds.sourceList,
-            refreshing = true,
+            refreshing = false,
             loading = false,
             feedsFlow = feedsFlow,
+            loadMoreError = false,
+            snackMessage = null,
         )
     }
 }

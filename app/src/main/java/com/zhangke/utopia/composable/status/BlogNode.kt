@@ -100,7 +100,7 @@ fun BlogContentComposable(
 private val statusDateFormatLocal = ThreadLocal<SimpleDateFormat>()
 
 private fun formatStatusDateTime(date: Date): String {
-    val format = statusDateFormatLocal.getOrSet { SimpleDateFormat("MM-DD HH:mm:ss", Locale.ROOT) }
+    val format = statusDateFormatLocal.getOrSet { SimpleDateFormat("MM-dd HH:mm:ss", Locale.ROOT) }
     return format.format(date)
 }
 

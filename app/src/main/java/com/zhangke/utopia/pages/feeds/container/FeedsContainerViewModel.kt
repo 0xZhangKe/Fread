@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.feeds.fetcher.FeedsFetcher
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.db.FeedsRepo
@@ -60,41 +61,53 @@ class FeedsContainerViewModel @Inject constructor(
         _uiState.update {
             it.copy(tabIndex = index)
         }
-        updateIndexedPageToRefreshing(index)
-        loadIndexPageStatus(index)
+        refreshPage(index)
     }
 
-    private fun loadIndexPageStatus(index: Int) {
-        if (!_uiState.value.pageUiStateList.isSuccess) return
-        val pageList = _uiState.value.pageUiStateList.requireSuccessData()
-        if (pageList.isEmpty()) return
+    private fun refreshPage(index: Int) {
+        updateIndexedPageToRefreshing(index)
         val fetcher = pagedFetchers[index]!!
-
-        updateIndexedPageToLoading(index)
         launchInViewModel {
+            fetcher.refresh()
+                .onSuccess { updateIndexedPageToData(index) }
+                .onFailure {
+                    updateIndexedPageToData(index)
+                    updateIndexedPageSnackMessage(index, it.message)
+                }
+        }
+    }
+
+    fun onLoadMore() {
+        val currentPageIndex = _uiState.value.tabIndex
+        val fetcher = pagedFetchers[currentPageIndex]!!
+        launchInViewModel {
+            updateIndexedPageToLoading(currentPageIndex)
             fetcher.loadNextPage()
-                .onSuccess {
-                    updateIndexedPageToData(index)
-                }.onFailure {
-                    updateIndexedPageToData(index)
+                .onSuccess { updateIndexedPageToData(currentPageIndex) }
+                .onFailure {
+                    updateIndexedPageToLoadError(currentPageIndex)
+                    updateIndexedPageSnackMessage(currentPageIndex, it.message)
                 }
         }
     }
 
     private fun updateIndexedPageToRefreshing(index: Int) {
         updateIndexedPage(index) {
-            it.copy(
-                refreshing = true,
-                loading = false,
-            )
+            it.copy(refreshing = true)
         }
     }
 
     private fun updateIndexedPageToLoading(index: Int) {
         updateIndexedPage(index) {
+            it.copy(loading = true)
+        }
+    }
+
+    private fun updateIndexedPageToLoadError(index: Int) {
+        updateIndexedPage(index) {
             it.copy(
-                refreshing = false,
-                loading = true,
+                loading = false,
+                loadMoreError = true,
             )
         }
     }
@@ -104,7 +117,14 @@ class FeedsContainerViewModel @Inject constructor(
             it.copy(
                 refreshing = false,
                 loading = false,
+                loadMoreError = false,
             )
+        }
+    }
+
+    private fun updateIndexedPageSnackMessage(index: Int, snackMessage: String?) {
+        updateIndexedPage(index) {
+            it.copy(snackMessage = snackMessage?.let(::textOf))
         }
     }
 

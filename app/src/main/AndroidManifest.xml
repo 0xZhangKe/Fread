@@ -15,7 +15,7 @@
         android:theme="@style/Theme.Utopia">
 
         <activity
-            android:name=".pages.main.MainActivity"
+            android:name=".pages.UtopiaActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

@@ -82,9 +82,10 @@ fun LoadableLazyColumn(
             },
         )
         PullRefreshIndicator(
-            refreshing,
-            state.pullRefreshState,
-            Modifier.align(Alignment.TopCenter)
+            modifier = Modifier.align(Alignment.TopCenter),
+            refreshing = refreshing,
+            state = state.pullRefreshState,
+            scale = true,
         )
     }
     // 上次是否正在滑动

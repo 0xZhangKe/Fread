@@ -4,16 +4,6 @@ plugins {
 
 android {
     namespace = "com.zhangke.utopia.commonbiz"
-
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
 }
 
 kotlin {

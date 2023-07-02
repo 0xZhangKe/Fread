@@ -1,38 +1,8 @@
 <resources>
     <string name="app_name">Utopia</string>
 
-    <string name="cancel">取消</string>
-
-    <string name="ok">确定</string>
-
-    <string name="login">登录</string>
-
-    <string name="add">添加</string>
-
-    <string name="search">搜索</string>
-
-    <string name="add_provider_page_title">添加服务</string>
-
-    <string name="add_provider_page_confirm_button">确定添加</string>
-
     <string name="authentication_page_normal_title">该功能需要登陆后才能使用哦</string>
 
     <string name="authentication_page_failed_title">登录状态失效，请重新登录。</string>
-
-    <string name="search_page_title">搜索</string>
-    <string name="search_result_not_found">未搜索到任何结果</string>
-
-    <string name="add_feeds_page_title">添加</string>
-
-    <string name="add_feeds_page_empty_name_tips">请输入一个名字</string>
-
-    <string name="add_feeds_page_empty_source_tips">请添加信息源</string>
-
-    <string name="add_feeds_choose_auth_dialog_title">请选择要登录的服务器</string>
-
-    <string name="auth_success">登录成功</string>
-
-    <string name="auth_failed">登录失败</string>
-      <string name="title_home">Home</string>
 
 </resources>

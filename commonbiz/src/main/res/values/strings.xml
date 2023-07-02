@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="cancel">取消</string>
+
+    <string name="ok">确定</string>
+
+    <string name="login">登录</string>
+
+    <string name="add">添加</string>
+
+    <string name="search">搜索</string>
+
+    <string name="auth_success">登录成功</string>
+
+    <string name="auth_failed">登录失败</string>
+</resources>

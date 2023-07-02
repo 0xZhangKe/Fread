@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="add_provider_page_title">添加服务</string>
+
+    <string name="add_provider_page_confirm_button">确定添加</string>
+
+    <string name="search_page_title">搜索</string>
+    <string name="search_result_not_found">未搜索到任何结果</string>
+
+    <string name="add_feeds_page_title">添加</string>
+
+    <string name="add_feeds_page_empty_name_tips">请输入一个名字</string>
+
+    <string name="add_feeds_page_empty_source_tips">请添加信息源</string>
+
+    <string name="add_feeds_choose_auth_dialog_title">请选择要登录的服务器</string>
+
+</resources>

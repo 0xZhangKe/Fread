@@ -1,6 +1,6 @@
 package com.zhangke.utopia.pages.main
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
@@ -15,6 +15,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.rememberNavController
+import com.zhangke.utopia.explore.exploreModuleNavGraph
+import com.zhangke.utopia.feeds.feedsModuleNavGraph
+import com.zhangke.utopia.feeds.feedsModuleRoute
+import com.zhangke.utopia.profile.profileModuleNavGraph
+import com.zhangke.utopia.publish.publishModuleNavGraph
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,16 +38,22 @@ fun MainPage() {
                 tabs = tabs,
                 onTabClick = {
                     selectedTabItem = it
+                    navController.navigate(it.route)
                 }
             )
         }
     ) { paddings ->
-        Box(modifier = Modifier.padding(paddings))
         NavHost(
             navController = navController,
-            startDestination = "",
+            startDestination = feedsModuleRoute,
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddings)
         ) {
-
+            feedsModuleNavGraph(navController)
+            exploreModuleNavGraph(navController)
+            publishModuleNavGraph(navController)
+            profileModuleNavGraph(navController)
         }
     }
 }

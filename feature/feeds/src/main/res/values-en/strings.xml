@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="add_provider_page_title">Add Server</string>
+
+    <string name="add_provider_page_confirm_button">Confirm Add</string>
+
+    <string name="search_page_title">Search</string>
+    <string name="search_result_not_found">No search results found</string>
+
+    <string name="add_feeds_page_title">ADD</string>
+
+    <string name="add_feeds_page_empty_name_tips">Please enter a name</string>
+
+    <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>
+
+    <string name="add_feeds_choose_auth_dialog_title">Please select login server</string>
+
+</resources>

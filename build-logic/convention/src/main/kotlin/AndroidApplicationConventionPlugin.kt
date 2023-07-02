@@ -16,6 +16,7 @@
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.zhangke.utopia.configureAndroidCompose
 import com.zhangke.utopia.configureKotlinAndroid
 import com.zhangke.utopia.configurePrintApksTask
 import org.gradle.api.Plugin
@@ -33,6 +34,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
             extensions.configure<ApplicationExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 33
+                configureAndroidCompose(this)
             }
             extensions.configure<ApplicationAndroidComponentsExtension> {
                 configurePrintApksTask(this)

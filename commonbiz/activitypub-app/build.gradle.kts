@@ -1,6 +1,6 @@
 plugins {
     id("utopia.android.library")
-    id("utopia.android.library.compose")
+    id("utopia.android.compose")
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
@@ -9,15 +9,6 @@ plugins {
 android {
     namespace = "com.zhangke.utopia.activitypubapp"
 
-    buildTypes {
-        release {
-            isMinifyEnabled = false
-            proguardFiles(
-                getDefaultProguardFile("proguard-android-optimize.txt"),
-                "proguard-rules.pro"
-            )
-        }
-    }
     // Allow references to generated code
     kapt {
         correctErrorTypes = true
@@ -39,7 +30,7 @@ dependencies {
     implementation(project(path = ":framework"))
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-provider"))
-    implementation(project(path = ":ActivityPub-Kotlin"))
+    api(project(path = ":ActivityPub-Kotlin"))
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)

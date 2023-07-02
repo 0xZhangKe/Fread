@@ -1,6 +1,5 @@
 plugins {
     id("utopia.android.application")
-    id("utopia.android.application.compose")
     id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
@@ -54,9 +53,12 @@ kotlin {
 dependencies {
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":framework"))
-    runtimeOnly(project(path = ":ActivityPub-Kotlin"))
     runtimeOnly(project(path = ":commonbiz:activitypub-app"))
     implementation(project(path = ":commonbiz:status-provider"))
+    implementation(project(path = ":feature:feeds"))
+    implementation(project(path = ":feature:explore"))
+    implementation(project(path = ":feature:publish"))
+    implementation(project(path = ":feature:profile"))
 
     testImplementation("junit:junit:4.+")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")

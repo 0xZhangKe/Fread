@@ -8,13 +8,19 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import com.zhangke.utopia.explore.exploreModuleRoute
+import com.zhangke.utopia.feeds.feedsModuleRoute
+import com.zhangke.utopia.profile.profileModuleRoute
+import com.zhangke.utopia.publish.publishModuleRoute
 
 enum class MainTabItem(
+    val route: String,
     val icon: @Composable () -> Unit,
     val label: @Composable (() -> Unit)? = null,
 ) {
 
     HOME(
+        route = feedsModuleRoute,
         icon = {
             Icon(
                 painter = rememberVectorPainter(Icons.Default.Home),
@@ -23,6 +29,7 @@ enum class MainTabItem(
         }
     ),
     EXPLORE(
+        route = exploreModuleRoute,
         icon = {
             Icon(
                 painter = rememberVectorPainter(Icons.Default.Explore),
@@ -31,6 +38,7 @@ enum class MainTabItem(
         }
     ),
     PUBLISH(
+        route = publishModuleRoute,
         icon = {
             Icon(
                 painter = rememberVectorPainter(Icons.Default.Publish),
@@ -39,6 +47,7 @@ enum class MainTabItem(
         }
     ),
     PROFILE(
+        route = profileModuleRoute,
         icon = {
             Icon(
                 painter = rememberVectorPainter(Icons.Default.Settings),

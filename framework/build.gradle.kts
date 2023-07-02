@@ -1,6 +1,6 @@
 plugins {
     id("utopia.android.library")
-    id("utopia.android.library.compose")
+    id("utopia.android.compose")
     id("kotlin-kapt")
     id("com.google.devtools.ksp")
 }

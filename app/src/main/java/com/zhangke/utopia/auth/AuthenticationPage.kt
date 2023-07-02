@@ -3,7 +3,13 @@ package com.zhangke.utopia.auth
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Card
 import androidx.compose.material3.Button
 import androidx.compose.material3.Text
@@ -73,13 +79,13 @@ fun AuthenticationPage(
                     Button(
                         onClick = onCancelClick
                     ) {
-                        Text(text = stringResource(R.string.cancel))
+                        Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.cancel))
                     }
                     Button(
                         modifier = Modifier.padding(start = 15.dp),
                         onClick = onLoginClick
                     ) {
-                        Text(text = stringResource(R.string.login))
+                        Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.login))
                     }
                 }
             }

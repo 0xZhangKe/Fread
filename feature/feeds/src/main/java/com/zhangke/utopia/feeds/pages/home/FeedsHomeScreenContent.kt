@@ -31,9 +31,9 @@ import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
 
-@OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
-internal fun FeedsHomePage(
+internal fun FeedsHomeScreenContent(
     uiState: FeedsHomeUiState,
     onTabSelected: (Int) -> Unit,
     onAddFeedsClick: () -> Unit,
@@ -85,6 +85,7 @@ internal fun FeedsHomePage(
                                 }
                             }
                         }
+
                         val pagerState = rememberPagerState(uiState.tabIndex)
                         var currentPageIndex: Int? by remember {
                             mutableStateOf(null)

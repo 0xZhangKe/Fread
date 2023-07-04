@@ -1,80 +1,63 @@
 package com.zhangke.utopia.pages.main
 
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
+import android.annotation.SuppressLint
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Modifier
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
-import com.zhangke.utopia.explore.exploreModuleNavGraph
-import com.zhangke.utopia.feeds.feedsModuleNavGraph
-import com.zhangke.utopia.feeds.feedsModuleRoute
-import com.zhangke.utopia.profile.profileModuleNavGraph
-import com.zhangke.utopia.publish.publishModuleNavGraph
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.tab.CurrentTab
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.zhangke.utopia.explore.ExploreTab
+import com.zhangke.utopia.feeds.FeedsHomeTab
+import com.zhangke.utopia.profile.ProfileTab
+import com.zhangke.utopia.publish.PublishTab
 
+@SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage() {
-    val navController = rememberNavController()
-    val tabs = remember {
-        listOf(MainTabItem.HOME, MainTabItem.EXPLORE, MainTabItem.PUBLISH, MainTabItem.PROFILE)
-    }
-    var selectedTabItem by remember {
-        mutableStateOf(MainTabItem.HOME)
-    }
-    Scaffold(
-        bottomBar = {
-            MainBottomBar(
-                selectedTabItem = selectedTabItem,
-                tabs = tabs,
-                onTabClick = {
-                    selectedTabItem = it
-                    navController.navigate(it.route)
+    val globalNavigator = LocalNavigator.currentOrThrow
+    TabNavigator(tab = FeedsHomeTab) {
+        Scaffold(
+            bottomBar = {
+                BottomNavigation {
+                    TabNavigationItem(FeedsHomeTab)
+                    TabNavigationItem(ExploreTab)
+                    TabNavigationItem(PublishTab)
+                    TabNavigationItem(ProfileTab)
                 }
-            )
-        }
-    ) { paddings ->
-        NavHost(
-            navController = navController,
-            startDestination = feedsModuleRoute,
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(paddings)
-        ) {
-            feedsModuleNavGraph(navController)
-            exploreModuleNavGraph(navController)
-            publishModuleNavGraph(navController)
-            profileModuleNavGraph(navController)
-        }
+            },
+            content = {
+                CompositionLocalProvider(
+                    LocalNavigator provides globalNavigator
+                ) {
+                    Box(modifier = Modifier.padding(it)) {
+                        CurrentTab()
+                    }
+                }
+            }
+        )
     }
 }
 
 @Composable
-private fun MainBottomBar(
-    modifier: Modifier = Modifier,
-    selectedTabItem: MainTabItem,
-    tabs: List<MainTabItem>,
-    onTabClick: (MainTabItem) -> Unit,
-) {
-    BottomNavigation(
-        modifier = modifier.fillMaxWidth()
-    ) {
-        tabs.forEach { tab ->
-            BottomNavigationItem(
-                selected = tab == selectedTabItem,
-                onClick = { onTabClick(tab) },
-                icon = tab.icon,
-                label = tab.label,
-            )
-        }
-    }
+private fun RowScope.TabNavigationItem(tab: Tab) {
+    val tabNavigator = LocalTabNavigator.current
+
+    BottomNavigationItem(
+        selected = tabNavigator.current.key == tab.key,
+        onClick = { tabNavigator.current = tab },
+        icon = { Icon(painter = tab.options.icon!!, contentDescription = tab.options.title) }
+    )
 }

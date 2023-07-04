@@ -42,6 +42,7 @@ dependencies {
     implementation(composeBom)
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.androidx.compose.foundation)
+    implementation(libs.bundles.androidx.compose.material)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.compose.material3)
@@ -73,4 +74,5 @@ dependencies {
     implementation(libs.joda.time)
     implementation(libs.auto.service.annotations)
     kapt(libs.auto.service)
+    implementation(libs.bundles.voyager)
 }

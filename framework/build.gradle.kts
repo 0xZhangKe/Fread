@@ -68,4 +68,5 @@ dependencies {
     ksp(libs.filt.compiler)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
+    implementation(libs.bundles.voyager)
 }

@@ -13,6 +13,7 @@ import com.zhangke.utopia.feeds.repo.db.FeedsRepo
 import com.zhangke.utopia.status.status.GetStatusFeedsByUrisUseCase
 import com.zhangke.utopia.status.status.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -54,10 +55,12 @@ internal class FeedsHomeViewModel @Inject constructor(
                     pageUiStateList = LoadableState.success(pageStates)
                 )
             }
+            refreshPage(_uiState.value.tabIndex)
         }
     }
 
     fun onPageChanged(index: Int) {
+        if (index == _uiState.value.tabIndex) return
         _uiState.update {
             it.copy(tabIndex = index)
         }
@@ -67,7 +70,7 @@ internal class FeedsHomeViewModel @Inject constructor(
     private fun refreshPage(index: Int) {
         updateIndexedPageToRefreshing(index)
         val fetcher = pagedFetchers[index]!!
-        launchInViewModel {
+        launchInViewModel(Dispatchers.IO) {
             fetcher.refresh()
                 .onSuccess { updateIndexedPageToData(index) }
                 .onFailure {
@@ -85,7 +88,7 @@ internal class FeedsHomeViewModel @Inject constructor(
     fun onLoadMore() {
         val currentPageIndex = _uiState.value.tabIndex
         val fetcher = pagedFetchers[currentPageIndex]!!
-        launchInViewModel {
+        launchInViewModel(Dispatchers.IO) {
             updateIndexedPageToLoading(currentPageIndex)
             fetcher.loadNextPage()
                 .onSuccess { updateIndexedPageToData(currentPageIndex) }

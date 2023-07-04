@@ -45,12 +45,11 @@ internal class FeedsManagerViewModel @Inject constructor(
     private val _finishPage = MutableSharedFlow<Boolean>()
     val finishPage: SharedFlow<Boolean> get() = _finishPage.asSharedFlow()
 
-    fun onAddSources(uris: String) {
+    fun onAddSources(uriList: List<String>) {
         launchInViewModel {
-            val uriArray = uris.split(',')
             val sourceList = mutableListOf<StatusSource>()
             sourceList.addAll(viewModelState.value.sourceList)
-            uriArray.forEach { uri ->
+            uriList.forEach { uri ->
                 resolveSourceUseCase(uri)
                     .onSuccess { source ->
                         source?.takeIf { item -> !sourceList.container { it.uri == item.uri } }

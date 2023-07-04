@@ -3,12 +3,8 @@ package com.zhangke.utopia.pages
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
-import androidx.compose.runtime.Composable
-import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.rememberNavController
+import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
-import com.zhangke.utopia.pages.main.MainRouter
-import com.zhangke.utopia.pages.main.mainNavigation
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -19,19 +15,8 @@ class UtopiaActivity : AppCompatActivity() {
 
         setContent {
             UtopiaTheme {
-                MainPage()
+                Navigator(UtopiaScreen())
             }
-        }
-    }
-
-    @Composable
-    private fun MainPage() {
-        val navController = rememberNavController()
-        NavHost(
-            navController = navController,
-            startDestination = MainRouter().route,
-        ) {
-            mainNavigation(navController)
         }
     }
 }

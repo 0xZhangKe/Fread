@@ -142,7 +142,7 @@ fun rememberLoadableLazyColumnState(
 
     val loadMoreState = rememberLoadMoreState(loadMoreRemainCountThreshold, onLoadMore)
 
-    return remember {
+    return remember(pullRefreshState, lazyListState, loadMoreState) {
         LoadableLazyColumnState(
             lazyListState = lazyListState,
             pullRefreshState = pullRefreshState,

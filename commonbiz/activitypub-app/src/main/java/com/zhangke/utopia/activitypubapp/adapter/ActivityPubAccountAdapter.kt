@@ -1,24 +1,25 @@
 package com.zhangke.utopia.activitypubapp.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubAccount
-import com.zhangke.activitypub.entry.ActivityPubInstance
+import com.zhangke.activitypub.entry.ActivityPubAccountEntity
+import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entry.ActivityPubToken
-import com.zhangke.utopia.activitypubapp.domain.ActivityPubAccountToWebFingerUseCase
+import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubUserEntity
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
-import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
-import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserEntity
+import com.zhangke.utopia.activitypubapp.usecase.ActivityPubAccountToUriUseCase
+import com.zhangke.utopia.activitypubapp.usecase.ActivityPubAccountToWebFingerUseCase
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
-import com.zhangke.utopia.status.user.UtopiaUser
+import com.zhangke.utopia.status.user.LoggedAccount
 import javax.inject.Inject
 
 class ActivityPubAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val accountToWebFinger: ActivityPubAccountToWebFingerUseCase,
+    private val accountToUriUseCase: ActivityPubAccountToUriUseCase,
 ) {
 
-    fun createSource(account: ActivityPubAccount): UserSource {
+    fun createSource(account: ActivityPubAccountEntity): UserSource {
         return UserSource(
             userId = account.id,
             name = account.displayName,
@@ -28,14 +29,14 @@ class ActivityPubAccountAdapter @Inject constructor(
         )
     }
 
-    fun createEntity(
-        instance: ActivityPubInstance,
-        account: ActivityPubAccount,
+    fun createDBEntity(
+        instance: ActivityPubInstanceEntity,
+        account: ActivityPubAccountEntity,
         token: ActivityPubToken,
         active: Boolean,
     ): ActivityPubUserEntity {
         return ActivityPubUserEntity(
-            uri = account.generateUri(),
+            uri = accountToUriUseCase.adapt(account).toString(),
             id = accountToWebFinger(account).toString(),
             platform = instanceAdapter.createPlatform(instance),
             host = ActivityPubUrl.create(instance.domain)!!.host,
@@ -48,12 +49,8 @@ class ActivityPubAccountAdapter @Inject constructor(
         )
     }
 
-    private fun ActivityPubAccount.generateUri(): String {
-        return ActivityPubUserUri.create(id, accountToWebFinger(this)).toString()
-    }
-
     fun toEntity(
-        user: UtopiaUser,
+        user: LoggedAccount,
         uri: String,
         webFinger: WebFinger,
         token: ActivityPubToken,
@@ -72,11 +69,11 @@ class ActivityPubAccountAdapter @Inject constructor(
         )
     }
 
-    fun toUtopiaUser(
+    fun toUtopiaLoggedAccount(
         entity: ActivityPubUserEntity,
         validate: Boolean
-    ): UtopiaUser {
-        return UtopiaUser(
+    ): LoggedAccount {
+        return LoggedAccount(
             id = entity.id,
             platform = entity.platform,
             host = entity.host,

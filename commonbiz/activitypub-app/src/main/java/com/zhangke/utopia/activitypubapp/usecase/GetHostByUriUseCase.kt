@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp.domain
+package com.zhangke.utopia.activitypubapp.usecase
 
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypubapp.utils.WebFinger

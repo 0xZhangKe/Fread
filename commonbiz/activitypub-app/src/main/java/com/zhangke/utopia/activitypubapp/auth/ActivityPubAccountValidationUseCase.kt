@@ -1,10 +1,10 @@
 package com.zhangke.utopia.activitypubapp.auth
 
 import com.zhangke.utopia.activitypubapp.client.CreateActivityPubClientUseCase
-import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserEntity
+import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubUserEntity
 import javax.inject.Inject
 
-class ActivityPubUserValidationUseCase @Inject constructor(
+class ActivityPubAccountValidationUseCase @Inject constructor(
     private val createActivityPubClientUseCase: CreateActivityPubClientUseCase,
 ) {
 

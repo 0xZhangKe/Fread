@@ -9,8 +9,8 @@ import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceDao
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceEntry
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceDao
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
-import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserDao
-import com.zhangke.utopia.activitypubapp.user.repo.ActivityPubUserEntity
+import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubUserDao
+import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubUserEntity
 import com.zhangke.utopia.status.utils.UtopiaPlatformTypeConverter
 
 internal const val ACTIVITY_PUB_DB_NAME = "ActivityPubStatusProvider"

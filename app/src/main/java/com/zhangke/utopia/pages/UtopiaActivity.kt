@@ -3,6 +3,7 @@ package com.zhangke.utopia.pages
 import android.os.Bundle
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
+import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import dagger.hilt.android.AndroidEntryPoint
@@ -15,7 +16,11 @@ class UtopiaActivity : AppCompatActivity() {
 
         setContent {
             UtopiaTheme {
-                Navigator(UtopiaScreen())
+//                Navigator(UtopiaScreen())
+                val serverDetailScreen = Class.forName(
+                    "com.zhangke.utopia.activitypubapp.screen.service.ServerDetailScreen"
+                ).constructors.first().newInstance("") as AndroidScreen
+                Navigator(serverDetailScreen)
             }
         }
     }

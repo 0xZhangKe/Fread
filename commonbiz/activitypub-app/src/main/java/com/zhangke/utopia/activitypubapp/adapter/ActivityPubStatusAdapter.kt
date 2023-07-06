@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypubapp.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubAccount
+import com.zhangke.activitypub.entry.ActivityPubAccountEntity
 import com.zhangke.activitypub.entry.ActivityPubStatus
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogAuthor
@@ -35,7 +35,7 @@ class ActivityPubStatusAdapter @Inject constructor() {
         return ISODateTimeFormat.dateTime().parseDateTime(dateTimeText).toDate()
     }
 
-    private fun ActivityPubAccount.toAuthor(domain: String): BlogAuthor {
+    private fun ActivityPubAccountEntity.toAuthor(domain: String): BlogAuthor {
         return BlogAuthor(
             name = username,
             avatar = avatar,

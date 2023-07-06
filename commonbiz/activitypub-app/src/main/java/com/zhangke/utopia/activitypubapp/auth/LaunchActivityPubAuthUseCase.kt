@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.auth
 
 import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
-import com.zhangke.utopia.activitypubapp.domain.FindHostFromUriUseCase
+import com.zhangke.utopia.activitypubapp.usecase.FindHostFromUriUseCase
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.status.auth.AuthWithStatusSourceLauncher

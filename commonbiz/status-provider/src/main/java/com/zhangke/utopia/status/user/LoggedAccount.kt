@@ -2,7 +2,7 @@ package com.zhangke.utopia.status.user
 
 import com.zhangke.utopia.status.platform.UtopiaPlatform
 
-data class UtopiaUser(
+data class LoggedAccount(
     val id: String,
     val platform: UtopiaPlatform,
     val host: String,

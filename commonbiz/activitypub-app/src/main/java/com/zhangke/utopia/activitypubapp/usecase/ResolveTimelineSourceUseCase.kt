@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp.domain
+package com.zhangke.utopia.activitypubapp.usecase
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.R

@@ -5,7 +5,7 @@ import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.collect
 import com.zhangke.utopia.activitypubapp.R
 import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
-import com.zhangke.utopia.activitypubapp.domain.ResolveUserSourceUseCase
+import com.zhangke.utopia.activitypubapp.usecase.ResolveUserSourceUseCase
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl

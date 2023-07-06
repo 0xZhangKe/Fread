@@ -1,9 +1,9 @@
-package com.zhangke.utopia.activitypubapp.user.repo
+package com.zhangke.utopia.activitypubapp.account.repo
 
 import com.zhangke.utopia.activitypubapp.db.ActivityPubDatabases
 import javax.inject.Inject
 
-class ActivityPubUserRepo @Inject constructor(
+class ActivityPubAccountRepo @Inject constructor(
     private val databases: ActivityPubDatabases,
 ) {
 

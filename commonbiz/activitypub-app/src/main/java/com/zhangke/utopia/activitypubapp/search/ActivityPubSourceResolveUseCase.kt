@@ -1,8 +1,8 @@
 package com.zhangke.utopia.activitypubapp.search
 
 import com.zhangke.filt.annotaions.Filt
-import com.zhangke.utopia.activitypubapp.domain.ResolveTimelineSourceUseCase
-import com.zhangke.utopia.activitypubapp.domain.ResolveUserSourceUseCase
+import com.zhangke.utopia.activitypubapp.usecase.ResolveTimelineSourceUseCase
+import com.zhangke.utopia.activitypubapp.usecase.ResolveUserSourceUseCase
 import com.zhangke.utopia.status.search.IResolveSourceByUriUseCase
 import com.zhangke.utopia.status.utils.StatusProviderUri
 import com.zhangke.utopia.status.source.StatusSource

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp.user.repo
+package com.zhangke.utopia.activitypubapp.account.repo
 
 import androidx.room.*
 import com.zhangke.activitypub.entry.ActivityPubToken

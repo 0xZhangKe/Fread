@@ -1,8 +1,8 @@
 plugins {
     id("utopia.android.application")
-    id("kotlin-kapt")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
+    id("kotlin-kapt")
 }
 
 android {
@@ -47,6 +47,8 @@ android {
 kotlin {
     sourceSets.main {
         kotlin.srcDir("build/generated/ksp/main/kotlin")
+        kotlin.srcDir("build/generated/ksp/debug/kotlin")
+        kotlin.srcDir("build/generated/ksp/release/kotlin")
     }
 }
 

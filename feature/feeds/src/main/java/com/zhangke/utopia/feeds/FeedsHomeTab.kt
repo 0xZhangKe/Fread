@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
@@ -17,10 +16,6 @@ import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
 import com.zhangke.utopia.feeds.pages.manager.FeedsManagerScreen
 
 object FeedsHomeTab : Tab {
-
-    init {
-        Log.d("U_TEST", "FeedsHomeTab@${hashCode()} init")
-    }
 
     override val options: TabOptions
         @Composable get() {

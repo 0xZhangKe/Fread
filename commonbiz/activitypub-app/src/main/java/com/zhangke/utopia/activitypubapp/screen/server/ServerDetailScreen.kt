@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp.screen.service
+package com.zhangke.utopia.activitypubapp.screen.server
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -7,6 +7,7 @@ import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +19,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
@@ -42,6 +44,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
@@ -50,12 +53,14 @@ import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.composable.textString
 
 class ServerDetailScreen(
     private val host: String,
@@ -63,7 +68,7 @@ class ServerDetailScreen(
 
     @Composable
     override fun Content() {
-        val viewModel: ServerDetailViewModel = viewModel()
+        val viewModel: ServerDetailViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
 
@@ -201,6 +206,15 @@ class ServerDetailScreen(
                             Text(
                                 modifier = Modifier.padding(top = 4.dp),
                                 text = uiState.description,
+                                maxLines = 4,
+                                overflow = TextOverflow.Ellipsis,
+                                fontSize = 14.sp,
+                            )
+                            val languageString = uiState.languages.joinToString(", ")
+                            Text(
+                                modifier = Modifier.padding(top = 4.dp),
+                                text = "语言：$languageString",
+                                maxLines = 3,
                                 fontSize = 14.sp,
                             )
                             Text(
@@ -208,6 +222,44 @@ class ServerDetailScreen(
                                 text = "月活：${uiState.activeMonth}",
                                 fontSize = 14.sp,
                             )
+
+                            Row(
+                                modifier = Modifier.fillMaxWidth(),
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
+                                Text(
+                                    modifier = Modifier
+                                        .background(
+                                            Color(0x6644429F),
+                                            RoundedCornerShape(3.dp),
+                                        )
+                                        .padding(vertical = 2.dp, horizontal = 4.dp),
+                                    text = "MOD",
+                                    fontSize = 14.sp,
+                                    fontWeight = FontWeight.Bold,
+                                )
+
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .padding(start = 6.dp)
+                                        .size(18.dp)
+                                        .clip(CircleShape),
+                                    model = uiState.contract.account.avatar,
+                                    contentDescription = "Mod avatar",
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(start = 4.dp),
+                                    text = uiState.contract.account.displayName,
+                                    fontSize = 14.sp,
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(start = 4.dp),
+                                    text = uiState.contract.email,
+                                    fontSize = 14.sp,
+                                )
+                            }
                         }
                     }
                     Surface(
@@ -261,7 +313,7 @@ class ServerDetailScreen(
                 var selectedTabIndex by remember {
                     mutableStateOf(0)
                 }
-                val pageList = listOf(0, 1, 2, 3, 4, 5)
+                val tabs = uiState.tabs
                 val pagerState = rememberPagerState(0)
                 LaunchedEffect(selectedTabIndex) {
                     pagerState.scrollToPage(selectedTabIndex)
@@ -271,7 +323,7 @@ class ServerDetailScreen(
                         .fillMaxWidth(),
                     selectedTabIndex = selectedTabIndex,
                 ) {
-                    pageList.forEachIndexed { index, item ->
+                    tabs.forEachIndexed { index, item ->
                         Tab(
                             selected = selectedTabIndex == index,
                             onClick = { selectedTabIndex = index },
@@ -280,7 +332,7 @@ class ServerDetailScreen(
                                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
                             ) {
                                 Text(
-                                    text = "$item st Tab",
+                                    text = textString(item.title),
                                 )
                             }
                         }
@@ -291,25 +343,14 @@ class ServerDetailScreen(
                         .fillMaxSize()
                         .scrollable(rememberScrollState(), Orientation.Vertical),
                     state = pagerState,
-                    pageCount = pageList.size,
+                    pageCount = tabs.size,
                     userScrollEnabled = true,
                 ) { currentPage ->
-                    val state = rememberLazyListState()
-                    val canScrollBackward by remember {
-                        derivedStateOf {
-                            state.firstVisibleItemIndex != 0 || state.firstVisibleItemScrollOffset != 0
-                        }
-                    }
-                    contentCanScrollBackward.value = canScrollBackward
-                    LazyColumn(
-                        modifier = Modifier
-                            .fillMaxWidth(),
-                        state = state,
-                    ) {
-                        items(100) {
-                            Text(text = "item $it", modifier = Modifier.padding(4.dp))
-                        }
-                    }
+                    tabs[currentPage].content(
+                        this@ServerDetailScreen,
+                        uiState.rules,
+                        contentCanScrollBackward,
+                    )
                     LaunchedEffect(currentPage) {
                         selectedTabIndex = currentPage
                     }

@@ -1,9 +1,9 @@
-package com.zhangke.utopia.activitypubapp.screen.service
+package com.zhangke.utopia.activitypubapp.screen.server
 
 import com.zhangke.utopia.activitypubapp.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypubapp.model.ActivityPubUser
 
-data class ServerDetailUiState(
+internal data class ServerDetailUiState(
     val domain: String,
     val title: String,
     val description: String,
@@ -13,9 +13,10 @@ data class ServerDetailUiState(
     val languages: List<String>,
     val contract: ServerDetailContract,
     val rules: List<ActivityPubInstanceRule>,
+    val tabs: List<ServerDetailTab>,
 )
 
-data class ServerDetailContract(
+internal data class ServerDetailContract(
     val email: String,
     val account: ActivityPubUser,
 )

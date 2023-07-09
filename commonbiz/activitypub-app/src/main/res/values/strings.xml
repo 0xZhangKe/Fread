@@ -8,4 +8,6 @@
     <string name="activity_pub_public_timeline">跨站时间轴</string>
 
     <string name="activity_pub_search_timeline_name">%s的%s</string>
+
+    <string name="activity_pub_about">关于</string>
 </resources>

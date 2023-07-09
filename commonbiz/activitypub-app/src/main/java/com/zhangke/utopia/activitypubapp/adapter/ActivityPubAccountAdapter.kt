@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.adapter
 
 import com.zhangke.activitypub.entry.ActivityPubAccountEntity
 import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
-import com.zhangke.activitypub.entry.ActivityPubToken
+import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubUserEntity
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
@@ -32,7 +32,7 @@ class ActivityPubAccountAdapter @Inject constructor(
     fun createDBEntity(
         instance: ActivityPubInstanceEntity,
         account: ActivityPubAccountEntity,
-        token: ActivityPubToken,
+        token: ActivityPubTokenEntity,
         active: Boolean,
     ): ActivityPubUserEntity {
         return ActivityPubUserEntity(
@@ -53,7 +53,7 @@ class ActivityPubAccountAdapter @Inject constructor(
         user: LoggedAccount,
         uri: String,
         webFinger: WebFinger,
-        token: ActivityPubToken,
+        token: ActivityPubTokenEntity,
     ): ActivityPubUserEntity {
         return ActivityPubUserEntity(
             uri = uri,

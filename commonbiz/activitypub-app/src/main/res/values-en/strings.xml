@@ -8,4 +8,6 @@
     <string name="activity_pub_public_timeline">Public timeline</string>
 
     <string name="activity_pub_search_timeline_name">%s`s %s</string>
+
+    <string name="activity_pub_about">About</string>
 </resources>

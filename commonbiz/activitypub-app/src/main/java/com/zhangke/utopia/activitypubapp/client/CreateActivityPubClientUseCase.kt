@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.client
 
 import com.google.gson.Gson
 import com.zhangke.activitypub.ActivityPubClient
-import com.zhangke.activitypub.entry.ActivityPubToken
+import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.framework.architect.http.newRetrofit
 import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
@@ -20,7 +20,7 @@ class CreateActivityPubClientUseCase @Inject constructor(
         retrofit: Retrofit = newRetrofit(ActivityPubUrl.create(host)!!.completenessUrl),
         gson: Gson = globalGson,
         redirectUrl: String = REDIRECT_URI,
-        tokenProvider: suspend () -> ActivityPubToken?,
+        tokenProvider: suspend () -> ActivityPubTokenEntity?,
         onAuthorizeFailed: suspend (url: String, client: ActivityPubClient) -> Unit,
     ): ActivityPubClient {
         val application = obtainActivityPubApplicationUseCase(host)

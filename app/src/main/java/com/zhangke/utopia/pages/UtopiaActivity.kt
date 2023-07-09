@@ -18,7 +18,7 @@ class UtopiaActivity : AppCompatActivity() {
             UtopiaTheme {
 //                Navigator(UtopiaScreen())
                 val serverDetailScreen = Class.forName(
-                    "com.zhangke.utopia.activitypubapp.screen.service.ServerDetailScreen"
+                    "com.zhangke.utopia.activitypubapp.screen.server.ServerDetailScreen"
                 ).constructors.first().newInstance("") as AndroidScreen
                 Navigator(serverDetailScreen)
             }

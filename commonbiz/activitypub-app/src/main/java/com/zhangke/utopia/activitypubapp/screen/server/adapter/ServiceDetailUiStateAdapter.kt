@@ -1,10 +1,10 @@
-package com.zhangke.utopia.activitypubapp.screen.service.adapter
+package com.zhangke.utopia.activitypubapp.screen.server.adapter
 
 import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubUserAdapter
 import com.zhangke.utopia.activitypubapp.model.ActivityPubInstanceRule
-import com.zhangke.utopia.activitypubapp.screen.service.ServerDetailContract
-import com.zhangke.utopia.activitypubapp.screen.service.ServerDetailUiState
+import com.zhangke.utopia.activitypubapp.screen.server.ServerDetailContract
+import com.zhangke.utopia.activitypubapp.screen.server.ServerDetailUiState
 import javax.inject.Inject
 
 class ServiceDetailUiStateAdapter @Inject constructor(

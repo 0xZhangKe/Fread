@@ -1,18 +1,18 @@
 package com.zhangke.utopia.activitypubapp.db
 
 import androidx.room.TypeConverter
-import com.zhangke.activitypub.entry.ActivityPubToken
+import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.framework.architect.json.globalGson
 
 class ActivityPubUserTokenConverter {
 
     @TypeConverter
-    fun fromType(token: ActivityPubToken): String {
+    fun fromType(token: ActivityPubTokenEntity): String {
         return globalGson.toJson(token)
     }
 
     @TypeConverter
-    fun toType(text: String): ActivityPubToken {
-        return globalGson.fromJson(text, ActivityPubToken::class.java)
+    fun toType(text: String): ActivityPubTokenEntity {
+        return globalGson.fromJson(text, ActivityPubTokenEntity::class.java)
     }
 }

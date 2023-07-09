@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.account.repo
 
 import androidx.room.*
-import com.zhangke.activitypub.entry.ActivityPubToken
+import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.utopia.status.platform.UtopiaPlatform
 
 private const val TABLE_NAME = "logged_users"
@@ -23,7 +23,7 @@ data class ActivityPubUserEntity(
     val avatar: String?,
     val homepage: String?,
     val active: Boolean,
-    val token: ActivityPubToken,
+    val token: ActivityPubTokenEntity,
 )
 
 @Dao

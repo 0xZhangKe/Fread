@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.adapter
 
 import com.zhangke.activitypub.entry.ActivityPubAccountEntity
-import com.zhangke.activitypub.entry.ActivityPubStatus
+import com.zhangke.activitypub.entry.ActivityPubStatusEntity
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogAuthor
 import com.zhangke.utopia.status.status.Status
@@ -11,12 +11,12 @@ import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor() {
 
-    fun adapt(statusAdapter: ActivityPubStatus, domain: String): Status {
+    fun adapt(statusAdapter: ActivityPubStatusEntity, domain: String): Status {
         //fixme temporary code
         return Status.NewBlog(statusAdapter.toBlog(domain))
     }
 
-    private fun ActivityPubStatus.toBlog(domain: String): Blog {
+    private fun ActivityPubStatusEntity.toBlog(domain: String): Blog {
         return Blog(
             id = id,
             author = account.toAuthor(domain),

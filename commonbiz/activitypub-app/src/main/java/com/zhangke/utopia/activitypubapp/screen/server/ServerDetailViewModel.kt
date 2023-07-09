@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp.screen.service
+package com.zhangke.utopia.activitypubapp.screen.server
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.LoadableState
@@ -49,6 +49,7 @@ internal class ServerDetailViewModel @Inject constructor() : ViewModel() {
                     account = user
                 ),
                 rules = emptyList(),
+                tabs = listOf(ServerDetailTab.ABOUT, ServerDetailTab.PLACEHOLDER)
             )
         )
     )

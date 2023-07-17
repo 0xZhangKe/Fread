@@ -60,6 +60,7 @@ dependencies {
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
     implementation(libs.filt.annotaions)
+    implementation(libs.accompanist.placeholder.material)
     ksp(libs.filt.compiler)
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)

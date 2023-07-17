@@ -28,14 +28,14 @@ fun textOf(string: String): TextString {
 @Composable
 fun textString(text: TextString): String {
     return when (text) {
-        is TextString.ResourceText -> stringResource(id = text.stringResId, text.formatArgs)
+        is TextString.ResourceText -> stringResource(id = text.stringResId, *text.formatArgs)
         is TextString.StringText -> text.string
     }
 }
 
 fun TextString.getString(context: Context): String {
     return when (this) {
-        is TextString.ResourceText -> context.getString(stringResId, formatArgs)
+        is TextString.ResourceText -> context.getString(stringResId, *formatArgs)
         is TextString.StringText -> string
     }
 }

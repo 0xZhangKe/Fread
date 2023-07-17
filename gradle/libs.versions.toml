@@ -26,6 +26,8 @@ androidx-lifecycle = "2.4.1"
 androidx-paging = "3.1.1"
 androidx-paging-compose = "3.2.0-rc01"
 
+accompanist-placeholder-material = "0.31.5-beta"
+
 hilt = "2.44"
 
 okhttp3 = "4.9.3"
@@ -42,7 +44,7 @@ auto_service = "1.0.1"
 
 ksp = "1.8.21-1.0.11"
 
-filt = "1.0.3"
+filt = "1.0.4"
 
 voyager = "1.0.0-rc05"
 
@@ -114,6 +116,8 @@ androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecy
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidx.lifecycle" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidx.paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx.paging.compose" }
+
+accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist.placeholder.material"}
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin.coroutine" }

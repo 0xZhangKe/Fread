@@ -59,6 +59,7 @@ dependencies {
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
+    implementation(libs.accompanist.placeholder.material)
     implementation(libs.filt.annotaions)
     ksp(libs.filt.compiler)
     implementation(libs.hilt)

@@ -58,6 +58,7 @@ dependencies {
     implementation(libs.bundles.androidx.collection)
     implementation(libs.bundles.androidx.nav)
     implementation(libs.androidx.compose.constraintlayout)
+    implementation(libs.accompanist.placeholder.material)
     implementation(libs.androidx.hilt.nav.compose)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.room)

@@ -4,6 +4,7 @@ import com.zhangke.utopia.activitypubapp.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypubapp.model.ActivityPubUser
 
 internal data class ServerDetailUiState(
+    val loading: Boolean,
     val domain: String,
     val title: String,
     val description: String,
@@ -11,7 +12,7 @@ internal data class ServerDetailUiState(
     val version: String,
     val activeMonth: Int,
     val languages: List<String>,
-    val contract: ServerDetailContract,
+    val contract: ServerDetailContract? = null,
     val rules: List<ActivityPubInstanceRule>,
     val tabs: List<ServerDetailTab>,
 )

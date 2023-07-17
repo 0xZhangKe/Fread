@@ -19,10 +19,12 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.utopia.activitypubapp.R
 import com.zhangke.utopia.activitypubapp.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypubapp.screen.server.about.ServerAboutPage
+import com.zhangke.utopia.activitypubapp.screen.server.trending.tags.ServerTrendsTagsPage
 
 internal enum class ServerDetailTab(
     val title: TextString,
     val content: @Composable Screen.(
+        host: String,
         rules: List<ActivityPubInstanceRule>,
         contentCanScrollBackward: MutableState<Boolean>,
     ) -> Unit,
@@ -30,14 +32,21 @@ internal enum class ServerDetailTab(
 
     ABOUT(
         title = textOf(R.string.activity_pub_about),
-        content = @Composable { rules, contentCanScrollBackward ->
-            ServerAboutPage(rules, contentCanScrollBackward)
+        content = @Composable { host, rules, contentCanScrollBackward ->
+            ServerAboutPage(host, rules, contentCanScrollBackward)
+        },
+    ),
+
+    TRENDS_TAG(
+        title = textOf(R.string.activity_pub_trends_tag),
+        content = @Composable { host, _, contentCanScrollBackward ->
+            ServerTrendsTagsPage(host, contentCanScrollBackward)
         },
     ),
 
     PLACEHOLDER(
         title = textOf("PlaceHolder"),
-        content = @Composable { _, contentCanScrollBackward ->
+        content = @Composable { _, _, contentCanScrollBackward ->
             val listState = rememberLazyListState()
             val canScrollBackward by remember {
                 derivedStateOf {

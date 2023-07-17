@@ -3,21 +3,15 @@ package com.zhangke.utopia.activitypubapp.screen.server
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.Orientation
-import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -31,8 +25,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -51,7 +45,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
-import androidx.lifecycle.viewmodel.compose.viewModel
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -59,8 +52,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
-import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.textString
+import com.zhangke.framework.composable.utopiaPlaceholder
 
 class ServerDetailScreen(
     private val host: String,
@@ -69,11 +62,16 @@ class ServerDetailScreen(
     @Composable
     override fun Content() {
         val viewModel: ServerDetailViewModel = getViewModel()
+        viewModel.host = host
+        LaunchedEffect(Unit) {
+            viewModel.onPageResume()
+        }
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow
 
         ServiceDetailContent(
-            uiState = uiState.requireSuccessData(),
+            host = host,
+            uiState = uiState,
             onBackClick = navigator::pop,
         )
     }
@@ -81,6 +79,7 @@ class ServerDetailScreen(
     @OptIn(ExperimentalMotionApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun ServiceDetailContent(
+        host: String,
         uiState: ServerDetailUiState,
         onBackClick: () -> Unit,
     ) {
@@ -178,7 +177,8 @@ class ServerDetailScreen(
                 ) {
                     AsyncImage(
                         modifier = Modifier
-                            .layoutId("banner"),
+                            .layoutId("banner")
+                            .utopiaPlaceholder(uiState.loading),
                         model = uiState.thumbnail,
                         contentScale = ContentScale.Crop,
                         contentDescription = "Thumbnail",
@@ -193,18 +193,24 @@ class ServerDetailScreen(
                             )
                         ) {
                             Text(
-                                modifier = Modifier.padding(top = 40.dp),
+                                modifier = Modifier
+                                    .padding(top = 40.dp)
+                                    .utopiaPlaceholder(visible = uiState.loading),
                                 text = uiState.title,
                                 fontSize = 18.sp,
                                 fontWeight = FontWeight.Bold,
                             )
                             Text(
-                                modifier = Modifier.padding(top = 4.dp),
+                                modifier = Modifier
+                                    .padding(top = 4.dp)
+                                    .utopiaPlaceholder(visible = uiState.loading),
                                 text = uiState.domain,
                                 fontSize = 12.sp,
                             )
                             Text(
-                                modifier = Modifier.padding(top = 4.dp),
+                                modifier = Modifier
+                                    .padding(top = 4.dp)
+                                    .utopiaPlaceholder(visible = uiState.loading),
                                 text = uiState.description,
                                 maxLines = 4,
                                 overflow = TextOverflow.Ellipsis,
@@ -212,53 +218,61 @@ class ServerDetailScreen(
                             )
                             val languageString = uiState.languages.joinToString(", ")
                             Text(
-                                modifier = Modifier.padding(top = 4.dp),
+                                modifier = Modifier
+                                    .padding(top = 4.dp)
+                                    .utopiaPlaceholder(visible = uiState.loading),
                                 text = "语言：$languageString",
                                 maxLines = 3,
                                 fontSize = 14.sp,
                             )
                             Text(
-                                modifier = Modifier.padding(top = 4.dp),
+                                modifier = Modifier
+                                    .padding(top = 4.dp)
+                                    .utopiaPlaceholder(visible = uiState.loading),
                                 text = "月活：${uiState.activeMonth}",
                                 fontSize = 14.sp,
                             )
 
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
+                            if (uiState.contract != null) {
+                                Row(
                                     modifier = Modifier
-                                        .background(
-                                            Color(0x6644429F),
-                                            RoundedCornerShape(3.dp),
-                                        )
-                                        .padding(vertical = 2.dp, horizontal = 4.dp),
-                                    text = "MOD",
-                                    fontSize = 14.sp,
-                                    fontWeight = FontWeight.Bold,
-                                )
+                                        .fillMaxWidth()
+                                        .utopiaPlaceholder(visible = uiState.loading),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    Text(
+                                        modifier = Modifier
+                                            .background(
+                                                Color(0x6644429F),
+                                                RoundedCornerShape(3.dp),
+                                            )
+                                            .padding(vertical = 2.dp, horizontal = 4.dp),
+                                        text = "MOD",
+                                        fontSize = 14.sp,
+                                        fontWeight = FontWeight.Bold,
+                                    )
 
-                                AsyncImage(
-                                    modifier = Modifier
-                                        .padding(start = 6.dp)
-                                        .size(18.dp)
-                                        .clip(CircleShape),
-                                    model = uiState.contract.account.avatar,
-                                    contentDescription = "Mod avatar",
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(start = 4.dp),
-                                    text = uiState.contract.account.displayName,
-                                    fontSize = 14.sp,
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(start = 4.dp),
-                                    text = uiState.contract.email,
-                                    fontSize = 14.sp,
-                                )
+                                    AsyncImage(
+                                        modifier = Modifier
+                                            .padding(start = 6.dp)
+                                            .size(18.dp)
+                                            .clip(CircleShape),
+                                        model = uiState.contract.account.avatar,
+                                        contentDescription = "Mod avatar",
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(start = 4.dp),
+                                        text = uiState.contract.account.displayName,
+                                        fontSize = 14.sp,
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(start = 4.dp),
+                                        text = uiState.contract.email,
+                                        fontSize = 14.sp,
+                                    )
+                                }
                             }
                         }
                     }
@@ -275,7 +289,8 @@ class ServerDetailScreen(
                             .size(64.dp)
                             .clip(CircleShape)
                             .border(2.dp, Color.White, CircleShape)
-                            .layoutId("avatar"),
+                            .layoutId("avatar")
+                            .utopiaPlaceholder(visible = uiState.loading),
                         model = uiState.thumbnail,
                         contentScale = ContentScale.Crop,
                         contentDescription = "avatar",
@@ -311,10 +326,14 @@ class ServerDetailScreen(
         ) {
             Column {
                 var selectedTabIndex by remember {
-                    mutableStateOf(0)
+                    mutableIntStateOf(0)
                 }
                 val tabs = uiState.tabs
-                val pagerState = rememberPagerState(0)
+                val pagerState = rememberPagerState(
+                    initialPage = 0,
+                    initialPageOffsetFraction = 0f,
+                    pageCount = tabs::size,
+                )
                 LaunchedEffect(selectedTabIndex) {
                     pagerState.scrollToPage(selectedTabIndex)
                 }
@@ -340,14 +359,14 @@ class ServerDetailScreen(
                 }
                 HorizontalPager(
                     modifier = Modifier
-                        .fillMaxSize()
-                        .scrollable(rememberScrollState(), Orientation.Vertical),
+                        .fillMaxWidth()
+                        .weight(1F),
                     state = pagerState,
-                    pageCount = tabs.size,
-                    userScrollEnabled = true,
                 ) { currentPage ->
+                    // TODO check this, why need Screen params but receiver
                     tabs[currentPage].content(
                         this@ServerDetailScreen,
+                        host,
                         uiState.rules,
                         contentCanScrollBackward,
                     )

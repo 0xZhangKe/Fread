@@ -2,14 +2,15 @@ package com.zhangke.utopia.activitypubapp.adapter
 
 import com.zhangke.activitypub.entry.ActivityPubAccountEntity
 import com.zhangke.activitypub.entry.ActivityPubStatusEntity
+import com.zhangke.utopia.activitypubapp.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogAuthor
 import com.zhangke.utopia.status.status.Status
-import org.joda.time.format.ISODateTimeFormat
-import java.util.*
 import javax.inject.Inject
 
-class ActivityPubStatusAdapter @Inject constructor() {
+class ActivityPubStatusAdapter @Inject constructor(
+    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase
+) {
 
     fun adapt(statusAdapter: ActivityPubStatusEntity, domain: String): Status {
         //fixme temporary code
@@ -24,15 +25,11 @@ class ActivityPubStatusAdapter @Inject constructor() {
             title = null,
             content = content,
             mediaList = emptyList(),
-            date = formatActivityPubDate(createdAt),
+            date = formatDatetimeToDate(createdAt),
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
             repliesCount = repliesCount,
         )
-    }
-
-    private fun formatActivityPubDate(dateTimeText: String): Date {
-        return ISODateTimeFormat.dateTime().parseDateTime(dateTimeText).toDate()
     }
 
     private fun ActivityPubAccountEntity.toAuthor(domain: String): BlogAuthor {

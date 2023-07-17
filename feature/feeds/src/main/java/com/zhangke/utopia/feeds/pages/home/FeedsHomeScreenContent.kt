@@ -86,14 +86,17 @@ internal fun FeedsHomeScreenContent(
                             }
                         }
 
-                        val pagerState = rememberPagerState(uiState.tabIndex)
+                        val pagerState = rememberPagerState(
+                            initialPage = uiState.tabIndex,
+                            initialPageOffsetFraction = 0f,
+                            pageCount = feedsList::size,
+                        )
                         var currentPageIndex: Int? by remember {
                             mutableStateOf(null)
                         }
                         HorizontalPager(
                             modifier = Modifier.fillMaxSize(),
                             state = pagerState,
-                            pageCount = feedsList.size,
                             userScrollEnabled = true,
                         ) { currentPage ->
                             if (currentPageIndex != currentPage) {

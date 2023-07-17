@@ -4,15 +4,21 @@ import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubUserAdapter
 import com.zhangke.utopia.activitypubapp.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypubapp.screen.server.ServerDetailContract
+import com.zhangke.utopia.activitypubapp.screen.server.ServerDetailTab
 import com.zhangke.utopia.activitypubapp.screen.server.ServerDetailUiState
 import javax.inject.Inject
 
-class ServiceDetailUiStateAdapter @Inject constructor(
+internal class ServiceDetailUiStateAdapter @Inject constructor(
     private val userAdapter: ActivityPubUserAdapter,
 ) {
 
-    fun createUiState(entity: ActivityPubInstanceEntity): ServerDetailUiState {
+    fun createUiState(
+        entity: ActivityPubInstanceEntity,
+        loading: Boolean,
+        tabs: List<ServerDetailTab>,
+    ): ServerDetailUiState {
         return ServerDetailUiState(
+            loading = loading,
             domain = entity.domain,
             title = entity.title,
             description = entity.description,
@@ -22,6 +28,7 @@ class ServiceDetailUiStateAdapter @Inject constructor(
             languages = entity.languages,
             rules = entity.rules.map(::convertRule),
             contract = convertContract(entity.contact),
+            tabs = tabs,
         )
     }
 
@@ -32,7 +39,7 @@ class ServiceDetailUiStateAdapter @Inject constructor(
     private fun convertContract(entity: ActivityPubInstanceEntity.Contact): ServerDetailContract {
         return ServerDetailContract(
             email = entity.email,
-            account = userAdapter.createUser(entity.accountEntity)
+            account = userAdapter.createUser(entity.account)
         )
     }
 }

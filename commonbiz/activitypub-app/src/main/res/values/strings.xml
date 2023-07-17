@@ -10,4 +10,7 @@
     <string name="activity_pub_search_timeline_name">%s的%s</string>
 
     <string name="activity_pub_about">关于</string>
+    <string name="activity_pub_about_rule_title">站点规则</string>
+    <string name="activity_pub_trends_tag">话题</string>
+    <string name="activity_pub_trends_tag_description">最近两天有%s人在讨论</string>
 </resources>

@@ -29,9 +29,10 @@ internal class ServerDetailViewModel @Inject constructor(
             languages = emptyList(),
             rules = emptyList(),
             tabs = listOf(
+                ServerDetailTab.TRENDS,
+                ServerDetailTab.TRENDS_TAG,
                 ServerDetailTab.PLACEHOLDER,
                 ServerDetailTab.ABOUT,
-                ServerDetailTab.TRENDS_TAG,
             )
         )
     )

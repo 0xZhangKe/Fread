@@ -80,5 +80,7 @@ dependencies {
     implementation(libs.joda.time)
     implementation(libs.auto.service.annotations)
     kapt(libs.auto.service)
+    implementation(libs.androidx.paging.runtime)
+    implementation(libs.androidx.paging.compose)
     implementation(libs.bundles.voyager)
 }

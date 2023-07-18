@@ -6,6 +6,12 @@ data class ActivityPubTag(
     val name: String,
     val url: String,
     val description: TextString,
-    val history: List<Float>,
     val following: Boolean,
+    val history: ActivityPubTagHistory,
+)
+
+data class ActivityPubTagHistory(
+    val history: List<Float>,
+    val min: Float?,
+    val max: Float?,
 )

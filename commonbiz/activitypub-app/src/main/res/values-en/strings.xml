@@ -13,4 +13,5 @@
     <string name="activity_pub_about_rule_title">Rules</string>
     <string name="activity_pub_trends_tag">Trends Tags</string>
     <string name="activity_pub_trends_tag_description">%s people in the past 2 days</string>
+    <string name="activity_pub_trends_status">Hot</string>
 </resources>

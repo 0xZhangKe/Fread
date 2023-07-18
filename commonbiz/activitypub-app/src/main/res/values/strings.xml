@@ -13,4 +13,5 @@
     <string name="activity_pub_about_rule_title">站点规则</string>
     <string name="activity_pub_trends_tag">话题</string>
     <string name="activity_pub_trends_tag_description">最近两天有%s人在讨论</string>
+    <string name="activity_pub_trends_status">热门</string>
 </resources>

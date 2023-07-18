@@ -8,10 +8,14 @@ class GetServerTrendingUseCase @Inject constructor(
     private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
 ) {
 
-    suspend operator fun invoke(host: String): Result<List<ActivityPubStatusEntity>> {
+    suspend operator fun invoke(
+        host: String,
+        limit: Int,
+        offset: Int,
+    ): Result<List<ActivityPubStatusEntity>> {
         return obtainActivityPubClientUseCase(host).instanceRepo.getTrendsStatuses(
-            limit = 10,
-            offset = 0,
+            limit = limit,
+            offset = offset,
         )
     }
 }

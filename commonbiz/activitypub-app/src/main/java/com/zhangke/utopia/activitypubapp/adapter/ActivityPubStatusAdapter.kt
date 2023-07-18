@@ -12,9 +12,9 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase
 ) {
 
-    fun adapt(statusAdapter: ActivityPubStatusEntity, domain: String): Status {
+    fun adapt(entity: ActivityPubStatusEntity, domain: String): Status {
         //fixme temporary code
-        return Status.NewBlog(statusAdapter.toBlog(domain))
+        return Status.NewBlog(entity.toBlog(domain))
     }
 
     private fun ActivityPubStatusEntity.toBlog(domain: String): Blog {

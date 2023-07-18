@@ -101,9 +101,11 @@ private fun ServerTrendsTagsItem(tag: ActivityPubTag) {
             modifier = Modifier
                 .padding(end = 15.dp)
                 .size(width = 70.dp, height = 40.dp),
-            points = tag.history.reversed(),
+            points = tag.history.history.reversed(),
+            minPoint = tag.history.min,
+            maxPoint = tag.history.max,
             style = BezierCurveStyle.StrokeAndFill(
-                fillBrush = SolidColor(Color.Blue),
+                fillBrush = SolidColor(Color.Green),
                 strokeBrush = SolidColor(Color.White),
                 stroke = Stroke(width = 1.dp.toPx()),
             )

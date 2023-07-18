@@ -19,6 +19,7 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.utopia.activitypubapp.R
 import com.zhangke.utopia.activitypubapp.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypubapp.screen.server.about.ServerAboutPage
+import com.zhangke.utopia.activitypubapp.screen.server.trending.ServerTrendingPage
 import com.zhangke.utopia.activitypubapp.screen.server.trending.tags.ServerTrendsTagsPage
 
 internal enum class ServerDetailTab(
@@ -34,6 +35,13 @@ internal enum class ServerDetailTab(
         title = textOf(R.string.activity_pub_about),
         content = @Composable { host, rules, contentCanScrollBackward ->
             ServerAboutPage(host, rules, contentCanScrollBackward)
+        },
+    ),
+
+    TRENDS(
+        title = textOf(R.string.activity_pub_trends_status),
+        content = @Composable { host, _, contentCanScrollBackward ->
+            ServerTrendingPage(host, contentCanScrollBackward)
         },
     ),
 

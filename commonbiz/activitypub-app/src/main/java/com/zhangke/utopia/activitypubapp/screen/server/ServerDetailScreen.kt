@@ -29,6 +29,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -54,6 +55,7 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
+import kotlinx.coroutines.launch
 
 class ServerDetailScreen(
     private val host: String,
@@ -83,6 +85,7 @@ class ServerDetailScreen(
         uiState: ServerDetailUiState,
         onBackClick: () -> Unit,
     ) {
+        val coroutineScope = rememberCoroutineScope()
         val toolbarHeight = ToolbarTokens.ContainerHeight
         val motionScene = MotionScene {
             val backIcon = createRefFor("backIcon")
@@ -325,27 +328,24 @@ class ServerDetailScreen(
             }
         ) {
             Column {
-                var selectedTabIndex by remember {
-                    mutableIntStateOf(0)
-                }
                 val tabs = uiState.tabs
                 val pagerState = rememberPagerState(
                     initialPage = 0,
-                    initialPageOffsetFraction = 0f,
                     pageCount = tabs::size,
                 )
-                LaunchedEffect(selectedTabIndex) {
-                    pagerState.scrollToPage(selectedTabIndex)
-                }
                 TabRow(
                     modifier = Modifier
                         .fillMaxWidth(),
-                    selectedTabIndex = selectedTabIndex,
+                    selectedTabIndex = pagerState.currentPage,
                 ) {
                     tabs.forEachIndexed { index, item ->
                         Tab(
-                            selected = selectedTabIndex == index,
-                            onClick = { selectedTabIndex = index },
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.scrollToPage(index)
+                                }
+                            },
                         ) {
                             Box(
                                 modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
@@ -370,9 +370,6 @@ class ServerDetailScreen(
                         uiState.rules,
                         contentCanScrollBackward,
                     )
-                    LaunchedEffect(currentPage) {
-                        selectedTabIndex = currentPage
-                    }
                 }
             }
         }

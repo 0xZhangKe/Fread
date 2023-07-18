@@ -57,6 +57,7 @@ dependencies {
     implementation(project(path = ":framework"))
     runtimeOnly(project(path = ":commonbiz:activitypub-app"))
     implementation(project(path = ":commonbiz:status-provider"))
+    implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":feature:feeds"))
     implementation(project(path = ":feature:explore"))
     implementation(project(path = ":feature:publish"))

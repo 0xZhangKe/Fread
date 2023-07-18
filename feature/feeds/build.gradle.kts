@@ -29,6 +29,7 @@ dependencies {
     implementation(project(path = ":framework"))
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-provider"))
+    implementation(project(path = ":commonbiz:status-ui"))
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.composable.status
+package com.zhangke.utopia.status.ui
 
 import android.text.Html
 import android.widget.TextView
@@ -24,7 +24,7 @@ import java.util.*
 import kotlin.concurrent.getOrSet
 
 @Composable
-internal fun BlogContentComposable(
+fun BlogContentComposable(
     modifier: Modifier = Modifier,
     blog: Blog
 ) {

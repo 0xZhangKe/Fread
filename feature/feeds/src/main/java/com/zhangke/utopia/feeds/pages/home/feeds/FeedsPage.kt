@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
-import com.zhangke.utopia.feeds.composable.status.StatusNode
+import com.zhangke.utopia.status.ui.StatusNode
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

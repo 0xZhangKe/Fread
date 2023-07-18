@@ -1,11 +1,11 @@
-package com.zhangke.utopia.feeds.composable.status
+package com.zhangke.utopia.status.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.utopia.status.status.Status
 
 @Composable
-internal fun StatusNode(
+fun StatusNode(
     modifier: Modifier = Modifier,
     status: Status,
 ) {

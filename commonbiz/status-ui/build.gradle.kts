@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zhangke.utopia.activitypubapp"
+    namespace = "com.zhangke.utopia.statusui"
 
     // Allow references to generated code
     kapt {
@@ -32,7 +32,6 @@ dependencies {
     implementation(project(path = ":framework"))
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-provider"))
-    implementation(project(path = ":commonbiz:status-ui"))
     api(project(path = ":ActivityPub-Kotlin"))
 
     implementation(libs.bundles.kotlin)

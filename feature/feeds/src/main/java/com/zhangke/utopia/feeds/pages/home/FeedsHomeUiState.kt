@@ -7,3 +7,4 @@ internal data class FeedsHomeUiState(
     val tabIndex: Int,
     val pageUiStateList: LoadableState<List<FeedsPageUiState>>,
 )
+

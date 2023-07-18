@@ -10,7 +10,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class StatusSourceResolver @Inject constructor(
-    private val resolvers: List<IStatusSourceResolver>
+    private val resolvers: Set<@JvmSuppressWildcards IStatusSourceResolver>
 ) {
 
     suspend fun resolve(uri: String): Result<StatusSource> {

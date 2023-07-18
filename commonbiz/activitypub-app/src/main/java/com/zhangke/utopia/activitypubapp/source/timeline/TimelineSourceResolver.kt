@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypubapp.source.timeline
 
+import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.uri.timeline.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.activitypubapp.uri.timeline.TimelineUriValidateUseCase
 import com.zhangke.utopia.status.resolvers.IStatusSourceResolver
@@ -7,7 +8,8 @@ import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
-internal class TimelineSourceResolver @Inject constructor(
+@Filt
+class TimelineSourceResolver @Inject constructor(
     private val repo: TimelineRepo,
     private val timelineUriValidateUseCase: TimelineUriValidateUseCase,
     private val parseUriToTimelineUriUseCase: ParseUriToTimelineUriUseCase,

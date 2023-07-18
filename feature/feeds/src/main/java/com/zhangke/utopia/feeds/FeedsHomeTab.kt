@@ -40,6 +40,9 @@ object FeedsHomeTab : Tab {
             onAddFeedsClick = {
                 navigator.push(FeedsManagerScreen(true))
             },
+            onSourceItemClick = { source ->
+                source.uri
+            }
         )
     }
 }

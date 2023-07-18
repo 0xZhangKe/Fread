@@ -23,6 +23,9 @@ interface UserSourceDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE webFinger=:webFinger")
     suspend fun query(webFinger: WebFinger): UserSourceEntry?
 
+    @Query("SELECT * FROM $TABLE_NAME")
+    suspend fun queryAll(): List<UserSourceEntry>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entry: UserSourceEntry)
 }

@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypubapp.adapter
 import com.zhangke.activitypub.entry.ActivityPubAccountEntity
 import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entry.ActivityPubTokenEntity
-import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubUserEntity
+import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
 import com.zhangke.utopia.activitypubapp.usecase.ActivityPubAccountToUriUseCase
@@ -34,8 +34,8 @@ class ActivityPubAccountAdapter @Inject constructor(
         account: ActivityPubAccountEntity,
         token: ActivityPubTokenEntity,
         active: Boolean,
-    ): ActivityPubUserEntity {
-        return ActivityPubUserEntity(
+    ): ActivityPubLoggedAccountEntity {
+        return ActivityPubLoggedAccountEntity(
             uri = accountToUriUseCase.adapt(account).toString(),
             id = accountToWebFinger(account).toString(),
             platform = instanceAdapter.createPlatform(instance),
@@ -46,43 +46,6 @@ class ActivityPubAccountAdapter @Inject constructor(
             homepage = account.url,
             active = active,
             token = token,
-        )
-    }
-
-    fun toEntity(
-        user: LoggedAccount,
-        uri: String,
-        webFinger: WebFinger,
-        token: ActivityPubTokenEntity,
-    ): ActivityPubUserEntity {
-        return ActivityPubUserEntity(
-            uri = uri,
-            id = webFinger.toString(),
-            platform = user.platform,
-            host = user.host,
-            name = user.name,
-            description = user.description,
-            avatar = user.avatar,
-            homepage = user.homepage,
-            active = user.active,
-            token = token,
-        )
-    }
-
-    fun toUtopiaLoggedAccount(
-        entity: ActivityPubUserEntity,
-        validate: Boolean
-    ): LoggedAccount {
-        return LoggedAccount(
-            id = entity.id,
-            platform = entity.platform,
-            host = entity.host,
-            name = entity.name,
-            description = entity.description,
-            avatar = entity.avatar,
-            homepage = entity.homepage,
-            active = entity.active,
-            validate = validate,
         )
     }
 

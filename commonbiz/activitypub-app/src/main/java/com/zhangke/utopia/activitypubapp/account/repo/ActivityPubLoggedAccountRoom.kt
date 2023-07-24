@@ -4,16 +4,16 @@ import androidx.room.*
 import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.utopia.status.platform.UtopiaPlatform
 
-private const val TABLE_NAME = "logged_users"
+private const val TABLE_NAME = "logged_accounts"
 
 @Entity(tableName = TABLE_NAME)
-data class ActivityPubUserEntity(
+data class ActivityPubLoggedAccountEntity(
     /**
-     * it will container user id
+     * it will container account id
      */
     @PrimaryKey val uri: String,
     /**
-     * Not ActivityPub userId, it`s WebFinger.
+     * Not ActivityPub accountId, it`s WebFinger.
      */
     val id: String,
     val platform: UtopiaPlatform,
@@ -27,22 +27,22 @@ data class ActivityPubUserEntity(
 )
 
 @Dao
-interface ActivityPubUserDao {
+interface ActivityPubLoggerAccountDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE active='true'")
-    suspend fun querySelectedUser(): ActivityPubUserEntity?
+    suspend fun querySelectedAccount(): ActivityPubLoggedAccountEntity?
 
     @Query("SELECT * FROM $TABLE_NAME")
-    suspend fun queryAll(): List<ActivityPubUserEntity>
+    suspend fun queryAll(): List<ActivityPubLoggedAccountEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE uri=:uri")
-    suspend fun queryByUri(uri: String): ActivityPubUserEntity?
+    suspend fun queryByUri(uri: String): ActivityPubLoggedAccountEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entry: ActivityPubUserEntity)
+    suspend fun insert(entry: ActivityPubLoggedAccountEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entries: List<ActivityPubUserEntity>)
+    suspend fun insert(entries: List<ActivityPubLoggedAccountEntity>)
 
     @Query("DELETE FROM $TABLE_NAME WHERE uri=:uri")
     suspend fun deleteByUri(uri: String)

@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.auth
 
 import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypubapp.uri.ActivityPubUriValidateUseCase
-import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubAccountRepo
+import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.status.auth.ISourceListAuthValidateUseCase
 import com.zhangke.utopia.status.auth.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @Filt
 class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
-    private val userRepo: ActivityPubAccountRepo,
+    private val userRepo: ActivityPubLoggedAccountRepo,
     private val userValidateUseCase: ActivityPubAccountValidationUseCase,
     private val activityPubUriValidateUseCase: ActivityPubUriValidateUseCase,
 ) : ISourceListAuthValidateUseCase {

@@ -30,7 +30,7 @@ class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
         if (activityPubSourceList.isEmpty()) {
             return Result.success(SourcesAuthValidateResult(emptyList(), emptyList()))
         }
-        val user = userRepo.getCurrentUser()
+        val user = userRepo.getCurrentAccount()
         if (user != null) {
             val userValidateResult = userValidateUseCase(user)
             if (userValidateResult.isFailure) {

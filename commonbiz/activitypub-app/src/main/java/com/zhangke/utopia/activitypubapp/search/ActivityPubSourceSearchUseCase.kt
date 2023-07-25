@@ -5,9 +5,10 @@ import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.collect
 import com.zhangke.utopia.activitypubapp.R
 import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
-import com.zhangke.utopia.activitypubapp.usecase.ResolveUserSourceUseCase
+import com.zhangke.utopia.activitypubapp.source.user.ResolveUserSourceUseCase
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
+import com.zhangke.utopia.activitypubapp.user.UserRepo
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.status.search.ISearchStatusSourceUseCase
 import com.zhangke.utopia.status.source.StatusSource
@@ -17,6 +18,7 @@ import javax.inject.Inject
 class ActivityPubSourceSearchUseCase @Inject constructor(
     private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
     private val resolveUserSourceUseCase: ResolveUserSourceUseCase,
+    private val userRepo: UserRepo,
 ) : ISearchStatusSourceUseCase {
 
     override suspend fun invoke(query: String): Result<List<StatusSource>> {

@@ -18,7 +18,7 @@ class ObtainActivityPubClientUseCase @Inject constructor(
         return createActivityPubClientUseCase(
             host = host,
             tokenProvider = {
-                userRepo.getCurrentUser()?.token
+                userRepo.getCurrentAccount()?.token
             },
             onAuthorizeFailed = { url, client ->
                 author.startOauth(url, client)

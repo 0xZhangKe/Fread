@@ -1,17 +1,19 @@
-package com.zhangke.utopia.activitypubapp.adapter
+package com.zhangke.utopia.activitypubapp.user
 
 import com.zhangke.activitypub.entry.ActivityPubAccountEntity
 import com.zhangke.utopia.activitypubapp.model.ActivityPubUser
-import com.zhangke.utopia.activitypubapp.usecase.ActivityPubAccountToUriUseCase
+import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
+import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import javax.inject.Inject
 
-class ActivityPubUserAdapter @Inject constructor(
-    private val accountToUriUseCase: ActivityPubAccountToUriUseCase,
-) {
+class ActivityPubUserAdapter @Inject constructor() {
 
-    fun createUser(entity: ActivityPubAccountEntity): ActivityPubUser {
+    fun adapt(entity: ActivityPubAccountEntity): ActivityPubUser {
+        val webFinger = accountToWebFinger(entity)
         return ActivityPubUser(
-            uri = accountToUriUseCase.adapt(entity),
+            id = entity.id,
+            webFinger = webFinger,
+            uri = ActivityPubUserUri.create(entity.id, webFinger),
             username = entity.username,
             displayName = entity.displayName,
             locked = entity.locked,
@@ -30,5 +32,10 @@ class ActivityPubUserAdapter @Inject constructor(
             statusesCount = entity.statusesCount,
             lastStatusAt = entity.lastStatusAt,
         )
+    }
+
+    private fun accountToWebFinger(account: ActivityPubAccountEntity): WebFinger {
+        WebFinger.create(account.acct)?.let { return it }
+        WebFinger.create(account.url)!!.let { return it }
     }
 }

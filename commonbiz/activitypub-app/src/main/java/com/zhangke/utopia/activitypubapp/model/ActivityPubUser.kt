@@ -1,9 +1,12 @@
 package com.zhangke.utopia.activitypubapp.model
 
 import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
+import com.zhangke.utopia.activitypubapp.utils.WebFinger
 
 data class ActivityPubUser(
+    val id: String,
     val uri: ActivityPubUserUri,
+    val webFinger: WebFinger,
     val username: String,
     val displayName: String,
     val locked: Boolean,

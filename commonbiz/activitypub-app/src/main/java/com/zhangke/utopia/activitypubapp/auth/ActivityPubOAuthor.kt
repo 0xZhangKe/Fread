@@ -37,7 +37,7 @@ class ActivityPubOAuthor @Inject constructor(
             toast(e.message)
             return false
         }
-        repo.updateCurrentUser(entity)
+        repo.updateCurrentAccount(entity)
         return true
     }
 

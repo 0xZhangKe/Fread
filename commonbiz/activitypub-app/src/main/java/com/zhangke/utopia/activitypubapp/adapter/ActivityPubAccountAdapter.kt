@@ -6,28 +6,12 @@ import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.source.user.UserSourceEntry
-import com.zhangke.utopia.activitypubapp.usecase.ActivityPubAccountToUriUseCase
-import com.zhangke.utopia.activitypubapp.usecase.ActivityPubAccountToWebFingerUseCase
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
-import com.zhangke.utopia.status.user.LoggedAccount
 import javax.inject.Inject
 
 class ActivityPubAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
-    private val accountToWebFinger: ActivityPubAccountToWebFingerUseCase,
-    private val accountToUriUseCase: ActivityPubAccountToUriUseCase,
 ) {
-
-    fun createSource(account: ActivityPubAccountEntity): UserSource {
-        return UserSource(
-            userId = account.id,
-            name = account.displayName,
-            description = account.note,
-            thumbnail = account.avatar,
-            webFinger = accountToWebFinger(account),
-        )
-    }
 
     fun createDBEntity(
         instance: ActivityPubInstanceEntity,

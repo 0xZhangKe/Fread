@@ -1,17 +1,15 @@
-package com.zhangke.utopia.activitypubapp.usecase
+package com.zhangke.utopia.activitypubapp.source.user
 
-import com.zhangke.utopia.activitypubapp.adapter.ActivityPubAccountAdapter
-import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
-import com.zhangke.utopia.activitypubapp.source.user.UserSource
 import com.zhangke.utopia.activitypubapp.uri.user.ParseUriToUserUriUseCase
+import com.zhangke.utopia.activitypubapp.user.UserRepo
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
 class ResolveUserSourceUseCase @Inject constructor(
-    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
-    private val userSourceAdapter: ActivityPubAccountAdapter,
     private val parseUriToUserUriUseCase: ParseUriToUserUriUseCase,
+    private val userRepo: UserRepo,
+    private val userSourceAdapter: UserSourceAdapter,
 ) {
 
     suspend operator fun invoke(query: String): Result<UserSource?> {
@@ -21,9 +19,9 @@ class ResolveUserSourceUseCase @Inject constructor(
             webFinger = WebFinger.create(query)
         }
         webFinger ?: return Result.success(null)
-        val client = obtainActivityPubClientUseCase(webFinger.host)
-        return client.accountRepo
-            .lookup(webFinger.toString())
-            .map { userSourceAdapter.createSource(it) }
+        return userRepo.lookup(webFinger)
+            .map { user ->
+                user?.let { userSourceAdapter.adapt(it) }
+            }
     }
 }

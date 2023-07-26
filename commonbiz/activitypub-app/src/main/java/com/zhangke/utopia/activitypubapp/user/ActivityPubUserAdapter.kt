@@ -13,8 +13,8 @@ class ActivityPubUserAdapter @Inject constructor() {
         return ActivityPubUser(
             id = entity.id,
             webFinger = webFinger,
-            uri = ActivityPubUserUri.create(entity.id, webFinger),
-            username = entity.username,
+            uri = ActivityPubUserUri.create(entity.id, webFinger).toString(),
+            userName = entity.username,
             displayName = entity.displayName,
             locked = entity.locked,
             bot = entity.bot,

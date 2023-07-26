@@ -7,7 +7,7 @@ import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypubapp.adapter.ActivityPubAccountAdapter
+import com.zhangke.utopia.activitypubapp.account.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubLoggedAccountRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 @Singleton
 class ActivityPubOAuthor @Inject constructor(
     private val repo: ActivityPubLoggedAccountRepo,
-    private val accountAdapter: ActivityPubAccountAdapter
+    private val accountAdapter: ActivityPubLoggedAccountAdapter
 ) {
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
@@ -32,7 +32,7 @@ class ActivityPubOAuthor @Inject constructor(
             val instance = client.instanceRepo.getInstanceInformation().getOrThrow()
             val token = client.oauthRepo.getToken(code, ActivityPubScope.ALL).getOrThrow()
             val account = client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
-            accountAdapter.createDBEntity(instance, account, token, true)
+            accountAdapter.createFromAccount(instance, account, token, true)
         } catch (e: Exception) {
             toast(e.message)
             return false

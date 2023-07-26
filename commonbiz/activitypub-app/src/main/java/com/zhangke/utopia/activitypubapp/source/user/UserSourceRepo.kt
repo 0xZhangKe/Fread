@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypubapp.source.user
 
 import androidx.room.*
-import com.zhangke.utopia.activitypubapp.adapter.ActivityPubAccountAdapter
 import com.zhangke.utopia.activitypubapp.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import javax.inject.Inject
@@ -30,9 +29,7 @@ interface UserSourceDao {
     suspend fun insert(entry: UserSourceEntry)
 }
 
-class UserSourceRepo @Inject constructor(
-    private val activityPubAccountAdapter: ActivityPubAccountAdapter,
-) {
+class UserSourceRepo @Inject constructor() {
 
     private val databases = ActivityPubDatabases.instance
 
@@ -40,15 +37,15 @@ class UserSourceRepo @Inject constructor(
 
     private val webFingerToSourceCache = mutableMapOf<WebFinger, UserSource>()
 
-    suspend fun query(webFinger: WebFinger): UserSource? {
-        val cached = webFingerToSourceCache[webFinger]
-        if (cached != null) return cached
-        return dao.query(webFinger)
-            ?.let { activityPubAccountAdapter.fromUserSourceEntity(it) }
-            ?.also { webFingerToSourceCache[webFinger] = it }
-    }
+//    suspend fun query(webFinger: WebFinger): UserSource? {
+//        val cached = webFingerToSourceCache[webFinger]
+//        if (cached != null) return cached
+//        return dao.query(webFinger)
+//            ?.let { activityPubAccountAdapter.fromUserSourceEntity(it) }
+//            ?.also { webFingerToSourceCache[webFinger] = it }
+//    }
 
-    suspend fun save(userSource: UserSource) {
-        dao.insert(activityPubAccountAdapter.toSourceEntityEntry(userSource))
-    }
+//    suspend fun save(userSource: UserSource) {
+//        dao.insert(activityPubAccountAdapter.toSourceEntityEntry(userSource))
+//    }
 }

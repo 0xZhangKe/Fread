@@ -2,7 +2,6 @@ package com.zhangke.utopia.activitypubapp.account.repo
 
 import com.zhangke.utopia.activitypubapp.account.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypubapp.account.adapter.ActivityPubLoggedAccountAdapter
-import com.zhangke.utopia.activitypubapp.adapter.ActivityPubAccountAdapter
 import com.zhangke.utopia.activitypubapp.db.ActivityPubDatabases
 import javax.inject.Inject
 
@@ -31,14 +30,17 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         accountDao.insert(insertList)
     }
 
-    suspend fun queryAll(): List<ActivityPubLoggedAccountEntity> = accountDao.queryAll()
+    suspend fun queryAll(): List<ActivityPubLoggedAccount> =
+        accountDao.queryAll().map(adapter::adapt)
 
-    suspend fun queryByUri(uri: String): ActivityPubLoggedAccountEntity? =
-        accountDao.queryByUri(uri)
+    suspend fun queryByUri(uri: String): ActivityPubLoggedAccount? =
+        accountDao.queryByUri(uri)?.let(adapter::adapt)
 
-    suspend fun insert(entry: ActivityPubLoggedAccountEntity) = accountDao.insert(entry)
+    suspend fun insert(entry: ActivityPubLoggedAccount) =
+        accountDao.insert(adapter.recovery(entry))
 
-    suspend fun insert(entries: List<ActivityPubLoggedAccountEntity>) = accountDao.insert(entries)
+    suspend fun insert(entries: List<ActivityPubLoggedAccount>) =
+        accountDao.insert(entries.map(adapter::recovery))
 
     suspend fun deleteByUri(uri: String) = accountDao.deleteByUri(uri)
 

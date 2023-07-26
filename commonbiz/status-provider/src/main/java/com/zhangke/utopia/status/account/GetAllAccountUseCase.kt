@@ -1,10 +1,10 @@
-package com.zhangke.utopia.status.user
+package com.zhangke.utopia.status.account
 
 import com.zhangke.utopia.status.utils.collect
 import javax.inject.Inject
 
 class GetAllUserUseCase @Inject constructor(
-    private val useCases: Set<@JvmSuppressWildcards IGetAllUserUseCase>
+    private val useCases: Set<@JvmSuppressWildcards IGetAllAccountUseCase>
 ) {
 
     suspend operator fun invoke(): Result<List<LoggedAccount>> {
@@ -12,7 +12,7 @@ class GetAllUserUseCase @Inject constructor(
     }
 }
 
-interface IGetAllUserUseCase {
+interface IGetAllAccountUseCase {
 
     suspend operator fun invoke(): Result<List<LoggedAccount>>
 }

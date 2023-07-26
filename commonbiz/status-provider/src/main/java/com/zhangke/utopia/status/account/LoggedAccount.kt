@@ -1,8 +1,8 @@
-package com.zhangke.utopia.status.user
+package com.zhangke.utopia.status.account
 
 import com.zhangke.utopia.status.platform.UtopiaPlatform
 
-data class LoggedAccount(
+open class LoggedAccount(
     val userId: String,
     val uri: String,
     val platform: UtopiaPlatform,
@@ -12,5 +12,4 @@ data class LoggedAccount(
     val avatar: String?,
     val homepage: String?,
     val active: Boolean,
-    val validate: Boolean,
 )

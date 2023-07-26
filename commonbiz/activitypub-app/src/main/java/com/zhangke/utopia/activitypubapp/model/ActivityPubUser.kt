@@ -1,13 +1,13 @@
 package com.zhangke.utopia.activitypubapp.model
 
-import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.utopia.status.user.UtopiaUser
 
-data class ActivityPubUser(
+class ActivityPubUser(
     val id: String,
-    val uri: ActivityPubUserUri,
+    uri: String,
     val webFinger: WebFinger,
-    val username: String,
+    userName: String,
     val displayName: String,
     val locked: Boolean,
     val bot: Boolean,
@@ -15,13 +15,23 @@ data class ActivityPubUser(
     val group: Boolean,
     val createdAt: String,
     val note: String,
-    val homePageUrl: String,
-    val avatar: String,
+    homePageUrl: String,
+    avatar: String,
     val avatarStatic: String,
-    val header: String,
+    header: String,
     val headerStatic: String,
-    val followersCount: Int,
-    val followingCount: Int,
-    val statusesCount: Int,
+    followersCount: Int,
+    followingCount: Int,
+    statusesCount: Int,
     val lastStatusAt: String,
+) : UtopiaUser(
+    uri = uri,
+    userName = userName,
+    description = note,
+    homePageUrl = homePageUrl,
+    avatar = avatar,
+    header = header,
+    followersCount = followersCount,
+    followingCount = followingCount,
+    statusesCount = statusesCount,
 )

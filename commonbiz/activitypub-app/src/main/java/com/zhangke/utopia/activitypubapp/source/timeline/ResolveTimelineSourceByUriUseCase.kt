@@ -1,23 +1,20 @@
-package com.zhangke.utopia.activitypubapp.usecase
+package com.zhangke.utopia.activitypubapp.source.timeline
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.R
-import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
-import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSource
-import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
+import com.zhangke.utopia.activitypubapp.servers.GetActivityPubServerUseCase
 import com.zhangke.utopia.activitypubapp.uri.timeline.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
 
-class ResolveTimelineSourceUseCase @Inject constructor(
-    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
+class ResolveTimelineSourceByUriUseCase @Inject constructor(
+    private val getServerInstance: GetActivityPubServerUseCase,
     private val parseUriToTimelineUriUseCase: ParseUriToTimelineUriUseCase,
 ) {
 
     suspend operator fun invoke(uri: StatusProviderUri): Result<TimelineSource?> {
         val timelineUri = parseUriToTimelineUriUseCase(uri) ?: return Result.success(null)
-        val client = obtainActivityPubClientUseCase(timelineUri.timelineServerHost)
-        val instance = client.instanceRepo.getInstanceInformation().getOrNull()
+        val instance = getServerInstance(timelineUri.timelineServerHost).getOrNull()
             ?: return Result.success(null)
         return Result.success(
             buildTimelineSearchResult(

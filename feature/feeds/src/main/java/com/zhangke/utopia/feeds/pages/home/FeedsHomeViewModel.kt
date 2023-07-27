@@ -10,24 +10,24 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.FeedsPageUiStateAdapter
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.repo.db.FeedsRepo
-import com.zhangke.utopia.status.source.ResolveStatusSourceUseCase
+import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
 import com.zhangke.utopia.status.status.GetStatusFeedsByUrisUseCase
 import com.zhangke.utopia.status.status.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedsHomeViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val feedsPageUiStateAdapter: FeedsPageUiStateAdapter,
     private val getStatusFeedsByUrisUseCase: GetStatusFeedsByUrisUseCase,
-    private val resolveStatusSource: ResolveStatusSourceUseCase,
+    private val resolveStatusSource: ResolveSourceByUriUseCase,
 ) : ViewModel() {
 
     private val pagedFetchers = mutableMapOf<Int, FeedsFetcher<Status>>()

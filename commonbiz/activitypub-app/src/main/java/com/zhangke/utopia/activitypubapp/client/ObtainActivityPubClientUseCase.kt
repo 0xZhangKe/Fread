@@ -14,6 +14,7 @@ class ObtainActivityPubClientUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(host: String): ActivityPubClient {
+        // TODO Always use single client, maybe use current logged user.
         clientCache[host]?.let { return it }
         return createActivityPubClientUseCase(
             host = host,

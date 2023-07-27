@@ -1,14 +1,14 @@
 package com.zhangke.utopia.activitypubapp.auth
 
+import com.zhangke.utopia.activitypubapp.account.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypubapp.client.CreateActivityPubClientUseCase
-import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubLoggedAccountEntity
 import javax.inject.Inject
 
 class ActivityPubAccountValidationUseCase @Inject constructor(
     private val createActivityPubClientUseCase: CreateActivityPubClientUseCase,
 ) {
 
-    suspend operator fun invoke(userEntity: ActivityPubLoggedAccountEntity): Result<Boolean> {
+    suspend operator fun invoke(userEntity: ActivityPubLoggedAccount): Result<Boolean> {
         val host = userEntity.host
         val client = createActivityPubClientUseCase(
             host = host,

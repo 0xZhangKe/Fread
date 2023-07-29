@@ -46,6 +46,7 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
+import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -55,14 +56,18 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import kotlinx.coroutines.launch
 
+@Destination("server/detail")
 class ServerDetailScreen(
-    private val host: String,
+    @Router val router: String,
 ) : AndroidScreen() {
 
     @Composable
     override fun Content() {
+        val host = router.toUri().getQueryParameter("host")!!
         val viewModel: ServerDetailViewModel = getViewModel()
         viewModel.host = host
         LaunchedEffect(Unit) {

@@ -20,6 +20,7 @@ kotlin {
         kotlin.srcDir("build/generated/ksp/main/kotlin")
         kotlin.srcDir("build/generated/ksp/debug/kotlin")
         kotlin.srcDir("build/generated/ksp/release/kotlin")
+        resources.srcDir("build/generated/ksp/main/resources")
     }
 }
 
@@ -83,4 +84,6 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.bundles.voyager)
+    implementation(libs.krouter.core)
+    ksp(libs.krouter.compiler)
 }

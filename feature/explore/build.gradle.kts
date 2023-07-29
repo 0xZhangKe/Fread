@@ -17,6 +17,7 @@ android {
 kotlin {
     sourceSets.main {
         kotlin.srcDir("build/generated/ksp/main/kotlin")
+        resources.srcDir("build/generated/ksp/main/resources")
     }
 }
 
@@ -74,4 +75,6 @@ dependencies {
     implementation(libs.auto.service.annotations)
     kapt(libs.auto.service)
     implementation(libs.bundles.voyager)
+    implementation(libs.krouter.core)
+    ksp(libs.krouter.compiler)
 }

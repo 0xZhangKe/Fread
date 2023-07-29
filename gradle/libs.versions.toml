@@ -48,6 +48,7 @@ filt = "1.0.4"
 
 voyager = "1.0.0-rc05"
 
+krouter = "0.1.4"
 
 androidGradlePlugin = "8.0.1"
 hiltAndroidGradlePlugin = "2.44"
@@ -70,7 +71,6 @@ kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 coil = ["coil", "coil.compose", "coil.gif"]
 
 voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.android", "voyager.hilt", "voyager.koin"]
-
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
@@ -160,6 +160,9 @@ voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitio
 voyager-android = { group = "cafe.adriel.voyager", name = "voyager-androidx", version.ref = "voyager" }
 voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.ref = "voyager" }
 voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.ref = "voyager" }
+
+krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", version.ref = "krouter"}
+krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.ref = "krouter"}
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -22,6 +22,6 @@ class UserRepo @Inject constructor(
         val client = obtainActivityPubClient(webFinger.host)
         return client.accountRepo
             .lookup(webFinger.toString())
-            .map(userAdapter::adapt)
+            .map { it?.let { userAdapter.adapt(it) } }
     }
 }

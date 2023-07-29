@@ -38,7 +38,7 @@ import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
-import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.server.StatusProviderServer
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -48,26 +48,14 @@ internal fun FeedsHomeScreenContent(
     onAddFeedsClick: () -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
-    onSourceItemClick: (StatusSource) -> Unit,
+    onServerItemClick: (StatusProviderServer) -> Unit,
 ) {
     val snackbarHostState = rememberSnackbarHostState()
-    var topBarItems: List<StatusSource> by remember {
+    var topBarItems: List<StatusProviderServer> by remember {
         mutableStateOf(emptyList())
     }
     var showSelectSourcePopup by remember {
         mutableStateOf(false)
-    }
-    DropdownMenu(
-        expanded = showSelectSourcePopup,
-        onDismissRequest = { showSelectSourcePopup = false },
-    ) {
-        topBarItems.forEach { source ->
-            DropdownMenuItem(
-                onClick = { onSourceItemClick(source) },
-            ) {
-                Text(text = source.name)
-            }
-        }
     }
     Scaffold(
         topBar = {
@@ -80,7 +68,7 @@ internal fun FeedsHomeScreenContent(
                                     if (topBarItems.size > 1) {
                                         showSelectSourcePopup = true
                                     } else {
-                                        onSourceItemClick(topBarItems.first())
+                                        onServerItemClick(topBarItems.first())
                                     }
                                 },
                             verticalAlignment = Alignment.CenterVertically,
@@ -98,6 +86,18 @@ internal fun FeedsHomeScreenContent(
                             }
                         }
 
+                        DropdownMenu(
+                            expanded = showSelectSourcePopup,
+                            onDismissRequest = { showSelectSourcePopup = false },
+                        ) {
+                            topBarItems.forEach { source ->
+                                DropdownMenuItem(
+                                    onClick = { onServerItemClick(source) },
+                                ) {
+                                    Text(text = source.name)
+                                }
+                            }
+                        }
                     },
                     colors = TopAppBarDefaults.smallTopAppBarColors(),
                 )
@@ -112,7 +112,10 @@ internal fun FeedsHomeScreenContent(
                 .fillMaxSize()
                 .padding(paddings)
         ) {
-            LoadableLayout(state = uiState.pageUiStateList) { feedsList ->
+            LoadableLayout(
+                modifier = Modifier.fillMaxSize(),
+                state = uiState.pageUiStateList,
+            ) { feedsList ->
                 if (feedsList.isNotEmpty()) {
                     Column(modifier = Modifier.fillMaxSize()) {
                         TabRow(
@@ -151,7 +154,7 @@ internal fun FeedsHomeScreenContent(
                             userScrollEnabled = true,
                         ) { pageIndex ->
                             val pagedUiState = feedsList[pageIndex]
-                            topBarItems = pagedUiState.sourceList
+                            topBarItems = pagedUiState.serverList
                             FeedsPage(
                                 uiState = pagedUiState,
                                 onRefresh = onRefresh,

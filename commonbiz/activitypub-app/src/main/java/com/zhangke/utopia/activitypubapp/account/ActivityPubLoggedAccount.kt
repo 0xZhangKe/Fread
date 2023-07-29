@@ -3,13 +3,13 @@ package com.zhangke.utopia.activitypubapp.account
 import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.platform.UtopiaPlatform
+import com.zhangke.utopia.status.server.StatusProviderServer
 
 class ActivityPubLoggedAccount(
     userId: String,
     uri: String,
     val webFinger: WebFinger,
-    platform: UtopiaPlatform,
+    server: StatusProviderServer,
     host: String,
     name: String,
     description: String?,
@@ -20,7 +20,7 @@ class ActivityPubLoggedAccount(
 ) : LoggedAccount(
     userId = userId,
     uri = uri,
-    platform = platform,
+    server = server,
     host = host,
     name = name,
     description = description,

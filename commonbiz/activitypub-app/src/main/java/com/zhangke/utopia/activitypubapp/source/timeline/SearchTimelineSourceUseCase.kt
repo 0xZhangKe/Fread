@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.source.timeline
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.R
-import com.zhangke.utopia.activitypubapp.servers.GetActivityPubServerUseCase
+import com.zhangke.utopia.activitypubapp.server.GetActivityPubServerUseCase
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
@@ -19,12 +19,12 @@ class SearchTimelineSourceUseCase @Inject constructor(
 
         val url = ActivityPubUrl.create(query) ?: return Result.success(emptyList())
         val host = url.host
-        val instance = getServerInstance(host).getOrNull()
+        val server = getServerInstance(host).getOrNull()
             ?: return Result.success(emptyList())
         val resultList = listOf(
-            buildTimelineSearchResult(instance.title, host, TimelineSourceType.HOME),
-            buildTimelineSearchResult(instance.title, host, TimelineSourceType.LOCAL),
-            buildTimelineSearchResult(instance.title, host, TimelineSourceType.PUBLIC),
+            buildTimelineSearchResult(server.name, host, TimelineSourceType.HOME),
+            buildTimelineSearchResult(server.name, host, TimelineSourceType.LOCAL),
+            buildTimelineSearchResult(server.name, host, TimelineSourceType.PUBLIC),
         )
         return Result.success(resultList)
     }

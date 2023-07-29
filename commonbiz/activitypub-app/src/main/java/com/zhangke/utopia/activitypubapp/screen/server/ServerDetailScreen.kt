@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypubapp.screen.server
 
+import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -62,12 +63,12 @@ import kotlinx.coroutines.launch
 
 @Destination("server/detail")
 class ServerDetailScreen(
-    @Router val router: String,
+    @Router val router: String = "",
 ) : AndroidScreen() {
 
     @Composable
     override fun Content() {
-        val host = router.toUri().getQueryParameter("host")!!
+        val host = Uri.decode(router.toUri().getQueryParameter("host")!!)
         val viewModel: ServerDetailViewModel = getViewModel()
         viewModel.host = host
         LaunchedEffect(Unit) {

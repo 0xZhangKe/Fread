@@ -56,7 +56,7 @@ kotlin {
 dependencies {
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":framework"))
-    runtimeOnly(project(path = ":commonbiz:activitypub-app"))
+    implementation(project(path = ":commonbiz:activitypub-app"))
     implementation(project(path = ":commonbiz:status-provider"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":feature:feeds"))
@@ -67,15 +67,6 @@ dependencies {
     testImplementation("junit:junit:4.+")
     androidTestImplementation("androidx.test.ext:junit:1.1.2")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.3.0")
-
-    // Import the Firebase BoM
-//    implementation platform('com.google.firebase:firebase-bom:30.1.0')
-    // Add the dependency for the Firebase SDK for Google Analytics
-    // When using the BoM, don't specify versions in Firebase dependencies
-//    implementation 'com.google.firebase:firebase-analytics-ktx'
-//    implementation 'com.google.firebase:firebase-crashlytics-ktx'
-//    implementation 'com.google.firebase:firebase-perf-ktx'
-
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)

@@ -1,12 +1,13 @@
 package com.zhangke.utopia.feeds
 
+import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -42,8 +43,9 @@ object FeedsHomeTab : Tab {
             onAddFeedsClick = {
                 navigator.push(FeedsManagerScreen(true))
             },
-            onSourceItemClick = { source ->
-                val screen = KRouter.route<Screen>("server/detail?host=${source.uri}")!!
+            onServerItemClick = { server ->
+                val screen =
+                    KRouter.route<AndroidScreen>("server/detail?host=${Uri.encode(server.url)}")!!
                 navigator.push(screen)
             }
         )

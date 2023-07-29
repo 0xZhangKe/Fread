@@ -1,8 +1,7 @@
 package com.zhangke.utopia.feeds.adapter
 
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
-import com.zhangke.utopia.feeds.model.Feeds
-import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.server.StatusProviderServer
 import com.zhangke.utopia.status.status.Status
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -11,12 +10,12 @@ internal class FeedsPageUiStateAdapter @Inject constructor() {
 
     fun adapt(
         feedsName: String,
-        sourceList: List<StatusSource>,
+        serverList: List<StatusProviderServer>,
         feedsFlow: Flow<List<Status>>,
     ): FeedsPageUiState {
         return FeedsPageUiState(
             name = feedsName,
-            sourceList = sourceList,
+            serverList = serverList,
             refreshing = false,
             loading = false,
             feedsFlow = feedsFlow,

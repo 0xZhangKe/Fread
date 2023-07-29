@@ -34,7 +34,7 @@ class ActivityPubStatusAdapter @Inject constructor(
 
     private fun ActivityPubAccountEntity.toAuthor(domain: String): BlogAuthor {
         return BlogAuthor(
-            name = username,
+            name = displayName,
             avatar = avatar,
             id = "${acct}@$domain",
             description = note,

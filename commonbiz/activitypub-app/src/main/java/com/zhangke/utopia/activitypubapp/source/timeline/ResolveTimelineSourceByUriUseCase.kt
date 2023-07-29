@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.source.timeline
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypubapp.R
-import com.zhangke.utopia.activitypubapp.servers.GetActivityPubServerUseCase
+import com.zhangke.utopia.activitypubapp.server.GetActivityPubServerUseCase
 import com.zhangke.utopia.activitypubapp.uri.timeline.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.status.utils.StatusProviderUri
 import javax.inject.Inject
@@ -18,7 +18,7 @@ class ResolveTimelineSourceByUriUseCase @Inject constructor(
             ?: return Result.success(null)
         return Result.success(
             buildTimelineSearchResult(
-                instance.title,
+                instance.name,
                 timelineUri.timelineServerHost,
                 timelineUri.type
             )

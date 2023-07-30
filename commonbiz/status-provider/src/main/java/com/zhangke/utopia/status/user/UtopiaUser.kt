@@ -1,7 +1,9 @@
 package com.zhangke.utopia.status.user
 
+import com.zhangke.utopia.status.uri.StatusProviderUri
+
 open class UtopiaUser(
-    val uri: String,
+    val uri: StatusProviderUri,
     val userName: String,
     val description: String,
     val homePageUrl: String,

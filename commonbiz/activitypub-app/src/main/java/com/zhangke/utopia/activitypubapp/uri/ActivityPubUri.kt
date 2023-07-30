@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypubapp.uri
 
-import com.zhangke.utopia.status.utils.StatusProviderUri
+import com.zhangke.utopia.status.uri.StatusProviderUri
 
 open class ActivityPubUri protected constructor(
     private val path: String,
@@ -18,9 +18,16 @@ open class ActivityPubUri protected constructor(
         }
     }
 
+    fun toStatusProviderUri(): StatusProviderUri {
+        return StatusProviderUri.build(
+            host = HOST,
+            path = path,
+            queries = queries,
+        )
+    }
+
     companion object {
 
         const val HOST = "activitypub.com"
     }
 }
-

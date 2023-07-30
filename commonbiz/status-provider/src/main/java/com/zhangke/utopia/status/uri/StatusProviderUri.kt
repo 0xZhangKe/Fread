@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.utils
+package com.zhangke.utopia.status.uri
 
 class StatusProviderUri private constructor(
     val host: String,
@@ -49,6 +49,10 @@ class StatusProviderUri private constructor(
         fun create(uri: String): StatusProviderUri? {
             val (host, path, queries) = StatusProviderUriParser().parse(uri) ?: return null
             return StatusProviderUri(host, path, queries)
+        }
+
+        fun buildBaseUrl(host: String, path: String): String{
+
         }
     }
 }

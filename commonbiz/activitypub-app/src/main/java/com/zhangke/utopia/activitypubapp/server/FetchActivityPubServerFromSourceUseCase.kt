@@ -5,7 +5,7 @@ import com.zhangke.utopia.activitypubapp.uri.timeline.ParseUriToTimelineUriUseCa
 import com.zhangke.utopia.activitypubapp.uri.user.ParseUriToUserUriUseCase
 import com.zhangke.utopia.status.server.IFetchServerFromSourceUseCase
 import com.zhangke.utopia.status.server.StatusProviderServer
-import com.zhangke.utopia.status.utils.StatusProviderUri
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 @Filt

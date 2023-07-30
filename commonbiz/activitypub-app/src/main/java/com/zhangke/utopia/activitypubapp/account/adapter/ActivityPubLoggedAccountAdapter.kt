@@ -9,6 +9,7 @@ import com.zhangke.utopia.activitypubapp.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
@@ -20,7 +21,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
             userId = entity.userId,
-            uri = entity.uri,
+            uri = StatusProviderUri.create(entity.uri)!!,
             webFinger = entity.webFinger,
             server = entity.platform,
             host = entity.host,
@@ -38,7 +39,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccountEntity {
         return ActivityPubLoggedAccountEntity(
             userId = user.userId,
-            uri = user.uri,
+            uri = user.uri.toString(),
             webFinger = user.webFinger,
             platform = user.server,
             host = user.host,
@@ -60,7 +61,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         val webFinger = accountToWebFinger(account)
         return ActivityPubLoggedAccount(
             userId = account.id,
-            uri = ActivityPubUserUri.create(account.id, webFinger).toString(),
+            uri = ActivityPubUserUri.create(account.id, webFinger).toStatusProviderUri(),
             webFinger = webFinger,
             server = instanceAdapter.adapt(instance),
             host = ActivityPubUrl.create(instance.domain)!!.host,

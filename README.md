@@ -2,7 +2,8 @@
 
 Mastodon android client
 
-# Uri
+# StatusProviderUri
+The Uri associated with status-provider is denoted by `StatusProviderUri`.
 
 - scheme: utopiaapp
 - host: protocol identification host, no need for ten actual hosts, e.g:
@@ -12,6 +13,7 @@ Mastodon android client
 
 ## ActivityPub uri
 scheme always is utopiaapp
+
 host always is activitypub.com
 
 ### user path

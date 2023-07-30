@@ -6,7 +6,7 @@ import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubLoggedAccountRe
 import com.zhangke.utopia.status.auth.ISourceListAuthValidateUseCase
 import com.zhangke.utopia.status.auth.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.utils.StatusProviderUri
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 @Filt

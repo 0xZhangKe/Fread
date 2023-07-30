@@ -1,8 +1,10 @@
 package com.zhangke.utopia.status.source
 
+import com.zhangke.utopia.status.uri.StatusProviderUri
+
 interface StatusSource {
 
-    val uri: String
+    val uri: StatusProviderUri
 
     val name: String
 

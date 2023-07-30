@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypubapp.uri.timeline
 
-import com.zhangke.utopia.status.utils.StatusProviderUri
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 class TimelineUriValidateUseCase @Inject constructor(

@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypubapp.source.user
 import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
 import com.zhangke.utopia.activitypubapp.utils.WebFinger
 import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class UserSource(
     val userId: String,
@@ -12,5 +13,6 @@ class UserSource(
     override val thumbnail: String?,
 ) : StatusSource {
 
-    override val uri: String = ActivityPubUserUri.create(userId, webFinger).toString()
+    override val uri: StatusProviderUri = ActivityPubUserUri.create(userId, webFinger)
+        .toStatusProviderUri()
 }

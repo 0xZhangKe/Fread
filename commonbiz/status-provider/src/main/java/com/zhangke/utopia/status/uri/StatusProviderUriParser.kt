@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.utils
+package com.zhangke.utopia.status.uri
 
 class StatusProviderUriParser {
 

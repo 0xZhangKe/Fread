@@ -1,10 +1,11 @@
 package com.zhangke.utopia.status.account
 
 import com.zhangke.utopia.status.server.StatusProviderServer
+import com.zhangke.utopia.status.uri.StatusProviderUri
 
 open class LoggedAccount(
     val userId: String,
-    val uri: String,
+    val uri: StatusProviderUri,
     val server: StatusProviderServer,
     val host: String,
     val name: String,

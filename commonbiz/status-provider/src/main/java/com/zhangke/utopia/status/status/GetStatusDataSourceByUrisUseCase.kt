@@ -2,7 +2,7 @@ package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.feeds.fetcher.StatusDataSource
-import com.zhangke.utopia.status.utils.StatusProviderUri
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 class GetStatusDataSourceByUrisUseCase @Inject constructor(

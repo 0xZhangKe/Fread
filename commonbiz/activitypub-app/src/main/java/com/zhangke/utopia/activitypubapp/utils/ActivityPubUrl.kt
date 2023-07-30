@@ -14,10 +14,6 @@ internal class ActivityPubUrl private constructor(
     val completenessUrl: String,
 ) {
 
-    fun encodeToBase64(): String {
-        return completenessUrl.encodeToBase64()
-    }
-
     override fun toString(): String {
         return completenessUrl
     }

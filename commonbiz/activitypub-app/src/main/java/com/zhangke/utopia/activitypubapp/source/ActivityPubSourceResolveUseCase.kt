@@ -6,7 +6,7 @@ import com.zhangke.utopia.activitypubapp.source.user.ResolveUserSourceByUriUseCa
 import com.zhangke.utopia.activitypubapp.uri.user.ParseUriToUserUriUseCase
 import com.zhangke.utopia.status.search.IResolveSourceByUriUseCase
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.utils.StatusProviderUri
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 @Filt

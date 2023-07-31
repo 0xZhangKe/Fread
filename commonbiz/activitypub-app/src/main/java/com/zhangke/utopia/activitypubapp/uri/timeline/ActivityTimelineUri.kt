@@ -2,6 +2,9 @@ package com.zhangke.utopia.activitypubapp.uri.timeline
 
 import com.zhangke.utopia.activitypubapp.source.timeline.TimelineSourceType
 import com.zhangke.utopia.activitypubapp.uri.ActivityPubUri
+import com.zhangke.utopia.activitypubapp.uri.activityPubUriString
+import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
+import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class ActivityTimelineUri private constructor(
     val timelineServerHost: String,
@@ -15,6 +18,8 @@ class ActivityTimelineUri private constructor(
 
         internal const val QUERY_HOST = "host"
         internal const val QUERY_TYPE = "type"
+
+        const val baseUrl: String = "${StatusProviderUri.SCHEME}://$HOST${PATH}"
 
         fun create(host: String, type: TimelineSourceType): ActivityTimelineUri {
             val queries = mapOf(QUERY_HOST to host, QUERY_TYPE to type.stringValue)

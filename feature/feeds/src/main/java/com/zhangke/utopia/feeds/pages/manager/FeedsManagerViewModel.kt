@@ -65,7 +65,7 @@ internal class FeedsManagerViewModel @Inject constructor(
     fun onRemoveSource(source: StatusSourceUiState) {
         viewModelState.update { state ->
             state.copy(
-                sourceList = state.sourceList.filter { it.uri != source.uri }
+                sourceList = state.sourceList.filter { it.uri.toString() != source.uri }
             )
         }
     }
@@ -107,7 +107,8 @@ internal class FeedsManagerViewModel @Inject constructor(
     }
 
     fun onAuthItemClick(source: StatusSourceUiState) {
-        val sourceModel = viewModelState.value.invalidateSourceList.first { it.uri == source.uri }
+        val sourceModel = viewModelState.value.invalidateSourceList
+            .first { it.uri.toString() == source.uri }
         launchInViewModel {
             launchAuthBySourceListUseCase(sourceModel)
                 .onSuccess {
@@ -131,7 +132,7 @@ internal class FeedsManagerViewModel @Inject constructor(
 
     private fun onReadyToAdd() {
         val currentState = viewModelState.value
-        val sourceUriList = currentState.sourceList.map { it.uri }
+        val sourceUriList = currentState.sourceList.map { it.uri.toString() }
         val sourceName = currentState.sourceName
         launchInViewModel {
             feedsRepo.insert(sourceName, sourceUriList)

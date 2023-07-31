@@ -20,7 +20,7 @@ class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
         sourceList: List<StatusSource>,
     ): Result<SourcesAuthValidateResult> {
         val activityPubSourceList = sourceList.filter {
-            val uri = StatusProviderUri.create(it.uri)
+            val uri = StatusProviderUri.create(it.uri.toString())
             if (uri == null) {
                 false
             } else {

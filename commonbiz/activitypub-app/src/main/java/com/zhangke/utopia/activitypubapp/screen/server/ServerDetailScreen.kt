@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypubapp.screen.server
 
-import android.net.Uri
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -27,11 +26,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -47,7 +44,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
-import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -59,18 +55,18 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
+import com.zhangke.utopia.activitypubapp.uri.server.ActivityPubServerUri
 import kotlinx.coroutines.launch
 
-@Destination("server/detail")
+@Destination(ActivityPubServerUri.baseUrl)
 class ServerDetailScreen(
     @Router val router: String = "",
 ) : AndroidScreen() {
 
     @Composable
     override fun Content() {
-        val host = Uri.decode(router.toUri().getQueryParameter("host")!!)
         val viewModel: ServerDetailViewModel = getViewModel()
-        viewModel.host = host
+        viewModel.uri = router
         LaunchedEffect(Unit) {
             viewModel.onPageResume()
         }
@@ -78,7 +74,6 @@ class ServerDetailScreen(
         val navigator = LocalNavigator.currentOrThrow
 
         ServiceDetailContent(
-            host = host,
             uiState = uiState,
             onBackClick = navigator::pop,
         )
@@ -87,7 +82,6 @@ class ServerDetailScreen(
     @OptIn(ExperimentalMotionApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun ServiceDetailContent(
-        host: String,
         uiState: ServerDetailUiState,
         onBackClick: () -> Unit,
     ) {
@@ -370,12 +364,15 @@ class ServerDetailScreen(
                     state = pagerState,
                 ) { currentPage ->
                     // TODO check this, why need Screen params but receiver
-                    tabs[currentPage].content(
-                        this@ServerDetailScreen,
-                        host,
-                        uiState.rules,
-                        contentCanScrollBackward,
-                    )
+                    val host = uiState.domain
+                    if (host.isNotEmpty()) {
+                        tabs[currentPage].content(
+                            this@ServerDetailScreen,
+                            uiState.domain,
+                            uiState.rules,
+                            contentCanScrollBackward,
+                        )
+                    }
                 }
             }
         }

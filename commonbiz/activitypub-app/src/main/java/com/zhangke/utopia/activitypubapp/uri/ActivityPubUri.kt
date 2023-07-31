@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypubapp.uri
 
 import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.statusProviderUriString
 
 open class ActivityPubUri protected constructor(
     private val path: String,
@@ -8,14 +9,7 @@ open class ActivityPubUri protected constructor(
 ) {
 
     override fun toString(): String {
-        val query = buildQuery()
-        return "${StatusProviderUri.SCHEME}://$HOST$path$query"
-    }
-
-    private fun buildQuery(): String {
-        return queries.entries.joinToString(prefix = "?", separator = "&") {
-            "${it.key}=${it.value}"
-        }
+        return activityPubUriString(path, queries)
     }
 
     fun toStatusProviderUri(): StatusProviderUri {
@@ -30,4 +24,8 @@ open class ActivityPubUri protected constructor(
 
         const val HOST = "activitypub.com"
     }
+}
+
+fun activityPubUriString(path: String, queries: Map<String, String>): String {
+    return statusProviderUriString(ActivityPubUri.HOST, path, queries)
 }

@@ -11,10 +11,9 @@ class ActivityPubInstanceAdapter @Inject constructor() {
     fun adapt(
         instance: ActivityPubInstanceEntity,
     ): StatusProviderServer {
-        val url = ActivityPubUrl.create(instance.domain).toString()
         return StatusProviderServer(
-            url = url,
-            uri = ActivityPubServerUri.create(url).toStatusProviderUri(),
+            url = ActivityPubUrl.create(instance.domain).toString(),
+            uri = ActivityPubServerUri.create(instance.domain).toStatusProviderUri(),
             name = instance.title,
             description = instance.description,
             thumbnail = instance.thumbnail.url,

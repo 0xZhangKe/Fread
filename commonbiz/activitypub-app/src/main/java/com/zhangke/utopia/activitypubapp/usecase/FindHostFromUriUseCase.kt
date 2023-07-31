@@ -10,10 +10,9 @@ class FindHostFromUriUseCase @Inject constructor(
     private val parseUriToTimelineUriUseCase: ParseUriToTimelineUriUseCase,
 ) {
 
-    operator fun invoke(uri: String): String? {
-        val activityPubUri = StatusProviderUri.create(uri) ?: return null
-        parseUriToUserUriUseCase(activityPubUri)?.let { return it.finger.host }
-        parseUriToTimelineUriUseCase(activityPubUri)?.let { return it.timelineServerHost }
+    operator fun invoke(uri: StatusProviderUri): String? {
+        parseUriToUserUriUseCase(uri)?.let { return it.finger.host }
+        parseUriToTimelineUriUseCase(uri)?.let { return it.timelineServerHost }
         return null
     }
 }

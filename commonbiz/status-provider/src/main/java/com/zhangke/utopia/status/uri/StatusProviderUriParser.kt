@@ -1,5 +1,7 @@
 package com.zhangke.utopia.status.uri
 
+import android.net.Uri
+
 class StatusProviderUriParser {
 
     fun parse(uriString: String): Triple<String, String, Map<String, String>>? {
@@ -42,7 +44,7 @@ class StatusProviderUriParser {
         return queryPart.split('&')
             .associate {
                 val array = it.split('=')
-                array[0] to array.getOrElse(1) { "" }
+                array[0] to Uri.decode(array.getOrElse(1) { "" })
             }
     }
 }

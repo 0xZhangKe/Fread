@@ -7,8 +7,8 @@ class ParseUriToServerUriUseCase @Inject constructor() {
 
     operator fun invoke(uri: StatusProviderUri): ActivityPubServerUri? {
         if (uri.path != ActivityPubServerUri.PATH) return null
-        val serverUrl = uri.queries[ActivityPubServerUri.QUERY_URL]
-        if (serverUrl.isNullOrEmpty()) return null
-        return ActivityPubServerUri.create(serverUrl)
+        val host = uri.queries[ActivityPubServerUri.QUERY_HOST]
+        if (host.isNullOrEmpty()) return null
+        return ActivityPubServerUri.create(host)
     }
 }

@@ -45,7 +45,7 @@ object FeedsHomeTab : Tab {
             },
             onServerItemClick = { server ->
                 val screen =
-                    KRouter.route<AndroidScreen>("server/detail?host=${Uri.encode(server.url)}")!!
+                    KRouter.route<AndroidScreen>(server.uri.toString())!!
                 navigator.push(screen)
             }
         )

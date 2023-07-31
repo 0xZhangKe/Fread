@@ -1,5 +1,7 @@
 package com.zhangke.utopia.status.uri
 
+import com.zhangke.framework.utils.uriString
+
 class StatusProviderUri private constructor(
     val host: String,
     /**
@@ -10,14 +12,7 @@ class StatusProviderUri private constructor(
 ) {
 
     override fun toString(): String {
-        val query = buildQuery()
-        return "$SCHEME://$host$path$query"
-    }
-
-    private fun buildQuery(): String {
-        return queries.entries.joinToString(prefix = "?", separator = "&") {
-            "${it.key}=${it.value}"
-        }
+        return statusProviderUriString(host, path, queries)
     }
 
     companion object {
@@ -50,9 +45,18 @@ class StatusProviderUri private constructor(
             val (host, path, queries) = StatusProviderUriParser().parse(uri) ?: return null
             return StatusProviderUri(host, path, queries)
         }
-
-        fun buildBaseUrl(host: String, path: String): String{
-
-        }
     }
+}
+
+fun statusProviderUriString(
+    host: String,
+    path: String,
+    queries: Map<String, String>,
+): String {
+    return uriString(
+        scheme = StatusProviderUri.SCHEME,
+        host = host,
+        path = path,
+        queries = queries,
+    )
 }

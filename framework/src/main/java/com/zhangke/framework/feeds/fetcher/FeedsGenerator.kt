@@ -2,11 +2,14 @@ package com.zhangke.framework.feeds.fetcher
 
 import javax.inject.Inject
 
-class FeedsGenerator<Value : StatusData> @Inject constructor() {
+class FeedsGenerator<Value> @Inject constructor() {
 
     fun generate(
         paramsList: List<GenerateParams<Value>>,
     ): GenerateResult<Value> {
+        paramsList.maxOf {
+            it.pagingSource.currentPage
+        }
         val maxLastDatetime = paramsList.mapNotNull {
             it.statusList.takeIf { list -> list.isNotEmpty() }
         }.maxOf { it.last().datetime }
@@ -25,12 +28,12 @@ class FeedsGenerator<Value : StatusData> @Inject constructor() {
         )
     }
 
-    data class GenerateParams<Value : StatusData>(
+    data class GenerateParams<Value>(
         val pagingSource: StatusPagingSource<*, *>,
         val statusList: List<Value>,
     )
 
-    data class GenerateResult<Value : StatusData>(
+    data class GenerateResult<Value>(
         val list: List<Value>,
         val pagingToEndId: Map<StatusPagingSource<*, *>, String>,
     )

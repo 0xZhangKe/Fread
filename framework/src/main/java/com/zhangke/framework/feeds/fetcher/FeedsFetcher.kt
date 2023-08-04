@@ -4,23 +4,21 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.onStart
 
-class FeedsFetcher<Value : StatusData>(
+class FeedsFetcher<Value>(
     sourceList: List<StatusDataSource<*, Value>>,
     private val pageSize: Int,
     private val feedsGenerator: FeedsGenerator<Value> = FeedsGenerator()
 ) {
 
     private val _dataFlow = MutableSharedFlow<List<Value>>(1)
+        .onStart { emit(emptyList()) }
 
     val dataFlow: Flow<List<Value>> = _dataFlow.asSharedFlow()
 
     private val pagingList = sourceList.map { StatusPagingSource(it, pageSize) }
     private val pagingToStartId = mutableMapOf<StatusPagingSource<*, *>, String>()
-
-    init {
-        _dataFlow.tryEmit(emptyList())
-    }
 
     suspend fun refresh(): Result<Unit> {
         _dataFlow.emit(emptyList())

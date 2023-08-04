@@ -2,7 +2,7 @@ package com.zhangke.framework.feeds.fetcher
 
 import com.zhangke.framework.utils.throwInDebug
 
-class StatusPagingSource<Key, Value : StatusData>(
+class StatusPagingSource<Key, Value>(
     private val source: StatusDataSource<Key, Value>,
     private val pageSize: Int,
 ) {

@@ -1,15 +1,15 @@
 package com.zhangke.utopia.activitypubapp.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubAccountEntity
 import com.zhangke.activitypub.entry.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypubapp.usecase.FormatActivityPubDatetimeToDateUseCase
+import com.zhangke.utopia.activitypubapp.user.ActivityPubUserAdapter
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.blog.BlogAuthor
 import com.zhangke.utopia.status.status.Status
 import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase
+    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
+    private val activityPubUserAdapter: ActivityPubUserAdapter,
 ) {
 
     fun adapt(entity: ActivityPubStatusEntity, domain: String): Status {
@@ -20,7 +20,9 @@ class ActivityPubStatusAdapter @Inject constructor(
     private fun ActivityPubStatusEntity.toBlog(domain: String): Blog {
         return Blog(
             id = id,
-            author = account.toAuthor(domain),
+            author = activityPubUserAdapter.adapt(
+                account,
+            ),
             supportedAction = emptyList(),
             title = null,
             content = content,
@@ -29,16 +31,6 @@ class ActivityPubStatusAdapter @Inject constructor(
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
             repliesCount = repliesCount,
-        )
-    }
-
-    private fun ActivityPubAccountEntity.toAuthor(domain: String): BlogAuthor {
-        return BlogAuthor(
-            name = displayName,
-            avatar = avatar,
-            id = "${acct}@$domain",
-            description = note,
-            homePage = url,
         )
     }
 }

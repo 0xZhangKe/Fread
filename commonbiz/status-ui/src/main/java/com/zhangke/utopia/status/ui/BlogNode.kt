@@ -17,8 +17,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.blog.BlogAuthor
-import com.zhangke.utopia.status.status.StatusAction
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.getOrSet

@@ -2,15 +2,11 @@ package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.feeds.fetcher.StatusData
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.blog.BlogAuthor
 
 /**
  * Created by ZhangKe on 2022/12/4.
  */
-sealed class Status(
-    open val author: BlogAuthor,
-    open val supportedAction: List<StatusAction>
-) : StatusData {
+sealed class Status: StatusData {
 
     override val authorId: String
         get() = author.id

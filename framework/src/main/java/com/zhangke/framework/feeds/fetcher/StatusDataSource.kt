@@ -1,10 +1,16 @@
 package com.zhangke.framework.feeds.fetcher
 
-interface StatusDataSource<Key, Value: StatusData> {
+interface StatusDataSource<Key, Value> {
 
     suspend fun load(params: LoadParams<Key>): Result<StatusSourceData<Key, Value>>
 
     fun getRefreshKey(): Key
+
+    fun getDataId(): String
+
+    fun getAuthId(): String
+
+    fun getDatetime(): Long
 }
 
 data class LoadParams<Key>(
@@ -18,12 +24,3 @@ data class StatusSourceData<Key, Value>(
     val nextPageKey: Key?,
     val extra: Map<String, String> = emptyMap(),
 )
-
-interface StatusData {
-
-    val dataId: String
-
-    val datetime: Long
-
-    val authorId: String
-}

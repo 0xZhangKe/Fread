@@ -6,7 +6,6 @@ import java.util.*
 data class Blog(
     val id: String,
     val author: UtopiaUser,
-    val supportedAction: List<StatusAction>,
     val title: String?,
     val content: String,
     val mediaList: List<BlogMedia>?,

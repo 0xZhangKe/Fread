@@ -1,52 +1,26 @@
 package com.zhangke.utopia.status.status
 
-import com.zhangke.framework.feeds.fetcher.StatusData
 import com.zhangke.utopia.status.blog.Blog
 
 /**
  * Created by ZhangKe on 2022/12/4.
  */
-sealed class Status: StatusData {
+sealed interface Status {
 
-    override val authorId: String
-        get() = author.id
+    val datetime: Long
+
+    val authId: String
+
+    val id: String
 
     data class NewBlog(
         val blog: Blog,
-    ) : Status(blog.author, blog.supportedAction) {
+    ) : Status {
 
-        override val dataId: String
-            get() = blog.id
+        override val id: String = blog.id
 
-        override val datetime: Long
-            get() = blog.date.time
-    }
+        override val datetime: Long = blog.date.time
 
-    data class Forward(
-        override val author: BlogAuthor,
-        override val supportedAction: List<StatusAction>,
-        val forwardComment: String?,
-        val source: Forward?,
-        val originBlog: Blog
-    ) : Status(author, supportedAction) {
-
-        override val dataId: String
-            get() = TODO("Not yet implemented")
-
-        override val datetime: Long
-            get() = 0L
-    }
-
-    data class Comment(
-        override val author: BlogAuthor,
-        override val supportedAction: List<StatusAction>,
-        val originBlog: Blog
-    ) : Status(author, supportedAction) {
-
-        override val datetime: Long
-            get() = 0L
-
-        override val dataId: String
-            get() = TODO("Not yet implemented")
+        override val authId: String = blog.author.uri.toString()
     }
 }

@@ -17,25 +17,25 @@ class FeedsGeneratorTest {
             FeedsGenerator.GenerateParams(
                 pagingSource1,
                 listOf(
-                    MockData("1", 1L),
-                    MockData("3", 3L),
                     MockData("5", 5L),
+                    MockData("3", 3L),
+                    MockData("1", 1L),
                 )
             ),
             FeedsGenerator.GenerateParams(
                 pagingSource2,
                 listOf(
-                    MockData("3", 3L),
-                    MockData("4", 4L),
                     MockData("7", 9L),
+                    MockData("4", 4L),
+                    MockData("3", 3L),
                 )
             ),
             FeedsGenerator.GenerateParams(
                 pagingSource3,
                 listOf(
-                    MockData("1", 1L),
-                    MockData("6", 6L),
                     MockData("9", 9L),
+                    MockData("6", 6L),
+                    MockData("1", 1L),
                 )
             ),
             FeedsGenerator.GenerateParams(
@@ -48,7 +48,7 @@ class FeedsGeneratorTest {
             ),
         )
         val result = generator.generate(params)
-        Assert.assertEquals("5", result.pagingToEndId[pagingSource1])
+        Assert.assertEquals("1", result.pagingToEndId[pagingSource1])
         Assert.assertEquals("4", result.pagingToEndId[pagingSource2])
         Assert.assertEquals("1", result.pagingToEndId[pagingSource3])
         val expectedList = listOf("1", "1", "3", "3", "4","5")

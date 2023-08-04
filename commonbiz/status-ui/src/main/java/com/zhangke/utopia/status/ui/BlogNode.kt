@@ -17,6 +17,8 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.user.UtopiaUser
 import java.text.SimpleDateFormat
 import java.util.*
 import kotlin.concurrent.getOrSet
@@ -59,7 +61,7 @@ fun BlogContentComposable(
                     start.linkTo(avatar.end, margin = 8.dp)
                     bottom.linkTo(guideline.top)
                 },
-                text = blog.author.name,
+                text = blog.author.userName,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -77,7 +79,7 @@ fun BlogContentComposable(
                     top.linkTo(guideline.bottom, 3.dp)
                     start.linkTo(name.start)
                 },
-                text = blog.author.id,
+                text = blog.author.uri.toString(),
                 fontSize = 12.sp,
             )
         }
@@ -105,22 +107,21 @@ private fun formatStatusDateTime(date: Date): String {
 @Preview
 @Composable
 private fun PreviewBlogContentComposable() {
-    val author = BlogAuthor(
-        name = "zhangke",
-        id = "@zhangke@m.cmx.im",
+    val author = UtopiaUser(
+        userName = "zhangke",
+        uri = StatusProviderUri.create("@zhangke@m.cmx.im")!!,
         description = "一个落魄Android开发",
         avatar = "https://media.cmx.edu.kg/accounts/avatars/109/305/640/413/684/932/original/2804adcd878c37c9.png",
-        homePage = "https://m.cmx.im/@AtomZ"
+        homePageUrl = "https://m.cmx.im/@AtomZ",
+        header = "",
+        followersCount = 100,
+        followingCount = 234,
+        statusesCount = 23412,
     )
 
     val blog = Blog(
         id = "",
         author = author,
-        supportedAction = listOf(
-            StatusAction.Forawrd(),
-            StatusAction.Like(),
-            StatusAction.Comment()
-        ),
         title = "什么时候才能搞定啊",
         content = "什么时候才能搞定啊, 从去年就开始做了，零零星星的做了好长时间，需求也越做越多，没想到刚开始很简单的想法最后竟然花了这么久才做完，也不知道最终结果如何。",
         mediaList = null,

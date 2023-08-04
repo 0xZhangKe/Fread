@@ -41,14 +41,19 @@ class TimelineStatusDataSource(
             )
         }
         return timelineListResult.map {
+            val data = it.map { item -> activityPubStatusAdapter.adapt(item, host) }
             StatusSourceData(
-                data = it.map { item -> activityPubStatusAdapter.adapt(item, host) },
-                nextPageKey = it.lastOrNull()?.id,
+                data = data,
+                nextPageKey = data.lastOrNull()?.let(::getDataId),
             )
         }
     }
 
-    override fun getRefreshKey(): String {
-        return ""
-    }
+    override fun getRefreshKey(): String = ""
+
+    override fun getDataId(data: Status): String = data.id
+
+    override fun getAuthId(data: Status): String = data.authId
+
+    override fun getDatetime(data: Status): Long = data.datetime
 }

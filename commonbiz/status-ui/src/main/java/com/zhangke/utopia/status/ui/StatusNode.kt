@@ -11,8 +11,6 @@ fun StatusNode(
 ) {
     val blog = when (status) {
         is Status.NewBlog -> status.blog
-        is Status.Forward -> status.originBlog
-        is Status.Comment -> status.originBlog
     }
     BlogContentComposable(modifier, blog = blog)
 }

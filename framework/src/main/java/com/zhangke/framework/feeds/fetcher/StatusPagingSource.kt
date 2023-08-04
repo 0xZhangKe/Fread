@@ -30,7 +30,7 @@ class StatusPagingSource<Key, Value>(
     }
 
     private suspend fun loadNexPageInternal(startId: String): Result<List<Value>> {
-        val index = currentPage.indexOfFirst { it.dataId == startId }
+        val index = currentPage.indexOfFirst { source.getDataId(it) == startId }
         if (index == -1) {
             throwInDebug("Load next page status, can`t find start id!")
             return Result.success(emptyList())
@@ -51,7 +51,7 @@ class StatusPagingSource<Key, Value>(
                 }
             }
             currentPage += nextPageList
-            val nowIndex = currentPage.indexOfFirst { startId == it.dataId }
+            val nowIndex = currentPage.indexOfFirst { startId == source.getDataId(it) }
             val returnList = currentPage.subList(
                 nowIndex + 1,
                 minOf(nowIndex + 1 + pageSize, currentPage.size),
@@ -72,5 +72,17 @@ class StatusPagingSource<Key, Value>(
 
     private fun StatusSourceData<Key, Value>.nextLoadParams(): LoadParams<Key> {
         return LoadParams(nextPageKey, pageSize, extra)
+    }
+
+    fun getDataId(value: Value): String {
+        return source.getDataId(value)
+    }
+
+    fun getDatetime(value: Value): Long {
+        return source.getDatetime(value)
+    }
+
+    fun getAuthId(value: Value): String {
+        return source.getAuthId(value)
     }
 }

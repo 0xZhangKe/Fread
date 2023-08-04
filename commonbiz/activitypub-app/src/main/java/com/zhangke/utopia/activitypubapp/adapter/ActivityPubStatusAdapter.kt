@@ -23,7 +23,6 @@ class ActivityPubStatusAdapter @Inject constructor(
             author = activityPubUserAdapter.adapt(
                 account,
             ),
-            supportedAction = emptyList(),
             title = null,
             content = content,
             mediaList = emptyList(),

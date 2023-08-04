@@ -6,11 +6,11 @@ interface StatusDataSource<Key, Value> {
 
     fun getRefreshKey(): Key
 
-    fun getDataId(): String
+    fun getDataId(data: Value): String
 
-    fun getAuthId(): String
+    fun getAuthId(data: Value): String
 
-    fun getDatetime(): Long
+    fun getDatetime(data: Value): Long
 }
 
 data class LoadParams<Key>(

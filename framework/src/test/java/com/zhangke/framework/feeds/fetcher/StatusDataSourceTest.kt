@@ -1,13 +1,9 @@
 package com.zhangke.framework.feeds.fetcher
 
-
 data class MockData(
-    override val dataId: String,
-    override val datetime: Long = System.currentTimeMillis()
-) : StatusData {
-
-    override val authorId: String = "AuthId"
-}
+    val dataId: String,
+    val datetime: Long = System.currentTimeMillis()
+)
 
 class MockDataSource(
     private val endPage: Int = Int.MAX_VALUE,
@@ -37,4 +33,12 @@ class MockDataSource(
     override fun getRefreshKey(): Int {
         return 0
     }
+
+    override fun getDataId(data: MockData): String {
+        return data.dataId
+    }
+
+    override fun getAuthId(data: MockData): String = "ZhangKe"
+
+    override fun getDatetime(data: MockData): Long = data.datetime
 }

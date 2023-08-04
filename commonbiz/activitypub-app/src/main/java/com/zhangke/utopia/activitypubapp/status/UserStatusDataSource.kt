@@ -32,12 +32,16 @@ class UserStatusDataSource(
             }.map {
                 StatusSourceData(
                     data = it,
-                    nextPageKey = it.lastOrNull()?.dataId,
+                    nextPageKey = it.lastOrNull()?.let(::getDataId),
                 )
             }
     }
 
-    override fun getRefreshKey(): String {
-        return ""
-    }
+    override fun getRefreshKey(): String = ""
+
+    override fun getDataId(data: Status): String = data.id
+
+    override fun getAuthId(data: Status): String = data.authId
+
+    override fun getDatetime(data: Status): Long = data.datetime
 }

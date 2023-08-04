@@ -77,6 +77,7 @@ internal class FeedsHomeViewModel @Inject constructor(
     }
 
     private fun refreshPage(index: Int) {
+        if (pagedFetchers.isEmpty()) return
         updateIndexedPageToRefreshing(index)
         val fetcher = pagedFetchers[index]!!
         launchInViewModel(Dispatchers.IO) {

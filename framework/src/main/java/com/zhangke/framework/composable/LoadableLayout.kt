@@ -85,7 +85,7 @@ fun BoxScope.DefaultLoading(modifier: Modifier = Modifier) {
     CircularProgressIndicator(
         modifier = modifier
             .align(Alignment.Center)
-            .fillMaxWidth(0.5F)
+            .fillMaxWidth(0.3F)
     )
 }
 

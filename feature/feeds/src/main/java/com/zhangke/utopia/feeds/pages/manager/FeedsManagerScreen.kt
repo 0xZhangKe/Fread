@@ -28,14 +28,17 @@ import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.framework.ktx.CollectOnComposable
+import com.zhangke.krouter.Destination
+import com.zhangke.utopia.commonbiz.router.SharedRouter
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.StatusSourceNode
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 import kotlinx.coroutines.flow.Flow
 
+@Destination(SharedRouter.Feeds.add)
 internal data class FeedsManagerScreen(
-    private val addMode: Boolean,
+    private val addMode: Boolean = false,
 ) : AndroidScreen() {
 
     @Composable

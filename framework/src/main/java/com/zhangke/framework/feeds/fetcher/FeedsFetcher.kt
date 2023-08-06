@@ -16,7 +16,7 @@ class FeedsFetcher<Value>(
     val dataFlow: Flow<List<Value>> = _dataFlow.asSharedFlow()
 
     private val pagingList = sourceList.map { StatusPagingSource(it, pageSize) }
-    private val pagingToStartId = mutableMapOf<StatusPagingSource<*, *>, String>()
+    private val pagingToStartId = mutableMapOf<StatusPagingSource<*, *>, String?>()
 
     init {
         _dataFlow.tryEmit(emptyList())
@@ -56,7 +56,7 @@ class FeedsFetcher<Value>(
         return pagingToStartId[source]
     }
 
-    private fun setSourceStartId(source: StatusPagingSource<*, *>, startId: String) {
+    private fun setSourceStartId(source: StatusPagingSource<*, *>, startId: String?) {
         pagingToStartId[source] = startId
     }
 }

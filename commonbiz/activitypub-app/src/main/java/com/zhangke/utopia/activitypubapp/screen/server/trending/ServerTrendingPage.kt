@@ -17,6 +17,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.canScrollBackward
 import com.zhangke.utopia.status.status.Status
 import com.zhangke.utopia.status.ui.StatusNode
 import kotlinx.coroutines.flow.Flow
@@ -40,12 +41,7 @@ private fun ServerTrendingContent(
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
     val listState = rememberLazyListState()
-    val canScrollBackward by remember {
-        derivedStateOf {
-            listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0
-        }
-    }
-    contentCanScrollBackward.value = canScrollBackward
+    contentCanScrollBackward.value = canScrollBackward(listState)
     val statusList = statusFlow.collectAsLazyPagingItems()
     LazyColumn(
         modifier = Modifier.fillMaxSize(),

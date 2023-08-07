@@ -23,7 +23,6 @@ import com.zhangke.utopia.status.ui.StatusNode
 @Composable
 internal fun FeedsPage(
     uiState: FeedsPageUiState,
-    contentCanScrollBackward: MutableState<Boolean>,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onShowSnackMessage: suspend (String) -> Unit,
@@ -34,7 +33,6 @@ internal fun FeedsPage(
         onRefresh = onRefresh,
         onLoadMore = onLoadMore,
     )
-    contentCanScrollBackward.value = canScrollBackward(state.lazyListState)
     val snackMessage = uiState.snackMessage?.let { textString(it) }
     if (snackMessage.isNullOrEmpty().not()) {
         LaunchedEffect(uiState.snackMessage) {

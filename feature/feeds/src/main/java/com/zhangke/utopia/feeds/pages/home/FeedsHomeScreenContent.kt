@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home
 
+import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -7,11 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.requiredHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.AppBarDefaults
@@ -34,15 +31,14 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.UtopiaTabRow
-import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.utils.pxToDp
+import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.status.server.StatusProviderServer
@@ -61,11 +57,7 @@ internal fun FeedsHomeScreenContent(
     var topBarItems: List<StatusProviderServer> by remember {
         mutableStateOf(emptyList())
     }
-    val density = LocalDensity.current
     val selectedIndex = uiState.tabIndex
-    val contentCanScrollBackward = remember {
-        mutableStateOf(false)
-    }
     LoadableLayout(
         modifier = Modifier.fillMaxSize(),
         state = uiState.pageUiStateList,
@@ -75,23 +67,12 @@ internal fun FeedsHomeScreenContent(
                 SnackbarHost(hostState = snackbarHostState)
             },
         ) { paddings ->
-            CollapsableTopBarLayout(
+            TopOutTopBarLayout(
                 modifier = Modifier.padding(paddings),
-                minTopBarHeight = 0.dp,
-                contentCanScrollBackward = contentCanScrollBackward,
-                topBar = { collapsableProgress ->
+                topBar = {
                     if (topBarItems.isNotEmpty()) {
-                        var topBarHeight by remember {
-                            mutableStateOf(0.dp)
-                        }
                         FeedsHomeTopBar(
-                            modifier = Modifier
-                                .onGloballyPositioned {
-                                    topBarHeight = it.size.height.pxToDp(density)
-                                }
-                                .padding(top = -topBarHeight * collapsableProgress),
-//                                .height(topBarHeight - topBarHeight * collapsableProgress),
-//                                .offset(y = -topBarHeight * collapsableProgress),
+                            modifier = Modifier,
                             topBarItems = topBarItems,
                             tabs = feedsList,
                             selectedIndex = selectedIndex,
@@ -122,7 +103,6 @@ internal fun FeedsHomeScreenContent(
                         topBarItems = pagedUiState.serverList
                         FeedsPage(
                             uiState = pagedUiState,
-                            contentCanScrollBackward = contentCanScrollBackward,
                             onRefresh = onRefresh,
                             onLoadMore = onLoadMore,
                             onShowSnackMessage = {

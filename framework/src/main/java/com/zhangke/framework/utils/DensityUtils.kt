@@ -22,3 +22,8 @@ fun Int.pxToDp(density: Density): Dp {
     val pxValue = this
     return with(density) { pxValue.toDp() }
 }
+
+fun Float.pxToDp(density: Density): Dp {
+    val pxValue = this
+    return with(density) { pxValue.toDp() }
+}

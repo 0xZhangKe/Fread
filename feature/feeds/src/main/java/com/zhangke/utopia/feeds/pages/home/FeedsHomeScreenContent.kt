@@ -2,12 +2,14 @@ package com.zhangke.utopia.feeds.pages.home
 
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -30,9 +32,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.LoadableLayout
@@ -138,48 +142,50 @@ private fun FeedsHomeTopBar(
         mutableStateOf(false)
     }
     Column(modifier = modifier) {
-        Row(
-            modifier = Modifier
-                .padding(AppBarDefaults.ContentPadding)
-                .padding(top = 10.dp, bottom = 8.dp)
-                .clickable {
-                    if (topBarItems.size > 1) {
-                        showSelectSourcePopup = true
-                    } else {
-                        onServerItemClick(topBarItems.first())
-                    }
-                },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Text(
-                text = topBarItems.first().name,
-                fontSize = 18.sp,
-            )
-            if (topBarItems.size > 1) {
-                Icon(
-                    modifier = Modifier.padding(start = 4.dp),
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "",
+        Column {
+            Row(
+                modifier = Modifier
+                    .padding(AppBarDefaults.ContentPadding)
+                    .padding(top = 10.dp, bottom = 8.dp)
+                    .clickable {
+                        if (topBarItems.size > 1) {
+                            showSelectSourcePopup = true
+                        } else {
+                            onServerItemClick(topBarItems.first())
+                        }
+                    },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    text = topBarItems.first().name,
+                    fontSize = 18.sp,
                 )
+                if (topBarItems.size > 1) {
+                    Icon(
+                        modifier = Modifier.padding(start = 4.dp),
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "",
+                    )
+                }
             }
-        }
 
-        DropdownMenu(
-            expanded = showSelectSourcePopup,
-            onDismissRequest = { showSelectSourcePopup = false },
-        ) {
-            topBarItems.forEach { source ->
-                DropdownMenuItem(
-                    onClick = { onServerItemClick(source) },
-                ) {
-                    Text(text = source.name)
+            DropdownMenu(
+                offset = DpOffset(x = 30.dp, y = 8.dp),
+                expanded = showSelectSourcePopup,
+                onDismissRequest = { showSelectSourcePopup = false },
+            ) {
+                topBarItems.forEach { source ->
+                    DropdownMenuItem(
+                        onClick = { onServerItemClick(source) },
+                    ) {
+                        Text(text = source.name)
+                    }
                 }
             }
         }
 
         UtopiaTabRow(
-            modifier = Modifier
-                .fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(),
             selectedTabIndex = selectedIndex,
             tabCount = tabs.size,
             containerColor = Color.Transparent,

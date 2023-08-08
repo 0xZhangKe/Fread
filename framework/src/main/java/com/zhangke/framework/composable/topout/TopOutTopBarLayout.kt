@@ -1,5 +1,6 @@
 package com.zhangke.framework.composable.topout
 
+import android.util.Log
 import androidx.compose.foundation.gestures.Orientation
 import androidx.compose.foundation.gestures.scrollable
 import androidx.compose.foundation.layout.Box
@@ -40,6 +41,7 @@ fun TopOutTopBarLayout(
             topBarHeight = topBarHeight.dpToPx(density),
         )
         topMargin = connection.topMargin.pxToDp(density)
+        Log.d("U_TEST", "topMargin:$topMargin")
         Modifier
             .then(modifier)
             .nestedScroll(connection)
@@ -55,11 +57,15 @@ fun TopOutTopBarLayout(
         Box(
             modifier = Modifier
                 .onGloballyPositioned {
-                    topBarHeight = it.size.height.pxToDp(density)
+                    if (topBarHeight == 0.dp) {
+                        topBarHeight = it.size.height.pxToDp(density)
+                    }
+                    Log.d("U_TEST", "topBarHeight:$topBarHeight")
                 }
                 .graphicsLayer(translationY = (-(topBarHeight - topMargin)).dpToPx(density)),
         ) {
             topBar()
         }
+        Log.d("U_TEST", "translationY:${(-(topBarHeight - topMargin)).dpToPx(density)}")
     }
 }

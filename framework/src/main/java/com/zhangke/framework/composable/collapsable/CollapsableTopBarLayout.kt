@@ -51,11 +51,13 @@ fun CollapsableTopBarLayout(
 
     Column(modifier = finalModifier) {
         Box(
-            modifier = Modifier.onGloballyPositioned {
-                if (maxTopBarHeightPx == null || maxTopBarHeightPx == 0F) {
-                    maxTopBarHeightPx = it.size.height.toFloat()
+            modifier = Modifier
+                .scrollable(rememberScrollState(), Orientation.Vertical)
+                .onGloballyPositioned {
+                    if (maxTopBarHeightPx == null || maxTopBarHeightPx == 0F) {
+                        maxTopBarHeightPx = it.size.height.toFloat()
+                    }
                 }
-            }
         ) {
             topBar(progress)
         }

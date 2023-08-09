@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.home
 
-import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -13,11 +12,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.AppBarDefaults
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
+import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
+import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,19 +34,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.zhangke.framework.composable.BottomSheetDialog
 import com.zhangke.framework.composable.LoadableLayout
+import com.zhangke.framework.composable.LocalGlobalScreenProvider
+import com.zhangke.framework.composable.TextWithIcon
 import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.theme.TopAppBarDefault
 import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
+import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
 import com.zhangke.utopia.status.server.StatusProviderServer
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -62,6 +68,9 @@ internal fun FeedsHomeScreenContent(
         mutableStateOf(emptyList())
     }
     val selectedIndex = uiState.tabIndex
+    var showFeedsManagerBottomDialog by remember {
+        mutableStateOf(false)
+    }
     LoadableLayout(
         modifier = Modifier.fillMaxSize(),
         state = uiState.pageUiStateList,
@@ -82,6 +91,9 @@ internal fun FeedsHomeScreenContent(
                             selectedIndex = selectedIndex,
                             onTabClick = onTabSelected,
                             onServerItemClick = onServerItemClick,
+                            onMenuClick = {
+                                showFeedsManagerBottomDialog = !showFeedsManagerBottomDialog
+                            },
                         )
                     }
                 },
@@ -127,6 +139,37 @@ internal fun FeedsHomeScreenContent(
             }
         }
     }
+
+    val configuration = LocalConfiguration.current
+    val screenHeight = configuration.screenHeightDp.dp
+
+    val globalScreenProvider = LocalGlobalScreenProvider.current
+    globalScreenProvider.content.value = @Composable {
+        BottomSheetDialog(
+            visible = showFeedsManagerBottomDialog,
+            onDismissRequest = {
+                showFeedsManagerBottomDialog = false
+            },
+            content = {
+                Box(
+                    modifier = Modifier
+                        .height(screenHeight * 0.67F)
+                        .background(
+                            Color.White,
+                            RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
+                        )
+                ) {
+                    AllFeedsManagerScreen()
+                }
+            }
+        )
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            globalScreenProvider.content.value = null
+        }
+    }
 }
 
 @Composable
@@ -137,6 +180,7 @@ private fun FeedsHomeTopBar(
     onTabClick: (Int) -> Unit,
     topBarItems: List<StatusProviderServer>,
     onServerItemClick: (StatusProviderServer) -> Unit,
+    onMenuClick: () -> Unit,
 ) {
     var showSelectSourcePopup by remember {
         mutableStateOf(false)
@@ -145,26 +189,36 @@ private fun FeedsHomeTopBar(
         Column {
             Row(
                 modifier = Modifier
-                    .padding(AppBarDefaults.ContentPadding)
-                    .padding(top = 10.dp, bottom = 8.dp)
-                    .clickable {
+                    .padding(
+                        start = TopAppBarDefault.StartPadding,
+                        end = TopAppBarDefault.EndPadding
+                    )
+                    .height(TopAppBarDefault.TopBarHeight),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                TextWithIcon(
+                    modifier = Modifier.clickable {
                         if (topBarItems.size > 1) {
                             showSelectSourcePopup = true
                         } else {
                             onServerItemClick(topBarItems.first())
                         }
                     },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
                     text = topBarItems.first().name,
                     fontSize = 18.sp,
+                    endIcon = {
+                        Icon(
+                            modifier = Modifier.padding(start = 4.dp),
+                            imageVector = Icons.Default.ArrowDropDown,
+                            contentDescription = "",
+                        )
+                    }
                 )
-                if (topBarItems.size > 1) {
+                Box(modifier = Modifier.weight(1F))
+                IconButton(onClick = onMenuClick) {
                     Icon(
-                        modifier = Modifier.padding(start = 4.dp),
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = "",
+                        painter = rememberVectorPainter(Icons.Default.Menu),
+                        contentDescription = "Menu",
                     )
                 }
             }

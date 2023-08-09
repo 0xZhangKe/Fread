@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds
 
-import android.net.Uri
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
@@ -16,7 +15,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
-import com.zhangke.utopia.feeds.pages.manager.FeedsManagerScreen
+import com.zhangke.utopia.feeds.pages.manager.single.SingleFeedsManagerScreen
 
 object FeedsHomeTab : Tab {
 
@@ -41,7 +40,7 @@ object FeedsHomeTab : Tab {
             onLoadMore = viewModel::onLoadMore,
             onRefresh = viewModel::onRefresh,
             onAddFeedsClick = {
-                navigator.push(FeedsManagerScreen(true))
+                navigator.push(SingleFeedsManagerScreen(true))
             },
             onServerItemClick = { server ->
                 val screen =

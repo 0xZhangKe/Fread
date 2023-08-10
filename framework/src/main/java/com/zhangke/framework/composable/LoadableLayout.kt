@@ -132,3 +132,7 @@ fun <T> MutableStateFlow<LoadableState<T>>.updateToFailed(e: Exception) {
 fun <T> LoadableState<T>.requireSuccessData(): T {
     return (this as LoadableState.Success).data
 }
+
+fun <T> LoadableState<T>.successDataOrNull(): T? {
+    return (this as? LoadableState.Success)?.data
+}

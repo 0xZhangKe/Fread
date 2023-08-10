@@ -8,6 +8,7 @@ import kotlinx.coroutines.flow.Flow
 internal data class FeedsPageUiState(
     val name: String,
     val serverList: List<StatusProviderServer>,
+    val sourceList: List<String>,
     val feedsFlow: Flow<List<Status>>,
     val refreshing: Boolean,
     val loading: Boolean,

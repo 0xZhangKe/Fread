@@ -11,11 +11,13 @@ internal class FeedsPageUiStateAdapter @Inject constructor() {
     fun adapt(
         feedsName: String,
         serverList: List<StatusProviderServer>,
+        sourceList: List<String>,
         feedsFlow: Flow<List<Status>>,
     ): FeedsPageUiState {
         return FeedsPageUiState(
             name = feedsName,
             serverList = serverList,
+            sourceList = sourceList,
             refreshing = false,
             loading = false,
             feedsFlow = feedsFlow,

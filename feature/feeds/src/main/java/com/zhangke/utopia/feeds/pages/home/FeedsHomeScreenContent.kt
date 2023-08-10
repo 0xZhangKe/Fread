@@ -46,6 +46,8 @@ import com.zhangke.framework.composable.LocalGlobalScreenProvider
 import com.zhangke.framework.composable.TextWithIcon
 import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.theme.TopAppBarDefault
 import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
@@ -159,7 +161,11 @@ internal fun FeedsHomeScreenContent(
                             RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                         )
                 ) {
-                    AllFeedsManagerScreen()
+                    AllFeedsManagerScreen(
+                        feedsList = uiState.pageUiStateList
+                            .successDataOrNull() ?: emptyList(),
+
+                    )
                 }
             }
         )

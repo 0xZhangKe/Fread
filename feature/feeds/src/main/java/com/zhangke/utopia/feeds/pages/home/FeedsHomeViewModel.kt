@@ -56,6 +56,7 @@ internal class FeedsHomeViewModel @Inject constructor(
                 feedsPageUiStateAdapter.adapt(
                     feeds.name,
                     serverList,
+                    sourceList = feeds.sourceList,
                     fetcher.dataFlow,
                 )
             }

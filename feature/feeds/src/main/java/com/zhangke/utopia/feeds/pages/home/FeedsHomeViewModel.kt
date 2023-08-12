@@ -54,10 +54,11 @@ internal class FeedsHomeViewModel @Inject constructor(
                     ?: emptyList()
                 pagedFetchers[index] = fetcher
                 feedsPageUiStateAdapter.adapt(
-                    feeds.name,
-                    serverList,
+                    feedsId = feeds.id,
+                    feedsName = feeds.name,
+                    serverList = serverList,
                     sourceList = feeds.sourceList,
-                    fetcher.dataFlow,
+                    feedsFlow = fetcher.dataFlow,
                 )
             }
             _uiState.update {

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.manager.single
+package com.zhangke.utopia.feeds.pages.manager.add
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
@@ -37,14 +37,12 @@ import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 import kotlinx.coroutines.flow.Flow
 
 @Destination(SharedRouter.Feeds.add)
-internal data class SingleFeedsManagerScreen(
-    private val addMode: Boolean = false,
-) : AndroidScreen() {
+internal class AddFeedsManagerScreen : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel: SingleFeedsManagerViewModel = getViewModel()
+        val viewModel: AddFeedsManagerViewModel = getViewModel()
         FeedsManager(
             uiState = viewModel.uiState.collectAsState().value,
             errorMessageFlow = viewModel.errorMessageFlow,
@@ -69,7 +67,7 @@ internal data class SingleFeedsManagerScreen(
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun FeedsManager(
-        uiState: SingleFeedsManagerUiState,
+        uiState: AddFeedsManagerUiState,
         errorMessageFlow: Flow<TextString>,
         onAddSourceClick: () -> Unit,
         onConfirmClick: () -> Unit,

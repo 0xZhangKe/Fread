@@ -15,7 +15,7 @@ import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
-import com.zhangke.utopia.feeds.pages.manager.single.SingleFeedsManagerScreen
+import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 
 object FeedsHomeTab : Tab {
 
@@ -40,7 +40,7 @@ object FeedsHomeTab : Tab {
             onLoadMore = viewModel::onLoadMore,
             onRefresh = viewModel::onRefresh,
             onAddFeedsClick = {
-                navigator.push(SingleFeedsManagerScreen(true))
+                navigator.push(AddFeedsManagerScreen(true))
             },
             onServerItemClick = { server ->
                 val screen =

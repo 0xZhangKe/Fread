@@ -8,6 +8,7 @@ internal class FeedsEntityAdapter @Inject constructor() {
 
     fun adapt(entity: FeedsEntity): Feeds {
         return Feeds(
+            id = entity.id,
             name = entity.name,
             sourceList = entity.uriList
         )

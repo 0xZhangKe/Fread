@@ -46,7 +46,6 @@ import com.zhangke.framework.composable.LocalGlobalScreenProvider
 import com.zhangke.framework.composable.TextWithIcon
 import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.theme.TopAppBarDefault
 import com.zhangke.framework.composable.topout.TopOutTopBarLayout
@@ -164,7 +163,10 @@ internal fun FeedsHomeScreenContent(
                     AllFeedsManagerScreen(
                         feedsList = uiState.pageUiStateList
                             .successDataOrNull() ?: emptyList(),
-
+                        onItemClick = { index ->
+                            showFeedsManagerBottomDialog = false
+                            onTabSelected(index)
+                        }
                     )
                 }
             }

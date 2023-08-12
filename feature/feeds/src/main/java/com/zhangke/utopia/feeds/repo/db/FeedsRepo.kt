@@ -3,6 +3,7 @@ package com.zhangke.utopia.feeds.repo.db
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.feeds.adapter.FeedsEntityAdapter
 import com.zhangke.utopia.feeds.model.Feeds
+import java.io.File
 import javax.inject.Inject
 
 internal class FeedsRepo @Inject constructor(
@@ -17,8 +18,12 @@ internal class FeedsRepo @Inject constructor(
         return feedsDao.queryAll().map { feedAdapter.adapt(it) }
     }
 
+    suspend fun checkNameExists(name: String): Boolean {
+        return feedsDao.queryAllNames().contains(name)
+    }
+
     suspend fun insert(feedsName: String, uriList: List<String>) {
-        feedsDao.insert(FeedsEntity(name = feedsName, uriList))
+        feedsDao.insert(FeedsEntity(id = 0, name = feedsName, uriList))
     }
 
     suspend fun deleteByName(feedName: String) {

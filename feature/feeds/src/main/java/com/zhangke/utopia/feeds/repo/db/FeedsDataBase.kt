@@ -20,7 +20,8 @@ private const val DB_VERSION = 1
 @TypeConverters(ListStringConverter::class)
 @Entity(tableName = TABLE_NAME)
 internal data class FeedsEntity(
-    @PrimaryKey val name: String,
+    @PrimaryKey(autoGenerate = true) val id: Int,
+    val name: String,
     val uriList: List<String>,
 )
 
@@ -32,6 +33,9 @@ internal interface FeedsDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(feedsEntity: FeedsEntity)
+
+    @Query("SELECT name FROM $TABLE_NAME")
+    suspend fun queryAllNames(): List<String>
 
     @Query("DELETE FROM $TABLE_NAME WHERE name=:feedsName")
     suspend fun delete(feedsName: String)

@@ -9,12 +9,14 @@ import javax.inject.Inject
 internal class FeedsPageUiStateAdapter @Inject constructor() {
 
     fun adapt(
+        feedsId: Int,
         feedsName: String,
         serverList: List<StatusProviderServer>,
         sourceList: List<String>,
         feedsFlow: Flow<List<Status>>,
     ): FeedsPageUiState {
         return FeedsPageUiState(
+            feedsId = feedsId,
             name = feedsName,
             serverList = serverList,
             sourceList = sourceList,

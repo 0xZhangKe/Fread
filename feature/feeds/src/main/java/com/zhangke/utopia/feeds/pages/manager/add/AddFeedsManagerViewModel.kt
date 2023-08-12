@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.manager.single
+package com.zhangke.utopia.feeds.pages.manager.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -26,7 +26,7 @@ import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
-internal class SingleFeedsManagerViewModel @Inject constructor(
+internal class AddFeedsManagerViewModel @Inject constructor(
     private val resolveSourceUseCase: ResolveSourceByUriUseCase,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val feedsRepo: FeedsRepo,
@@ -36,7 +36,7 @@ internal class SingleFeedsManagerViewModel @Inject constructor(
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
 
-    val uiState: StateFlow<SingleFeedsManagerUiState> =
+    val uiState: StateFlow<AddFeedsManagerUiState> =
         viewModelState.map(viewModelScope) { it.toUiState() }
 
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
@@ -149,8 +149,8 @@ internal class SingleFeedsManagerViewModel @Inject constructor(
         )
     }
 
-    private fun AddSourceViewModelState.toUiState(): SingleFeedsManagerUiState {
-        return SingleFeedsManagerUiState(
+    private fun AddSourceViewModelState.toUiState(): AddFeedsManagerUiState {
+        return AddFeedsManagerUiState(
             sourceList = sourceList.map { it.toUiState() },
             sourceName = sourceName,
             showChooseSourceDialog = showChooseSourceDialog,

@@ -3,7 +3,6 @@ package com.zhangke.utopia.feeds.repo.db
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.feeds.adapter.FeedsEntityAdapter
 import com.zhangke.utopia.feeds.model.Feeds
-import java.io.File
 import javax.inject.Inject
 
 internal class FeedsRepo @Inject constructor(
@@ -22,11 +21,24 @@ internal class FeedsRepo @Inject constructor(
         return feedsDao.queryAllNames().contains(name)
     }
 
+    suspend fun queryById(id: Int): Feeds? {
+        return feedsDao.queryById(id)?.let(feedAdapter::adapt)
+    }
+
     suspend fun insert(feedsName: String, uriList: List<String>) {
         feedsDao.insert(FeedsEntity(id = 0, name = feedsName, uriList))
     }
 
-    suspend fun deleteByName(feedName: String) {
-        feedsDao.delete(feedName)
+    suspend fun update(id: Int, name: String, uriList: List<String>) {
+        val entity = FeedsEntity(
+            id = id,
+            name = name,
+            uriList = uriList,
+        )
+        feedsDao.insert(entity)
+    }
+
+    suspend fun deleteById(id: Int) {
+        feedsDao.delete(id)
     }
 }

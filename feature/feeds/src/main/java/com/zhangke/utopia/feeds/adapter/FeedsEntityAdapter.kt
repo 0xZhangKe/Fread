@@ -10,7 +10,7 @@ internal class FeedsEntityAdapter @Inject constructor() {
         return Feeds(
             id = entity.id,
             name = entity.name,
-            sourceList = entity.uriList
+            sourceUriList = entity.uriList
         )
     }
 }

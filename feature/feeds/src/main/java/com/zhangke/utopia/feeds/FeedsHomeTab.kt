@@ -40,7 +40,7 @@ object FeedsHomeTab : Tab {
             onLoadMore = viewModel::onLoadMore,
             onRefresh = viewModel::onRefresh,
             onAddFeedsClick = {
-                navigator.push(AddFeedsManagerScreen(true))
+                navigator.push(AddFeedsManagerScreen())
             },
             onServerItemClick = { server ->
                 val screen =

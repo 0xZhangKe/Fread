@@ -49,15 +49,15 @@ internal class FeedsHomeViewModel @Inject constructor(
             pagedFetchers.clear()
             val feedsList = feedsRepo.queryAll()
             val pageStates = feedsList.mapIndexed { index, feeds ->
-                val fetcher = getStatusFeedsByUrisUseCase(feeds.sourceList, 20)
-                val serverList = fetchAllServerFromSources(feeds.sourceList).getOrNull()
+                val fetcher = getStatusFeedsByUrisUseCase(feeds.sourceUriList, 20)
+                val serverList = fetchAllServerFromSources(feeds.sourceUriList).getOrNull()
                     ?: emptyList()
                 pagedFetchers[index] = fetcher
                 feedsPageUiStateAdapter.adapt(
                     feedsId = feeds.id,
                     feedsName = feeds.name,
                     serverList = serverList,
-                    sourceList = feeds.sourceList,
+                    sourceList = feeds.sourceUriList,
                     feedsFlow = fetcher.dataFlow,
                 )
             }

@@ -129,6 +129,19 @@ fun <T> MutableStateFlow<LoadableState<T>>.updateToFailed(e: Exception) {
     }
 }
 
+fun <T> MutableStateFlow<LoadableState<T>>.updateOnSuccess(
+    updater: (T) -> T,
+) {
+    update {
+        if (it.isSuccess) {
+            val data = it.requireSuccessData()
+            LoadableState.success(updater(data))
+        } else {
+            it
+        }
+    }
+}
+
 fun <T> LoadableState<T>.requireSuccessData(): T {
     return (this as LoadableState.Success).data
 }

@@ -37,8 +37,11 @@ internal interface FeedsDao {
     @Query("SELECT name FROM $TABLE_NAME")
     suspend fun queryAllNames(): List<String>
 
-    @Query("DELETE FROM $TABLE_NAME WHERE name=:feedsName")
-    suspend fun delete(feedsName: String)
+    @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
+    suspend fun queryById(id: Int): FeedsEntity?
+
+    @Query("DELETE FROM $TABLE_NAME WHERE id=:id")
+    suspend fun delete(id: Int)
 }
 
 @Database(entities = [FeedsEntity::class], version = DB_VERSION, exportSchema = false)

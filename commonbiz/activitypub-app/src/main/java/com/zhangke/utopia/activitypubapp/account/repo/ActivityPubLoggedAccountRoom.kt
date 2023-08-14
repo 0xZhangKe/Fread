@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.account.repo
 
 import androidx.room.*
 import com.zhangke.activitypub.entry.ActivityPubTokenEntity
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.server.StatusProviderServer
 
 private const val TABLE_NAME = "logged_accounts"

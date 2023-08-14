@@ -2,7 +2,11 @@ package com.zhangke.utopia.status.ui
 
 import android.text.Html
 import android.widget.TextView
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -16,11 +20,13 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.user.UtopiaUser
 import java.text.SimpleDateFormat
-import java.util.*
+import java.util.Date
+import java.util.Locale
 import kotlin.concurrent.getOrSet
 
 @Composable
@@ -79,7 +85,7 @@ fun BlogContentComposable(
                     top.linkTo(guideline.bottom, 3.dp)
                     start.linkTo(name.start)
                 },
-                text = blog.author.uri.toString(),
+                text = blog.author.webFinger.toString(),
                 fontSize = 12.sp,
             )
         }
@@ -109,6 +115,7 @@ private fun formatStatusDateTime(date: Date): String {
 private fun PreviewBlogContentComposable() {
     val author = UtopiaUser(
         userName = "zhangke",
+        webFinger = WebFinger.create("@zhangke@m.cmx.im")!!,
         uri = StatusProviderUri.create("@zhangke@m.cmx.im")!!,
         description = "一个落魄Android开发",
         avatar = "https://media.cmx.edu.kg/accounts/avatars/109/305/640/413/684/932/original/2804adcd878c37c9.png",

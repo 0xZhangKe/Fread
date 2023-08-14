@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.usecase
 
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 import javax.inject.Inject
 
 class GetHostByUriUseCase @Inject constructor() {

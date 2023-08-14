@@ -1,6 +1,4 @@
-package com.zhangke.utopia.activitypubapp.utils
-
-import com.zhangke.framework.utils.RegexFactory
+package com.zhangke.framework.utils
 
 /**
  * Supported:

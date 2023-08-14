@@ -1,5 +1,6 @@
-package com.zhangke.utopia.activitypubapp.utils
+package com.zhangke.framework.utils
 
+import com.zhangke.framework.utils.WebFinger
 import org.junit.Test
 
 /**

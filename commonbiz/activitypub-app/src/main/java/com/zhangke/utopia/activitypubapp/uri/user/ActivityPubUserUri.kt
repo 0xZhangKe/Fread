@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.uri.user
 
 import com.zhangke.utopia.activitypubapp.uri.ActivityPubUri
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class ActivityPubUserUri private constructor(

@@ -8,7 +8,7 @@ import com.zhangke.utopia.activitypubapp.account.repo.ActivityPubLoggedAccountEn
 import com.zhangke.utopia.activitypubapp.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
 import com.zhangke.utopia.activitypubapp.utils.ActivityPubUrl
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 

@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypubapp.source.user
 
 import androidx.room.*
 import com.zhangke.utopia.activitypubapp.db.ActivityPubDatabases
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 import javax.inject.Inject
 
 private const val TABLE_NAME = "UserSources"

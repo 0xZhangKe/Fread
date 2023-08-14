@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.db
 
 import androidx.room.TypeConverter
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 
 internal class WebFingerConverter {
 

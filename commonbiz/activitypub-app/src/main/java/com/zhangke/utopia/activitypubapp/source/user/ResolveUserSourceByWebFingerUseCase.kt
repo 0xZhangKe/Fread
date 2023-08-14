@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypubapp.source.user
 
 import com.zhangke.utopia.activitypubapp.user.UserRepo
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 import javax.inject.Inject
 
 class ResolveUserSourceByWebFingerUseCase @Inject constructor(

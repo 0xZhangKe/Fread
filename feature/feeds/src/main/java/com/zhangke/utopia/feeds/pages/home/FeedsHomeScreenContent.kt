@@ -215,11 +215,13 @@ private fun FeedsHomeTopBar(
                     text = topBarItems.first().name,
                     fontSize = 18.sp,
                     endIcon = {
-                        Icon(
-                            modifier = Modifier.padding(start = 4.dp),
-                            imageVector = Icons.Default.ArrowDropDown,
-                            contentDescription = "",
-                        )
+                        if (topBarItems.size > 1) {
+                            Icon(
+                                modifier = Modifier.padding(start = 4.dp),
+                                imageVector = Icons.Default.ArrowDropDown,
+                                contentDescription = "",
+                            )
+                        }
                     }
                 )
                 Box(modifier = Modifier.weight(1F))

@@ -42,7 +42,7 @@ internal class EditFeedsViewModel @Inject constructor(
             val newSourceList = _uiState.value
                 .requireSuccessData()
                 .sourceList
-                .filter { it == source }
+                .filter { it != source }
             feedsRepo.update(
                 id = feedsId,
                 name = _uiState.value.requireSuccessData().name,

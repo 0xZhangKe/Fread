@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypubapp.user
 import com.zhangke.utopia.activitypubapp.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypubapp.model.ActivityPubUser
 import com.zhangke.utopia.activitypubapp.uri.user.ActivityPubUserUri
-import com.zhangke.utopia.activitypubapp.utils.WebFinger
+import com.zhangke.framework.utils.WebFinger
 import javax.inject.Inject
 
 class UserRepo @Inject constructor(

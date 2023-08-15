@@ -131,7 +131,7 @@ private fun PreviewBlogContentComposable() {
         author = author,
         title = "什么时候才能搞定啊",
         content = "什么时候才能搞定啊, 从去年就开始做了，零零星星的做了好长时间，需求也越做越多，没想到刚开始很简单的想法最后竟然花了这么久才做完，也不知道最终结果如何。",
-        mediaList = null,
+        mediaList = emptyList(),
         date = Date(),
         forwardCount = 10321,
         likeCount = 38747,

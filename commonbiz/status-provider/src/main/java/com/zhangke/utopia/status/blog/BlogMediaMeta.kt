@@ -12,7 +12,7 @@ sealed class BlogMediaMeta {
             val width: Int?,
             val height: Int?,
             val size: String?,
-            val aspect: Double?,
+            val aspect: Float?,
         )
 
         data class FocusMeta(
@@ -28,7 +28,7 @@ sealed class BlogMediaMeta {
         val size: String?,
         val width: Int?,
         val height: Int?,
-        val aspect: Double?,
+        val aspect: Float?,
         val audioEncode: String?,
         val audioBitrate: String?,
         val audioChannels: String?,
@@ -40,7 +40,7 @@ sealed class BlogMediaMeta {
             val width: Int?,
             val height: Int?,
             val size: String?,
-            val aspect: Double?,
+            val aspect: Float?,
             val frameRate: String?,
             val duration: Double?,
             val bitrate: Int?,
@@ -54,7 +54,7 @@ sealed class BlogMediaMeta {
         val size: String?,
         val width: Int?,
         val height: Int?,
-        val aspect: Double?,
+        val aspect: Float?,
         val original: LayoutMeta?,
         val small: LayoutMeta?,
     ) : BlogMediaMeta() {
@@ -63,7 +63,7 @@ sealed class BlogMediaMeta {
             val width: Int?,
             val height: Int?,
             val size: String?,
-            val aspect: Double?,
+            val aspect: Float?,
             val frameRate: String?,
             val duration: Double?,
             val bitrate: Int?,
@@ -85,3 +85,8 @@ sealed class BlogMediaMeta {
         )
     }
 }
+
+fun BlogMediaMeta.asImageMeta(): BlogMediaMeta.ImageMeta = this as BlogMediaMeta.ImageMeta
+
+fun BlogMediaMeta.asImageMetaOrNull(): BlogMediaMeta.ImageMeta? = this as? BlogMediaMeta.ImageMeta
+

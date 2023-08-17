@@ -18,8 +18,14 @@ class UtopiaScreen : AndroidScreen() {
         CompositionLocalProvider(
             LocalGlobalScreenProvider provides globalScreenProvider
         ) {
-            MainPage()
+//            MainPage()
+            MediaTestPage()
         }
         globalScreenProvider.content.value?.invoke()
     }
+}
+
+@Composable
+private fun MediaTestPage(){
+
 }

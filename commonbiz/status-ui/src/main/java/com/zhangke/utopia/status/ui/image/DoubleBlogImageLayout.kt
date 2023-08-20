@@ -5,14 +5,13 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import com.zhangke.framework.ktx.second
 
 @Composable
 internal fun DoubleBlogImageLayout(
+    modifier: Modifier = Modifier,
     style: BlogImageMediaStyle,
     aspectList: List<Float>,
     itemContent: @Composable (index: Int) -> Unit,
@@ -24,9 +23,8 @@ internal fun DoubleBlogImageLayout(
     if (firstAspect > 1 && secondAspect > 1) {
         // vertical arrange
         Column(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(style.radius))
         ) {
             Box(
                 modifier = Modifier
@@ -47,9 +45,8 @@ internal fun DoubleBlogImageLayout(
     } else {
         // horizontal arrange
         Row(
-            modifier = Modifier
+            modifier = modifier
                 .fillMaxWidth()
-                .clip(RoundedCornerShape(style.radius))
         ) {
             Box(
                 modifier = Modifier

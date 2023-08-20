@@ -4,8 +4,10 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
@@ -24,6 +26,7 @@ fun BlogImageMedias(
 ) {
     val aspectList = mediaList.map { it.meta.decideAspect(style.defaultMediaAspect) }
     BlogImageLayout(
+        modifier = Modifier.clip(RoundedCornerShape(style.radius)),
         containerWidth = containerWidth,
         aspectList = aspectList,
         style = style,
@@ -42,6 +45,7 @@ fun BlogImageMedias(
  */
 @Composable
 internal fun BlogImageLayout(
+    modifier: Modifier,
     containerWidth: Dp,
     aspectList: List<Float>,
     style: BlogImageMediaStyle,
@@ -49,18 +53,21 @@ internal fun BlogImageLayout(
 ) {
     when (aspectList.size) {
         1 -> SingleBlogImageLayout(
+            modifier = modifier,
             style = style,
             aspect = aspectList.first(),
             itemContent = { itemContent(0) },
         )
 
         2 -> DoubleBlogImageLayout(
+            modifier = modifier,
             style = style,
             aspectList = aspectList,
             itemContent = itemContent,
         )
 
         3 -> TripleImageMediaLayout(
+            modifier = modifier,
             containerWidth = containerWidth,
             style = style,
             aspectList = aspectList,
@@ -68,6 +75,15 @@ internal fun BlogImageLayout(
         )
 
         4 -> QuadrupleImageMediaLayout(
+            modifier = modifier,
+            containerWidth = containerWidth,
+            aspectList = aspectList,
+            style = style,
+            itemContent = itemContent,
+        )
+
+        5 -> FivefoldImageMediaLayout(
+            modifier = modifier,
             containerWidth = containerWidth,
             aspectList = aspectList,
             style = style,

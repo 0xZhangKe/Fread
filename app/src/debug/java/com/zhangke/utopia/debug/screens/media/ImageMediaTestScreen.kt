@@ -75,6 +75,12 @@ class ImageMediaTestScreen : AndroidScreen() {
                 ) {
                     Text(text = "Four Image Media")
                 }
+                Spacer(modifier = Modifier.height(15.dp))
+                Button(
+                    onClick = { navigator.push(FiveImageMediaTestScreen()) }
+                ) {
+                    Text(text = "Five Image Media")
+                }
             }
         }
     }

@@ -19,19 +19,19 @@ import com.zhangke.framework.ktx.third
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.ui.BlogMedias
 
-class ThreeImageMediaTestScreen : AndroidScreen() {
+class FiveImageMediaTestScreen : AndroidScreen() {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.current!!
         val list = remember {
-            mockThreeImageMediaList()
+            mockFivefoldImageMediaList()
         }
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = "ThreeImageMedia",
+                    title = "FivefoldImageMedia",
                     onBackClick = navigator::pop,
                 )
             }
@@ -45,7 +45,9 @@ class ThreeImageMediaTestScreen : AndroidScreen() {
                 items(list) { item ->
                     val label = "${item.first().fetchDebugAspectRatio()}, " +
                             "${item.second().fetchDebugAspectRatio()}, " +
-                            "${item.third().fetchDebugAspectRatio()}"
+                            "${item.third().fetchDebugAspectRatio()}," +
+                            "${item[3].fetchDebugAspectRatio()}, " +
+                            "${item[4].fetchDebugAspectRatio()}, "
                     MockBlog(label) {
                         BlogMedias(
                             modifier = Modifier
@@ -68,29 +70,41 @@ private const val mockImageUrl2 =
 private const val mockImageUrl3 =
     "https://media.cmx.edu.kg/media_attachments/files/110/913/746/721/111/726/original/a5b3ec61c6cd0fa5.jpeg"
 
-private fun mockThreeImageMediaList(): List<List<BlogMedia>> {
+private const val mockImageUrl4 =
+    "https://media.cmx.edu.kg/media_attachments/files/110/913/324/151/581/983/original/13e30ecf43a076d7.jpeg"
+
+private const val mockImageUrl5 =
+    "https://media.cmx.edu.kg/media_attachments/files/110/922/456/655/829/735/original/f03978cfab6dbc50.png"
+
+private fun mockFivefoldImageMediaList(): List<List<BlogMedia>> {
     return listOf(
         // horizontal arrange
-        tripleImageMedia(0.1F, 0.3F, 0.3F),
-        tripleImageMedia(0.5F, 3F, 1F),
-        tripleImageMedia(0.8F, 0.1F, 3F),
-        tripleImageMedia(1F, 0.1F, 3F),
+        fivefoldImageMedia(0.1F, 0.1F, 0.1F, 0.1F, 0.1F),
+        fivefoldImageMedia(0.1F, 10F, 10F, 10F, 10F),
+        fivefoldImageMedia(0.9F, 0.1F, 0.1F, 0.1F, 0.1F),
+        fivefoldImageMedia(0.9F, 10F, 10F, 10F, 10F),
+        fivefoldImageMedia(0.6F, 0.6F, 0.6F, 0.6F, 0.6F),
         // vertical arrange
-        tripleImageMedia(2F, 0.1F, 3F),
-        tripleImageMedia(2F, 3F, 3F),
-        tripleImageMedia(2F, 0.8F, 0.8F),
-        tripleImageMedia(10F, 0.1F, 0.1F),
+        fivefoldImageMedia(1F, 0.1F, 0.1F, 0.1F, 0.1F),
+        fivefoldImageMedia(1F, 10F, 10F, 10F, 10F),
+        fivefoldImageMedia(10F, 0.1F, 0.1F, 0.1F, 0.1F),
+        fivefoldImageMedia(10F, 10F, 10F, 10F, 10F),
+        fivefoldImageMedia(2F, 2F, 2F, 2F, 2F),
     )
 }
 
-private fun tripleImageMedia(
+private fun fivefoldImageMedia(
     firstAspect: Float,
     secondAspect: Float,
     thirdAspect: Float,
+    fourAspect: Float,
+    fiveAspect: Float,
 ): List<BlogMedia> {
     return listOf(
         mockBlogImageMedia(mockImageUrl1, firstAspect),
         mockBlogImageMedia(mockImageUrl2, secondAspect),
         mockBlogImageMedia(mockImageUrl3, thirdAspect),
+        mockBlogImageMedia(mockImageUrl4, fourAspect),
+        mockBlogImageMedia(mockImageUrl5, fiveAspect),
     )
 }

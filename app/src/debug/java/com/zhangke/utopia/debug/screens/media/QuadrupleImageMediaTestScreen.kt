@@ -86,6 +86,7 @@ private fun mockQuadrupleImageMediaList(): List<List<BlogMedia>> {
         quadrupleImageMedia(1.5F, 0.1F, 10F, 1F),
         quadrupleImageMedia(2F, 0.9F, 1F, 1.4F),
         quadrupleImageMedia(10F, 0.9F, 1.5F, 10F),
+        quadrupleImageMedia(10F, 0.1F, 0.1F, 0.1F),
     )
 }
 

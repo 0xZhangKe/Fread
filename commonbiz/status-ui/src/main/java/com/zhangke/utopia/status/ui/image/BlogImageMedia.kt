@@ -12,6 +12,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaMeta
 
@@ -24,7 +25,7 @@ fun BlogImageMedias(
     containerWidth: Dp,
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
 ) {
-    val aspectList = mediaList.map { it.meta.decideAspect(style.defaultMediaAspect) }
+    val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
     BlogImageLayout(
         modifier = Modifier.clip(RoundedCornerShape(style.radius)),
         containerWidth = containerWidth,
@@ -89,6 +90,13 @@ internal fun BlogImageLayout(
             style = style,
             itemContent = itemContent,
         )
+
+        6 -> SixfoldImageMediaLayout(
+            modifier = modifier,
+            aspectList = aspectList,
+            style = style,
+            itemContent = itemContent,
+        )
     }
 }
 
@@ -98,7 +106,7 @@ internal fun BlogImage(modifier: Modifier, media: BlogMedia) {
         modifier = modifier,
         model = media.url,
         contentScale = ContentScale.Crop,
-        contentDescription = media.description.ifEmpty { "Blog Image Media" },
+        contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
     )
 }
 
@@ -141,12 +149,13 @@ data class BlogImageMediaStyle(
     val maxWeightInHorizontalThreshold: Float,
     val quadrupleHorizontalThreshold: Float,
     val quadrupleVerticalThreshold: Float,
+    val sixfoldAspect: Float,
 )
 
 object BlogImageMediaDefault {
 
     val defaultStyle = BlogImageMediaStyle(
-        radius = 6.dp,
+        radius = 8.dp,
         horizontalDivider = 4.dp,
         verticalDivider = 4.dp,
         defaultMediaAspect = 1F,
@@ -157,6 +166,7 @@ object BlogImageMediaDefault {
         maxWeightInHorizontalThreshold = 0.6F,
         quadrupleHorizontalThreshold = 0.67F,
         quadrupleVerticalThreshold = 1.5F,
+        sixfoldAspect = 1.5F,
     )
 }
 

@@ -18,7 +18,12 @@ class ActivityPubStatusAdapter @Inject constructor(
 
     fun adapt(entity: ActivityPubStatusEntity, domain: String): Status {
         //fixme temporary code
-        return Status.NewBlog(entity.toBlog())
+        return try {
+            Status.NewBlog(entity.toBlog())
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            throw e
+        }
     }
 
     private fun ActivityPubStatusEntity.toBlog(): Blog {
@@ -33,7 +38,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
             repliesCount = repliesCount,
-            mediaList = mediaAttachments.map { it.toBlogMedia() }
+            mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList()
         )
     }
 

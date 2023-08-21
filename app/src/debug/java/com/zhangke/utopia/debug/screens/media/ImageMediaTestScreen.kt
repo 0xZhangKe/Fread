@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.Button
 import androidx.compose.material3.Divider
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -80,6 +79,12 @@ class ImageMediaTestScreen : AndroidScreen() {
                     onClick = { navigator.push(FiveImageMediaTestScreen()) }
                 ) {
                     Text(text = "Five Image Media")
+                }
+                Spacer(modifier = Modifier.height(15.dp))
+                Button(
+                    onClick = { navigator.push(SixfoldImageTestScreen()) }
+                ) {
+                    Text(text = "Six Image Media")
                 }
             }
         }

@@ -1,6 +1,6 @@
 package com.zhangke.framework.utils
 
-import com.zhangke.framework.utils.WebFinger
+import org.junit.Assert
 import org.junit.Test
 
 /**
@@ -90,5 +90,11 @@ internal class WebFingerTest {
         assert(webFinger != null)
         assert(webFinger!!.name == "jw")
         assert(webFinger.host == "jakewharton.com")
+    }
+
+    @Test
+    fun `should return WebFinger when url container - symbol`() {
+        val webFinger = WebFinger.create("https://ramen-fsm.eu.org/@midX")!!
+        Assert.assertEquals("@midX@ramen-fsm.eu.org", webFinger.toString())
     }
 }

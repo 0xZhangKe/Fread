@@ -1,17 +1,20 @@
 package com.zhangke.utopia.status.ui
 
-import android.text.Html
 import android.widget.TextView
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentSize
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -44,7 +47,7 @@ fun BlogContentComposable(
                     .size(40.dp)
                     .constrainAs(avatar) {
                         top.linkTo(parent.top, 10.dp)
-                        start.linkTo(parent.start, 10.dp)
+                        start.linkTo(parent.start, 8.dp)
                         bottom.linkTo(parent.bottom)
                     },
                 model = blog.author.avatar,
@@ -89,16 +92,24 @@ fun BlogContentComposable(
                 fontSize = 12.sp,
             )
         }
-        AndroidView(
-            modifier = Modifier.padding(start = 15.dp, end = 15.dp, top = 8.dp, bottom = 10.dp),
-            factory = {
-                TextView(it).apply {
-                    textSize = 14F
-                }
-            },
-            update = {
-                it.text = HtmlCompat.fromHtml(blog.content, Html.FROM_HTML_MODE_LEGACY)
-            }
+        if (blog.content.isEmpty().not()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp, top = 6.dp),
+                text = blog.content,
+            )
+        }
+        BlogMedias(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, top = 6.dp, end = 8.dp),
+            mediaList = blog.mediaList,
+        )
+        Spacer(
+            modifier = Modifier
+                .width(1.dp)
+                .height(6.dp)
         )
     }
 }

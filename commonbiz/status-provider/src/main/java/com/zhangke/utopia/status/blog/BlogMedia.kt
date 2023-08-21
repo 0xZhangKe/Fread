@@ -6,7 +6,7 @@ data class BlogMedia(
     val type: BlogMediaType,
     val previewUrl: String?,
     val remoteUrl: String?,
-    val description: String,
-    val blurhash: String,
+    val description: String?,
+    val blurhash: String?,
     val meta: BlogMediaMeta?,
 )

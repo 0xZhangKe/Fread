@@ -1,3 +1,6 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("utopia.android.application")
     id("com.google.dagger.hilt.android")
@@ -5,11 +8,30 @@ plugins {
     id("kotlin-kapt")
 }
 
+val keystorePropertiesFile: File = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
+
 android {
     namespace = "com.zhangke.utopia"
 
     buildFeatures {
         buildConfig = true
+    }
+
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+        }
+        create("release") {
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+        }
     }
 
     defaultConfig {
@@ -30,6 +52,12 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+        }
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
         }
     }
     bundle {

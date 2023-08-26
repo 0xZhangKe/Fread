@@ -13,9 +13,11 @@ jobs:
 
       - name: Checkout repository
         uses: actions/checkout
+        with:
+              submodules: recursive
 
-      - name: Checkout submodules
-        run: git submodule update --init --recursive
+#      - name: Checkout submodules
+#        run: git submodule update --init --recursive
 
       - name: Build with Gradle
         run: bash ./gradlew assembleDebug

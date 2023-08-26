@@ -1,14 +1,8 @@
 on: push
 
 jobs:
-  sync:
-    - name: Checkout repository
-      uses: actions/checkout@v2
-
-    - name: Checkout submodules
-      run: git submodule update --init
-
   build:
+
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2
@@ -16,6 +10,12 @@ jobs:
         uses: actions/setup-java@v1
         with:
           java-version: 17
+
+      - name: Checkout repository
+        uses: actions/checkout
+
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
 
       - name: Build with Gradle
         run: bash ./gradlew assembleDebug

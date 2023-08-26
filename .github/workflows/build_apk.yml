@@ -11,10 +11,10 @@ jobs:
         with:
           java-version: 17
 
-      - name: Checkout repository
-        uses: actions/checkout
-        with:
-              submodules: recursive
+#      - name: Checkout repository
+#        uses: actions/checkout
+#        with:
+#              submodules: recursive
 
 #      - name: Checkout submodules
 #        run: git submodule update --init --recursive

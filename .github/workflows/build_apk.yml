@@ -11,6 +11,12 @@ jobs:
         with:
           java-version: 17
 
+      - name: Checkout repository
+        uses: actions/checkout@v2
+
+      - name: Checkout submodules
+        run: git submodule update --init --recursive
+
       - name: Build with Gradle
         run: bash ./gradlew assembleDebug
 

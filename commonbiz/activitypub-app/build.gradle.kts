@@ -18,8 +18,6 @@ android {
 kotlin {
     sourceSets.main {
         kotlin.srcDir("build/generated/ksp/main/kotlin")
-        kotlin.srcDir("build/generated/ksp/debug/kotlin")
-        kotlin.srcDir("build/generated/ksp/release/kotlin")
         resources.srcDir("build/generated/ksp/main/resources")
     }
 }

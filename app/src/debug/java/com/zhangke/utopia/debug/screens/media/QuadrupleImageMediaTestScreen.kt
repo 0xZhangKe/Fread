@@ -52,6 +52,7 @@ class QuadrupleImageMediaTestScreen : AndroidScreen() {
                             modifier = Modifier
                                 .fillMaxWidth(),
                             mediaList = item,
+                            onMediaClick = {},
                         )
                     }
                 }

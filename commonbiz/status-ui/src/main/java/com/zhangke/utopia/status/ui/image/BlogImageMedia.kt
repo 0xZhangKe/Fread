@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.ui.image
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
@@ -24,6 +25,7 @@ fun BlogImageMedias(
     mediaList: List<BlogMedia>,
     containerWidth: Dp,
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
+    onMediaClick: (BlogMedia) -> Unit,
 ) {
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
     BlogImageLayout(
@@ -34,7 +36,11 @@ fun BlogImageMedias(
         itemContent = { index ->
             val media = mediaList[index]
             BlogImage(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .clickable {
+                        onMediaClick(mediaList[index])
+                    },
                 media = media,
             )
         }

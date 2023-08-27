@@ -23,6 +23,7 @@ import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.user.UtopiaUser
 import java.text.SimpleDateFormat
@@ -33,7 +34,8 @@ import kotlin.concurrent.getOrSet
 @Composable
 fun BlogContentComposable(
     modifier: Modifier = Modifier,
-    blog: Blog
+    blog: Blog,
+    onMediaClick: (BlogMedia) -> Unit,
 ) {
     Card(
         modifier = modifier
@@ -114,6 +116,7 @@ fun BlogContentComposable(
                 .fillMaxWidth()
                 .padding(start = 8.dp, top = 6.dp, end = 8.dp),
             mediaList = blog.mediaList,
+            onMediaClick = onMediaClick,
         )
         Spacer(
             modifier = Modifier
@@ -157,5 +160,5 @@ private fun PreviewBlogContentComposable() {
         likeCount = 38747,
         repliesCount = 10,
     )
-    BlogContentComposable(blog = blog)
+    BlogContentComposable(blog = blog, onMediaClick = {})
 }

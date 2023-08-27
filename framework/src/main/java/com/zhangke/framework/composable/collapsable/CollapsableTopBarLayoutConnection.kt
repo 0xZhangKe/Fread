@@ -3,7 +3,6 @@ package com.zhangke.framework.composable.collapsable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -34,7 +33,7 @@ class CollapsableTopBarLayoutConnection(
             progress = 1 - (topBarHeight - minPx) / (maxPx - minPx)
         }
 
-    var progress: Float by mutableFloatStateOf(0F)
+    var progress: Float by mutableStateOf(0F)
         private set
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {

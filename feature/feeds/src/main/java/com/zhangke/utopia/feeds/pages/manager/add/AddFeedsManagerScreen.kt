@@ -29,7 +29,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.framework.ktx.CollectOnComposable
 import com.zhangke.krouter.Destination
-import com.zhangke.utopia.commonbiz.router.SharedRouter
+import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.StatusSourceNode
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState

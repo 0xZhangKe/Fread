@@ -31,7 +31,6 @@ dependencies {
     implementation(project(path = ":framework"))
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-provider"))
-    api(project(path = ":ActivityPub-Kotlin"))
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)

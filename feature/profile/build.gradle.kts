@@ -30,6 +30,7 @@ dependencies {
     implementation(project(path = ":framework"))
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-provider"))
+    implementation(project(path = ":commonbiz:sharedscreen"))
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)

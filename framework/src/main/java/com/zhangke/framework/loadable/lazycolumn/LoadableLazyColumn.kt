@@ -1,5 +1,6 @@
 package com.zhangke.framework.loadable.lazycolumn
 
+import android.util.Log
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
@@ -22,7 +23,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -95,7 +95,7 @@ fun LoadableLazyColumn(
     }
     // 上次滑动结束后最后一个可见的index
     var lastTimeLastVisibleIndex by remember {
-        mutableIntStateOf(listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0)
+        mutableStateOf(listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0)
     }
     // 当前是否正在滑动
     val currentIsScrollInProgress = lazyListState.isScrollInProgress
@@ -139,6 +139,11 @@ fun rememberLoadableLazyColumnState(
     val lazyListState = rememberLazyListState(
         initialFirstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset,
         initialFirstVisibleItemIndex = initialFirstVisibleItemIndex,
+    )
+
+    Log.d(
+        "U_TEST",
+        "LazyListState.Saver@${LazyListState.Saver.hashCode()}, lazyListState@:${lazyListState.hashCode()}"
     )
 
     val loadMoreState = rememberLoadMoreState(loadMoreRemainCountThreshold, onLoadMore)

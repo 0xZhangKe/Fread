@@ -26,7 +26,7 @@ androidx-lifecycle = "2.4.1"
 androidx-paging = "3.1.1"
 androidx-paging-compose = "1.0.0-alpha18"
 
-accompanist-placeholder-material = "0.31.5-beta"
+accompanist-placeholder-material = "0.28.0"
 
 hilt = "2.44"
 
@@ -46,11 +46,11 @@ ksp = "1.8.21-1.0.11"
 
 filt = "1.0.4"
 
-voyager = "1.0.0-rc05"
+voyager = "1.0.0-rc06"
 
 krouter = "0.1.6"
 
-androidGradlePlugin = "8.0.1"
+androidGradlePlugin = "8.0.2"
 hiltAndroidGradlePlugin = "2.44"
 
 [bundles]
@@ -70,7 +70,7 @@ kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
 coil = ["coil", "coil.compose", "coil.gif"]
 
-voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.android", "voyager.hilt", "voyager.koin"]
+voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.android", "voyager.hilt"]
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
@@ -158,7 +158,6 @@ voyager-bottom-sheet-navigator = { group = "cafe.adriel.voyager", name = "voyage
 voyager-tab-navigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyager" }
 voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyager" }
 voyager-android = { group = "cafe.adriel.voyager", name = "voyager-androidx", version.ref = "voyager" }
-voyager-koin = { group = "cafe.adriel.voyager", name = "voyager-koin", version.ref = "voyager" }
 voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.ref = "voyager" }
 
 krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", version.ref = "krouter"}

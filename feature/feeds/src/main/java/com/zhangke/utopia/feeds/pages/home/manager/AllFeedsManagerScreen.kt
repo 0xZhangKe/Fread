@@ -5,11 +5,12 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -39,9 +40,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
+import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
@@ -52,204 +55,216 @@ import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 import com.zhangke.utopia.feeds.pages.manager.edit.EditFeedsScreen
 
-@Composable
-internal fun AllFeedsManagerScreen(
-    feedsList: List<FeedsPageUiState>,
-    onItemClick: (index: Int) -> Unit,
-) {
-    val navigator = LocalNavigator.currentOrThrow
-    AllFeedsManagerScreenContent(
-        feedsList = feedsList,
-        onAddFeedsClick = {
-            navigator.push(AddFeedsManagerScreen())
-        },
-        onItemClick = onItemClick,
-        onItemEditClick = {
-            navigator.push(EditFeedsScreen(feedsId = feedsList[it].feedsId))
-        },
-    )
-}
+internal class AllFeedsManagerScreen(
+    private val feedsList: List<FeedsPageUiState>,
+    private val onItemClick: (index: Int) -> Unit,
+) : AndroidScreen() {
 
-@Composable
-private fun AllFeedsManagerScreenContent(
-    feedsList: List<FeedsPageUiState>,
-    onAddFeedsClick: () -> Unit,
-    onItemClick: (index: Int) -> Unit,
-    onItemEditClick: (index: Int) -> Unit,
-) {
-    Column(modifier = Modifier.fillMaxSize()) {
-        Row(
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        AllFeedsManagerScreenContent(
+            feedsList = feedsList,
+            onAddFeedsClick = {
+                navigator.push(AddFeedsManagerScreen())
+            },
+            onItemClick = onItemClick,
+            onItemEditClick = {
+                navigator.push(EditFeedsScreen(feedsId = feedsList[it].feedsId))
+            },
+        )
+    }
+
+    @Composable
+    private fun AllFeedsManagerScreenContent(
+        feedsList: List<FeedsPageUiState>,
+        onAddFeedsClick: () -> Unit,
+        onItemClick: (index: Int) -> Unit,
+        onItemEditClick: (index: Int) -> Unit,
+    ) {
+        val configuration = LocalConfiguration.current
+        val screenHeight = configuration.screenHeightDp.dp
+        val minHeight = screenHeight * 0.3F
+        val maxHeight = screenHeight * 0.85F
+        Column(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(TopAppBarDefault.TopBarHeight)
-                .padding(
-                    start = TopAppBarDefault.StartPadding,
-                    end = TopAppBarDefault.EndPadding,
-                ),
-            verticalAlignment = Alignment.CenterVertically,
+                .heightIn(min = minHeight, max = maxHeight)
         ) {
-            Text(
-                text = "Feeds Manager",
-                style = MaterialTheme.typography.titleLarge,
-            )
-            Spacer(modifier = Modifier.weight(1F))
-            IconButton(
-                onClick = onAddFeedsClick,
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(TopAppBarDefault.TopBarHeight)
+                    .padding(
+                        start = TopAppBarDefault.StartPadding,
+                        end = TopAppBarDefault.EndPadding,
+                    ),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    painter = rememberVectorPainter(Icons.Default.Add),
-                    contentDescription = "Add New Feeds",
+                Text(
+                    text = "Feeds Manager",
+                    style = MaterialTheme.typography.titleLarge,
                 )
+                Spacer(modifier = Modifier.weight(1F))
+                IconButton(
+                    onClick = onAddFeedsClick,
+                ) {
+                    Icon(
+                        painter = rememberVectorPainter(Icons.Default.Add),
+                        contentDescription = "Add New Feeds",
+                    )
+                }
             }
-        }
 
-        val columns = 3
-        val horizontalEdgePadding = 10.dp
-        val horizontalSpace = 14.dp
-        LazyVerticalGrid(
-            columns = GridCells.Fixed(columns),
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = horizontalEdgePadding)
-                .weight(1F),
-            horizontalArrangement = Arrangement.Center,
-        ) {
-            itemsIndexed(
-                items = feedsList,
-            ) { index, uiState ->
-                AllFeedsManagerItem(
-                    modifier = Modifier
-                        .padding(horizontal = horizontalSpace / 2)
-                        .fillMaxWidth()
-                        .height(64.dp),
-                    uiState = uiState,
-                    onClick = {
-                        onItemClick(index)
-                    },
-                    onEditClick = {
-                        onItemEditClick(index)
-                    }
-                )
+            val columns = 3
+            val horizontalEdgePadding = 10.dp
+            val horizontalSpace = 14.dp
+            LazyVerticalGrid(
+                columns = GridCells.Fixed(columns),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = horizontalEdgePadding),
+                contentPadding = PaddingValues(bottom = 20.dp),
+                horizontalArrangement = Arrangement.Center,
+            ) {
+                itemsIndexed(
+                    items = feedsList,
+                ) { index, uiState ->
+                    AllFeedsManagerItem(
+                        modifier = Modifier
+                            .padding(horizontal = horizontalSpace / 2)
+                            .fillMaxWidth()
+                            .padding(bottom = 15.dp)
+                            .height(64.dp),
+                        uiState = uiState,
+                        onClick = {
+                            onItemClick(index)
+                        },
+                        onEditClick = {
+                            onItemEditClick(index)
+                        }
+                    )
+                }
             }
         }
     }
-}
 
-@Composable
-private fun AllFeedsManagerItem(
-    modifier: Modifier = Modifier,
-    uiState: FeedsPageUiState,
-    onClick: () -> Unit,
-    onEditClick: () -> Unit,
-) {
-    Box(
-        modifier = modifier,
-        contentAlignment = Alignment.Center,
+    @Composable
+    private fun AllFeedsManagerItem(
+        modifier: Modifier = Modifier,
+        uiState: FeedsPageUiState,
+        onClick: () -> Unit,
+        onEditClick: () -> Unit,
     ) {
-        Card(
-            modifier = Modifier.fillMaxWidth(),
-            elevation = CardDefaults.cardElevation(3.dp),
+        Box(
+            modifier = modifier,
+            contentAlignment = Alignment.Center,
         ) {
-            Column(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable(onClick = onClick)
-                    .padding(horizontal = 6.dp, vertical = 4.dp)
+            Card(
+                modifier = Modifier.fillMaxWidth(),
+                elevation = CardDefaults.cardElevation(3.dp),
             ) {
-                Text(
-                    text = uiState.name,
-                    style = MaterialTheme.typography.bodyMedium,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-
-                if (uiState.serverList.isSingle()) {
-                    Row(
-                        modifier = Modifier.padding(top = 2.dp),
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        val serverInfo = uiState.serverList.first()
-                        val serverThumbnail = serverInfo.thumbnail
-                        if (serverThumbnail.isNullOrEmpty().not()) {
-                            AsyncImage(
-                                modifier = Modifier
-                                    .size(16.dp)
-                                    .clip(CircleShape),
-                                model = uiState.serverList.first().thumbnail,
-                                contentScale = ContentScale.Crop,
-                                contentDescription = "ServerAvatar",
-                            )
-                            Spacer(modifier = Modifier.width(4.dp))
-                        }
-                        Text(
-                            text = serverInfo.name,
-                            style = MaterialTheme.typography.labelSmall,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                } else {
-                    val avatarList = uiState.serverList.mapNotNull { it.thumbnail }.take(5)
-                    AvatarHorizontalStack(
-                        modifier = Modifier.padding(top = 2.dp),
-                        avatars = avatarList,
-                        avatarSize = 16.dp,
-                    )
-                }
-
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable(onClick = onClick)
+                        .padding(horizontal = 6.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        modifier = Modifier.padding(top = 2.dp),
-                        text = "count: ${uiState.sourceList.size}",
-                        style = MaterialTheme.typography.labelSmall,
+                        text = uiState.name,
+                        style = MaterialTheme.typography.bodyMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
 
-                    Spacer(modifier = Modifier.weight(1F))
-
-                    Column {
-                        var showMoreOptionPopup by remember {
-                            mutableStateOf(false)
-                        }
-                        IconButton(
-                            modifier = Modifier.size(24.dp),
-                            onClick = {
-                                showMoreOptionPopup = true
-                            }
+                    if (uiState.serverList.isSingle()) {
+                        Row(
+                            modifier = Modifier.padding(top = 2.dp),
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            Icon(
-                                modifier = Modifier.size(20.dp),
-                                painter = rememberVectorPainter(Icons.Default.MoreHoriz),
-                                contentDescription = "More Options",
+                            val serverInfo = uiState.serverList.first()
+                            val serverThumbnail = serverInfo.thumbnail
+                            if (serverThumbnail.isNullOrEmpty().not()) {
+                                AsyncImage(
+                                    modifier = Modifier
+                                        .size(16.dp)
+                                        .clip(CircleShape),
+                                    model = uiState.serverList.first().thumbnail,
+                                    contentScale = ContentScale.Crop,
+                                    contentDescription = "ServerAvatar",
+                                )
+                                Spacer(modifier = Modifier.width(4.dp))
+                            }
+                            Text(
+                                text = serverInfo.name,
+                                style = MaterialTheme.typography.labelSmall,
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
                             )
                         }
-                        if (showMoreOptionPopup) {
-                            Popup(
-                                onDismissRequest = { showMoreOptionPopup = false }
+                    } else {
+                        val avatarList = uiState.serverList.mapNotNull { it.thumbnail }.take(5)
+                        AvatarHorizontalStack(
+                            modifier = Modifier.padding(top = 2.dp),
+                            avatars = avatarList,
+                            avatarSize = 16.dp,
+                        )
+                    }
+
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            modifier = Modifier.padding(top = 2.dp),
+                            text = "count: ${uiState.sourceList.size}",
+                            style = MaterialTheme.typography.labelSmall,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+
+                        Spacer(modifier = Modifier.weight(1F))
+
+                        Column {
+                            var showMoreOptionPopup by remember {
+                                mutableStateOf(false)
+                            }
+                            IconButton(
+                                modifier = Modifier.size(24.dp),
+                                onClick = {
+                                    showMoreOptionPopup = true
+                                }
                             ) {
-                                Surface(
-                                    modifier = Modifier
-                                        .width(IntrinsicSize.Max)
-                                        .widthIn(min = 80.dp),
-                                    shape = RoundedCornerShape(4.dp),
-                                    elevation = 4.dp,
+                                Icon(
+                                    modifier = Modifier.size(20.dp),
+                                    painter = rememberVectorPainter(Icons.Default.MoreHoriz),
+                                    contentDescription = "More Options",
+                                )
+                            }
+                            if (showMoreOptionPopup) {
+                                Popup(
+                                    onDismissRequest = { showMoreOptionPopup = false }
                                 ) {
-                                    Text(
+                                    Surface(
                                         modifier = Modifier
-                                            .clickable {
-                                                showMoreOptionPopup = false
-                                                onEditClick()
-                                            }
-                                            .padding(
-                                                vertical = 6.dp,
-                                                horizontal = 12.dp
-                                            ),
-                                        text = "Edit",
-                                    )
+                                            .width(IntrinsicSize.Max)
+                                            .widthIn(min = 80.dp),
+                                        shape = RoundedCornerShape(4.dp),
+                                        elevation = 4.dp,
+                                    ) {
+                                        Text(
+                                            modifier = Modifier
+                                                .clickable {
+                                                    showMoreOptionPopup = false
+                                                    onEditClick()
+                                                }
+                                                .padding(
+                                                    vertical = 6.dp,
+                                                    horizontal = 12.dp
+                                                ),
+                                            text = "Edit",
+                                        )
+                                    }
                                 }
                             }
                         }

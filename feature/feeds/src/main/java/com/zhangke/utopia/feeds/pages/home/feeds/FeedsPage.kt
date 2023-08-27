@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -17,6 +18,8 @@ import com.zhangke.framework.composable.canScrollBackward
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
+import com.zhangke.krouter.KRouter
+import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.ui.StatusNode
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -26,6 +29,7 @@ internal fun FeedsPage(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onShowSnackMessage: suspend (String) -> Unit,
+    onMediaClick: (BlogMedia) -> Unit,
 ) {
     val feeds = uiState.feedsFlow.collectAsState(initial = emptyList()).value
     val state = rememberLoadableLazyColumnState(
@@ -33,6 +37,7 @@ internal fun FeedsPage(
         onRefresh = onRefresh,
         onLoadMore = onLoadMore,
     )
+    Log.d("U_TEST", "LoadableLazyColumnState:$state")
     val snackMessage = uiState.snackMessage?.let { textString(it) }
     if (snackMessage.isNullOrEmpty().not()) {
         LaunchedEffect(uiState.snackMessage) {
@@ -62,6 +67,7 @@ internal fun FeedsPage(
                 StatusNode(
                     modifier = Modifier.padding(bottom = 15.dp),
                     status = item,
+                    onMediaClick = onMediaClick,
                 )
             }
         }

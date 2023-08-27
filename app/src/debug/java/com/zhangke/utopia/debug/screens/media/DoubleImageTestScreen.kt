@@ -50,6 +50,7 @@ class DoubleImageTestScreen : AndroidScreen() {
                             modifier = Modifier
                                 .fillMaxWidth(),
                             mediaList = item,
+                            onMediaClick = {},
                         )
                     }
                 }

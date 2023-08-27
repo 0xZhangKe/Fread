@@ -1,9 +1,11 @@
 package com.zhangke.utopia.feeds
 
+import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.androidx.AndroidScreen
@@ -12,7 +14,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.krouter.KRouter
+import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
@@ -33,7 +37,8 @@ object FeedsHomeTab : Tab {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: FeedsHomeViewModel = getViewModel()
-        val uiState = viewModel.uiState.collectAsState().value
+        val uiState by viewModel.uiState.collectAsState()
+        Log.d("U_TEST", "FeedsHomeTab@${hashCode()}, viewModel@${viewModel.hashCode()}")
         FeedsHomeScreenContent(
             uiState = uiState,
             onTabSelected = viewModel::onPageChanged,
@@ -46,6 +51,9 @@ object FeedsHomeTab : Tab {
                 val screen =
                     KRouter.route<AndroidScreen>(server.uri.toString())!!
                 navigator.push(screen)
+            },
+            onBlogMediaClick = {
+                navigator.pushDestination(SharedRouter.Common.imageGallery)
             }
         )
     }

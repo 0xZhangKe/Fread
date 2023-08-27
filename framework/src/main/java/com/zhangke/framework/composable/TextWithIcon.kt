@@ -34,10 +34,9 @@ fun TextWithIcon(
     overflow: TextOverflow = TextOverflow.Clip,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
-    minLines: Int = 1,
     startIcon: (@Composable () -> Unit)? = null,
     endIcon: (@Composable () -> Unit)? = null,
-    onTextLayout: ((TextLayoutResult) -> Unit)? = null,
+    onTextLayout: (TextLayoutResult) -> Unit = {},
     style: TextStyle = LocalTextStyle.current
 ) {
     Row(
@@ -60,7 +59,6 @@ fun TextWithIcon(
             overflow = overflow,
             softWrap = softWrap,
             maxLines = maxLines,
-            minLines = minLines,
             onTextLayout = onTextLayout,
             style = style,
         )

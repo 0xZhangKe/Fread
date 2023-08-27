@@ -1,9 +1,8 @@
 package com.zhangke.framework.composable.topout
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
@@ -23,14 +22,13 @@ class TopOutTopBarLayoutConnection(
     private val topBarHeight: Float,
 ) : NestedScrollConnection {
 
-    var topMargin by mutableFloatStateOf(topBarHeight)
+    var topMargin by mutableStateOf(topBarHeight)
 
     // content to screen margin
     private var _topMargin: Float = topBarHeight
         private set(value) {
             field = value
             topMargin = value
-            Log.d("U_TEST", "top margin:$value")
         }
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {

@@ -1,7 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,7 +11,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
@@ -26,7 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,13 +33,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.zhangke.framework.composable.BottomSheetDialog
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.LoadableLayout
-import com.zhangke.framework.composable.LocalGlobalScreenProvider
 import com.zhangke.framework.composable.TextWithIcon
 import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -52,6 +47,7 @@ import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
+import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.server.StatusProviderServer
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
@@ -63,15 +59,14 @@ internal fun FeedsHomeScreenContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onServerItemClick: (StatusProviderServer) -> Unit,
+    onBlogMediaClick: (BlogMedia) -> Unit,
 ) {
+    val bottomSheetNavigator = LocalBottomSheetNavigator.current
     val snackbarHostState = rememberSnackbarHostState()
     var topBarItems: List<StatusProviderServer> by remember {
         mutableStateOf(emptyList())
     }
     val selectedIndex = uiState.tabIndex
-    var showFeedsManagerBottomDialog by remember {
-        mutableStateOf(false)
-    }
     LoadableLayout(
         modifier = Modifier.fillMaxSize(),
         state = uiState.pageUiStateList,
@@ -93,7 +88,14 @@ internal fun FeedsHomeScreenContent(
                             onTabClick = onTabSelected,
                             onServerItemClick = onServerItemClick,
                             onMenuClick = {
-                                showFeedsManagerBottomDialog = !showFeedsManagerBottomDialog
+                                bottomSheetNavigator.show(
+                                    AllFeedsManagerScreen(
+                                        feedsList = uiState.pageUiStateList
+                                            .successDataOrNull() ?: emptyList(),
+                                        onItemClick = { index ->
+                                            onTabSelected(index)
+                                        }
+                                    ))
                             },
                         )
                     }
@@ -102,7 +104,6 @@ internal fun FeedsHomeScreenContent(
                 if (feedsList.isNotEmpty()) {
                     val pagerState = rememberPagerState(
                         initialPage = selectedIndex,
-                        pageCount = feedsList::size,
                     )
                     LaunchedEffect(selectedIndex) {
                         pagerState.scrollToPage(selectedIndex)
@@ -115,6 +116,7 @@ internal fun FeedsHomeScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         state = pagerState,
                         userScrollEnabled = true,
+                        pageCount = feedsList.size,
                     ) { pageIndex ->
                         val pagedUiState = feedsList[pageIndex]
                         topBarItems = pagedUiState.serverList
@@ -124,7 +126,8 @@ internal fun FeedsHomeScreenContent(
                             onLoadMore = onLoadMore,
                             onShowSnackMessage = {
                                 snackbarHostState.showSnackbar(it)
-                            }
+                            },
+                            onMediaClick = onBlogMediaClick,
                         )
                     }
                 } else {
@@ -138,44 +141,6 @@ internal fun FeedsHomeScreenContent(
                     }
                 }
             }
-        }
-    }
-
-    val configuration = LocalConfiguration.current
-    val screenHeight = configuration.screenHeightDp.dp
-
-    val globalScreenProvider = LocalGlobalScreenProvider.current
-    globalScreenProvider.content.value = @Composable {
-        BottomSheetDialog(
-            visible = showFeedsManagerBottomDialog,
-            onDismissRequest = {
-                showFeedsManagerBottomDialog = false
-            },
-            content = {
-                Box(
-                    modifier = Modifier
-                        .height(screenHeight * 0.67F)
-                        .background(
-                            Color.White,
-                            RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
-                        )
-                ) {
-                    AllFeedsManagerScreen(
-                        feedsList = uiState.pageUiStateList
-                            .successDataOrNull() ?: emptyList(),
-                        onItemClick = { index ->
-                            showFeedsManagerBottomDialog = false
-                            onTabSelected(index)
-                        }
-                    )
-                }
-            }
-        )
-    }
-
-    DisposableEffect(Unit) {
-        onDispose {
-            globalScreenProvider.content.value = null
         }
     }
 }

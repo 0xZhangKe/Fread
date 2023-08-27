@@ -32,6 +32,7 @@ dependencies {
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-provider"))
     implementation(project(path = ":commonbiz:status-ui"))
+    implementation(project(path = ":commonbiz:sharedscreen"))
     api(project(path = ":ActivityPub-Kotlin"))
 
     implementation(libs.bundles.kotlin)

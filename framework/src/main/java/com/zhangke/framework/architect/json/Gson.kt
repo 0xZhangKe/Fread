@@ -48,7 +48,7 @@ private class EnumWithJsonValueTypeAdapter(val gson: Gson, val rawType: Class<*>
 
     override fun read(`in`: JsonReader): Any? {
         val genericInterface = rawType.genericInterfaces.first {
-            `$Gson$Types`.getRawType(it) == JsonEnum::class.java
+            JsonEnum::class.java == `$Gson$Types`.getRawType(it)
         }
         val valueType = (genericInterface as ParameterizedType).actualTypeArguments[0]
         val adapter = gson.getAdapter(TypeToken.get(valueType))

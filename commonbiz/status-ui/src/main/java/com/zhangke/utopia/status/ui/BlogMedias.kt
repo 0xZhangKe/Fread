@@ -19,6 +19,7 @@ import com.zhangke.utopia.status.ui.image.BlogImageMedias
 fun BlogMedias(
     modifier: Modifier,
     mediaList: List<BlogMedia>,
+    onMediaClick: (BlogMedia) -> Unit,
 ) {
     if (mediaList.isEmpty()) return
     val density = LocalDensity.current
@@ -34,7 +35,11 @@ fun BlogMedias(
         if (containerWidth != null) {
             val imageMediaList =
                 mediaList.filter { it.type == BlogMediaType.IMAGE || it.type == BlogMediaType.GIFV }
-            BlogImageMedias(mediaList = imageMediaList, containerWidth = containerWidth!!)
+            BlogImageMedias(
+                mediaList = imageMediaList,
+                containerWidth = containerWidth!!,
+                onMediaClick = onMediaClick,
+            )
         }
     }
 }

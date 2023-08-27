@@ -53,6 +53,7 @@ private fun ServerTrendingContent(
                 StatusNode(
                     modifier = Modifier.padding(bottom = 15.dp),
                     status = status,
+                    onMediaClick = {},
                 )
             }
         }

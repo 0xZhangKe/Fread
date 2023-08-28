@@ -1,6 +1,5 @@
 package com.zhangke.framework.loadable.lazycolumn
 
-import android.util.Log
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
@@ -139,11 +138,6 @@ fun rememberLoadableLazyColumnState(
     val lazyListState = rememberLazyListState(
         initialFirstVisibleItemScrollOffset = initialFirstVisibleItemScrollOffset,
         initialFirstVisibleItemIndex = initialFirstVisibleItemIndex,
-    )
-
-    Log.d(
-        "U_TEST",
-        "LazyListState.Saver@${LazyListState.Saver.hashCode()}, lazyListState@:${lazyListState.hashCode()}"
     )
 
     val loadMoreState = rememberLoadMoreState(loadMoreRemainCountThreshold, onLoadMore)

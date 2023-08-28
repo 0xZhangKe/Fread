@@ -11,10 +11,14 @@ fun Navigator.pushDestination(routerDestination: String): Boolean {
     return true
 }
 
+fun TransparentNavigator.pushDestination(routerDestination: String): Boolean {
+    val destination = KRouter.routeScreen(routerDestination) ?: return false
+    push(destination)
+    return true
+}
+
 private fun KRouter.routeScreen(destination: String): Screen? {
     route<Screen>(destination)?.let { return it }
     route<AndroidScreen>(destination)?.let { return it }
-    route<TransparentAndroidScreen>(destination)?.let { return it }
-    route<TransparentScreen>(destination)?.let { return it }
     return null
 }

@@ -1,14 +1,76 @@
 package com.zhangke.framework.voyager
 
-import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.ModalBottomSheetState
+import androidx.activity.compose.BackHandler
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.interaction.MutableInteractionSource
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ProvidableCompositionLocal
+import androidx.compose.runtime.currentCompositeKeyHash
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.stack.Stack
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
-import kotlinx.coroutines.CoroutineScope
+
+typealias TransparentNavigatorContent =
+        @Composable (transparentNavigator: TransparentNavigator) -> Unit
+
+val LocalTransparentNavigator: ProvidableCompositionLocal<TransparentNavigator> =
+    staticCompositionLocalOf { error("TransparentNavigator not initialized") }
+
+@Composable
+fun TransparentNavigator(
+    key: String = currentCompositeKeyHash.toString(35),
+    transparentContent: TransparentNavigatorContent = { CurrentScreen() },
+    content: TransparentNavigatorContent
+) {
+    Navigator(HiddenTransparentScreen, onBackPressed = null, key = key) { navigator ->
+        val transparentNavigator = remember(navigator) {
+            TransparentNavigator(navigator)
+        }
+
+        CompositionLocalProvider(
+            LocalTransparentNavigator provides transparentNavigator
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                content(transparentNavigator)
+                val lastItem = transparentNavigator.lastItemOrNull
+                if (lastItem != null) {
+                    BackHandler {
+                        transparentNavigator.pop()
+                    }
+                    Box(
+                        modifier = Modifier
+                            .clickable(
+                                interactionSource = remember { MutableInteractionSource() },
+                                onClick = {},
+                                indication = null,
+                            )
+                    ) {
+                        transparentContent(transparentNavigator)
+                    }
+                }
+            }
+        }
+    }
+}
 
 class TransparentNavigator internal constructor(
     private val navigator: Navigator,
-): Stack<Screen> by navigator{
+) : Stack<Screen> by navigator
 
+private object HiddenTransparentScreen : Screen {
+
+    @Composable
+    override fun Content() {
+        Spacer(modifier = Modifier.height(1.dp))
+    }
 }

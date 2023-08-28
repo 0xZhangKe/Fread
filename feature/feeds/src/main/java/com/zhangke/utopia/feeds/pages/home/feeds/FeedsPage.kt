@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,16 +9,14 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
-import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.canScrollBackward
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
-import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.status.blog.BlogMedia
+import com.zhangke.utopia.status.status.Status
 import com.zhangke.utopia.status.ui.StatusNode
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -31,13 +28,20 @@ internal fun FeedsPage(
     onShowSnackMessage: suspend (String) -> Unit,
     onMediaClick: (BlogMedia) -> Unit,
 ) {
-    val feeds = uiState.feedsFlow.collectAsState(initial = emptyList()).value
+    val feedsList = rememberSaveable(uiState.feedsFlow) {
+        mutableListOf<Status>()
+    }
+    LaunchedEffect(uiState.feedsFlow) {
+        uiState.feedsFlow.collect {
+            feedsList.clear()
+            feedsList.addAll(it)
+        }
+    }
     val state = rememberLoadableLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,
         onLoadMore = onLoadMore,
     )
-    Log.d("U_TEST", "LoadableLazyColumnState:$state")
     val snackMessage = uiState.snackMessage?.let { textString(it) }
     if (snackMessage.isNullOrEmpty().not()) {
         LaunchedEffect(uiState.snackMessage) {
@@ -56,14 +60,14 @@ internal fun FeedsPage(
             bottom = 20.dp,
         )
     ) {
-        if (feeds.isEmpty()) {
+        if (feedsList.isEmpty()) {
             item {
                 Box(modifier = Modifier.fillMaxSize()) {
                     Text(text = "Empty Placeholder")
                 }
             }
         } else {
-            items(feeds) { item ->
+            items(feedsList) { item ->
                 StatusNode(
                     modifier = Modifier.padding(bottom = 15.dp),
                     status = item,

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.zhangke.utopia.explore.pages.home.ExploreHomePage
 
 object ExploreTab : Tab {
 
@@ -30,17 +31,8 @@ object ExploreTab : Tab {
             }
         }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center,
-        ) {
-            var inputtedText by remember {
-                mutableStateOf("Explore")
-            }
-            TextField(value = inputtedText, onValueChange = { inputtedText = it })
-        }
+        ExploreHomePage()
     }
 }

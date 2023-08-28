@@ -28,6 +28,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,7 +64,7 @@ internal fun FeedsHomeScreenContent(
 ) {
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
     val snackbarHostState = rememberSnackbarHostState()
-    var topBarItems: List<StatusProviderServer> by remember {
+    var topBarItems: List<StatusProviderServer> by rememberSaveable {
         mutableStateOf(emptyList())
     }
     val selectedIndex = uiState.tabIndex

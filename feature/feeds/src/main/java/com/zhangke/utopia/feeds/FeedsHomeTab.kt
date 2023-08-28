@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds
 
-import android.util.Log
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Home
 import androidx.compose.runtime.Composable
@@ -14,6 +13,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
+import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
@@ -36,9 +36,9 @@ object FeedsHomeTab : Tab {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val transparentNavigator = LocalTransparentNavigator.current
         val viewModel: FeedsHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        Log.d("U_TEST", "FeedsHomeTab@${hashCode()}, viewModel@${viewModel.hashCode()}")
         FeedsHomeScreenContent(
             uiState = uiState,
             onTabSelected = viewModel::onPageChanged,
@@ -53,7 +53,7 @@ object FeedsHomeTab : Tab {
                 navigator.push(screen)
             },
             onBlogMediaClick = {
-                navigator.pushDestination(SharedRouter.Common.imageGallery)
+                transparentNavigator.pushDestination(SharedRouter.Common.imageGallery)
             }
         )
     }

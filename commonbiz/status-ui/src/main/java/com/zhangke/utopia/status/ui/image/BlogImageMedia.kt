@@ -7,15 +7,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.layout.LayoutCoordinates
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaMeta
+
+typealias OnBlogMediaClick = (BlogMedia, LayoutCoordinates) -> Unit
 
 /**
  * Image and Gifv
@@ -25,9 +30,12 @@ fun BlogImageMedias(
     mediaList: List<BlogMedia>,
     containerWidth: Dp,
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
-    onMediaClick: (BlogMedia) -> Unit,
+    onMediaClick: OnBlogMediaClick,
 ) {
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
+    val mediaPosition: MutableMap<Int, LayoutCoordinates> = remember {
+        mutableMapOf()
+    }
     BlogImageLayout(
         modifier = Modifier.clip(RoundedCornerShape(style.radius)),
         containerWidth = containerWidth,
@@ -38,8 +46,11 @@ fun BlogImageMedias(
             BlogImage(
                 modifier = Modifier
                     .fillMaxSize()
+                    .onGloballyPositioned {
+                        mediaPosition[index] = it
+                    }
                     .clickable {
-                        onMediaClick(mediaList[index])
+                        onMediaClick(mediaList[index], mediaPosition[index]!!)
                     },
                 media = media,
             )

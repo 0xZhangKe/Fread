@@ -24,6 +24,7 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.user.UtopiaUser
 import java.text.SimpleDateFormat
@@ -35,7 +36,7 @@ import kotlin.concurrent.getOrSet
 fun BlogContentComposable(
     modifier: Modifier = Modifier,
     blog: Blog,
-    onMediaClick: (BlogMedia) -> Unit,
+    onMediaClick: OnBlogMediaClick,
 ) {
     Card(
         modifier = modifier
@@ -160,5 +161,5 @@ private fun PreviewBlogContentComposable() {
         likeCount = 38747,
         repliesCount = 10,
     )
-    BlogContentComposable(blog = blog, onMediaClick = {})
+    BlogContentComposable(blog = blog, onMediaClick = { _, _ -> })
 }

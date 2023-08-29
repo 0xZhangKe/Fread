@@ -18,6 +18,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.status.Status
 import com.zhangke.utopia.status.ui.StatusNode
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -26,7 +27,7 @@ internal fun FeedsPage(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onShowSnackMessage: suspend (String) -> Unit,
-    onMediaClick: (BlogMedia) -> Unit,
+    onMediaClick: OnBlogMediaClick,
 ) {
     val feedsList = rememberSaveable(uiState.feedsFlow) {
         mutableListOf<Status>()

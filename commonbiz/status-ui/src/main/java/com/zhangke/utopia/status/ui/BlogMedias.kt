@@ -14,12 +14,13 @@ import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
 import com.zhangke.utopia.status.ui.image.BlogImageMedias
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 @Composable
 fun BlogMedias(
     modifier: Modifier,
     mediaList: List<BlogMedia>,
-    onMediaClick: (BlogMedia) -> Unit,
+    onMediaClick: OnBlogMediaClick,
 ) {
     if (mediaList.isEmpty()) return
     val density = LocalDensity.current

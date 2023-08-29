@@ -19,6 +19,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.stack.Stack
 import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.Navigator
+import com.zhangke.framework.composable.noRippleClick
 
 typealias TransparentNavigatorContent =
         @Composable (transparentNavigator: TransparentNavigator) -> Unit
@@ -49,11 +50,7 @@ fun TransparentNavigator(
                     }
                     Box(
                         modifier = Modifier
-                            .clickable(
-                                interactionSource = remember { MutableInteractionSource() },
-                                onClick = {},
-                                indication = null,
-                            )
+                            .noRippleClick {}
                     ) {
                         transparentContent(transparentNavigator)
                     }

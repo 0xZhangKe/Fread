@@ -48,8 +48,8 @@ import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
-import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.server.StatusProviderServer
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -60,7 +60,7 @@ internal fun FeedsHomeScreenContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onServerItemClick: (StatusProviderServer) -> Unit,
-    onBlogMediaClick: (BlogMedia) -> Unit,
+    onBlogMediaClick: OnBlogMediaClick,
 ) {
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
     val snackbarHostState = rememberSnackbarHostState()

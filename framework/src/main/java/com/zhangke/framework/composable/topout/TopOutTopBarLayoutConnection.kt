@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
@@ -14,19 +15,32 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 fun rememberTopOutTopBarLayoutConnection(
     topBarHeight: Float,
 ): TopOutTopBarLayoutConnection {
-    return remember(topBarHeight) {
+    return rememberSaveable(topBarHeight, saver = TopOutTopBarLayoutConnection.Saver) {
         TopOutTopBarLayoutConnection(topBarHeight)
     }
 }
 
 class TopOutTopBarLayoutConnection(
     private val topBarHeight: Float,
+    initialTopMargin: Float = topBarHeight,
 ) : NestedScrollConnection {
 
-    var topMargin by mutableStateOf(topBarHeight)
+    companion object {
+
+        val Saver: Saver<TopOutTopBarLayoutConnection, *> = Saver(
+            save = {
+                arrayOf(it.topBarHeight, it.topMargin)
+            },
+            restore = {
+                TopOutTopBarLayoutConnection(it.first(), it[1])
+            },
+        )
+    }
+
+    var topMargin by mutableStateOf(initialTopMargin)
 
     // content to screen margin
-    private var _topMargin: Float = topBarHeight
+    private var _topMargin: Float = initialTopMargin
         private set(value) {
             field = value
             topMargin = value

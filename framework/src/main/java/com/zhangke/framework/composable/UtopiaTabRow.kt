@@ -19,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -48,13 +49,13 @@ fun UtopiaTabRow(
     tabs: @Composable () -> Unit
 ) {
     val density = LocalDensity.current
-    var tabContainerWidth: Dp? by remember {
+    var tabContainerWidth: Dp? by rememberSaveable(saver = StateSaver.MutableNullableDpSaver) {
         mutableStateOf(null)
     }
-    var allTabSumWidth: Dp? by remember {
+    var allTabSumWidth: Dp? by rememberSaveable(saver = StateSaver.MutableNullableDpSaver) {
         mutableStateOf(null)
     }
-    var tabEdgePadding by remember {
+    var tabEdgePadding by rememberSaveable(saver = StateSaver.MutableDpSaver) {
         mutableStateOf(0.dp)
     }
     if (tabContainerWidth != null && allTabSumWidth != null) {

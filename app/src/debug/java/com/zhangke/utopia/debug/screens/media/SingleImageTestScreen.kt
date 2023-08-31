@@ -46,7 +46,7 @@ class SingleImageTestScreen : AndroidScreen() {
                             modifier = Modifier
                                 .fillMaxWidth(),
                             mediaList = item,
-                            onMediaClick = { _, _ -> },
+                            onMediaClick = { },
                         )
                     }
                 }

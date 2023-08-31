@@ -51,8 +51,15 @@ object FeedsHomeTab : Tab {
                     KRouter.route<AndroidScreen>(server.uri.toString())!!
                 navigator.push(screen)
             },
-            onBlogMediaClick = { media, coordinates ->
-                transparentNavigator.push(ImageGalleryScreen(media, coordinates))
+            onBlogMediaClick = { event ->
+                transparentNavigator.push(
+                    ImageGalleryScreen(
+                        mediaList = event.mediaList,
+                        selectedIndex = event.index,
+                        coordinatesList = event.coordinatesList,
+                        onDismiss = event.onDismiss,
+                    )
+                )
             }
         )
     }

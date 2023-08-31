@@ -20,7 +20,14 @@ import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaMeta
 
-typealias OnBlogMediaClick = (BlogMedia, LayoutCoordinates) -> Unit
+typealias OnBlogMediaClick = (BlogMediaClickEvent) -> Unit
+
+data class BlogMediaClickEvent(
+    val index: Int,
+    val mediaList: List<BlogMedia>,
+    val coordinatesList: List<LayoutCoordinates?>,
+    val onDismiss: () -> Unit,
+)
 
 /**
  * Image and Gifv
@@ -33,8 +40,8 @@ fun BlogImageMedias(
     onMediaClick: OnBlogMediaClick,
 ) {
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
-    val mediaPosition: MutableMap<Int, LayoutCoordinates> = remember {
-        mutableMapOf()
+    val mediaPosition: Array<LayoutCoordinates?> = remember {
+        arrayOfNulls(mediaList.size)
     }
     BlogImageLayout(
         modifier = Modifier.clip(RoundedCornerShape(style.radius)),
@@ -50,7 +57,16 @@ fun BlogImageMedias(
                         mediaPosition[index] = it
                     }
                     .clickable {
-                        onMediaClick(mediaList[index], mediaPosition[index]!!)
+                        onMediaClick(
+                            BlogMediaClickEvent(
+                                index = index,
+                                mediaList = mediaList,
+                                coordinatesList = mediaPosition.toList(),
+                                onDismiss = {
+
+                                },
+                            )
+                        )
                     },
                 media = media,
             )

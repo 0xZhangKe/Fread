@@ -161,5 +161,5 @@ private fun PreviewBlogContentComposable() {
         likeCount = 38747,
         repliesCount = 10,
     )
-    BlogContentComposable(blog = blog, onMediaClick = { _, _ -> })
+    BlogContentComposable(blog = blog, onMediaClick = { _ -> })
 }

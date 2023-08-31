@@ -18,6 +18,10 @@ fun Dp.dpToPx(density: Density): Float {
     }
 }
 
+fun Int.dpToPx(density: Density): Float {
+    return Dp(this.toFloat()).dpToPx(density)
+}
+
 fun Int.pxToDp(density: Density): Dp {
     val pxValue = this
     return with(density) { pxValue.toDp() }

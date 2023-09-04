@@ -85,6 +85,7 @@ dependencies {
     implementation(project(path = ":commonbiz:activitypub-app"))
     implementation(project(path = ":commonbiz:status-provider"))
     implementation(project(path = ":commonbiz:status-ui"))
+    implementation(project(path = ":commonbiz:sharedscreen"))
     implementation(project(path = ":feature:feeds"))
     implementation(project(path = ":feature:explore"))
     implementation(project(path = ":feature:publish"))

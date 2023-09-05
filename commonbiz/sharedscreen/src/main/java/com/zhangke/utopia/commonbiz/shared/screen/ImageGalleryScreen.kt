@@ -114,37 +114,50 @@ class ImageGalleryScreen(
         needAnimateIn: Boolean,
         animateInFinished: () -> Unit,
     ) {
-        val photoState = rememberPhotoState()
+        val context = LocalContext.current
+        val config = LocalConfiguration.current
+        val initialWidth = config.screenWidthDp.dp
+        var initialHeight: Dp? by remember {
+            mutableStateOf(null)
+        }
+
+        if (initialHeight == null && coordinates != null) {
+            val originSize = coordinates.size
+            val aspectRatio = originSize.width.toFloat() / originSize.height.toFloat()
+            initialHeight = initialWidth / aspectRatio
+        }
+        if (initialHeight == null) {
+            LaunchedEffect(media) {
+                val aspectRatio = ImageRequest.Builder(context)
+                    .data(media.url)
+                    .size(50, 50)
+                    .build()
+                    .let { context.imageLoader.execute(it) }
+                    .drawable
+                    ?.aspectRatio() ?: 1F
+                initialHeight = initialWidth / aspectRatio
+            }
+        }
+        if (initialHeight == null) return
+        var initialScale = 1F
+        var initialOffset = Offset.Zero
+        if (coordinates != null) {
+            initialScale = coordinates.size.width.toFloat() / initialWidth.toPx()
+//            initialOffset = coordinates.positionInRoot()
+        }
+        val photoState = rememberPhotoState(
+            initialScale = initialScale,
+            initialOffset = initialOffset,
+        )
+//        LaunchedEffect(photoState) {
+//            photoState.animateToCenter()
+//        }
         PhotoBox(
             modifier = Modifier
                 .fillMaxSize(),
             state = photoState,
             contentAlignment = Alignment.TopStart,
         ) {
-            val context = LocalContext.current
-            val config = LocalConfiguration.current
-            val initialWidth = config.screenWidthDp.dp
-            var initialHeight: Dp? by remember {
-                mutableStateOf(null)
-            }
-
-            if (initialHeight == null && coordinates != null) {
-                val originSize = coordinates.size
-                val aspectRatio = originSize.width.toFloat() / originSize.height.toFloat()
-                initialHeight = initialWidth / aspectRatio
-            }
-            if (initialHeight == null) {
-                LaunchedEffect(media) {
-                    val aspectRatio = ImageRequest.Builder(context)
-                        .data(media.url)
-                        .size(50, 50)
-                        .build()
-                        .let { context.imageLoader.execute(it) }
-                        .drawable
-                        ?.aspectRatio() ?: 1F
-                    initialHeight = initialWidth / aspectRatio
-                }
-            }
 
             if (initialHeight != null) {
 //                val layoutState = remember(initialWidth, initialHeight) {

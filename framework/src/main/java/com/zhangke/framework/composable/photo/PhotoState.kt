@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.photo
 
-import android.util.Log
 import androidx.annotation.FloatRange
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.DecayAnimationSpec
@@ -8,6 +7,7 @@ import androidx.compose.animation.core.VectorConverter
 import androidx.compose.animation.core.animateDecay
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.exponentialDecay
+import androidx.compose.animation.core.tween
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -22,45 +22,27 @@ import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.times
 
-/**
- * Creates a [PhotoState] that is remembered across compositions.
- *
- * Changes to the provided values for [initialScale] will **not** result in the state being
- * recreated or changed in any way if it has already
- * been created.
- *
- * @param initialScale the initial value for [PhotoState.currentScale]
- * @param initialOffset the initial value for [PhotoState.currentOffset]
- */
 @ExperimentalPhotoApi
 @Composable
 fun rememberPhotoState(
-    @FloatRange(from = 1.0) initialScale: Float = 1f,
+    initialScale: Float = 1f,
     initialOffset: Offset = Offset.Zero,
     minimumScale: Float = 1f,
     maximumScale: Float = 3f,
 ): PhotoState = rememberSaveable(saver = PhotoState.Saver) {
     PhotoState(
-        currentScale = initialScale,
-        currentOffset = initialOffset,
+        initialScale = initialScale,
+        initialOffset = initialOffset,
         minimumScale = minimumScale,
         maximumScale = maximumScale,
     )
 }
 
-/**
- * A state object that can be hoisted to control and observe scaling and scrolling for [PhotoBox].
- *
- * In most cases, this will be created via [rememberPhotoState].
- *
- * @param currentScale the initial value for [PhotoState.currentScale]
- * @param currentOffset the initial value for [PhotoState.currentOffset]
- */
 @ExperimentalPhotoApi
 @Stable
 class PhotoState(
-    @FloatRange(from = 1.0) currentScale: Float = 1f,
-    currentOffset: Offset = Offset.Zero,
+    @FloatRange(from = 1.0) private val initialScale: Float = 1f,
+    private val initialOffset: Offset = Offset.Zero,
     private val minimumScale: Float = 1f,
     internal val maximumScale: Float = 3f,
 ) {
@@ -69,15 +51,11 @@ class PhotoState(
 
     private var photoIntrinsicSize: Size = Size.Unspecified
 
-    /**
-     * Set the intrinsic size of the photo.
-     * If the value is set to [Size.Unspecified], it is assumed to be layout size.
-     */
-    public fun setPhotoIntrinsicSize(size: Size) {
+    fun setPhotoIntrinsicSize(size: Size) {
         photoIntrinsicSize = size
     }
 
-    private var _currentScale by mutableStateOf(currentScale)
+    private var _currentScale by mutableStateOf(initialScale)
 
     @get:FloatRange(from = 1.0)
     internal var currentScale: Float
@@ -89,7 +67,7 @@ class PhotoState(
             }
         }
 
-    private var _currentOffset by mutableStateOf(currentOffset)
+    private var _currentOffset by mutableStateOf(initialOffset)
 
     internal var currentOffset: Offset
         get() = _currentOffset
@@ -101,7 +79,6 @@ class PhotoState(
             )
             if (coerceValue != _currentOffset) {
                 _currentOffset = coerceValue
-                Log.d("U_TEST", "${coerceValue.x}:${coerceValue.y}")
             }
         }
 
@@ -129,24 +106,31 @@ class PhotoState(
      * Animate to the initial state.
      */
     suspend fun animateToInitialState() {
-        val initialScale = currentScale
-        val targetScale = minimumScale
-        val initialOffset = currentOffset
-        val targetOffset = Offset.Zero
-        if (initialScale != targetScale || initialOffset != targetOffset) {
-            val scaleDiff = targetScale - initialScale
-            val offsetDiff = targetOffset - initialOffset
-            val anim = AnimationState(initialValue = 0f)
-            anim.animateTo(targetValue = 1f) {
-                currentScale = initialScale + scaleDiff * value
-                currentOffset = initialOffset + offsetDiff * value
-            }
-        }
+        animateToTarget(initialScale, initialOffset)
     }
 
-    suspend fun animateToCenter(){
-//        asdlal;
-        // 默认设置initial offset 和 initialScale，然后调用这个方法移动到中间
+    suspend fun animateToCenter() {
+        animateToTarget(1F, initialOffset)
+    }
+
+    private suspend fun animateToTarget(
+        targetScale: Float,
+        targetOffset: Offset,
+    ) {
+        val startScale = currentScale
+        val startOffset = currentOffset
+        if (startScale != targetScale || startOffset != targetOffset) {
+            val scaleDiff = targetScale - startScale
+            val offsetDiff = targetOffset - startOffset
+            val anim = AnimationState(initialValue = 0f)
+            anim.animateTo(
+                targetValue = 1f,
+                animationSpec = tween(durationMillis = 500),
+            ) {
+                currentScale = startScale + scaleDiff * value
+                currentOffset = startOffset + offsetDiff * value
+            }
+        }
     }
 
     /**
@@ -207,8 +191,8 @@ class PhotoState(
             },
             restore = {
                 PhotoState(
-                    currentScale = it[0] as Float,
-                    currentOffset = Offset(
+                    initialScale = it[0] as Float,
+                    initialOffset = Offset(
                         x = it[1] as Float,
                         y = it[2] as Float,
                     ),

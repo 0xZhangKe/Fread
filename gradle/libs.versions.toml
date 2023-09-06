@@ -20,15 +20,15 @@ androidx-browser = "1.4.0"
 androidx-multidex = "2.0.1"
 androidx-nav = "2.5.3"
 androidx-hilt-nav-compose = "1.0.0"
-androidx-compose-bom = "2023.01.00"
+androidx-compose-bom = "2023.08.00"
 androidx-constraintlayout-compose = "1.1.0-alpha04"
 androidx-lifecycle = "2.4.1"
 androidx-paging = "3.1.1"
 androidx-paging-compose = "1.0.0-alpha18"
 
-accompanist-placeholder-material = "0.28.0"
+accompanist-placeholder-material = "0.31.5-beta"
 
-hilt = "2.44"
+hilt = "2.46.1"
 
 okhttp3 = "4.9.3"
 
@@ -46,12 +46,12 @@ ksp = "1.8.21-1.0.11"
 
 filt = "1.0.4"
 
-voyager = "1.0.0-rc06"
+voyager = "1.0.0-rc07"
 
 krouter = "0.1.6"
 
 androidGradlePlugin = "8.0.2"
-hiltAndroidGradlePlugin = "2.44"
+hiltAndroidGradlePlugin = "2.46.1"
 
 [bundles]
 androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]

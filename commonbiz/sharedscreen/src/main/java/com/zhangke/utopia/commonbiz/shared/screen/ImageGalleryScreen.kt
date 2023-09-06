@@ -11,7 +11,6 @@ import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -81,14 +80,16 @@ class ImageGalleryScreen(
                 .fillMaxSize()
                 .background(Color.Black.copy(backgroundAlpha.value))
         ) {
-            val pagerState = rememberPagerState(selectedIndex)
+            val pagerState = rememberPagerState(
+                initialPage = selectedIndex,
+                pageCount = mediaList::size,
+            )
             val animatedInHolder = remember {
                 arrayOf(false)
             }
             HorizontalPager(
                 modifier = Modifier
                     .fillMaxSize(),
-                pageCount = mediaList.size,
                 state = pagerState,
             ) { pageIndex ->
                 val currentMedia = mediaList[pageIndex]

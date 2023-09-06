@@ -105,6 +105,7 @@ internal fun FeedsHomeScreenContent(
                 if (feedsList.isNotEmpty()) {
                     val pagerState = rememberPagerState(
                         initialPage = selectedIndex,
+                        pageCount = feedsList::size,
                     )
                     LaunchedEffect(selectedIndex) {
                         pagerState.scrollToPage(selectedIndex)
@@ -117,7 +118,6 @@ internal fun FeedsHomeScreenContent(
                         modifier = Modifier.fillMaxSize(),
                         state = pagerState,
                         userScrollEnabled = true,
-                        pageCount = feedsList.size,
                     ) { pageIndex ->
                         val pagedUiState = feedsList[pageIndex]
                         topBarItems = pagedUiState.serverList

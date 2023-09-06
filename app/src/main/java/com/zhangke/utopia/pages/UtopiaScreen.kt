@@ -1,10 +1,13 @@
 package com.zhangke.utopia.pages
 
+import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -14,12 +17,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.infinite.InfiniteBox
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.commonbiz.shared.screen.ImageGalleryScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
@@ -32,6 +37,21 @@ class UtopiaScreen : AndroidScreen() {
     @Composable
     override fun Content() {
 //        MainPage()
+
+//        InfiniteBox(modifier = Modifier.fillMaxSize()) {
+//            AsyncImage(
+//                modifier = Modifier
+//                    .background(Color.Yellow)
+//                    .size(width = 3000.dp, height = 200.dp)
+//                    .onGloballyPositioned {
+//                        Log.d("U_TEST", "size:${it.size}")
+//                    },
+//                model = "https://media.cmx.edu.kg/cache/media_attachments/files/111/014/516/795/728/057/original/99b46e11908049cd.jpeg",
+//                contentScale = ContentScale.FillBounds,
+//                contentDescription = ""
+//            )
+//        }
+
         Box(modifier = Modifier.fillMaxSize()) {
             val transparentNavigator = LocalTransparentNavigator.current
             val media = BlogMedia(

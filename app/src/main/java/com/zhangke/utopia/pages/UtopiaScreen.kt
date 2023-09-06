@@ -22,6 +22,7 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import coil.compose.AsyncImage
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.commonbiz.shared.screen.ImageGalleryScreen
+import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.pages.main.MainPage
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
@@ -30,62 +31,42 @@ class UtopiaScreen : AndroidScreen() {
 
     @Composable
     override fun Content() {
-        MainPage()
-//        Box(modifier = Modifier.fillMaxSize()) {
-//            val transparentNavigator = LocalTransparentNavigator.current
-//            val media = BlogMedia(
-//                id = "",
-//                url = "https://media.cmx.edu.kg/cache/media_attachments/files/110/994/199/046/134/697/original/a672a13d98c21627.jpg",
-//                type = BlogMediaType.IMAGE,
-//                previewUrl = null,
-//                remoteUrl = null,
-//                description = null,
-//                blurhash = null,
-//                meta = null,
-//            )
-//            val coordinates by remember {
-//                mutableStateOf(arrayOfNulls<LayoutCoordinates>(1))
-//            }
-//            AsyncImage(
-//                modifier = Modifier
-//                    .width(200.dp)
-//                    .height(180.dp)
-//                    .onGloballyPositioned {
-//                        coordinates[0] = it
-//                    }
-//                    .clickable {
-//                        transparentNavigator.push(
-//                            ImageGalleryScreen(
-//                                selectedIndex = 0,
-//                                mediaList = listOf(media),
-//                                coordinatesList = coordinates.toList(),
-//                                onDismiss = {},
-//                            )
-//                        )
-//                    },
-//                model = media.url,
-//                contentDescription = ""
-//            )
-//        }
-//        Box(
-//            modifier = Modifier
-//                .fillMaxSize()
-//        ) {
-//            Box(
-//                modifier = Modifier
-//                    .align(Alignment.Center)
-//                    .horizontalScroll(rememberScrollState())
-//                    .verticalScroll(rememberScrollState())
-//            ) {
-//                AsyncImage(
-//                    modifier = Modifier
-//                        .width(1000.dp)
-//                        .height(1000.dp),
-//                    contentScale = ContentScale.FillBounds,
-//                    model = "https://media.cmx.edu.kg/cache/media_attachments/files/110/994/199/046/134/697/original/a672a13d98c21627.jpg",
-//                    contentDescription = "",
-//                )
-//            }
-//        }
+//        MainPage()
+        Box(modifier = Modifier.fillMaxSize()) {
+            val transparentNavigator = LocalTransparentNavigator.current
+            val media = BlogMedia(
+                id = "",
+                url = "https://media.cmx.edu.kg/cache/media_attachments/files/111/014/516/795/728/057/original/99b46e11908049cd.jpeg",
+                type = BlogMediaType.IMAGE,
+                previewUrl = null,
+                remoteUrl = null,
+                description = null,
+                blurhash = null,
+                meta = null,
+            )
+            val coordinates by remember {
+                mutableStateOf(arrayOfNulls<LayoutCoordinates>(1))
+            }
+            AsyncImage(
+                modifier = Modifier
+                    .width(200.dp)
+                    .height(180.dp)
+                    .onGloballyPositioned {
+                        coordinates[0] = it
+                    }
+                    .clickable {
+                        transparentNavigator.push(
+                            ImageViewerScreen(
+                                selectedIndex = 0,
+                                mediaList = listOf(media),
+                                coordinatesList = coordinates.toList(),
+                                onDismiss = {},
+                            )
+                        )
+                    },
+                model = media.url,
+                contentDescription = ""
+            )
+        }
     }
 }

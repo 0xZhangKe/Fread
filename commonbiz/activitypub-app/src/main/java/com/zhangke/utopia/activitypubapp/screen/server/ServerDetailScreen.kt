@@ -331,6 +331,7 @@ class ServerDetailScreen(
                 val tabs = uiState.tabs
                 val pagerState = rememberPagerState(
                     initialPage = 0,
+                    pageCount = tabs::size,
                 )
                 TabRow(
                     modifier = Modifier
@@ -361,7 +362,6 @@ class ServerDetailScreen(
                         .fillMaxWidth()
                         .weight(1F),
                     state = pagerState,
-                    pageCount = tabs.size,
                 ) { currentPage ->
                     // TODO check this, why need Screen params but receiver
                     val host = uiState.domain

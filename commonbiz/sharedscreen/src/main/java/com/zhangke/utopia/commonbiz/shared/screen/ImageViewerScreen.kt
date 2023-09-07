@@ -125,7 +125,7 @@ class ImageViewerScreen(
                     modifier = Modifier
                         .fillMaxSize(),
                     model = media.url,
-                    contentScale = ContentScale.Crop,
+                    contentScale = ContentScale.FillBounds,
                     contentDescription = media.description,
                 )
             }

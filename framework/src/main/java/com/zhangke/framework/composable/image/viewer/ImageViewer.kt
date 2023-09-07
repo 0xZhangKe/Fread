@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.image.viewer
 
-import android.util.Log
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
@@ -15,10 +14,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.toSize
 import com.zhangke.framework.composable.infinite.InfiniteBox
+import com.zhangke.framework.composable.infinite.rememberInfinityBoxState
 import com.zhangke.framework.utils.pxToDp
 import kotlinx.coroutines.launch
 
@@ -33,7 +34,13 @@ fun ImageViewer(
     var latestSize: Size? by remember {
         mutableStateOf(null)
     }
+
+
+    Layout(measurePolicy = )
+
+    val infinityBoxState = rememberInfinityBoxState()
     InfiniteBox(
+        state = infinityBoxState,
         modifier = modifier
             .onGloballyPositioned { position ->
                 val currentSize = position.size.toSize()
@@ -52,6 +59,7 @@ fun ImageViewer(
                                 state.animateToStandard()
                             }
                         } else {
+                            infinityBoxState.moveToCenter()
                             coroutineScope.launch {
                                 state.animateToBig()
                             }

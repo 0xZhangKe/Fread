@@ -1,5 +1,6 @@
 package com.zhangke.framework.composable.image.viewer
 
+import android.util.Log
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.animateTo
 import androidx.compose.animation.core.tween
@@ -78,6 +79,7 @@ class ImageViewerState(
         layoutSize = size
         onLayoutSizeChanged()
         onAnimateInFinished?.invoke()
+        Log.d("U_TEST", "updateLayoutSize:$size")
     }
 
     private suspend fun onLayoutSizeChanged() {
@@ -98,11 +100,25 @@ class ImageViewerState(
     suspend fun animateToBig() {
         val layoutSize = layoutSize
         if (layoutSize == Size.Zero) return
+        val startWidth = _currentWidthPixel.floatValue
+        val startHeight = _currentWidthPixel.floatValue
         val targetWidth = standardWidth * maximumScale
-        animateToTargetInCenter(
-            targetWidth = targetWidth,
-            targetHeight = targetWidth / aspectRatio,
-        )
+        val targetHeight = targetWidth / aspectRatio
+        val widthDiff = targetWidth - startWidth
+        val heightDiff = targetHeight - startHeight
+        val anim = AnimationState(initialValue = 0f)
+        anim.animateTo(
+            targetValue = 1f,
+            animationSpec = tween(durationMillis = animationDuration),
+        ) {
+            val progress = value
+            if (widthDiff != 0F) {
+                _currentWidthPixel.floatValue = startWidth + widthDiff * progress
+            }
+            if (heightDiff != 0F) {
+                _currentHeightPixel.floatValue = startHeight + heightDiff * progress
+            }
+        }
     }
 
     private suspend fun animateToTargetInCenter(
@@ -115,6 +131,10 @@ class ImageViewerState(
         val startOffsetY = _currentOffsetYPixel.floatValue
         val targetOffsetX = 0F
         val targetOffsetY = layoutSize.height / 2F - targetHeight / 2F
+        Log.d(
+            "U_TEST",
+            "height: $startHeight -> $targetHeight, offsetY: $startOffsetY -> $targetOffsetY",
+        )
         if (startWidth != targetWidth || startHeight != targetHeight
             || startOffsetX != targetOffsetX || startOffsetY != targetOffsetY
         ) {

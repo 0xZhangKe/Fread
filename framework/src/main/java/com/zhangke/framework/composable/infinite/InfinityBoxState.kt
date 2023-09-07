@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.infinite
 
-import android.util.Log
 import androidx.compose.animation.core.AnimationScope
 import androidx.compose.animation.core.AnimationState
 import androidx.compose.animation.core.AnimationVector2D
@@ -42,10 +41,18 @@ class InfinityBoxState {
             cancelAnimation()
             field = value
             _currentOffset.value = Offset.Zero
-            Log.d("U_TEST", "draggableBounds:$draggableBounds, exceed: $exceed")
         }
 
     private var flingAnimation: AnimationScope<Offset, AnimationVector2D>? = null
+
+    fun moveToCenter() {
+        cancelAnimation()
+        if (!exceed) return
+        _currentOffset.value = Offset(
+            x = draggableBounds.left / 2F,
+            y = draggableBounds.top / 2F,
+        )
+    }
 
     fun drag(dragAmount: Offset) {
         cancelAnimation()

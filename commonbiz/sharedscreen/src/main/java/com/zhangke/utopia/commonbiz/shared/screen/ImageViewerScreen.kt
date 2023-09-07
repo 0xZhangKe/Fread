@@ -23,6 +23,8 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.toSize
 import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
@@ -42,6 +44,7 @@ class ImageViewerScreen(
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val backgroundAlpha = remember {
             Animatable(0F)
         }
@@ -77,7 +80,11 @@ class ImageViewerScreen(
                     animatedIn,
                     animateInFinished = {
                         animatedInHolder[0] = true
-                    }
+                    },
+                    onDismissRequest = {
+                        navigator.pop()
+                        onDismiss()
+                    },
                 )
             }
         }
@@ -89,6 +96,7 @@ class ImageViewerScreen(
         coordinates: LayoutCoordinates?,
         needAnimateIn: Boolean,
         animateInFinished: () -> Unit,
+        onDismissRequest: () -> Unit
     ) {
         val context = LocalContext.current
         var aspectRatio: Float? by remember {
@@ -120,6 +128,7 @@ class ImageViewerScreen(
             ImageViewer(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
+                onDismissRequest = onDismissRequest,
             ) {
                 AsyncImage(
                     modifier = Modifier

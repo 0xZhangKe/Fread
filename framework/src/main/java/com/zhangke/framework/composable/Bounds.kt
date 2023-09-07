@@ -31,6 +31,10 @@ data class Bounds(
 
     fun outsideAbsolute(offset: Offset) = xOutside(offset.x) && yOutside(offset.y)
 
+    fun coerceInY(y: Float): Float {
+        return y.coerceAtLeast(top).coerceAtMost(bottom)
+    }
+
     fun coerceIn(offset: Offset): Offset {
         return Offset(
             x = offset.x.coerceIn(left..right),

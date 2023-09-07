@@ -1,32 +1,45 @@
 package com.zhangke.framework.composable.image.viewer
 
+import android.util.Log
+import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.input.pointer.util.VelocityTracker
+import androidx.compose.ui.input.pointer.util.addPointerInputChange
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.toSize
-import com.zhangke.framework.composable.infinite.InfiniteBox
-import com.zhangke.framework.composable.infinite.rememberInfinityBoxState
+import com.zhangke.framework.composable.transformable.rememberTransformableCleverlyState
+import com.zhangke.framework.composable.transformable.transformableCleverly
+import com.zhangke.framework.ktx.isSingle
 import com.zhangke.framework.utils.pxToDp
 import kotlinx.coroutines.launch
+
+private val infinityConstraints = Constraints()
 
 @Composable
 fun ImageViewer(
     state: ImageViewerState,
     modifier: Modifier = Modifier,
+    onDismissRequest: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     val density = LocalDensity.current
@@ -34,13 +47,17 @@ fun ImageViewer(
     var latestSize: Size? by remember {
         mutableStateOf(null)
     }
-
-
-    Layout(measurePolicy = )
-
-    val infinityBoxState = rememberInfinityBoxState()
-    InfiniteBox(
-        state = infinityBoxState,
+    var latestZoomChang: Float by remember {
+        mutableFloatStateOf(1F)
+    }
+    val transformableState = rememberTransformableCleverlyState { zoomChange, _ ->
+        if (latestZoomChang != zoomChange) {
+            state.zoom(zoomChange)
+        }
+        latestZoomChang = zoomChange
+    }
+    state.onDismissRequest = onDismissRequest
+    Layout(
         modifier = modifier
             .onGloballyPositioned { position ->
                 val currentSize = position.size.toSize()
@@ -54,30 +71,78 @@ fun ImageViewer(
             .pointerInput(state) {
                 detectTapGestures(
                     onDoubleTap = {
-                        if (state.scaled) {
+                        if (state.exceed) {
                             coroutineScope.launch {
                                 state.animateToStandard()
                             }
                         } else {
-                            infinityBoxState.moveToCenter()
                             coroutineScope.launch {
                                 state.animateToBig()
                             }
                         }
                     }
                 )
-            },
-    ) {
-        Box(
-            modifier = Modifier
-                .offset(
-                    x = state.currentOffsetXPixel.pxToDp(density),
-                    y = state.currentOffsetYPixel.pxToDp(density)
-                )
-                .width(state.currentWidthPixel.pxToDp(density))
-                .height(state.currentHeightPixel.pxToDp(density))
-        ) {
-            content()
+            }
+            .draggableInfinity(
+                enabled = true,
+                onDrag = { offset ->
+                    state.drag(offset)
+                },
+                onDragStopped = { velocity ->
+                    coroutineScope.launch {
+                        state.dragStop(velocity)
+                    }
+                }
+            )
+            .transformableCleverly(transformableState),
+        content = {
+            Box(
+                modifier = Modifier
+                    .offset(
+                        x = state.currentOffsetXPixel.pxToDp(density),
+                        y = state.currentOffsetYPixel.pxToDp(density)
+                    )
+                    .width(state.currentWidthPixel.pxToDp(density))
+                    .height(state.currentHeightPixel.pxToDp(density))
+            ) {
+                content()
+            }
+            Log.d("U_TEST", "currentOffsetYPixel: ${state.currentOffsetYPixel}")
+        }
+    ) { measurables, constraints ->
+        if (measurables.isSingle().not()) {
+            throw IllegalStateException("InfiniteBox is only allowed to have one children!")
+        }
+        val placeable = measurables.first().measure(infinityConstraints)
+
+        layout(constraints.maxWidth, constraints.maxHeight) {
+            placeable.placeRelative(0, 0)
+        }
+    }
+}
+
+private fun Modifier.draggableInfinity(
+    enabled: Boolean,
+    onDrag: (dragAmount: Offset) -> Unit,
+    onDragStopped: (velocity: Velocity) -> Unit,
+): Modifier {
+    val velocityTracker = VelocityTracker()
+    return pointerInput(enabled) {
+        if (enabled) {
+            detectDragGestures(
+                onDrag = { change, dragAmount ->
+                    velocityTracker.addPointerInputChange(change)
+                    onDrag(dragAmount)
+                },
+                onDragEnd = {
+                    val velocity = velocityTracker.calculateVelocity()
+                    onDragStopped(velocity)
+                },
+                onDragCancel = {
+                    val velocity = velocityTracker.calculateVelocity()
+                    onDragStopped(velocity)
+                },
+            )
         }
     }
 }

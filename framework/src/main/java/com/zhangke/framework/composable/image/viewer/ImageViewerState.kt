@@ -18,19 +18,17 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.unit.Velocity
 import com.zhangke.framework.composable.Bounds
-import com.zhangke.framework.composable.isZero
 import com.zhangke.framework.composable.toOffset
 import com.zhangke.framework.utils.equalsExactly
-
-private const val animationDuration = 500
 
 @Composable
 fun rememberImageViewerState(
     aspectRatio: Float,
     initialSize: Size = Size.Unspecified,
-    initialOffset: Offset = Offset.Zero,
+    initialOffset: Offset = Offset.Unspecified,
     minimumScale: Float = 1f,
     maximumScale: Float = 3f,
 ): ImageViewerState {
@@ -72,6 +70,8 @@ class ImageViewerState(
 
     var onDismissRequest: (() -> Unit)? = null
 
+    var onStartDismiss: (() -> Unit)? = null
+
     val exceed: Boolean get() = !_currentWidthPixel.floatValue.equalsExactly(layoutSize.width)
 
     private var flingAnimation: AnimationScope<Offset, AnimationVector2D>? = null
@@ -95,7 +95,7 @@ class ImageViewerState(
             _currentWidthPixel.floatValue = initialSize.width
             _currentHeightPixel.floatValue = initialSize.height
         }
-        if (!initialOffset.isZero) {
+        if (!initialOffset.isUnspecified) {
             _currentOffsetXPixel.floatValue = initialOffset.x
             _currentOffsetYPixel.floatValue = initialOffset.y
         }
@@ -198,7 +198,7 @@ class ImageViewerState(
             val anim = AnimationState(initialValue = _currentOffsetYPixel.floatValue)
             anim.animateTo(
                 targetValue = standardOffsetY,
-                animationSpec = tween(durationMillis = animationDuration),
+                animationSpec = tween(durationMillis = ImageViewerDefault.animationDuration),
             ) {
                 resumeOffsetYAnimation = this
                 _currentOffsetYPixel.floatValue = value
@@ -207,7 +207,8 @@ class ImageViewerState(
     }
 
     private suspend fun startDismiss() {
-        if (initialSize.isEmpty() && initialOffset.isZero) {
+        onStartDismiss?.invoke()
+        if (initialSize.isEmpty() && initialOffset.isUnspecified) {
             onDismissRequest?.invoke()
             return
         }
@@ -216,9 +217,9 @@ class ImageViewerState(
         val targetHeight =
             if (initialSize.isEmpty()) _currentHeightPixel.floatValue else initialSize.height
         val targetOffsetX =
-            if (initialOffset.isZero) _currentOffsetXPixel.floatValue else initialOffset.x
+            if (initialOffset.isUnspecified) _currentOffsetXPixel.floatValue else initialOffset.x
         val targetOffsetY =
-            if (initialOffset.isZero) _currentOffsetYPixel.floatValue else initialOffset.y
+            if (initialOffset.isUnspecified) _currentOffsetYPixel.floatValue else initialOffset.y
         animateToTarget(
             targetWidth = targetWidth,
             targetHeight = targetHeight,
@@ -249,7 +250,7 @@ class ImageViewerState(
             val anim = AnimationState(initialValue = 0f)
             anim.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = animationDuration),
+                animationSpec = tween(durationMillis = ImageViewerDefault.animationDuration),
             ) {
                 scaleAnimation = this
                 val progress = value
@@ -301,14 +302,38 @@ class ImageViewerState(
 
     internal companion object {
 
+        private const val MAGIC_NUMBER = -21039142F
+
+        private val Size.magicWidth: Float
+            get() = if (isUnspecified) MAGIC_NUMBER else width
+
+        private val Size.magicHeight: Float
+            get() = if (isUnspecified) MAGIC_NUMBER else height
+
+        private val Offset.magicX: Float
+            get() = if (isUnspecified) MAGIC_NUMBER else x
+
+        private val Offset.magicY: Float
+            get() = if (isUnspecified) MAGIC_NUMBER else y
+
+        private fun magicSize(width: Float, height: Float): Size {
+            if (width == MAGIC_NUMBER || height == MAGIC_NUMBER) return Size.Unspecified
+            return Size(width = width, height = height)
+        }
+
+        private fun magicOffset(x: Float, y: Float): Offset {
+            if (x == MAGIC_NUMBER || y == MAGIC_NUMBER) return Offset.Unspecified
+            return Offset(x = x, y = y)
+        }
+
         val Saver: Saver<ImageViewerState, *> = listSaver(
             save = {
                 listOf(
                     it.aspectRatio,
-                    it.initialSize.height,
-                    it.initialSize.width,
-                    it.initialOffset.x,
-                    it.initialOffset.y,
+                    it.initialSize.magicWidth,
+                    it.initialSize.magicHeight,
+                    it.initialOffset.magicX,
+                    it.initialOffset.magicY,
                     it.minimumScale,
                     it.maximumScale,
                 )
@@ -316,8 +341,8 @@ class ImageViewerState(
             restore = {
                 ImageViewerState(
                     aspectRatio = it[0],
-                    initialSize = Size(width = it[1], height = it[2]),
-                    initialOffset = Offset(
+                    initialSize = magicSize(width = it[1], height = it[2]),
+                    initialOffset = magicOffset(
                         x = it[3],
                         y = it[4],
                     ),
@@ -327,4 +352,9 @@ class ImageViewerState(
             }
         )
     }
+}
+
+object ImageViewerDefault {
+
+    const val animationDuration = 300
 }

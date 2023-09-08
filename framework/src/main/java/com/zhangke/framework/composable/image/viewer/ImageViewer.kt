@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.image.viewer
 
-import android.util.Log
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -8,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
@@ -39,6 +37,7 @@ private val infinityConstraints = Constraints()
 fun ImageViewer(
     state: ImageViewerState,
     modifier: Modifier = Modifier,
+    onStartDismiss: () -> Unit,
     onDismissRequest: () -> Unit,
     content: @Composable () -> Unit,
 ) {
@@ -57,6 +56,7 @@ fun ImageViewer(
         latestZoomChang = zoomChange
     }
     state.onDismissRequest = onDismissRequest
+    state.onStartDismiss = onStartDismiss
     Layout(
         modifier = modifier
             .onGloballyPositioned { position ->
@@ -107,7 +107,6 @@ fun ImageViewer(
             ) {
                 content()
             }
-            Log.d("U_TEST", "currentOffsetYPixel: ${state.currentOffsetYPixel}")
         }
     ) { measurables, constraints ->
         if (measurables.isSingle().not()) {

@@ -15,7 +15,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.krouter.KRouter
-import com.zhangke.utopia.commonbiz.shared.screen.ImageGalleryScreen
+import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
@@ -53,7 +53,7 @@ object FeedsHomeTab : Tab {
             },
             onBlogMediaClick = { event ->
                 transparentNavigator.push(
-                    ImageGalleryScreen(
+                    ImageViewerScreen(
                         mediaList = event.mediaList,
                         selectedIndex = event.index,
                         coordinatesList = event.coordinatesList,

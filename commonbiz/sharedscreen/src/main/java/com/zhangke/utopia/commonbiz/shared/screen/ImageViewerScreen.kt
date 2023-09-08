@@ -3,8 +3,8 @@ package com.zhangke.utopia.commonbiz.shared.screen
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
@@ -12,8 +12,10 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -29,10 +31,12 @@ import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.zhangke.framework.composable.image.viewer.ImageViewer
+import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.utils.aspectRatio
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.asImageMetaOrNull
+import kotlinx.coroutines.launch
 
 class ImageViewerScreen(
     private val selectedIndex: Int,
@@ -41,24 +45,38 @@ class ImageViewerScreen(
     private val onDismiss: () -> Unit,
 ) : AndroidScreen() {
 
+    private val backgroundCommonAlpha = 0.95F
+
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val backgroundAlpha = remember {
-            Animatable(0F)
+        val coroutineScope = rememberCoroutineScope()
+        var backgroundColorAlpha by remember {
+            mutableFloatStateOf(0F)
         }
-        LaunchedEffect(backgroundAlpha) {
-            backgroundAlpha.animateTo(
-                targetValue = 0.95F,
-                animationSpec = tween(500, easing = FastOutSlowInEasing),
-            )
+        LaunchedEffect(Unit) {
+            Animatable(0F).animateTo(
+                targetValue = backgroundCommonAlpha,
+                animationSpec = tween(
+                    ImageViewerDefault.animationDuration,
+                    easing = FastOutSlowInEasing
+                ),
+            ) {
+                backgroundColorAlpha = value
+            }
         }
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(Color.Black.copy(backgroundAlpha.value))
+                .fillMaxSize(),
         ) {
+            // TODO: check this bug, maybe cause Compose.
+            Canvas(modifier = Modifier.fillMaxSize()) {
+                drawRect(
+                    color = Color.Black,
+                    alpha = backgroundColorAlpha,
+                )
+            }
             val pagerState = rememberPagerState(
                 initialPage = selectedIndex,
                 pageCount = mediaList::size,
@@ -85,6 +103,19 @@ class ImageViewerScreen(
                         navigator.pop()
                         onDismiss()
                     },
+                    onStartDismiss = {
+                        coroutineScope.launch {
+                            Animatable(backgroundCommonAlpha).animateTo(
+                                targetValue = 0.1F,
+                                animationSpec = tween(
+                                    ImageViewerDefault.animationDuration,
+                                    easing = FastOutSlowInEasing
+                                ),
+                            ) {
+                                backgroundColorAlpha = value
+                            }
+                        }
+                    }
                 )
             }
         }
@@ -96,7 +127,8 @@ class ImageViewerScreen(
         coordinates: LayoutCoordinates?,
         needAnimateIn: Boolean,
         animateInFinished: () -> Unit,
-        onDismissRequest: () -> Unit
+        onDismissRequest: () -> Unit,
+        onStartDismiss: () -> Unit,
     ) {
         val context = LocalContext.current
         var aspectRatio: Float? by remember {
@@ -129,6 +161,7 @@ class ImageViewerScreen(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
                 onDismissRequest = onDismissRequest,
+                onStartDismiss = onStartDismiss,
             ) {
                 AsyncImage(
                     modifier = Modifier

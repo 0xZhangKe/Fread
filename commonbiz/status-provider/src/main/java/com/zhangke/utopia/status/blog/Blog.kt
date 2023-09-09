@@ -12,5 +12,7 @@ data class Blog(
     val forwardCount: Int?,
     val likeCount: Int?,
     val repliesCount: Int?,
+    val sensitive: Boolean,
+    val spoilerText: String,
     val mediaList: List<BlogMedia>,
 )

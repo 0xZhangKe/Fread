@@ -7,15 +7,21 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.imageLoader
+import coil.request.ImageRequest
+import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaMeta
@@ -36,6 +42,7 @@ data class BlogMediaClickEvent(
 fun BlogImageMedias(
     mediaList: List<BlogMedia>,
     containerWidth: Dp,
+    hideContent: Boolean,
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
     onMediaClick: OnBlogMediaClick,
 ) {
@@ -69,6 +76,7 @@ fun BlogImageMedias(
                         )
                     },
                 media = media,
+                hideContent = hideContent,
             )
         }
     )
@@ -134,9 +142,30 @@ internal fun BlogImageLayout(
 }
 
 @Composable
-internal fun BlogImage(modifier: Modifier, media: BlogMedia) {
+internal fun BlogImage(
+    modifier: Modifier,
+    media: BlogMedia,
+    hideContent: Boolean,
+) {
+    val context = LocalContext.current
+    if (hideContent) {
+        LaunchedEffect(Unit) {
+            ImageRequest.Builder(context)
+                .data(media.url)
+                .size(50, 50)
+                .build()
+                .let { context.imageLoader.execute(it) }
+        }
+    }
     AsyncImage(
-        modifier = modifier,
+        modifier = modifier
+            .run {
+                if (media.blurhash.isNullOrEmpty().not()) {
+                    blurhash(media.blurhash!!)
+                } else {
+                    this
+                }
+            },
         model = media.url,
         contentScale = ContentScale.Crop,
         contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },

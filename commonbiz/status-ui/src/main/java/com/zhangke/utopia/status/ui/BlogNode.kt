@@ -117,6 +117,7 @@ fun BlogContentComposable(
                 .fillMaxWidth()
                 .padding(start = 8.dp, top = 6.dp, end = 8.dp),
             mediaList = blog.mediaList,
+            sensitive = blog.sensitive,
             onMediaClick = onMediaClick,
         )
         Spacer(
@@ -159,6 +160,8 @@ private fun PreviewBlogContentComposable() {
         date = Date(),
         forwardCount = 10321,
         likeCount = 38747,
+        sensitive = true,
+        spoilerText = "",
         repliesCount = 10,
     )
     BlogContentComposable(blog = blog, onMediaClick = { _ -> })

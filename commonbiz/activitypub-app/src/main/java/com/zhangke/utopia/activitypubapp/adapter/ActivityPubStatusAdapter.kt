@@ -34,6 +34,8 @@ class ActivityPubStatusAdapter @Inject constructor(
             ),
             title = null,
             content = content,
+            sensitive = sensitive,
+            spoilerText = spoilerText,
             date = formatDatetimeToDate(createdAt),
             forwardCount = reblogsCount,
             likeCount = favouritesCount,

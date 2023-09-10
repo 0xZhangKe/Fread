@@ -206,7 +206,7 @@ class ImageViewerState(
         }
     }
 
-    private suspend fun startDismiss() {
+    internal suspend fun startDismiss() {
         onStartDismiss?.invoke()
         if (initialSize.isEmpty() && initialOffset.isUnspecified) {
             onDismissRequest?.invoke()

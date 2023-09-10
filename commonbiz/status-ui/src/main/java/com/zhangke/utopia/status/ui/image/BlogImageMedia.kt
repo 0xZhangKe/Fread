@@ -63,7 +63,7 @@ fun BlogImageMedias(
                     .onGloballyPositioned {
                         mediaPosition[index] = it
                     }
-                    .clickable {
+                    .clickable(enabled = !hideContent) {
                         onMediaClick(
                             BlogMediaClickEvent(
                                 index = index,
@@ -166,7 +166,7 @@ internal fun BlogImage(
                     this
                 }
             },
-        model = media.url,
+        model = if (hideContent) null else media.url,
         contentScale = ContentScale.Crop,
         contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
     )

@@ -12,6 +12,7 @@ import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.onSizeChanged
+import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import kotlin.math.roundToInt
 
@@ -47,7 +48,7 @@ fun Modifier.blurhash(blurHash: String): Modifier = composed {
         if (bitmap != null && size != null) {
             drawImage(
                 image = bitmap!!.asImageBitmap(),
-//                destSize = size!!,
+                dstSize = IntSize(size!!.width.roundToInt(), size!!.height.roundToInt()),
             )
         }
     }

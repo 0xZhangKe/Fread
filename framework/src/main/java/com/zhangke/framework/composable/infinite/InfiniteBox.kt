@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.infinite
 
-import android.util.Log
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,10 +40,6 @@ fun InfiniteBox(
             .onSizeChanged {
                 layoutSize = it.toSize()
                 state.layoutSize = it.toSize()
-                Log.d(
-                    "U_TEST",
-                    "InfiniteBox layoutSize ${it.toSize()}",
-                )
             }
             .draggableInfinity(
                 enabled = state.exceed,
@@ -70,10 +65,6 @@ fun InfiniteBox(
             top = (-(placeable.height - layoutSize.height)).coerceAtMost(0F),
             right = 0F,
             bottom = 0F,
-        )
-        Log.d(
-            "U_TEST",
-            "placeable size: ${placeable.width} * ${placeable.height}, bounds left:${state.draggableBounds.left}, top:${state.draggableBounds.top}",
         )
         layout(constraints.maxWidth, constraints.maxHeight) {
             placeable.placeRelative(

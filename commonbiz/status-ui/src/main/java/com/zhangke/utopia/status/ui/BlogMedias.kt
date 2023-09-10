@@ -2,16 +2,13 @@ package com.zhangke.utopia.status.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.Icon
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.RemoveRedEye
 import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf

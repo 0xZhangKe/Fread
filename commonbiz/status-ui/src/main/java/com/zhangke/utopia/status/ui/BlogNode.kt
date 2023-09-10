@@ -8,11 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -27,6 +35,7 @@ import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.user.UtopiaUser
+import com.zhangke.utopia.statusui.R
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -93,7 +102,13 @@ fun BlogContentComposable(
                 fontSize = 12.sp,
             )
         }
-        if (blog.content.isEmpty().not()) {
+        val sensitive = blog.sensitive
+        val spoilerText = blog.spoilerText
+        val canHidden = blog.sensitive || spoilerText.isNotEmpty()
+        var hideContent by rememberSaveable {
+            mutableStateOf(canHidden)
+        }
+        if (spoilerText.isNotEmpty()) {
             AndroidView(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -106,18 +121,65 @@ fun BlogContentComposable(
                 },
                 update = {
                     it.text = HtmlCompat.fromHtml(
-                        blog.content,
+                        spoilerText,
                         HtmlCompat.FROM_HTML_MODE_COMPACT,
                     )
                 }
             )
         }
+        val hasContent = blog.content.isNotEmpty()
+        if (hasContent) {
+            if (hideContent) {
+                TextButton(
+                    onClick = {
+                        hideContent = false
+                    },
+                    colors = ButtonDefaults.textButtonColors(
+                        containerColor = Color.Transparent,
+                    )
+                ) {
+                    Text(text = stringResource(R.string.status_ui_image_content_show_hidden_label))
+                }
+            }
+            if (!hideContent) {
+                AndroidView(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(start = 15.dp, end = 15.dp, top = 8.dp),
+                    factory = {
+                        TextView(it).apply {
+                            textSize = 14F
+                        }
+                    },
+                    update = {
+                        it.text = HtmlCompat.fromHtml(
+                            blog.content,
+                            HtmlCompat.FROM_HTML_MODE_COMPACT,
+                        )
+                    }
+                )
+                if (canHidden) {
+                    TextButton(
+                        onClick = {
+                            hideContent = true
+                        },
+                        colors = ButtonDefaults.textButtonColors(
+                            containerColor = Color.Transparent,
+                        )
+                    ) {
+                        Text(text = stringResource(R.string.status_ui_image_content_hide_hidden_label))
+                    }
+                }
+            }
+        }
+
         BlogMedias(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = 8.dp, top = 6.dp, end = 8.dp),
             mediaList = blog.mediaList,
-            sensitive = blog.sensitive,
+            sensitive = sensitive,
             onMediaClick = onMediaClick,
         )
         Spacer(

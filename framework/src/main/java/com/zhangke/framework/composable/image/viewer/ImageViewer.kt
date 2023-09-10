@@ -1,5 +1,6 @@
 package com.zhangke.framework.composable.image.viewer
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
@@ -54,6 +55,11 @@ fun ImageViewer(
             state.zoom(zoomChange)
         }
         latestZoomChang = zoomChange
+    }
+    BackHandler {
+        coroutineScope.launch {
+            state.startDismiss()
+        }
     }
     state.onDismissRequest = onDismissRequest
     state.onStartDismiss = onStartDismiss

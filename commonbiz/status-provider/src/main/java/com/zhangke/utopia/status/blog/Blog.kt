@@ -15,4 +15,5 @@ data class Blog(
     val sensitive: Boolean,
     val spoilerText: String,
     val mediaList: List<BlogMedia>,
+    val poll: BlogPoll?,
 )

@@ -33,6 +33,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
+import com.zhangke.utopia.status.ui.poll.BlogPoll
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.user.UtopiaUser
 import com.zhangke.utopia.statusui.R
@@ -174,14 +175,22 @@ fun BlogContentComposable(
             }
         }
 
-        BlogMedias(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, top = 6.dp, end = 8.dp),
-            mediaList = blog.mediaList,
-            sensitive = sensitive,
-            onMediaClick = onMediaClick,
-        )
+        if (blog.mediaList.isNotEmpty()) {
+            BlogMedias(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, top = 6.dp, end = 8.dp),
+                mediaList = blog.mediaList,
+                sensitive = sensitive,
+                onMediaClick = onMediaClick,
+            )
+        }
+        if (blog.poll != null) {
+            BlogPoll(
+                modifier = Modifier.fillMaxWidth(),
+                poll = blog.poll!!,
+            )
+        }
         Spacer(
             modifier = Modifier
                 .width(1.dp)
@@ -225,6 +234,7 @@ private fun PreviewBlogContentComposable() {
         sensitive = true,
         spoilerText = "",
         repliesCount = 10,
+        poll = null,
     )
     BlogContentComposable(blog = blog, onMediaClick = { _ -> })
 }

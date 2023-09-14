@@ -36,7 +36,6 @@ fun BlogMedias(
     sensitive: Boolean,
     onMediaClick: OnBlogMediaClick,
 ) {
-    if (mediaList.isEmpty()) return
     val density = LocalDensity.current
     var containerWidth: Dp? by remember {
         mutableStateOf(null)

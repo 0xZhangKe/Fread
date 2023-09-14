@@ -28,7 +28,7 @@ class UserStatusDataSource(
                 minId = params.pageKey,
             )
             .map { list ->
-                list.map { activityPubStatusAdapter.adapt(it, client.application.host) }
+                list.map { activityPubStatusAdapter.adapt(it) }
             }.map {
                 StatusSourceData(
                     data = it,

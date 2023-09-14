@@ -41,7 +41,7 @@ class TimelineStatusDataSource(
             )
         }
         return timelineListResult.map {
-            val data = it.map { item -> activityPubStatusAdapter.adapt(item, host) }
+            val data = it.map { item -> activityPubStatusAdapter.adapt(item) }
             StatusSourceData(
                 data = data,
                 nextPageKey = data.lastOrNull()?.let(::getDataId),

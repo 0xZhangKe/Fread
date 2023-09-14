@@ -14,9 +14,10 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val activityPubUserAdapter: ActivityPubUserAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
+    private val pollAdapter: ActivityPubPollAdapter,
 ) {
 
-    fun adapt(entity: ActivityPubStatusEntity, domain: String): Status {
+    fun adapt(entity: ActivityPubStatusEntity): Status {
         //fixme temporary code
         return try {
             Status.NewBlog(entity.toBlog())
@@ -40,7 +41,8 @@ class ActivityPubStatusAdapter @Inject constructor(
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
             repliesCount = repliesCount,
-            mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList()
+            mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
+            poll = poll?.let(pollAdapter::adapt)
         )
     }
 

@@ -1,11 +1,12 @@
 package com.zhangke.utopia.status.ui.poll
 
-import androidx.compose.foundation.Canvas
+import androidx.annotation.FloatRange
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
@@ -21,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.platform.LocalDensity
@@ -29,6 +30,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.SlickRoundCornerShape
 import com.zhangke.framework.utils.dpToPx
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.status.blog.BlogPoll
@@ -38,13 +40,24 @@ fun BlogPoll(
     modifier: Modifier,
     poll: BlogPoll,
 ) {
-
-    poll.options.forEach {
-        BlogPollOption(
-            modifier = Modifier.fillMaxWidth(),
-            optionContent = it.title,
-            progress = 0.5F,
-        )
+    Column(modifier = modifier) {
+        val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
+        poll.options.forEachIndexed { index, option ->
+            val votesCount = option.votesCount?.toFloat() ?: 0F
+            val progress = if (votesCount > 0) {
+                votesCount / sum
+            } else {
+                0F
+            }
+            BlogPollOption(
+                modifier = Modifier.fillMaxWidth(),
+                optionContent = option.title,
+                progress = progress,
+            )
+            if (index < poll.options.lastIndex) {
+                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
+            }
+        }
     }
 }
 
@@ -52,7 +65,7 @@ fun BlogPoll(
 private fun BlogPollOption(
     modifier: Modifier,
     optionContent: String,
-    progress: Float,
+    @FloatRange(from = 0.0, to = 1.0) progress: Float,
 ) {
     val density = LocalDensity.current
     val colorScheme = MaterialTheme.colorScheme
@@ -60,6 +73,8 @@ private fun BlogPollOption(
         mutableStateOf(null)
     }
     val borderWidth = 1.dp
+    val cornerRadius = 21.dp
+    val cornerRadiusPx = cornerRadius.dpToPx(density)
     Box(
         modifier = modifier
             .onSizeChanged {
@@ -67,29 +82,53 @@ private fun BlogPollOption(
                     containerSize = it
                 }
             }
-            .border(width = borderWidth, color = Color.Black, shape = RoundedCornerShape(20.dp))
-            .heightIn(min = 35.dp),
+            .heightIn(min = 42.dp)
+            .border(
+                width = borderWidth,
+                color = Color.Black,
+                shape = RoundedCornerShape(cornerRadius),
+            ),
     ) {
         val fixedContainerSize = containerSize
         if (fixedContainerSize != null && progress > 0F) {
             val progressWidth = fixedContainerSize.width * progress.coerceAtMost(1F)
-            Canvas(
+            Box(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = borderWidth)
-                    .fillMaxWidth()
+                    .clip(SlickRoundCornerShape(cornerRadius))
+                    .background(color = Color.Blue.copy(alpha = 0.3F))
                     .size(
-                        height = fixedContainerSize.height.pxToDp(density) - borderWidth * 2,
-                        width = progressWidth.pxToDp(density) - borderWidth,
+                        height = fixedContainerSize.height.pxToDp(density),
+                        width = progressWidth.pxToDp(density),
                     ),
-                onDraw = {
-                    drawRoundRect(
-                        color = Color.Blue.copy(alpha = 0.3F),
-                        size = size,
-                        cornerRadius = CornerRadius(20.dp.dpToPx(density)),
-                    )
-                }
             )
+//            Canvas(
+//                modifier = Modifier
+//                    .align(Alignment.CenterStart)
+//                    .padding(start = borderWidth)
+//                    .clipToBounds()
+//                    .size(
+//                        height = fixedContainerSize.height.pxToDp(density),
+//                        width = progressWidth.pxToDp(density),
+//                    ),
+//                onDraw = {
+//                    val nodeWidthDp = size.width.pxToDp(density)
+//                    if (nodeWidthDp > cornerRadius) {
+//                        drawRoundRect(
+//                            color = Color.Blue.copy(alpha = 0.3F),
+//                            size = size,
+//                            cornerRadius = CornerRadius(cornerRadiusPx),
+//                        )
+//                    } else {
+//                        drawCircle(
+//                            color = Color.Blue.copy(alpha = 0.3F),
+//                            radius = cornerRadiusPx,
+//                            center = Offset(x = cornerRadiusPx, y = size.height / 2F),
+//                        )
+//                    }
+//                }
+//            )
         }
         Text(
             modifier = Modifier

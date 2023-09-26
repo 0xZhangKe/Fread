@@ -24,7 +24,6 @@ import com.zhangke.utopia.profile.ProfileTab
 import com.zhangke.utopia.publish.PublishTab
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MainPage() {
     val globalNavigator = LocalNavigator.currentOrThrow

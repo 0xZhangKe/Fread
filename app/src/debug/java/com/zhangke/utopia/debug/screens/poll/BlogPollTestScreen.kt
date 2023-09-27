@@ -43,25 +43,25 @@ class BlogPollTestScreen : AndroidScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Left,
-                    text = "Poll 1",
-                    fontSize = 18.sp,
-                )
-                BlogPoll(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp),
-                    poll = mockPoll(
-                        listOf(
-                            mockPollOption("选项一AA"),
-                            mockPollOption("CCC"),
-                            mockPollOption("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"),
-                        )
-                    ),
-                )
-                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
+//                Text(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    textAlign = TextAlign.Left,
+//                    text = "Poll 1",
+//                    fontSize = 18.sp,
+//                )
+//                BlogPoll(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 6.dp),
+//                    poll = mockPoll(
+//                        listOf(
+//                            mockPollOption("选项一AA"),
+//                            mockPollOption("CCC"),
+//                            mockPollOption("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"),
+//                        )
+//                    ),
+//                )
+//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
                 Text(
                     modifier = Modifier.fillMaxWidth(),
                     textAlign = TextAlign.Left,
@@ -74,72 +74,84 @@ class BlogPollTestScreen : AndroidScreen() {
                         .padding(top = 6.dp),
                     poll = mockPoll(
                         listOf(
-                            mockPollOption("AAA", 10),
+                            mockPollOption("0", 0),
+                            mockPollOption("1", 1),
+                            mockPollOption("3", 3),
+                            mockPollOption("6", 6),
+                            mockPollOption("10", 10),
+                            mockPollOption("15", 15),
+                            mockPollOption("20", 20),
+                            mockPollOption("30", 30),
+                            mockPollOption("45", 45),
+                            mockPollOption("50", 50),
+                            mockPollOption("55", 55),
+                            mockPollOption("65", 65),
+                            mockPollOption("70", 70),
                             mockPollOption(
                                 "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-                                190
+                                220
                             ),
                         )
                     ),
                 )
-                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Left,
-                    text = "Poll 3",
-                    fontSize = 18.sp,
-                )
-                BlogPoll(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp),
-                    poll = mockPoll(
-                        listOf(
-                            mockPollOption("BBB", 10),
-                            mockPollOption(
-                                "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-                                10
-                            ),
-                            mockPollOption("CCC", 1000),
-                        )
-                    ),
-                )
-                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Left,
-                    text = "Poll 4",
-                    fontSize = 18.sp,
-                )
-                BlogPoll(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp),
-                    poll = mockPoll(
-                        listOf(
-                            mockPollOption("BBB", 80),
-                            mockPollOption("CCC", 36),
-                        )
-                    ),
-                )
-                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
-                Text(
-                    modifier = Modifier.fillMaxWidth(),
-                    textAlign = TextAlign.Left,
-                    text = "Poll 5",
-                    fontSize = 18.sp,
-                )
-                BlogPoll(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 6.dp),
-                    poll = mockPoll(
-                        listOf(
-                            mockPollOption("BBB", 0),
-                            mockPollOption("CCC", 1000),
-                        )
-                    ),
-                )
+//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
+//                Text(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    textAlign = TextAlign.Left,
+//                    text = "Poll 3",
+//                    fontSize = 18.sp,
+//                )
+//                BlogPoll(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 6.dp),
+//                    poll = mockPoll(
+//                        listOf(
+//                            mockPollOption("BBB", 10),
+//                            mockPollOption(
+//                                "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
+//                                10
+//                            ),
+//                            mockPollOption("CCC", 1000),
+//                        )
+//                    ),
+//                )
+//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
+//                Text(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    textAlign = TextAlign.Left,
+//                    text = "Poll 4",
+//                    fontSize = 18.sp,
+//                )
+//                BlogPoll(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 6.dp),
+//                    poll = mockPoll(
+//                        listOf(
+//                            mockPollOption("BBB", 80),
+//                            mockPollOption("CCC", 36),
+//                        )
+//                    ),
+//                )
+//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
+//                Text(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    textAlign = TextAlign.Left,
+//                    text = "Poll 5",
+//                    fontSize = 18.sp,
+//                )
+//                BlogPoll(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(top = 6.dp),
+//                    poll = mockPoll(
+//                        listOf(
+//                            mockPollOption("BBB", 0),
+//                            mockPollOption("CCC", 1000),
+//                        )
+//                    ),
+//                )
             }
         }
     }

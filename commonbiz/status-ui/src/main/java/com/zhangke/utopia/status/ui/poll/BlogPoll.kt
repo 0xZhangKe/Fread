@@ -31,7 +31,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SlickRoundCornerShape
-import com.zhangke.framework.utils.dpToPx
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.status.blog.BlogPoll
 
@@ -74,7 +73,6 @@ private fun BlogPollOption(
     }
     val borderWidth = 1.dp
     val cornerRadius = 21.dp
-    val cornerRadiusPx = cornerRadius.dpToPx(density)
     Box(
         modifier = modifier
             .onSizeChanged {
@@ -96,39 +94,13 @@ private fun BlogPollOption(
                 modifier = Modifier
                     .align(Alignment.CenterStart)
                     .padding(start = borderWidth)
-                    .clip(SlickRoundCornerShape(cornerRadius))
-                    .background(color = Color.Blue.copy(alpha = 0.3F))
                     .size(
                         height = fixedContainerSize.height.pxToDp(density),
                         width = progressWidth.pxToDp(density),
-                    ),
+                    )
+                    .clip(SlickRoundCornerShape(cornerRadius))
+                    .background(color = Color.Blue.copy(alpha = 0.3F)),
             )
-//            Canvas(
-//                modifier = Modifier
-//                    .align(Alignment.CenterStart)
-//                    .padding(start = borderWidth)
-//                    .clipToBounds()
-//                    .size(
-//                        height = fixedContainerSize.height.pxToDp(density),
-//                        width = progressWidth.pxToDp(density),
-//                    ),
-//                onDraw = {
-//                    val nodeWidthDp = size.width.pxToDp(density)
-//                    if (nodeWidthDp > cornerRadius) {
-//                        drawRoundRect(
-//                            color = Color.Blue.copy(alpha = 0.3F),
-//                            size = size,
-//                            cornerRadius = CornerRadius(cornerRadiusPx),
-//                        )
-//                    } else {
-//                        drawCircle(
-//                            color = Color.Blue.copy(alpha = 0.3F),
-//                            radius = cornerRadiusPx,
-//                            center = Offset(x = cornerRadiusPx, y = size.height / 2F),
-//                        )
-//                    }
-//                }
-//            )
         }
         Text(
             modifier = Modifier

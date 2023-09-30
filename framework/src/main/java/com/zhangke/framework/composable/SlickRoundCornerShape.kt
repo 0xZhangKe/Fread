@@ -13,6 +13,7 @@ import androidx.compose.ui.unit.Density
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
+import kotlin.math.sqrt
 
 class SlickRoundCornerShape(
     private val topStart: CornerSize,
@@ -44,27 +45,19 @@ class SlickRoundCornerShape(
         bottomStart: Float,
         layoutDirection: LayoutDirection,
     ): Outline {
+        val height = size.height
+        val width = size.width
         return if (topStart + topEnd + bottomEnd + bottomStart == 0.0f) {
             Outline.Rectangle(size.toRect())
-        } else if (topStart == bottomStart && size.width < (topStart * 2F)) {
+        } else if (topStart == bottomStart && width < (topStart * 2F)) {
             val radius = topStart
-            Outline.Generic(
-                Path().apply {
-                    moveTo(size.width, 0F)
-                    arcTo(
-                        rect = Rect(
-                            left = 0F,
-                            top = 0F,
-                            right = radius * 2F,
-                            bottom = radius * 2F,
-                        ),
-                        startAngleDegrees = 90F,
-                        sweepAngleDegrees = 180F,
-                        forceMoveTo = true,
-                    )
-                    close()
-                }
-            )
+            val path = Path()
+            if (height > radius * 2) {
+                buildSlickRoundCornerPath(path, size, radius)
+            } else {
+                buildSingleArcPath(path, size, radius)
+            }
+            Outline.Generic(path)
         } else {
             Outline.Rounded(
                 RoundRect(
@@ -78,6 +71,61 @@ class SlickRoundCornerShape(
         }
     }
 
+    private fun buildSlickRoundCornerPath(path: Path, size: Size, radius: Float) {
+        val width = size.width
+        val height = size.height
+        if (width > radius) {
+            path.addRoundRect(
+                RoundRect(
+                    rect = size.toRect(),
+                    topLeft = CornerRadius(radius),
+                    topRight = CornerRadius(0F),
+                    bottomRight = CornerRadius(0F),
+                    bottomLeft = CornerRadius(radius),
+                )
+            )
+            return
+        }
+        val arcHeight = sqrt(radius * radius - (radius - width) * (radius - width))
+        val yOffset = radius - arcHeight
+        path.arcTo(
+            rect = Rect(
+                left = 0F,
+                top = yOffset,
+                right = width * 2F,
+                bottom = yOffset + arcHeight * 2F,
+            ),
+            startAngleDegrees = 180F,
+            sweepAngleDegrees = 90F,
+            forceMoveTo = true,
+        )
+        val bottomArcBottom = height - yOffset
+        path.lineTo(x = width, y = bottomArcBottom)
+        path.arcTo(
+            rect = Rect(
+                left = 0F,
+                top = bottomArcBottom - arcHeight * 2,
+                right = width * 2F,
+                bottom = bottomArcBottom,
+            ),
+            startAngleDegrees = 90F,
+            sweepAngleDegrees = 90F,
+            forceMoveTo = true,
+        )
+        path.lineTo(0F, yOffset + arcHeight)
+        path.close()
+    }
+
+    private fun buildSingleArcPath(path: Path, size: Size, radius: Float) {
+        path.moveTo(size.width, 0F)
+        path.arcTo(
+            rect = Rect(0F, 0F, radius * 2F, radius * 2F),
+            startAngleDegrees = 90F,
+            sweepAngleDegrees = 180F,
+            forceMoveTo = true,
+        )
+        path.close()
+    }
 }
 
 fun SlickRoundCornerShape(corner: CornerSize) =

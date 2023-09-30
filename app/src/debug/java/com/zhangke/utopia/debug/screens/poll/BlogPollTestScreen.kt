@@ -4,8 +4,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Scaffold
@@ -43,27 +43,44 @@ class BlogPollTestScreen : AndroidScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center,
             ) {
-//                Text(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    textAlign = TextAlign.Left,
-//                    text = "Poll 1",
-//                    fontSize = 18.sp,
-//                )
-//                BlogPoll(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 6.dp),
-//                    poll = mockPoll(
-//                        listOf(
-//                            mockPollOption("选项一AA"),
-//                            mockPollOption("CCC"),
-//                            mockPollOption("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"),
-//                        )
-//                    ),
-//                )
-//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
+                val poll1 = mutableListOf<BlogPoll.Option>().apply {
+                    for (index in 10 until 1000 step 100) {
+                        add(
+                            mockPollOption(
+                                "$index",
+                                index * index,
+                            ),
+                        )
+                    }
+                }
+                val poll2 = mutableListOf<BlogPoll.Option>().apply {
+                    for (index in 10 until 1000 step 100) {
+                        add(
+                            mockPollOption(
+                                "$index \n -------------------",
+                                index * index,
+                            ),
+                        )
+                    }
+                }
                 Text(
                     modifier = Modifier.fillMaxWidth(),
+                    textAlign = TextAlign.Left,
+                    text = "Poll 1",
+                    fontSize = 18.sp,
+                )
+
+                BlogPoll(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp),
+                    poll = mockPoll(poll1),
+                )
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp),
                     textAlign = TextAlign.Left,
                     text = "Poll 2",
                     fontSize = 18.sp,
@@ -72,86 +89,39 @@ class BlogPollTestScreen : AndroidScreen() {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
+                    poll = mockPoll(poll2),
+                )
+
+                Text(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 15.dp),
+                    textAlign = TextAlign.Left,
+                    text = "Poll 3",
+                    fontSize = 18.sp,
+                )
+                BlogPoll(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 6.dp),
                     poll = mockPoll(
                         listOf(
-                            mockPollOption("0", 0),
-                            mockPollOption("1", 1),
-                            mockPollOption("3", 3),
-                            mockPollOption("6", 6),
-                            mockPollOption("10", 10),
-                            mockPollOption("15", 15),
-                            mockPollOption("20", 20),
-                            mockPollOption("30", 30),
-                            mockPollOption("45", 45),
-                            mockPollOption("50", 50),
-                            mockPollOption("55", 55),
-                            mockPollOption("65", 65),
-                            mockPollOption("70", 70),
                             mockPollOption(
-                                "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-                                220
+                                "1",
+                                1
+                            ),
+                            mockPollOption(
+                                "30",
+                                300
                             ),
                         )
                     ),
                 )
-//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
-//                Text(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    textAlign = TextAlign.Left,
-//                    text = "Poll 3",
-//                    fontSize = 18.sp,
-//                )
-//                BlogPoll(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 6.dp),
-//                    poll = mockPoll(
-//                        listOf(
-//                            mockPollOption("BBB", 10),
-//                            mockPollOption(
-//                                "DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD",
-//                                10
-//                            ),
-//                            mockPollOption("CCC", 1000),
-//                        )
-//                    ),
-//                )
-//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
-//                Text(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    textAlign = TextAlign.Left,
-//                    text = "Poll 4",
-//                    fontSize = 18.sp,
-//                )
-//                BlogPoll(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 6.dp),
-//                    poll = mockPoll(
-//                        listOf(
-//                            mockPollOption("BBB", 80),
-//                            mockPollOption("CCC", 36),
-//                        )
-//                    ),
-//                )
-//                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
-//                Text(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    textAlign = TextAlign.Left,
-//                    text = "Poll 5",
-//                    fontSize = 18.sp,
-//                )
-//                BlogPoll(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .padding(top = 6.dp),
-//                    poll = mockPoll(
-//                        listOf(
-//                            mockPollOption("BBB", 0),
-//                            mockPollOption("CCC", 1000),
-//                        )
-//                    ),
-//                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(15.dp)
+                )
             }
         }
     }

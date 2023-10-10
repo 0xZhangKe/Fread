@@ -21,7 +21,7 @@ data class BlogPoll(
     val votersCount: Int,
     val options: List<Option>,
     val voted: Boolean?,
-    val ownVotes: Boolean,
+    val ownVotes: List<Int>,
 ) {
 
     data class Option(

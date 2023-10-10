@@ -189,6 +189,7 @@ fun BlogContentComposable(
             BlogPoll(
                 modifier = Modifier.fillMaxWidth(),
                 poll = blog.poll!!,
+                onVote = {},
             )
         }
         Spacer(

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.debug.screens.poll
 
+import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -47,7 +48,7 @@ class BlogPollTestScreen : AndroidScreen() {
                     for (index in 10 until 1000 step 100) {
                         add(
                             mockPollOption(
-                                "$index",
+                                "选项 $index ",
                                 index * index,
                             ),
                         )
@@ -57,7 +58,7 @@ class BlogPollTestScreen : AndroidScreen() {
                     for (index in 10 until 1000 step 100) {
                         add(
                             mockPollOption(
-                                "$index \n -------------------",
+                                "选项xxxxxxxxxxxxxxxsssxxxxssss$index----xxxxxxxxxxxxxxxxxxxxxxxxxxxxxx---------------",
                                 index * index,
                             ),
                         )
@@ -75,6 +76,9 @@ class BlogPollTestScreen : AndroidScreen() {
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                     poll = mockPoll(poll1),
+                    onVote = {
+                        Log.d("U_TEST", "onVote:$it")
+                    }
                 )
 
                 Text(
@@ -90,6 +94,9 @@ class BlogPollTestScreen : AndroidScreen() {
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                     poll = mockPoll(poll2),
+                    onVote = {
+                        Log.d("U_TEST", "onVote:$it")
+                    }
                 )
 
                 Text(
@@ -116,6 +123,9 @@ class BlogPollTestScreen : AndroidScreen() {
                             ),
                         )
                     ),
+                    onVote = {
+                        Log.d("U_TEST", "onVote:$it")
+                    }
                 )
                 Spacer(
                     modifier = Modifier
@@ -131,12 +141,12 @@ class BlogPollTestScreen : AndroidScreen() {
             id = System.currentTimeMillis().toString(),
             expiresAt = null,
             expired = false,
-            multiple = false,
+            multiple = true,
             votesCount = 124,
             votersCount = 100,
-            voted = false,
+            voted = true,
             options = options,
-            ownVotes = false,
+            ownVotes = listOf(0, 1),
         )
     }
 

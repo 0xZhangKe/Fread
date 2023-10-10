@@ -16,7 +16,7 @@ class ActivityPubPollAdapter @Inject constructor() {
             votersCount = entity.votersCount,
             voted = entity.voted,
             options = entity.options.map { it.convertToPoll() },
-            ownVotes = entity.ownVotes,
+            ownVotes = entity.ownVotes ?: emptyList(),
         )
     }
 

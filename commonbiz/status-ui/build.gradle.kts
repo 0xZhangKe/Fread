@@ -78,4 +78,5 @@ dependencies {
     implementation(libs.auto.service.annotations)
     kapt(libs.auto.service)
     implementation(libs.bundles.voyager)
+    implementation(libs.bundles.androidx.media3)
 }

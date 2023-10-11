@@ -25,6 +25,8 @@ androidx-constraintlayout-compose = "1.1.0-alpha04"
 androidx-lifecycle = "2.4.1"
 androidx-paging = "3.1.1"
 androidx-paging-compose = "1.0.0-alpha18"
+androidx-media3 = "1.0.0-rc01"
+
 
 accompanist-placeholder-material = "0.31.5-beta"
 
@@ -65,6 +67,8 @@ androidx-preference = ["androidx.preference", "androidx.preference.ktx"]
 androidx-datastore = ["androidx.datastore", "androidx.datastore.preferences"]
 androidx-collection = ["androidx.collection", "androidx.collection.ktx"]
 androidx-nav = ["androidx.nav.ui.ktx", "androidx.nav.compose"]
+
+androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okhttp", "androidx.media3.ui", "androidx.media3.session", "androidx.media3.database", "androidx.media3.decoder", "androidx.media3.datasource", "androidx.media3.common"]
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
@@ -116,6 +120,15 @@ androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecy
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidx.lifecycle" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidx.paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx.paging.compose" }
+
+androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidx.media3"}
+androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidx.media3"}
+androidx-media3-ui = { group = "androidx.media3", name = "media3-ui", version.ref = "androidx.media3"}
+androidx-media3-session = { group = "androidx.media3", name = "media3-session", version.ref = "androidx.media3"}
+androidx-media3-database = { group = "androidx.media3", name = "media3-database", version.ref = "androidx.media3"}
+androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", version.ref = "androidx.media3"}
+androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3"}
+androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
 
 accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist.placeholder.material"}
 

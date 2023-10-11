@@ -6,6 +6,7 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.utopia.debug.screens.poll.BlogPollTestScreen
+import com.zhangke.utopia.debug.screens.video.InlineVideoPlayerScreen
 
 class UtopiaScreen : AndroidScreen() {
 
@@ -14,7 +15,7 @@ class UtopiaScreen : AndroidScreen() {
 //        MainPage()
         val navigator = LocalNavigator.currentOrThrow
         LaunchedEffect(Unit) {
-            navigator.push(BlogPollTestScreen())
+            navigator.push(InlineVideoPlayerScreen())
         }
     }
 }

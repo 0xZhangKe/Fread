@@ -145,6 +145,7 @@ dependencies {
     implementation(libs.bundles.voyager)
     implementation(libs.krouter.core)
     ksp(libs.krouter.compiler)
+    implementation(libs.bundles.androidx.media3)
 }
 
 // Allow references to generated code

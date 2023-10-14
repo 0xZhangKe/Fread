@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Card
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -18,7 +17,7 @@ import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.utopia.status.ui.video.InlineVideoPlayer
+import com.zhangke.utopia.status.ui.video.InlineVideo
 
 class InlineVideoPlayerScreen : AndroidScreen() {
 
@@ -42,12 +41,17 @@ class InlineVideoPlayerScreen : AndroidScreen() {
             ) {
                 items(list) { item ->
                     if (item == 5) {
-                        InlineVideoPlayer(
+                        Box(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .height(80.dp),
-                            uri = "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12".toUri(),
-                        )
+                                .padding(horizontal = 16.dp)
+                        ) {
+                            InlineVideo(
+                                aspectRatio = 2F,
+                                coverImage = "aaaaa",
+                                uri = "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12".toUri(),
+                            )
+                        }
                     } else {
                         Box(
                             modifier = Modifier

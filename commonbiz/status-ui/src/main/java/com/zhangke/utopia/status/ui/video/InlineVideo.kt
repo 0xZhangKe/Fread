@@ -1,7 +1,6 @@
 package com.zhangke.utopia.status.ui.video
 
 import android.net.Uri
-import android.util.Log
 import android.widget.FrameLayout
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
@@ -19,7 +18,11 @@ import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +42,8 @@ import androidx.media3.exoplayer.source.ProgressiveMediaSource
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
+import kotlinx.coroutines.delay
+import kotlin.math.abs
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -90,6 +95,11 @@ private fun InlineVideoPlayer(
     val playerListener = remember(uri) {
         object : Player.Listener {
 
+            override fun onRenderedFirstFrame() {
+                super.onRenderedFirstFrame()
+                state.renderedFirstFrame = true
+            }
+
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 state.onPlaybackStateChanged(playbackState)
@@ -122,12 +132,18 @@ private fun InlineVideoPlayer(
                     .createMediaSource(MediaItem.fromUri(uri))
                 setMediaSource(source)
                 prepare()
-                seekTo(state.playerProgress)
+                seekTo(state.playerPosition)
                 volume = state.playerVolume
                 playWhenReady = state.playWhenReady
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
                 repeatMode = Player.REPEAT_MODE_OFF
             }
+    }
+    LaunchedEffect(uri) {
+        while (true) {
+            delay(500)
+            state.updatePosition(exoPlayer.currentPosition)
+        }
     }
     Box(modifier = Modifier.fillMaxSize()) {
         AndroidView(
@@ -135,7 +151,7 @@ private fun InlineVideoPlayer(
                 .fillMaxSize(),
             factory = {
                 PlayerView(it).apply {
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FILL
+                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
                     useController = false
                     controllerAutoShow = false
                     player = exoPlayer
@@ -146,14 +162,10 @@ private fun InlineVideoPlayer(
                 }
             },
         )
-        if (coverImage.isNullOrEmpty().not()
-            && !state.playing
-            && exoPlayer.contentPosition == 0L
-        ) {
+        if (coverImage.isNullOrEmpty().not() && !state.playWhenReady) {
             AsyncImage(
                 modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Green),
+                    .fillMaxSize(),
                 model = coverImage,
                 contentScale = ContentScale.Crop,
                 contentDescription = null,
@@ -164,8 +176,9 @@ private fun InlineVideoPlayer(
             playEnded = state.playbackEnded,
             mute = state.playerVolume <= 0F,
             onPlayClick = {
-                if (state.playbackEnded) {
-                    exoPlayer.seekTo(1L)
+                val diff = abs(exoPlayer.duration - exoPlayer.currentPosition)
+                if (diff < 100L) {
+                    exoPlayer.seekTo(0L)
                 }
                 if (!state.playing) {
                     exoPlayer.play()
@@ -183,7 +196,7 @@ private fun InlineVideoPlayer(
 
     DisposableEffect(uri) {
         onDispose {
-            state.updateProgress(exoPlayer.currentPosition)
+            state.updatePosition(exoPlayer.currentPosition)
             exoPlayer.removeListener(playerListener)
             exoPlayer.release()
         }

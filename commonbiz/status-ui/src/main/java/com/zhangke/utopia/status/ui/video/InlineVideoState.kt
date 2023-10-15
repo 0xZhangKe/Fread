@@ -1,6 +1,5 @@
 package com.zhangke.utopia.status.ui.video
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
@@ -29,18 +28,16 @@ class InlineVideoState(
 ) {
     var playing by mutableStateOf(false)
         private set
-    var playWhenReady by mutableStateOf(false)
+    var playWhenReady by mutableStateOf(true)
         private set
     var playbackEnded by mutableStateOf(false)
         private set
     var playerVolume by mutableFloatStateOf(0F)
         private set
-    var playerProgress by mutableLongStateOf(initialPlayerProgress)
+    var playerPosition by mutableLongStateOf(initialPlayerProgress)
         private set
 
-    init {
-        Log.d("U_TEST", "InlineVideoState@${hashCode()} progress:$playerProgress")
-    }
+    var renderedFirstFrame by mutableStateOf(false)
 
     fun onPlaybackStateChanged(playbackState: Int) {
         playbackEnded = playbackState == Player.STATE_ENDED
@@ -58,27 +55,23 @@ class InlineVideoState(
         playing = isPlaying
     }
 
-    fun updateProgress(progress: Long) {
-        playerProgress = progress
-        Log.d("U_TEST", "InlineVideoState@${hashCode()} updateProgress:$playerProgress")
+    fun updatePosition(progress: Long) {
+        playerPosition = progress
     }
 
     companion object {
 
         val Saver: Saver<InlineVideoState, *> = Saver(
             save = { state ->
-                Log.d("U_TEST", "save progress:${state.playerProgress}")
                 arrayOf(
-                    state.playerProgress,
+                    state.playerPosition,
                 )
             },
             restore = { array ->
-                Log.d("U_TEST", "restore progress:${array.first()}")
                 InlineVideoState(
-                    array[0],
+                    array[0] as Long,
                 )
             },
         )
     }
 }
-

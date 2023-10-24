@@ -101,9 +101,3 @@ class InlineVideoPlayerScreen : AndroidScreen() {
         }
     }
 }
-
-fun LazyListState.visibilityPercent(info: LazyListItemInfo): Float {
-    val cutTop = max(0, layoutInfo.viewportStartOffset - info.offset)
-    val cutBottom = max(0, info.offset + info.size - layoutInfo.viewportEndOffset)
-    return max(0f, 100f - (cutTop + cutBottom) * 100f / info.size)
-}

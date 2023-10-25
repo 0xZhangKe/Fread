@@ -10,20 +10,29 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListItemInfo
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
+import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
+import com.zhangke.framework.composable.sensitive.SensitiveLazyColumn
+import com.zhangke.framework.composable.sensitive.SensitiveLazyColumnState
 import com.zhangke.utopia.status.ui.video.InlineVideo
 import kotlin.math.max
 
@@ -54,32 +63,23 @@ class InlineVideoPlayerScreen : AndroidScreen() {
 //                    contentDescription = "123",
 //                )
 //            }
-            val state = rememberLazyListState()
-            val firstVisibleIndex by remember { derivedStateOf { state.firstVisibleItemIndex } }
-            val layoutInfo by remember { derivedStateOf { state.layoutInfo } }
-            if (layoutInfo.visibleItemsInfo.isNotEmpty()) {
-                layoutInfo.visibleItemsInfo[firstVisibleIndex].also {
-                    Log.d("U_TEST", "firstVisibleIndex:$firstVisibleIndex, ${state.visibilityPercent(it)}")
-                }
-                layoutInfo.viewportSize
-            }
 
-            LazyColumn(
+            InlineVideoLazyColumn(
                 modifier = Modifier.padding(paddingValues),
-                state = state,
             ) {
-                items(list) { item ->
+                itemsIndexed(list) { index, item ->
                     if (item == 5) {
                         Box(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .padding(horizontal = 16.dp)
                         ) {
-//                            InlineVideo(
-//                                aspectRatio = 2F,
-//                                coverImage = "https://pbs.twimg.com/media/F8ZjbTDakAAOCfA?format=jpg&name=small",
-//                                uri = "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12".toUri(),
-//                            )
+                            InlineVideo(
+                                aspectRatio = 2F,
+                                coverImage = "https://pbs.twimg.com/media/F8ZjbTDakAAOCfA?format=jpg&name=small",
+                                uri = "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12".toUri(),
+                            )
+                            LocalPlayableIndexRecorder.current?.recordePlayableIndex(index)
                         }
                     } else {
                         Box(

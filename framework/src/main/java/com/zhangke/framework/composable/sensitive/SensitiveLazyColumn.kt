@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.sensitive
 
-import android.util.Log
 import androidx.compose.foundation.gestures.FlingBehavior
 import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
@@ -11,7 +10,8 @@ import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -24,7 +24,7 @@ import kotlin.math.max
 fun SensitiveLazyColumn(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    sensitiveLazyColumnState: State<SensitiveLazyColumnState>? = null,
+    sensitiveLazyColumnState: MutableState<SensitiveLazyColumnState>? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
@@ -35,10 +35,26 @@ fun SensitiveLazyColumn(
     content: LazyListScope.() -> Unit
 ) {
     if (sensitiveLazyColumnState != null) {
-        val firstVisibleIndex by remember { derivedStateOf { state.firstVisibleItemIndex } }
         val layoutInfo by remember { derivedStateOf { state.layoutInfo } }
-        if (layoutInfo.visibleItemsInfo.isNotEmpty()) {
-            layoutInfo.visibleItemsInfo[firstVisibleIndex]
+        val visibleItemsInfo = layoutInfo.visibleItemsInfo
+        if (visibleItemsInfo.isNotEmpty()) {
+            val firstItemLayoutInfo = visibleItemsInfo.first()
+            val lastItemLayoutInfo = visibleItemsInfo.last()
+            val firstVisiblePercent = state.visibilityPercent(firstItemLayoutInfo)
+            val lastVisiblePercent = state.visibilityPercent(lastItemLayoutInfo)
+            val isScrollInProgress = state.isScrollInProgress
+            LaunchedEffect(
+                visibleItemsInfo,
+                isScrollInProgress,
+            ) {
+                sensitiveLazyColumnState.value = SensitiveLazyColumnState(
+                    firstVisibleIndex = firstItemLayoutInfo.index,
+                    firstVisiblePercent = firstVisiblePercent,
+                    lastVisibleIndex = lastItemLayoutInfo.index,
+                    lastVisiblePercent = lastVisiblePercent,
+                    isScrollInProgress = isScrollInProgress,
+                )
+            }
         }
     }
     LazyColumn(

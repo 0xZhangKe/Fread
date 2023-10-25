@@ -5,13 +5,5 @@ data class SensitiveLazyColumnState(
     val firstVisiblePercent: Float,
     val lastVisibleIndex: Int,
     val lastVisiblePercent: Float,
-    val scrollState: ScrollState,
-    val velocity: Float,
-) {
-
-    enum class ScrollState {
-
-        DRAGGING,
-        FLINGING,
-    }
-}
+    val isScrollInProgress: Boolean,
+)

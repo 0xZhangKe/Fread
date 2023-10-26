@@ -6,4 +6,12 @@ data class SensitiveLazyColumnState(
     val lastVisibleIndex: Int,
     val lastVisiblePercent: Float,
     val isScrollInProgress: Boolean,
-)
+) {
+
+    fun getVisiblePercentOfIndex(index: Int): Float {
+        if (index == firstVisibleIndex) return firstVisiblePercent
+        if (index == lastVisibleIndex) return lastVisiblePercent
+        if (index in firstVisibleIndex..lastVisibleIndex) return 1F
+        return 0F
+    }
+}

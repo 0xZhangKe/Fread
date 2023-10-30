@@ -28,8 +28,6 @@ class InlineVideoState(
 ) {
     var playing by mutableStateOf(false)
         private set
-    var playWhenReady by mutableStateOf(true)
-        private set
     var playbackEnded by mutableStateOf(false)
         private set
     var playerVolume by mutableFloatStateOf(0F)
@@ -41,10 +39,6 @@ class InlineVideoState(
 
     fun onPlaybackStateChanged(playbackState: Int) {
         playbackEnded = playbackState == Player.STATE_ENDED
-    }
-
-    fun onPlayWhenReadyChanged(whenReady: Boolean) {
-        playWhenReady = whenReady
     }
 
     fun onVolumeChanged(volume: Float) {

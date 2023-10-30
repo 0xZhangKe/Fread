@@ -6,24 +6,17 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.LazyListItemInfo
-import androidx.compose.foundation.lazy.LazyListState
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
+import androidx.compose.runtime.MutableIntState
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
@@ -31,10 +24,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
-import com.zhangke.framework.composable.sensitive.SensitiveLazyColumn
-import com.zhangke.framework.composable.sensitive.SensitiveLazyColumnState
 import com.zhangke.utopia.status.ui.video.InlineVideo
-import kotlin.math.max
 
 class InlineVideoPlayerScreen : AndroidScreen() {
 
@@ -64,23 +54,26 @@ class InlineVideoPlayerScreen : AndroidScreen() {
 //                )
 //            }
 
+            val activeInlineVideoIndexState = remember {
+                mutableIntStateOf(-1)
+            }
+            Log.d("U_TEST", "active index:${activeInlineVideoIndexState.intValue}")
             InlineVideoLazyColumn(
                 modifier = Modifier.padding(paddingValues),
+                activeIndexState = activeInlineVideoIndexState,
             ) {
                 itemsIndexed(list) { index, item ->
-                    if (item == 5) {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 16.dp)
-                        ) {
-                            InlineVideo(
-                                aspectRatio = 2F,
-                                coverImage = "https://pbs.twimg.com/media/F8ZjbTDakAAOCfA?format=jpg&name=small",
-                                uri = "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12".toUri(),
-                            )
-                            LocalPlayableIndexRecorder.current?.recordePlayableIndex(index)
-                        }
+                    if (item == 5 || item == 3) {
+                        LocalPlayableIndexRecorder.current?.recordePlayableIndex(index)
+                        InlineVideoItem(
+                            url = if (item == 3) {
+                                "https://media.cmx.edu.kg/cache/media_attachments/files/111/318/410/597/746/411/original/b9b3e11728fc6bf9.mp4"
+                            } else {
+                                "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12"
+                            },
+                            index = index,
+                            activeInlineVideoIndexState = activeInlineVideoIndexState,
+                        )
                     } else {
                         Box(
                             modifier = Modifier
@@ -92,11 +85,45 @@ class InlineVideoPlayerScreen : AndroidScreen() {
                                 modifier = Modifier.fillMaxSize(),
                                 shadowElevation = 6.dp,
                             ) {
-                                Text(text = "-----------$item----------")
+                                Text(
+                                    modifier = Modifier.fillMaxSize(),
+                                    text = "-----------$item----------",
+                                    textAlign = TextAlign.Center,
+                                )
                             }
                         }
                     }
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun InlineVideoItem(
+        url: String,
+        index: Int,
+        activeInlineVideoIndexState: MutableIntState,
+    ) {
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 16.dp)
+        ) {
+            Surface(
+                modifier = Modifier.fillMaxWidth(),
+                shadowElevation = 6.dp,
+            ) {
+                InlineVideo(
+                    aspectRatio = 2F,
+                    playWhenReady = index == activeInlineVideoIndexState.intValue,
+                    coverImage = "https://pbs.twimg.com/media/F8ZjbTDakAAOCfA?format=jpg&name=small",
+                    uri = url.toUri(),
+                    onPlayManually = {
+                        if (activeInlineVideoIndexState.intValue != index) {
+                            activeInlineVideoIndexState.intValue = index
+                        }
+                    },
+                )
             }
         }
     }

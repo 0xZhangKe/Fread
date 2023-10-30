@@ -50,8 +50,10 @@ import kotlin.math.abs
 fun InlineVideo(
     aspectRatio: Float?,
     coverImage: String?,
+    playWhenReady: Boolean,
     style: InlineVideoPlayerStyle = InlineVideoPlayerDefault.defaultStyle,
     uri: Uri,
+    onPlayManually: () -> Unit,
 ) {
     InlineVideoShell(
         aspectRatio = aspectRatio ?: style.defaultMediaAspect,
@@ -60,6 +62,8 @@ fun InlineVideo(
         InlineVideoPlayer(
             uri = uri,
             coverImage = coverImage,
+            playWhenReady = playWhenReady,
+            onPlayManually = onPlayManually,
         )
     }
 }
@@ -89,9 +93,14 @@ private fun InlineVideoShell(
 private fun InlineVideoPlayer(
     uri: Uri,
     coverImage: String?,
+    playWhenReady: Boolean,
     state: InlineVideoState = rememberInlineVideoState(),
+    onPlayManually: () -> Unit,
 ) {
     val context = LocalContext.current
+    val currentPlayWhenReady by remember(playWhenReady) {
+        mutableStateOf(playWhenReady)
+    }
     val playerListener = remember(uri) {
         object : Player.Listener {
 
@@ -103,11 +112,6 @@ private fun InlineVideoPlayer(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 state.onPlaybackStateChanged(playbackState)
-            }
-
-            override fun onPlayWhenReadyChanged(playWhenReady: Boolean, reason: Int) {
-                super.onPlayWhenReadyChanged(playWhenReady, reason)
-                state.onPlayWhenReadyChanged(playWhenReady)
             }
 
             override fun onVolumeChanged(volume: Float) {
@@ -134,10 +138,13 @@ private fun InlineVideoPlayer(
                 prepare()
                 seekTo(state.playerPosition)
                 volume = state.playerVolume
-                playWhenReady = state.playWhenReady
+                this.playWhenReady = false
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
                 repeatMode = Player.REPEAT_MODE_OFF
             }
+    }
+    LaunchedEffect(currentPlayWhenReady){
+        exoPlayer.playWhenReady = currentPlayWhenReady
     }
     LaunchedEffect(uri) {
         while (true) {
@@ -162,7 +169,7 @@ private fun InlineVideoPlayer(
                 }
             },
         )
-        if (coverImage.isNullOrEmpty().not() && !state.playWhenReady) {
+        if (coverImage.isNullOrEmpty().not() && !currentPlayWhenReady) {
             AsyncImage(
                 modifier = Modifier
                     .fillMaxSize(),
@@ -172,7 +179,7 @@ private fun InlineVideoPlayer(
             )
         }
         InlineVideoControlPanel(
-            playWhenReady = state.playWhenReady,
+            playWhenReady = currentPlayWhenReady,
             playEnded = state.playbackEnded,
             mute = state.playerVolume <= 0F,
             onPlayClick = {
@@ -182,6 +189,7 @@ private fun InlineVideoPlayer(
                 }
                 if (!state.playing) {
                     exoPlayer.play()
+                    onPlayManually()
                 }
             },
             onMuteClick = { mute ->

@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -27,7 +28,7 @@ private const val UNSPECIFIED_INDEX = -1
 fun InlineVideoLazyColumn(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    activeIndexState: MutableState<Int>,
+    activeIndexState: MutableIntState,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
@@ -54,13 +55,13 @@ fun InlineVideoLazyColumn(
     }
     LaunchedEffect(localState) {
         val threshold = PLAYABLE_PERCENT_THRESHOLD
-        val currentActiveInlineIndex = activeIndexState.value
+        val currentActiveInlineIndex = activeIndexState.intValue
         if (currentActiveInlineIndex >= 0) {
             val currentActivePlayablePercent =
                 localState.getVisiblePercentOfIndex(currentActiveInlineIndex)
             if (currentActivePlayablePercent >= threshold) return@LaunchedEffect
         }
-        activeIndexState.value =
+        activeIndexState.intValue =
             playableIndexRecorder.getCenterIndex(localState, threshold) ?: UNSPECIFIED_INDEX
     }
     CompositionLocalProvider(

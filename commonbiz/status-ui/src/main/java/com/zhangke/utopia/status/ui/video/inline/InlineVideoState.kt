@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.ui.video
+package com.zhangke.utopia.status.ui.video.inline
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -34,8 +34,6 @@ class InlineVideoState(
         private set
     var playerPosition by mutableLongStateOf(initialPlayerProgress)
         private set
-
-    var renderedFirstFrame by mutableStateOf(false)
 
     fun onPlaybackStateChanged(playbackState: Int) {
         playbackEnded = playbackState == Player.STATE_ENDED

@@ -8,14 +8,20 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Slider
+import androidx.compose.material3.SliderColors
+import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -24,7 +30,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
-import com.zhangke.utopia.status.ui.video.InlineVideo
+import com.zhangke.utopia.status.ui.video.inline.InlineVideo
 
 class InlineVideoPlayerScreen : AndroidScreen() {
 
@@ -79,17 +85,31 @@ class InlineVideoPlayerScreen : AndroidScreen() {
                             modifier = Modifier
                                 .padding(horizontal = 16.dp, vertical = 16.dp)
                                 .fillMaxWidth()
-                                .height(80.dp)
+                                .height(80.dp),
                         ) {
                             Surface(
                                 modifier = Modifier.fillMaxSize(),
                                 shadowElevation = 6.dp,
+                                color = Color.Blue,
                             ) {
-                                Text(
-                                    modifier = Modifier.fillMaxSize(),
-                                    text = "-----------$item----------",
-                                    textAlign = TextAlign.Center,
+                                var progress by remember {
+                                    mutableFloatStateOf(0.3F)
+                                }
+                                Slider(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    value = progress,
+                                    onValueChange = { progress = it },
+                                    colors = SliderDefaults.colors(
+                                        thumbColor = Color.White,
+                                        activeTrackColor = Color.White,
+                                        activeTickColor = Color.White,
+                                    )
                                 )
+//                                Text(
+//                                    modifier = Modifier.fillMaxSize(),
+//                                    text = "-----------$item----------",
+//                                    textAlign = TextAlign.Center,
+//                                )
                             }
                         }
                     }

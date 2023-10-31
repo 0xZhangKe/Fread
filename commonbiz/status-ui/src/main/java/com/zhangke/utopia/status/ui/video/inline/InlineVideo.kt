@@ -1,8 +1,8 @@
-package com.zhangke.utopia.status.ui.video
+package com.zhangke.utopia.status.ui.video.inline
 
 import android.net.Uri
+import android.view.SurfaceView
 import android.widget.FrameLayout
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,7 +22,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -33,15 +32,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
-import androidx.media3.common.MediaItem
 import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
 import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
 import coil.compose.AsyncImage
+import com.zhangke.utopia.status.ui.utils.toMediaSource
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 
@@ -94,20 +89,15 @@ private fun InlineVideoPlayer(
     uri: Uri,
     coverImage: String?,
     playWhenReady: Boolean,
-    state: InlineVideoState = rememberInlineVideoState(),
     onPlayManually: () -> Unit,
 ) {
     val context = LocalContext.current
+    val state = rememberInlineVideoState()
     val currentPlayWhenReady by remember(playWhenReady) {
         mutableStateOf(playWhenReady)
     }
     val playerListener = remember(uri) {
         object : Player.Listener {
-
-            override fun onRenderedFirstFrame() {
-                super.onRenderedFirstFrame()
-                state.renderedFirstFrame = true
-            }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
@@ -130,11 +120,7 @@ private fun InlineVideoPlayer(
             .build()
             .apply {
                 addListener(playerListener)
-                val defaultDataSourceFactory = DefaultDataSource.Factory(context)
-                val dataSourceFactory = DefaultDataSource.Factory(context, defaultDataSourceFactory)
-                val source = ProgressiveMediaSource.Factory(dataSourceFactory)
-                    .createMediaSource(MediaItem.fromUri(uri))
-                setMediaSource(source)
+                setMediaSource(uri.toMediaSource())
                 prepare()
                 seekTo(state.playerPosition)
                 volume = state.playerVolume
@@ -157,11 +143,8 @@ private fun InlineVideoPlayer(
             modifier = Modifier
                 .fillMaxSize(),
             factory = {
-                PlayerView(it).apply {
-                    resizeMode = AspectRatioFrameLayout.RESIZE_MODE_ZOOM
-                    useController = false
-                    controllerAutoShow = false
-                    player = exoPlayer
+                SurfaceView(it).apply {
+                    exoPlayer.setVideoSurfaceView(this)
                     layoutParams = FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT,

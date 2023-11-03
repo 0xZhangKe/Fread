@@ -23,6 +23,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -83,6 +84,20 @@ private fun Project.configureKotlin() {
                 "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
                 "-opt-in=kotlinx.coroutines.FlowPreview",
             )
+        }
+    }
+    extensions.configure<KotlinProjectExtension>("kotlin") {
+        sourceSets.findByName("main")?.apply {
+            kotlin.srcDir("build/generated/ksp/main/kotlin")
+            resources.srcDir("build/generated/ksp/main/resources")
+        }
+        sourceSets.findByName("debug")?.apply {
+            kotlin.srcDir("build/generated/ksp/debug/kotlin")
+            resources.srcDir("build/generated/ksp/debug/resources")
+        }
+        sourceSets.findByName("release")?.apply {
+            kotlin.srcDir("build/generated/ksp/release/kotlin")
+            resources.srcDir("build/generated/ksp/release/resources")
         }
     }
 }

@@ -72,12 +72,20 @@ android {
     }
 }
 
-kotlin {
-    sourceSets.main {
-        kotlin.srcDir("build/generated/ksp/main/kotlin")
-        resources.srcDir("build/generated/ksp/main/resources")
-    }
-}
+//kotlin {
+//    sourceSets.main {
+//        kotlin.srcDir("build/generated/ksp/main/kotlin")
+//        resources.srcDir("build/generated/ksp/main/resources")
+//    }
+//    sourceSets.debug{
+//        kotlin.srcDir("build/generated/ksp/debug/kotlin")
+//        resources.srcDir("build/generated/ksp/debug/resources")
+//    }
+//    sourceSets.release{
+//        kotlin.srcDir("build/generated/ksp/release/kotlin")
+//        resources.srcDir("build/generated/ksp/release/resources")
+//    }
+//}
 
 dependencies {
     implementation(project(path = ":commonbiz"))

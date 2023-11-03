@@ -15,13 +15,6 @@ android {
     }
 }
 
-kotlin {
-    sourceSets.main {
-        kotlin.srcDir("build/generated/ksp/main/kotlin")
-        kotlin.srcDir("build/generated/ksp/release/kotlin")
-    }
-}
-
 dependencies {
 
     testImplementation("junit:junit:4.13.2")

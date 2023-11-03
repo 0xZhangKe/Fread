@@ -18,6 +18,7 @@ object VideoDurationFormatter {
     private fun formatVideoDuration(durationMs: Long): String {
         val builder = StringBuilder()
         val duration = durationMs.milliseconds
+        if (duration.isInfinite()) return ""
         val hours = duration.inWholeHours.hours
         if (hours > 0.hours) {
             builder.append(hours.toFormatString(DurationUnit.HOURS))

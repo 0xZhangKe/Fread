@@ -99,7 +99,13 @@ fun ImageViewer(
                     coroutineScope.launch {
                         state.dragStop(velocity)
                     }
-                }
+                },
+//                onZoomChange = {zoomChange ->
+//                    if (latestZoomChang != zoomChange) {
+//                        state.zoom(zoomChange)
+//                    }
+//                    latestZoomChang = zoomChange
+//                }
             )
             .transformableCleverly(transformableState),
         content = {
@@ -131,10 +137,14 @@ private fun Modifier.draggableInfinity(
     enabled: Boolean,
     onDrag: (dragAmount: Offset) -> Unit,
     onDragStopped: (velocity: Velocity) -> Unit,
+//    onZoomChange: (zoom: Float) -> Unit,
 ): Modifier {
     val velocityTracker = VelocityTracker()
     return pointerInput(enabled) {
         if (enabled) {
+//            detectTransformGestures { _, _, zoom, _ ->
+//                onZoomChange(zoom)
+//            }
             detectDragGestures(
                 onDrag = { change, dragAmount ->
                     velocityTracker.addPointerInputChange(change)

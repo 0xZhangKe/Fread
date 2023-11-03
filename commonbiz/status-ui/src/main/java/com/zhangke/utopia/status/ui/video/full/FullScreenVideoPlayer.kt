@@ -41,6 +41,7 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.utopia.status.ui.utils.toMediaSource
+import com.zhangke.utopia.status.ui.video.VideoDurationFormatter
 import kotlinx.coroutines.delay
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -73,9 +74,6 @@ fun FullScreenVideoPlayer(
             }
         }
 
-        var volume by rememberSaveable {
-            mutableFloatStateOf(0F)
-        }
         var playerPosition by rememberSaveable {
             mutableLongStateOf(0L)
         }
@@ -104,10 +102,14 @@ fun FullScreenVideoPlayer(
                     setMediaSource(uri.toMediaSource())
                     prepare()
                     seekTo(playerPosition)
-                    this.playWhenReady = false
+                    this.playWhenReady = true
+                    volume = 1F
                     videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
                     repeatMode = Player.REPEAT_MODE_OFF
                 }
+        }
+        LaunchedEffect(playWhenReady) {
+            exoPlayer.playWhenReady = playWhenReady
         }
         Box(modifier = Modifier.fillMaxSize()) {
             AndroidView(
@@ -123,9 +125,21 @@ fun FullScreenVideoPlayer(
                     }
                 },
             )
-        }
-        LaunchedEffect(volume) {
-            exoPlayer.volume = volume
+            FullScreenVideoPlayerPanel(
+                modifier = Modifier.align(Alignment.BottomCenter),
+                playWhenReady = playWhenReady,
+                onPlayClick = {
+                    playWhenReady = true
+                },
+                onPauseClick = {
+                    playWhenReady = false
+                },
+                playerPosition = playerPosition,
+                duration = exoPlayer.duration,
+                onPositionChangeRequest = {
+                    playerPosition = it
+                },
+            )
         }
         LaunchedEffect(playWhenReady) {
             exoPlayer.playWhenReady = playWhenReady
@@ -143,17 +157,15 @@ fun FullScreenVideoPlayer(
 private fun FullScreenVideoPlayerPanel(
     modifier: Modifier = Modifier,
     playWhenReady: Boolean,
-    playEnded: Boolean,
-    mute: Boolean,
-    progress: Float,
+    playerPosition: Long,
     duration: Long,
     onPauseClick: () -> Unit,
     onPlayClick: () -> Unit,
-    onMuteClick: (mute: Boolean) -> Unit,
-    onProgressChangeRequest: (progress: Float) -> Unit,
+    onPositionChangeRequest: (position: Long) -> Unit,
 ) {
+    val progress = playerPosition / duration.toFloat()
     ConstraintLayout(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(40.dp),
     ) {
@@ -176,7 +188,9 @@ private fun FullScreenVideoPlayerPanel(
                 end.linkTo(parent.end, 12.dp)
             },
             progress = progress,
-            onProgressChangeRequest = onProgressChangeRequest,
+            onProgressChange = { progress ->
+                onPositionChangeRequest((duration * progress).toLong())
+            },
         )
         Text(
             modifier = Modifier.constrainAs(timeRef) {
@@ -185,14 +199,10 @@ private fun FullScreenVideoPlayerPanel(
                 end.linkTo(progressRef.end)
             },
             fontSize = 12.sp,
-            text = buildProgressTimeDesc(progress, duration),
+            text = VideoDurationFormatter.formatVideoProgressDesc(playerPosition, duration),
             color = Color.White,
         )
     }
-}
-
-private fun buildProgressTimeDesc(progress: Float, duration: Long): String {
-    return ""
 }
 
 @Composable
@@ -228,12 +238,20 @@ private fun PlayPauseIconButton(
 private fun PlayerProgress(
     modifier: Modifier,
     progress: Float,
-    onProgressChangeRequest: (progress: Float) -> Unit,
+    onProgressChange: (progress: Float) -> Unit,
 ) {
+    var progressInChanging by remember {
+        mutableFloatStateOf(progress)
+    }
     Slider(
         modifier = modifier,
         value = progress,
-        onValueChange = onProgressChangeRequest,
+        onValueChange = {
+            progressInChanging = it
+        },
+        onValueChangeFinished = {
+            onProgressChange(progressInChanging)
+        },
         colors = SliderDefaults.colors(
             thumbColor = Color.White,
             activeTrackColor = Color.White,

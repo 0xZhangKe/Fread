@@ -1,8 +1,8 @@
 [versions]
-kotlin = "1.8.21"
+kotlin = "1.9.10"
 kotlin-coroutine = "1.7.1"
 
-androidxComposeCompiler = "1.4.7"
+androidxComposeCompiler = "1.5.3"
 
 androidx-core = "1.7.0"
 androidx-fragment = "1.4.1"
@@ -11,7 +11,7 @@ androidx-annotation = "1.3.0"
 androidx-activity = "1.4.0"
 androidx-preference = "1.2.0"
 androidx-collection = "1.2.0"
-androidx-room = "2.4.3"
+androidx-room = "2.6.0"
 androidx-datastore-preferences = "1.0.0"
 androidx-constraintlayout = "2.1.3"
 androidx-coordinatorlayout = "1.2.0"
@@ -20,7 +20,7 @@ androidx-browser = "1.4.0"
 androidx-multidex = "2.0.1"
 androidx-nav = "2.5.3"
 androidx-hilt-nav-compose = "1.0.0"
-androidx-compose-bom = "2023.08.00"
+androidx-compose-bom = "2023.10.01"
 androidx-constraintlayout-compose = "1.1.0-alpha04"
 androidx-lifecycle = "2.4.1"
 androidx-paging = "3.1.1"
@@ -30,9 +30,9 @@ androidx-media3 = "1.0.0-rc01"
 
 accompanist-placeholder-material = "0.31.5-beta"
 
-hilt = "2.46.1"
+hilt = "2.47"
 
-okhttp3 = "4.9.3"
+okhttp3 = "4.11.0"
 
 retrofit2 = "2.9.0"
 
@@ -44,7 +44,7 @@ joda-time = "2.12.1"
 
 auto_service = "1.0.1"
 
-ksp = "1.8.21-1.0.11"
+ksp = "1.9.10-1.0.13"
 
 filt = "1.0.4"
 

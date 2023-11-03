@@ -134,7 +134,7 @@ private fun InlineVideoPlayer(
     }
     LaunchedEffect(uri) {
         while (true) {
-            delay(500)
+            delay(100)
             state.updatePosition(exoPlayer.currentPosition)
         }
     }

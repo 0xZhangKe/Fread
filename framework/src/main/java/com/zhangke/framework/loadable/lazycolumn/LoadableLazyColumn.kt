@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -94,7 +95,7 @@ fun LoadableLazyColumn(
     }
     // 上次滑动结束后最后一个可见的index
     var lastTimeLastVisibleIndex by remember {
-        mutableStateOf(listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0)
+        mutableIntStateOf(listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0)
     }
     // 当前是否正在滑动
     val currentIsScrollInProgress = lazyListState.isScrollInProgress

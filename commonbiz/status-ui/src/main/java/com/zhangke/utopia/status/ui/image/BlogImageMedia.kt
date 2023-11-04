@@ -194,6 +194,7 @@ internal fun BlogMediaMeta?.decideAspect(defaultMediaAspect: Float): Float {
     val metaAspect = when (this) {
         is BlogMediaMeta.ImageMeta -> this.original?.aspect
         is BlogMediaMeta.GifvMeta -> this.aspect ?: this.original?.aspect
+        is BlogMediaMeta.VideoMeta -> this.aspect ?: this.original?.aspect
         else -> null
     }
     return metaAspect ?: defaultMediaAspect

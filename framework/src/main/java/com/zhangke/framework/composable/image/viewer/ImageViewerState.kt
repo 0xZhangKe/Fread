@@ -108,7 +108,14 @@ class ImageViewerState(
     }
 
     private suspend fun onLayoutSizeChanged() {
-        animateToStandard()
+        if (initialSize.isUnspecified || initialOffset.isUnspecified) {
+            _currentWidthPixel.floatValue = standardWidth
+            _currentHeightPixel.floatValue = standardHeight
+            _currentOffsetXPixel.floatValue = 0F
+            _currentOffsetYPixel.floatValue = layoutSize.height / 2F - standardHeight / 2F
+        } else {
+            animateToStandard()
+        }
     }
 
     suspend fun animateToStandard() {
@@ -208,7 +215,7 @@ class ImageViewerState(
 
     internal suspend fun startDismiss() {
         onStartDismiss?.invoke()
-        if (initialSize.isEmpty() && initialOffset.isUnspecified) {
+        if ((initialSize.isUnspecified || initialSize.isEmpty()) && initialOffset.isUnspecified) {
             onDismissRequest?.invoke()
             return
         }
@@ -288,6 +295,16 @@ class ImageViewerState(
         if (newWidth == standardWidth) {
             _currentOffsetXPixel.floatValue = 0F
         }
+    }
+
+    internal fun inImageBound(position: Offset): Boolean {
+        val yOffset = _currentOffsetYPixel.floatValue
+        val xOffset = _currentOffsetXPixel.floatValue
+        val height = _currentHeightPixel.floatValue
+        val width = _currentWidthPixel.floatValue
+        val yRange = yOffset..yOffset + height
+        val xRange = xOffset..xOffset + width
+        return position.x in xRange && position.y in yRange
     }
 
     private fun Float.coerceInWidth(): Float {

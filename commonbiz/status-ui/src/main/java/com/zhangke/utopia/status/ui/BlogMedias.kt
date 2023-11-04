@@ -27,6 +27,7 @@ import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
 import com.zhangke.utopia.status.ui.image.BlogImageMedias
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
+import com.zhangke.utopia.status.ui.video.BlogVideos
 import com.zhangke.utopia.statusui.R
 
 @Composable
@@ -50,10 +51,8 @@ fun BlogMedias(
             }
     ) {
         if (containerWidth != null) {
-            val imageMediaList =
-                mediaList.filter { it.type == BlogMediaType.IMAGE || it.type == BlogMediaType.GIFV }
-            BlogImageMedias(
-                mediaList = imageMediaList,
+            BlogMediaContent(
+                mediaList = mediaList,
                 hideContent = hideContent,
                 containerWidth = containerWidth!!,
                 onMediaClick = onMediaClick,
@@ -91,5 +90,30 @@ fun BlogMedias(
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun BlogMediaContent(
+    mediaList: List<BlogMedia>,
+    hideContent: Boolean,
+    containerWidth: Dp,
+    onMediaClick: OnBlogMediaClick,
+) {
+    if (mediaList.firstOrNull()?.type == BlogMediaType.VIDEO) {
+        BlogVideos(
+            mediaList = mediaList,
+            hideContent = hideContent,
+            onMediaClick = onMediaClick,
+        )
+    } else {
+        val imageMediaList =
+            mediaList.filter { it.type == BlogMediaType.IMAGE || it.type == BlogMediaType.GIFV }
+        BlogImageMedias(
+            mediaList = imageMediaList,
+            hideContent = hideContent,
+            containerWidth = containerWidth,
+            onMediaClick = onMediaClick,
+        )
     }
 }

@@ -67,8 +67,8 @@ fun Modifier.transformableCleverly(
 }
 
 private sealed class TransformEvent {
-    object TransformStarted : TransformEvent()
-    object TransformStopped : TransformEvent()
+    data object TransformStarted : TransformEvent()
+    data object TransformStopped : TransformEvent()
     class TransformDelta(
         val zoomChange: Float,
         val panChange: Offset,

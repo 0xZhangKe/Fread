@@ -3,7 +3,7 @@ package com.zhangke.framework.composable.image.viewer
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
-import androidx.compose.foundation.gestures.detectTransformGestures
+import androidx.compose.foundation.gestures.detectVerticalDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -87,11 +87,18 @@ fun ImageViewer(
                                 state.animateToBig()
                             }
                         }
-                    }
+                    },
+                    onTap = {
+                        if (!state.inImageBound(it)) {
+                            coroutineScope.launch {
+                                state.startDismiss()
+                            }
+                        }
+                    },
                 )
             }
             .draggableInfinity(
-                enabled = true,
+                enabled = state.exceed,
                 onDrag = { offset ->
                     state.drag(offset)
                 },
@@ -100,12 +107,6 @@ fun ImageViewer(
                         state.dragStop(velocity)
                     }
                 },
-//                onZoomChange = {zoomChange ->
-//                    if (latestZoomChang != zoomChange) {
-//                        state.zoom(zoomChange)
-//                    }
-//                    latestZoomChang = zoomChange
-//                }
             )
             .transformableCleverly(transformableState),
         content = {
@@ -137,18 +138,29 @@ private fun Modifier.draggableInfinity(
     enabled: Boolean,
     onDrag: (dragAmount: Offset) -> Unit,
     onDragStopped: (velocity: Velocity) -> Unit,
-//    onZoomChange: (zoom: Float) -> Unit,
 ): Modifier {
     val velocityTracker = VelocityTracker()
     return pointerInput(enabled) {
         if (enabled) {
-//            detectTransformGestures { _, _, zoom, _ ->
-//                onZoomChange(zoom)
-//            }
             detectDragGestures(
                 onDrag = { change, dragAmount ->
                     velocityTracker.addPointerInputChange(change)
                     onDrag(dragAmount)
+                },
+                onDragEnd = {
+                    val velocity = velocityTracker.calculateVelocity()
+                    onDragStopped(velocity)
+                },
+                onDragCancel = {
+                    val velocity = velocityTracker.calculateVelocity()
+                    onDragStopped(velocity)
+                },
+            )
+        } else {
+            detectVerticalDragGestures(
+                onVerticalDrag = { change, dragAmount ->
+                    velocityTracker.addPointerInputChange(change)
+                    onDrag(Offset(x = 0F, y = dragAmount))
                 },
                 onDragEnd = {
                     val velocity = velocityTracker.calculateVelocity()

@@ -138,6 +138,9 @@ class InlineVideoPlayerScreen : AndroidScreen() {
                     playWhenReady = index == activeInlineVideoIndexState.intValue,
                     coverImage = "https://pbs.twimg.com/media/F8ZjbTDakAAOCfA?format=jpg&name=small",
                     uri = url.toUri(),
+                    onClick = {
+
+                    },
                     onPlayManually = {
                         if (activeInlineVideoIndexState.intValue != index) {
                             activeInlineVideoIndexState.intValue = index

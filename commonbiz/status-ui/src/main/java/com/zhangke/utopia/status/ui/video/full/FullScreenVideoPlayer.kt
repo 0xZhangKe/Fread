@@ -3,6 +3,10 @@ package com.zhangke.utopia.status.ui.video.full
 import android.net.Uri
 import android.view.SurfaceView
 import android.widget.FrameLayout
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +48,7 @@ import androidx.media3.common.C
 import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.zhangke.framework.composable.ToolbarTokens
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.utopia.status.ui.utils.toMediaSource
 import com.zhangke.utopia.status.ui.video.VideoDurationFormatter
 import kotlinx.coroutines.delay
@@ -96,9 +101,15 @@ fun FullScreenVideoPlayer(
                 playerPosition = exoPlayer.currentPosition
             }
         }
+        var panelVisible by remember {
+            mutableStateOf(true)
+        }
         AndroidView(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .noRippleClick {
+                    panelVisible = !panelVisible
+                },
             factory = {
                 SurfaceView(it).apply {
                     layoutParams = FrameLayout.LayoutParams(
@@ -109,22 +120,31 @@ fun FullScreenVideoPlayer(
                 }
             },
         )
-        FullScreenVideoPlayerPanel(
-            modifier = Modifier.align(Alignment.BottomCenter),
-            playWhenReady = playWhenReady,
-            onPlayClick = {
-                playWhenReady = true
-            },
-            onPauseClick = {
-                playWhenReady = false
-            },
-            playerPosition = playerPosition,
-            duration = exoPlayer.duration,
-            onPositionChangeRequest = {
-                exoPlayer.seekTo(it)
-            },
-        )
-        FullScreenPlayerToolBar(onBackClick)
+        AnimatedVisibility(
+            modifier = Modifier.fillMaxSize(),
+            visible = panelVisible,
+            enter = fadeIn(),
+            exit = fadeOut(),
+        ) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                FullScreenVideoPlayerPanel(
+                    modifier = Modifier.align(Alignment.BottomCenter),
+                    playWhenReady = playWhenReady,
+                    onPlayClick = {
+                        playWhenReady = true
+                    },
+                    onPauseClick = {
+                        playWhenReady = false
+                    },
+                    playerPosition = playerPosition,
+                    duration = exoPlayer.duration,
+                    onPositionChangeRequest = {
+                        exoPlayer.seekTo(it)
+                    },
+                )
+                FullScreenPlayerToolBar(onBackClick)
+            }
+        }
     }
 }
 

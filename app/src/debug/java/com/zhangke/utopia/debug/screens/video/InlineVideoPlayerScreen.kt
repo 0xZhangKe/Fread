@@ -1,6 +1,5 @@
 package com.zhangke.utopia.debug.screens.video
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,20 +8,15 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Slider
-import androidx.compose.material3.SliderColors
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableIntState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
@@ -60,17 +54,11 @@ class InlineVideoPlayerScreen : AndroidScreen() {
 //                )
 //            }
 
-            val activeInlineVideoIndexState = remember {
-                mutableIntStateOf(-1)
-            }
-            Log.d("U_TEST", "active index:${activeInlineVideoIndexState.intValue}")
             InlineVideoLazyColumn(
                 modifier = Modifier.padding(paddingValues),
-                activeIndexState = activeInlineVideoIndexState,
             ) {
                 itemsIndexed(list) { index, item ->
                     if (item == 5 || item == 3) {
-                        LocalPlayableIndexRecorder.current?.recordePlayableIndex(index)
                         InlineVideoItem(
                             url = if (item == 3) {
                                 "https://media.cmx.edu.kg/cache/media_attachments/files/111/318/410/597/746/411/original/b9b3e11728fc6bf9.mp4"
@@ -78,7 +66,6 @@ class InlineVideoPlayerScreen : AndroidScreen() {
                                 "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12"
                             },
                             index = index,
-                            activeInlineVideoIndexState = activeInlineVideoIndexState,
                         )
                     } else {
                         Box(
@@ -105,11 +92,6 @@ class InlineVideoPlayerScreen : AndroidScreen() {
                                         activeTickColor = Color.White,
                                     )
                                 )
-//                                Text(
-//                                    modifier = Modifier.fillMaxSize(),
-//                                    text = "-----------$item----------",
-//                                    textAlign = TextAlign.Center,
-//                                )
                             }
                         }
                     }
@@ -122,7 +104,6 @@ class InlineVideoPlayerScreen : AndroidScreen() {
     private fun InlineVideoItem(
         url: String,
         index: Int,
-        activeInlineVideoIndexState: MutableIntState,
     ) {
         Box(
             modifier = Modifier
@@ -135,16 +116,11 @@ class InlineVideoPlayerScreen : AndroidScreen() {
             ) {
                 InlineVideo(
                     aspectRatio = 2F,
-                    playWhenReady = index == activeInlineVideoIndexState.intValue,
+                    indexInList = index,
                     coverImage = "https://pbs.twimg.com/media/F8ZjbTDakAAOCfA?format=jpg&name=small",
                     uri = url.toUri(),
                     onClick = {
 
-                    },
-                    onPlayManually = {
-                        if (activeInlineVideoIndexState.intValue != index) {
-                            activeInlineVideoIndexState.intValue = index
-                        }
                     },
                 )
             }

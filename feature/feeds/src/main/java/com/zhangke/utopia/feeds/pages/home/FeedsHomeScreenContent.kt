@@ -60,7 +60,6 @@ internal fun FeedsHomeScreenContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onServerItemClick: (StatusProviderServer) -> Unit,
-    onBlogMediaClick: OnBlogMediaClick,
 ) {
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
     val snackbarHostState = rememberSnackbarHostState()
@@ -128,7 +127,6 @@ internal fun FeedsHomeScreenContent(
                             onShowSnackMessage = {
                                 snackbarHostState.showSnackbar(it)
                             },
-                            onMediaClick = onBlogMediaClick,
                         )
                     }
                 } else {

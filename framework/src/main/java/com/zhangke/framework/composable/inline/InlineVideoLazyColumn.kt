@@ -10,8 +10,6 @@ import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableIntState
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -21,14 +19,10 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.sensitive.SensitiveLazyColumn
 import com.zhangke.framework.composable.sensitive.SensitiveLazyColumnState
 
-private const val PLAYABLE_PERCENT_THRESHOLD = 0.3F
-private const val UNSPECIFIED_INDEX = -1
-
 @Composable
 fun InlineVideoLazyColumn(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    activeIndexState: MutableIntState,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
@@ -49,20 +43,12 @@ fun InlineVideoLazyColumn(
             )
         )
     }
-    val localState by sensitiveState
+    val localSensitiveState by sensitiveState
     val playableIndexRecorder = remember {
         PlayableIndexRecorder()
     }
-    LaunchedEffect(localState) {
-        val threshold = PLAYABLE_PERCENT_THRESHOLD
-        val currentActiveInlineIndex = activeIndexState.intValue
-        if (currentActiveInlineIndex >= 0) {
-            val currentActivePlayablePercent =
-                localState.getVisiblePercentOfIndex(currentActiveInlineIndex)
-            if (currentActivePlayablePercent >= threshold) return@LaunchedEffect
-        }
-        activeIndexState.intValue =
-            playableIndexRecorder.getCenterIndex(localState, threshold) ?: UNSPECIFIED_INDEX
+    LaunchedEffect(localSensitiveState) {
+        playableIndexRecorder.updateLayoutState(localSensitiveState)
     }
     CompositionLocalProvider(
         LocalPlayableIndexRecorder provides playableIndexRecorder

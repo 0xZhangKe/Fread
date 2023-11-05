@@ -55,6 +55,7 @@ class SixfoldImageTestScreen : AndroidScreen() {
                                 .fillMaxWidth(),
                             mediaList = item,
                             sensitive = false,
+                            indexInList = 1,
                             onMediaClick = { },
                         )
                     }

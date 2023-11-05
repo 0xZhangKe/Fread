@@ -10,10 +10,16 @@ import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 fun StatusNode(
     modifier: Modifier = Modifier,
     status: Status,
+    indexInList: Int,
     onMediaClick: OnBlogMediaClick,
 ) {
     val blog = when (status) {
         is Status.NewBlog -> status.blog
     }
-    BlogContentComposable(modifier, blog = blog, onMediaClick = onMediaClick)
+    BlogContentComposable(
+        modifier = modifier,
+        blog = blog,
+        indexInList = indexInList,
+        onMediaClick = onMediaClick,
+    )
 }

@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zhangke.utopia.activitypubapp"
+    namespace = "com.zhangke.utopia.activitypub.app"
 
     // Allow references to generated code
     kapt {

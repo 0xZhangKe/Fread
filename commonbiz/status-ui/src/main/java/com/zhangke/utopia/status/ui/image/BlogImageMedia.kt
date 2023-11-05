@@ -28,12 +28,21 @@ import com.zhangke.utopia.status.blog.BlogMediaMeta
 
 typealias OnBlogMediaClick = (BlogMediaClickEvent) -> Unit
 
-data class BlogMediaClickEvent(
-    val index: Int,
-    val mediaList: List<BlogMedia>,
-    val coordinatesList: List<LayoutCoordinates?>,
-    val onDismiss: () -> Unit,
-)
+sealed interface BlogMediaClickEvent {
+
+    data class BlogImageClickEvent(
+
+        val index: Int,
+        val mediaList: List<BlogMedia>,
+        val coordinatesList: List<LayoutCoordinates?>,
+        val onDismiss: () -> Unit,
+    ) : BlogMediaClickEvent
+
+    data class BlogVideoClickEvent(
+        val index: Int,
+        val media: BlogMedia,
+    ): BlogMediaClickEvent
+}
 
 /**
  * Image and Gifv
@@ -65,7 +74,7 @@ fun BlogImageMedias(
                     }
                     .clickable(enabled = !hideContent) {
                         onMediaClick(
-                            BlogMediaClickEvent(
+                            BlogMediaClickEvent.BlogImageClickEvent(
                                 index = index,
                                 mediaList = mediaList,
                                 coordinatesList = mediaPosition.toList(),

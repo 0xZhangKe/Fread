@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -30,12 +29,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-fun LoadableLazyColumn(
+fun LoadableInlineVideoLazyColumn(
     modifier: Modifier = Modifier,
-    state: LoadableLazyColumnState,
+    state: LoadableLazyInlineVideoColumnState,
     refreshing: Boolean,
     loading: Boolean,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -55,7 +55,7 @@ fun LoadableLazyColumn(
         modifier = modifier
             .pullRefresh(state.pullRefreshState)
     ) {
-        LazyColumn(
+        InlineVideoLazyColumn(
             contentPadding = contentPadding,
             state = state.lazyListState,
             reverseLayout = reverseLayout,
@@ -119,7 +119,7 @@ fun LoadableLazyColumn(
 
 @Composable
 @ExperimentalMaterialApi
-fun rememberLoadableLazyColumnState(
+fun rememberLoadableInlineVideoLazyColumnState(
     refreshing: Boolean,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
@@ -128,7 +128,7 @@ fun rememberLoadableLazyColumnState(
     loadMoreRemainCountThreshold: Int = 5,
     initialFirstVisibleItemIndex: Int = 0,
     initialFirstVisibleItemScrollOffset: Int = 0
-): LoadableLazyColumnState {
+): LoadableLazyInlineVideoColumnState {
     val pullRefreshState = rememberPullRefreshState(
         refreshing = refreshing,
         onRefresh = onRefresh,
@@ -144,7 +144,7 @@ fun rememberLoadableLazyColumnState(
     val loadMoreState = rememberLoadMoreState(loadMoreRemainCountThreshold, onLoadMore)
 
     return remember(pullRefreshState, lazyListState, loadMoreState) {
-        LoadableLazyColumnState(
+        LoadableLazyInlineVideoColumnState(
             lazyListState = lazyListState,
             pullRefreshState = pullRefreshState,
             loadMoreState = loadMoreState,
@@ -168,7 +168,7 @@ data class LoadMoreState(
 )
 
 @OptIn(ExperimentalMaterialApi::class)
-data class LoadableLazyColumnState(
+data class LoadableLazyInlineVideoColumnState(
     val lazyListState: LazyListState,
     val pullRefreshState: PullRefreshState,
     val loadMoreState: LoadMoreState,

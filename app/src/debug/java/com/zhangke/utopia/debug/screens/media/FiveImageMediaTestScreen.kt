@@ -53,6 +53,7 @@ class FiveImageMediaTestScreen : AndroidScreen() {
                             modifier = Modifier
                                 .fillMaxWidth(),
                             mediaList = item,
+                            indexInList = 1,
                             sensitive = false,
                             onMediaClick = { },
                         )

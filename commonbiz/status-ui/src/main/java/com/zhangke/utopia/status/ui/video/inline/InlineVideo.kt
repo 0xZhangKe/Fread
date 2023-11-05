@@ -36,6 +36,7 @@ import androidx.media3.common.Player
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.utopia.status.ui.utils.toMediaSource
 import kotlinx.coroutines.delay
@@ -46,12 +47,14 @@ import kotlin.math.abs
 fun InlineVideo(
     aspectRatio: Float?,
     coverImage: String?,
-    playWhenReady: Boolean,
+    indexInList: Int,
     style: InlineVideoPlayerStyle = InlineVideoPlayerDefault.defaultStyle,
     uri: Uri,
     onClick: () -> Unit,
-    onPlayManually: () -> Unit,
 ) {
+    val playableIndexRecorder = LocalPlayableIndexRecorder.current!!
+    playableIndexRecorder.recordePlayableIndex(indexInList)
+    val playWhenReady = playableIndexRecorder.currentActiveIndex == indexInList
     InlineVideoShell(
         aspectRatio = aspectRatio ?: style.defaultMediaAspect,
         style = style,
@@ -61,7 +64,9 @@ fun InlineVideo(
             coverImage = coverImage,
             playWhenReady = playWhenReady,
             onClick = onClick,
-            onPlayManually = onPlayManually,
+            onPlayManually = {
+                playableIndexRecorder.changeActiveIndex(indexInList)
+            },
         )
     }
 }
@@ -142,9 +147,11 @@ private fun InlineVideoPlayer(
             state.updatePosition(exoPlayer.currentPosition)
         }
     }
-    Box(modifier = Modifier
-        .fillMaxSize()
-        .noRippleClick(onClick = onClick)) {
+    Box(
+        modifier = Modifier
+            .fillMaxSize()
+            .noRippleClick(onClick = onClick)
+    ) {
         AndroidView(
             modifier = Modifier
                 .fillMaxSize(),

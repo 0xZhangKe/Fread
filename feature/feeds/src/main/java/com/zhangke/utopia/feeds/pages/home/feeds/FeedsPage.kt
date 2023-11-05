@@ -4,21 +4,21 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.textString
-import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
-import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
-import com.zhangke.utopia.status.blog.BlogMedia
+import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
+import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.status.Status
-import com.zhangke.utopia.status.ui.StatusNode
-import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -27,18 +27,18 @@ internal fun FeedsPage(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onShowSnackMessage: suspend (String) -> Unit,
-    onMediaClick: OnBlogMediaClick,
 ) {
-    val feedsList = rememberSaveable(uiState.feedsFlow) {
-        mutableListOf<Status>()
-    }
-    LaunchedEffect(uiState.feedsFlow) {
-        uiState.feedsFlow.collect {
-            feedsList.clear()
-            feedsList.addAll(it)
-        }
-    }
-    val state = rememberLoadableLazyColumnState(
+//    val feedsList = rememberSaveable(uiState.feedsFlow) {
+//        mutableListOf<Status>()
+//    }
+    val feedsList by uiState.feedsFlow.collectAsState(initial = emptyList())
+//    LaunchedEffect(uiState.feedsFlow) {
+//        uiState.feedsFlow.collect {
+//            feedsList.clear()
+//            feedsList.addAll(it)
+//        }
+//    }
+    val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,
         onLoadMore = onLoadMore,
@@ -49,7 +49,7 @@ internal fun FeedsPage(
             onShowSnackMessage(snackMessage!!)
         }
     }
-    LoadableLazyColumn(
+    LoadableInlineVideoLazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = state,
         refreshing = uiState.refreshing,
@@ -68,11 +68,11 @@ internal fun FeedsPage(
                 }
             }
         } else {
-            items(feedsList) { item ->
-                StatusNode(
+            itemsIndexed(feedsList) { index, item ->
+                FeedsStatusNode(
                     modifier = Modifier.padding(bottom = 15.dp),
                     status = item,
-                    onMediaClick = onMediaClick,
+                    indexInList = index,
                 )
             }
         }

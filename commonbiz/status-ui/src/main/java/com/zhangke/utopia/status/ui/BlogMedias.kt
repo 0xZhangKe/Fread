@@ -34,6 +34,7 @@ import com.zhangke.utopia.statusui.R
 fun BlogMedias(
     modifier: Modifier,
     mediaList: List<BlogMedia>,
+    indexInList: Int,
     sensitive: Boolean,
     onMediaClick: OnBlogMediaClick,
 ) {
@@ -54,6 +55,7 @@ fun BlogMedias(
             BlogMediaContent(
                 mediaList = mediaList,
                 hideContent = hideContent,
+                indexInList = indexInList,
                 containerWidth = containerWidth!!,
                 onMediaClick = onMediaClick,
             )
@@ -97,12 +99,14 @@ fun BlogMedias(
 private fun BlogMediaContent(
     mediaList: List<BlogMedia>,
     hideContent: Boolean,
+    indexInList: Int,
     containerWidth: Dp,
     onMediaClick: OnBlogMediaClick,
 ) {
     if (mediaList.firstOrNull()?.type == BlogMediaType.VIDEO) {
         BlogVideos(
             mediaList = mediaList,
+            indexInList = indexInList,
             hideContent = hideContent,
             onMediaClick = onMediaClick,
         )

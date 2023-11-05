@@ -46,6 +46,7 @@ import kotlin.concurrent.getOrSet
 fun BlogContentComposable(
     modifier: Modifier = Modifier,
     blog: Blog,
+    indexInList: Int,
     onMediaClick: OnBlogMediaClick,
 ) {
     Card(
@@ -181,6 +182,7 @@ fun BlogContentComposable(
                     .fillMaxWidth()
                     .padding(start = 8.dp, top = 6.dp, end = 8.dp),
                 mediaList = blog.mediaList,
+                indexInList = indexInList,
                 sensitive = sensitive,
                 onMediaClick = onMediaClick,
             )
@@ -237,5 +239,5 @@ private fun PreviewBlogContentComposable() {
         repliesCount = 10,
         poll = null,
     )
-    BlogContentComposable(blog = blog, onMediaClick = { _ -> })
+    BlogContentComposable(blog = blog, indexInList = 1, onMediaClick = { _ -> })
 }

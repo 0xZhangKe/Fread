@@ -3,9 +3,10 @@ package com.zhangke.utopia.feeds.pages.manager.search
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
-import com.zhangke.utopia.status.search.SearchStatusSourceUseCase
+import com.zhangke.utopia.feeds.composable.StatusSourceUiState
+import com.zhangke.utopia.status.search.SearchResult
+import com.zhangke.utopia.status.search.UtopiaSearchEngine
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -15,7 +16,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class SearchSourceForAddViewModel @Inject constructor(
-    private val searchUseCase: SearchStatusSourceUseCase,
+    private val searchEngine: UtopiaSearchEngine,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
 ) : ViewModel() {
 
@@ -35,7 +36,10 @@ internal class SearchSourceForAddViewModel @Inject constructor(
             )
         }
         launchInViewModel {
-            searchUseCase(query)
+            searchEngine.search(query)
+                .map { list ->
+                    list.filterIsInstance<SearchResult.Source>().map { it.source }
+                }
                 .onSuccess { list ->
                     _uiState.update { state ->
                         state.copy(

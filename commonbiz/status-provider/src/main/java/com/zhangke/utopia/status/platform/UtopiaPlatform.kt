@@ -1,9 +1,9 @@
-package com.zhangke.utopia.status.model
+package com.zhangke.utopia.status.platform
 
 data class UtopiaPlatform (
-    val id: String,
     val name: String,
     val description: String,
     val baseUrl: String,
     val protocol: String,
+    val thumbnail: String?,
 )

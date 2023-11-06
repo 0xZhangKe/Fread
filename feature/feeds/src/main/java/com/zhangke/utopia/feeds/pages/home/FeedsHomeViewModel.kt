@@ -10,7 +10,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.FeedsPageUiStateAdapter
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.repo.db.FeedsRepo
-import com.zhangke.utopia.status.server.FetchAllServerFromSourceUseCase
+import com.zhangke.utopia.status.platform.PlatformResolver
 import com.zhangke.utopia.status.status.GetStatusFeedsByUrisUseCase
 import com.zhangke.utopia.status.status.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -27,7 +27,7 @@ internal class FeedsHomeViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val feedsPageUiStateAdapter: FeedsPageUiStateAdapter,
     private val getStatusFeedsByUrisUseCase: GetStatusFeedsByUrisUseCase,
-    private val fetchAllServerFromSources: FetchAllServerFromSourceUseCase,
+    private val platformResolver: PlatformResolver,
 ) : ViewModel() {
 
     private val pagedFetchers = mutableMapOf<Int, FeedsFetcher<Status>>()
@@ -50,13 +50,13 @@ internal class FeedsHomeViewModel @Inject constructor(
             val feedsList = feedsRepo.queryAll()
             val pageStates = feedsList.mapIndexed { index, feeds ->
                 val fetcher = getStatusFeedsByUrisUseCase(feeds.sourceUriList, 20)
-                val serverList = fetchAllServerFromSources(feeds.sourceUriList).getOrNull()
+                val platformList = platformResolver.resolveBySourceUriList(feeds.sourceUriList).getOrNull()
                     ?: emptyList()
                 pagedFetchers[index] = fetcher
                 feedsPageUiStateAdapter.adapt(
                     feedsId = feeds.id,
                     feedsName = feeds.name,
-                    serverList = serverList,
+                    platformList = platformList,
                     sourceList = feeds.sourceUriList,
                     feedsFlow = fetcher.dataFlow,
                 )

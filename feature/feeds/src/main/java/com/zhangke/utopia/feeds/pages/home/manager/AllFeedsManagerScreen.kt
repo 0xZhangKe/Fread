@@ -177,19 +177,19 @@ internal class AllFeedsManagerScreen(
                         overflow = TextOverflow.Ellipsis,
                     )
 
-                    if (uiState.serverList.isSingle()) {
+                    if (uiState.platformList.isSingle()) {
                         Row(
                             modifier = Modifier.padding(top = 2.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            val serverInfo = uiState.serverList.first()
+                            val serverInfo = uiState.platformList.first()
                             val serverThumbnail = serverInfo.thumbnail
                             if (serverThumbnail.isNullOrEmpty().not()) {
                                 AsyncImage(
                                     modifier = Modifier
                                         .size(16.dp)
                                         .clip(CircleShape),
-                                    model = uiState.serverList.first().thumbnail,
+                                    model = uiState.platformList.first().thumbnail,
                                     contentScale = ContentScale.Crop,
                                     contentDescription = "ServerAvatar",
                                 )
@@ -203,7 +203,7 @@ internal class AllFeedsManagerScreen(
                             )
                         }
                     } else {
-                        val avatarList = uiState.serverList.mapNotNull { it.thumbnail }.take(5)
+                        val avatarList = uiState.platformList.mapNotNull { it.thumbnail }.take(5)
                         AvatarHorizontalStack(
                             modifier = Modifier.padding(top = 2.dp),
                             avatars = avatarList,

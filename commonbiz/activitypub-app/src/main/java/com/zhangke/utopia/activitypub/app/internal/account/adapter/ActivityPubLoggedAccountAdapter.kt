@@ -3,12 +3,12 @@ package com.zhangke.utopia.activitypub.app.internal.account.adapter
 import com.zhangke.activitypub.entry.ActivityPubAccountEntity
 import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entry.ActivityPubTokenEntity
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.uri.user.ActivityPubUserUri
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubUrl
-import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
@@ -23,7 +23,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = entity.userId,
             uri = StatusProviderUri.create(entity.uri)!!,
             webFinger = entity.webFinger,
-            server = entity.platform,
+            platform = entity.platform,
             host = entity.host,
             name = entity.name,
             description = entity.description,
@@ -41,7 +41,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = user.userId,
             uri = user.uri.toString(),
             webFinger = user.webFinger,
-            platform = user.server,
+            platform = user.platform,
             host = user.host,
             name = user.name,
             description = user.description,
@@ -63,7 +63,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = account.id,
             uri = ActivityPubUserUri.create(account.id, webFinger).toStatusProviderUri(),
             webFinger = webFinger,
-            server = instanceAdapter.adapt(instance),
+            platform = instanceAdapter.toPlatform(instance),
             host = ActivityPubUrl.create(instance.domain)!!.host,
             name = account.displayName,
             description = account.note,

@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.source.timeline
 
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypubapp.R
+import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.uri.timeline.ActivityTimelineUri
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri

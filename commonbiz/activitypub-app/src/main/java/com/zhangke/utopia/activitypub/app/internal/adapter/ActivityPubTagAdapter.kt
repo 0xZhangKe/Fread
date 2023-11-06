@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entry.ActivityPubTagEntity
 import com.zhangke.framework.composable.textOf
-import com.zhangke.utopia.activitypubapp.R
+import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTag
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTagHistory
 import javax.inject.Inject

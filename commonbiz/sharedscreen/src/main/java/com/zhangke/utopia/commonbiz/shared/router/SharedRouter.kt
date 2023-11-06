@@ -6,4 +6,14 @@ object SharedRouter {
 
         const val add = "feeds/add"
     }
+
+    object Platform {
+
+        object Detail {
+
+            const val route = "platform/detail"
+
+            const val paramBaseurl = "baseUrl"
+        }
+    }
 }

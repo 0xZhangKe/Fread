@@ -48,8 +48,7 @@ import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
-import com.zhangke.utopia.status.server.StatusProviderServer
-import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
+import com.zhangke.utopia.status.platform.UtopiaPlatform
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
 @Composable
@@ -59,11 +58,11 @@ internal fun FeedsHomeScreenContent(
     onAddFeedsClick: () -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
-    onServerItemClick: (StatusProviderServer) -> Unit,
+    onPlatformItemClick: (UtopiaPlatform) -> Unit,
 ) {
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
     val snackbarHostState = rememberSnackbarHostState()
-    var topBarItems: List<StatusProviderServer> by rememberSaveable {
+    var topBarItems: List<UtopiaPlatform> by rememberSaveable {
         mutableStateOf(emptyList())
     }
     val selectedIndex = uiState.tabIndex
@@ -86,7 +85,7 @@ internal fun FeedsHomeScreenContent(
                             tabs = feedsList,
                             selectedIndex = selectedIndex,
                             onTabClick = onTabSelected,
-                            onServerItemClick = onServerItemClick,
+                            onServerItemClick = onPlatformItemClick,
                             onMenuClick = {
                                 bottomSheetNavigator.show(
                                     AllFeedsManagerScreen(
@@ -119,7 +118,7 @@ internal fun FeedsHomeScreenContent(
                         userScrollEnabled = true,
                     ) { pageIndex ->
                         val pagedUiState = feedsList[pageIndex]
-                        topBarItems = pagedUiState.serverList
+                        topBarItems = pagedUiState.platformList
                         FeedsPage(
                             uiState = pagedUiState,
                             onRefresh = onRefresh,
@@ -150,8 +149,8 @@ private fun FeedsHomeTopBar(
     selectedIndex: Int,
     tabs: List<FeedsPageUiState>,
     onTabClick: (Int) -> Unit,
-    topBarItems: List<StatusProviderServer>,
-    onServerItemClick: (StatusProviderServer) -> Unit,
+    topBarItems: List<UtopiaPlatform>,
+    onServerItemClick: (UtopiaPlatform) -> Unit,
     onMenuClick: () -> Unit,
 ) {
     var showSelectSourcePopup by remember {

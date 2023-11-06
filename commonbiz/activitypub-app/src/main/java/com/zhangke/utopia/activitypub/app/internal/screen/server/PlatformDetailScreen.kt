@@ -55,10 +55,11 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
+import com.zhangke.utopia.activitypub.app.internal.platform.ActivityPubPlatformUri
 import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import kotlinx.coroutines.launch
 
-@Destination(SharedRouter.Platform.Detail.route)
+@Destination(ActivityPubPlatformUri.baseUrl)
 class PlatformDetailScreen(
     @Router val router: String = "",
 ) : AndroidScreen() {
@@ -66,7 +67,7 @@ class PlatformDetailScreen(
     @Composable
     override fun Content() {
         val viewModel: ServerDetailViewModel = getViewModel()
-        viewModel.setupRoute(router)
+        viewModel.uri = router
         LaunchedEffect(Unit) {
             viewModel.onPageResume()
         }

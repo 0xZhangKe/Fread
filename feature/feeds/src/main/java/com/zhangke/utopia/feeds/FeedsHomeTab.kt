@@ -14,7 +14,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.krouter.KRouter
-import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
@@ -45,10 +44,7 @@ object FeedsHomeTab : Tab {
                 navigator.push(AddFeedsManagerScreen())
             },
             onPlatformItemClick = { server ->
-                val route = SharedRouter.Platform.Detail.route
-                val paramBaseUrl = SharedRouter.Platform.Detail.paramBaseurl
-                val screen =
-                    KRouter.route<AndroidScreen>("$route?$paramBaseUrl=${server.baseUrl}")!!
+                val screen = KRouter.route<AndroidScreen>(server.uri)!!
                 navigator.push(screen)
             },
         )

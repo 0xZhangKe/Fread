@@ -1,14 +1,14 @@
 package com.zhangke.utopia.activitypub.app.internal.source.timeline
 
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypubapp.R
-import com.zhangke.utopia.activitypub.app.internal.server.GetActivityPubServerUseCase
+import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.internal.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubUrl
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 class SearchTimelineSourceUseCase @Inject constructor(
-    private val getServerInstance: GetActivityPubServerUseCase,
+    private val getServerInstance: GetActivityPubPlatformUseCase,
     private val resolveTimelineSourceByUri: ResolveTimelineSourceByUriUseCase,
 ) {
 

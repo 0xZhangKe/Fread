@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.server
+package com.zhangke.utopia.activitypub.app.internal.platform
 
 import com.zhangke.utopia.status.blog.BlogServer
 

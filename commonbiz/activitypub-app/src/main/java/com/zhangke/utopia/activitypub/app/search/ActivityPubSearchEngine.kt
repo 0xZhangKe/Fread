@@ -1,23 +1,25 @@
-package com.zhangke.utopia.activitypub.app.internal.source
+package com.zhangke.utopia.activitypub.app.search
 
 import com.zhangke.filt.annotaions.Filt
 import com.zhangke.framework.utils.collect
 import com.zhangke.utopia.activitypub.app.internal.source.timeline.SearchTimelineSourceUseCase
 import com.zhangke.utopia.activitypub.app.internal.source.user.SearchUserSourceUseCase
-import com.zhangke.utopia.status.search.ISearchStatusSourceUseCase
-import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.search.IUtopiaSearchEngine
+import com.zhangke.utopia.status.search.SearchResult
 import javax.inject.Inject
 
 @Filt
-class SearchActivityPubStatusSourceUseCase @Inject constructor(
+class ActivityPubSearchEngine @Inject constructor(
     private val searchUserSource: SearchUserSourceUseCase,
     private val searchTimelineSource: SearchTimelineSourceUseCase,
-) : ISearchStatusSourceUseCase {
+) : IUtopiaSearchEngine {
 
-    override suspend fun invoke(query: String): Result<List<StatusSource>> {
+    override suspend fun search(query: String): Result<List<SearchResult>> {
         return listOf(
             searchUserSource(query),
             searchTimelineSource(query),
-        ).collect()
+        ).collect().map { list ->
+            list.map { SearchResult.Source(it) }
+        }
     }
 }

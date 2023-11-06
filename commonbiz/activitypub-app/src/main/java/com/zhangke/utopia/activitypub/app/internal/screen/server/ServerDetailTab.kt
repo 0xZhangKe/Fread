@@ -16,7 +16,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
-import com.zhangke.utopia.activitypubapp.R
+import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.screen.server.about.ServerAboutPage
 import com.zhangke.utopia.activitypub.app.internal.screen.server.trending.ServerTrendingPage

@@ -3,9 +3,8 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.activitypub.app.internal.screen.server.adapter.ServiceDetailUiStateAdapter
-import com.zhangke.utopia.activitypub.app.internal.uri.server.ParseUriToServerUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetInstanceUseCase
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.activitypub.app.internal.utils.toDomain
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -15,10 +14,9 @@ import javax.inject.Inject
 internal class ServerDetailViewModel @Inject constructor(
     private val getInstance: GetInstanceUseCase,
     private val uiStateAdapter: ServiceDetailUiStateAdapter,
-    private val parseUriToServerUri: ParseUriToServerUriUseCase,
 ) : ViewModel() {
 
-    lateinit var uri: String
+    private lateinit var baseUrl: String
 
     private val _uiState = MutableStateFlow(
         ServerDetailUiState(
@@ -42,9 +40,13 @@ internal class ServerDetailViewModel @Inject constructor(
 
     val uiState: StateFlow<ServerDetailUiState> = _uiState
 
+    fun setupRoute(route: String) {
+        baseUrl = route.split("=").last()
+    }
+
     fun onPageResume() {
         launchInViewModel {
-            getInstance(parseUriToServerUri(StatusProviderUri.create(uri)!!)!!.host)
+            getInstance(baseUrl.toDomain())
                 .onSuccess {
                     _uiState.value = uiStateAdapter.createUiState(
                         entity = it,

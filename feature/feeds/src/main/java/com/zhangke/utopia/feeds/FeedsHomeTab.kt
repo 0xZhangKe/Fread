@@ -7,21 +7,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.krouter.KRouter
-import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
-import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
-import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 
 object FeedsHomeTab : Tab {
 
@@ -48,9 +44,11 @@ object FeedsHomeTab : Tab {
             onAddFeedsClick = {
                 navigator.push(AddFeedsManagerScreen())
             },
-            onServerItemClick = { server ->
+            onPlatformItemClick = { server ->
+                val route = SharedRouter.Platform.Detail.route
+                val paramBaseUrl = SharedRouter.Platform.Detail.paramBaseurl
                 val screen =
-                    KRouter.route<AndroidScreen>(server.uri.toString())!!
+                    KRouter.route<AndroidScreen>("$route?$paramBaseUrl=${server.baseUrl}")!!
                 navigator.push(screen)
             },
         )

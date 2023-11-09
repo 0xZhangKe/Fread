@@ -1,22 +1,19 @@
 package com.zhangke.utopia.activitypub.app.internal.auth
 
-import com.zhangke.filt.annotaions.Filt
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUriValidateUseCase
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
-import com.zhangke.utopia.status.auth.ISourceListAuthValidateUseCase
-import com.zhangke.utopia.status.auth.SourcesAuthValidateResult
+import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUriValidateUseCase
+import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
-@Filt
 class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
     private val userRepo: ActivityPubLoggedAccountRepo,
     private val userValidateUseCase: ActivityPubAccountValidationUseCase,
     private val activityPubUriValidateUseCase: ActivityPubUriValidateUseCase,
-) : ISourceListAuthValidateUseCase {
+) {
 
-    override suspend fun invoke(
+    suspend operator fun invoke(
         sourceList: List<StatusSource>,
     ): Result<SourcesAuthValidateResult> {
         val activityPubSourceList = sourceList.filter {

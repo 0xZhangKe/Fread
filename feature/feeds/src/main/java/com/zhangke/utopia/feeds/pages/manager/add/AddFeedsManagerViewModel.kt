@@ -11,9 +11,7 @@ import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.repo.db.FeedsRepo
-import com.zhangke.utopia.status.auth.LaunchAuthBySourceListUseCase
-import com.zhangke.utopia.status.auth.SourceListAuthValidateUseCase
-import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -27,11 +25,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class AddFeedsManagerViewModel @Inject constructor(
-    private val resolveSourceUseCase: ResolveSourceByUriUseCase,
+    private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val feedsRepo: FeedsRepo,
-    private val sourceListAuthValidateUseCase: SourceListAuthValidateUseCase,
-    private val launchAuthBySourceListUseCase: LaunchAuthBySourceListUseCase,
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
@@ -50,7 +46,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
             val sourceList = mutableListOf<StatusSource>()
             sourceList.addAll(viewModelState.value.sourceList)
             uriList.forEach { uri ->
-                resolveSourceUseCase(uri)
+                statusProvider.statusSourceResolver.resolveSourceByUri(uri)
                     .onSuccess { source ->
                         source?.takeIf { item -> !sourceList.container { it.uri == item.uri } }
                             ?.let { sourceList += it }
@@ -88,7 +84,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
                 _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
                 return@launchInViewModel
             }
-            sourceListAuthValidateUseCase(sourceList)
+            statusProvider.accountManager.validateAuthOfSourceList(sourceList)
                 .onFailure {
                     _errorMessageFlow.emit(textOf(it.message.orEmpty()))
                 }.onSuccess {
@@ -110,7 +106,8 @@ internal class AddFeedsManagerViewModel @Inject constructor(
         val sourceModel = viewModelState.value.invalidateSourceList
             .first { it.uri.toString() == source.uri }
         launchInViewModel {
-            launchAuthBySourceListUseCase(sourceModel)
+            statusProvider.accountManager
+                .launchAuthBySource(sourceModel)
                 .onSuccess {
                     _errorMessageFlow.emit(
                         textOf(com.zhangke.utopia.commonbiz.R.string.auth_success)

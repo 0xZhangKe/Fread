@@ -5,8 +5,8 @@ import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
-class PlatformResolver @Inject constructor(
-    private val resolverList: Set<@JvmSuppressWildcards IPlatformResolver>,
+class PlatformResolver constructor(
+    private val resolverList: List<IPlatformResolver>,
 ) {
 
     @Suppress("MemberVisibilityCanBePrivate")

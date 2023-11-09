@@ -1,25 +1,22 @@
 package com.zhangke.utopia.activitypub.app.internal.status
 
-import com.zhangke.filt.annotaions.Filt
 import com.zhangke.framework.feeds.fetcher.StatusDataSource
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypub.app.internal.uri.timeline.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.uri.user.ParseUriToUserUriUseCase
-import com.zhangke.utopia.status.status.IGetStatusDataSourceByUriUseCase
 import com.zhangke.utopia.status.status.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
-@Filt
 class GetUserStatusDataSourceFromUriUseCase @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
     private val parseUriToTimelineUriUseCase: ParseUriToTimelineUriUseCase,
     private val parseUriToUserUriUseCase: ParseUriToUserUriUseCase,
-) : IGetStatusDataSourceByUriUseCase {
+) {
 
-    override fun invoke(uri: StatusProviderUri): StatusDataSource<*, Status>? {
+    operator fun invoke(uri: StatusProviderUri): StatusDataSource<*, Status>? {
         getUserDataSource(uri)?.let { return it }
         getTimelineDataSource(uri)?.let { return it }
         return null

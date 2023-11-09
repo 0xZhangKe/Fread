@@ -1,6 +1,5 @@
-package com.zhangke.utopia.activitypub.app.platform
+package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.filt.annotaions.Filt
 import com.zhangke.utopia.activitypub.app.internal.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.activitypub.app.internal.uri.timeline.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.uri.user.ParseUriToUserUriUseCase
@@ -9,7 +8,6 @@ import com.zhangke.utopia.status.platform.UtopiaPlatform
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
-@Filt
 class ActivityPubPlatformResolver @Inject constructor(
     private val getActivityPubServer: GetActivityPubPlatformUseCase,
     private val parseUriToUserUriUseCase: ParseUriToUserUriUseCase,

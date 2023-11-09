@@ -1,8 +1,6 @@
 package com.zhangke.framework.feeds.fetcher
 
-import javax.inject.Inject
-
-class FeedsGenerator<Value> @Inject constructor() {
+class FeedsGenerator<Value> {
 
     fun generate(
         paramsList: List<GenerateParams<Value>>,

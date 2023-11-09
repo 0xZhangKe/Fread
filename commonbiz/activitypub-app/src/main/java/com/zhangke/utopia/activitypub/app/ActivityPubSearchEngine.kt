@@ -1,6 +1,5 @@
-package com.zhangke.utopia.activitypub.app.search
+package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.filt.annotaions.Filt
 import com.zhangke.framework.utils.collect
 import com.zhangke.utopia.activitypub.app.internal.source.timeline.SearchTimelineSourceUseCase
 import com.zhangke.utopia.activitypub.app.internal.source.user.SearchUserSourceUseCase
@@ -8,7 +7,6 @@ import com.zhangke.utopia.status.search.IUtopiaSearchEngine
 import com.zhangke.utopia.status.search.SearchResult
 import javax.inject.Inject
 
-@Filt
 class ActivityPubSearchEngine @Inject constructor(
     private val searchUserSource: SearchUserSourceUseCase,
     private val searchTimelineSource: SearchTimelineSourceUseCase,

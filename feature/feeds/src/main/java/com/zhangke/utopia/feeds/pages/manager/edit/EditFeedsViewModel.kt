@@ -8,7 +8,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.repo.db.FeedsRepo
-import com.zhangke.utopia.status.search.ResolveSourceByUriUseCase
+import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +22,7 @@ import javax.inject.Inject
 internal class EditFeedsViewModel @Inject constructor(
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val feedsRepo: FeedsRepo,
-    private val resolveSource: ResolveSourceByUriUseCase,
+    private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
     var feedsId: Int = -1
@@ -67,15 +67,16 @@ internal class EditFeedsViewModel @Inject constructor(
             val sourceUriList = sourceList.map { it.uri }
             uriList.filter { sourceUriList.contains(it).not() }
                 .forEach { uri ->
-                    resolveSource(uri).onSuccess { source ->
-                        source?.let {
-                            statusSourceUiStateAdapter.adapt(
-                                source = it,
-                                addEnabled = true,
-                                removeEnabled = false
-                            )
-                        }?.let { sourceList += it }
-                    }
+                    statusProvider.statusSourceResolver.resolveSourceByUri(uri)
+                        .onSuccess { source ->
+                            source?.let {
+                                statusSourceUiStateAdapter.adapt(
+                                    source = it,
+                                    addEnabled = true,
+                                    removeEnabled = false
+                                )
+                            }?.let { sourceList += it }
+                        }
                 }
             feedsRepo.update(
                 id = feedsId,
@@ -93,7 +94,9 @@ internal class EditFeedsViewModel @Inject constructor(
                 _uiState.emit(LoadableState.failed(IllegalArgumentException("Unknown Feeds Id:$feedsId")))
                 return@launchInViewModel
             }
-            val sourceList = feeds.sourceUriList.mapNotNull { resolveSource(it).getOrNull() }
+            val sourceList = feeds.sourceUriList.mapNotNull {
+                statusProvider.statusSourceResolver.resolveSourceByUri(it).getOrNull()
+            }
                 .map { source ->
                     statusSourceUiStateAdapter.adapt(
                         source,

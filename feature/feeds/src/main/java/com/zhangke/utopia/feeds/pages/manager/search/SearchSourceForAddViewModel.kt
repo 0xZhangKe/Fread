@@ -5,8 +5,9 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.search.SearchResult
-import com.zhangke.utopia.status.search.UtopiaSearchEngine
+import com.zhangke.utopia.status.search.SearchEngine
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,7 +17,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class SearchSourceForAddViewModel @Inject constructor(
-    private val searchEngine: UtopiaSearchEngine,
+    private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
 ) : ViewModel() {
 
@@ -36,7 +37,8 @@ internal class SearchSourceForAddViewModel @Inject constructor(
             )
         }
         launchInViewModel {
-            searchEngine.search(query)
+            statusProvider.searchEngine
+                .search(query)
                 .map { list ->
                     list.filterIsInstance<SearchResult.Source>().map { it.source }
                 }

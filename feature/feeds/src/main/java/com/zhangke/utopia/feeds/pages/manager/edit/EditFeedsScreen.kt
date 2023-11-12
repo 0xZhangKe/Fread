@@ -81,7 +81,6 @@ class EditFeedsScreen(private val feedsId: Int) : AndroidScreen() {
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun EditFeedsScreenContent(
         uiState: LoadableState<EditFeedsUiState>,
@@ -141,7 +140,6 @@ class EditFeedsScreen(private val feedsId: Int) : AndroidScreen() {
     }
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun EditFeedsScreenTopBar(
     uiState: LoadableState<EditFeedsUiState>,

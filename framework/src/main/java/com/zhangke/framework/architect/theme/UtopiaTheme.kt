@@ -1,6 +1,8 @@
 package com.zhangke.framework.architect.theme
 
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.material.Colors
+import androidx.compose.material3.ColorScheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.material3.lightColorScheme
@@ -75,13 +77,35 @@ fun UtopiaTheme(
     useDarkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    val colors = if (!useDarkTheme) {
-        LightColors
-    } else {
+    val colors = if (useDarkTheme) {
         DarkColors
+    } else {
+        LightColors
     }
-    MaterialTheme(
-        colorScheme = colors,
-        content = content,
+    val m1Colors = colors.toColors(!useDarkTheme)
+    androidx.compose.material.MaterialTheme(
+        colors = m1Colors,
+        content = {
+            MaterialTheme(
+                colorScheme = colors,
+                content = content,
+            )
+        }
     )
 }
+
+private fun ColorScheme.toColors(isLight: Boolean): Colors = Colors(
+    primary = primary,
+    primaryVariant = secondary,
+    secondary = tertiary,
+    secondaryVariant = tertiary,
+    background = background,
+    surface = surface,
+    error = error,
+    onPrimary = onPrimary,
+    onSecondary = onSecondary,
+    onBackground = onBackground,
+    onSurface = onSurface,
+    onError = onError,
+    isLight = isLight,
+)

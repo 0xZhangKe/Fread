@@ -31,7 +31,8 @@ import com.zhangke.framework.ktx.CollectOnComposable
 import com.zhangke.krouter.Destination
 import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.feeds.R
-import com.zhangke.utopia.feeds.composable.StatusSourceNode
+import com.zhangke.utopia.feeds.composable.RemovableStatusSource
+import com.zhangke.utopia.feeds.composable.StatusSourceSection
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 import kotlinx.coroutines.flow.Flow
@@ -129,7 +130,7 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
                     modifier = Modifier.padding(top = 15.dp)
                 ) {
                     items(uiState.sourceList) { item ->
-                        StatusSourceNode(
+                        RemovableStatusSource(
                             modifier = Modifier.fillMaxWidth(),
                             source = item,
                             onRemoveClick = {
@@ -167,7 +168,7 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
                         .heightIn(max = screenHeight)
                 ) {
                     items(sourceList) { item ->
-                        StatusSourceNode(
+                        StatusSourceSection(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {

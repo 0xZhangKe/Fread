@@ -7,10 +7,10 @@ import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 class ActivityPubSourceResolver @Inject constructor(
-    private val resolveSourceByUri: ActivityPubSourceResolveUseCase,
+    private val resolveActivityPubSourceByUri: ActivityPubSourceResolveUseCase,
 ): IStatusSourceResolver {
 
     override suspend fun resolveSourceByUri(uri: StatusProviderUri): Result<StatusSource?> {
-        return resolveSourceByUri(uri)
+        return resolveActivityPubSourceByUri(uri)
     }
 }

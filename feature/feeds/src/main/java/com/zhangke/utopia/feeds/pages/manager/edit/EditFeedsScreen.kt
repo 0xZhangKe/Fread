@@ -16,7 +16,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -47,7 +46,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.ktx.CollectOnComposable
-import com.zhangke.utopia.feeds.composable.StatusSourceNode
+import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 
@@ -126,7 +125,7 @@ class EditFeedsScreen(private val feedsId: Int) : AndroidScreen() {
             ) { uiState ->
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(uiState.sourceList) { item ->
-                        StatusSourceNode(
+                        RemovableStatusSource(
                             modifier = Modifier.fillMaxWidth(),
                             source = item,
                             onRemoveClick = {

@@ -13,7 +13,7 @@ class ActivityPubSourceResolveUseCase @Inject constructor(
     private val parseUriToUserUri: ParseUriToUserUriUseCase,
 ) {
 
-    suspend fun invoke(uri: StatusProviderUri): Result<StatusSource?> {
+    suspend operator fun invoke(uri: StatusProviderUri): Result<StatusSource?> {
         parseUriToUserUri(uri)?.let { resolveUserSource(it) }?.let { return it }
         resolveTimelineSourceUseCase(uri)
             .takeIf { it.getOrNull() != null }

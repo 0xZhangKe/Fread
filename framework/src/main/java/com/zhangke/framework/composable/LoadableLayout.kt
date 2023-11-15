@@ -123,7 +123,7 @@ fun <T> MutableStateFlow<LoadableState<T>>.updateToLoading() {
     }
 }
 
-fun <T> MutableStateFlow<LoadableState<T>>.updateToFailed(e: Exception) {
+fun <T> MutableStateFlow<LoadableState<T>>.updateToFailed(e: Throwable) {
     update {
         LoadableState.failed(e)
     }

@@ -31,6 +31,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.framework.voyager.TransparentNavigator
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class UtopiaActivity : AppCompatActivity() {

@@ -50,7 +50,7 @@ import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
 import com.zhangke.utopia.status.platform.UtopiaPlatform
 
-@OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 internal fun FeedsHomeScreenContent(
     uiState: FeedsHomeUiState,

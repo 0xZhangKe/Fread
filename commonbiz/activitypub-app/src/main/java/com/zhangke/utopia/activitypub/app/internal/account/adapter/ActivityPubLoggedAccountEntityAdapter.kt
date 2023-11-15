@@ -12,11 +12,11 @@ import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubUrl
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
-class ActivityPubLoggedAccountAdapter @Inject constructor(
+class ActivityPubLoggedAccountEntityAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
 ) {
 
-    fun adapt(
+    fun toAccount(
         entity: ActivityPubLoggedAccountEntity,
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
@@ -43,7 +43,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             webFinger = user.webFinger,
             platform = user.platform,
             host = user.host,
-            name = user.name,
+            name = user.userName,
             description = user.description,
             avatar = user.avatar,
             homepage = user.homepage,

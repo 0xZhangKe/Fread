@@ -22,3 +22,9 @@ private fun KRouter.routeScreen(destination: String): Screen? {
     route<AndroidScreen>(destination)?.let { return it }
     return null
 }
+
+val Navigator.rootNavigator: Navigator
+    get() {
+        if (parent != null) return parent!!.rootNavigator
+        return this
+    }

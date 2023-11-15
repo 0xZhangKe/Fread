@@ -51,6 +51,7 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.AvatarHorizontalStack
 import com.zhangke.framework.composable.theme.TopAppBarDefault
 import com.zhangke.framework.ktx.isSingle
+import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 import com.zhangke.utopia.feeds.pages.manager.edit.EditFeedsScreen
@@ -62,7 +63,7 @@ internal class AllFeedsManagerScreen(
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
+        val navigator = LocalNavigator.currentOrThrow.rootNavigator
         AllFeedsManagerScreenContent(
             feedsList = feedsList,
             onAddFeedsClick = {

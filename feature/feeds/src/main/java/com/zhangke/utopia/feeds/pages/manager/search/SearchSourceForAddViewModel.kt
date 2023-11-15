@@ -2,17 +2,17 @@ package com.zhangke.utopia.feeds.pages.manager.search
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.LoadableState
+import com.zhangke.framework.composable.updateToFailed
+import com.zhangke.framework.composable.updateToLoading
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.search.SearchResult
-import com.zhangke.utopia.status.search.SearchEngine
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -22,20 +22,13 @@ internal class SearchSourceForAddViewModel @Inject constructor(
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
-        SearchSourceForAddUiState(
-            addedSourceUriList = emptyList(),
-            searchedResult = LoadableState.idle(),
-        )
+        LoadableState.idle<List<StatusSourceUiState>>()
     )
 
     val uiState get() = _uiState.asStateFlow()
 
     fun onSearchClick(query: String) {
-        _uiState.update {
-            it.copy(
-                searchedResult = LoadableState.loading()
-            )
-        }
+        _uiState.updateToLoading()
         launchInViewModel {
             statusProvider.searchEngine
                 .search(query)
@@ -43,15 +36,9 @@ internal class SearchSourceForAddViewModel @Inject constructor(
                     list.filterIsInstance<SearchResult.Source>().map { it.source }
                 }
                 .onSuccess { list ->
-                    _uiState.update { state ->
-                        state.copy(
-                            searchedResult = LoadableState.success(list.map { it.toUiState() })
-                        )
-                    }
+                    _uiState.value = LoadableState.success(list.map { it.toUiState() })
                 }.onFailure { e ->
-                    _uiState.update {
-                        it.copy(searchedResult = LoadableState.failed(e))
-                    }
+                    _uiState.updateToFailed(e)
                 }
         }
     }
@@ -59,51 +46,8 @@ internal class SearchSourceForAddViewModel @Inject constructor(
     private fun StatusSource.toUiState(): StatusSourceUiState {
         return statusSourceUiStateAdapter.adapt(
             this,
-            addEnabled = true,
+            addEnabled = false,
             removeEnabled = false,
         )
-    }
-
-    fun onAddClick(result: StatusSourceUiState) {
-        _uiState.update {
-            it.copy(
-                addedSourceUriList = it.addedSourceUriList
-                    .toMutableList()
-                    .also { list ->
-                        list.add(result.uri)
-                    }
-            )
-        }
-        updateAddableRemove()
-    }
-
-    fun onRemoveClick(result: StatusSourceUiState) {
-        _uiState.update {
-            it.copy(
-                addedSourceUriList = it.addedSourceUriList
-                    .toMutableList()
-                    .also { list ->
-                        list.remove(result.uri)
-                    }
-            )
-        }
-        updateAddableRemove()
-    }
-
-    private fun updateAddableRemove() {
-        val currentState = _uiState.value
-        val resultList = (currentState.searchedResult as? LoadableState.Success)?.data ?: return
-        val newList = resultList.map {
-            val addEnable = !currentState.addedSourceUriList.contains(it.uri)
-            it.copy(
-                addEnabled = addEnable,
-                removeEnabled = !addEnable,
-            )
-        }
-        _uiState.update {
-            it.copy(
-                searchedResult = LoadableState.success(newList)
-            )
-        }
     }
 }

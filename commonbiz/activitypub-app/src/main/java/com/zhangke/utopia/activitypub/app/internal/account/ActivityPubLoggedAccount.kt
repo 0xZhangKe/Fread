@@ -7,25 +7,22 @@ import com.zhangke.utopia.status.platform.UtopiaPlatform
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class ActivityPubLoggedAccount(
-    userId: String,
+    val userId: String,
     uri: StatusProviderUri,
     val webFinger: WebFinger,
     platform: UtopiaPlatform,
-    host: String,
+    val host: String,
     name: String,
     description: String?,
     avatar: String?,
-    homepage: String?,
+    val homepage: String?,
     active: Boolean,
     val token: ActivityPubTokenEntity,
 ) : LoggedAccount(
-    userId = userId,
     uri = uri,
     platform = platform,
-    host = host,
-    name = name,
+    userName = name,
     description = description,
     avatar = avatar,
-    homepage = homepage,
     active = active,
 )

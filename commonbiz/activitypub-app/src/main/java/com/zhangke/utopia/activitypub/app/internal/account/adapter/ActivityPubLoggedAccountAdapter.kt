@@ -43,7 +43,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             webFinger = user.webFinger,
             platform = user.platform,
             host = user.host,
-            name = user.name,
+            name = user.userName,
             description = user.description,
             avatar = user.avatar,
             homepage = user.homepage,

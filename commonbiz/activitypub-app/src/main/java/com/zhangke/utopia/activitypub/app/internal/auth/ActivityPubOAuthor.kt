@@ -7,7 +7,7 @@ import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountEntityAdapter
+import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
@@ -20,7 +20,7 @@ import javax.inject.Singleton
 @Singleton
 class ActivityPubOAuthor @Inject constructor(
     private val repo: ActivityPubLoggedAccountRepo,
-    private val accountAdapter: ActivityPubLoggedAccountEntityAdapter
+    private val accountAdapter: ActivityPubLoggedAccountAdapter
 ) {
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()

@@ -1,13 +1,13 @@
 package com.zhangke.utopia.activitypub.app.internal.account.repo
 
 import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountEntityAdapter
+import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountRepo @Inject constructor(
     private val databases: ActivityPubDatabases,
-    private val adapter: ActivityPubLoggedAccountEntityAdapter,
+    private val adapter: ActivityPubLoggedAccountAdapter,
 ) {
 
     private val accountDao: ActivityPubLoggerAccountDao
@@ -17,7 +17,7 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         return accountDao.queryAll()
             .firstOrNull { it.active }
             ?.let {
-                adapter.toAccount(it)
+                adapter.adapt(it)
             }
     }
 
@@ -31,10 +31,10 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
     }
 
     suspend fun queryAll(): List<ActivityPubLoggedAccount> =
-        accountDao.queryAll().map(adapter::toAccount)
+        accountDao.queryAll().map(adapter::adapt)
 
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccount? =
-        accountDao.queryByUri(uri)?.let(adapter::toAccount)
+        accountDao.queryByUri(uri)?.let(adapter::adapt)
 
     suspend fun insert(entry: ActivityPubLoggedAccount) =
         accountDao.insert(adapter.recovery(entry))

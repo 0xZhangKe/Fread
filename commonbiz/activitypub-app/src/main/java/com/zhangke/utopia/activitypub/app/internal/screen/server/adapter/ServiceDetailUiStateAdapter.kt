@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.server.adapter
 
 import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
-import com.zhangke.utopia.activitypub.app.internal.user.ActivityPubUserAdapter
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailContract
 import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailTab
@@ -9,7 +9,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailUiS
 import javax.inject.Inject
 
 internal class ServiceDetailUiStateAdapter @Inject constructor(
-    private val userAdapter: ActivityPubUserAdapter,
+    private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
 ) {
 
     fun createUiState(
@@ -39,7 +39,7 @@ internal class ServiceDetailUiStateAdapter @Inject constructor(
     private fun convertContract(entity: ActivityPubInstanceEntity.Contact): ServerDetailContract {
         return ServerDetailContract(
             email = entity.email,
-            account = userAdapter.adapt(entity.account)
+            account = accountEntityAdapter.toAuthor(entity.account),
         )
     }
 }

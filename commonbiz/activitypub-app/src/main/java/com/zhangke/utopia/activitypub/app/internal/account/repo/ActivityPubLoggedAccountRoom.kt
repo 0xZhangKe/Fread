@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.account.repo
 import androidx.room.*
 import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.status.platform.UtopiaPlatform
+import com.zhangke.utopia.status.platform.BlogPlatform
 
 private const val TABLE_NAME = "logged_accounts"
 
@@ -18,7 +18,7 @@ data class ActivityPubLoggedAccountEntity(
      */
     val userId: String,
     val webFinger: WebFinger,
-    val platform: UtopiaPlatform,
+    val platform: BlogPlatform,
     val host: String,
     val name: String,
     val description: String?,

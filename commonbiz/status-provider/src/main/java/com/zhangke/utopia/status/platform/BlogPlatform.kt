@@ -1,6 +1,6 @@
 package com.zhangke.utopia.status.platform
 
-data class UtopiaPlatform (
+data class BlogPlatform (
     val uri: String,
     val name: String,
     val description: String,

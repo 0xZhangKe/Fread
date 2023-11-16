@@ -13,7 +13,7 @@ class StatusResolver(
     fun getStatusDataSourceByUri(
         uris: List<String>
     ): List<StatusDataSource<*, Status>> {
-        return uris.map { StatusProviderUri.create(it)!! }
+        return uris.map { StatusProviderUri.from(it)!! }
             .mapNotNull { uri -> resolverList.mapFirstOrNull { it.getStatusDataSourceByUri(uri) } }
     }
 

@@ -1,11 +1,11 @@
 package com.zhangke.utopia.status.blog
 
-import com.zhangke.utopia.status.user.UtopiaUser
+import com.zhangke.utopia.status.author.BlogAuthor
 import java.util.Date
 
 data class Blog(
     val id: String,
-    val author: UtopiaUser,
+    val author: BlogAuthor,
     val title: String?,
     val content: String,
     val date: Date,

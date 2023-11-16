@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.source.user
 
-import com.zhangke.utopia.activitypub.app.internal.uri.user.ParseStringToUserUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseStringToUserUriUseCase
 import javax.inject.Inject
 
 class ResolveUserSourceByUriStringUseCase @Inject constructor(

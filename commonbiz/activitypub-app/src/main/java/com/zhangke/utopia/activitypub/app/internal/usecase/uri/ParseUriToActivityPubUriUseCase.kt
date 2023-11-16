@@ -1,7 +1,6 @@
-package com.zhangke.utopia.activitypub.app.internal.uri
+package com.zhangke.utopia.activitypub.app.internal.usecase.uri
 
-import com.zhangke.utopia.activitypub.app.internal.uri.timeline.ParseUriToTimelineUriUseCase
-import com.zhangke.utopia.activitypub.app.internal.uri.user.ParseUriToUserUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUri
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 

@@ -19,7 +19,6 @@ import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -48,7 +47,7 @@ import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPage
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
-import com.zhangke.utopia.status.platform.UtopiaPlatform
+import com.zhangke.utopia.status.platform.BlogPlatform
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
@@ -58,11 +57,11 @@ internal fun FeedsHomeScreenContent(
     onAddFeedsClick: () -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
-    onPlatformItemClick: (UtopiaPlatform) -> Unit,
+    onPlatformItemClick: (BlogPlatform) -> Unit,
 ) {
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
     val snackbarHostState = rememberSnackbarHostState()
-    var topBarItems: List<UtopiaPlatform> by rememberSaveable {
+    var topBarItems: List<BlogPlatform> by rememberSaveable {
         mutableStateOf(emptyList())
     }
     val selectedIndex = uiState.tabIndex
@@ -149,8 +148,8 @@ private fun FeedsHomeTopBar(
     selectedIndex: Int,
     tabs: List<FeedsPageUiState>,
     onTabClick: (Int) -> Unit,
-    topBarItems: List<UtopiaPlatform>,
-    onServerItemClick: (UtopiaPlatform) -> Unit,
+    topBarItems: List<BlogPlatform>,
+    onServerItemClick: (BlogPlatform) -> Unit,
     onMenuClick: () -> Unit,
 ) {
     var showSelectSourcePopup by remember {

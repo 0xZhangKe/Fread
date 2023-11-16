@@ -3,7 +3,6 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entry.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entry.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.utopia.activitypub.app.internal.user.ActivityPubUserAdapter
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
@@ -12,7 +11,7 @@ import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-    private val activityPubUserAdapter: ActivityPubUserAdapter,
+    private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
 ) {
@@ -30,9 +29,7 @@ class ActivityPubStatusAdapter @Inject constructor(
     private fun ActivityPubStatusEntity.toBlog(): Blog {
         return Blog(
             id = id,
-            author = activityPubUserAdapter.adapt(
-                account,
-            ),
+            author = activityPubAccountEntityAdapter.toAuthor(account),
             title = null,
             content = content,
             sensitive = sensitive,

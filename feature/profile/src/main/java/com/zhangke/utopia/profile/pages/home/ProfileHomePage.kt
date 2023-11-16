@@ -1,18 +1,146 @@
 package com.zhangke.utopia.profile.pages.home
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.Card
+import androidx.compose.material.MaterialTheme
+import androidx.compose.material.RadioButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
+import coil.compose.AsyncImage
+import com.zhangke.utopia.profile.R
+import com.zhangke.utopia.status.account.LoggedAccount
+import com.zhangke.utopia.status.platform.BlogPlatform
 
 @Composable
-internal fun ProfileHomePage() {
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+internal fun ProfileHomePage(
+    uiState: ProfileHomeUiState,
+) {
+    Column(modifier = Modifier.fillMaxSize()) {
+        Text(
+            modifier = Modifier.padding(start = 16.dp, top = 56.dp),
+            text = stringResource(R.string.profile_page_title),
+            style = MaterialTheme.typography.h3,
+            color = MaterialTheme.colors.onBackground,
+        )
+
+        LazyColumn(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 16.dp)
+        ) {
+            items(uiState.accountDataList) { item ->
+                AccountGroupItem(item.first, item.second)
+            }
+        }
+    }
+}
+
+@Composable
+private fun AccountGroupItem(platform: BlogPlatform, accountList: List<LoggedAccount>) {
+    Card(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            .fillMaxWidth()
     ) {
-        Text(text = "ProfilePage")
+        Column {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = platform.name,
+                style = MaterialTheme.typography.h5,
+                color = MaterialTheme.colors.onSurface,
+            )
+            accountList.forEach { account ->
+                LoggedAccountSection(
+                    account = account,
+                    onActiveClicked = {},
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun LoggedAccountSection(
+    account: LoggedAccount,
+    onActiveClicked: () -> Unit,
+) {
+    ConstraintLayout(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 16.dp)
+    ) {
+        val (avatar, content, options) = createRefs()
+        AsyncImage(
+            modifier = Modifier
+                .size(40.dp)
+                .clip(CircleShape)
+                .constrainAs(avatar) {
+                    start.linkTo(parent.start, 16.dp)
+                    end.linkTo(content.start)
+                    top.linkTo(parent.top, 12.dp)
+                },
+            placeholder = painterResource(id = com.zhangke.utopia.commonbiz.R.drawable.ic_avatar),
+            error = painterResource(id = com.zhangke.utopia.commonbiz.R.drawable.ic_avatar),
+            model = account.avatar,
+            contentDescription = "Avatar",
+        )
+        Column(
+            modifier = Modifier
+                .wrapContentHeight()
+                .constrainAs(content) {
+                    start.linkTo(avatar.end, 16.dp)
+                    top.linkTo(parent.top, 12.dp)
+                    end.linkTo(options.start)
+                    bottom.linkTo(parent.bottom, 12.dp)
+                    width = Dimension.fillToConstraints
+                },
+            horizontalAlignment = Alignment.Start,
+        ) {
+            androidx.compose.material3.Text(
+                maxLines = 1,
+                text = account.userName,
+                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
+                style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+            )
+            if (account.description.isNullOrEmpty().not()) {
+                androidx.compose.material3.Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    maxLines = 3,
+                    text = account.description!!,
+                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                )
+            }
+        }
+        Row(
+            modifier = Modifier.constrainAs(options) {
+                start.linkTo(content.end, 16.dp)
+                end.linkTo(parent.end, 24.dp)
+                top.linkTo(parent.top, 12.dp)
+                bottom.linkTo(parent.bottom)
+            }
+        ) {
+            RadioButton(
+                selected = account.active,
+                onClick = onActiveClicked,
+            )
+        }
     }
 }

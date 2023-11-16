@@ -60,6 +60,8 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
     implementation(libs.coil)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
     implementation(libs.retrofit2)

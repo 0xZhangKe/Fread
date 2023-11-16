@@ -30,12 +30,11 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.poll.BlogPoll
 import com.zhangke.utopia.status.uri.StatusProviderUri
-import com.zhangke.utopia.status.user.UtopiaUser
 import com.zhangke.utopia.statusui.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -82,7 +81,7 @@ fun BlogContentComposable(
                     start.linkTo(avatar.end, margin = 8.dp)
                     bottom.linkTo(guideline.top)
                 },
-                text = blog.author.userName,
+                text = blog.author.name,
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Medium
             )
@@ -212,17 +211,12 @@ private fun formatStatusDateTime(date: Date): String {
 @Preview
 @Composable
 private fun PreviewBlogContentComposable() {
-    val author = UtopiaUser(
-        userName = "zhangke",
+    val author = BlogAuthor(
+        name = "zhangke",
         webFinger = WebFinger.create("@zhangke@m.cmx.im")!!,
-        uri = StatusProviderUri.create("@zhangke@m.cmx.im")!!,
+        uri = StatusProviderUri.from("@zhangke@m.cmx.im")!!,
         description = "一个落魄Android开发",
         avatar = "https://media.cmx.edu.kg/accounts/avatars/109/305/640/413/684/932/original/2804adcd878c37c9.png",
-        homePageUrl = "https://m.cmx.im/@AtomZ",
-        header = "",
-        followersCount = 100,
-        followingCount = 234,
-        statusesCount = 23412,
     )
 
     val blog = Blog(

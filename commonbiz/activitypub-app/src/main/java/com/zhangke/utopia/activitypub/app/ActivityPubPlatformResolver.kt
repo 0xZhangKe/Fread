@@ -1,10 +1,10 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.utopia.activitypub.app.internal.platform.GetActivityPubPlatformUseCase
-import com.zhangke.utopia.activitypub.app.internal.uri.timeline.ParseUriToTimelineUriUseCase
-import com.zhangke.utopia.activitypub.app.internal.uri.user.ParseUriToUserUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToTimelineUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToUserUriUseCase
 import com.zhangke.utopia.status.platform.IPlatformResolver
-import com.zhangke.utopia.status.platform.UtopiaPlatform
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
@@ -14,7 +14,7 @@ class ActivityPubPlatformResolver @Inject constructor(
     private val parseTimelineUri: ParseUriToTimelineUriUseCase,
 ) : IPlatformResolver {
 
-    override suspend fun resolveBySourceUri(sourceUri: StatusProviderUri): Result<UtopiaPlatform?> {
+    override suspend fun resolveBySourceUri(sourceUri: StatusProviderUri): Result<BlogPlatform?> {
         var host = parseUriToUserUriUseCase(sourceUri)?.finger?.host
         if (host.isNullOrEmpty()) {
             host = parseTimelineUri(sourceUri)?.timelineServerHost

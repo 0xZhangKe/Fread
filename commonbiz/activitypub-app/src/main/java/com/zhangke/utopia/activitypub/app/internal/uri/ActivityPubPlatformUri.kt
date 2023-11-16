@@ -1,10 +1,9 @@
-package com.zhangke.utopia.activitypub.app.internal.platform
+package com.zhangke.utopia.activitypub.app.internal.uri
 
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUri
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class ActivityPubPlatformUri private constructor(
-    val host: String,
+    val serverHost: String,
     queries: Map<String, String>
 ) : ActivityPubUri(PATH, queries) {
 
@@ -12,9 +11,9 @@ class ActivityPubPlatformUri private constructor(
 
         const val PATH = "/server"
 
-        internal const val QUERY_HOST = "url"
+        private const val QUERY_HOST = "url"
 
-        const val baseUrl: String = "${StatusProviderUri.SCHEME}://$HOST$PATH"
+        const val baseUrl: String = "$SCHEME://$HOST$PATH"
 
         fun create(host: String): ActivityPubPlatformUri {
             val queries = mapOf(QUERY_HOST to host)
@@ -22,7 +21,7 @@ class ActivityPubPlatformUri private constructor(
         }
 
         fun parse(uri: String): ActivityPubPlatformUri? {
-            return parse(StatusProviderUri.create(uri)!!)
+            return parse(from(uri)!!)
         }
 
         fun parse(uri: StatusProviderUri): ActivityPubPlatformUri? {

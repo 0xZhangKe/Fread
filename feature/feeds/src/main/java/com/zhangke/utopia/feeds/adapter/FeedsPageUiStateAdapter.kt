@@ -1,7 +1,7 @@
 package com.zhangke.utopia.feeds.adapter
 
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
-import com.zhangke.utopia.status.platform.UtopiaPlatform
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.Status
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
@@ -11,7 +11,7 @@ internal class FeedsPageUiStateAdapter @Inject constructor() {
     fun adapt(
         feedsId: Int,
         feedsName: String,
-        platformList: List<UtopiaPlatform>,
+        platformList: List<BlogPlatform>,
         sourceList: List<String>,
         feedsFlow: Flow<List<Status>>,
     ): FeedsPageUiState {

@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.server
 
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubUser
+import com.zhangke.utopia.status.author.BlogAuthor
 
 internal data class ServerDetailUiState(
     val loading: Boolean,
@@ -19,5 +19,5 @@ internal data class ServerDetailUiState(
 
 internal data class ServerDetailContract(
     val email: String,
-    val account: ActivityPubUser,
+    val account: BlogAuthor,
 )

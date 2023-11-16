@@ -55,8 +55,7 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
-import com.zhangke.utopia.activitypub.app.internal.platform.ActivityPubPlatformUri
-import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
+import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
 import kotlinx.coroutines.launch
 
 @Destination(ActivityPubPlatformUri.baseUrl)
@@ -267,7 +266,7 @@ class PlatformDetailScreen(
                                     Text(
                                         modifier = Modifier
                                             .padding(start = 4.dp),
-                                        text = uiState.contract.account.displayName,
+                                        text = uiState.contract.account.name,
                                         fontSize = 14.sp,
                                     )
                                     Text(

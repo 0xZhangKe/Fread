@@ -13,7 +13,7 @@ class SearchTimelineSourceUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(query: String): Result<List<TimelineSource>> {
-        StatusProviderUri.create(query)
+        StatusProviderUri.from(query)
             ?.let { resolveTimelineSourceByUri(it) }?.getOrNull()
             ?.let { source -> return@let listOf(source) }
 

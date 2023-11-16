@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.auth
 
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUriValidateUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ActivityPubUriValidateUseCase
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri
@@ -17,7 +17,7 @@ class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
         sourceList: List<StatusSource>,
     ): Result<SourcesAuthValidateResult> {
         val activityPubSourceList = sourceList.filter {
-            val uri = StatusProviderUri.create(it.uri.toString())
+            val uri = StatusProviderUri.from(it.uri.toString())
             if (uri == null) {
                 false
             } else {

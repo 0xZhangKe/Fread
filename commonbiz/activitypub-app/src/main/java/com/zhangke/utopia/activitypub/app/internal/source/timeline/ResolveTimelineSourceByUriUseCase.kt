@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.source.timeline
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.platform.GetActivityPubPlatformUseCase
-import com.zhangke.utopia.activitypub.app.internal.uri.timeline.ParseUriToTimelineUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 

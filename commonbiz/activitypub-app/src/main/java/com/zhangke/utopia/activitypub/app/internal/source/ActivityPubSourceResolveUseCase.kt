@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.source
 
 import com.zhangke.utopia.activitypub.app.internal.source.timeline.ResolveTimelineSourceByUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.source.user.ResolveUserSourceByUriUseCase
-import com.zhangke.utopia.activitypub.app.internal.uri.user.ParseUriToUserUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToUserUriUseCase
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject

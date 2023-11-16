@@ -7,7 +7,7 @@ class StatusSourceResolver(
 ) {
 
     suspend fun resolveSourceByUri(uri: String): Result<StatusSource?>{
-        val statusProviderUri = StatusProviderUri.create(uri) ?: return Result.success(null)
+        val statusProviderUri = StatusProviderUri.from(uri) ?: return Result.success(null)
         resolverList.forEach {
             val result = it.resolveSourceByUri(statusProviderUri)
             if (result.getOrNull() != null) return result

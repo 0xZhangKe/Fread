@@ -14,6 +14,7 @@ import javax.inject.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
+    private val platformEntityAdapter: BlogPlatformEntityAdapter,
 ) {
 
     fun adapt(
@@ -23,7 +24,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = entity.userId,
             uri = StatusProviderUri.from(entity.uri)!!,
             webFinger = entity.webFinger,
-            platform = entity.platform,
+            platform = platformEntityAdapter.toPlatform(entity.platform),
             host = entity.host,
             name = entity.name,
             description = entity.description,
@@ -41,7 +42,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = user.userId,
             uri = user.uri.toString(),
             webFinger = user.webFinger,
-            platform = user.platform,
+            platform = platformEntityAdapter.fromPlatform(user.platform),
             host = user.host,
             name = user.userName,
             description = user.description,
@@ -61,7 +62,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         val webFinger = accountToWebFinger(account)
         return ActivityPubLoggedAccount(
             userId = account.id,
-            uri = ActivityPubUserUri.create(account.id, webFinger).toStatusProviderUri(),
+            uri = ActivityPubUserUri.create(account.id, webFinger),
             webFinger = webFinger,
             platform = instanceAdapter.toPlatform(instance),
             host = ActivityPubUrl.create(instance.domain)!!.host,

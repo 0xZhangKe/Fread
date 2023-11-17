@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.account
 
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.utils.collect
 import javax.inject.Inject
@@ -34,10 +35,10 @@ class AccountManager @Inject constructor(
         )
     }
 
-    suspend fun launchAuthBySource(source: StatusSource): Result<Boolean> {
-        val launcher = accountManagerList.firstOrNull { it.applicable(source) }
-            ?: return Result.failure(IllegalArgumentException("Illegal source: $source"))
-        return launcher.launchAuthBySource(source)
+    suspend fun launchAuthBySource(platform: BlogPlatform): Result<Boolean> {
+        val launcher = accountManagerList.firstOrNull { it.applicable(platform) }
+            ?: return Result.failure(IllegalArgumentException("Illegal platform: $platform"))
+        return launcher.launchAuthBySource(platform)
     }
 }
 
@@ -49,7 +50,7 @@ interface IAccountManager {
         sourceList: List<StatusSource>
     ): Result<SourcesAuthValidateResult>
 
-    fun applicable(source: StatusSource): Boolean
+    fun applicable(platform: BlogPlatform): Boolean
 
-    suspend fun launchAuthBySource(source: StatusSource): Result<Boolean>
+    suspend fun launchAuthBySource(platform: BlogPlatform): Result<Boolean>
 }

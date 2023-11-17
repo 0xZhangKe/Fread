@@ -96,8 +96,8 @@ private fun LoggedAccountSection(
                     end.linkTo(content.start)
                     top.linkTo(parent.top, 12.dp)
                 },
-            placeholder = painterResource(id = com.zhangke.utopia.commonbiz.R.drawable.ic_avatar),
-            error = painterResource(id = com.zhangke.utopia.commonbiz.R.drawable.ic_avatar),
+            placeholder = painterResource(id = com.zhangke.utopia.framework.R.drawable.ic_avatar),
+            error = painterResource(id = com.zhangke.utopia.framework.R.drawable.ic_avatar),
             model = account.avatar,
             contentDescription = "Avatar",
         )

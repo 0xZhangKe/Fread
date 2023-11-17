@@ -31,10 +31,12 @@ import com.zhangke.framework.ktx.CollectOnComposable
 import com.zhangke.krouter.Destination
 import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.feeds.R
+import com.zhangke.utopia.feeds.composable.BlogPlatformSection
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceSection
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
+import com.zhangke.utopia.status.platform.BlogPlatform
 import kotlinx.coroutines.flow.Flow
 
 @Destination(SharedRouter.Feeds.add)
@@ -57,15 +59,25 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
             onConfirmClick = viewModel::onConfirmClick,
             onNameInputValueChanged = viewModel::onSourceNameInput,
             onRemoveSourceClick = viewModel::onRemoveSource,
-            onChooseSourceItemClick = viewModel::onAuthItemClick,
-            onChooseSourceDialogDismissRequest = viewModel::onChooseDialogDismissRequest,
         )
         viewModel.finishPage.CollectOnComposable {
             navigator.pop()
         }
+        var platformList: List<BlogPlatform>? by remember {
+            mutableStateOf(null)
+        }
+        viewModel.loginRecommendPlatform.CollectOnComposable {
+            platformList = it
+        }
+        if (platformList != null) {
+            LoginDialog(
+                platformList = platformList!!,
+                onPlatformClick = viewModel::onAuthItemClick,
+                onDismissRequest = { platformList = null },
+            )
+        }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun FeedsManager(
         uiState: AddFeedsManagerUiState,
@@ -74,8 +86,6 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
         onConfirmClick: () -> Unit,
         onNameInputValueChanged: (String) -> Unit,
         onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
-        onChooseSourceItemClick: (StatusSourceUiState) -> Unit,
-        onChooseSourceDialogDismissRequest: () -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         ConsumeSnackbarFlow(snackbarHostState, errorMessageFlow)
@@ -141,13 +151,6 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
                 }
             }
         }
-        if (uiState.showChooseSourceDialog && uiState.invalidateSourceList.isNotEmpty()) {
-            ChooseSourceDialog(
-                uiState.invalidateSourceList,
-                onChooseSourceItemClick,
-                onChooseSourceDialogDismissRequest,
-            )
-        }
     }
 
     @Composable
@@ -175,6 +178,38 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
                                     onSourceItemClick(item)
                                 },
                             source = item,
+                        )
+                    }
+                }
+            }
+        )
+    }
+
+    @Composable
+    private fun LoginDialog(
+        platformList: List<BlogPlatform>,
+        onPlatformClick: (platform: BlogPlatform) -> Unit,
+        onDismissRequest: () -> Unit,
+    ) {
+        val configuration = LocalConfiguration.current
+        val screenHeight = configuration.screenHeightDp.dp
+        UtopiaDialog(
+            onDismissRequest = onDismissRequest,
+            title = stringResource(id = R.string.add_feeds_choose_auth_dialog_title),
+            content = {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .heightIn(max = screenHeight * 0.7F)
+                ) {
+                    items(platformList) { item ->
+                        BlogPlatformSection(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onPlatformClick(item)
+                                },
+                            platform = item,
                         )
                     }
                 }

@@ -12,6 +12,7 @@ import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.repo.db.FeedsRepo
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +41,9 @@ internal class AddFeedsManagerViewModel @Inject constructor(
 
     private val _finishPage = MutableSharedFlow<Boolean>()
     val finishPage: SharedFlow<Boolean> get() = _finishPage.asSharedFlow()
+
+    private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
+    val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
 
     fun onAddSources(uriList: List<String>) {
         launchInViewModel {
@@ -91,23 +95,26 @@ internal class AddFeedsManagerViewModel @Inject constructor(
                     if (it.invalidateList.isEmpty()) {
                         onReadyToAdd()
                     } else {
-                        viewModelState.update { state ->
-                            state.copy(
-                                showChooseSourceDialog = true,
-                                invalidateSourceList = it.invalidateList,
-                            )
-                        }
+                        onValidateAuthFailed(it.invalidateList)
                     }
                 }
         }
     }
 
-    fun onAuthItemClick(source: StatusSourceUiState) {
-        val sourceModel = viewModelState.value.invalidateSourceList
-            .first { it.uri.toString() == source.uri }
+    private suspend fun onValidateAuthFailed(sourceList: List<StatusSource>) {
+        statusProvider.platformResolver
+            .resolveBySourceUriList(sourceList.map { source -> source.uri.toString() })
+            .onSuccess {
+                _loginRecommendPlatform.emit(it)
+            }.onFailure {
+                _loginRecommendPlatform.emit(emptyList())
+            }
+    }
+
+    fun onAuthItemClick(platform: BlogPlatform) {
         launchInViewModel {
             statusProvider.accountManager
-                .launchAuthBySource(sourceModel)
+                .launchAuthBySource(platform)
                 .onSuccess {
                     _errorMessageFlow.emit(
                         textOf(com.zhangke.utopia.commonbiz.R.string.auth_success)
@@ -118,12 +125,6 @@ internal class AddFeedsManagerViewModel @Inject constructor(
                         textOf(com.zhangke.utopia.commonbiz.R.string.auth_failed)
                     )
                 }
-        }
-    }
-
-    fun onChooseDialogDismissRequest() {
-        viewModelState.update {
-            it.copy(showChooseSourceDialog = false)
         }
     }
 
@@ -141,8 +142,6 @@ internal class AddFeedsManagerViewModel @Inject constructor(
         return AddSourceViewModelState(
             sourceList = emptyList(),
             sourceName = "",
-            showChooseSourceDialog = false,
-            invalidateSourceList = emptyList(),
         )
     }
 
@@ -150,8 +149,6 @@ internal class AddFeedsManagerViewModel @Inject constructor(
         return AddFeedsManagerUiState(
             sourceList = sourceList.map { it.toUiState() },
             sourceName = sourceName,
-            showChooseSourceDialog = showChooseSourceDialog,
-            invalidateSourceList = invalidateSourceList.map { it.toUiState(removeEnabled = false) }
         )
     }
 
@@ -170,6 +167,4 @@ internal class AddFeedsManagerViewModel @Inject constructor(
 internal data class AddSourceViewModelState(
     val sourceList: List<StatusSource>,
     val sourceName: String,
-    val showChooseSourceDialog: Boolean,
-    val invalidateSourceList: List<StatusSource>,
 )

@@ -5,6 +5,4 @@ import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 internal data class AddFeedsManagerUiState(
     val sourceList: List<StatusSourceUiState>,
     val sourceName: String,
-    val showChooseSourceDialog: Boolean,
-    val invalidateSourceList: List<StatusSourceUiState>,
 )

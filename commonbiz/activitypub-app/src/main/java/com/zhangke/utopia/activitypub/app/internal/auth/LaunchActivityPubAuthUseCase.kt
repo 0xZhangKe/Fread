@@ -1,28 +1,24 @@
 package com.zhangke.utopia.activitypub.app.internal.auth
 
+import com.zhangke.utopia.activitypub.app.ACTIVITY_PUB_PROTOCOL
 import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
-import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSource
-import com.zhangke.utopia.activitypub.app.internal.source.user.UserSource
-import com.zhangke.utopia.activitypub.app.internal.usecase.FindHostFromUriUseCase
-import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.platform.BlogPlatform
 import javax.inject.Inject
 
 class LaunchActivityPubAuthUseCase @Inject constructor(
     private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
     private val author: ActivityPubOAuthor,
-    private val findHostFromUriUseCase: FindHostFromUriUseCase,
 ) {
 
-    fun applicable(source: StatusSource): Boolean {
-        return source is UserSource || source is TimelineSource
+    fun applicable(platform: BlogPlatform): Boolean {
+        return platform.protocol == ACTIVITY_PUB_PROTOCOL
     }
 
-    suspend fun launch(source: StatusSource): Result<Boolean> {
-        val host = findHostFromUriUseCase(source.uri)
-        if (host.isNullOrEmpty()) {
-            return Result.failure(IllegalArgumentException("Illegal source:$source"))
+    suspend fun launch(platform: BlogPlatform): Result<Boolean> {
+        if (platform.baseUrl.isEmpty()) {
+            return Result.failure(IllegalArgumentException("Illegal platform:$platform"))
         }
-        val client = obtainActivityPubClientUseCase(host)
+        val client = obtainActivityPubClientUseCase(platform.baseUrl)
         return Result.success(author.startOauth(client.buildOAuthUrl(), client))
     }
 }

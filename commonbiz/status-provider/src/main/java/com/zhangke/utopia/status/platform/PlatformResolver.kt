@@ -16,7 +16,7 @@ class PlatformResolver constructor(
 
     suspend fun resolveBySourceUriList(uriList: List<String>): Result<List<BlogPlatform>> {
         val resultList = uriList.map { resolveBySourceUri(it) }
-        val platformList = resultList.mapNotNull { it.getOrNull() }
+        val platformList = resultList.mapNotNull { it.getOrNull() }.distinct()
         if (platformList.isNotEmpty()) return Result.success(platformList)
         val exception = resultList.mapFirstOrNull { it.exceptionOrNull() }
         if (exception != null) return Result.failure(exception)

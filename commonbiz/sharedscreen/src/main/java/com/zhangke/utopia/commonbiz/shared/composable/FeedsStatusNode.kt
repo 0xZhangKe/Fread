@@ -9,7 +9,7 @@ import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.status.status.Status
-import com.zhangke.utopia.status.ui.StatusNode
+import com.zhangke.utopia.status.ui.StatusUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 
 @Composable
@@ -20,7 +20,7 @@ fun FeedsStatusNode(
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
-    StatusNode(
+    StatusUi(
         modifier = modifier,
         status = status,
         indexInList = indexInList,

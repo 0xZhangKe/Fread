@@ -9,7 +9,7 @@ import com.zhangke.framework.feeds.fetcher.FeedsFetcher
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.FeedsPageUiStateAdapter
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
-import com.zhangke.utopia.feeds.repo.db.FeedsRepo
+import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.Status
 import dagger.hilt.android.lifecycle.HiltViewModel

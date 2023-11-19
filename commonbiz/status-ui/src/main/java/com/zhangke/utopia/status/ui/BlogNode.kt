@@ -42,7 +42,7 @@ import java.util.Locale
 import kotlin.concurrent.getOrSet
 
 @Composable
-fun BlogContentComposable(
+fun BlogContentUi(
     modifier: Modifier = Modifier,
     blog: Blog,
     indexInList: Int,
@@ -233,5 +233,5 @@ private fun PreviewBlogContentComposable() {
         repliesCount = 10,
         poll = null,
     )
-    BlogContentComposable(blog = blog, indexInList = 1, onMediaClick = { _ -> })
+    BlogContentUi(blog = blog, indexInList = 1, onMediaClick = { _ -> })
 }

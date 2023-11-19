@@ -10,10 +10,14 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.Card
-import androidx.compose.material.MaterialTheme
-import androidx.compose.material.RadioButton
-import androidx.compose.material.Text
+import androidx.compose.material.Icon
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.Card
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,13 +35,14 @@ import com.zhangke.utopia.status.platform.BlogPlatform
 @Composable
 internal fun ProfileHomePage(
     uiState: ProfileHomeUiState,
+    onAddAccountClick: () -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 56.dp),
             text = stringResource(R.string.profile_page_title),
-            style = MaterialTheme.typography.h3,
-            color = MaterialTheme.colors.onBackground,
+            style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.onBackground,
         )
 
         LazyColumn(
@@ -46,32 +51,61 @@ internal fun ProfileHomePage(
                 .padding(top = 16.dp)
         ) {
             items(uiState.accountDataList) { item ->
-                AccountGroupItem(item.first, item.second)
+                AccountGroupItem(
+                    platform = item.first,
+                    accountList = item.second,
+                    onAddAccountClick = onAddAccountClick,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun AccountGroupItem(platform: BlogPlatform, accountList: List<LoggedAccount>) {
-    Card(
-        modifier = Modifier
-            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-            .fillMaxWidth()
-    ) {
-        Column {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = platform.name,
-                style = MaterialTheme.typography.h5,
-                color = MaterialTheme.colors.onSurface,
-            )
-            accountList.forEach { account ->
-                LoggedAccountSection(
-                    account = account,
-                    onActiveClicked = {},
+private fun AccountGroupItem(
+    platform: BlogPlatform,
+    accountList: List<LoggedAccount>,
+    onAddAccountClick: () -> Unit,
+) {
+    Column {
+        Text(
+            modifier = Modifier.padding(start = 20.dp, top = 16.dp, bottom = 16.dp),
+            text = platform.protocol,
+            style = MaterialTheme.typography.titleLarge,
+        )
+
+        Card(
+            modifier = Modifier
+                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+                .fillMaxWidth()
+        ) {
+            Column {
+                Text(
+                    modifier = Modifier.padding(16.dp),
+                    text = platform.name,
+                    style = MaterialTheme.typography.titleLarge,
+                    color = MaterialTheme.colorScheme.onSurface,
                 )
+                accountList.forEach { account ->
+                    LoggedAccountSection(
+                        account = account,
+                        onActiveClicked = {},
+                    )
+                }
             }
+        }
+
+        IconButton(
+            modifier = Modifier
+                .align(Alignment.CenterHorizontally)
+                .padding(top = 16.dp),
+            onClick = onAddAccountClick,
+        ) {
+
+            Icon(
+                imageVector = Icons.Default.Add,
+                contentDescription = "Add Account"
+            )
         }
     }
 }
@@ -113,19 +147,19 @@ private fun LoggedAccountSection(
                 },
             horizontalAlignment = Alignment.Start,
         ) {
-            androidx.compose.material3.Text(
+            Text(
                 maxLines = 1,
                 text = account.userName,
-                color = androidx.compose.material3.MaterialTheme.colorScheme.onSurface,
-                style = androidx.compose.material3.MaterialTheme.typography.bodyLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+                style = MaterialTheme.typography.bodyLarge,
             )
             if (account.description.isNullOrEmpty().not()) {
-                androidx.compose.material3.Text(
+                Text(
                     modifier = Modifier.padding(top = 2.dp),
                     maxLines = 3,
                     text = account.description!!,
-                    color = androidx.compose.material3.MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = androidx.compose.material3.MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.bodySmall,
                 )
             }
         }

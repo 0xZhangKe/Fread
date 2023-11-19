@@ -10,7 +10,7 @@ import com.zhangke.framework.ktx.map
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
-import com.zhangke.utopia.feeds.repo.db.FeedsRepo
+import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource

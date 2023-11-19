@@ -1,11 +1,11 @@
-package com.zhangke.utopia.feeds.repo.db
+package com.zhangke.utopia.common.feeds.repo
 
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.feeds.adapter.FeedsEntityAdapter
-import com.zhangke.utopia.feeds.model.Feeds
+import com.zhangke.utopia.common.feeds.adapter.FeedsEntityAdapter
+import com.zhangke.utopia.common.feeds.model.Feeds
 import javax.inject.Inject
 
-internal class FeedsRepo @Inject constructor(
+class FeedsRepo @Inject constructor(
     private val feedAdapter: FeedsEntityAdapter,
 ) {
 

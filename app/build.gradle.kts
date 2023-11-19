@@ -90,8 +90,8 @@ android {
 dependencies {
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":framework"))
-    implementation(project(path = ":commonbiz:activitypub-app"))
-    implementation(project(path = ":commonbiz:status-provider"))
+    implementation(project(path = ":plugins:activitypub-app"))
+    implementation(project(path = ":bizframework:status-provider"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":commonbiz:sharedscreen"))
     implementation(project(path = ":feature:feeds"))

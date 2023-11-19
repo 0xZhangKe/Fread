@@ -11,7 +11,7 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.zhangke.framework.room.ListStringConverter
+import com.zhangke.utopia.common.utils.ListStringConverter
 
 private const val DB_NAME = "UtopiaFeeds.db"
 private const val TABLE_NAME = "feeds"
@@ -26,7 +26,7 @@ data class FeedsEntity(
 )
 
 @Dao
-internal interface FeedsDao {
+interface FeedsDao {
 
     @Query("SELECT * FROM $TABLE_NAME")
     suspend fun queryAll(): List<FeedsEntity>
@@ -45,7 +45,7 @@ internal interface FeedsDao {
 }
 
 @Database(entities = [FeedsEntity::class], version = DB_VERSION, exportSchema = false)
-internal abstract class FeedsDatabases : RoomDatabase() {
+abstract class FeedsDatabases : RoomDatabase() {
 
     abstract fun getDao(): FeedsDao
 

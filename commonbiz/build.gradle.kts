@@ -15,6 +15,7 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
 
     implementation(project(path = ":framework"))
+    implementation(project(path = ":bizframework:status-provider"))
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.room)

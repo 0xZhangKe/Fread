@@ -2,12 +2,11 @@ package com.zhangke.utopia.status.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.status.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 @Composable
-fun StatusNode(
+fun StatusUi(
     modifier: Modifier = Modifier,
     status: Status,
     indexInList: Int,
@@ -16,7 +15,7 @@ fun StatusNode(
     val blog = when (status) {
         is Status.NewBlog -> status.blog
     }
-    BlogContentComposable(
+    BlogContentUi(
         modifier = modifier,
         blog = blog,
         indexInList = indexInList,

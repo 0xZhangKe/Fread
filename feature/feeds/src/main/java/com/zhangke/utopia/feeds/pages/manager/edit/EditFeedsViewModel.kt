@@ -7,7 +7,7 @@ import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
-import com.zhangke.utopia.feeds.repo.db.FeedsRepo
+import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow

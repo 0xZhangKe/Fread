@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.repo.db
+package com.zhangke.utopia.common.feeds.repo
 
 import android.content.Context
 import androidx.room.Dao
@@ -19,7 +19,7 @@ private const val DB_VERSION = 1
 
 @TypeConverters(ListStringConverter::class)
 @Entity(tableName = TABLE_NAME)
-internal data class FeedsEntity(
+data class FeedsEntity(
     @PrimaryKey(autoGenerate = true) val id: Int,
     val name: String,
     val uriList: List<String>,

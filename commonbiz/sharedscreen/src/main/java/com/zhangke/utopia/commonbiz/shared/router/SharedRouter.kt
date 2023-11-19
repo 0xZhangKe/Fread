@@ -16,4 +16,9 @@ object SharedRouter {
             const val paramBaseurl = "baseUrl"
         }
     }
+
+    object Profile {
+
+        const val login = "profile/login"
+    }
 }

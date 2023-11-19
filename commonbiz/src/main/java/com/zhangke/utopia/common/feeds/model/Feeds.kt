@@ -1,6 +1,6 @@
-package com.zhangke.utopia.feeds.model
+package com.zhangke.utopia.common.feeds.model
 
-internal data class Feeds(
+data class Feeds(
     val id: Int,
     val name: String,
     val sourceUriList: List<String>,

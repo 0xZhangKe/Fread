@@ -1,4 +1,4 @@
-package com.zhangke.framework.room
+package com.zhangke.utopia.common.utils
 
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken

@@ -1,16 +1,11 @@
 plugins {
     id("utopia.android.library")
+    id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
 
 android {
     namespace = "com.zhangke.utopia.commonbiz"
-}
-
-kotlin {
-    sourceSets.main {
-        kotlin.srcDir("build/generated/ksp/main/kotlin")
-    }
 }
 
 dependencies {
@@ -27,4 +22,5 @@ dependencies {
     kapt(libs.androidx.room.compiler)
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
+    implementation(libs.gson)
 }

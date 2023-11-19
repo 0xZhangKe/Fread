@@ -2,7 +2,23 @@
 
 Mastodon android client
 
+# Module structure
+
+```
+           framework/libs
+                |
+           biz framework
+                |
+            common biz
+               /  \
+              /    \
+         feature   plugins
+           /          |
+         app < - - - /
+```
+
 # StatusProviderUri
+
 The Uri associated with status-provider is denoted by `StatusProviderUri`.
 
 - scheme: utopiaapp
@@ -12,13 +28,16 @@ The Uri associated with status-provider is denoted by `StatusProviderUri`.
 - query: function params
 
 ## ActivityPub uri
+
 scheme always is utopiaapp
 
 host always is activitypub.com
 
 ### user path
+
 presenter a user, must container a `WebFinger` query and a `UserId` query.
 
 ### timeline path
+
 Presenter a timeline, must container a `host` and `type` query.
 

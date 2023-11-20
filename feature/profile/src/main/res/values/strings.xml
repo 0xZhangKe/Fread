@@ -2,4 +2,7 @@
 <resources>
     <string name="profile_page_title">Profile</string>
     <string name="login_dialog_title">Please select server</string>
+    <string name="login_dialog_input_tip">Input Server Host</string>
+    <string name="login_dialog_input_title">Please Input Server Host</string>
+    <string name="login_dialog_input_label">Server Host</string>
 </resources>

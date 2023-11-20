@@ -32,7 +32,7 @@ fun CardInfoSection(
     actions: (@Composable RowScope.() -> Unit)? = null
 ) {
     Card(
-        modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 20.dp),
+        modifier = modifier,
     ) {
         ConstraintLayout(
             modifier = Modifier

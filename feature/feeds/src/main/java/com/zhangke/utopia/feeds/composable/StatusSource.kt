@@ -67,7 +67,7 @@ internal fun StatusSourceNode(
     onRemoveClick: (() -> Unit)? = null,
 ) {
     CardInfoSection(
-        modifier = modifier,
+        modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
         avatar = source.thumbnail,
         title = source.name,
         description = source.description,

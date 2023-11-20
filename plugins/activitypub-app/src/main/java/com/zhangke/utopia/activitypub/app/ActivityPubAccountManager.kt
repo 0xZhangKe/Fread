@@ -6,7 +6,6 @@ import com.zhangke.utopia.activitypub.app.internal.auth.LaunchActivityPubAuthUse
 import com.zhangke.utopia.status.account.IAccountManager
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
-import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
@@ -26,11 +25,7 @@ class ActivityPubAccountManager @Inject constructor(
         return validateAuthOfSourceList.invoke(sourceList)
     }
 
-    override fun applicable(platform: BlogPlatform): Boolean {
-        return launchAuth.applicable(platform)
-    }
-
-    override suspend fun launchAuthBySource(platform: BlogPlatform): Result<Boolean> {
-        return launchAuth.launch(platform)
+    override suspend fun launchAuthBySource(baseUrl: String): Result<Boolean> {
+        return launchAuth.launch(baseUrl)
     }
 }

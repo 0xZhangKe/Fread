@@ -3,6 +3,7 @@ package com.zhangke.utopia.status.account
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.utils.collect
+import java.lang.RuntimeException
 import javax.inject.Inject
 
 class AccountManager @Inject constructor(
@@ -35,10 +36,13 @@ class AccountManager @Inject constructor(
         )
     }
 
-    suspend fun launchAuthBySource(platform: BlogPlatform): Result<Boolean> {
-        val launcher = accountManagerList.firstOrNull { it.applicable(platform) }
-            ?: return Result.failure(IllegalArgumentException("Illegal platform: $platform"))
-        return launcher.launchAuthBySource(platform)
+    suspend fun launchAuthBySource(baseUrl: String): Result<Boolean> {
+        var result: Result<Boolean> = Result.failure(RuntimeException("Can't auth!"))
+        for (manager in accountManagerList) {
+            result = manager.launchAuthBySource(baseUrl)
+            if (result.getOrNull() == true) break
+        }
+        return result
     }
 }
 
@@ -50,7 +54,5 @@ interface IAccountManager {
         sourceList: List<StatusSource>
     ): Result<SourcesAuthValidateResult>
 
-    fun applicable(platform: BlogPlatform): Boolean
-
-    suspend fun launchAuthBySource(platform: BlogPlatform): Result<Boolean>
+    suspend fun launchAuthBySource(baseUrl: String): Result<Boolean>
 }

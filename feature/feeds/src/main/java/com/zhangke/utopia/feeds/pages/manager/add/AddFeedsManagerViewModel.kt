@@ -114,7 +114,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     fun onAuthItemClick(platform: BlogPlatform) {
         launchInViewModel {
             statusProvider.accountManager
-                .launchAuthBySource(platform)
+                .launchAuthBySource(platform.baseUrl)
                 .onSuccess {
                     _errorMessageFlow.emit(
                         textOf(com.zhangke.utopia.commonbiz.R.string.auth_success)

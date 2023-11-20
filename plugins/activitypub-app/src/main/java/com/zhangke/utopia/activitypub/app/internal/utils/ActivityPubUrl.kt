@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.utils
 import android.net.Uri
 import android.util.Base64
 import com.zhangke.framework.utils.RegexFactory
+import java.net.URL
 
 private const val HTTP_SCHEME_PREFIX = "http://"
 private const val HTTPS_SCHEME_PREFIX = "https://"
@@ -21,7 +22,7 @@ internal class ActivityPubUrl private constructor(
     companion object {
 
         fun create(url: String): ActivityPubUrl? {
-            val host = RegexFactory.getDomainRegex().find(url)?.value
+            val host = RegexFactory.getDomainRegex().find(url.toDomain())?.value
             if (host.isNullOrEmpty()) return null
             val completenessUrl = buildCompletenessUrl(url)
             val uri = Uri.parse(completenessUrl)

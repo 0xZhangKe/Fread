@@ -38,7 +38,7 @@ object ProfileTab : Tab {
         ProfileHomePage(
             uiState = uiState,
             onAddAccountClick = {
-                bottomSheetNavigator.push(LoginScreen())
+                bottomSheetNavigator.show(LoginScreen())
             },
         )
     }

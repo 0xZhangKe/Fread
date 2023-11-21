@@ -2,6 +2,7 @@ plugins {
     id("utopia.android.library")
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 android {

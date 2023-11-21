@@ -14,4 +14,8 @@
     <string name="auth_success">Login successful</string>
 
     <string name="auth_failed">Login failed</string>
+
+    <string name="select">Select</string>
+
+    <string name="logout">Logout</string>
 </resources>

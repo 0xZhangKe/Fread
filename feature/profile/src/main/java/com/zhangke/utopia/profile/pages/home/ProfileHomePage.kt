@@ -1,5 +1,7 @@
 package com.zhangke.utopia.profile.pages.home
 
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,21 +15,29 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.Card
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.size
 import com.zhangke.utopia.profile.R
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -54,47 +64,9 @@ internal fun ProfileHomePage(
                 AccountGroupItem(
                     platform = item.first,
                     accountList = item.second,
-                    onAddAccountClick = onAddAccountClick,
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun AccountGroupItem(
-    platform: BlogPlatform,
-    accountList: List<LoggedAccount>,
-    onAddAccountClick: () -> Unit,
-) {
-    Column {
-        Text(
-            modifier = Modifier.padding(start = 20.dp, top = 16.dp, bottom = 16.dp),
-            text = platform.protocol,
-            style = MaterialTheme.typography.titleLarge,
-        )
-
-        Card(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                .fillMaxWidth()
-        ) {
-            Column {
-                Text(
-                    modifier = Modifier.padding(16.dp),
-                    text = platform.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
-                )
-                accountList.forEach { account ->
-                    LoggedAccountSection(
-                        account = account,
-                        onActiveClicked = {},
-                    )
-                }
-            }
-        }
-
         IconButton(
             modifier = Modifier
                 .align(Alignment.CenterHorizontally)
@@ -111,6 +83,33 @@ private fun AccountGroupItem(
 }
 
 @Composable
+private fun AccountGroupItem(
+    platform: BlogPlatform,
+    accountList: List<LoggedAccount>,
+) {
+    Card(
+        modifier = Modifier
+            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
+            .fillMaxWidth()
+    ) {
+        Column {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = platform.name,
+                style = MaterialTheme.typography.titleLarge,
+                color = MaterialTheme.colorScheme.onSurface,
+            )
+            accountList.forEach { account ->
+                LoggedAccountSection(
+                    account = account,
+                    onActiveClicked = {},
+                )
+            }
+        }
+    }
+}
+
+@Composable
 private fun LoggedAccountSection(
     account: LoggedAccount,
     onActiveClicked: () -> Unit,
@@ -120,7 +119,7 @@ private fun LoggedAccountSection(
             .fillMaxWidth()
             .padding(bottom = 16.dp)
     ) {
-        val (avatar, content, options) = createRefs()
+        val (avatar, content, moreIcon) = createRefs()
         AsyncImage(
             modifier = Modifier
                 .size(40.dp)
@@ -141,18 +140,31 @@ private fun LoggedAccountSection(
                 .constrainAs(content) {
                     start.linkTo(avatar.end, 16.dp)
                     top.linkTo(parent.top, 12.dp)
-                    end.linkTo(options.start)
+                    end.linkTo(moreIcon.start)
                     bottom.linkTo(parent.bottom, 12.dp)
                     width = Dimension.fillToConstraints
                 },
             horizontalAlignment = Alignment.Start,
         ) {
-            Text(
-                maxLines = 1,
-                text = account.userName,
-                color = MaterialTheme.colorScheme.onSurface,
-                style = MaterialTheme.typography.bodyLarge,
-            )
+            Row {
+                Text(
+                    modifier = Modifier.align(Alignment.CenterVertically),
+                    maxLines = 1,
+                    text = account.userName,
+                    color = MaterialTheme.colorScheme.onSurface,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                if (account.active) {
+                    Box(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .padding(start = 6.dp)
+                            .clip(CircleShape)
+                            .size(8.dp)
+                            .background(Color(0xFF00BF00))
+                    )
+                }
+            }
             if (account.description.isNullOrEmpty().not()) {
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
@@ -163,18 +175,43 @@ private fun LoggedAccountSection(
                 )
             }
         }
-        Row(
-            modifier = Modifier.constrainAs(options) {
+        var showMorePopup by remember {
+            mutableStateOf(false)
+        }
+        Box(
+            modifier = Modifier.constrainAs(moreIcon) {
                 start.linkTo(content.end, 16.dp)
                 end.linkTo(parent.end, 24.dp)
                 top.linkTo(parent.top, 12.dp)
                 bottom.linkTo(parent.bottom)
+            }) {
+            IconButton(
+                onClick = { showMorePopup = true },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.MoreVert,
+                    contentDescription = "More option",
+                )
             }
-        ) {
-            RadioButton(
-                selected = account.active,
-                onClick = onActiveClicked,
-            )
+            DropdownMenu(
+                expanded = showMorePopup,
+                onDismissRequest = { showMorePopup = false },
+            ) {
+                if (!account.active) {
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.select))
+                        },
+                        onClick = { /*TODO*/ },
+                    )
+                }
+                DropdownMenuItem(
+                    text = {
+                        Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.logout))
+                    },
+                    onClick = { /*TODO*/ },
+                )
+            }
         }
     }
 }

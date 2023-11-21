@@ -1,9 +1,7 @@
 package com.zhangke.utopia.status.account
 
-import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.utils.collect
-import java.lang.RuntimeException
 import javax.inject.Inject
 
 class AccountManager @Inject constructor(

@@ -14,4 +14,8 @@
     <string name="auth_success">登录成功</string>
 
     <string name="auth_failed">登录失败</string>
+
+    <string name="select">选择</string>
+
+    <string name="logout">退出登陆</string>
 </resources>

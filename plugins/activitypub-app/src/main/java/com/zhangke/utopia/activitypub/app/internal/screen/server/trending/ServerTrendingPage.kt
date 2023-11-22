@@ -48,7 +48,7 @@ private fun ServerTrendingContent(
         itemsIndexed(statusList) { index, status ->
             if (status != null) {
                 FeedsStatusNode(
-                    modifier = Modifier.padding(bottom = 15.dp),
+                    modifier = Modifier,
                     status = status,
                     indexInList = index,
                 )

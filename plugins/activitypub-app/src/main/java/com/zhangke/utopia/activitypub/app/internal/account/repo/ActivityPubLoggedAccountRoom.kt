@@ -4,7 +4,7 @@ import androidx.room.*
 import com.zhangke.activitypub.entry.ActivityPubTokenEntity
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.account.entities.BlogPlatformEntity
-import com.zhangke.utopia.status.platform.BlogPlatform
+import kotlinx.coroutines.flow.Flow
 
 private const val TABLE_NAME = "logged_accounts"
 
@@ -32,8 +32,11 @@ data class ActivityPubLoggedAccountEntity(
 @Dao
 interface ActivityPubLoggerAccountDao {
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE active='true'")
-    suspend fun querySelectedAccount(): ActivityPubLoggedAccountEntity?
+    @Query("SELECT * FROM $TABLE_NAME")
+    fun queryAllFlow(): Flow<List<ActivityPubLoggedAccountEntity>>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE active=1")
+    suspend fun queryActiveAccount(): ActivityPubLoggedAccountEntity?
 
     @Query("SELECT * FROM $TABLE_NAME")
     suspend fun queryAll(): List<ActivityPubLoggedAccountEntity>

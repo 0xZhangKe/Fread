@@ -3,14 +3,11 @@ package com.zhangke.utopia.feeds.pages.home.feeds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -28,16 +25,16 @@ internal fun FeedsPage(
     onLoadMore: () -> Unit,
     onShowSnackMessage: suspend (String) -> Unit,
 ) {
-//    val feedsList = rememberSaveable(uiState.feedsFlow) {
-//        mutableListOf<Status>()
-//    }
-    val feedsList by uiState.feedsFlow.collectAsState(initial = emptyList())
-//    LaunchedEffect(uiState.feedsFlow) {
-//        uiState.feedsFlow.collect {
-//            feedsList.clear()
-//            feedsList.addAll(it)
-//        }
-//    }
+    val feedsList = rememberSaveable(uiState.feedsFlow) {
+        mutableListOf<Status>()
+    }
+//    val feedsList by uiState.feedsFlow.collectAsState(initial = emptyList())
+    LaunchedEffect(uiState.feedsFlow) {
+        uiState.feedsFlow.collect {
+            feedsList.clear()
+            feedsList.addAll(it)
+        }
+    }
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,
@@ -55,9 +52,6 @@ internal fun FeedsPage(
         refreshing = uiState.refreshing,
         loading = uiState.loading,
         contentPadding = PaddingValues(
-            start = 15.dp,
-            top = 15.dp,
-            end = 15.dp,
             bottom = 20.dp,
         )
     ) {
@@ -70,7 +64,7 @@ internal fun FeedsPage(
         } else {
             itemsIndexed(feedsList) { index, item ->
                 FeedsStatusNode(
-                    modifier = Modifier.padding(bottom = 15.dp),
+                    modifier = Modifier,
                     status = item,
                     indexInList = index,
                 )

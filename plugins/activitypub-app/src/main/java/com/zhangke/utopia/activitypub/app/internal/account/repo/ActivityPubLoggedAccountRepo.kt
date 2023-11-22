@@ -4,6 +4,9 @@ import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAcco
 import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
+import com.zhangke.utopia.status.account.LoggedAccount
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountRepo @Inject constructor(
@@ -14,17 +17,19 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
     private val accountDao: ActivityPubLoggerAccountDao
         get() = databases.getActivityPubUserDao()
 
+    fun getAllAccountFlow(): Flow<List<ActivityPubLoggedAccount>> {
+        return accountDao.queryAllFlow().map { list ->
+            list.map { adapter.adapt(it) }
+        }
+    }
+
     suspend fun getCurrentAccount(): ActivityPubLoggedAccount? {
-        return accountDao.queryAll()
-            .firstOrNull { it.active }
-            ?.let {
-                adapter.adapt(it)
-            }
+        return accountDao.queryActiveAccount()?.let(adapter::adapt)
     }
 
     suspend fun updateCurrentAccount(account: ActivityPubLoggedAccount) {
         val insertList = mutableListOf<ActivityPubLoggedAccountEntity>()
-        accountDao.querySelectedAccount()
+        accountDao.queryActiveAccount()
             ?.copy(active = false)
             ?.let { insertList += it }
         insertList += adapter.recovery(account)

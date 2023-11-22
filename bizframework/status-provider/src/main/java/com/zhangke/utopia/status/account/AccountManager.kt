@@ -3,6 +3,8 @@ package com.zhangke.utopia.status.account
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.utils.collect
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
 class AccountManager @Inject constructor(
@@ -11,6 +13,15 @@ class AccountManager @Inject constructor(
 
     suspend fun getAllLoggedAccount(): Result<List<LoggedAccount>> {
         return accountManagerList.map { it.getAllLoggedAccount() }.collect()
+    }
+
+    fun getAllAccountFlow(): Flow<List<LoggedAccount>> {
+        val flowList = accountManagerList.map {
+            it.getAllAccountFlow()
+        }
+        return combine(*flowList.toTypedArray()) {
+            it.flatMap { list -> list }
+        }
     }
 
     suspend fun validateAuthOfSourceList(
@@ -60,6 +71,8 @@ class AccountManager @Inject constructor(
 interface IAccountManager {
 
     suspend fun getAllLoggedAccount(): Result<List<LoggedAccount>>
+
+    fun getAllAccountFlow(): Flow<List<LoggedAccount>>
 
     suspend fun validateAuthOfSourceList(
         sourceList: List<StatusSource>

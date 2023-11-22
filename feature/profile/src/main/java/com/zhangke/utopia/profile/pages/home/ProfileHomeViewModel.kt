@@ -8,6 +8,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -23,15 +24,12 @@ class ProfileHomeViewModel @Inject constructor(
     init {
         viewModelScope.launch {
             statusProvider.accountManager
-                .getAllLoggedAccount()
-                .onSuccess { list ->
-                    list.groupBy { it.platform }
-                        .map { it.key to it.value }
-                        .let { dataList ->
-                            _uiState.update {
-                                it.copy(accountDataList = dataList)
-                            }
-                        }
+                .getAllAccountFlow()
+                .map { list -> list.groupBy(LoggedAccount::platform).map { it.key to it.value } }
+                .collect { list ->
+                    _uiState.update {
+                        it.copy(accountDataList = list)
+                    }
                 }
         }
     }

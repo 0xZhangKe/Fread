@@ -37,7 +37,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
-import com.zhangke.framework.composable.size
 import com.zhangke.utopia.profile.R
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -214,14 +213,20 @@ private fun LoggedAccountSection(
                         text = {
                             Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.select))
                         },
-                        onClick = onActiveClick,
+                        onClick = {
+                            onActiveClick()
+                            showMorePopup = false
+                        },
                     )
                 }
                 DropdownMenuItem(
                     text = {
                         Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.logout))
                     },
-                    onClick = onLogoutClick,
+                    onClick = {
+                        onLogoutClick()
+                        showMorePopup = false
+                    },
                 )
             }
         }

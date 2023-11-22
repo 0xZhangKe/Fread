@@ -3,6 +3,7 @@ package com.zhangke.utopia.profile.pages.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.account.LoggedAccount
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,6 +33,18 @@ class ProfileHomeViewModel @Inject constructor(
                             }
                         }
                 }
+        }
+    }
+
+    fun onLogoutClick(account: LoggedAccount) {
+        viewModelScope.launch {
+            statusProvider.accountManager.logout(account.uri)
+        }
+    }
+
+    fun onActiveClick(account: LoggedAccount) {
+        viewModelScope.launch {
+            statusProvider.accountManager.activeAccount(account.uri)
         }
     }
 }

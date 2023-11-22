@@ -9,7 +9,6 @@ import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLogge
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubUrl
-import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
@@ -22,7 +21,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
             userId = entity.userId,
-            uri = StatusProviderUri.from(entity.uri)!!,
+            uri = ActivityPubUserUri.create(entity.userId, entity.webFinger),
             webFinger = entity.webFinger,
             platform = platformEntityAdapter.toPlatform(entity.platform),
             host = entity.host,

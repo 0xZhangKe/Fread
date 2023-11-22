@@ -31,7 +31,6 @@ object ProfileTab : Tab {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
@@ -40,6 +39,8 @@ object ProfileTab : Tab {
             onAddAccountClick = {
                 bottomSheetNavigator.show(LoginScreen())
             },
+            onActiveClick = viewModel::onActiveClick,
+            onLogoutClick = viewModel::onLogoutClick,
         )
     }
 }

@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.account
 
 import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.utils.collect
 import javax.inject.Inject
 
@@ -42,6 +43,18 @@ class AccountManager @Inject constructor(
         }
         return result
     }
+
+    suspend fun activeAccount(uri: StatusProviderUri) {
+        accountManagerList.forEach { manager ->
+            if (manager.activeAccount(uri)) return@forEach
+        }
+    }
+
+    suspend fun logout(uri: StatusProviderUri) {
+        accountManagerList.forEach {
+            if (it.logout(uri)) return@forEach
+        }
+    }
 }
 
 interface IAccountManager {
@@ -53,4 +66,11 @@ interface IAccountManager {
     ): Result<SourcesAuthValidateResult>
 
     suspend fun launchAuthBySource(baseUrl: String): Result<Boolean>
+
+    /**
+     * @return active success
+     */
+    suspend fun activeAccount(uri: StatusProviderUri): Boolean
+
+    suspend fun logout(uri: StatusProviderUri): Boolean
 }

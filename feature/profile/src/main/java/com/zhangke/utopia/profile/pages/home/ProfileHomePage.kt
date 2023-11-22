@@ -46,6 +46,8 @@ import com.zhangke.utopia.status.platform.BlogPlatform
 internal fun ProfileHomePage(
     uiState: ProfileHomeUiState,
     onAddAccountClick: () -> Unit,
+    onActiveClick: (LoggedAccount) -> Unit,
+    onLogoutClick: (LoggedAccount) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
         Text(
@@ -64,6 +66,8 @@ internal fun ProfileHomePage(
                 AccountGroupItem(
                     platform = item.first,
                     accountList = item.second,
+                    onActiveClick = onActiveClick,
+                    onLogoutClick = onLogoutClick,
                 )
             }
         }
@@ -86,6 +90,8 @@ internal fun ProfileHomePage(
 private fun AccountGroupItem(
     platform: BlogPlatform,
     accountList: List<LoggedAccount>,
+    onActiveClick: (LoggedAccount) -> Unit,
+    onLogoutClick: (LoggedAccount) -> Unit,
 ) {
     Card(
         modifier = Modifier
@@ -102,7 +108,12 @@ private fun AccountGroupItem(
             accountList.forEach { account ->
                 LoggedAccountSection(
                     account = account,
-                    onActiveClicked = {},
+                    onActiveClick = {
+                        onActiveClick(account)
+                    },
+                    onLogoutClick = {
+                        onLogoutClick(account)
+                    }
                 )
             }
         }
@@ -112,7 +123,8 @@ private fun AccountGroupItem(
 @Composable
 private fun LoggedAccountSection(
     account: LoggedAccount,
-    onActiveClicked: () -> Unit,
+    onActiveClick: () -> Unit,
+    onLogoutClick: () -> Unit,
 ) {
     ConstraintLayout(
         modifier = Modifier
@@ -202,14 +214,14 @@ private fun LoggedAccountSection(
                         text = {
                             Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.select))
                         },
-                        onClick = { /*TODO*/ },
+                        onClick = onActiveClick,
                     )
                 }
                 DropdownMenuItem(
                     text = {
                         Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.logout))
                     },
-                    onClick = { /*TODO*/ },
+                    onClick = onLogoutClick,
                 )
             }
         }

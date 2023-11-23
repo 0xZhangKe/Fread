@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.server.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
+import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailContract

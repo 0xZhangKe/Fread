@@ -1,8 +1,8 @@
 package com.zhangke.utopia.activitypub.app.internal.account.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubAccountEntity
-import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
-import com.zhangke.activitypub.entry.ActivityPubTokenEntity
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
+import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
+import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountEntity

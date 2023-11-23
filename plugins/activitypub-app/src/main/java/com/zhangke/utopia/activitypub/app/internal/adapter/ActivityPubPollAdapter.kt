@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubPollEntity
+import com.zhangke.activitypub.entities.ActivityPubPollEntity
 import com.zhangke.utopia.status.blog.BlogPoll
 import javax.inject.Inject
 

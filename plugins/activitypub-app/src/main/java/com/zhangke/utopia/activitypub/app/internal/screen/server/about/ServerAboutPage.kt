@@ -26,7 +26,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.core.text.HtmlCompat
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import com.zhangke.activitypub.entry.ActivityPubAnnouncementEntity
+import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 

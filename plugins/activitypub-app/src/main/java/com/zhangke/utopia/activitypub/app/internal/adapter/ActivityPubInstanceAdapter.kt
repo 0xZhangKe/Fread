@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubInstanceEntity
+import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.utopia.activitypub.app.ACTIVITY_PUB_PROTOCOL
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl

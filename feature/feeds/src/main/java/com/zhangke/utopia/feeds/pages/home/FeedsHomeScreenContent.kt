@@ -15,6 +15,7 @@ import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
@@ -57,6 +58,7 @@ internal fun FeedsHomeScreenContent(
     onAddFeedsClick: () -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
+    onPostStatusClick: () -> Unit,
     onPlatformItemClick: (BlogPlatform) -> Unit,
 ) {
     val bottomSheetNavigator = LocalBottomSheetNavigator.current
@@ -73,6 +75,16 @@ internal fun FeedsHomeScreenContent(
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
+            floatingActionButton = {
+                IconButton(
+                    onClick = onPostStatusClick
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Add,
+                        contentDescription = "Add",
+                    )
+                }
+            }
         ) { paddings ->
             TopOutTopBarLayout(
                 modifier = Modifier.padding(paddings),

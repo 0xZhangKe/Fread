@@ -14,4 +14,8 @@ class ActivityPubStatusResolver @Inject constructor(
     override fun getStatusDataSourceByUri(uri: StatusProviderUri): StatusDataSource<*, Status>? {
         return getUserStatusFromUri(uri)
     }
+
+    override fun postStatus() {
+        TODO("Not yet implemented")
+    }
 }

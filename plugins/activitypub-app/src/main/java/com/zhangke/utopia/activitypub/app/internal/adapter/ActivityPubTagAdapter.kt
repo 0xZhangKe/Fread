@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubTagEntity
+import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.textOf
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTag

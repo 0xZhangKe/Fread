@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase
 
-import com.zhangke.activitypub.entry.ActivityPubAnnouncementEntity
+import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
 import javax.inject.Inject
 

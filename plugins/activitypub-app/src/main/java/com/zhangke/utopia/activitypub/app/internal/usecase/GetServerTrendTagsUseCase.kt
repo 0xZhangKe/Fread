@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase
 
-import com.zhangke.activitypub.entry.ActivityPubTagEntity
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTag

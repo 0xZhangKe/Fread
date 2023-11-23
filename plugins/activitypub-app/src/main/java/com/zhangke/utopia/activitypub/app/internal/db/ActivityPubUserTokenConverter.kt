@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.db
 
 import androidx.room.TypeConverter
-import com.zhangke.activitypub.entry.ActivityPubTokenEntity
+import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.architect.json.globalGson
 
 class ActivityPubUserTokenConverter {

@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
-import com.zhangke.activitypub.entry.ActivityPubMediaMetaEntity
+import com.zhangke.activitypub.entities.ActivityPubMediaMetaEntity
 import com.zhangke.utopia.status.blog.BlogMediaMeta
 import com.zhangke.utopia.status.blog.BlogMediaType
 import javax.inject.Inject

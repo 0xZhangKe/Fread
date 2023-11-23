@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.account.repo
 
 import androidx.room.*
-import com.zhangke.activitypub.entry.ActivityPubTokenEntity
+import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.account.entities.BlogPlatformEntity
 import kotlinx.coroutines.flow.Flow

@@ -10,6 +10,8 @@ class StatusResolver(
     private val resolverList: List<IStatusResolver>,
 ) {
 
+
+
     fun getStatusDataSourceByUri(
         uris: List<String>
     ): List<StatusDataSource<*, Status>> {
@@ -28,4 +30,6 @@ class StatusResolver(
 interface IStatusResolver {
 
     fun getStatusDataSourceByUri(uri: StatusProviderUri): StatusDataSource<*, Status>?
+
+    fun postStatus()
 }

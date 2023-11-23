@@ -17,6 +17,7 @@ import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
+import com.zhangke.utopia.feeds.pages.post.PostStatusScreen
 
 object FeedsHomeTab : Tab {
 
@@ -40,6 +41,9 @@ object FeedsHomeTab : Tab {
             onTabSelected = viewModel::onPageChanged,
             onLoadMore = viewModel::onLoadMore,
             onRefresh = viewModel::onRefresh,
+            onPostStatusClick = {
+                navigator.push(PostStatusScreen())
+            },
             onAddFeedsClick = {
                 navigator.push(AddFeedsManagerScreen())
             },

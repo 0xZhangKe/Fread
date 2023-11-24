@@ -19,7 +19,8 @@
 
         <activity
             android:name=".pages.UtopiaActivity"
-            android:exported="true">
+            android:exported="true"
+            android:windowSoftInputMode="adjustResize">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 

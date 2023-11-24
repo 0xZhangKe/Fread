@@ -8,12 +8,10 @@ import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.uri.StatusProviderUriParser
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -28,16 +26,21 @@ class PostStatusViewModel @Inject constructor(
         launchInViewModel {
             val accountManager = statusProvider.accountManager
             val loggedAccount = accountManager.getLoggedAccount()
-            val allLoggedAccount = statusProvider.accountManager.getAllLoggedAccount().getOrNull() ?: emptyList()
+            val allLoggedAccount =
+                statusProvider.accountManager.getAllLoggedAccount().getOrNull() ?: emptyList()
             if (loggedAccount == null) {
                 _uiState.updateToFailed(IllegalStateException("Not login!"))
             } else {
-                _uiState.updateOnSuccess {
-                    it.copy(
+                _uiState.value = LoadableState.success(
+                    PostStatusUiState(
                         account = loggedAccount,
                         availableAccountList = allLoggedAccount,
+                        content = "",
+                        mediaList = emptyList(),
+                        sensitive = false,
+                        language = "",
                     )
-                }
+                )
             }
         }
     }
@@ -57,14 +60,14 @@ class PostStatusViewModel @Inject constructor(
     fun onMediaSelected(list: List<Uri>) {
         _uiState.updateOnSuccess {
             it.copy(
-                mediaPathList = it.mediaPathList.plus(list),
+                mediaList = it.mediaList.plus(list),
             )
         }
     }
 
     fun onMediaDeleteClick(uri: Uri) {
         _uiState.updateOnSuccess { state ->
-            state.copy(mediaPathList = state.mediaPathList.remove { it == uri })
+            state.copy(mediaList = state.mediaList.remove { it == uri })
         }
     }
 

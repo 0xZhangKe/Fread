@@ -16,6 +16,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.unit.dp
+import androidx.core.view.WindowCompat
 import androidx.core.view.marginTop
 import androidx.media3.common.C
 import androidx.media3.common.MediaItem
@@ -30,6 +31,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.utopia.feeds.pages.post.PostStatusScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.delay
 
@@ -40,6 +42,8 @@ class UtopiaActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
 //        setContentView(createContentView())
         setContent {
             UtopiaTheme {
@@ -47,7 +51,8 @@ class UtopiaActivity : AppCompatActivity() {
                     BottomSheetNavigator(
                         sheetShape = RoundedCornerShape(12.dp),
                     ) {
-                        Navigator(UtopiaScreen())
+//                        Navigator(UtopiaScreen())
+                        Navigator(PostStatusScreen())
                     }
                 }
             }

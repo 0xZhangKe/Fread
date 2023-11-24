@@ -7,10 +7,10 @@ data class PostStatusUiState(
     val account: LoggedAccount,
     val availableAccountList: List<LoggedAccount>,
     val content: String,
-    val mediaPathList: List<Uri>,
+    val mediaList: List<Uri>,
     val sensitive: Boolean,
     val language: String,
 ) {
 
-    val allowedSelectCount: Int get() = (4 - mediaPathList.size).coerceAtLeast(0)
+    val allowedSelectCount: Int get() = (4 - mediaList.size).coerceAtLeast(0)
 }

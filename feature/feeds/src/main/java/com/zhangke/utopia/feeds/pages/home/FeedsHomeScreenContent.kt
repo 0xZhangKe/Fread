@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.DropdownMenuItem
+import androidx.compose.material.FloatingActionButton
 import androidx.compose.material.Icon
 import androidx.compose.material.IconButton
 import androidx.compose.material.icons.Icons
@@ -76,8 +77,8 @@ internal fun FeedsHomeScreenContent(
                 SnackbarHost(hostState = snackbarHostState)
             },
             floatingActionButton = {
-                IconButton(
-                    onClick = onPostStatusClick
+                FloatingActionButton(
+                    onClick = onPostStatusClick,
                 ) {
                     Icon(
                         imageVector = Icons.Default.Add,

@@ -18,4 +18,5 @@
 
     <string name="search_feeds_title_hint">请输入感兴趣的内容</string>
 
+    <string name="post_status_page_title">新博客</string>
 </resources>

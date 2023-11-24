@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.account
 
+import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import com.zhangke.utopia.status.utils.collect
@@ -10,6 +11,10 @@ import javax.inject.Inject
 class AccountManager @Inject constructor(
     private val accountManagerList: List<IAccountManager>,
 ) {
+
+    suspend fun getLoggedAccount(): LoggedAccount? {
+        return accountManagerList.mapFirstOrNull { it.getLoggedAccount() }
+    }
 
     suspend fun getAllLoggedAccount(): Result<List<LoggedAccount>> {
         return accountManagerList.map { it.getAllLoggedAccount() }.collect()
@@ -69,6 +74,8 @@ class AccountManager @Inject constructor(
 }
 
 interface IAccountManager {
+
+    suspend fun getLoggedAccount(): LoggedAccount?
 
     suspend fun getAllLoggedAccount(): Result<List<LoggedAccount>>
 

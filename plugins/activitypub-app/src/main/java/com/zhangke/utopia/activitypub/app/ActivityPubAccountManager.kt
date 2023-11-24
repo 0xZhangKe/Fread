@@ -24,6 +24,10 @@ class ActivityPubAccountManager @Inject constructor(
     private val accountRepo: ActivityPubLoggedAccountRepo,
 ) : IAccountManager {
 
+    override suspend fun getLoggedAccount(): LoggedAccount? {
+        return accountRepo.getCurrentAccount()
+    }
+
     override suspend fun getAllLoggedAccount(): Result<List<LoggedAccount>> {
         return getAllLoggedAccount.invoke()
     }

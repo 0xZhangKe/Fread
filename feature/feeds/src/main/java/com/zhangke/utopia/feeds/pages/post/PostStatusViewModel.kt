@@ -7,11 +7,15 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.FileUtils
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.withContext
+import java.util.Locale
 import javax.inject.Inject
 
 @HiltViewModel
@@ -37,8 +41,9 @@ class PostStatusViewModel @Inject constructor(
                         availableAccountList = allLoggedAccount,
                         content = "",
                         mediaList = emptyList(),
+                        maxMediaCount = 4,
                         sensitive = false,
-                        language = "",
+                        language = Locale.ROOT,
                     )
                 )
             }
@@ -65,9 +70,24 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
+    private fun onNewImageAdded(uri: Uri) {
+        launchInViewModel {
+            val size = withContext(Dispatchers.IO) {
+                FileUtils.getFileSizeByUri(uri)?.MB ?: 0
+            }
+
+        }
+    }
+
     fun onMediaDeleteClick(uri: Uri) {
         _uiState.updateOnSuccess { state ->
             state.copy(mediaList = state.mediaList.remove { it == uri })
+        }
+    }
+
+    fun onLanguageSelected(locale: Locale) {
+        _uiState.updateOnSuccess { state ->
+            state.copy(language = locale)
         }
     }
 

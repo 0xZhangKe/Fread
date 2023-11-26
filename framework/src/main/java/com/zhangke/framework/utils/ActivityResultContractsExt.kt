@@ -11,18 +11,17 @@ import androidx.compose.runtime.Composable
 fun rememberPickVisualMediaLauncher(
     maxItems: Int,
     onResult: (List<Uri>) -> Unit,
-): ManagedActivityResultLauncher<PickVisualMediaRequest, *> {
-    return if (maxItems > 1) {
-        rememberLauncherForActivityResult(
+): ManagedActivityResultLauncher<PickVisualMediaRequest, *>? {
+    return when {
+        maxItems < 1 -> null
+        maxItems > 1 -> rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickMultipleVisualMedia(maxItems = maxItems),
             onResult = onResult,
         )
-    } else {
-        rememberLauncherForActivityResult(
+
+        else -> rememberLauncherForActivityResult(
             contract = ActivityResultContracts.PickVisualMedia(),
-            onResult = { uri ->
-                uri?.let { onResult(listOf(it)) }
-            },
+            onResult = { uri -> uri?.let { onResult(listOf(it)) } },
         )
     }
 }

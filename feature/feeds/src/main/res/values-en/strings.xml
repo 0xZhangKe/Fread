@@ -19,4 +19,6 @@
     <string name="search_feeds_title_hint">Please input the topic of interest</string>
 
     <string name="post_status_page_title">New Blog</string>
+
+    <string name="post_screen_input_hint">Please input your blog</string>
 </resources>

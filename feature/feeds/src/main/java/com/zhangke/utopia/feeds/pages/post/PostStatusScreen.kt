@@ -1,10 +1,8 @@
 package com.zhangke.utopia.feeds.pages.post
 
 import android.net.Uri
-import android.util.Log
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,12 +17,15 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
+import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AddAlert
 import androidx.compose.material.icons.filled.Close
@@ -45,24 +46,20 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.State
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -76,13 +73,9 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.rememberPickVisualMediaLauncher
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.account.LoggedAccount
+import java.util.Locale
 
 class PostStatusScreen : AndroidScreen() {
-
-    companion object {
-
-        private const val MEDIA_ASPECT = 1.78F
-    }
 
     @Composable
     override fun Content() {
@@ -100,7 +93,8 @@ class PostStatusScreen : AndroidScreen() {
                 onPostClick = viewModel::onPostClick,
                 onSensitiveClick = viewModel::onSensitiveClick,
                 onMediaSelected = viewModel::onMediaSelected,
-                onDelete = viewModel::onMediaDeleteClick,
+                onMediaDelete = viewModel::onMediaDeleteClick,
+                onLanguageSelected = viewModel::onLanguageSelected,
             )
         }
     }
@@ -115,9 +109,10 @@ class PostStatusScreen : AndroidScreen() {
         onPostClick: () -> Unit,
         onSensitiveClick: () -> Unit,
         onMediaSelected: (List<Uri>) -> Unit,
-        onDelete: (Uri) -> Unit,
+        onMediaDelete: (Uri) -> Unit,
+        onLanguageSelected: (Locale) -> Unit,
     ) {
-        val bottomBarHeight = 40.dp
+        val bottomBarHeight = 48.dp
         Scaffold(
             topBar = {
                 TopAppBar(
@@ -149,6 +144,7 @@ class PostStatusScreen : AndroidScreen() {
                     uiState = uiState,
                     onSensitiveClick = onSensitiveClick,
                     onMediaSelected = onMediaSelected,
+                    onLanguageSelected = onLanguageSelected,
                 )
             }
         ) { paddingValues ->
@@ -163,14 +159,15 @@ class PostStatusScreen : AndroidScreen() {
                     )
                     .navigationBarsPadding()
                     .fillMaxSize()
+                    .verticalScroll(rememberScrollState())
             ) {
-                val (avatarRef, nameRef, platformRef, switchAccountRef, inputRef, mediaRef) = createRefs()
+                val (avatarRef, nameRef, platformRef, switchAccountRef, inputRef, statusAttachmentRef) = createRefs()
                 AsyncImage(
                     modifier = Modifier
                         .clip(CircleShape)
                         .constrainAs(avatarRef) {
                             start.linkTo(parent.start, 16.dp)
-                            top.linkTo(parent.top, 16.dp)
+                            top.linkTo(parent.top)
                             width = Dimension.value(36.dp)
                             height = Dimension.value(36.dp)
                         },
@@ -195,7 +192,7 @@ class PostStatusScreen : AndroidScreen() {
                         top.linkTo(nameRef.bottom, 2.dp)
                         width = Dimension.fillToConstraints
                     },
-                    text = uiState.account.uri.toString(),
+                    text = uiState.account.webFinger.toString(),
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Box(
@@ -232,15 +229,21 @@ class PostStatusScreen : AndroidScreen() {
                     }
                 }
                 TextField(
-                    modifier = Modifier.constrainAs(inputRef) {
-                        top.linkTo(platformRef.bottom)
-                        start.linkTo(parent.start, 8.dp)
-                        end.linkTo(parent.end, 8.dp)
-                        bottom.linkTo(mediaRef.top)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.fillToConstraints
-                    },
+                    modifier = Modifier
+                        .constrainAs(inputRef) {
+                            top.linkTo(platformRef.bottom)
+                            start.linkTo(parent.start, 8.dp)
+                            end.linkTo(parent.end, 8.dp)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        },
                     shape = GenericShape { _, _ -> },
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.post_screen_input_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    },
                     value = uiState.content,
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
@@ -251,252 +254,31 @@ class PostStatusScreen : AndroidScreen() {
                     textStyle = MaterialTheme.typography.bodyMedium,
                     onValueChange = onContentChanged,
                 )
-                StatusMedias(
-                    modifier = Modifier.constrainAs(mediaRef) {
-                        bottom.linkTo(parent.bottom)
-                        start.linkTo(parent.start)
-                        end.linkTo(parent.end)
-                    },
+                StatusAttachment(
+                    modifier = Modifier
+                        .padding(bottom = 16.dp)
+                        .constrainAs(statusAttachmentRef) {
+                            top.linkTo(inputRef.bottom, 16.dp)
+                            start.linkTo(parent.start)
+                            end.linkTo(parent.end)
+                        },
                     uiState = uiState,
-                    onDelete = onDelete,
+                    onMediaDelete = onMediaDelete,
                 )
             }
         }
     }
 
     @Composable
-    private fun PostStatusBottomBar(
-        height: Dp,
-        uiState: PostStatusUiState,
-        onSensitiveClick: () -> Unit,
-        onMediaSelected: (List<Uri>) -> Unit,
-    ) {
-        val bottomPaddingByIme = WindowInsets.ime
-            .asPaddingValues()
-            .calculateBottomPadding()
-        val modifier = if (bottomPaddingByIme > 0.dp) {
-            Modifier.padding(bottom = bottomPaddingByIme)
-        } else {
-            Modifier.navigationBarsPadding()
-        }
-        Surface(modifier = modifier.height(height)) {
-            Row {
-                SelectedMediaIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onMediaSelected = onMediaSelected,
-                    allowedSelectCount = uiState.allowedSelectCount,
-                )
-                SimpleIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onClick = { /*TODO*/ },
-                    imageVector = Icons.Default.Poll,
-                    contentDescription = "Add Poll",
-                )
-                SimpleIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onClick = { /*TODO*/ },
-                    imageVector = Icons.Default.EmojiFlags,
-                    contentDescription = "Add Emoji",
-                )
-                SimpleIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onClick = onSensitiveClick,
-                    imageVector = Icons.Default.AddAlert,
-                    contentDescription = "Sensitive content",
-                )
-                SimpleIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onClick = { /*TODO*/ },
-                    imageVector = Icons.Default.Language,
-                    contentDescription = "Choose language",
-                )
-                Spacer(modifier = Modifier.weight(1F))
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(end = 16.dp),
-                    text = "1000",
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun SelectedMediaIconButton(
+    private fun StatusAttachment(
         modifier: Modifier,
-        allowedSelectCount: Int,
-        onMediaSelected: (List<Uri>) -> Unit,
+        uiState: PostStatusUiState,
+        onMediaDelete: (Uri) -> Unit,
     ) {
-        val launcher = if (allowedSelectCount > 0) {
-            rememberPickVisualMediaLauncher(
-                maxItems = allowedSelectCount,
-                onResult = onMediaSelected,
-            )
-        } else {
-            null
-        }
-        SimpleIconButton(
+        PostStatusImages(
             modifier = modifier,
-            onClick = {
-                launcher?.launch(
-                    PickVisualMediaRequest.Builder()
-                        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
-                        .build()
-                )
-            },
-            imageVector = Icons.Default.Image,
-            contentDescription = "Add Image",
+            uiState = uiState,
+            onDelete = onMediaDelete,
         )
-    }
-
-    @Composable
-    private fun StatusMedias(
-        modifier: Modifier,
-        uiState: PostStatusUiState,
-        onDelete: (Uri) -> Unit,
-    ) {
-        Box(
-            modifier = modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
-        ) {
-            MediaLayout(
-                count = uiState.mediaList.size,
-                itemContent = { index ->
-                    val mediaUri = uiState.mediaList[index]
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        AsyncImage(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .clip(RoundedCornerShape(6.dp)),
-                            model = mediaUri,
-                            contentScale = ContentScale.Crop,
-                            contentDescription = "Media",
-                        )
-                        SimpleIconButton(
-                            modifier = Modifier
-                                .align(Alignment.TopEnd),
-                            onClick = { onDelete(mediaUri) },
-                            imageVector = Icons.Default.Close,
-                            tint = Color.White,
-                            contentDescription = "Delete",
-                        )
-                    }
-                }
-            )
-        }
-    }
-
-    @Composable
-    private fun MediaLayout(
-        count: Int,
-        itemContent: @Composable (Int) -> Unit,
-    ) {
-        when (count) {
-            1 -> {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(MEDIA_ASPECT)
-                ) {
-                    itemContent(0)
-                }
-            }
-
-            2 -> {
-                DoubleMediaSingleRow(itemContent)
-            }
-
-            3 -> {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .aspectRatio(MEDIA_ASPECT)
-                ) {
-                    Box(
-                        modifier = Modifier
-                            .weight(1F)
-                            .fillMaxHeight()
-                    ) {
-                        itemContent(0)
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .width(16.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1F)
-                            .fillMaxHeight()
-                    ) {
-                        itemContent(1)
-                    }
-                    Spacer(
-                        modifier = Modifier
-                            .height(1.dp)
-                            .width(16.dp)
-                    )
-                    Box(
-                        modifier = Modifier
-                            .weight(1F)
-                            .fillMaxHeight()
-                    ) {
-                        itemContent(2)
-                    }
-                }
-            }
-
-            4 -> {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    DoubleMediaSingleRow(itemContent = itemContent)
-                    Spacer(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .height(16.dp)
-                    )
-                    DoubleMediaSingleRow(itemContent = { itemContent(it + 2) })
-                }
-            }
-        }
-    }
-
-    @Composable
-    private fun DoubleMediaSingleRow(
-        itemContent: @Composable (Int) -> Unit,
-    ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .aspectRatio(MEDIA_ASPECT)
-        ) {
-            Box(
-                modifier = Modifier
-                    .weight(1F)
-                    .fillMaxHeight()
-            ) {
-                itemContent(0)
-            }
-            Spacer(
-                modifier = Modifier
-                    .height(1.dp)
-                    .width(16.dp)
-            )
-            Box(
-                modifier = Modifier
-                    .weight(1F)
-                    .fillMaxHeight()
-            ) {
-                itemContent(1)
-            }
-        }
     }
 }

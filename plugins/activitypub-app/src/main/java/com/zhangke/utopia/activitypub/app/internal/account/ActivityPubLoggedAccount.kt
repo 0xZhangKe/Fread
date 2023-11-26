@@ -9,7 +9,7 @@ import com.zhangke.utopia.status.platform.BlogPlatform
 class ActivityPubLoggedAccount(
     val userId: String,
     uri: ActivityPubUserUri,
-    val webFinger: WebFinger,
+    webFinger: WebFinger,
     platform: BlogPlatform,
     val host: String,
     name: String,
@@ -20,6 +20,7 @@ class ActivityPubLoggedAccount(
     val token: ActivityPubTokenEntity,
 ) : LoggedAccount(
     uri = uri,
+    webFinger = webFinger,
     platform = platform,
     userName = name,
     description = description,

@@ -2,19 +2,19 @@ package com.zhangke.utopia.feeds.pages.post
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.remove
 import com.zhangke.framework.composable.LoadableState
+import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.FileUtils
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.withContext
 import java.util.Locale
 import javax.inject.Inject
 
@@ -40,7 +40,7 @@ class PostStatusViewModel @Inject constructor(
                         account = loggedAccount,
                         availableAccountList = allLoggedAccount,
                         content = "",
-                        mediaList = emptyList(),
+                        attachment = null,
                         maxMediaCount = 4,
                         sensitive = false,
                         language = Locale.ROOT,
@@ -63,19 +63,27 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onMediaSelected(list: List<Uri>) {
-        _uiState.updateOnSuccess {
-            it.copy(
-                mediaList = it.mediaList.plus(list),
-            )
-        }
+
     }
 
     private fun onNewImageAdded(uri: Uri) {
-        launchInViewModel {
-            val size = withContext(Dispatchers.IO) {
-                FileUtils.getFileSizeByUri(uri)?.MB ?: 0
-            }
-
+        val job = UploadingMediaJob(
+            uri = uri,
+            account = _uiState.value.requireSuccessData().account,
+            statusResolver = statusProvider.statusResolver,
+            scope = viewModelScope,
+        )
+        val imageList = mutableListOf<PostStatusImage>()
+        (_uiState.value.requireSuccessData().attachment as? PostStatusAttachment.ImageAttachment)?.imageList
+            ?.let { imageList += it }
+        imageList += PostStatusImage(
+            uri = uri,
+            description = null,
+            size = FileUtils.getFileSizeByUri(uri)?.MB?.toFloat() ?: 0F,
+            uploadJob = job,
+        )
+        _uiState.updateOnSuccess {
+            it.copy(attachment = PostStatusAttachment.ImageAttachment(imageList))
         }
     }
 

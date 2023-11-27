@@ -2,11 +2,11 @@ package com.zhangke.framework.utils
 
 @Suppress("PropertyName")
 @JvmInline
-value class StorageSize(val bytes: Long) {
+value class StorageSize(val length: Long) {
 
-    val KB: Long get() = bytes / 1024
+    val KB: Double get() = length.toDouble() / 1024
 
-    val MB: Long get() = KB / 1024
+    val MB: Double get() = KB / 1024
 
-    val GB: Long get() = MB / 1024
+    val GB: Double get() = MB / 1024
 }

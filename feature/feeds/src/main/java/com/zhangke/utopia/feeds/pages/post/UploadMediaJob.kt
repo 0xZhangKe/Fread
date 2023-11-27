@@ -13,7 +13,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
-class UploadingMediaJob(
+class UploadMediaJob(
     private val uri: Uri,
     private val account: LoggedAccount,
     private val statusResolver: StatusResolver,
@@ -55,7 +55,7 @@ class UploadingMediaJob(
 
     sealed interface UploadState {
 
-        object Idle : UploadState
+        data object Idle : UploadState
 
         class Uploading : UploadState {
 
@@ -69,7 +69,7 @@ class UploadingMediaJob(
 
         class Failed(val reason: Throwable?) : UploadState
 
-        object Success : UploadState
+        data object Success : UploadState
     }
 
     class CancelByManualException : RuntimeException()

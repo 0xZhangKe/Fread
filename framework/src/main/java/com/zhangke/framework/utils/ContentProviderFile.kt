@@ -1,8 +1,10 @@
 package com.zhangke.framework.utils
 
+import android.net.Uri
 import java.io.InputStream
 
 data class ContentProviderFile(
+    val uri: Uri,
     val fileName: String,
     val size: StorageSize,
     val mimeType: String,

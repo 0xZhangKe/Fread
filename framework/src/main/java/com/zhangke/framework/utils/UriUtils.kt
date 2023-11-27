@@ -17,6 +17,7 @@ fun Uri.toContentProviderFile(): ContentProviderFile? {
                 val size = cursor.getSize() ?: StorageSize(0L)
                 val name = cursor.getDisplayName().orEmpty()
                 return ContentProviderFile(
+                    uri = this,
                     fileName = name,
                     size = size,
                     mimeType = contentResolver.getType(this).orEmpty(),
@@ -33,6 +34,7 @@ fun Uri.toContentProviderFile(): ContentProviderFile? {
                 val fileName = getAssetFileNameFromUri(this).orEmpty()
                 val extension = getExtensionFromFileName(fileName)
                 ContentProviderFile(
+                    uri = this,
                     fileName = fileName,
                     size = size,
                     mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension).orEmpty(),

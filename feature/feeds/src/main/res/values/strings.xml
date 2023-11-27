@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="image">图片</string>
+
+    <string name="video">视频</string>
+
     <string name="add_provider_page_title">添加服务</string>
 
     <string name="add_provider_page_confirm_button">确定添加</string>
@@ -21,4 +25,6 @@
     <string name="post_status_page_title">新博客</string>
 
     <string name="post_screen_input_hint">请输入你的博客</string>
+
+    <string name="post_screen_media_placeholder">图片描述文本</string>
 </resources>

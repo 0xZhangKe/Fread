@@ -16,25 +16,31 @@ data class PostStatusUiState(
 
     val allowedSelectCount: Int
         get() {
-            val imageList = (attachment as? PostStatusAttachment.ImageAttachment)?.imageList ?: return 0
+            val imageList = attachment?.asImageAttachment?.imageList ?: return maxMediaCount
             return (maxMediaCount - imageList.size).coerceAtLeast(0)
         }
 }
 
 sealed interface PostStatusAttachment {
 
-    class ImageAttachment(val imageList: List<PostStatusImage>) : PostStatusAttachment
+    class ImageAttachment(val imageList: List<PostStatusFile>) : PostStatusAttachment
+
+    class VideoAttachment(val video: PostStatusFile) : PostStatusAttachment
+
+    val asImageAttachment: ImageAttachment? get() = this as? ImageAttachment
+
+    val asVideoAttachment: VideoAttachment? get() = this as? VideoAttachment
 }
 
-data class PostStatusImage(
+data class PostStatusFile(
     val uri: Uri,
     val description: String?,
     /**
      * MB
      */
-    val size: Float,
+    val size: String,
     /**
      * 0 to 1
      */
-    val uploadJob: UploadingMediaJob,
+    val uploadJob: UploadMediaJob,
 )

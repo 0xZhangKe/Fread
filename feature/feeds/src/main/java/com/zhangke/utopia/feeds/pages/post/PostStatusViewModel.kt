@@ -10,6 +10,8 @@ import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.FileUtils
+import com.zhangke.framework.utils.StorageSize
+import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -63,33 +65,92 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onMediaSelected(list: List<Uri>) {
-
+        val videoFile = list.map { it.toContentProviderFile() }
+            .firstOrNull { it?.mimeType?.contains("video") == true }
+        if (videoFile != null) {
+            onAddVideo(videoFile.uri)
+        } else {
+            onAddImageList(list)
+        }
     }
 
-    private fun onNewImageAdded(uri: Uri) {
-        val job = UploadingMediaJob(
-            uri = uri,
-            account = _uiState.value.requireSuccessData().account,
-            statusResolver = statusProvider.statusResolver,
-            scope = viewModelScope,
-        )
-        val imageList = mutableListOf<PostStatusImage>()
-        (_uiState.value.requireSuccessData().attachment as? PostStatusAttachment.ImageAttachment)?.imageList
+    private fun onAddVideo(uri: Uri) {
+        val attachmentFile = buildAttachmentFile(uri)
+        attachmentFile.uploadJob.upload()
+        _uiState.updateOnSuccess {
+            it.copy(
+                attachment = PostStatusAttachment.VideoAttachment(attachmentFile)
+            )
+        }
+    }
+
+    private fun onAddImageList(uriList: List<Uri>) {
+        val imageList = mutableListOf<PostStatusFile>()
+        _uiState.value
+            .requireSuccessData()
+            .attachment
+            ?.asImageAttachment
+            ?.imageList
             ?.let { imageList += it }
-        imageList += PostStatusImage(
-            uri = uri,
-            description = null,
-            size = FileUtils.getFileSizeByUri(uri)?.MB?.toFloat() ?: 0F,
-            uploadJob = job,
-        )
+        uriList.forEach { uri ->
+            val attachmentFile = buildAttachmentFile(uri)
+            attachmentFile.uploadJob.upload()
+            imageList += attachmentFile
+        }
         _uiState.updateOnSuccess {
             it.copy(attachment = PostStatusAttachment.ImageAttachment(imageList))
         }
     }
 
-    fun onMediaDeleteClick(uri: Uri) {
+    private fun buildUploadFileJob(uri: Uri) = UploadMediaJob(
+        uri = uri,
+        account = _uiState.value.requireSuccessData().account,
+        statusResolver = statusProvider.statusResolver,
+        scope = viewModelScope,
+    )
+
+    private fun buildAttachmentFile(uri: Uri) = PostStatusFile(
+        uri = uri,
+        description = null,
+        size = FileUtils.getFileSizeByUri(uri)?.getDisplaySize().orEmpty(),
+        uploadJob = buildUploadFileJob(uri),
+    )
+
+    private fun StorageSize.getDisplaySize(): String {
+        return "%.2f KB".format(MB)
+    }
+
+    fun onMediaDeleteClick(image: PostStatusFile) {
+        val imageAttachment = _uiState.value
+            .requireSuccessData()
+            .attachment
+            ?.asImageAttachment ?: return
         _uiState.updateOnSuccess { state ->
-            state.copy(mediaList = state.mediaList.remove { it == uri })
+            state.copy(
+                attachment = PostStatusAttachment.ImageAttachment(imageAttachment.imageList.remove { it == image })
+            )
+        }
+    }
+
+    fun onCancelUploadClick(file: PostStatusFile) {
+        file.uploadJob.cancel()
+    }
+
+    fun onRetryClick(file: PostStatusFile) {
+        file.uploadJob.upload()
+    }
+
+    fun onDescriptionInputted(file: PostStatusFile, description: String) {
+        _uiState.updateOnSuccess { state ->
+            val imageList = state.attachment?.asImageAttachment?.imageList ?: emptyList()
+            val newImageList = imageList.map {
+                if (it == file) {
+                    it.copy(description = description)
+                } else {
+                    it
+                }
+            }
+            state.copy(attachment = PostStatusAttachment.ImageAttachment(newImageList))
         }
     }
 

@@ -3,12 +3,14 @@ package com.zhangke.utopia.feeds.pages.post
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.collections.remove
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.FileUtils
 import com.zhangke.framework.utils.StorageSize
 import com.zhangke.framework.utils.toContentProviderFile
@@ -65,17 +67,17 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onMediaSelected(list: List<Uri>) {
-        val videoFile = list.map { it.toContentProviderFile() }
-            .firstOrNull { it?.isVideo == true }
+        val fileList = list.mapNotNull { it.toContentProviderFile() }
+        val videoFile = fileList.firstOrNull { it.isVideo }
         if (videoFile != null) {
-            onAddVideo(videoFile.uri)
+            onAddVideo(videoFile)
         } else {
-            onAddImageList(list)
+            onAddImageList(fileList)
         }
     }
 
-    private fun onAddVideo(uri: Uri) {
-        val attachmentFile = buildAttachmentFile(uri)
+    private fun onAddVideo(file: ContentProviderFile) {
+        val attachmentFile = buildAttachmentFile(file)
         attachmentFile.uploadJob.upload()
         _uiState.updateOnSuccess {
             it.copy(
@@ -84,7 +86,7 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
-    private fun onAddImageList(uriList: List<Uri>) {
+    private fun onAddImageList(uriList: List<ContentProviderFile>) {
         val imageList = mutableListOf<PostStatusFile>()
         _uiState.value
             .requireSuccessData()
@@ -102,23 +104,18 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
-    private fun buildUploadFileJob(uri: Uri) = UploadMediaJob(
-        uri = uri,
+    private fun buildUploadFileJob(file: ContentProviderFile) = UploadMediaJob(
+        file = file,
         account = _uiState.value.requireSuccessData().account,
         statusResolver = statusProvider.statusResolver,
         scope = viewModelScope,
     )
 
-    private fun buildAttachmentFile(uri: Uri) = PostStatusFile(
-        uri = uri,
+    private fun buildAttachmentFile(file: ContentProviderFile) = PostStatusFile(
+        file = file,
         description = null,
-        size = FileUtils.getFileSizeByUri(uri)?.getDisplaySize().orEmpty(),
-        uploadJob = buildUploadFileJob(uri),
+        uploadJob = buildUploadFileJob(file),
     )
-
-    private fun StorageSize.getDisplaySize(): String {
-        return "%.2f KB".format(MB)
-    }
 
     fun onMediaDeleteClick(image: PostStatusFile) {
         val imageAttachment = _uiState.value

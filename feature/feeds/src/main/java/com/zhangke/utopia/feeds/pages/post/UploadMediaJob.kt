@@ -1,6 +1,6 @@
 package com.zhangke.utopia.feeds.pages.post
 
-import android.net.Uri
+import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.status.StatusResolver
 import kotlinx.coroutines.CoroutineScope
@@ -14,7 +14,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class UploadMediaJob(
-    private val uri: Uri,
+    private val file: ContentProviderFile,
     private val account: LoggedAccount,
     private val statusResolver: StatusResolver,
     private val scope: CoroutineScope,
@@ -32,7 +32,7 @@ class UploadMediaJob(
             _uploadState.value = uploadState
             val result = statusResolver.uploadMediaAttachment(
                 account = account,
-                fileUri = uri,
+                fileUri = file.uri,
                 description = null,
                 onProgress = {
                     scope.launch {

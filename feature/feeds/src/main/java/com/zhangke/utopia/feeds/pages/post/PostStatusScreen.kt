@@ -286,6 +286,16 @@ class PostStatusScreen : AndroidScreen() {
                     onDescriptionInputted = onDescriptionInputted,
                 )
             }
+
+            is PostStatusAttachment.Poll -> {
+                PostStatusPoll(
+                    modifier = modifier,
+                    poll = attachment,
+                    onPollContentChanged = { index, content ->
+
+                    },
+                )
+            }
         }
     }
 }

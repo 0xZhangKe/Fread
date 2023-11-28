@@ -26,9 +26,18 @@
 
     <string name="post_screen_input_hint">请输入你的博客</string>
 
-    <string name="post_screen_media_placeholder">图片描述文本</string>
+    <string name="post_screen_media_image_placeholder">图片描述文本</string>
 
-    <string name="input_media_desc_page_title">图片描述文本</string>
+    <string name="post_screen_media_video_placeholder">图片描述文本</string>
 
-    <string name="input_media_desc_input_hint">请输入图片描述文本</string>
+    <string name="post_status_poll_item_hint">选项 %s</string>
+
+    <string name="post_status_poll_duration">投票时长</string>
+
+    <string name="post_status_poll_multiple">能力</string>
+
+    <string name="input_media_desc_page_title">描述文本</string>
+
+    <string name="input_media_desc_input_hint">请输入描述文本</string>
+
 </resources>

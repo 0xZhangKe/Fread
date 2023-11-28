@@ -27,4 +27,8 @@
     <string name="post_screen_input_hint">请输入你的博客</string>
 
     <string name="post_screen_media_placeholder">图片描述文本</string>
+
+    <string name="input_media_desc_page_title">图片描述文本</string>
+
+    <string name="input_media_desc_input_hint">请输入图片描述文本</string>
 </resources>

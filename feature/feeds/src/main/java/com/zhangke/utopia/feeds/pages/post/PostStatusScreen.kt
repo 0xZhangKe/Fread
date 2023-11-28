@@ -58,6 +58,7 @@ class PostStatusScreen : AndroidScreen() {
         val viewModel = getViewModel<PostStatusViewModel>()
         val loadableUiState by viewModel.uiState.collectAsState()
         LoadableLayout(
+            modifier = Modifier.fillMaxSize(),
             state = loadableUiState,
         ) { uiState ->
             PostStatusScreenContent(
@@ -263,7 +264,7 @@ class PostStatusScreen : AndroidScreen() {
         onDescriptionInputted: (PostStatusFile, String) -> Unit,
     ) {
         val attachment = uiState.attachment ?: return
-        when(attachment){
+        when (attachment) {
             is PostStatusAttachment.ImageAttachment -> {
                 PostStatusImageAttachment(
                     modifier = modifier,
@@ -274,8 +275,16 @@ class PostStatusScreen : AndroidScreen() {
                     onDescriptionInputted = onDescriptionInputted,
                 )
             }
-            is PostStatusAttachment.VideoAttachment -> {
 
+            is PostStatusAttachment.VideoAttachment -> {
+                PostStatusVideoAttachment(
+                    modifier = modifier,
+                    attachment = attachment,
+                    onDeleteClick = onDeleteClick,
+                    onCancelUploadClick = onCancelUploadClick,
+                    onRetryClick = onRetryClick,
+                    onDescriptionInputted = onDescriptionInputted,
+                )
             }
         }
     }

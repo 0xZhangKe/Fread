@@ -27,4 +27,8 @@
     <string name="post_screen_input_hint">Please input your blog</string>
 
     <string name="post_screen_media_placeholder">Image description text</string>
+
+    <string name="input_media_desc_page_title">Image description text</string>
+
+    <string name="input_media_desc_input_hint">Please input image description text</string>
 </resources>

@@ -66,7 +66,7 @@ class PostStatusViewModel @Inject constructor(
 
     fun onMediaSelected(list: List<Uri>) {
         val videoFile = list.map { it.toContentProviderFile() }
-            .firstOrNull { it?.mimeType?.contains("video") == true }
+            .firstOrNull { it?.isVideo == true }
         if (videoFile != null) {
             onAddVideo(videoFile.uri)
         } else {

@@ -51,8 +51,8 @@ class UtopiaActivity : AppCompatActivity() {
                     BottomSheetNavigator(
                         sheetShape = RoundedCornerShape(12.dp),
                     ) {
-//                        Navigator(UtopiaScreen())
-                        Navigator(PostStatusScreen())
+                        Navigator(UtopiaScreen())
+//                        Navigator(PostStatusScreen())
                     }
                 }
             }

@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.post
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -29,19 +28,42 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.feeds.R
 
 private const val MEDIA_ASPECT = 1.78F
+
+@Composable
+internal fun PostStatusVideoAttachment(
+    modifier: Modifier,
+    attachment: PostStatusAttachment.VideoAttachment,
+    onDeleteClick: (PostStatusFile) -> Unit,
+    onCancelUploadClick: (PostStatusFile) -> Unit,
+    onRetryClick: (PostStatusFile) -> Unit,
+    onDescriptionInputted: (PostStatusFile, String) -> Unit,
+) {
+    Box(
+        modifier = modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
+    ) {
+        val attachmentFile = attachment.video
+        MediaFileContent(
+            modifier = Modifier.fillMaxSize(),
+            file = attachmentFile,
+            onDeleteClick = { onDeleteClick(attachmentFile) },
+            onCancelUploadClick = { onCancelUploadClick(attachmentFile) },
+            onRetryClick = { onRetryClick(attachmentFile) },
+            onDescriptionInputted = { onDescriptionInputted(attachmentFile, it) },
+        )
+    }
+}
 
 @Composable
 internal fun PostStatusImageAttachment(
@@ -59,7 +81,7 @@ internal fun PostStatusImageAttachment(
             count = attachment.imageList.size,
             itemContent = { index ->
                 val attachmentFile = attachment.imageList[index]
-                ImageMediaContent(
+                MediaFileContent(
                     modifier = Modifier.fillMaxSize(),
                     file = attachmentFile,
                     onDeleteClick = { onDeleteClick(attachmentFile) },
@@ -73,7 +95,7 @@ internal fun PostStatusImageAttachment(
 }
 
 @Composable
-private fun ImageMediaContent(
+private fun MediaFileContent(
     modifier: Modifier,
     file: PostStatusFile,
     onDeleteClick: () -> Unit,
@@ -98,7 +120,7 @@ private fun ImageMediaContent(
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp),
                 text = file.description.ifNullOrEmpty { stringResource(R.string.post_screen_media_placeholder) },
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -106,12 +128,11 @@ private fun ImageMediaContent(
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),
                 text = "${file.size} / $imageString",
-                style = MaterialTheme.typography.bodySmall,
+                style = MaterialTheme.typography.bodyMedium,
             )
 
             Box(
                 modifier = Modifier
-                    .height(40.dp)
                     .fillMaxWidth()
                     .padding(start = 16.dp)
             ) {
@@ -132,6 +153,7 @@ private fun ImageMediaContent(
 
                     else -> {
                         ImageAttachmentBottomSuccess(
+                            file = file,
                             onDescriptionInputted = onDescriptionInputted,
                             onDeleteClick = onDeleteClick,
                         )
@@ -196,9 +218,11 @@ private fun BoxScope.ImageAttachmentBottomFailed(
 
 @Composable
 private fun BoxScope.ImageAttachmentBottomSuccess(
+    file: PostStatusFile,
     onDescriptionInputted: (String) -> Unit,
     onDeleteClick: () -> Unit,
 ) {
+    val navigator = LocalNavigator.currentOrThrow
     Row(
         modifier = Modifier
             .align(Alignment.CenterEnd)
@@ -206,7 +230,9 @@ private fun BoxScope.ImageAttachmentBottomSuccess(
         SimpleIconButton(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
-            onClick = onDeleteClick,
+            onClick = {
+                navigator.push(InputMediaDescriptionScreen(file, onDescriptionInputted))
+            },
             imageVector = Icons.Default.Edit,
             contentDescription = "Edit",
         )

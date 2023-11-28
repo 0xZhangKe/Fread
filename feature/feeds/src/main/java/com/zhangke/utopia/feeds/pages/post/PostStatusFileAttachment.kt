@@ -1,5 +1,7 @@
 package com.zhangke.utopia.feeds.pages.post
 
+import android.graphics.Bitmap
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
@@ -17,17 +19,23 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -37,7 +45,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.framework.utils.getThumbnail
 import com.zhangke.utopia.feeds.R
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 
 private const val MEDIA_ASPECT = 1.78F
 
@@ -51,7 +62,9 @@ internal fun PostStatusVideoAttachment(
     onDescriptionInputted: (PostStatusFile, String) -> Unit,
 ) {
     Box(
-        modifier = modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
+        modifier = modifier
+            .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+            .aspectRatio(MEDIA_ASPECT)
     ) {
         val attachmentFile = attachment.video
         MediaFileContent(
@@ -107,27 +120,65 @@ private fun MediaFileContent(
         modifier = modifier,
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-            AsyncImage(
+            Box(
                 modifier = Modifier
                     .clip(RoundedCornerShape(6.dp))
                     .fillMaxWidth()
-                    .weight(1F),
-                model = file.uri,
-                contentScale = ContentScale.Crop,
-                contentDescription = "Media",
-            )
+                    .weight(1F)
+            ) {
+                if (file.file.isVideo) {
+                    var bitmap: Bitmap? by remember(file) {
+                        mutableStateOf(null)
+                    }
+                    LaunchedEffect(file) {
+                        launch(Dispatchers.IO) {
+                            bitmap = file.file.uri.getThumbnail()
+                        }
+                    }
+                    if (bitmap != null) {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            bitmap = bitmap!!.asImageBitmap(),
+                            contentDescription = "preview",
+                        )
+                    } else {
+                        Image(
+                            modifier = Modifier.fillMaxSize(),
+                            imageVector = Icons.Default.Error,
+                            contentDescription = "preview",
+                        )
+                    }
+                } else {
+                    AsyncImage(
+                        modifier = Modifier.fillMaxSize(),
+                        model = file.file.uri,
+                        contentScale = ContentScale.Crop,
+                        contentDescription = "Media",
+                    )
+                }
+            }
 
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp),
-                text = file.description.ifNullOrEmpty { stringResource(R.string.post_screen_media_placeholder) },
+                text = file.description.ifNullOrEmpty {
+                    if (file.file.isVideo) {
+                        stringResource(R.string.post_screen_media_video_placeholder)
+                    } else {
+                        stringResource(R.string.post_screen_media_image_placeholder)
+                    }
+                },
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            val imageString = stringResource(R.string.image)
+            val mediaType = if (file.file.isVideo) {
+                stringResource(R.string.video)
+            } else {
+                stringResource(R.string.image)
+            }
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),
-                text = "${file.size} / $imageString",
+                text = "%.2f KB / %s".format(file.file.size.MB, mediaType),
                 style = MaterialTheme.typography.bodyMedium,
             )
 

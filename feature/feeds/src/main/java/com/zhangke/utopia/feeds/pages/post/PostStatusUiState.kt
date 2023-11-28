@@ -1,8 +1,9 @@
 package com.zhangke.utopia.feeds.pages.post
 
-import android.net.Uri
+import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.utopia.status.account.LoggedAccount
 import java.util.Locale
+import kotlin.time.Duration
 
 data class PostStatusUiState(
     val account: LoggedAccount,
@@ -23,9 +24,15 @@ data class PostStatusUiState(
 
 sealed interface PostStatusAttachment {
 
-    class ImageAttachment(val imageList: List<PostStatusFile>) : PostStatusAttachment
+    data class ImageAttachment(val imageList: List<PostStatusFile>) : PostStatusAttachment
 
-    class VideoAttachment(val video: PostStatusFile) : PostStatusAttachment
+    data class VideoAttachment(val video: PostStatusFile) : PostStatusAttachment
+
+    data class Poll(
+        val optionList: List<String>,
+        val multiple: Boolean,
+        val duration: Duration,
+    ): PostStatusAttachment
 
     val asImageAttachment: ImageAttachment? get() = this as? ImageAttachment
 
@@ -33,14 +40,7 @@ sealed interface PostStatusAttachment {
 }
 
 data class PostStatusFile(
-    val uri: Uri,
+    val file: ContentProviderFile,
     val description: String?,
-    /**
-     * MB
-     */
-    val size: String,
-    /**
-     * 0 to 1
-     */
     val uploadJob: UploadMediaJob,
 )

@@ -76,7 +76,7 @@ class InputMediaDescriptionScreen(
                         .fillMaxWidth()
                         .padding(paddingValues)
                         .aspectRatio(1F),
-                    model = file.uri,
+                    model = file.file.uri,
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )

@@ -3,6 +3,7 @@ package com.zhangke.utopia.pages.main
 import android.annotation.SuppressLint
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.BottomNavigation
 import androidx.compose.material.BottomNavigationItem
@@ -28,6 +29,7 @@ fun MainPage() {
     val globalNavigator = LocalNavigator.currentOrThrow
     TabNavigator(tab = FeedsHomeTab) {
         Scaffold(
+            modifier = Modifier.navigationBarsPadding(),
             bottomBar = {
                 BottomNavigation {
                     TabNavigationItem(FeedsHomeTab)

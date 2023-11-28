@@ -2,7 +2,10 @@ package com.zhangke.framework.utils
 
 import android.content.ContentResolver
 import android.database.Cursor
+import android.graphics.Bitmap
+import android.media.ThumbnailUtils
 import android.net.Uri
+import android.provider.MediaStore
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
@@ -86,6 +89,22 @@ private fun Cursor.getDisplayName(): String? {
         } catch (_: Throwable) {
             // ignore
         }
+    }
+    return null
+}
+
+fun Uri.getThumbnail(): Bitmap? {
+    val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+    try {
+        appContext.contentResolver
+            .query(this, filePathColumn, null, null, null)
+            ?.use { cursor ->
+                cursor.moveToFirst()
+                val columnIndex = cursor.getColumnIndex(filePathColumn[0])
+                val picturePath = cursor.getString(columnIndex)
+                return ThumbnailUtils.createVideoThumbnail(picturePath, MediaStore.Video.Thumbnails.MICRO_KIND)
+            }
+    } catch (_: Throwable) {
     }
     return null
 }

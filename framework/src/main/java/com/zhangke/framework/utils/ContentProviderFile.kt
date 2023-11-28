@@ -14,4 +14,7 @@ data class ContentProviderFile(
     fun openInputStream(): InputStream? {
         return inputStreamProvider()
     }
+
+    val isVideo: Boolean get() = mimeType.contains("video")
 }
+

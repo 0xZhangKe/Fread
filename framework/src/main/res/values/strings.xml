@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="cancel">取消</string>
+
+    <string name="ok">确定</string>
+
+    <string name="duration_minute">分钟</string>
+
+    <string name="duration_hour">小时</string>
+
+    <string name="duration_day">天</string>
+
+    <string name="duration_week">周</string>
+
+    <string name="duration_selector_title">设置时长</string>
+</resources>

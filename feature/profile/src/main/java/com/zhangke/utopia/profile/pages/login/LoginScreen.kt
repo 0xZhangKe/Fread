@@ -156,7 +156,7 @@ class LoginScreen : AndroidScreen() {
                             }
                         }
                     ) {
-                        Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.ok))
+                        Text(text = stringResource(com.zhangke.utopia.framework.R.string.ok))
                     }
                 }
             )

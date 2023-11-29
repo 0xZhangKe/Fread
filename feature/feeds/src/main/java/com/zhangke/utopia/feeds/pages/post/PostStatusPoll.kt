@@ -2,19 +2,21 @@ package com.zhangke.utopia.feeds.pages.post
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Remove
-import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -25,83 +27,130 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
+import com.zhangke.framework.composable.DurationSelector
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.common.utils.formattedString
 import com.zhangke.utopia.feeds.R
+import kotlin.time.Duration.Companion.hours
 
 @Composable
 internal fun PostStatusPoll(
     modifier: Modifier,
     poll: PostStatusAttachment.Poll,
+    onRemovePollClick: () -> Unit,
+    onRemoveItemClick: (Int) -> Unit,
+    onAddPollItemClick: () -> Unit,
     onPollContentChanged: (Int, String) -> Unit,
 ) {
-    Column(modifier = modifier) {
+    Column(modifier = modifier.padding(start = 16.dp, end = 16.dp)) {
         poll.optionList.forEachIndexed { index, option ->
-            var inputtedText: String by remember {
-                mutableStateOf(option)
-            }
-            TextField(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .border(
-                        width = 1.dp,
-                        shape = RoundedCornerShape(4.dp),
-                        color = MaterialTheme.colorScheme.outline,
-                    )
-                    .onFocusChanged {
-                        onPollContentChanged(index, inputtedText)
+            Row(modifier = Modifier.fillMaxWidth()) {
+                TextField(
+                    modifier = Modifier
+                        .weight(1F)
+                        .border(
+                            width = 1.dp,
+                            shape = RoundedCornerShape(4.dp),
+                            color = MaterialTheme.colorScheme.outline,
+                        )
+                        .align(Alignment.CenterVertically),
+                    value = option,
+                    onValueChange = {
+                        onPollContentChanged(index, it)
                     },
-                value = option,
-                onValueChange = {
-                    inputtedText = it
-                },
-                placeholder = {
-                    Text(
-                        text = stringResource(R.string.post_status_poll_item_hint, index),
+                    maxLines = 1,
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.post_status_poll_item_hint, index + 1),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    },
+                    textStyle = MaterialTheme.typography.bodyMedium,
+                    colors = TextFieldDefaults.colors(
+                        focusedIndicatorColor = Color.Transparent,
+                        unfocusedIndicatorColor = Color.Transparent,
+                        disabledIndicatorColor = Color.Transparent,
+                        errorIndicatorColor = Color.Transparent,
+                    ),
+                )
+                if (index == poll.optionList.lastIndex) {
+                    SimpleIconButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        onClick = onAddPollItemClick,
+                        imageVector = Icons.Rounded.Add,
+                        contentDescription = "",
                     )
-                },
-                colors = TextFieldDefaults.colors(
-                    focusedIndicatorColor = Color.Transparent,
-                    unfocusedIndicatorColor = Color.Transparent,
-                    disabledIndicatorColor = Color.Transparent,
-                    errorIndicatorColor = Color.Transparent,
-                ),
-            )
+                } else {
+                    SimpleIconButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        onClick = {
+                            onRemoveItemClick(index)
+                        },
+                        imageVector = Icons.Rounded.Remove,
+                        enabled = poll.optionList.size > 2,
+                        contentDescription = "",
+                    )
+                }
+            }
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(6.dp)
             )
         }
-        Row(modifier = Modifier.fillMaxWidth()) {
-            Column {
+        Row(
+            modifier = Modifier
+                .padding(start = 8.dp)
+                .fillMaxWidth()
+                .height(38.dp)
+        ) {
+            var durationDialogVisible by remember {
+                mutableStateOf(false)
+            }
+            Column(
+                modifier = Modifier
+                    .fillMaxHeight()
+                    .clickable {
+                        durationDialogVisible = true
+                    }
+            ) {
                 Text(
                     text = stringResource(R.string.post_status_poll_duration),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelMedium,
                 )
+                Box(modifier = Modifier.weight(1F))
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
                     text = poll.duration.formattedString(),
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            if (durationDialogVisible) {
+                DurationSelector(
+                    duration = 1.hours,
+                    onDismissRequest = { durationDialogVisible = false },
+                    onDurationSelect = {},
                 )
             }
             Box(
                 modifier = Modifier
+                    .padding(start = 8.dp, top = 6.dp, end = 16.dp, bottom = 4.dp)
                     .width(1.dp)
-                    .height(24.dp)
+                    .fillMaxHeight()
                     .background(DividerDefaults.color)
             )
-            Column {
+            Column(modifier = Modifier.fillMaxHeight()) {
                 Text(
                     text = stringResource(R.string.post_status_poll_function_title),
                     style = MaterialTheme.typography.labelSmall,
                 )
+                Box(modifier = Modifier.weight(1F))
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
                     text = if (poll.multiple) {
@@ -109,7 +158,8 @@ internal fun PostStatusPoll(
                     } else {
                         stringResource(R.string.post_status_poll_single)
                     },
-                    style = MaterialTheme.typography.labelSmall,
+                    style = MaterialTheme.typography.labelLarge,
+                    color = MaterialTheme.colorScheme.primary,
                 )
             }
 
@@ -120,15 +170,10 @@ internal fun PostStatusPoll(
             )
 
             SimpleIconButton(
-                onClick = {},
-                imageVector = Icons.Rounded.Remove,
+                modifier = Modifier.align(Alignment.CenterVertically),
+                onClick = onRemovePollClick,
+                imageVector = Icons.Filled.Delete,
                 contentDescription = "Remove poll",
-            )
-
-            SimpleIconButton(
-                onClick = {},
-                imageVector = Icons.Rounded.Add,
-                contentDescription = "Add option",
             )
         }
     }

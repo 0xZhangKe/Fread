@@ -37,6 +37,7 @@ internal fun PostStatusBottomBar(
     height: Dp,
     uiState: PostStatusUiState,
     onSensitiveClick: () -> Unit,
+    onPollClicked: () -> Unit,
     onMediaSelected: (List<Uri>) -> Unit,
     onLanguageSelected: (Locale) -> Unit,
 ) {
@@ -61,7 +62,7 @@ internal fun PostStatusBottomBar(
                 modifier = Modifier
                     .align(Alignment.CenterVertically)
                     .padding(start = 16.dp),
-                onClick = { /*TODO*/ },
+                onClick = onPollClicked,
                 imageVector = Icons.Default.Poll,
                 contentDescription = "Add Poll",
             )

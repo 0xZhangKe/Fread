@@ -79,7 +79,7 @@ fun AuthenticationPage(
                     Button(
                         onClick = onCancelClick
                     ) {
-                        Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.cancel))
+                        Text(text = stringResource(com.zhangke.utopia.framework.R.string.cancel))
                     }
                     Button(
                         modifier = Modifier.padding(start = 15.dp),

@@ -213,7 +213,7 @@ private fun EditFeedsScreenTopBar(
                             .padding(top = 6.dp)
                     ) {
                         TextButton(onClick = { showEditNameDialog = false }) {
-                            Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.cancel))
+                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.cancel))
                         }
                         TextButton(
                             modifier = Modifier.padding(start = 6.dp),
@@ -222,7 +222,7 @@ private fun EditFeedsScreenTopBar(
                                 onEditNameClick(inputtedText)
                             }
                         ) {
-                            Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.ok))
+                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.ok))
                         }
                     }
                 }
@@ -248,7 +248,7 @@ private fun EditFeedsScreenTopBar(
                             .padding(top = 6.dp)
                     ) {
                         TextButton(onClick = { showDeleteConfirmDialog = false }) {
-                            Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.cancel))
+                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.cancel))
                         }
                         TextButton(
                             modifier = Modifier.padding(start = 6.dp),
@@ -257,7 +257,7 @@ private fun EditFeedsScreenTopBar(
                                 onDeleteClick()
                             }
                         ) {
-                            Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.ok))
+                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.ok))
                         }
                     }
                 }

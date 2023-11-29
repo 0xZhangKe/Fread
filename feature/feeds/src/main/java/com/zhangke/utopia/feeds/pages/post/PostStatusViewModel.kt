@@ -3,16 +3,15 @@ package com.zhangke.utopia.feeds.pages.post
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.collections.remove
+import com.zhangke.framework.collections.removeIndex
+import com.zhangke.framework.collections.updateIndex
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
-import com.zhangke.framework.utils.FileUtils
-import com.zhangke.framework.utils.StorageSize
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,6 +20,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.time.Duration.Companion.days
 
 @HiltViewModel
 class PostStatusViewModel @Inject constructor(
@@ -91,7 +91,7 @@ class PostStatusViewModel @Inject constructor(
         _uiState.value
             .requireSuccessData()
             .attachment
-            ?.asImageAttachment
+            ?.asImageAttachmentOrNull
             ?.imageList
             ?.let { imageList += it }
         uriList.forEach { uri ->
@@ -121,7 +121,7 @@ class PostStatusViewModel @Inject constructor(
         val imageAttachment = _uiState.value
             .requireSuccessData()
             .attachment
-            ?.asImageAttachment ?: return
+            ?.asImageAttachmentOrNull ?: return
         _uiState.updateOnSuccess { state ->
             state.copy(
                 attachment = PostStatusAttachment.ImageAttachment(imageAttachment.imageList.remove { it == image })
@@ -139,7 +139,7 @@ class PostStatusViewModel @Inject constructor(
 
     fun onDescriptionInputted(file: PostStatusFile, description: String) {
         _uiState.updateOnSuccess { state ->
-            val imageList = state.attachment?.asImageAttachment?.imageList ?: emptyList()
+            val imageList = state.attachment?.asImageAttachmentOrNull?.imageList ?: emptyList()
             val newImageList = imageList.map {
                 if (it == file) {
                     it.copy(description = description)
@@ -154,6 +154,57 @@ class PostStatusViewModel @Inject constructor(
     fun onLanguageSelected(locale: Locale) {
         _uiState.updateOnSuccess { state ->
             state.copy(language = locale)
+        }
+    }
+
+    fun onPollClicked() {
+        _uiState.updateOnSuccess { state ->
+            state.copy(
+                attachment = PostStatusAttachment.Poll(
+                    optionList = listOf("", ""),
+                    multiple = false,
+                    duration = 1.days,
+                )
+            )
+        }
+    }
+
+    fun onPollContentChanged(index: Int, content: String) {
+        _uiState.updateOnSuccess { state ->
+            val pollAttachment = state.attachment!!.asPollAttachment
+            state.copy(
+                attachment = pollAttachment.copy(
+                    optionList = pollAttachment.optionList.updateIndex(index) { content }
+                )
+            )
+        }
+    }
+
+    fun onAddPollItemClick() {
+        _uiState.updateOnSuccess { state ->
+            val pollAttachment = state.attachment!!.asPollAttachment
+            state.copy(
+                attachment = pollAttachment.copy(
+                    optionList = pollAttachment.optionList.plus("")
+                )
+            )
+        }
+    }
+
+    fun onRemovePollItemClick(index: Int) {
+        _uiState.updateOnSuccess { state ->
+            val pollAttachment = state.attachment!!.asPollAttachment
+            state.copy(
+                attachment = pollAttachment.copy(
+                    optionList = pollAttachment.optionList.removeIndex(index)
+                )
+            )
+        }
+    }
+
+    fun onRemovePollClick() {
+        _uiState.updateOnSuccess { state ->
+            state.copy(attachment = null)
         }
     }
 

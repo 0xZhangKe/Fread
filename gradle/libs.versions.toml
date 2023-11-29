@@ -55,6 +55,8 @@ krouter = "0.1.6"
 androidGradlePlugin = "8.0.2"
 hiltAndroidGradlePlugin = "2.46.1"
 
+compose-wheel-picker = "1.0.0-alpha19"
+
 [bundles]
 androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]
 androidx-compose-foundation = ["androidx.compose.foundation", "androidx.compose.foundation.layout"]
@@ -175,6 +177,8 @@ voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.r
 
 krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", version.ref = "krouter"}
 krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.ref = "krouter"}
+
+compose-wheel-picker = { group = "com.github.zj565061763", name = "compose-wheel-picker", version.ref = "compose.wheel.picker"}
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

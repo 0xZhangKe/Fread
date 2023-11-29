@@ -74,6 +74,11 @@ class PostStatusScreen : AndroidScreen() {
                 onCancelUploadClick = viewModel::onCancelUploadClick,
                 onRetryClick = viewModel::onRetryClick,
                 onDescriptionInputted = viewModel::onDescriptionInputted,
+                onPollClicked = viewModel::onPollClicked,
+                onPollContentChanged = viewModel::onPollContentChanged,
+                onAddPollItemClick = viewModel::onAddPollItemClick,
+                onRemovePollClick = viewModel::onRemovePollClick,
+                onRemovePollItemClick = viewModel::onRemovePollItemClick,
             )
         }
     }
@@ -93,6 +98,11 @@ class PostStatusScreen : AndroidScreen() {
         onRetryClick: (PostStatusFile) -> Unit,
         onDescriptionInputted: (PostStatusFile, String) -> Unit,
         onLanguageSelected: (Locale) -> Unit,
+        onPollClicked: () -> Unit,
+        onPollContentChanged: (Int, String) -> Unit,
+        onRemovePollClick: () -> Unit,
+        onRemovePollItemClick: (Int) -> Unit,
+        onAddPollItemClick: () -> Unit,
     ) {
         val bottomBarHeight = 48.dp
         Scaffold(
@@ -127,6 +137,7 @@ class PostStatusScreen : AndroidScreen() {
                     onSensitiveClick = onSensitiveClick,
                     onMediaSelected = onMediaSelected,
                     onLanguageSelected = onLanguageSelected,
+                    onPollClicked = onPollClicked,
                 )
             }
         ) { paddingValues ->
@@ -249,6 +260,10 @@ class PostStatusScreen : AndroidScreen() {
                     onCancelUploadClick = onCancelUploadClick,
                     onRetryClick = onRetryClick,
                     onDescriptionInputted = onDescriptionInputted,
+                    onPollContentChanged = onPollContentChanged,
+                    onRemovePollClick = onRemovePollClick,
+                    onRemovePollItemClick = onRemovePollItemClick,
+                    onAddPollItemClick = onAddPollItemClick,
                 )
             }
         }
@@ -262,6 +277,10 @@ class PostStatusScreen : AndroidScreen() {
         onCancelUploadClick: (PostStatusFile) -> Unit,
         onRetryClick: (PostStatusFile) -> Unit,
         onDescriptionInputted: (PostStatusFile, String) -> Unit,
+        onPollContentChanged: (Int, String) -> Unit,
+        onRemovePollClick: () -> Unit,
+        onRemovePollItemClick: (Int) -> Unit,
+        onAddPollItemClick: () -> Unit,
     ) {
         val attachment = uiState.attachment ?: return
         when (attachment) {
@@ -291,9 +310,10 @@ class PostStatusScreen : AndroidScreen() {
                 PostStatusPoll(
                     modifier = modifier,
                     poll = attachment,
-                    onPollContentChanged = { index, content ->
-
-                    },
+                    onPollContentChanged = onPollContentChanged,
+                    onRemovePollClick = onRemovePollClick,
+                    onRemoveItemClick = onRemovePollItemClick,
+                    onAddPollItemClick = onAddPollItemClick,
                 )
             }
         }

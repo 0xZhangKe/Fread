@@ -1,6 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="duration_minute">minute</string>
+
+    <string name="duration_hour">hour</string>
+
+    <string name="duration_day">day</string>
+
+    <string name="duration_week">week</string>
+
     <string name="cancel">Cancel</string>
 
     <string name="ok">OK</string>

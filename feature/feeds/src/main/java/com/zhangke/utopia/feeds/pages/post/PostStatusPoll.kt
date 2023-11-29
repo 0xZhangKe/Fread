@@ -11,6 +11,9 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.rounded.Add
+import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.MaterialTheme
@@ -28,6 +31,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
+import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.utopia.common.utils.formattedString
 import com.zhangke.utopia.feeds.R
 
 @Composable
@@ -80,9 +85,9 @@ internal fun PostStatusPoll(
                     text = stringResource(R.string.post_status_poll_duration),
                     style = MaterialTheme.typography.labelSmall,
                 )
-                val duration = poll.duration
                 Text(
-                    text = stringResource(R.string.post_status_poll_duration),
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = poll.duration.formattedString(),
                     style = MaterialTheme.typography.labelSmall,
                 )
             }
@@ -92,7 +97,39 @@ internal fun PostStatusPoll(
                     .height(24.dp)
                     .background(DividerDefaults.color)
             )
+            Column {
+                Text(
+                    text = stringResource(R.string.post_status_poll_function_title),
+                    style = MaterialTheme.typography.labelSmall,
+                )
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = if (poll.multiple) {
+                        stringResource(R.string.post_status_poll_multiple)
+                    } else {
+                        stringResource(R.string.post_status_poll_single)
+                    },
+                    style = MaterialTheme.typography.labelSmall,
+                )
+            }
 
+            Box(
+                modifier = Modifier
+                    .height(1.dp)
+                    .weight(1F)
+            )
+
+            SimpleIconButton(
+                onClick = {},
+                imageVector = Icons.Rounded.Remove,
+                contentDescription = "Remove poll",
+            )
+
+            SimpleIconButton(
+                onClick = {},
+                imageVector = Icons.Rounded.Add,
+                contentDescription = "Add option",
+            )
         }
     }
 }

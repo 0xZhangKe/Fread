@@ -34,7 +34,11 @@
 
     <string name="post_status_poll_duration">Voting duration</string>
 
-    <string name="post_status_poll_multiple">Function</string>
+    <string name="post_status_poll_function_title">Function</string>
+
+    <string name="post_status_poll_single">Single</string>
+
+    <string name="post_status_poll_multiple">Multiple</string>
 
     <string name="input_media_desc_page_title">Image description text</string>
 

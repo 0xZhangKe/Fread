@@ -34,7 +34,11 @@
 
     <string name="post_status_poll_duration">投票时长</string>
 
-    <string name="post_status_poll_multiple">能力</string>
+    <string name="post_status_poll_function_title">能力</string>
+
+    <string name="post_status_poll_single">单选</string>
+
+    <string name="post_status_poll_multiple">多选</string>
 
     <string name="input_media_desc_page_title">描述文本</string>
 

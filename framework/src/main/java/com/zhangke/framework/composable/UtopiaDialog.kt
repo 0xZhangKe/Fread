@@ -12,12 +12,16 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.utopia.framework.R
 
 @Composable
 fun UtopiaDialog(
@@ -71,7 +75,7 @@ fun UtopiaDialog(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 6.dp),
+                        .padding(top = 16.dp),
                     contentAlignment = Alignment.Center,
                 ) {
                     val textStyle = MaterialTheme.typography.titleLarge
@@ -87,8 +91,8 @@ fun UtopiaDialog(
             null
         } else {
             {
-                Button(onClick = { onNegativeClick?.invoke() }) {
-                    Text(text = negativeButtonText.orEmpty())
+                TextButton(onClick = { onNegativeClick?.invoke() }) {
+                    Text(text = negativeButtonText.ifNullOrEmpty { stringResource(R.string.cancel) })
                 }
             }
         },
@@ -96,8 +100,8 @@ fun UtopiaDialog(
             null
         } else {
             {
-                Button(onClick = { onPositiveClick?.invoke() }) {
-                    Text(text = positiveButtonText.orEmpty())
+                TextButton(onClick = { onPositiveClick?.invoke() }) {
+                    Text(text = positiveButtonText.ifNullOrEmpty { stringResource(R.string.ok) })
                 }
             }
         }

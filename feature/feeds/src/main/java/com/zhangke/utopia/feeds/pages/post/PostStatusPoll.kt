@@ -19,6 +19,7 @@ import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material.icons.rounded.Remove
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -34,6 +35,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.DurationSelector
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.utopia.common.utils.formattedString
 import com.zhangke.utopia.feeds.R
 import kotlin.time.Duration.Companion.hours
@@ -46,6 +48,7 @@ internal fun PostStatusPoll(
     onRemoveItemClick: (Int) -> Unit,
     onAddPollItemClick: () -> Unit,
     onPollContentChanged: (Int, String) -> Unit,
+    onPollStyleSelect: (multiple: Boolean) -> Unit,
 ) {
     Column(modifier = modifier.padding(start = 16.dp, end = 16.dp)) {
         poll.optionList.forEachIndexed { index, option ->
@@ -145,7 +148,12 @@ internal fun PostStatusPoll(
                     .fillMaxHeight()
                     .background(DividerDefaults.color)
             )
-            Column(modifier = Modifier.fillMaxHeight()) {
+            var showChooseStyleDialog by remember {
+                mutableStateOf(false)
+            }
+            Column(modifier = Modifier
+                .fillMaxHeight()
+                .clickable { showChooseStyleDialog = true }) {
                 Text(
                     text = stringResource(R.string.post_status_poll_function_title),
                     style = MaterialTheme.typography.labelSmall,
@@ -160,6 +168,13 @@ internal fun PostStatusPoll(
                     },
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
+                )
+            }
+            if (showChooseStyleDialog) {
+                ChoosePollStyleDialog(
+                    defaultMultiple = poll.multiple,
+                    onDismissRequest = { showChooseStyleDialog = false },
+                    onSelect = onPollStyleSelect,
                 )
             }
 
@@ -177,4 +192,60 @@ internal fun PostStatusPoll(
             )
         }
     }
+}
+
+@Composable
+private fun ChoosePollStyleDialog(
+    defaultMultiple: Boolean,
+    onDismissRequest: () -> Unit,
+    onSelect: (multiple: Boolean) -> Unit,
+) {
+    var multiple by remember(defaultMultiple) {
+        mutableStateOf(defaultMultiple)
+    }
+    UtopiaDialog(
+        onDismissRequest = onDismissRequest,
+        title = stringResource(R.string.post_status_poll_style_select_dialog_title),
+        onNegativeClick = onDismissRequest,
+        onPositiveClick = {
+            onDismissRequest()
+            onSelect(multiple)
+        },
+        content = {
+            Column(
+                modifier = Modifier
+                    .padding(start = 80.dp, top = 16.dp, end = 80.dp, bottom = 16.dp)
+                    .fillMaxWidth()
+            ) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = stringResource(R.string.post_status_poll_single)
+                    )
+                    Box(modifier = Modifier.weight(1F))
+                    RadioButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        selected = !multiple,
+                        onClick = { multiple = false },
+                    )
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth()
+                ) {
+                    Text(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = stringResource(R.string.post_status_poll_multiple)
+                    )
+                    Box(modifier = Modifier.weight(1F))
+                    RadioButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        selected = multiple,
+                        onClick = { multiple = true },
+                    )
+                }
+            }
+        }
+    )
 }

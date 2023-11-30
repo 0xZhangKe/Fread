@@ -29,8 +29,6 @@ fun DurationSelector(
     UtopiaDialog(
         onDismissRequest = onDismissRequest,
         title = stringResource(R.string.duration_selector_title),
-        negativeButtonText = stringResource(R.string.cancel),
-        positiveButtonText = stringResource(R.string.ok),
         onNegativeClick = {
             onDismissRequest()
         },

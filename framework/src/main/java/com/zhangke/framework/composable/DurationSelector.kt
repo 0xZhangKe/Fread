@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,22 +9,34 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sd.lib.compose.wheel_picker.FVerticalWheelPicker
+import com.sd.lib.compose.wheel_picker.FWheelPickerState
 import com.sd.lib.compose.wheel_picker.rememberFWheelPickerState
+import com.zhangke.framework.utils.format
 import com.zhangke.utopia.framework.R
+import kotlinx.coroutines.launch
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 @Composable
 fun DurationSelector(
-    duration: Duration,
+    defaultDuration: Duration,
     onDismissRequest: () -> Unit,
     onDurationSelect: (Duration) -> Unit,
 ) {
+    var currentDuration by remember {
+        mutableStateOf(defaultDuration)
+    }
     UtopiaDialog(
         onDismissRequest = onDismissRequest,
         title = stringResource(R.string.duration_selector_title),
@@ -34,10 +45,14 @@ fun DurationSelector(
         },
         onPositiveClick = {
             onDismissRequest()
+            onDurationSelect(currentDuration)
         },
         content = {
             DurationSelectorContent(
-                onDurationSelect = {},
+                defaultDuration = defaultDuration,
+                onDurationChanged = {
+                    currentDuration = it
+                }
             )
         },
     )
@@ -45,8 +60,53 @@ fun DurationSelector(
 
 @Composable
 private fun DurationSelectorContent(
-    onDurationSelect: (Duration) -> Unit,
+    defaultDuration: Duration,
+    onDurationChanged: (Duration) -> Unit,
 ) {
+    val dayList = remember {
+        mutableListOf(0, 1, 2, 3, 4, 5, 6, 7)
+    }
+    val dayState = rememberFWheelPickerState(0)
+    val hourList = remember {
+        mutableListOf<Int>().apply {
+            repeat(24) {
+                add(it)
+            }
+        }
+    }
+    val hourState = rememberFWheelPickerState(0)
+    val minutesList = remember {
+        mutableListOf<Int>().apply {
+            repeat(60) {
+                add(it)
+            }
+        }
+    }
+    val minutesState = rememberFWheelPickerState(0)
+    val currentDay = dayState.currentIndex
+    val currentHour = hourState.currentIndex
+    val currentMinutes = minutesState.currentIndex
+    LaunchedEffect(currentDay, currentHour, currentMinutes) {
+        if (currentDay < 0 || currentHour < 0 || currentMinutes < 0) return@LaunchedEffect
+        val currentDuration = dayList[currentDay].days +
+                hourList[currentHour].hours +
+                minutesList[currentMinutes].minutes
+        onDurationChanged(currentDuration)
+    }
+    LaunchedEffect(defaultDuration) {
+        launch {
+            val formatted = defaultDuration.format()
+            dayList.indexOf(formatted.days).takeIf { it >= 0 }?.let {
+                dayState.animateScrollToIndex(it)
+            }
+            hourList.indexOf(formatted.hours).takeIf { it >= 0 }?.let {
+                hourState.animateScrollToIndex(it)
+            }
+            minutesList.indexOf(formatted.minutes).takeIf { it >= 0 }?.let {
+                minutesState.animateScrollToIndex(it)
+            }
+        }
+    }
     Row(
         modifier = Modifier
             .padding(16.dp)
@@ -57,14 +117,10 @@ private fun DurationSelectorContent(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = stringResource(R.string.duration_day),
             )
-            val dayList = remember {
-                mutableListOf("0", "1", "2", "3", "4", "5", "6", "7")
-            }
             DurationSelectorItem(
-                initialIndex = 1,
+                state = dayState,
                 modifier = Modifier.fillMaxWidth(),
                 list = dayList,
-                onSelect = {},
             )
         }
         Box(modifier = Modifier.width(8.dp))
@@ -73,18 +129,10 @@ private fun DurationSelectorContent(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = stringResource(R.string.duration_hour),
             )
-            val hourList = remember {
-                mutableListOf<String>().apply {
-                    repeat(24) {
-                        add("$it")
-                    }
-                }
-            }
             DurationSelectorItem(
-                initialIndex = 0,
+                state = hourState,
                 modifier = Modifier.fillMaxWidth(),
                 list = hourList,
-                onSelect = {},
             )
         }
         Box(modifier = Modifier.width(8.dp))
@@ -93,18 +141,10 @@ private fun DurationSelectorContent(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
                 text = stringResource(R.string.duration_minute),
             )
-            val minutesList = remember {
-                mutableListOf<String>().apply {
-                    repeat(60) {
-                        add("$it")
-                    }
-                }
-            }
             DurationSelectorItem(
-                initialIndex = 0,
+                state = minutesState,
                 modifier = Modifier.fillMaxWidth(),
                 list = minutesList,
-                onSelect = {},
             )
         }
     }
@@ -112,21 +152,15 @@ private fun DurationSelectorContent(
 
 @Composable
 private fun DurationSelectorItem(
-    initialIndex: Int,
+    state: FWheelPickerState,
     modifier: Modifier = Modifier,
-    list: List<String>,
-    onSelect: (index: Int) -> Unit,
+    list: List<Int>,
 ) {
-    val state = rememberFWheelPickerState(initialIndex)
-    val currentIndex = state.currentIndex
-    LaunchedEffect(currentIndex) {
-        Log.d("U_TEST", "current index:$currentIndex")
-    }
     FVerticalWheelPicker(
         modifier = modifier,
         count = list.size,
         state = state,
     ) { index ->
-        Text(text = list[index])
+        Text(text = list[index].toString())
     }
 }

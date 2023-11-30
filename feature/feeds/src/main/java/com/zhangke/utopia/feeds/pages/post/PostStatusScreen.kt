@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -33,9 +34,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -79,6 +82,9 @@ class PostStatusScreen : AndroidScreen() {
                 onAddPollItemClick = viewModel::onAddPollItemClick,
                 onRemovePollClick = viewModel::onRemovePollClick,
                 onRemovePollItemClick = viewModel::onRemovePollItemClick,
+                onPollStyleSelect = viewModel::onPollStyleSelect,
+                onWarningContentChanged = viewModel::onWarningContentChanged,
+                onVisibilityChanged = viewModel::onVisibilityChanged,
             )
         }
     }
@@ -103,6 +109,9 @@ class PostStatusScreen : AndroidScreen() {
         onRemovePollClick: () -> Unit,
         onRemovePollItemClick: (Int) -> Unit,
         onAddPollItemClick: () -> Unit,
+        onPollStyleSelect: (multiple: Boolean) -> Unit,
+        onWarningContentChanged: (String) -> Unit,
+        onVisibilityChanged: (PostStatusVisibility) -> Unit,
     ) {
         val bottomBarHeight = 48.dp
         Scaffold(
@@ -154,7 +163,15 @@ class PostStatusScreen : AndroidScreen() {
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {
-                val (avatarRef, nameRef, platformRef, switchAccountRef, inputRef, statusAttachmentRef) = createRefs()
+                val (
+                    avatarRef,
+                    nameRef,
+                    visibilityRef,
+                    switchAccountRef,
+                    warningRef,
+                    inputRef,
+                    statusAttachmentRef,
+                ) = createRefs()
                 AsyncImage(
                     modifier = Modifier
                         .clip(CircleShape)
@@ -167,30 +184,27 @@ class PostStatusScreen : AndroidScreen() {
                     model = uiState.account.avatar,
                     contentDescription = null,
                 )
-                Text(
+                NameAndAccountInfo(
                     modifier = Modifier.constrainAs(nameRef) {
                         start.linkTo(avatarRef.end, 8.dp)
                         top.linkTo(avatarRef.top)
-                        end.linkTo(switchAccountRef.start, 6.dp)
+                        end.linkTo(switchAccountRef.start, 2.dp)
                         width = Dimension.fillToConstraints
                     },
-                    text = uiState.account.userName,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
+                    uiState = uiState,
                 )
-                Text(
-                    modifier = Modifier.constrainAs(platformRef) {
-                        start.linkTo(nameRef.start)
-                        end.linkTo(switchAccountRef.start, 6.dp)
-                        top.linkTo(nameRef.bottom, 2.dp)
-                        width = Dimension.fillToConstraints
-                    },
-                    text = uiState.account.webFinger.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
+                PostStatusVisibilityUi(
+                    modifier = Modifier
+                        .constrainAs(visibilityRef) {
+                            top.linkTo(nameRef.bottom, 4.dp)
+                            start.linkTo(nameRef.start)
+                        },
+                    visibility = uiState.visibility,
+                    onVisibilitySelect = onVisibilityChanged,
                 )
                 Box(
                     modifier = Modifier.constrainAs(switchAccountRef) {
-                        end.linkTo(parent.end, 16.dp)
+                        end.linkTo(parent.end, 4.dp)
                         top.linkTo(nameRef.top)
                     }
                 ) {
@@ -221,10 +235,27 @@ class PostStatusScreen : AndroidScreen() {
                         }
                     }
                 }
+                Box(
+                    modifier = Modifier.constrainAs(warningRef) {
+                        top.linkTo(visibilityRef.bottom, 8.dp)
+                        start.linkTo(parent.start, 16.dp)
+                        end.linkTo(parent.end, 16.dp)
+                        width = Dimension.fillToConstraints
+                        height = Dimension.wrapContent
+                    }
+                ) {
+                    if (uiState.sensitive) {
+                        PostStatusWarning(
+                            modifier = Modifier.fillMaxWidth(),
+                            warning = uiState.warningContent,
+                            onValueChanged = onWarningContentChanged,
+                        )
+                    }
+                }
                 TextField(
                     modifier = Modifier
                         .constrainAs(inputRef) {
-                            top.linkTo(platformRef.bottom)
+                            top.linkTo(warningRef.bottom)
                             start.linkTo(parent.start, 8.dp)
                             end.linkTo(parent.end, 8.dp)
                             width = Dimension.fillToConstraints
@@ -264,9 +295,40 @@ class PostStatusScreen : AndroidScreen() {
                     onRemovePollClick = onRemovePollClick,
                     onRemovePollItemClick = onRemovePollItemClick,
                     onAddPollItemClick = onAddPollItemClick,
+                    onPollStyleSelect = onPollStyleSelect,
                 )
             }
         }
+    }
+
+    @Composable
+    private fun NameAndAccountInfo(
+        modifier: Modifier,
+        uiState: PostStatusUiState,
+    ) {
+        TwoTextsInRow(
+            firstText = {
+                Text(
+                    modifier = Modifier,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    text = uiState.account.userName,
+                    style = MaterialTheme.typography.titleMedium,
+                    textAlign = TextAlign.Start,
+                )
+            },
+            secondText = {
+                Text(
+                    modifier = Modifier,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    text = uiState.account.webFinger.toString(),
+                    style = MaterialTheme.typography.bodySmall,
+                )
+            },
+            spacing = 2.dp,
+            modifier = modifier,
+        )
     }
 
     @Composable
@@ -281,6 +343,7 @@ class PostStatusScreen : AndroidScreen() {
         onRemovePollClick: () -> Unit,
         onRemovePollItemClick: (Int) -> Unit,
         onAddPollItemClick: () -> Unit,
+        onPollStyleSelect: (multiple: Boolean) -> Unit,
     ) {
         val attachment = uiState.attachment ?: return
         when (attachment) {
@@ -314,8 +377,10 @@ class PostStatusScreen : AndroidScreen() {
                     onRemovePollClick = onRemovePollClick,
                     onRemoveItemClick = onRemovePollItemClick,
                     onAddPollItemClick = onAddPollItemClick,
+                    onPollStyleSelect = onPollStyleSelect,
                 )
             }
         }
     }
 }
+

@@ -44,4 +44,12 @@
 
     <string name="input_media_desc_input_hint">请输入描述文本</string>
 
+    <string name="post_status_poll_style_select_dialog_title">请选择功能</string>
+
+    <string name="post_status_content_warning">警告文本</string>
+
+    <string name="post_status_scope_public">公开</string>
+    <string name="post_status_scope_follower_only">仅关注着可见</string>
+    <string name="post_status_scope_mentioned_only">仅提及用户可见</string>
+
 </resources>

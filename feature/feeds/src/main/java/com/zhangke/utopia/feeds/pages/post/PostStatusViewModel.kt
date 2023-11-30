@@ -46,7 +46,9 @@ class PostStatusViewModel @Inject constructor(
                         content = "",
                         attachment = null,
                         maxMediaCount = 4,
+                        visibility = PostStatusVisibility.PUBLIC,
                         sensitive = false,
+                        warningContent = "",
                         language = Locale.ROOT,
                     )
                 )
@@ -205,6 +207,29 @@ class PostStatusViewModel @Inject constructor(
     fun onRemovePollClick() {
         _uiState.updateOnSuccess { state ->
             state.copy(attachment = null)
+        }
+    }
+
+    fun onPollStyleSelect(multiple: Boolean) {
+        _uiState.updateOnSuccess { state ->
+            val poll = state.attachment!!.asPollAttachment
+            state.copy(
+                attachment = poll.copy(
+                    multiple = multiple
+                )
+            )
+        }
+    }
+
+    fun onWarningContentChanged(content: String) {
+        _uiState.updateOnSuccess {
+            it.copy(warningContent = content)
+        }
+    }
+
+    fun onVisibilityChanged(visibility: PostStatusVisibility) {
+        _uiState.updateOnSuccess {
+            it.copy(visibility = visibility)
         }
     }
 

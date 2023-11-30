@@ -1,6 +1,7 @@
 package com.zhangke.utopia.feeds.pages.post
 
 import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.account.LoggedAccount
 import java.util.Locale
 import kotlin.time.Duration
@@ -11,7 +12,9 @@ data class PostStatusUiState(
     val content: String,
     val attachment: PostStatusAttachment?,
     val maxMediaCount: Int,
+    val visibility: PostStatusVisibility,
     val sensitive: Boolean,
+    val warningContent: String,
     val language: Locale,
 ) {
 
@@ -32,7 +35,7 @@ sealed interface PostStatusAttachment {
         val optionList: List<String>,
         val multiple: Boolean,
         val duration: Duration,
-    ): PostStatusAttachment
+    ) : PostStatusAttachment
 
     val asImageAttachmentOrNull: ImageAttachment? get() = this as? ImageAttachment
 
@@ -46,3 +49,17 @@ data class PostStatusFile(
     val description: String?,
     val uploadJob: UploadMediaJob,
 )
+
+enum class PostStatusVisibility {
+
+    PUBLIC,
+    FOLLOWERS_ONLY,
+    MENTIONS_ONLY;
+
+    val describeStringId: Int
+        get() = when (this) {
+            PUBLIC -> R.string.post_status_scope_public
+            FOLLOWERS_ONLY -> R.string.post_status_scope_follower_only
+            MENTIONS_ONLY -> R.string.post_status_scope_mentioned_only
+        }
+}

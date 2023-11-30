@@ -34,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.layout
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
@@ -52,6 +51,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.account.LoggedAccount
 import java.util.Locale
+import kotlin.time.Duration
 
 class PostStatusScreen : AndroidScreen() {
 
@@ -85,6 +85,7 @@ class PostStatusScreen : AndroidScreen() {
                 onPollStyleSelect = viewModel::onPollStyleSelect,
                 onWarningContentChanged = viewModel::onWarningContentChanged,
                 onVisibilityChanged = viewModel::onVisibilityChanged,
+                onDurationSelect = viewModel::onDurationSelect,
             )
         }
     }
@@ -112,6 +113,7 @@ class PostStatusScreen : AndroidScreen() {
         onPollStyleSelect: (multiple: Boolean) -> Unit,
         onWarningContentChanged: (String) -> Unit,
         onVisibilityChanged: (PostStatusVisibility) -> Unit,
+        onDurationSelect: (Duration) -> Unit,
     ) {
         val bottomBarHeight = 48.dp
         Scaffold(
@@ -296,6 +298,7 @@ class PostStatusScreen : AndroidScreen() {
                     onRemovePollItemClick = onRemovePollItemClick,
                     onAddPollItemClick = onAddPollItemClick,
                     onPollStyleSelect = onPollStyleSelect,
+                    onDurationSelect = onDurationSelect,
                 )
             }
         }
@@ -344,6 +347,7 @@ class PostStatusScreen : AndroidScreen() {
         onRemovePollItemClick: (Int) -> Unit,
         onAddPollItemClick: () -> Unit,
         onPollStyleSelect: (multiple: Boolean) -> Unit,
+        onDurationSelect: (Duration) -> Unit,
     ) {
         val attachment = uiState.attachment ?: return
         when (attachment) {
@@ -378,6 +382,7 @@ class PostStatusScreen : AndroidScreen() {
                     onRemoveItemClick = onRemovePollItemClick,
                     onAddPollItemClick = onAddPollItemClick,
                     onPollStyleSelect = onPollStyleSelect,
+                    onDurationSelect = onDurationSelect,
                 )
             }
         }

@@ -36,9 +36,9 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.DurationSelector
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.UtopiaDialog
-import com.zhangke.utopia.common.utils.formattedString
+import com.zhangke.framework.utils.formattedString
 import com.zhangke.utopia.feeds.R
-import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration
 
 @Composable
 internal fun PostStatusPoll(
@@ -49,6 +49,7 @@ internal fun PostStatusPoll(
     onAddPollItemClick: () -> Unit,
     onPollContentChanged: (Int, String) -> Unit,
     onPollStyleSelect: (multiple: Boolean) -> Unit,
+    onDurationSelect: (Duration) -> Unit,
 ) {
     Column(modifier = modifier.padding(start = 16.dp, end = 16.dp)) {
         poll.optionList.forEachIndexed { index, option ->
@@ -136,9 +137,9 @@ internal fun PostStatusPoll(
             }
             if (durationDialogVisible) {
                 DurationSelector(
-                    duration = 1.hours,
+                    defaultDuration = poll.duration,
                     onDismissRequest = { durationDialogVisible = false },
-                    onDurationSelect = {},
+                    onDurationSelect = onDurationSelect,
                 )
             }
             Box(

@@ -8,6 +8,7 @@ import com.zhangke.framework.collections.removeIndex
 import com.zhangke.framework.collections.updateIndex
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
@@ -20,6 +21,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import java.util.Locale
 import javax.inject.Inject
+import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
 @HiltViewModel
@@ -69,6 +71,7 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onMediaSelected(list: List<Uri>) {
+        if (list.isEmpty()) return
         val fileList = list.mapNotNull { it.toContentProviderFile() }
         val videoFile = fileList.firstOrNull { it.isVideo }
         if (videoFile != null) {
@@ -160,6 +163,7 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onPollClicked() {
+        if (_uiState.value.successDataOrNull()?.attachment is PostStatusAttachment.Poll) return
         _uiState.updateOnSuccess { state ->
             state.copy(
                 attachment = PostStatusAttachment.Poll(
@@ -230,6 +234,15 @@ class PostStatusViewModel @Inject constructor(
     fun onVisibilityChanged(visibility: PostStatusVisibility) {
         _uiState.updateOnSuccess {
             it.copy(visibility = visibility)
+        }
+    }
+
+    fun onDurationSelect(duration: Duration) {
+        _uiState.updateOnSuccess { state ->
+            val pollAttachment = state.attachment!!.asPollAttachment
+            state.copy(
+                attachment = pollAttachment.copy(duration = duration)
+            )
         }
     }
 

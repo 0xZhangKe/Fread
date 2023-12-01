@@ -50,6 +50,7 @@ import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.account.LoggedAccount
+import com.zhangke.utopia.status.emoji.CustomEmoji
 import java.util.Locale
 import kotlin.time.Duration
 
@@ -86,6 +87,8 @@ class PostStatusScreen : AndroidScreen() {
                 onWarningContentChanged = viewModel::onWarningContentChanged,
                 onVisibilityChanged = viewModel::onVisibilityChanged,
                 onDurationSelect = viewModel::onDurationSelect,
+                onEmojiPick = viewModel::onCustomEmojiPick,
+                onDeleteEmojiClick = viewModel::onEmojiDeleteClick,
             )
         }
     }
@@ -114,6 +117,8 @@ class PostStatusScreen : AndroidScreen() {
         onWarningContentChanged: (String) -> Unit,
         onVisibilityChanged: (PostStatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
+        onEmojiPick: (CustomEmoji) -> Unit,
+        onDeleteEmojiClick: () -> Unit,
     ) {
         val bottomBarHeight = 48.dp
         Scaffold(
@@ -149,6 +154,8 @@ class PostStatusScreen : AndroidScreen() {
                     onMediaSelected = onMediaSelected,
                     onLanguageSelected = onLanguageSelected,
                     onPollClicked = onPollClicked,
+                    onEmojiPick = onEmojiPick,
+                    onDeleteEmojiClick = onDeleteEmojiClick,
                 )
             }
         ) { paddingValues ->

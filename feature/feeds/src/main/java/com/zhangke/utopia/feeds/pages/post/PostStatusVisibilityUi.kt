@@ -42,7 +42,7 @@ internal fun PostStatusVisibilityUi(
                 .border(
                     width = 1.dp,
                     color = MaterialTheme.colorScheme.outline,
-                    shape = RoundedCornerShape(4.dp),
+                    shape = RoundedCornerShape(6.dp),
                 )
                 .padding(horizontal = 4.dp, vertical = 2.dp)
                 .clickable { showSelector = true },

@@ -14,11 +14,17 @@ import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.toContentProviderFile
+import com.zhangke.utopia.feeds.pages.post.adapter.CustomEmojiAdapter
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.emoji.CustomEmoji
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import java.util.Locale
 import javax.inject.Inject
 import kotlin.time.Duration
@@ -26,7 +32,8 @@ import kotlin.time.Duration.Companion.days
 
 @HiltViewModel
 class PostStatusViewModel @Inject constructor(
-    private val statusProvider: StatusProvider
+    private val statusProvider: StatusProvider,
+    private val emojiAdapter: CustomEmojiAdapter,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
@@ -51,10 +58,26 @@ class PostStatusViewModel @Inject constructor(
                         visibility = PostStatusVisibility.PUBLIC,
                         sensitive = false,
                         warningContent = "",
+                        emojiList = emptyList(),
                         language = Locale.ROOT,
                     )
                 )
             }
+        }
+        configCustomEmoji()
+    }
+
+    private fun configCustomEmoji() {
+        launchInViewModel {
+            _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
+                .distinctUntilChanged()
+                .mapNotNull { statusProvider.customEmojiProvider.getCustomEmojiList(it).getOrNull() }
+                .map { emojiAdapter.toEmojiCell(7, it) }
+                .collect { emojiList ->
+                    _uiState.updateOnSuccess {
+                        it.copy(emojiList = emojiList)
+                    }
+                }
         }
     }
 
@@ -244,6 +267,22 @@ class PostStatusViewModel @Inject constructor(
                 attachment = pollAttachment.copy(duration = duration)
             )
         }
+    }
+
+    fun onCustomEmojiPick(emoji: CustomEmoji) {
+        _uiState.updateOnSuccess { state ->
+            state.copy(
+                content = state.content.plus(":${emoji.shortcode}:")
+            )
+        }
+    }
+
+    fun onEmojiDeleteClick() {
+//        _uiState.updateOnSuccess { state ->
+//            state.copy(
+//                content = "",
+//            )
+//        }
     }
 
     fun onPostClick() {

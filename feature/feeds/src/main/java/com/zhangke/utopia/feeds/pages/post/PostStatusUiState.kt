@@ -3,6 +3,8 @@ package com.zhangke.utopia.feeds.pages.post
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.account.LoggedAccount
+import com.zhangke.utopia.status.emoji.CustomEmoji
+import com.zhangke.utopia.status.ui.emoji.CustomEmojiCell
 import java.util.Locale
 import kotlin.time.Duration
 
@@ -15,6 +17,7 @@ data class PostStatusUiState(
     val visibility: PostStatusVisibility,
     val sensitive: Boolean,
     val warningContent: String,
+    val emojiList: List<CustomEmojiCell>,
     val language: Locale,
 ) {
 

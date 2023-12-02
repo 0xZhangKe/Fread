@@ -5,7 +5,7 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdap
 import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToUserUriUseCase
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 

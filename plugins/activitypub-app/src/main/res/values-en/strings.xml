@@ -14,4 +14,23 @@
     <string name="activity_pub_trends_tag">Trends Tags</string>
     <string name="activity_pub_trends_tag_description">%s people in the past 2 days</string>
     <string name="activity_pub_trends_status">Hot</string>
+
+    <string name="input_media_desc_page_title">Image description text</string>
+    <string name="input_media_desc_input_hint">Please input image description text</string>
+
+    <string name="post_status_page_title">New Blog</string>
+    <string name="post_screen_input_hint">Please input your blog</string>
+    <string name="post_screen_media_image_placeholder">Image description text</string>
+    <string name="post_screen_media_video_placeholder">Video description text</string>
+    <string name="post_status_poll_item_hint">Option %s</string>
+    <string name="post_status_poll_duration">Voting duration</string>
+    <string name="post_status_poll_function_title">Function</string>
+    <string name="post_status_poll_single">Single</string>
+    <string name="post_status_poll_multiple">Multiple</string>
+    <string name="post_status_poll_style_select_dialog_title">Please select style</string>
+    <string name="post_status_content_warning">Content Warning</string>
+    <string name="post_status_scope_public">Public</string>
+    <string name="post_status_scope_unlisted">Public, but opted-out of discovery feature</string>
+    <string name="post_status_scope_follower_only">Followers only</string>
+    <string name="post_status_scope_mentioned_only">Only people mentioned</string>
 </resources>

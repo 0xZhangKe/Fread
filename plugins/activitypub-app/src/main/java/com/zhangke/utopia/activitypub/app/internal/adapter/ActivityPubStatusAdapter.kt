@@ -6,7 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDate
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(

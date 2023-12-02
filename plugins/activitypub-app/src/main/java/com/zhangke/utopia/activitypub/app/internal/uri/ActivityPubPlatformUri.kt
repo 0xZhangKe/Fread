@@ -13,8 +13,6 @@ class ActivityPubPlatformUri private constructor(
 
         private const val QUERY_HOST = "url"
 
-        const val baseUrl: String = "$SCHEME://$HOST$PATH"
-
         fun create(host: String): ActivityPubPlatformUri {
             val queries = mapOf(QUERY_HOST to host)
             return ActivityPubPlatformUri(host, queries)

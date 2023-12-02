@@ -58,15 +58,12 @@ import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
 import kotlinx.coroutines.launch
 
-@Destination(ActivityPubPlatformUri.baseUrl)
-class PlatformDetailScreen(
-    @Router val router: String = "",
-) : AndroidScreen() {
+class PlatformDetailScreen(private val serverUri: ActivityPubPlatformUri) : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val viewModel: ServerDetailViewModel = getViewModel()
-        viewModel.uri = router
+        viewModel.uri = serverUri
         LaunchedEffect(Unit) {
             viewModel.onPageResume()
         }

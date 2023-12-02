@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable

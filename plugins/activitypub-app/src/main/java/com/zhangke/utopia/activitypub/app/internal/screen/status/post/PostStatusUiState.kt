@@ -1,18 +1,19 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import com.zhangke.framework.utils.ContentProviderFile
-import com.zhangke.utopia.feeds.R
-import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.emoji.CustomEmoji
-import com.zhangke.utopia.status.ui.emoji.CustomEmojiCell
+import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.CustomEmojiCell
 import java.util.Locale
 import kotlin.time.Duration
 
 data class PostStatusUiState(
-    val account: LoggedAccount,
-    val availableAccountList: List<LoggedAccount>,
+    val account: ActivityPubLoggedAccount,
+    val availableAccountList: List<ActivityPubLoggedAccount>,
     val content: String,
     val attachment: PostStatusAttachment?,
+    val maxContent: Int,
     val maxMediaCount: Int,
     val visibility: PostStatusVisibility,
     val sensitive: Boolean,
@@ -26,6 +27,8 @@ data class PostStatusUiState(
             val imageList = attachment?.asImageAttachmentOrNull?.imageList ?: return maxMediaCount
             return (maxMediaCount - imageList.size).coerceAtLeast(0)
         }
+
+    val allowedInputCount: Int get() = maxContent - content.length
 }
 
 sealed interface PostStatusAttachment {
@@ -45,6 +48,8 @@ sealed interface PostStatusAttachment {
     val asVideoAttachmentOrNull: VideoAttachment? get() = this as? VideoAttachment
 
     val asPollAttachment: Poll get() = this as Poll
+
+    val asPollAttachmentOrNull: Poll? get() = this as? Poll
 }
 
 data class PostStatusFile(
@@ -52,17 +57,3 @@ data class PostStatusFile(
     val description: String?,
     val uploadJob: UploadMediaJob,
 )
-
-enum class PostStatusVisibility {
-
-    PUBLIC,
-    FOLLOWERS_ONLY,
-    MENTIONS_ONLY;
-
-    val describeStringId: Int
-        get() = when (this) {
-            PUBLIC -> R.string.post_status_scope_public
-            FOLLOWERS_ONLY -> R.string.post_status_scope_follower_only
-            MENTIONS_ONLY -> R.string.post_status_scope_mentioned_only
-        }
-}

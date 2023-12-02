@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
@@ -14,14 +14,19 @@ import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.toContentProviderFile
-import com.zhangke.utopia.feeds.pages.post.adapter.CustomEmojiAdapter
-import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.emoji.CustomEmoji
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
+import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
+import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
+import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
+import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
+import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.PostStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
@@ -32,19 +37,25 @@ import kotlin.time.Duration.Companion.days
 
 @HiltViewModel
 class PostStatusViewModel @Inject constructor(
-    private val statusProvider: StatusProvider,
+    private val getCustomEmoji: GetCustomEmojiUseCase,
     private val emojiAdapter: CustomEmojiAdapter,
+    private val accountManager: ActivityPubAccountManager,
+    private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
+    private val postNoAttachmentStatus: PostStatusUseCase,
 ) : ViewModel() {
+
+    companion object {
+
+        const val MAX_CONTENT = 1000
+    }
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
     val uiState: StateFlow<LoadableState<PostStatusUiState>> = _uiState.asStateFlow()
 
     init {
         launchInViewModel {
-            val accountManager = statusProvider.accountManager
-            val loggedAccount = accountManager.getLoggedAccount()
-            val allLoggedAccount =
-                statusProvider.accountManager.getAllLoggedAccount().getOrNull() ?: emptyList()
+            val loggedAccount = accountManager.getActiveAccount()
+            val allLoggedAccount = accountManager.getAllLoggedAccount()
             if (loggedAccount == null) {
                 _uiState.updateToFailed(IllegalStateException("Not login!"))
             } else {
@@ -57,6 +68,7 @@ class PostStatusViewModel @Inject constructor(
                         maxMediaCount = 4,
                         visibility = PostStatusVisibility.PUBLIC,
                         sensitive = false,
+                        maxContent = MAX_CONTENT,
                         warningContent = "",
                         emojiList = emptyList(),
                         language = Locale.ROOT,
@@ -71,7 +83,8 @@ class PostStatusViewModel @Inject constructor(
         launchInViewModel {
             _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
                 .distinctUntilChanged()
-                .mapNotNull { statusProvider.customEmojiProvider.getCustomEmojiList(it).getOrNull() }
+                .mapNotNull { ActivityPubPlatformUri.parse(it.uri) }
+                .mapNotNull { getCustomEmoji(it.serverHost).getOrNull() }
                 .map { emojiAdapter.toEmojiCell(7, it) }
                 .collect { emojiList ->
                     _uiState.updateOnSuccess {
@@ -81,7 +94,14 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
+    fun onSwitchAccountClick(account: ActivityPubLoggedAccount) {
+        _uiState.updateOnSuccess {
+            it.copy(account = account)
+        }
+    }
+
     fun onContentChanged(inputtedText: String) {
+        if (inputtedText.length > MAX_CONTENT) return
         _uiState.updateOnSuccess {
             it.copy(content = inputtedText)
         }
@@ -135,7 +155,7 @@ class PostStatusViewModel @Inject constructor(
     private fun buildUploadFileJob(file: ContentProviderFile) = UploadMediaJob(
         file = file,
         account = _uiState.value.requireSuccessData().account,
-        statusResolver = statusProvider.statusResolver,
+        uploadMediaAttachment = uploadMediaAttachment,
         scope = viewModelScope,
     )
 
@@ -151,6 +171,7 @@ class PostStatusViewModel @Inject constructor(
             .attachment
             ?.asImageAttachmentOrNull ?: return
         _uiState.updateOnSuccess { state ->
+
             state.copy(
                 attachment = PostStatusAttachment.ImageAttachment(imageAttachment.imageList.remove { it == image })
             )
@@ -186,10 +207,10 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onPollClicked() {
-        if (_uiState.value.successDataOrNull()?.attachment is PostStatusAttachment.Poll) return
+        if (_uiState.value.successDataOrNull()?.attachment is com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusAttachment.Poll) return
         _uiState.updateOnSuccess { state ->
             state.copy(
-                attachment = PostStatusAttachment.Poll(
+                attachment = com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusAttachment.Poll(
                     optionList = listOf("", ""),
                     multiple = false,
                     duration = 1.days,
@@ -270,11 +291,7 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onCustomEmojiPick(emoji: CustomEmoji) {
-        _uiState.updateOnSuccess { state ->
-            state.copy(
-                content = state.content.plus(":${emoji.shortcode}:")
-            )
-        }
+        onContentChanged(":${emoji.shortcode}:")
     }
 
     fun onEmojiDeleteClick() {
@@ -286,5 +303,43 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onPostClick() {
+        val currentUiState = _uiState.value.requireSuccessData()
+        val account = currentUiState.account
+        val attachment = currentUiState.attachment
+
+        when (attachment) {
+            is PostStatusAttachment.ImageAttachment -> {
+                val allSuccess = attachment.imageList
+                    .map { it.uploadJob.uploadState.value }
+                    .all { it is UploadMediaJob.UploadState.Success }
+                if (!allSuccess) return
+            }
+
+            is PostStatusAttachment.VideoAttachment -> {
+                if (attachment.video.uploadJob.uploadState.value !is UploadMediaJob.UploadState.Success) return
+            }
+
+            is PostStatusAttachment.Poll -> {
+                for (option in attachment.optionList) {
+                    if (option.isEmpty()) return
+                }
+            }
+
+            else -> {}
+        }
+        if (attachment != null) {
+            attachment.asImageAttachmentOrNull?.imageList?.map { it.uploadJob }
+        }
+        launchInViewModel {
+            postNoAttachmentStatus(
+                account = account,
+                content = currentUiState.content,
+                attachment = attachment,
+                sensitive = currentUiState.sensitive,
+                spoilerText = currentUiState.warningContent,
+                visibility = currentUiState.visibility,
+                language = currentUiState.language,
+            )
+        }
     }
 }

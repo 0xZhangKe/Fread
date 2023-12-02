@@ -8,7 +8,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 

@@ -1,39 +1,18 @@
 package com.zhangke.utopia.pages
 
-import android.graphics.Color
-import android.graphics.ColorSpace
 import android.os.Bundle
-import android.util.Log
-import android.view.Gravity
-import android.view.SurfaceView
-import android.view.TextureView
-import android.view.View
-import android.view.ViewGroup
-import android.widget.FrameLayout
-import android.widget.LinearLayout
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.ui.unit.dp
 import androidx.core.view.WindowCompat
-import androidx.core.view.marginTop
-import androidx.media3.common.C
-import androidx.media3.common.MediaItem
-import androidx.media3.common.Player
-import androidx.media3.common.util.UnstableApi
-import androidx.media3.datasource.DefaultDataSource
-import androidx.media3.exoplayer.ExoPlayer
-import androidx.media3.exoplayer.source.ProgressiveMediaSource
-import androidx.media3.ui.AspectRatioFrameLayout
-import androidx.media3.ui.PlayerView
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.utopia.feeds.pages.post.PostStatusScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreen
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.delay
 
 @AndroidEntryPoint
 class UtopiaActivity : AppCompatActivity() {

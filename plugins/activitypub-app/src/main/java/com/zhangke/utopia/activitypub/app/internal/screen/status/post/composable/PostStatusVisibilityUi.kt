@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.size
+import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 
 @Composable
 internal fun PostStatusVisibilityUi(
@@ -69,33 +69,17 @@ internal fun PostStatusVisibilityUi(
             expanded = showSelector,
             onDismissRequest = { },
         ) {
-            DropdownMenuItem(
-                text = {
-                    Text(text = stringResource(PostStatusVisibility.PUBLIC.describeStringId))
-                },
-                onClick = {
-                    showSelector = false
-                    onVisibilitySelect(PostStatusVisibility.PUBLIC)
-                },
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(text = stringResource(PostStatusVisibility.FOLLOWERS_ONLY.describeStringId))
-                },
-                onClick = {
-                    showSelector = false
-                    onVisibilitySelect(PostStatusVisibility.FOLLOWERS_ONLY)
-                },
-            )
-            DropdownMenuItem(
-                text = {
-                    Text(text = stringResource(PostStatusVisibility.MENTIONS_ONLY.describeStringId))
-                },
-                onClick = {
-                    showSelector = false
-                    onVisibilitySelect(PostStatusVisibility.MENTIONS_ONLY)
-                },
-            )
+            PostStatusVisibility.values().forEach {
+                DropdownMenuItem(
+                    text = {
+                        Text(text = stringResource(it.describeStringId))
+                    },
+                    onClick = {
+                        showSelector = false
+                        onVisibilitySelect(it)
+                    },
+                )
+            }
         }
     }
 }

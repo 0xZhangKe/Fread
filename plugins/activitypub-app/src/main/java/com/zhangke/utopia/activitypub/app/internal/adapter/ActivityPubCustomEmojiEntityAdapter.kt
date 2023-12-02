@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubCustomEmojiEntity
-import com.zhangke.utopia.status.emoji.CustomEmoji
+import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import javax.inject.Inject
 
 class ActivityPubCustomEmojiEntityAdapter @Inject constructor() {

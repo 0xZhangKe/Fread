@@ -14,4 +14,9 @@
     <string name="select">选择</string>
 
     <string name="logout">退出登陆</string>
+
+    <string name="image">图片</string>
+
+    <string name="video">视频</string>
+
 </resources>

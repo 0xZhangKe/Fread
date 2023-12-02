@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.status
+package com.zhangke.utopia.status.status.model
 
 import com.zhangke.utopia.status.blog.Blog
 

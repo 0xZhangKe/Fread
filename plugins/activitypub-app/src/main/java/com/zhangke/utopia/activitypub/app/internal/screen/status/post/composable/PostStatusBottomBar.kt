@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
 import android.net.Uri
 import androidx.activity.result.PickVisualMediaRequest
@@ -40,8 +40,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.rememberPickVisualMediaLauncher
 import com.zhangke.utopia.commonbiz.shared.screen.SelectLanguageScreen
-import com.zhangke.utopia.status.emoji.CustomEmoji
-import com.zhangke.utopia.status.ui.emoji.CustomEmojiPicker
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusUiState
+import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import java.util.Locale
 
 @Composable
@@ -113,7 +113,7 @@ internal fun PostStatusBottomBar(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
                         .padding(end = 16.dp),
-                    text = "1000",
+                    text = uiState.allowedInputCount.toString(),
                 )
             }
         }

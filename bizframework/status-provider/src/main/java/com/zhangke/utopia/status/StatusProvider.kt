@@ -2,10 +2,10 @@ package com.zhangke.utopia.status
 
 import com.zhangke.utopia.status.account.AccountManager
 import com.zhangke.utopia.status.account.IAccountManager
-import com.zhangke.utopia.status.emoji.CustomEmojiProvider
-import com.zhangke.utopia.status.emoji.ICustomEmojiProvider
 import com.zhangke.utopia.status.platform.IPlatformResolver
 import com.zhangke.utopia.status.platform.PlatformResolver
+import com.zhangke.utopia.status.screen.IStatusScreenProvider
+import com.zhangke.utopia.status.screen.StatusScreenProvider
 import com.zhangke.utopia.status.search.IUtopiaSearchEngine
 import com.zhangke.utopia.status.search.SearchEngine
 import com.zhangke.utopia.status.source.IStatusSourceResolver
@@ -21,6 +21,8 @@ class StatusProvider @Inject constructor(
     providers: Set<@JvmSuppressWildcards IStatusProvider>,
 ) {
 
+    val screenProvider = StatusScreenProvider(providers.map { it.screenProvider })
+
     val searchEngine = SearchEngine(providers.map { it.searchEngine })
 
     val platformResolver = PlatformResolver(providers.map { it.platformResolver })
@@ -30,12 +32,11 @@ class StatusProvider @Inject constructor(
     val statusSourceResolver = StatusSourceResolver(providers.map { it.statusSourceResolver })
 
     val accountManager = AccountManager(providers.map { it.accountManager })
-
-    val customEmojiProvider = CustomEmojiProvider(providers.map { it.customEmojiProvider })
-
 }
 
 interface IStatusProvider {
+
+    val screenProvider: IStatusScreenProvider
 
     val platformResolver: IPlatformResolver
 
@@ -46,6 +47,4 @@ interface IStatusProvider {
     val statusSourceResolver: IStatusSourceResolver
 
     val accountManager: IAccountManager
-
-    val customEmojiProvider: ICustomEmojiProvider
 }

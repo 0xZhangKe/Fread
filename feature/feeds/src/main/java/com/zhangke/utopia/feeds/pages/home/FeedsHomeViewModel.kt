@@ -11,7 +11,8 @@ import com.zhangke.utopia.feeds.adapter.FeedsPageUiStateAdapter
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.screen.StatusScreenProvider
+import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,6 +33,8 @@ internal class FeedsHomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(initialState())
     val uiState: StateFlow<FeedsHomeUiState> = _uiState.asStateFlow()
+
+    val screenProvider: StatusScreenProvider get() = statusProvider.screenProvider
 
     init {
         loadTabs()

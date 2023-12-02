@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,7 +37,8 @@ import com.zhangke.framework.composable.DurationSelector
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.utils.formattedString
-import com.zhangke.utopia.feeds.R
+import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import kotlin.time.Duration
 
 @Composable

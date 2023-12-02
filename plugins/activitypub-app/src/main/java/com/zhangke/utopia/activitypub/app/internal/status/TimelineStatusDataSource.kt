@@ -6,7 +6,7 @@ import com.zhangke.framework.feeds.fetcher.StatusSourceData
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
 import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceType
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 
 class TimelineStatusDataSource(
     private val host: String,

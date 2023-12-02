@@ -7,6 +7,6 @@ class HaveLoggedUserUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(): Boolean {
-        return getAllLoggedUser().getOrNull().isNullOrEmpty().not()
+        return getAllLoggedUser().isNotEmpty()
     }
 }

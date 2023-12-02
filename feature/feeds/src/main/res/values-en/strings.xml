@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="image">Image</string>
-
-    <string name="video">Video</string>
-
     <string name="add_provider_page_title">Add Server</string>
 
     <string name="add_provider_page_confirm_button">Confirm Add</string>
@@ -21,34 +17,4 @@
     <string name="add_feeds_choose_auth_dialog_title">Please select login server</string>
 
     <string name="search_feeds_title_hint">Please input the topic of interest</string>
-
-    <string name="post_status_page_title">New Blog</string>
-
-    <string name="post_screen_input_hint">Please input your blog</string>
-
-    <string name="post_screen_media_image_placeholder">Image description text</string>
-
-    <string name="post_screen_media_video_placeholder">Video description text</string>
-
-    <string name="post_status_poll_item_hint">Option %s</string>
-
-    <string name="post_status_poll_duration">Voting duration</string>
-
-    <string name="post_status_poll_function_title">Function</string>
-
-    <string name="post_status_poll_single">Single</string>
-
-    <string name="post_status_poll_multiple">Multiple</string>
-
-    <string name="input_media_desc_page_title">Image description text</string>
-
-    <string name="input_media_desc_input_hint">Please input image description text</string>
-
-    <string name="post_status_poll_style_select_dialog_title">Please select style</string>
-
-    <string name="post_status_content_warning">Content Warning</string>
-
-    <string name="post_status_scope_public">Public</string>
-    <string name="post_status_scope_follower_only">Followers only</string>
-    <string name="post_status_scope_mentioned_only">Only people mentioned</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.account.usecase.ActiveAccountUseCase
 import com.zhangke.utopia.activitypub.app.internal.account.usecase.GetAllActivityPubLoggedAccountUseCase
@@ -8,7 +9,6 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubSourceListAut
 import com.zhangke.utopia.activitypub.app.internal.auth.LaunchActivityPubAuthUseCase
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import com.zhangke.utopia.status.account.IAccountManager
-import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri
@@ -24,15 +24,15 @@ class ActivityPubAccountManager @Inject constructor(
     private val accountRepo: ActivityPubLoggedAccountRepo,
 ) : IAccountManager {
 
-    override suspend fun getLoggedAccount(): LoggedAccount? {
+    override suspend fun getActiveAccount(): ActivityPubLoggedAccount? {
         return accountRepo.getCurrentAccount()
     }
 
-    override suspend fun getAllLoggedAccount(): Result<List<LoggedAccount>> {
+    override suspend fun getAllLoggedAccount(): List<ActivityPubLoggedAccount> {
         return getAllLoggedAccount.invoke()
     }
 
-    override fun getAllAccountFlow(): Flow<List<LoggedAccount>> {
+    override fun getAllAccountFlow(): Flow<List<ActivityPubLoggedAccount>> {
         return accountRepo.getAllAccountFlow()
     }
 

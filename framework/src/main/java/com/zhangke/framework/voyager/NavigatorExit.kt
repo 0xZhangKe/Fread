@@ -11,6 +11,12 @@ fun Navigator.pushDestination(routerDestination: String): Boolean {
     return true
 }
 
+fun Navigator.tryPush(screen: Any): Boolean {
+    val realScreen = screen as? Screen ?: return false
+    push(realScreen)
+    return true
+}
+
 fun TransparentNavigator.pushDestination(routerDestination: String): Boolean {
     val destination = KRouter.routeScreen(routerDestination) ?: return false
     push(destination)

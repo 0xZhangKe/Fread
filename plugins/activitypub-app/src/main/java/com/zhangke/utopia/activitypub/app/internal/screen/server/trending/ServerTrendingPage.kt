@@ -2,7 +2,6 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server.trending
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
@@ -16,7 +15,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.canScrollBackward
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 
 @Composable

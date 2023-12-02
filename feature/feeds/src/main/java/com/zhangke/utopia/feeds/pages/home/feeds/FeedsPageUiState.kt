@@ -2,7 +2,7 @@ package com.zhangke.utopia.feeds.pages.home.feeds
 
 import com.zhangke.framework.composable.TextString
 import com.zhangke.utopia.status.platform.BlogPlatform
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 
 internal data class FeedsPageUiState(

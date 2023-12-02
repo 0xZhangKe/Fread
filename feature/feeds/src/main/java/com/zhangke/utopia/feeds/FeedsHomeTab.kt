@@ -7,17 +7,17 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.zhangke.krouter.KRouter
+import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.framework.voyager.tryPush
+import com.zhangke.utopia.commonbiz.shared.screen.PostStatusMediumScreen
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreenContent
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeViewModel
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
-import com.zhangke.utopia.feeds.pages.post.PostStatusScreen
 
 object FeedsHomeTab : Tab {
 
@@ -34,6 +34,7 @@ object FeedsHomeTab : Tab {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val transparentNavigator = LocalTransparentNavigator.current
         val viewModel: FeedsHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         FeedsHomeScreenContent(
@@ -42,14 +43,15 @@ object FeedsHomeTab : Tab {
             onLoadMore = viewModel::onLoadMore,
             onRefresh = viewModel::onRefresh,
             onPostStatusClick = {
-                navigator.push(PostStatusScreen())
+                transparentNavigator.push(PostStatusMediumScreen())
             },
             onAddFeedsClick = {
                 navigator.push(AddFeedsManagerScreen())
             },
             onPlatformItemClick = { server ->
-                val screen = KRouter.route<AndroidScreen>(server.uri)!!
-                navigator.push(screen)
+                viewModel.screenProvider
+                    .getServerDetailScreen(server.uri)
+                    ?.let(navigator::tryPush)
             },
         )
     }

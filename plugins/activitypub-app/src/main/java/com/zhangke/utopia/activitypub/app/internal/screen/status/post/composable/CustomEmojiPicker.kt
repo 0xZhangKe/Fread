@@ -1,6 +1,5 @@
-package com.zhangke.utopia.status.ui.emoji
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,7 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.utopia.status.emoji.CustomEmoji
+import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 
 @Composable
 fun CustomEmojiPicker(

@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="image">图片</string>
-
-    <string name="video">视频</string>
-
     <string name="add_provider_page_title">添加服务</string>
 
     <string name="add_provider_page_confirm_button">确定添加</string>
@@ -21,35 +17,5 @@
     <string name="add_feeds_choose_auth_dialog_title">请选择要登录的服务器</string>
 
     <string name="search_feeds_title_hint">请输入感兴趣的内容</string>
-
-    <string name="post_status_page_title">新博客</string>
-
-    <string name="post_screen_input_hint">请输入你的博客</string>
-
-    <string name="post_screen_media_image_placeholder">图片描述文本</string>
-
-    <string name="post_screen_media_video_placeholder">图片描述文本</string>
-
-    <string name="post_status_poll_item_hint">选项 %s</string>
-
-    <string name="post_status_poll_duration">投票时长</string>
-
-    <string name="post_status_poll_function_title">能力</string>
-
-    <string name="post_status_poll_single">单选</string>
-
-    <string name="post_status_poll_multiple">多选</string>
-
-    <string name="input_media_desc_page_title">描述文本</string>
-
-    <string name="input_media_desc_input_hint">请输入描述文本</string>
-
-    <string name="post_status_poll_style_select_dialog_title">请选择功能</string>
-
-    <string name="post_status_content_warning">警告文本</string>
-
-    <string name="post_status_scope_public">公开</string>
-    <string name="post_status_scope_follower_only">仅关注着可见</string>
-    <string name="post_status_scope_mentioned_only">仅提及用户可见</string>
 
 </resources>

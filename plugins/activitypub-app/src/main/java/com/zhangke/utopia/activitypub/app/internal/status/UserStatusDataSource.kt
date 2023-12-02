@@ -5,7 +5,7 @@ import com.zhangke.framework.feeds.fetcher.StatusDataSource
 import com.zhangke.framework.feeds.fetcher.StatusSourceData
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 
 class UserStatusDataSource(
     private val host: String,

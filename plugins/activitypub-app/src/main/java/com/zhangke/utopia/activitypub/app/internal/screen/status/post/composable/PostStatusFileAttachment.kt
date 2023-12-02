@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
 import android.graphics.Bitmap
 import androidx.compose.foundation.Image
@@ -46,7 +46,9 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.getThumbnail
-import com.zhangke.utopia.feeds.R
+import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusAttachment
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusFile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -172,9 +174,9 @@ private fun MediaFileContent(
                 overflow = TextOverflow.Ellipsis,
             )
             val mediaType = if (file.file.isVideo) {
-                stringResource(R.string.video)
+                stringResource(com.zhangke.utopia.commonbiz.R.string.video)
             } else {
-                stringResource(R.string.image)
+                stringResource(com.zhangke.utopia.commonbiz.R.string.image)
             }
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),
@@ -189,14 +191,14 @@ private fun MediaFileContent(
             ) {
                 val uploadState by file.uploadJob.uploadState.collectAsState()
                 when (uploadState) {
-                    is UploadMediaJob.UploadState.Uploading -> {
+                    is com.zhangke.utopia.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Uploading -> {
                         ImageAttachmentBottomLoading(
-                            uploadState = uploadState as UploadMediaJob.UploadState.Uploading,
+                            uploadState = uploadState as com.zhangke.utopia.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Uploading,
                             onCancelUploadClick = onCancelUploadClick,
                         )
                     }
 
-                    is UploadMediaJob.UploadState.Failed -> {
+                    is com.zhangke.utopia.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Failed -> {
                         ImageAttachmentBottomFailed(
                             onRetryClick = onRetryClick,
                         )
@@ -217,7 +219,7 @@ private fun MediaFileContent(
 
 @Composable
 private fun BoxScope.ImageAttachmentBottomLoading(
-    uploadState: UploadMediaJob.UploadState.Uploading,
+    uploadState: com.zhangke.utopia.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Uploading,
     onCancelUploadClick: () -> Unit,
 ) {
     Row(
@@ -282,7 +284,7 @@ private fun BoxScope.ImageAttachmentBottomSuccess(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
             onClick = {
-                navigator.push(InputMediaDescriptionScreen(file, onDescriptionInputted))
+                navigator.push(com.zhangke.utopia.activitypub.app.internal.screen.status.post.InputMediaDescriptionScreen(file, onDescriptionInputted))
             },
             imageVector = Icons.Default.Edit,
             contentDescription = "Edit",

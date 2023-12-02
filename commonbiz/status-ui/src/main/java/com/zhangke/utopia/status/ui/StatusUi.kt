@@ -2,7 +2,7 @@ package com.zhangke.utopia.status.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 @Composable

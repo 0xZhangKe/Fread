@@ -2,7 +2,7 @@ package com.zhangke.utopia.feeds.adapter
 
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.status.platform.BlogPlatform
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 

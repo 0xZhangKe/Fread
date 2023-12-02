@@ -1,7 +1,7 @@
-package com.zhangke.utopia.feeds.pages.post.adapter
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post.adapter
 
-import com.zhangke.utopia.status.emoji.CustomEmoji
-import com.zhangke.utopia.status.ui.emoji.CustomEmojiCell
+import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.CustomEmojiCell
 import javax.inject.Inject
 
 class CustomEmojiAdapter @Inject constructor() {

@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.server.trending
 
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 
 data class ServerTrendingUiState(
     val status: List<Status>,

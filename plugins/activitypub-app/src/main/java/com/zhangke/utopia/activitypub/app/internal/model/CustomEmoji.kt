@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.emoji
+package com.zhangke.utopia.activitypub.app.internal.model
 
 data class CustomEmoji(
     val shortcode: String,

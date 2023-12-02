@@ -1,8 +1,8 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import com.zhangke.framework.utils.ContentProviderFile
-import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.status.StatusResolver
+import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,8 +15,8 @@ import kotlinx.coroutines.launch
 
 class UploadMediaJob(
     private val file: ContentProviderFile,
-    private val account: LoggedAccount,
-    private val statusResolver: StatusResolver,
+    private val account: ActivityPubLoggedAccount,
+    private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val scope: CoroutineScope,
 ) {
 
@@ -30,7 +30,7 @@ class UploadMediaJob(
         uploadingJob = scope.launch(Dispatchers.IO) {
             val uploadState = UploadState.Uploading()
             _uploadState.value = uploadState
-            val result = statusResolver.uploadMediaAttachment(
+            val result = uploadMediaAttachment(
                 account = account,
                 fileUri = file.uri,
                 description = null,
@@ -40,10 +40,10 @@ class UploadMediaJob(
                     }
                 },
             )
-            if (result.isFailure){
+            if (result.isFailure) {
                 _uploadState.value = UploadState.Failed(result.exceptionOrNull())
-            }else{
-                _uploadState.value = UploadState.Success
+            } else {
+                _uploadState.value = UploadState.Success(result.getOrThrow())
             }
         }
     }
@@ -69,7 +69,7 @@ class UploadMediaJob(
 
         class Failed(val reason: Throwable?) : UploadState
 
-        data object Success : UploadState
+        data class Success(val id: String) : UploadState
     }
 
     class CancelByManualException : RuntimeException()

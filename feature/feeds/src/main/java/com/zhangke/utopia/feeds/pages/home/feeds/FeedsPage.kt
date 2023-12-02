@@ -15,7 +15,7 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.utopia.status.status.Status
+import com.zhangke.utopia.status.status.model.Status
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable

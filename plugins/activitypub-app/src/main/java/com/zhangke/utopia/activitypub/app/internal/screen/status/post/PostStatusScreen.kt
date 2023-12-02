@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.post
+package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
@@ -48,9 +48,17 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.utopia.feeds.R
-import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.emoji.CustomEmoji
+import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
+import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusImageAttachment
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusVideoAttachment
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
 import java.util.Locale
 import kotlin.time.Duration
 
@@ -67,7 +75,7 @@ class PostStatusScreen : AndroidScreen() {
         ) { uiState ->
             PostStatusScreenContent(
                 uiState = uiState,
-                onSwitchAccount = {},
+                onSwitchAccount = viewModel::onSwitchAccountClick,
                 onContentChanged = viewModel::onContentChanged,
                 onCloseClick = navigator::pop,
                 onPostClick = viewModel::onPostClick,
@@ -97,7 +105,7 @@ class PostStatusScreen : AndroidScreen() {
     @Composable
     private fun PostStatusScreenContent(
         uiState: PostStatusUiState,
-        onSwitchAccount: (LoggedAccount) -> Unit,
+        onSwitchAccount: (ActivityPubLoggedAccount) -> Unit,
         onContentChanged: (String) -> Unit,
         onCloseClick: () -> Unit,
         onPostClick: () -> Unit,

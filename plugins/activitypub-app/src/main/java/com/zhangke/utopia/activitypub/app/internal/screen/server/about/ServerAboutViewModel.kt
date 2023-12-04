@@ -17,7 +17,7 @@ internal class ServerAboutViewModel @Inject constructor(
     private val getInstanceAnnouncementUseCase: GetInstanceAnnouncementUseCase,
 ) : ViewModel() {
 
-    lateinit var host: String
+    lateinit var baseUrl: String
 
     var rules: List<ActivityPubInstanceRule> = emptyList()
 
@@ -34,7 +34,7 @@ internal class ServerAboutViewModel @Inject constructor(
     private fun requestAnnouncement() {
         launchInViewModel {
             if (!haveLoggedUser()) return@launchInViewModel
-            getInstanceAnnouncementUseCase(host)
+            getInstanceAnnouncementUseCase(baseUrl)
                 .onSuccess { announcements ->
                     _uiState.update {
                         it.copy(announcement = announcements)

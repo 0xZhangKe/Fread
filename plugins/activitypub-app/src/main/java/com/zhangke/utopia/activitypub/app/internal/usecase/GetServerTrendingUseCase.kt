@@ -1,19 +1,19 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import javax.inject.Inject
 
 class GetServerTrendingUseCase @Inject constructor(
-    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
+    private val clientManager: ActivityPubClientManager,
 ) {
 
     suspend operator fun invoke(
-        host: String,
+        baseUrl: String,
         limit: Int,
         offset: Int,
     ): Result<List<ActivityPubStatusEntity>> {
-        return obtainActivityPubClientUseCase(host).instanceRepo.getTrendsStatuses(
+        return clientManager.getClient(baseUrl).instanceRepo.getTrendsStatuses(
             limit = limit,
             offset = offset,
         )

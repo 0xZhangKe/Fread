@@ -9,6 +9,7 @@ import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLogge
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubUrl
+import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
@@ -24,7 +25,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             uri = ActivityPubUserUri.create(entity.userId, entity.webFinger),
             webFinger = entity.webFinger,
             platform = platformEntityAdapter.toPlatform(entity.platform),
-            host = entity.host,
+            baseUrl = entity.baseUrl,
             name = entity.name,
             description = entity.description,
             avatar = entity.avatar,
@@ -42,7 +43,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             uri = user.uri.toString(),
             webFinger = user.webFinger,
             platform = platformEntityAdapter.fromPlatform(user.platform),
-            host = user.host,
+            baseUrl = user.baseUrl,
             name = user.userName,
             description = user.description,
             avatar = user.avatar,
@@ -64,7 +65,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             uri = ActivityPubUserUri.create(account.id, webFinger),
             webFinger = webFinger,
             platform = instanceAdapter.toPlatform(instance),
-            host = ActivityPubUrl.create(instance.domain)!!.host,
+            baseUrl = instance.domain.toBaseUrl(),
             name = account.displayName,
             description = account.note,
             avatar = account.avatar,

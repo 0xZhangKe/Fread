@@ -35,11 +35,11 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTag
 
 @Composable
 internal fun Screen.ServerTrendsTagsPage(
-    host: String,
+    baseUrl: String,
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
     val viewModel = getViewModel<ServerTrendsTagsViewModel>()
-    viewModel.host = host
+    viewModel.baseUrl = baseUrl
     val uiState by viewModel.uiState.collectAsState()
     LaunchedEffect(Unit) {
         viewModel.onPageResume()

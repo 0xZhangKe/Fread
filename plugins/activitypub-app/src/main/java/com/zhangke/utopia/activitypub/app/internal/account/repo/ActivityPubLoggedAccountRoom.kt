@@ -20,7 +20,7 @@ data class ActivityPubLoggedAccountEntity(
     val userId: String,
     val webFinger: WebFinger,
     val platform: BlogPlatformEntity,
-    val host: String,
+    val baseUrl: String,
     val name: String,
     val description: String?,
     val avatar: String?,
@@ -43,6 +43,9 @@ interface ActivityPubLoggerAccountDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE uri=:uri")
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccountEntity?
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl")
+    suspend fun queryByBaseUrl(baseUrl: String): List<ActivityPubLoggedAccountEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entry: ActivityPubLoggedAccountEntity)

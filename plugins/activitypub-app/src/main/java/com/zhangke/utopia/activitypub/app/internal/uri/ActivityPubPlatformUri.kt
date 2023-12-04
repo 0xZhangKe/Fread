@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.uri
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class ActivityPubPlatformUri private constructor(
-    val serverHost: String,
+    val baseUrl: String,
     queries: Map<String, String>
 ) : ActivityPubUri(PATH, queries) {
 
@@ -11,11 +11,11 @@ class ActivityPubPlatformUri private constructor(
 
         const val PATH = "/server"
 
-        private const val QUERY_HOST = "url"
+        private const val QUERY_BASE_URL = "url"
 
-        fun create(host: String): ActivityPubPlatformUri {
-            val queries = mapOf(QUERY_HOST to host)
-            return ActivityPubPlatformUri(host, queries)
+        fun create(baseUrl: String): ActivityPubPlatformUri {
+            val queries = mapOf(QUERY_BASE_URL to baseUrl)
+            return ActivityPubPlatformUri(baseUrl, queries)
         }
 
         fun parse(uri: String): ActivityPubPlatformUri? {
@@ -24,9 +24,9 @@ class ActivityPubPlatformUri private constructor(
 
         fun parse(uri: StatusProviderUri): ActivityPubPlatformUri? {
             if (uri.path != PATH) return null
-            val host = uri.queries[QUERY_HOST]
-            if (host.isNullOrEmpty()) return null
-            return create(host)
+            val baseUrl = uri.queries[QUERY_BASE_URL]
+            if (baseUrl.isNullOrEmpty()) return null
+            return create(baseUrl)
         }
     }
 }

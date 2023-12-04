@@ -84,7 +84,7 @@ class PostStatusViewModel @Inject constructor(
             _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
                 .distinctUntilChanged()
                 .mapNotNull { ActivityPubPlatformUri.parse(it.uri) }
-                .mapNotNull { getCustomEmoji(it.serverHost).getOrNull() }
+                .mapNotNull { getCustomEmoji(it.baseUrl).getOrNull() }
                 .map { emojiAdapter.toEmojiCell(7, it) }
                 .collect { emojiList ->
                     _uiState.updateOnSuccess {

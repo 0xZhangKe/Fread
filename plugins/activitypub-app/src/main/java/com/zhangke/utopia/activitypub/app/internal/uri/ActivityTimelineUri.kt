@@ -15,8 +15,6 @@ class ActivityTimelineUri private constructor(
         internal const val QUERY_HOST = "host"
         internal const val QUERY_TYPE = "type"
 
-        const val baseUrl: String = "$SCHEME://$HOST$PATH"
-
         fun create(host: String, type: TimelineSourceType): ActivityTimelineUri {
             val queries = mapOf(QUERY_HOST to host, QUERY_TYPE to type.stringValue)
             return ActivityTimelineUri(host, type, queries)

@@ -4,15 +4,16 @@ import com.zhangke.framework.feeds.fetcher.LoadParams
 import com.zhangke.framework.feeds.fetcher.StatusDataSource
 import com.zhangke.framework.feeds.fetcher.StatusSourceData
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceType
+import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.status.model.Status
 
 class TimelineStatusDataSource(
     private val host: String,
     private val type: TimelineSourceType,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
-    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
+    private val clientManager: ActivityPubClientManager,
 ) : StatusDataSource<String, Status> {
 
     override suspend fun load(
@@ -21,7 +22,7 @@ class TimelineStatusDataSource(
         if (params.pageKey == null) {
             return Result.success(StatusSourceData(data = emptyList(), nextPageKey = null))
         }
-        val client = obtainActivityPubClientUseCase(host)
+        val client = clientManager.getClient(host.toBaseUrl())
         val timelineRepo = client.timelinesRepo
 
         val timelineListResult = when (type) {

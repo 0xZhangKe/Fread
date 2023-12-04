@@ -6,7 +6,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -25,7 +24,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.server.trending.tags.S
 internal enum class ServerDetailTab(
     val title: TextString,
     val content: @Composable Screen.(
-        host: String,
+        baseUrl: String,
         rules: List<ActivityPubInstanceRule>,
         contentCanScrollBackward: MutableState<Boolean>,
     ) -> Unit,
@@ -33,22 +32,22 @@ internal enum class ServerDetailTab(
 
     ABOUT(
         title = textOf(R.string.activity_pub_about),
-        content = @Composable { host, rules, contentCanScrollBackward ->
-            ServerAboutPage(host, rules, contentCanScrollBackward)
+        content = @Composable { baseUrl, rules, contentCanScrollBackward ->
+            ServerAboutPage(baseUrl, rules, contentCanScrollBackward)
         },
     ),
 
     TRENDS(
         title = textOf(R.string.activity_pub_trends_status),
-        content = @Composable { host, _, contentCanScrollBackward ->
-            ServerTrendingPage(host, contentCanScrollBackward)
+        content = @Composable { baseUrl, _, contentCanScrollBackward ->
+            ServerTrendingPage(baseUrl, contentCanScrollBackward)
         },
     ),
 
     TRENDS_TAG(
         title = textOf(R.string.activity_pub_trends_tag),
-        content = @Composable { host, _, contentCanScrollBackward ->
-            ServerTrendsTagsPage(host, contentCanScrollBackward)
+        content = @Composable { baseUrl, _, contentCanScrollBackward ->
+            ServerTrendsTagsPage(baseUrl, contentCanScrollBackward)
         },
     ),
 

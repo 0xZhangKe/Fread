@@ -3,12 +3,12 @@ package com.zhangke.utopia.activitypub.app.internal.auth
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
-import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
+import com.zhangke.utopia.activitypub.app.internal.platform.repo.ActivityPubApplicationRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject
@@ -20,25 +20,40 @@ import javax.inject.Singleton
 @Singleton
 class ActivityPubOAuthor @Inject constructor(
     private val repo: ActivityPubLoggedAccountRepo,
+    private val applicationRepo: ActivityPubApplicationRepo,
+    private val clientManager: ActivityPubClientManager,
     private val accountAdapter: ActivityPubLoggedAccountAdapter
 ) {
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
-    suspend fun startOauth(oauthUrl: String, client: ActivityPubClient): Boolean {
+    suspend fun startOauth(baseUrl: String): Result<Boolean> {
+        val app = applicationRepo.getApplicationByBaseUrl(baseUrl) ?: return Result.failure(IllegalStateException("Can not get application info by $baseUrl"))
+        val client = clientManager.getClient(baseUrl)
+        val oauthUrl = client.oauthRepo.buildOAuthUrl(
+            baseUrl = baseUrl,
+            clientId = app.clientId,
+            redirectUri = app.redirectUri,
+        )
         openOauthPage(oauthUrl)
         val code = oauthCodeFlow.first()
-        val entity = try {
+        val account = try {
             val instance = client.instanceRepo.getInstanceInformation().getOrThrow()
-            val token = client.oauthRepo.getToken(code, ActivityPubScope.ALL).getOrThrow()
-            val account = client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
-            accountAdapter.createFromAccount(instance, account, token, true)
+            val token = client.oauthRepo.getToken(
+                code = code,
+                clientId = app.clientId,
+                clientSecret = app.clientSecret,
+                redirectUri = app.redirectUri,
+                scopeList = ActivityPubScope.ALL,
+            ).getOrThrow()
+            val accountEntity = client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
+            accountAdapter.createFromAccount(instance, accountEntity, token, true)
         } catch (e: Exception) {
             toast(e.message)
-            return false
+            return Result.failure(e)
         }
-        repo.updateCurrentAccount(entity)
-        return true
+        repo.updateCurrentAccount(account)
+        return Result.success(true)
     }
 
     internal suspend fun onOauthSuccess(code: String) {

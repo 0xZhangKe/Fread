@@ -20,11 +20,11 @@ import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal fun Screen.ServerTrendingPage(
-    host: String,
+    baseUrl: String,
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
     val viewModel = getViewModel<ServerTrendingViewModel>()
-    viewModel.host = host
+    viewModel.baseUrl = baseUrl
     ServerTrendingContent(
         statusFlow = viewModel.statusFlow,
         contentCanScrollBackward = contentCanScrollBackward,

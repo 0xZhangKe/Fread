@@ -29,9 +29,9 @@ interface UserSourceDao {
     suspend fun insert(entry: UserSourceEntry)
 }
 
-class UserSourceRepo @Inject constructor() {
-
-    private val databases = ActivityPubDatabases.instance
+class UserSourceRepo @Inject constructor(
+    private val databases: ActivityPubDatabases
+) {
 
     private val dao: UserSourceDao get() = databases.getUserSourceDao()
 

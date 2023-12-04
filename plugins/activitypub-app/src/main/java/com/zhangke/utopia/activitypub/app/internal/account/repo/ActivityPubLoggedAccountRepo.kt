@@ -1,12 +1,15 @@
 package com.zhangke.utopia.activitypub.app.internal.account.repo
 
+import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
-import com.zhangke.utopia.status.account.LoggedAccount
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.launch
+import java.util.concurrent.ConcurrentHashMap
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountRepo @Inject constructor(
@@ -17,9 +20,31 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
     private val accountDao: ActivityPubLoggerAccountDao
         get() = databases.getActivityPubUserDao()
 
+    private val baseUrlToAccountCache = ConcurrentHashMap<String, ActivityPubLoggedAccount>()
+
+    init {
+        ApplicationScope.launch(Dispatchers.IO) {
+            accountDao.queryAllFlow().collect {
+                baseUrlToAccountCache.clear()
+            }
+        }
+    }
+
     fun getAllAccountFlow(): Flow<List<ActivityPubLoggedAccount>> {
         return accountDao.queryAllFlow().map { list ->
             list.map { adapter.adapt(it) }
+        }
+    }
+
+    suspend fun getUserByBaseUrl(baseUrl: String): ActivityPubLoggedAccount? {
+        return baseUrlToAccountCache.getOrPut(baseUrl) {
+            val accountList = accountDao.queryByBaseUrl(baseUrl)
+            var account = accountList.firstOrNull { it.active }?.let(adapter::adapt)
+            if (account == null) {
+                account = accountList.firstOrNull()?.let(adapter::adapt)
+            }
+            if (account == null) return null
+            account
         }
     }
 

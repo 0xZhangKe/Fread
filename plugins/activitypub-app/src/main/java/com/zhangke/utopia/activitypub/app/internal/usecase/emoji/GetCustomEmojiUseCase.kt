@@ -1,17 +1,17 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.emoji
 
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
-import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import javax.inject.Inject
 
 class GetCustomEmojiUseCase @Inject constructor(
-    private val obtainActivityPubClient: ObtainActivityPubClientUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) {
 
-    suspend operator fun invoke(serverHost: String): Result<List<CustomEmoji>> {
-        return obtainActivityPubClient(serverHost).emojiRepo
+    suspend operator fun invoke(baseUrl: String): Result<List<CustomEmoji>> {
+        return clientManager.getClient(baseUrl).emojiRepo
             .getCustomEmojis().map { list ->
                 list.map(emojiEntityAdapter::toCustomEmoji)
             }

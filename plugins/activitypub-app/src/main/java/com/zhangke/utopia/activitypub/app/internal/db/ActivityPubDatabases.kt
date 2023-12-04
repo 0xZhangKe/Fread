@@ -8,6 +8,8 @@ import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggerAccountDao
 import com.zhangke.utopia.activitypub.app.internal.account.repo.PlatformEntityTypeConverter
+import com.zhangke.utopia.activitypub.app.internal.platform.repo.ActivityPubApplicationEntity
+import com.zhangke.utopia.activitypub.app.internal.platform.repo.ActivityPubApplicationsDao
 import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceDao
 import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceEntry
 import com.zhangke.utopia.activitypub.app.internal.source.user.UserSourceDao
@@ -23,7 +25,7 @@ private const val DB_VERSION = 1
     ActivityPubUserTokenConverter::class,
 )
 @Database(
-    entities = [UserSourceEntry::class, TimelineSourceEntry::class, ActivityPubLoggedAccountEntity::class],
+    entities = [UserSourceEntry::class, TimelineSourceEntry::class, ActivityPubLoggedAccountEntity::class, ActivityPubApplicationEntity::class],
     version = DB_VERSION,
     exportSchema = false
 )
@@ -34,6 +36,8 @@ abstract class ActivityPubDatabases : RoomDatabase() {
     abstract fun getTimelineSourceDao(): TimelineSourceDao
 
     abstract fun getActivityPubUserDao(): ActivityPubLoggerAccountDao
+
+    abstract fun getApplicationDao(): ActivityPubApplicationsDao
 
     companion object {
 

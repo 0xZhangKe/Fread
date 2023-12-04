@@ -5,7 +5,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 
 internal data class ServerDetailUiState(
     val loading: Boolean,
-    val domain: String,
+    val baseUrl: String,
     val title: String,
     val description: String,
     val thumbnail: String,

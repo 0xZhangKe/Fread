@@ -32,13 +32,13 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 
 @Composable
 internal fun Screen.ServerAboutPage(
-    host: String,
+    baseUrl: String,
     rules: List<ActivityPubInstanceRule> = emptyList(),
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
     val viewModel: ServerAboutViewModel = getViewModel()
     viewModel.rules = rules
-    viewModel.host = host
+    viewModel.baseUrl = baseUrl
     LaunchedEffect(viewModel) {
         viewModel.onPageResume()
     }

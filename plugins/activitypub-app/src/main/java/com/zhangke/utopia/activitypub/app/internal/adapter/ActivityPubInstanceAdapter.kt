@@ -12,9 +12,10 @@ class ActivityPubInstanceAdapter @Inject constructor() {
     fun toPlatform(
         instance: ActivityPubInstanceEntity
     ): BlogPlatform {
+        val baseUrl = instance.domain.toBaseUrl()
         return BlogPlatform(
-            uri = ActivityPubPlatformUri.create(instance.domain).toString(),
-            baseUrl = instance.domain.toBaseUrl(),
+            uri = ActivityPubPlatformUri.create(baseUrl).toString(),
+            baseUrl = baseUrl,
             name = instance.title,
             description = instance.description,
             protocol = ACTIVITY_PUB_PROTOCOL,

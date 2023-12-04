@@ -11,7 +11,7 @@ class ActivityPubLoggedAccount(
     uri: ActivityPubUserUri,
     webFinger: WebFinger,
     platform: BlogPlatform,
-    val host: String,
+    val baseUrl: String,
     name: String,
     description: String?,
     avatar: String?,

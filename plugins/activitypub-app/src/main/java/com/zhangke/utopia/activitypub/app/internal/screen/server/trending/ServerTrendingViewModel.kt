@@ -16,12 +16,12 @@ class ServerTrendingViewModel @Inject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
 ) : ViewModel() {
 
-    lateinit var host: String
+    lateinit var baseUrl: String
 
     private var dataSource: ServerTrendingDataSource? = null
 
     val statusFlow = Pager(PagingConfig(pageSize = 40)) {
-        ServerTrendingDataSource(host, getServerTrending, statusAdapter).also {
+        ServerTrendingDataSource(baseUrl, getServerTrending, statusAdapter).also {
             dataSource = it
         }
     }.flow.cachedIn(viewModelScope)

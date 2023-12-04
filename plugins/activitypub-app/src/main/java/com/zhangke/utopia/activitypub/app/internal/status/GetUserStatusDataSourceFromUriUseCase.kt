@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.status
 
 import com.zhangke.framework.feeds.fetcher.StatusDataSource
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToUserUriUseCase
 import com.zhangke.utopia.status.status.model.Status
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class GetUserStatusDataSourceFromUriUseCase @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
-    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val parseUriToTimelineUriUseCase: ParseUriToTimelineUriUseCase,
     private val parseUriToUserUriUseCase: ParseUriToUserUriUseCase,
 ) {
@@ -28,7 +28,7 @@ class GetUserStatusDataSourceFromUriUseCase @Inject constructor(
             host = timelineUri.timelineServerHost,
             type = timelineUri.type,
             activityPubStatusAdapter = activityPubStatusAdapter,
-            obtainActivityPubClientUseCase = obtainActivityPubClientUseCase,
+            clientManager = clientManager,
         )
     }
 
@@ -38,7 +38,7 @@ class GetUserStatusDataSourceFromUriUseCase @Inject constructor(
             host = userUri.finger.host,
             userId = userUri.userId,
             activityPubStatusAdapter = activityPubStatusAdapter,
-            obtainActivityPubClientUseCase = obtainActivityPubClientUseCase,
+            clientManager = clientManager,
         )
     }
 }

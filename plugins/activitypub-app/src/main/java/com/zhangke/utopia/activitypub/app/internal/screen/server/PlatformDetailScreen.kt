@@ -53,8 +53,6 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
 import kotlinx.coroutines.launch
 
@@ -204,7 +202,7 @@ class PlatformDetailScreen(private val serverUri: ActivityPubPlatformUri) : Andr
                                 modifier = Modifier
                                     .padding(top = 4.dp)
                                     .utopiaPlaceholder(visible = uiState.loading),
-                                text = uiState.domain,
+                                text = uiState.baseUrl,
                                 fontSize = 12.sp,
                             )
                             Text(
@@ -361,11 +359,11 @@ class PlatformDetailScreen(private val serverUri: ActivityPubPlatformUri) : Andr
                     state = pagerState,
                 ) { currentPage ->
                     // TODO check this, why need Screen params but receiver
-                    val host = uiState.domain
+                    val host = uiState.baseUrl
                     if (host.isNotEmpty()) {
                         tabs[currentPage].content(
                             this@PlatformDetailScreen,
-                            uiState.domain,
+                            uiState.baseUrl,
                             uiState.rules,
                             contentCanScrollBackward,
                         )

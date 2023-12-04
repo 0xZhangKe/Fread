@@ -5,8 +5,8 @@ import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLogge
 import com.zhangke.utopia.activitypub.app.internal.account.usecase.ActiveAccountUseCase
 import com.zhangke.utopia.activitypub.app.internal.account.usecase.GetAllActivityPubLoggedAccountUseCase
 import com.zhangke.utopia.activitypub.app.internal.account.usecase.LogoutUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubSourceListAuthValidateUseCase
-import com.zhangke.utopia.activitypub.app.internal.auth.LaunchActivityPubAuthUseCase
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import com.zhangke.utopia.status.account.IAccountManager
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
@@ -18,7 +18,7 @@ import javax.inject.Inject
 class ActivityPubAccountManager @Inject constructor(
     private val getAllLoggedAccount: GetAllActivityPubLoggedAccountUseCase,
     private val validateAuthOfSourceList: ActivityPubSourceListAuthValidateUseCase,
-    private val launchAuth: LaunchActivityPubAuthUseCase,
+    private val oAuthor: ActivityPubOAuthor,
     private val activeAccount: ActiveAccountUseCase,
     private val logout: LogoutUseCase,
     private val accountRepo: ActivityPubLoggedAccountRepo,
@@ -43,7 +43,7 @@ class ActivityPubAccountManager @Inject constructor(
     }
 
     override suspend fun launchAuthBySource(baseUrl: String): Result<Boolean> {
-        return launchAuth.launch(baseUrl)
+        return oAuthor.startOauth(baseUrl)
     }
 
     override suspend fun activeAccount(uri: StatusProviderUri): Boolean {

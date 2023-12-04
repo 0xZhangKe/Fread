@@ -14,14 +14,14 @@ class ServerTrendsTagsViewModel @Inject constructor(
     private val getServerTrendsTags: GetServerTrendTagsUseCase,
 ) : ViewModel() {
 
-    lateinit var host: String
+    lateinit var baseUrl: String
 
     private val _uiState = MutableStateFlow(ServerTrendsTagsUiState(emptyList()))
     val uiState: StateFlow<ServerTrendsTagsUiState> = _uiState
 
     fun onPageResume() {
         launchInViewModel {
-            getServerTrendsTags(host)
+            getServerTrendsTags(baseUrl)
                 .onSuccess { list ->
                     _uiState.update { it.copy(list = list) }
                 }.onFailure {

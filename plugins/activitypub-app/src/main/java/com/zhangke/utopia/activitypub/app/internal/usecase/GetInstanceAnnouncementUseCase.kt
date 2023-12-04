@@ -1,19 +1,19 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase
 
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
-import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import javax.inject.Inject
 
 class GetInstanceAnnouncementUseCase @Inject constructor(
-    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
 ) {
 
     suspend operator fun invoke(
-        host: String,
+        baseUrl: String,
         justActive: Boolean = true,
     ): Result<List<ActivityPubAnnouncementEntity>> {
-        val client = obtainActivityPubClientUseCase(host)
+        val client = clientManager.getClient(baseUrl)
         return client.instanceRepo.getAnnouncement()
             .map {
                 if (justActive) {

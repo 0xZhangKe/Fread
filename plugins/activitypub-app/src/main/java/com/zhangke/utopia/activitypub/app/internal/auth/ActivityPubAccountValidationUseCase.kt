@@ -1,23 +1,24 @@
 package com.zhangke.utopia.activitypub.app.internal.auth
 
+import com.zhangke.activitypub.ActivityPubClient
+import com.zhangke.framework.architect.http.GlobalOkHttpClient
+import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.client.CreateActivityPubClientUseCase
 import javax.inject.Inject
 
-class ActivityPubAccountValidationUseCase @Inject constructor(
-    private val createActivityPubClientUseCase: CreateActivityPubClientUseCase,
-) {
+class ActivityPubAccountValidationUseCase @Inject constructor() {
 
     suspend operator fun invoke(userEntity: ActivityPubLoggedAccount): Result<Boolean> {
-        val host = userEntity.host
-        val client = createActivityPubClientUseCase(
-            host = host,
+        val client = ActivityPubClient(
+            baseUrl = userEntity.baseUrl,
+            httpClient = GlobalOkHttpClient.client,
+            gson = globalGson,
             tokenProvider = {
                 userEntity.token
             },
-            onAuthorizeFailed = { _, _ ->
+            onAuthorizeFailed = {
                 // ignore
-            }
+            },
         )
         val success = client.timelinesRepo.homeTimeline(
             maxId = "",

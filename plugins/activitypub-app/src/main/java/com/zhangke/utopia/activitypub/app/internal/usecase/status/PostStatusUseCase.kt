@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
 import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
-import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.UploadMediaJob
@@ -10,7 +10,7 @@ import java.util.Locale
 import javax.inject.Inject
 
 class PostStatusUseCase @Inject constructor(
-    private val obtainActivityPubClient: ObtainActivityPubClientUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val attachmentAdapter: PostStatusAttachmentAdapter,
 ) {
 
@@ -23,7 +23,7 @@ class PostStatusUseCase @Inject constructor(
         visibility: PostStatusVisibility? = null,
         language: Locale? = null,
     ): Result<Unit> {
-        val statusRepo = obtainActivityPubClient(account.host).statusRepo
+        val statusRepo = clientManager.getClient(account.baseUrl).statusRepo
         val mediaIds = when (attachment) {
             is PostStatusAttachment.VideoAttachment -> {
                 val videoMediaId = (attachment.video.uploadJob.uploadState.value as? UploadMediaJob.UploadState.Success)?.id

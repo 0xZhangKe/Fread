@@ -21,7 +21,7 @@ internal class ServerDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         ServerDetailUiState(
             loading = true,
-            domain = "",
+            baseUrl = "",
             title = "",
             description = "",
             thumbnail = "",
@@ -42,7 +42,7 @@ internal class ServerDetailViewModel @Inject constructor(
 
     fun onPageResume() {
         launchInViewModel {
-            getInstance(uri.serverHost)
+            getInstance(uri.baseUrl)
                 .onSuccess {
                     _uiState.value = uiStateAdapter.createUiState(
                         entity = it,

@@ -6,6 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailContract
 import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailTab
 import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailUiState
+import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import javax.inject.Inject
 
 internal class ServiceDetailUiStateAdapter @Inject constructor(
@@ -19,7 +20,7 @@ internal class ServiceDetailUiStateAdapter @Inject constructor(
     ): ServerDetailUiState {
         return ServerDetailUiState(
             loading = loading,
-            domain = entity.domain,
+            baseUrl = entity.domain.toBaseUrl(),
             title = entity.title,
             description = entity.description,
             thumbnail = entity.thumbnail.url,

@@ -4,13 +4,14 @@ import com.zhangke.framework.feeds.fetcher.LoadParams
 import com.zhangke.framework.feeds.fetcher.StatusDataSource
 import com.zhangke.framework.feeds.fetcher.StatusSourceData
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypub.app.internal.client.ObtainActivityPubClientUseCase
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.status.model.Status
 
 class UserStatusDataSource(
     private val host: String,
     private val userId: String,
-    private val obtainActivityPubClientUseCase: ObtainActivityPubClientUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : StatusDataSource<String, Status> {
 
@@ -20,8 +21,8 @@ class UserStatusDataSource(
         if (params.pageKey == null) return Result.success(
             StatusSourceData(data = emptyList(), null)
         )
-        val client = obtainActivityPubClientUseCase(host)
-        return client.accountRepo
+        return clientManager.getClient(host.toBaseUrl())
+            .accountRepo
             .getStatuses(
                 userId,
                 limit = params.loadSize,

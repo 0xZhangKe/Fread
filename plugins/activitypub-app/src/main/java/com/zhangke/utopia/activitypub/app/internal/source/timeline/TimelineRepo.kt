@@ -22,9 +22,9 @@ interface TimelineSourceDao {
     suspend fun insert(entry: TimelineSourceEntry)
 }
 
-class TimelineRepo @Inject constructor() {
-
-    private val databases = ActivityPubDatabases.instance
+class TimelineRepo @Inject constructor(
+    private val databases: ActivityPubDatabases
+) {
 
     private val dao: TimelineSourceDao get() = databases.getTimelineSourceDao()
 

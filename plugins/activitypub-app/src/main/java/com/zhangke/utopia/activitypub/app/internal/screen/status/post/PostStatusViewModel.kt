@@ -15,17 +15,21 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
-import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.PostStatusUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
@@ -41,6 +45,7 @@ class PostStatusViewModel @Inject constructor(
     private val emojiAdapter: CustomEmojiAdapter,
     private val accountManager: ActivityPubAccountManager,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val postNoAttachmentStatus: PostStatusUseCase,
 ) : ViewModel() {
 
@@ -51,6 +56,9 @@ class PostStatusViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
     val uiState: StateFlow<LoadableState<PostStatusUiState>> = _uiState.asStateFlow()
+
+    private val _postState = MutableSharedFlow<LoadableState<Unit>>()
+    val postState: SharedFlow<LoadableState<Unit>> = _postState.asSharedFlow()
 
     init {
         launchInViewModel {
@@ -171,7 +179,6 @@ class PostStatusViewModel @Inject constructor(
             .attachment
             ?.asImageAttachmentOrNull ?: return
         _uiState.updateOnSuccess { state ->
-
             state.copy(
                 attachment = PostStatusAttachment.ImageAttachment(imageAttachment.imageList.remove { it == image })
             )
@@ -198,6 +205,18 @@ class PostStatusViewModel @Inject constructor(
             }
             state.copy(attachment = PostStatusAttachment.ImageAttachment(newImageList))
         }
+        val mediaId = (file.uploadJob.uploadState.value as? UploadMediaJob.UploadState.Success)?.id
+        if (mediaId.isNullOrEmpty().not()) {
+            launchInViewModel {
+                val baseUrl = _uiState.value.requireSuccessData().account.baseUrl
+                clientManager.getClient(baseUrl)
+                    .mediaRepo
+                    .updateMedia(
+                        id = mediaId!!,
+                        description = description,
+                    )
+            }
+        }
     }
 
     fun onLanguageSelected(locale: Locale) {
@@ -207,10 +226,10 @@ class PostStatusViewModel @Inject constructor(
     }
 
     fun onPollClicked() {
-        if (_uiState.value.successDataOrNull()?.attachment is com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusAttachment.Poll) return
+        if (_uiState.value.successDataOrNull()?.attachment is PostStatusAttachment.Poll) return
         _uiState.updateOnSuccess { state ->
             state.copy(
-                attachment = com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusAttachment.Poll(
+                attachment = PostStatusAttachment.Poll(
                     optionList = listOf("", ""),
                     multiple = false,
                     duration = 1.days,
@@ -331,6 +350,7 @@ class PostStatusViewModel @Inject constructor(
             attachment.asImageAttachmentOrNull?.imageList?.map { it.uploadJob }
         }
         launchInViewModel {
+            _postState.emit(LoadableState.loading())
             postNoAttachmentStatus(
                 account = account,
                 content = currentUiState.content,
@@ -339,7 +359,11 @@ class PostStatusViewModel @Inject constructor(
                 spoilerText = currentUiState.warningContent,
                 visibility = currentUiState.visibility,
                 language = currentUiState.language,
-            )
+            ).onSuccess {
+                _postState.emit(LoadableState.success(Unit))
+            }.onFailure {
+                _postState.emit(LoadableState.failed(it))
+            }
         }
     }
 }

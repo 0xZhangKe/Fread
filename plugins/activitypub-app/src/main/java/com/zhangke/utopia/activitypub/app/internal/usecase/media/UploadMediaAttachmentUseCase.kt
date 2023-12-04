@@ -2,8 +2,8 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.media
 
 import android.net.Uri
 import com.zhangke.framework.utils.toContentProviderFile
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
@@ -16,10 +16,10 @@ class UploadMediaAttachmentUseCase @Inject constructor(
     suspend operator fun invoke(
         account: ActivityPubLoggedAccount,
         fileUri: Uri,
-        description: String?,
         onProgress: (Float) -> Unit,
     ): Result<String> {
-        val contentFile = withContext(Dispatchers.IO) { fileUri.toContentProviderFile() } ?: return Result.failure(RuntimeException("File invalid!"))
+        val contentFile = withContext(Dispatchers.IO) { fileUri.toContentProviderFile() }
+            ?: return Result.failure(RuntimeException("File invalid!"))
         val client = clientManager.getClient(account.webFinger.host.toBaseUrl())
         try {
             contentFile.openInputStream().use { inputStream ->
@@ -27,10 +27,11 @@ class UploadMediaAttachmentUseCase @Inject constructor(
                 return client.mediaRepo.postFile(
                     fileName = contentFile.fileName,
                     fileSize = contentFile.size.length,
-                    inputStream = inputStream,
-                    description = description,
+                    byteArray = inputStream.readBytes(),
                     fileMediaType = contentFile.mimeType,
-                    onProgress = onProgress,
+                    onProgress = {
+                        onProgress(it)
+                    },
                 ).map { it.id }
             }
         } catch (e: Throwable) {

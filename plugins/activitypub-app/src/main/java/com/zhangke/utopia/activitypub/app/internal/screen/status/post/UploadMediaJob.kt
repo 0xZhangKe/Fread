@@ -33,7 +33,6 @@ class UploadMediaJob(
             val result = uploadMediaAttachment(
                 account = account,
                 fileUri = file.uri,
-                description = null,
                 onProgress = {
                     scope.launch {
                         uploadState.onProgressChanged(it)

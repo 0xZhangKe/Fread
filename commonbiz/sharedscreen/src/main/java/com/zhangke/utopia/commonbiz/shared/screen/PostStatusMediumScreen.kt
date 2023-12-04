@@ -1,5 +1,6 @@
 package com.zhangke.utopia.commonbiz.shared.screen
 
+import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -9,13 +10,17 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.LoadableState
+import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.platform.BlogPlatform
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import javax.inject.Inject
 
 class PostStatusMediumScreen : AndroidScreen() {
 
@@ -23,37 +28,45 @@ class PostStatusMediumScreen : AndroidScreen() {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: PostStatusMediumViewModel = getViewModel()
-        val platform by viewModel.platform.collectAsState()
-        if (platform != null) {
-            LaunchedEffect(platform) {
+        val loadableState by viewModel.platform.collectAsState()
+        when (loadableState) {
+            is LoadableState.Failed -> LaunchedEffect(Unit) {
+                navigator.pop()
+            }
+
+            is LoadableState.Success -> LaunchedEffect(loadableState) {
+                navigator.pop()
                 viewModel.screenProvider
-                    .getPostStatusScreen(platform!!)
+                    .getPostStatusScreen(loadableState.requireSuccessData())
                     ?.let(navigator::tryPush)
-                navigator.pop()
             }
-        } else {
-            LaunchedEffect(Unit) {
-                navigator.pop()
-            }
+
+            else -> {}
         }
     }
 }
 
-class PostStatusMediumViewModel(
+@HiltViewModel
+class PostStatusMediumViewModel @Inject constructor(
     private val statusProvider: StatusProvider
 ) : ViewModel() {
 
-    private val _platform = MutableStateFlow<BlogPlatform?>(null)
-    val platform: StateFlow<BlogPlatform?> get() = _platform.asStateFlow()
+    private val _platform = MutableStateFlow<LoadableState<BlogPlatform>>(LoadableState.Loading())
+    val platform: StateFlow<LoadableState<BlogPlatform>> = _platform.asStateFlow()
 
     val screenProvider get() = statusProvider.screenProvider
 
     init {
         launchInViewModel {
-            _platform.value = statusProvider.accountManager
+            val postToPlatform = statusProvider.accountManager
                 .getActiveAccountList()
                 .firstOrNull()
                 ?.platform
+            if (postToPlatform == null) {
+                _platform.value = LoadableState.Failed(RuntimeException("Not login"))
+            } else {
+                _platform.value = LoadableState.success(postToPlatform)
+            }
         }
     }
 }

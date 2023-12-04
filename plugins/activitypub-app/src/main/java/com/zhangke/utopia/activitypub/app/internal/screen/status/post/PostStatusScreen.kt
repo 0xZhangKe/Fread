@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.GenericShape
@@ -16,16 +17,19 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -47,7 +51,9 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.LoadableLayout
+import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
@@ -69,12 +75,14 @@ class PostStatusScreen : AndroidScreen() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PostStatusViewModel>()
         val loadableUiState by viewModel.uiState.collectAsState()
+        val postStatus by viewModel.postState.collectAsState(initial = LoadableState.idle())
         LoadableLayout(
             modifier = Modifier.fillMaxSize(),
             state = loadableUiState,
         ) { uiState ->
             PostStatusScreenContent(
                 uiState = uiState,
+                postStatus = postStatus,
                 onSwitchAccount = viewModel::onSwitchAccountClick,
                 onContentChanged = viewModel::onContentChanged,
                 onCloseClick = navigator::pop,
@@ -99,12 +107,18 @@ class PostStatusScreen : AndroidScreen() {
                 onDeleteEmojiClick = viewModel::onEmojiDeleteClick,
             )
         }
+        if (postStatus is LoadableState.Success) {
+            LaunchedEffect(Unit) {
+                navigator.pop()
+            }
+        }
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun PostStatusScreenContent(
         uiState: PostStatusUiState,
+        postStatus: LoadableState<Unit>,
         onSwitchAccount: (ActivityPubLoggedAccount) -> Unit,
         onContentChanged: (String) -> Unit,
         onCloseClick: () -> Unit,
@@ -129,7 +143,20 @@ class PostStatusScreen : AndroidScreen() {
         onDeleteEmojiClick: () -> Unit,
     ) {
         val bottomBarHeight = 48.dp
+        val snackbarHostState = rememberSnackbarHostState()
+        if (postStatus is LoadableState.Failed) {
+            var errorMessage = stringResource(R.string.post_status_failed)
+            if (postStatus.exception.message.isNullOrEmpty().not()) {
+                errorMessage += ": ${postStatus.exception.message}"
+            }
+            LaunchedEffect(errorMessage) {
+                snackbarHostState.showSnackbar(errorMessage)
+            }
+        }
         Scaffold(
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
             topBar = {
                 TopAppBar(
                     navigationIcon = {
@@ -140,11 +167,23 @@ class PostStatusScreen : AndroidScreen() {
                         )
                     },
                     actions = {
-                        SimpleIconButton(
-                            onClick = onPostClick,
-                            imageVector = Icons.Default.Send,
-                            contentDescription = "Post",
-                        )
+                        when (postStatus) {
+                            is LoadableState.Loading -> {
+                                CircularProgressIndicator(
+                                    modifier = Modifier
+                                        .padding(end = 8.dp)
+                                        .size(24.dp)
+                                )
+                            }
+
+                            else -> {
+                                SimpleIconButton(
+                                    onClick = onPostClick,
+                                    imageVector = Icons.Default.Send,
+                                    contentDescription = "Post",
+                                )
+                            }
+                        }
                     },
                     title = {
                         Text(

@@ -180,7 +180,7 @@ private fun MediaFileContent(
             }
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),
-                text = "%.2f KB / %s".format(file.file.size.MB, mediaType),
+                text = "%.2f KB / %s".format(file.file.size.KB, mediaType),
                 style = MaterialTheme.typography.bodyMedium,
             )
 

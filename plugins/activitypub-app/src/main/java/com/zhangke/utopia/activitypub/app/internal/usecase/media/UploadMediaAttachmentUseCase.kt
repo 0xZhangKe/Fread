@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.media
 
 import android.net.Uri
 import com.zhangke.framework.utils.toContentProviderFile
-import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import kotlinx.coroutines.Dispatchers

@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.utopia.activitypub.app.internal.source.ActivityPubSourceResolveUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.source.ActivityPubSourceResolveUseCase
 import com.zhangke.utopia.status.source.IStatusSourceResolver
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri

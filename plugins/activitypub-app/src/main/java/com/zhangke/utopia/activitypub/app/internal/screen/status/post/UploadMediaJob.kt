@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import com.zhangke.framework.utils.ContentProviderFile
-import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers

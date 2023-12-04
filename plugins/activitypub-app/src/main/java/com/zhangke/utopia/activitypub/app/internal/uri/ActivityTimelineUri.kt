@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.uri
 
-import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceType
+import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 
 class ActivityTimelineUri private constructor(
     val timelineServerHost: String,

@@ -1,12 +1,12 @@
 package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
-import com.zhangke.utopia.activitypub.app.internal.account.usecase.ActiveAccountUseCase
-import com.zhangke.utopia.activitypub.app.internal.account.usecase.GetAllActivityPubLoggedAccountUseCase
-import com.zhangke.utopia.activitypub.app.internal.account.usecase.LogoutUseCase
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
+import com.zhangke.utopia.activitypub.app.internal.usecase.account.ActiveAccountUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.account.GetAllActivityPubLoggedAccountUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.account.LogoutUseCase
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthor
-import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubSourceListAuthValidateUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.auth.ActivityPubSourceListAuthValidateUseCase
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import com.zhangke.utopia.status.account.IAccountManager
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult

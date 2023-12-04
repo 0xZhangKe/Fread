@@ -1,8 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import com.zhangke.framework.utils.ContentProviderFile
-import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.CustomEmojiCell
 import java.util.Locale

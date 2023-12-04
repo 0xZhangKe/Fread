@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.db
 
 import androidx.room.TypeConverter
-import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceType
+import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 
 internal class TimelineSourceTypeConverter {
 

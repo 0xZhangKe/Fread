@@ -6,9 +6,9 @@ import androidx.browser.customtabs.CustomTabsIntent
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypub.app.internal.account.adapter.ActivityPubLoggedAccountAdapter
-import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
-import com.zhangke.utopia.activitypub.app.internal.platform.repo.ActivityPubApplicationRepo
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
+import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
+import com.zhangke.utopia.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import javax.inject.Inject

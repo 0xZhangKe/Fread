@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubApplication
-import com.zhangke.utopia.activitypub.app.internal.platform.repo.ActivityPubApplicationEntity
+import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubApplicationEntity
 import javax.inject.Inject
 
 class ActivityPubApplicationEntityAdapter @Inject constructor() {

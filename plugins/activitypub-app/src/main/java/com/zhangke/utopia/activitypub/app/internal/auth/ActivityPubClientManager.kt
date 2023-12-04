@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.auth
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.framework.architect.http.GlobalOkHttpClient
 import com.zhangke.framework.architect.json.globalGson
-import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountRepo
+import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import javax.inject.Inject
 import javax.inject.Singleton
 

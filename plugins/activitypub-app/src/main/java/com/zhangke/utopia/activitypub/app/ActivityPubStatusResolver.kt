@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.framework.feeds.fetcher.StatusDataSource
-import com.zhangke.utopia.activitypub.app.internal.status.GetUserStatusDataSourceFromUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusDataSourceFromUriUseCase
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri

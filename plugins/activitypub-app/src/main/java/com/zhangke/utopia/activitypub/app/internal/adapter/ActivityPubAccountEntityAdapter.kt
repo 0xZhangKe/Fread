@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubUserAuthor
-import com.zhangke.utopia.activitypub.app.internal.source.user.UserSource
+import com.zhangke.utopia.activitypub.app.internal.model.UserSource
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import javax.inject.Inject
 

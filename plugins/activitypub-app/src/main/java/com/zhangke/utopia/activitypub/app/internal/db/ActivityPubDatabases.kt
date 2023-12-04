@@ -5,15 +5,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggedAccountEntity
-import com.zhangke.utopia.activitypub.app.internal.account.repo.ActivityPubLoggerAccountDao
-import com.zhangke.utopia.activitypub.app.internal.account.repo.PlatformEntityTypeConverter
-import com.zhangke.utopia.activitypub.app.internal.platform.repo.ActivityPubApplicationEntity
-import com.zhangke.utopia.activitypub.app.internal.platform.repo.ActivityPubApplicationsDao
-import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceDao
-import com.zhangke.utopia.activitypub.app.internal.source.timeline.TimelineSourceEntry
-import com.zhangke.utopia.activitypub.app.internal.source.user.UserSourceDao
-import com.zhangke.utopia.activitypub.app.internal.source.user.UserSourceEntry
+import com.zhangke.utopia.activitypub.app.internal.repo.source.TimelineSourceDao
+import com.zhangke.utopia.activitypub.app.internal.repo.source.TimelineSourceEntry
+import com.zhangke.utopia.activitypub.app.internal.repo.source.UserSourceDao
+import com.zhangke.utopia.activitypub.app.internal.repo.source.UserSourceEntry
 
 internal const val ACTIVITY_PUB_DB_NAME = "ActivityPubStatusProvider"
 private const val DB_VERSION = 1

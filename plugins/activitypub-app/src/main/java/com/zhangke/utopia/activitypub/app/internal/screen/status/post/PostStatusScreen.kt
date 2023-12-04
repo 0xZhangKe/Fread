@@ -49,7 +49,7 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar

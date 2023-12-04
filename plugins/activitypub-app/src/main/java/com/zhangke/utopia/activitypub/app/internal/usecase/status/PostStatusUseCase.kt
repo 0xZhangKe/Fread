@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
-import com.zhangke.utopia.activitypub.app.internal.account.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility

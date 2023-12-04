@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.utopia.activitypub.app.internal.platform.GetActivityPubPlatformUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToTimelineUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToUserUriUseCase
 import com.zhangke.utopia.status.platform.IPlatformResolver

@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server.about
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.utopia.activitypub.app.internal.account.usecase.HaveLoggedUserUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.account.HaveLoggedUserUseCase
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetInstanceAnnouncementUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel

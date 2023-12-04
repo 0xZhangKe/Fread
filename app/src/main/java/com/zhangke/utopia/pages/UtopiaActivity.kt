@@ -11,7 +11,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -30,8 +29,7 @@ class UtopiaActivity : AppCompatActivity() {
                     BottomSheetNavigator(
                         sheetShape = RoundedCornerShape(12.dp),
                     ) {
-//                        Navigator(UtopiaScreen())
-                        Navigator(PostStatusScreen())
+                        Navigator(UtopiaScreen())
                     }
                 }
             }

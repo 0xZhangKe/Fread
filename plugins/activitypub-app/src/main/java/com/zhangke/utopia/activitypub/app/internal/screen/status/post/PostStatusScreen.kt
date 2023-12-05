@@ -154,6 +154,7 @@ class PostStatusScreen : AndroidScreen() {
             }
         }
         Scaffold(
+            modifier = Modifier.navigationBarsPadding(),
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
@@ -215,7 +216,6 @@ class PostStatusScreen : AndroidScreen() {
                         end = paddingValues.calculateEndPadding(layoutDirection),
                         bottom = bottomBarHeight,
                     )
-                    .navigationBarsPadding()
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {

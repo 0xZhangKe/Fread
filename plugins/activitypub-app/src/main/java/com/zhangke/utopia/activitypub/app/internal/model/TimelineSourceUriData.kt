@@ -2,22 +2,13 @@ package com.zhangke.utopia.activitypub.app.internal.model
 
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityTimelineUri
-import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
-class TimelineSource(
-    val host: String,
+data class TimelineSourceUriData(
+    val uri: StatusProviderUri,
+    val serverBaseUrl: String,
     val type: TimelineSourceType,
-    override val description: String = ""
-) : StatusSource {
-
-    override val uri: StatusProviderUri = ActivityTimelineUri.create(host, type)
-
-    override val name: String = type.nickName
-
-    override val thumbnail: String? = null
-}
+)
 
 enum class TimelineSourceType(val stringValue: String) {
 

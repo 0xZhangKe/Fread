@@ -1,6 +1,6 @@
 package com.zhangke.utopia.common
 
-import com.zhangke.utopia.common.feeds.repo.config.FeedsConfigDatabase
+import com.zhangke.utopia.common.status.repo.db.StatusDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,7 +11,7 @@ import dagger.hilt.components.SingletonComponent
 class CommonModule {
 
     @Provides
-    fun provideFeedsConfigDataBase(): FeedsConfigDatabase {
-        return FeedsConfigDatabase.instance
+    fun provideStatusDatabase(): StatusDatabase {
+        return StatusDatabase.instance
     }
 }

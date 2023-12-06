@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.uri
 
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUri
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import com.zhangke.utopia.status.uri.StatusProviderUri

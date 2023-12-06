@@ -2,7 +2,7 @@ package com.zhangke.utopia.status.uri
 
 import com.zhangke.framework.utils.uriString
 
-open class StatusProviderUri(
+class StatusProviderUri private constructor(
     val host: String,
     /**
      * format like "/xxx"
@@ -11,6 +11,7 @@ open class StatusProviderUri(
     val queries: Map<String, String>,
 ) {
 
+    @Suppress("MemberVisibilityCanBePrivate")
     val scheme = SCHEME
 
     val path = fixPath(path)
@@ -38,6 +39,14 @@ open class StatusProviderUri(
     companion object {
 
         const val SCHEME = "utopiaapp"
+
+        fun create(host: String, path: String, queries: Map<String, String>): StatusProviderUri {
+            return StatusProviderUri(
+                host = host,
+                path = path,
+                queries = queries,
+            )
+        }
 
         fun from(uri: String): StatusProviderUri? {
             val (host, path, queries) = StatusProviderUriParser().parse(uri) ?: return null

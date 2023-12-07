@@ -5,8 +5,9 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdap
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineStatusDataSource
 import com.zhangke.utopia.activitypub.app.internal.model.UserStatusDataSource
-import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToTimelineUriUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ParseUriToUserUriUseCase
+import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
+import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
@@ -14,8 +15,8 @@ import javax.inject.Inject
 class GetUserStatusDataSourceFromUriUseCase @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
-    private val parseUriToTimelineUriUseCase: ParseUriToTimelineUriUseCase,
-    private val parseUriToUserUriUseCase: ParseUriToUserUriUseCase,
+    private val userUriTransformer: UserUriTransformer,
+    private val timelineUriTransformer: TimelineUriTransformer,
 ) {
 
     operator fun invoke(uri: StatusProviderUri): StatusDataSource<*, Status>? {
@@ -25,20 +26,20 @@ class GetUserStatusDataSourceFromUriUseCase @Inject constructor(
     }
 
     private fun getTimelineDataSource(uri: StatusProviderUri): StatusDataSource<*, Status>? {
-        val timelineUri = parseUriToTimelineUriUseCase(uri) ?: return null
+        val timelineUriData = timelineUriTransformer.parse(uri) ?: return null
         return TimelineStatusDataSource(
-            host = timelineUri.timelineServerHost,
-            type = timelineUri.type,
+            baseUrl = timelineUriData.serverBaseUrl,
+            type = timelineUriData.type,
             activityPubStatusAdapter = activityPubStatusAdapter,
             clientManager = clientManager,
         )
     }
 
     private fun getUserDataSource(uri: StatusProviderUri): StatusDataSource<*, Status>? {
-        val userUri = parseUriToUserUriUseCase(uri) ?: return null
+        val userUriData = userUriTransformer.parse(uri) ?: return null
         return UserStatusDataSource(
-            host = userUri.finger.host,
-            userId = userUri.userId,
+            baseUrl = userUriData.webFinger.host.toBaseUrl(),
+            userId = userUriData.userId,
             activityPubStatusAdapter = activityPubStatusAdapter,
             clientManager = clientManager,
         )

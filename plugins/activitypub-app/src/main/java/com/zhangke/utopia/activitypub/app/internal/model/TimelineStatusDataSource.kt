@@ -9,7 +9,7 @@ import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.status.model.Status
 
 class TimelineStatusDataSource(
-    private val host: String,
+    private val baseUrl: String,
     private val type: TimelineSourceType,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
@@ -21,7 +21,7 @@ class TimelineStatusDataSource(
         if (params.pageKey == null) {
             return Result.success(StatusSourceData(data = emptyList(), nextPageKey = null))
         }
-        val client = clientManager.getClient(host.toBaseUrl())
+        val client = clientManager.getClient(baseUrl)
         val timelineRepo = client.timelinesRepo
 
         val timelineListResult = when (type) {

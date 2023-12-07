@@ -4,15 +4,16 @@ import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val platformEntityAdapter: BlogPlatformEntityAdapter,
+    private val userUriTransformer: UserUriTransformer,
 ) {
 
     fun adapt(
@@ -20,7 +21,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
             userId = entity.userId,
-            uri = ActivityPubUserUri.create(entity.userId, entity.webFinger),
+            uri = userUriTransformer.build(entity.userId, entity.webFinger),
             webFinger = entity.webFinger,
             platform = platformEntityAdapter.toPlatform(entity.platform),
             baseUrl = entity.baseUrl,
@@ -60,7 +61,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         val webFinger = accountToWebFinger(account)
         return ActivityPubLoggedAccount(
             userId = account.id,
-            uri = ActivityPubUserUri.create(account.id, webFinger),
+            uri = userUriTransformer.build(account.id, webFinger),
             webFinger = webFinger,
             platform = instanceAdapter.toPlatform(instance),
             baseUrl = instance.domain.toBaseUrl(),

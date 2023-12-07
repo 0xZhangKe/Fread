@@ -11,8 +11,8 @@ class GetActivityPubPlatformUseCase @Inject constructor(
     private val activityPubInstanceAdapter: ActivityPubInstanceAdapter,
 ) {
 
-    suspend operator fun invoke(host: String): Result<BlogPlatform> {
-        return clientManager.getClient(host.toBaseUrl()).instanceRepo
+    suspend operator fun invoke(baseUrl: String): Result<BlogPlatform> {
+        return clientManager.getClient(baseUrl).instanceRepo
             .getInstanceInformation().map {
                 it.let(activityPubInstanceAdapter::toPlatform)
             }

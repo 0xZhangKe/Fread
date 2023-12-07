@@ -10,19 +10,14 @@ import javax.inject.Inject
 class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
     private val userRepo: ActivityPubLoggedAccountRepo,
     private val userValidateUseCase: ActivityPubAccountValidationUseCase,
-    private val activityPubUriValidateUseCase: ActivityPubUriValidateUseCase,
+    private val activityPubUriValidate: ActivityPubUriValidateUseCase,
 ) {
 
     suspend operator fun invoke(
         sourceList: List<StatusSource>,
     ): Result<SourcesAuthValidateResult> {
         val activityPubSourceList = sourceList.filter {
-            val uri = StatusProviderUri.from(it.uri.toString())
-            if (uri == null) {
-                false
-            } else {
-                activityPubUriValidateUseCase(uri)
-            }
+            activityPubUriValidate(it.uri)
         }
         if (activityPubSourceList.isEmpty()) {
             return Result.success(SourcesAuthValidateResult(emptyList(), emptyList()))

@@ -1,13 +1,13 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
+import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.account.ActiveAccountUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.account.GetAllActivityPubLoggedAccountUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.account.LogoutUseCase
-import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypub.app.internal.usecase.auth.ActivityPubSourceListAuthValidateUseCase
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubUserUri
 import com.zhangke.utopia.status.account.IAccountManager
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
@@ -22,6 +22,7 @@ class ActivityPubAccountManager @Inject constructor(
     private val activeAccount: ActiveAccountUseCase,
     private val logout: LogoutUseCase,
     private val accountRepo: ActivityPubLoggedAccountRepo,
+    private val userUriTransformer: UserUriTransformer,
 ) : IAccountManager {
 
     override suspend fun getActiveAccount(): ActivityPubLoggedAccount? {
@@ -47,13 +48,13 @@ class ActivityPubAccountManager @Inject constructor(
     }
 
     override suspend fun activeAccount(uri: StatusProviderUri): Boolean {
-        if (uri !is ActivityPubUserUri) return false
+        userUriTransformer.parse(uri) ?: return false
         activeAccount.invoke(uri)
         return true
     }
 
     override suspend fun logout(uri: StatusProviderUri): Boolean {
-        if (uri !is ActivityPubUserUri) return false
+        userUriTransformer.parse(uri) ?: return false
         logout.invoke(uri)
         return true
     }

@@ -27,7 +27,7 @@ interface StatusSourceDao {
     suspend fun queryAllSource(): List<StatusSourceEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
-    suspend fun queryById(id: Long): StatusSourceEntity
+    suspend fun queryById(id: Long): StatusSourceEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplace(entity: StatusSourceEntity)

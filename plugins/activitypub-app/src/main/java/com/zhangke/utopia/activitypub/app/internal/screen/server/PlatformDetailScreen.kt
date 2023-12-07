@@ -54,15 +54,14 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
 import kotlinx.coroutines.launch
 
-class PlatformDetailScreen(private val serverUri: ActivityPubPlatformUri) : AndroidScreen() {
+class PlatformDetailScreen(private val serverBaseUrl: String) : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val viewModel: ServerDetailViewModel = getViewModel()
-        viewModel.uri = serverUri
+        viewModel.serverBaseUrl = serverBaseUrl
         LaunchedEffect(Unit) {
             viewModel.onPageResume()
         }

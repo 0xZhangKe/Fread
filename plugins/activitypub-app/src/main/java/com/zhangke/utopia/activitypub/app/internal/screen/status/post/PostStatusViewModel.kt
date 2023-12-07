@@ -20,10 +20,11 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccoun
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
-import com.zhangke.utopia.activitypub.app.internal.uri.ActivityPubPlatformUri
+import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.PostStatusUseCase
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -47,6 +48,7 @@ class PostStatusViewModel @Inject constructor(
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val clientManager: ActivityPubClientManager,
     private val postNoAttachmentStatus: PostStatusUseCase,
+    private val platformUriTransformer: PlatformUriTransformer,
 ) : ViewModel() {
 
     companion object {
@@ -91,8 +93,9 @@ class PostStatusViewModel @Inject constructor(
         launchInViewModel {
             _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
                 .distinctUntilChanged()
-                .mapNotNull { ActivityPubPlatformUri.parse(it.uri) }
-                .mapNotNull { getCustomEmoji(it.baseUrl).getOrNull() }
+                .mapNotNull { StatusProviderUri.from(it.uri) }
+                .mapNotNull { platformUriTransformer.parse(it) }
+                .mapNotNull { getCustomEmoji(it.serverBaseUrl).getOrNull() }
                 .map { emojiAdapter.toEmojiCell(7, it) }
                 .collect { emojiList ->
                     _uiState.updateOnSuccess {

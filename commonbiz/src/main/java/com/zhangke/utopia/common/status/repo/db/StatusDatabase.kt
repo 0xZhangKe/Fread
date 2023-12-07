@@ -10,7 +10,7 @@ private const val DB_NAME = "StatusDatabase.db"
 private const val DB_VERSION = 1
 
 @Database(
-    entities = [FeedsEntity::class],
+    entities = [StatusSourceEntity::class],
     version = DB_VERSION,
     exportSchema = false,
 )

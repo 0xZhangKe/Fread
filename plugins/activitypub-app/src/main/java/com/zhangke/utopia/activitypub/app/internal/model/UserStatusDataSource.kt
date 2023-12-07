@@ -9,7 +9,7 @@ import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.status.model.Status
 
 class UserStatusDataSource(
-    private val host: String,
+    private val baseUrl: String,
     private val userId: String,
     private val clientManager: ActivityPubClientManager,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
@@ -21,7 +21,7 @@ class UserStatusDataSource(
         if (params.pageKey == null) return Result.success(
             StatusSourceData(data = emptyList(), null)
         )
-        return clientManager.getClient(host.toBaseUrl())
+        return clientManager.getClient(baseUrl)
             .accountRepo
             .getStatuses(
                 userId,

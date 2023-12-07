@@ -5,4 +5,6 @@ object ActivityPubUriPath {
     const val USER = "/user"
 
     const val TIMELINE = "/timeline"
+
+    const val PLATFORM = "/platform"
 }

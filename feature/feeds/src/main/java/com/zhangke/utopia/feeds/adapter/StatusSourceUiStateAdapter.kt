@@ -12,7 +12,7 @@ internal class StatusSourceUiStateAdapter @Inject constructor() {
         removeEnabled: Boolean,
     ): StatusSourceUiState {
         return StatusSourceUiState(
-            uri = source.uri.toString(),
+            uri = source.uri,
             name = source.name,
             description = source.description,
             thumbnail = source.thumbnail,

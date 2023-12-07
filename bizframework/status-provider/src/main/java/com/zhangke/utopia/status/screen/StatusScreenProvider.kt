@@ -2,14 +2,16 @@ package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class StatusScreenProvider(
     private val providerList: List<IStatusScreenProvider>
 ) {
 
-    fun getServerDetailScreen(serverUri: String): Any? {
+    fun getPlatformDetailScreen(platformUri: String): Any? {
+        val uri = StatusProviderUri.from(platformUri) ?: return null
         return providerList.mapFirstOrNull {
-            it.getServerDetailScreen(serverUri)
+            it.getServerDetailScreen(uri)
         }
     }
 
@@ -22,7 +24,7 @@ class StatusScreenProvider(
 
 interface IStatusScreenProvider {
 
-    fun getServerDetailScreen(serverUri: String): Any?
+    fun getServerDetailScreen(platformUri: StatusProviderUri): Any?
 
     fun getPostStatusScreen(platform: BlogPlatform): Any?
 }

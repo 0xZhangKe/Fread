@@ -1,8 +1,10 @@
 package com.zhangke.utopia.activitypub.app.internal.model
 
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
-data class PlatformUriData(
+data class UserUriInsights(
     val uri: StatusProviderUri,
-    val serverBaseUrl: String,
+    val userId: String,
+    val webFinger: WebFinger,
 )

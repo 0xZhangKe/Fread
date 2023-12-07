@@ -22,9 +22,10 @@ import com.zhangke.framework.composable.SearchToolbar
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.StatusSourceNode
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
+import com.zhangke.utopia.status.uri.StatusProviderUri
 
 internal class SearchSourceForAddScreen(
-    private val onUrisAdded: (uris: List<String>) -> Unit,
+    private val onUrisAdded: (uris: List<StatusProviderUri>) -> Unit,
 ) : AndroidScreen() {
 
     @Composable

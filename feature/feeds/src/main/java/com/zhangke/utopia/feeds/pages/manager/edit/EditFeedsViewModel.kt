@@ -5,10 +5,12 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.utopia.common.status.FeedsConfig
+import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
-import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -21,11 +23,11 @@ import javax.inject.Inject
 @HiltViewModel
 internal class EditFeedsViewModel @Inject constructor(
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
-    private val feedsRepo: FeedsRepo,
+    private val feedsConfigRepo: FeedsConfigRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    var feedsId: Int = -1
+    var feedsId: Long = -1L
 
     private val _uiState = MutableStateFlow(LoadableState.loading<EditFeedsUiState>())
     val uiState: StateFlow<LoadableState<EditFeedsUiState>> = _uiState.asStateFlow()
@@ -43,10 +45,12 @@ internal class EditFeedsViewModel @Inject constructor(
                 .requireSuccessData()
                 .sourceList
                 .filter { it != source }
-            feedsRepo.update(
-                id = feedsId,
-                name = _uiState.value.requireSuccessData().name,
-                uriList = newSourceList.map { it.uri },
+            feedsConfigRepo.insertOrReplace(
+                FeedsConfig(
+                    id = feedsId,
+                    name = _uiState.value.requireSuccessData().name,
+                    sourceUriList = newSourceList.map { it.uri },
+                )
             )
             _uiState.updateOnSuccess {
                 it.copy(sourceList = newSourceList)
@@ -56,12 +60,12 @@ internal class EditFeedsViewModel @Inject constructor(
 
     fun onDeleteFeeds() {
         launchInViewModel {
-            feedsRepo.deleteById(feedsId)
+            feedsConfigRepo.deleteById(feedsId)
             _finishScreenFlow.emit(Unit)
         }
     }
 
-    fun onAddSources(uriList: List<String>) {
+    fun onAddSources(uriList: List<StatusProviderUri>) {
         launchInViewModel {
             val sourceList = _uiState.value.requireSuccessData().sourceList.toMutableList()
             val sourceUriList = sourceList.map { it.uri }
@@ -78,10 +82,12 @@ internal class EditFeedsViewModel @Inject constructor(
                             }?.let { sourceList += it }
                         }
                 }
-            feedsRepo.update(
-                id = feedsId,
-                name = _uiState.value.requireSuccessData().name,
-                uriList = sourceList.map { it.uri },
+            feedsConfigRepo.insertOrReplace(
+                FeedsConfig(
+                    id = feedsId,
+                    name = _uiState.value.requireSuccessData().name,
+                    sourceUriList = sourceList.map { it.uri },
+                )
             )
             loadFeedsDetail()
         }
@@ -89,7 +95,7 @@ internal class EditFeedsViewModel @Inject constructor(
 
     private fun loadFeedsDetail() {
         launchInViewModel {
-            val feeds = feedsRepo.queryById(feedsId)
+            val feeds = feedsConfigRepo.getConfigById(feedsId)
             if (feeds == null) {
                 _uiState.emit(LoadableState.failed(IllegalArgumentException("Unknown Feeds Id:$feedsId")))
                 return@launchInViewModel
@@ -113,17 +119,19 @@ internal class EditFeedsViewModel @Inject constructor(
     fun onEditName(newName: String) {
         if (newName == _uiState.value.requireSuccessData().name) return
         launchInViewModel {
-            val exists = feedsRepo.checkNameExists(newName)
+            val exists = feedsConfigRepo.checkNameExists(newName)
             if (exists) {
                 _uiState.updateOnSuccess {
                     it.copy(errorMessage = "$newName exists!")
                 }
                 return@launchInViewModel
             }
-            feedsRepo.update(
-                id = feedsId,
-                name = newName,
-                uriList = _uiState.fetchUriList(),
+            feedsConfigRepo.insertOrReplace(
+                FeedsConfig(
+                    id = feedsId,
+                    name = newName,
+                    sourceUriList = _uiState.getUriList(),
+                )
             )
             _uiState.updateOnSuccess {
                 it.copy(name = newName)
@@ -131,7 +139,7 @@ internal class EditFeedsViewModel @Inject constructor(
         }
     }
 
-    private fun MutableStateFlow<LoadableState<EditFeedsUiState>>.fetchUriList(): List<String> {
+    private fun MutableStateFlow<LoadableState<EditFeedsUiState>>.getUriList(): List<StatusProviderUri> {
         return value.requireSuccessData().sourceList.map { it.uri }
     }
 }

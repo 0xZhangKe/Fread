@@ -9,7 +9,7 @@ import com.zhangke.framework.feeds.fetcher.FeedsFetcher
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.FeedsPageUiStateAdapter
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
-import com.zhangke.utopia.common.feeds.repo.FeedsRepo
+import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.screen.StatusScreenProvider
 import com.zhangke.utopia.status.status.model.Status
@@ -24,7 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class FeedsHomeViewModel @Inject constructor(
-    private val feedsRepo: FeedsRepo,
+    private val feedsConfigRepo: FeedsConfigRepo,
     private val feedsPageUiStateAdapter: FeedsPageUiStateAdapter,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
@@ -48,8 +48,8 @@ internal class FeedsHomeViewModel @Inject constructor(
         }
         viewModelScope.launch {
             pagedFetchers.clear()
-            val feedsList = feedsRepo.queryAll()
-            val pageStates = feedsList.mapIndexed { index, feeds ->
+            val feedsConfigList = feedsConfigRepo.getAllConfig()
+            val pageStates = feedsConfigList.mapIndexed { index, feeds ->
                 val fetcher =
                     statusProvider.statusResolver.getStatusFeedsByUris(feeds.sourceUriList, 20)
                 val platformList = statusProvider.platformResolver

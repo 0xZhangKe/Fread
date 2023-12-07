@@ -6,10 +6,9 @@ class StatusSourceResolver(
     private val resolverList: List<IStatusSourceResolver>,
 ) {
 
-    suspend fun resolveSourceByUri(uri: String): Result<StatusSource?>{
-        val statusProviderUri = StatusProviderUri.from(uri) ?: return Result.success(null)
+    suspend fun resolveSourceByUri(uri: StatusProviderUri): Result<StatusSource?>{
         resolverList.forEach {
-            val result = it.resolveSourceByUri(statusProviderUri)
+            val result = it.resolveSourceByUri(uri)
             if (result.getOrNull() != null) return result
         }
         return Result.success(null)

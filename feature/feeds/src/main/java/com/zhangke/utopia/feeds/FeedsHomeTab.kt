@@ -48,9 +48,9 @@ object FeedsHomeTab : Tab {
             onAddFeedsClick = {
                 navigator.push(AddFeedsManagerScreen())
             },
-            onPlatformItemClick = { server ->
+            onPlatformItemClick = { platform ->
                 viewModel.screenProvider
-                    .getServerDetailScreen(server.uri)
+                    .getPlatformDetailScreen(platform.uri)
                     ?.let(navigator::tryPush)
             },
         )

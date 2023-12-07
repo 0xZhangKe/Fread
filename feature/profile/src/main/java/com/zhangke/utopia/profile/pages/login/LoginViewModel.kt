@@ -3,7 +3,7 @@ package com.zhangke.utopia.profile.pages.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.utopia.common.feeds.usecase.QueryAllPlatformByLocalSourceUseCase
+import com.zhangke.utopia.common.status.usecase.QueryAllPlatformByLocalSourceUseCase
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow

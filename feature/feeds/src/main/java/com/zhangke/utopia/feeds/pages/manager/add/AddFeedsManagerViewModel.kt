@@ -7,13 +7,14 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
+import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
-import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -28,7 +29,7 @@ import javax.inject.Inject
 internal class AddFeedsManagerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
-    private val feedsRepo: FeedsRepo,
+    private val feedsConfigRepo: FeedsConfigRepo,
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
@@ -45,7 +46,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
     val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
 
-    fun onAddSources(uriList: List<String>) {
+    fun onAddSources(uriList: List<StatusProviderUri>) {
         launchInViewModel {
             val sourceList = mutableListOf<StatusSource>()
             sourceList.addAll(viewModelState.value.sourceList)
@@ -65,7 +66,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     fun onRemoveSource(source: StatusSourceUiState) {
         viewModelState.update { state ->
             state.copy(
-                sourceList = state.sourceList.filter { it.uri.toString() != source.uri }
+                sourceList = state.sourceList.filter { it.uri != source.uri }
             )
         }
     }
@@ -103,7 +104,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
 
     private suspend fun onValidateAuthFailed(sourceList: List<StatusSource>) {
         statusProvider.platformResolver
-            .resolveBySourceUriList(sourceList.map { source -> source.uri.toString() })
+            .resolveBySourceUriList(sourceList.map { source -> source.uri })
             .onSuccess {
                 _loginRecommendPlatform.emit(it)
             }.onFailure {
@@ -130,10 +131,10 @@ internal class AddFeedsManagerViewModel @Inject constructor(
 
     private fun onReadyToAdd() {
         val currentState = viewModelState.value
-        val sourceUriList = currentState.sourceList.map { it.uri.toString() }
+        val sourceUriList = currentState.sourceList.map { it.uri }
         val sourceName = currentState.sourceName
         launchInViewModel {
-            feedsRepo.insert(sourceName, sourceUriList)
+            feedsConfigRepo.insert(sourceName, sourceUriList)
             _finishPage.emit(true)
         }
     }

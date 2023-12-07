@@ -50,7 +50,7 @@ import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 
-class EditFeedsScreen(private val feedsId: Int) : AndroidScreen() {
+class EditFeedsScreen(private val feedsId: Long) : AndroidScreen() {
 
     @Composable
     override fun Content() {

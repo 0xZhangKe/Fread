@@ -12,4 +12,3 @@ data class BlogPlatform(
     val protocol: String,
     val thumbnail: String?,
 ) : Parcelable
-

@@ -9,12 +9,11 @@ class PlatformResolver constructor(
 ) {
 
     @Suppress("MemberVisibilityCanBePrivate")
-    suspend fun resolveBySourceUri(uri: String): Result<BlogPlatform?> {
-        val statusProviderUri = StatusProviderUri.from(uri) ?: return Result.success(null)
-        return resolverList.mapFirst { it.resolveBySourceUri(statusProviderUri) }
+    suspend fun resolveBySourceUri(uri: StatusProviderUri): Result<BlogPlatform?> {
+        return resolverList.mapFirst { it.resolveBySourceUri(uri) }
     }
 
-    suspend fun resolveBySourceUriList(uriList: List<String>): Result<List<BlogPlatform>> {
+    suspend fun resolveBySourceUriList(uriList: List<StatusProviderUri>): Result<List<BlogPlatform>> {
         val resultList = uriList.map { resolveBySourceUri(it) }
         val platformList = resultList.mapNotNull { it.getOrNull() }.distinct()
         if (platformList.isNotEmpty()) return Result.success(platformList)

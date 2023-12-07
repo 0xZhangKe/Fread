@@ -12,9 +12,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.CardInfoSection
+import com.zhangke.utopia.status.uri.StatusProviderUri
 
 internal data class StatusSourceUiState(
-    val uri: String,
+    val uri: StatusProviderUri,
     val name: String,
     val description: String,
     val thumbnail: String?,

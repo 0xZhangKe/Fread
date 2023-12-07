@@ -12,14 +12,17 @@ class StatusResolver(
 ) {
 
     fun getStatusDataSourceByUri(
-        uris: List<String>
+        uris: List<StatusProviderUri>
     ): List<StatusDataSource<*, Status>> {
-        return uris.map { StatusProviderUri.from(it)!! }
-            .mapNotNull { uri -> resolverList.mapFirstOrNull { it.getStatusDataSourceByUri(uri) } }
+        return uris.mapNotNull { uri ->
+            resolverList.mapFirstOrNull {
+                it.getStatusDataSourceByUri(uri)
+            }
+        }
     }
 
     fun getStatusFeedsByUris(
-        uris: List<String>,
+        uris: List<StatusProviderUri>,
         pageSize: Int,
     ): FeedsFetcher<Status> {
         return FeedsFetcher(getStatusDataSourceByUri(uris), pageSize, FeedsGenerator())

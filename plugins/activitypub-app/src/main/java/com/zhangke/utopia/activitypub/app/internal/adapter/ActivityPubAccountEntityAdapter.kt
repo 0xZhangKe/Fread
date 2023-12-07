@@ -2,8 +2,8 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubUserAuthor
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.status.author.BlogAuthor
 import javax.inject.Inject
 
 class ActivityPubAccountEntityAdapter @Inject constructor(
@@ -12,9 +12,9 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
 
     fun toAuthor(
         entity: ActivityPubAccountEntity,
-    ): ActivityPubUserAuthor {
+    ): BlogAuthor {
         val webFinger = toWebFinger(entity)
-        return ActivityPubUserAuthor(
+        return BlogAuthor(
             uri = userUriTransformer.build(entity.id, webFinger),
             webFinger = webFinger,
             name = entity.displayName,

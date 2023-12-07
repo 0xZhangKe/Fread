@@ -4,7 +4,7 @@ import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
-data class TimelineSourceUriData(
+data class TimelineSourceUriInsights(
     val uri: StatusProviderUri,
     val serverBaseUrl: String,
     val type: TimelineSourceType,

@@ -12,9 +12,8 @@ class ActivityPubScreenProvider @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
 ) : IStatusScreenProvider {
 
-    override fun getServerDetailScreen(serverUri: String): Any? {
-        val uri = StatusProviderUri.from(serverUri) ?: return null
-        val platformUriData = platformUriTransformer.parse(uri) ?: return null
+    override fun getServerDetailScreen(platformUri: StatusProviderUri): Any? {
+        val platformUriData = platformUriTransformer.parse(platformUri) ?: return null
         return PlatformDetailScreen(platformUriData.serverBaseUrl)
     }
 

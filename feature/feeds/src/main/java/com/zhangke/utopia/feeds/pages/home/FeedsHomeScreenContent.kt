@@ -1,8 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -89,11 +87,8 @@ internal fun FeedsHomeScreenContent(
                 )
             }
         },
-        contentWindowInsets = ScaffoldDefaults.contentWindowInsets.also {
-            Log.d("U_TEST", "${it.getTop(density)}, ${it.getBottom(density)}")
-        },
+        contentWindowInsets = ScaffoldDefaults.contentWindowInsets,
     ) { paddings ->
-        Log.d("U_TEST", "paddings top:${paddings.calculateTopPadding()}, bottom:${paddings.calculateBottomPadding()}")
         val selectedIndex = uiState.tabIndex
         LoadableLayout(
             modifier = Modifier

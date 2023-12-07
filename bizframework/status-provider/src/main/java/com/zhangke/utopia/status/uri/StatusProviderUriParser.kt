@@ -2,7 +2,13 @@ package com.zhangke.utopia.status.uri
 
 import android.net.Uri
 
-class StatusProviderUriParser {
+private val defaultUriDecoder: (String) -> String = { url ->
+    Uri.decode(url)
+}
+
+class StatusProviderUriParser(
+    val uriDecoder: (String) -> String = defaultUriDecoder,
+) {
 
     fun parse(uriString: String): Triple<String, String, Map<String, String>>? {
         val scheme = findScheme(uriString)
@@ -44,7 +50,7 @@ class StatusProviderUriParser {
         return queryPart.split('&')
             .associate {
                 val array = it.split('=')
-                array[0] to Uri.decode(array.getOrElse(1) { "" })
+                array[0] to uriDecoder(array.getOrElse(1) { "" })
             }
     }
 }

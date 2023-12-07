@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.repo.user
 
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.model.UserUriData
+import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.source.UserSourceTransformer
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.source.StatusSource
@@ -13,10 +13,10 @@ class UserRepo @Inject constructor(
     private val userSourceTransformer: UserSourceTransformer,
 ) {
 
-    suspend fun getUserSource(userUriData: UserUriData): Result<StatusSource> {
-        return clientManager.getClient(userUriData.webFinger.host.toBaseUrl())
+    suspend fun getUserSource(userUriInsights: UserUriInsights): Result<StatusSource> {
+        return clientManager.getClient(userUriInsights.webFinger.host.toBaseUrl())
             .accountRepo
-            .getAccount(userUriData.userId)
+            .getAccount(userUriInsights.userId)
             .map(userSourceTransformer::createByUserEntity)
     }
 

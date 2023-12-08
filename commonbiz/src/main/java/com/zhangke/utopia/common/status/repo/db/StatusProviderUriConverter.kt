@@ -1,4 +1,4 @@
-package com.zhangke.utopia.common.utils
+package com.zhangke.utopia.common.status.repo.db
 
 import androidx.room.TypeConverter
 import com.zhangke.utopia.status.uri.StatusProviderUri

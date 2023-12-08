@@ -5,9 +5,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.framework.utils.appContext
+import com.zhangke.utopia.common.utils.DateTypeConverter
 import com.zhangke.utopia.common.utils.ListStringConverter
-import com.zhangke.utopia.common.utils.StatusProviderUriConverter
-import com.zhangke.utopia.common.utils.StatusProviderUriListConverter
+import com.zhangke.utopia.common.utils.WebFingerConverter
 
 private const val DB_NAME = "StatusDatabase.db"
 private const val DB_VERSION = 1
@@ -16,9 +16,14 @@ private const val DB_VERSION = 1
     StatusProviderUriConverter::class,
     ListStringConverter::class,
     StatusProviderUriListConverter::class,
+    StatusTypeConverter::class,
+    BlogMediaListConverter::class,
+    BlogPollConverter::class,
+    DateTypeConverter::class,
+    WebFingerConverter::class,
 )
 @Database(
-    entities = [StatusSourceEntity::class, FeedsConfigEntity::class],
+    entities = [StatusSourceEntity::class, FeedsConfigEntity::class, StatusContentEntity::class],
     version = DB_VERSION,
     exportSchema = false,
 )
@@ -27,6 +32,8 @@ abstract class StatusDatabase : RoomDatabase() {
     abstract fun getSourceDao(): StatusSourceDao
 
     abstract fun getFeedsConfigDao(): FeedsConfigDao
+
+    abstract fun getStatusContentDao(): StatusContentDao
 
     companion object {
 

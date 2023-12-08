@@ -5,6 +5,7 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.framework.utils.appContext
+import com.zhangke.utopia.common.utils.WebFingerConverter
 
 internal const val ACTIVITY_PUB_DB_NAME = "ActivityPubStatusProvider"
 private const val DB_VERSION = 1

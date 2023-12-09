@@ -7,6 +7,7 @@ import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.feeds.fetcher.FeedsFetcher
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.feeds.adapter.FeedsPageUiStateAdapter
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
@@ -27,6 +28,7 @@ internal class FeedsHomeViewModel @Inject constructor(
     private val feedsConfigRepo: FeedsConfigRepo,
     private val feedsPageUiStateAdapter: FeedsPageUiStateAdapter,
     private val statusProvider: StatusProvider,
+    private val feedsRepo: FeedsRepo,
 ) : ViewModel() {
 
     private val pagedFetchers = mutableMapOf<Int, FeedsFetcher<Status>>()

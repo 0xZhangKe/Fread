@@ -12,13 +12,14 @@ import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.StatusType
 import com.zhangke.utopia.status.uri.StatusProviderUri
+import kotlinx.coroutines.flow.Flow
 import java.util.Date
 
 private const val TABLE_NAME = "status_content"
 
 @Entity(tableName = TABLE_NAME)
 data class StatusContentEntity(
-    @PrimaryKey(autoGenerate = true) val id: Long,
+    @PrimaryKey val id: String,
     val authorUri: StatusProviderUri,
     val authorWebFinger: WebFinger,
     val authorName: String,
@@ -26,7 +27,7 @@ data class StatusContentEntity(
     val authorAvatar: String?,
     val sourceUri: StatusProviderUri,
     val type: StatusType,
-    val statusId: String,
+    val statusIdOfPlatform: String,
     val title: String?,
     val content: String,
     val date: Date,
@@ -46,12 +47,15 @@ interface StatusContentDao {
     suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY date DESC")
-    suspend fun queryBySourceUriList(
+    fun queryBySourceUriList(
         sourceUriList: List<StatusProviderUri>
-    ): List<StatusContentEntity>
+    ): Flow<List<StatusContentEntity>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: StatusContentEntity)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(entityList: List<StatusContentEntity>)
 
     @Delete
     suspend fun delete(entity: StatusContentEntity)

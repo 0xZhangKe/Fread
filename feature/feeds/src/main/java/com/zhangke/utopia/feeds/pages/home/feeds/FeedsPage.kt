@@ -28,7 +28,6 @@ internal fun FeedsPage(
     val feedsList = rememberSaveable(uiState.feedsFlow) {
         mutableListOf<Status>()
     }
-//    val feedsList by uiState.feedsFlow.collectAsState(initial = emptyList())
     LaunchedEffect(uiState.feedsFlow) {
         uiState.feedsFlow.collect {
             feedsList.clear()
@@ -62,7 +61,12 @@ internal fun FeedsPage(
                 }
             }
         } else {
-            itemsIndexed(feedsList) { index, item ->
+            itemsIndexed(
+                items = feedsList,
+                key = { _, item ->
+                    item.id
+                },
+            ) { index, item ->
                 FeedsStatusNode(
                     modifier = Modifier,
                     status = item,

@@ -11,7 +11,7 @@ internal data class FeedsPageUiState(
     val name: String,
     val platformList: List<BlogPlatform>,
     val sourceList: List<StatusProviderUri>,
-    val feedsFlow: Flow<List<Status>>,
+    val feedsList: List<Status>,
     val refreshing: Boolean,
     val loading: Boolean,
     val loadMoreError: Boolean,

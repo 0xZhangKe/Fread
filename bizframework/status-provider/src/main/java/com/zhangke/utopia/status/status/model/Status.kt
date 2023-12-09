@@ -11,6 +11,9 @@ sealed interface Status {
 
     val authId: String
 
+    /**
+     * identify of this status, must non-empty
+     */
     val id: String
 
     data class NewBlog(

@@ -27,9 +27,24 @@ class StatusResolver(
     ): FeedsFetcher<Status> {
         return FeedsFetcher(getStatusDataSourceByUri(uris), pageSize, FeedsGenerator())
     }
+
+    suspend fun getStatusList(
+        uri: StatusProviderUri,
+        pageSie: Int,
+    ): Result<List<Status>> {
+        for (statusResolver in resolverList) {
+            statusResolver.getStatusList(uri, pageSie)?.let { return it }
+        }
+        return Result.failure(IllegalArgumentException("Unsupported uri:$uri!"))
+    }
 }
 
 interface IStatusResolver {
+
+    /**
+     * @return null if un-support
+     */
+    suspend fun getStatusList(uri: StatusProviderUri, limit: Int): Result<List<Status>>?
 
     fun getStatusDataSourceByUri(uri: StatusProviderUri): StatusDataSource<*, Status>?
 }

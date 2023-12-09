@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.adapter
 
+import com.zhangke.utopia.common.status.StatusIdGenerator
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
@@ -8,7 +9,9 @@ import com.zhangke.utopia.status.status.model.StatusType
 import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
-class StatusContentEntityAdapter @Inject constructor() {
+class StatusContentEntityAdapter @Inject constructor(
+    private val statusIdGenerator: StatusIdGenerator,
+) {
 
     fun toStatus(entity: StatusContentEntity): Status {
         return Status.NewBlog(toBlog(entity))
@@ -17,10 +20,10 @@ class StatusContentEntityAdapter @Inject constructor() {
     fun toEntity(sourceUri: StatusProviderUri, status: Status): StatusContentEntity {
         val blog = (status as Status.NewBlog).blog
         return StatusContentEntity(
-            id = 0,
+            id = statusIdGenerator.generate(sourceUri, status),
             sourceUri = sourceUri,
             type = StatusType.BLOG,
-            statusId = blog.id,
+            statusIdOfPlatform = blog.id,
             authorUri = blog.author.uri,
             authorWebFinger = blog.author.webFinger,
             authorName = blog.author.name,
@@ -41,7 +44,7 @@ class StatusContentEntityAdapter @Inject constructor() {
 
     fun toBlog(entity: StatusContentEntity): Blog {
         return Blog(
-            id = entity.statusId,
+            id = entity.statusIdOfPlatform,
             author = toAuthor(entity),
             title = entity.title,
             content = entity.content,

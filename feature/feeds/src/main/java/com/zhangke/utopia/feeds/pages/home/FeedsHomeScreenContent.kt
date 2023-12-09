@@ -70,8 +70,6 @@ internal fun FeedsHomeScreenContent(
     var topBarItems: List<BlogPlatform> by rememberSaveable {
         mutableStateOf(emptyList())
     }
-    val density = LocalDensity.current
-
     Scaffold(
         modifier = Modifier.navigationBarsPadding(),
         snackbarHost = {

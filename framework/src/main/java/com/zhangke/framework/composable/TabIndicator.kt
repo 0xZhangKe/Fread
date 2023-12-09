@@ -26,7 +26,8 @@ fun Modifier.ownTabIndicatorOffset(
 ) {
     val indicatorOffset by animateDpAsState(
         targetValue = currentTabPosition.left,
-        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing)
+        animationSpec = tween(durationMillis = 250, easing = FastOutSlowInEasing),
+        label = ""
     )
     fillMaxWidth()
         .wrapContentSize(Alignment.BottomStart)

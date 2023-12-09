@@ -52,12 +52,14 @@ import com.zhangke.framework.composable.AvatarHorizontalStack
 import com.zhangke.framework.composable.theme.TopAppBarDefault
 import com.zhangke.framework.ktx.isSingle
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
+import com.zhangke.utopia.feeds.pages.home.FeedsConfigWithPlatforms
+import com.zhangke.utopia.feeds.pages.home.feeds.FeedsScreenUiState
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 import com.zhangke.utopia.feeds.pages.manager.edit.EditFeedsScreen
+import com.zhangke.utopia.status.platform.BlogPlatform
 
 internal class AllFeedsManagerScreen(
-    private val feedsList: List<FeedsPageUiState>,
+    private val feedsConfigWithPlatformList: List<FeedsConfigWithPlatforms>,
     private val onItemClick: (index: Int) -> Unit,
 ) : AndroidScreen() {
 
@@ -65,20 +67,21 @@ internal class AllFeedsManagerScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         AllFeedsManagerScreenContent(
-            feedsList = feedsList,
+            feedsConfigWithPlatformList = feedsConfigWithPlatformList,
             onAddFeedsClick = {
                 navigator.push(AddFeedsManagerScreen())
             },
             onItemClick = onItemClick,
             onItemEditClick = {
-                navigator.push(EditFeedsScreen(feedsId = feedsList[it].feedsId))
+                val feedsId = feedsConfigWithPlatformList[it].feedsConfig.id
+                navigator.push(EditFeedsScreen(feedsId))
             },
         )
     }
 
     @Composable
     private fun AllFeedsManagerScreenContent(
-        feedsList: List<FeedsPageUiState>,
+        feedsConfigWithPlatformList: List<FeedsConfigWithPlatforms>,
         onAddFeedsClick: () -> Unit,
         onItemClick: (index: Int) -> Unit,
         onItemEditClick: (index: Int) -> Unit,
@@ -129,15 +132,15 @@ internal class AllFeedsManagerScreen(
                 horizontalArrangement = Arrangement.Center,
             ) {
                 itemsIndexed(
-                    items = feedsList,
-                ) { index, uiState ->
+                    items = feedsConfigWithPlatformList,
+                ) { index, configWithPlatforms ->
                     AllFeedsManagerItem(
                         modifier = Modifier
                             .padding(horizontal = horizontalSpace / 2)
                             .fillMaxWidth()
                             .padding(bottom = 15.dp)
                             .height(64.dp),
-                        uiState = uiState,
+                        configWithPlatforms = configWithPlatforms,
                         onClick = {
                             onItemClick(index)
                         },
@@ -153,7 +156,7 @@ internal class AllFeedsManagerScreen(
     @Composable
     private fun AllFeedsManagerItem(
         modifier: Modifier = Modifier,
-        uiState: FeedsPageUiState,
+        configWithPlatforms: FeedsConfigWithPlatforms,
         onClick: () -> Unit,
         onEditClick: () -> Unit,
     ) {
@@ -163,7 +166,6 @@ internal class AllFeedsManagerScreen(
         ) {
             Card(
                 modifier = Modifier.fillMaxWidth(),
-                elevation = CardDefaults.cardElevation(3.dp),
             ) {
                 Column(
                     modifier = Modifier
@@ -172,25 +174,25 @@ internal class AllFeedsManagerScreen(
                         .padding(horizontal = 6.dp, vertical = 4.dp)
                 ) {
                     Text(
-                        text = uiState.name,
+                        text = configWithPlatforms.feedsConfig.name,
                         style = MaterialTheme.typography.bodyMedium,
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis,
                     )
-
-                    if (uiState.platformList.isSingle()) {
+                    val platformList = configWithPlatforms.platformList
+                    if (platformList.isSingle()) {
                         Row(
                             modifier = Modifier.padding(top = 2.dp),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
-                            val serverInfo = uiState.platformList.first()
+                            val serverInfo = platformList.first()
                             val serverThumbnail = serverInfo.thumbnail
                             if (serverThumbnail.isNullOrEmpty().not()) {
                                 AsyncImage(
                                     modifier = Modifier
                                         .size(16.dp)
                                         .clip(CircleShape),
-                                    model = uiState.platformList.first().thumbnail,
+                                    model = platformList.first().thumbnail,
                                     contentScale = ContentScale.Crop,
                                     contentDescription = "ServerAvatar",
                                 )
@@ -204,7 +206,7 @@ internal class AllFeedsManagerScreen(
                             )
                         }
                     } else {
-                        val avatarList = uiState.platformList.mapNotNull { it.thumbnail }.take(5)
+                        val avatarList = platformList.mapNotNull { it.thumbnail }.take(5)
                         AvatarHorizontalStack(
                             modifier = Modifier.padding(top = 2.dp),
                             avatars = avatarList,
@@ -218,7 +220,7 @@ internal class AllFeedsManagerScreen(
                     ) {
                         Text(
                             modifier = Modifier.padding(top = 2.dp),
-                            text = "count: ${uiState.sourceList.size}",
+                            text = "count: ${platformList.size}",
                             style = MaterialTheme.typography.labelSmall,
                             maxLines = 1,
                             overflow = TextOverflow.Ellipsis,

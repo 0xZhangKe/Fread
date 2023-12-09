@@ -1,9 +1,14 @@
 package com.zhangke.utopia.feeds.pages.home
 
-import com.zhangke.framework.composable.LoadableState
-import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
+import com.zhangke.utopia.common.status.FeedsConfig
+import com.zhangke.utopia.status.platform.BlogPlatform
 
-internal data class FeedsHomeUiState(
-    val tabIndex: Int,
-    val pageUiStateList: LoadableState<List<FeedsPageUiState>>,
+data class FeedsHomeUiState(
+    val selectedIndex: Int,
+    val feedsConfigList: List<FeedsConfigWithPlatforms>,
+)
+
+data class FeedsConfigWithPlatforms(
+    val feedsConfig: FeedsConfig,
+    val platformList: List<BlogPlatform>,
 )

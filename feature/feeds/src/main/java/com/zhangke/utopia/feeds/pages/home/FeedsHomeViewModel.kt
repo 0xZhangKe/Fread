@@ -1,180 +1,77 @@
 package com.zhangke.utopia.feeds.pages.home
 
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.requireSuccessData
-import com.zhangke.framework.composable.textOf
-import com.zhangke.framework.feeds.fetcher.FeedsFetcher
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.successDataOrNull
+import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.utopia.common.feeds.repo.FeedsRepo
-import com.zhangke.utopia.feeds.adapter.FeedsPageUiStateAdapter
-import com.zhangke.utopia.feeds.pages.home.feeds.FeedsPageUiState
 import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.screen.StatusScreenProvider
-import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 @HiltViewModel
-internal class FeedsHomeViewModel @Inject constructor(
+class FeedsHomeViewModel @Inject constructor(
     private val feedsConfigRepo: FeedsConfigRepo,
-    private val feedsPageUiStateAdapter: FeedsPageUiStateAdapter,
     private val statusProvider: StatusProvider,
-    private val feedsRepo: FeedsRepo,
 ) : ViewModel() {
 
-    private val pagedFetchers = mutableMapOf<Int, FeedsFetcher<Status>>()
+    private val _uiState = MutableStateFlow(LoadableState.idle<FeedsHomeUiState>())
+    val uiState: StateFlow<LoadableState<FeedsHomeUiState>> get() = _uiState.asStateFlow()
 
-    private val _uiState = MutableStateFlow(initialState())
-    val uiState: StateFlow<FeedsHomeUiState> = _uiState.asStateFlow()
+    private val _errorMessageFlow = MutableSharedFlow<TextString>()
+    val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
-    val screenProvider: StatusScreenProvider get() = statusProvider.screenProvider
+    val screenProvider = statusProvider.screenProvider
 
     init {
-        loadTabs()
+        loadFeedsConfigList()
     }
 
-    private fun loadTabs() {
-        _uiState.update {
-            it.copy(
-                pageUiStateList = LoadableState.loading()
-            )
-        }
-        viewModelScope.launch {
-            pagedFetchers.clear()
+    private fun loadFeedsConfigList() {
+        launchInViewModel {
+            _uiState.value = LoadableState.loading()
             val feedsConfigList = feedsConfigRepo.getAllConfig()
-            val pageStates = feedsConfigList.mapIndexed { index, feeds ->
-                val fetcher =
-                    statusProvider.statusResolver.getStatusFeedsByUris(feeds.sourceUriList, 20)
-                val platformList = statusProvider.platformResolver
-                    .resolveBySourceUriList(feeds.sourceUriList)
-                    .getOrNull() ?: emptyList()
-                pagedFetchers[index] = fetcher
-                feedsPageUiStateAdapter.adapt(
-                    feedsId = feeds.id,
-                    feedsName = feeds.name,
-                    platformList = platformList,
-                    sourceList = feeds.sourceUriList,
-                    feedsFlow = fetcher.dataFlow,
-                )
-            }
-            _uiState.update {
-                it.copy(
-                    pageUiStateList = LoadableState.success(pageStates)
-                )
-            }
-            refreshPage(_uiState.value.tabIndex)
-        }
-    }
-
-    fun onPageChanged(index: Int) {
-        if (index == _uiState.value.tabIndex) return
-        _uiState.update {
-            it.copy(tabIndex = index)
-        }
-        refreshPage(index)
-    }
-
-    private fun refreshPage(index: Int) {
-        if (pagedFetchers.isEmpty()) return
-        updateIndexedPageToRefreshing(index)
-        val fetcher = pagedFetchers[index]!!
-        launchInViewModel(Dispatchers.IO) {
-            fetcher.refresh()
-                .onSuccess { updateIndexedPageToData(index) }
-                .onFailure {
-                    updateIndexedPageToData(index)
-                    updateIndexedPageSnackMessage(index, it.message)
+            val state = FeedsHomeUiState(
+                selectedIndex = 0,
+                feedsConfigList = feedsConfigList.map {
+                    FeedsConfigWithPlatforms(it, emptyList())
+                },
+            )
+            _uiState.value = LoadableState.success(state)
+            val finalFeedsConfigList = feedsConfigList.map { config ->
+                async {
+                    val platformList = statusProvider.platformResolver
+                        .resolveBySourceUriList(config.sourceUriList)
+                        .getOrNull()
+                    FeedsConfigWithPlatforms(config, platformList ?: emptyList())
                 }
-        }
-    }
-
-    fun onRefresh() {
-        val index = _uiState.value.tabIndex
-        refreshPage(index)
-    }
-
-    fun onLoadMore() {
-        val currentPageIndex = _uiState.value.tabIndex
-        val fetcher = pagedFetchers[currentPageIndex]!!
-        launchInViewModel(Dispatchers.IO) {
-            updateIndexedPageToLoading(currentPageIndex)
-            fetcher.loadNextPage()
-                .onSuccess { updateIndexedPageToData(currentPageIndex) }
-                .onFailure {
-                    updateIndexedPageToLoadError(currentPageIndex)
-                    updateIndexedPageSnackMessage(currentPageIndex, it.message)
-                }
-        }
-    }
-
-    private fun updateIndexedPageToRefreshing(index: Int) {
-        updateIndexedPage(index) {
-            it.copy(refreshing = true)
-        }
-    }
-
-    private fun updateIndexedPageToLoading(index: Int) {
-        updateIndexedPage(index) {
-            it.copy(loading = true)
-        }
-    }
-
-    private fun updateIndexedPageToLoadError(index: Int) {
-        updateIndexedPage(index) {
-            it.copy(
-                loading = false,
-                loadMoreError = true,
-            )
-        }
-    }
-
-    private fun updateIndexedPageToData(index: Int) {
-        updateIndexedPage(index) {
-            it.copy(
-                refreshing = false,
-                loading = false,
-                loadMoreError = false,
-            )
-        }
-    }
-
-    private fun updateIndexedPageSnackMessage(index: Int, snackMessage: String?) {
-        updateIndexedPage(index) {
-            it.copy(snackMessage = snackMessage?.let(::textOf))
-        }
-    }
-
-    private fun updateIndexedPage(index: Int, block: (FeedsPageUiState) -> FeedsPageUiState) {
-        if (!_uiState.value.pageUiStateList.isSuccess) return
-        val pageList = _uiState.value.pageUiStateList.requireSuccessData()
-        if (pageList.isEmpty()) return
-        val newPageList = pageList.mapIndexed { i, feedsPageUiState ->
-            if (i == index) {
-                block(feedsPageUiState)
-            } else {
-                feedsPageUiState
+            }.awaitAll()
+            _uiState.updateOnSuccess {
+                it.copy(feedsConfigList = finalFeedsConfigList)
             }
         }
-        _uiState.update {
-            it.copy(
-                pageUiStateList = LoadableState.success(newPageList)
-            )
+    }
+
+    fun onTabSelected(index: Int) {
+        val currentIndex = _uiState.value.successDataOrNull()?.selectedIndex
+        if (index == currentIndex) return
+        _uiState.updateOnSuccess {
+            it.copy(selectedIndex = index)
         }
     }
 
-    private fun initialState(): FeedsHomeUiState {
-        return FeedsHomeUiState(
-            pageUiStateList = LoadableState.loading(),
-            tabIndex = 0,
-        )
+    fun showErrorMessage(text: TextString) {
+        launchInViewModel {
+            _errorMessageFlow.emit(text)
+        }
     }
 }

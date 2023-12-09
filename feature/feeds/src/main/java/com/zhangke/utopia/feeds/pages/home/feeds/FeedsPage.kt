@@ -3,50 +3,65 @@ package com.zhangke.utopia.feeds.pages.home.feeds
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.textString
+import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.navigator.tab.Tab
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.utopia.status.status.model.Status
+import kotlinx.coroutines.flow.SharedFlow
+
+@Composable
+fun Tab.FeedsTab(
+    feedsConfig: FeedsConfig,
+    showSnakeMessage: (TextString) -> Unit,
+) {
+    val viewModel = getScreenModel<FeedsViewModel, FeedsViewModel.Factory> { factory ->
+        factory.create(feedsConfig)
+    }
+    val uiState by viewModel.state.collectAsState()
+    LaunchedEffect(viewModel.errorMessageFlow) {
+        viewModel.errorMessageFlow.collect(showSnakeMessage)
+    }
+    FeedsTabContent(
+        uiState = uiState,
+        onRefresh = viewModel::onRefresh,
+        onLoadMore = viewModel::onLoadMore,
+    )
+}
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
-internal fun FeedsPage(
-    uiState: FeedsPageUiState,
+private fun FeedsTabContent(
+    uiState: FeedsScreenUiState,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
-    onShowSnackMessage: suspend (String) -> Unit,
 ) {
-    val feedsList = rememberSaveable(uiState.feedsFlow) {
-        mutableListOf<Status>()
-    }
-    LaunchedEffect(uiState.feedsFlow) {
-        uiState.feedsFlow.collect {
-            feedsList.clear()
-            feedsList.addAll(it)
-        }
-    }
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,
         onLoadMore = onLoadMore,
     )
-    val snackMessage = uiState.snackMessage?.let { textString(it) }
-    if (snackMessage.isNullOrEmpty().not()) {
-        LaunchedEffect(uiState.snackMessage) {
-            onShowSnackMessage(snackMessage!!)
-        }
-    }
     LoadableInlineVideoLazyColumn(
-        modifier = Modifier.fillMaxSize(),
+        modifier = Modifier
+            .fillMaxSize(),
         state = state,
         refreshing = uiState.refreshing,
         loading = uiState.loading,
@@ -54,15 +69,21 @@ internal fun FeedsPage(
             bottom = 20.dp,
         )
     ) {
-        if (feedsList.isEmpty()) {
+        if (uiState.feeds.isEmpty()) {
             item {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    Text(text = "Empty Placeholder")
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 48.dp)
+                            .fillMaxWidth(),
+                        text = "Empty Placeholder",
+                        textAlign = TextAlign.Center,
+                    )
                 }
             }
         } else {
             itemsIndexed(
-                items = feedsList,
+                items = uiState.feeds,
                 key = { _, item ->
                     item.id
                 },

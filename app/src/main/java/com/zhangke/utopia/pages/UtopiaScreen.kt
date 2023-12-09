@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -23,6 +24,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.pages.main.MainPage
 import kotlinx.coroutines.delay
@@ -39,10 +42,7 @@ class UtopiaScreen : AndroidScreen() {
 
 //        val navigator = LocalNavigator.currentOrThrow
 //        LaunchedEffect(Unit) {
-//            navigator.push(InlineVideoPlayerScreen())
-//            navigator.push(FullVideoScreen(
-//                "https://video.twimg.com/ext_tw_video/1712110948700352512/pu/vid/avc1/720x1280/i43wruptl2R9KHAZ.mp4?tag=12".toUri()
-//            ))
+//            navigator.push(TabTestScreen())
 //        }
 
 //        val viewModel = getViewModel<TestViewModel>()
@@ -106,3 +106,5 @@ class UtopiaScreen : AndroidScreen() {
 //        }
 //    }
 //}
+
+

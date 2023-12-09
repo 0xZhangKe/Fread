@@ -1,4 +1,4 @@
-package com.zhangke.utopia.common.status.repo.db
+package com.zhangke.utopia.common.status.repo.db.converts
 
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken

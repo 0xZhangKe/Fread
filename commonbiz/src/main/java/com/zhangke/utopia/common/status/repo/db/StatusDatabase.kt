@@ -5,7 +5,6 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.common.status.repo.db.converts.BlogMediaConverter
 import com.zhangke.utopia.common.status.repo.db.converts.BlogMediaListConverter
 import com.zhangke.utopia.common.status.repo.db.converts.BlogPollConverter
 import com.zhangke.utopia.common.status.repo.db.converts.StatusProviderUriConverter
@@ -27,7 +26,6 @@ private const val DB_VERSION = 1
     BlogPollConverter::class,
     DateTypeConverter::class,
     WebFingerConverter::class,
-    BlogMediaConverter::class,
 )
 @Database(
     entities = [StatusSourceEntity::class, FeedsConfigEntity::class, StatusContentEntity::class],

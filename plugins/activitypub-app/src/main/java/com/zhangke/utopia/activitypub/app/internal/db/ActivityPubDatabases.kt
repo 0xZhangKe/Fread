@@ -5,6 +5,10 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.framework.utils.appContext
+import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubInstanceEntityConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubUserTokenConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.PlatformEntityTypeConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.TimelineSourceTypeConverter
 import com.zhangke.utopia.common.utils.WebFingerConverter
 
 internal const val ACTIVITY_PUB_DB_NAME = "ActivityPubStatusProvider"
@@ -15,9 +19,14 @@ private const val DB_VERSION = 1
     TimelineSourceTypeConverter::class,
     PlatformEntityTypeConverter::class,
     ActivityPubUserTokenConverter::class,
+    ActivityPubInstanceEntityConverter::class,
 )
 @Database(
-    entities = [ActivityPubLoggedAccountEntity::class, ActivityPubApplicationEntity::class],
+    entities = [
+        ActivityPubLoggedAccountEntity::class,
+        ActivityPubApplicationEntity::class,
+        ActivityPubInstanceInfoEntity::class,
+    ],
     version = DB_VERSION,
     exportSchema = false
 )
@@ -26,6 +35,8 @@ abstract class ActivityPubDatabases : RoomDatabase() {
     abstract fun getActivityPubUserDao(): ActivityPubLoggerAccountDao
 
     abstract fun getApplicationDao(): ActivityPubApplicationsDao
+
+    abstract fun getPlatformDao(): ActivityPubPlatformDao
 
     companion object {
 

@@ -8,11 +8,11 @@ import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEn
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
+import com.zhangke.utopia.status.platform.BlogPlatform
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
-    private val platformEntityAdapter: BlogPlatformEntityAdapter,
     private val userUriTransformer: UserUriTransformer,
 ) {
 
@@ -23,7 +23,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = entity.userId,
             uri = userUriTransformer.build(entity.userId, entity.webFinger),
             webFinger = entity.webFinger,
-            platform = platformEntityAdapter.toPlatform(entity.platform),
+            platform = entity.platform.toPlatform(),
             baseUrl = entity.baseUrl,
             name = entity.name,
             description = entity.description,
@@ -41,7 +41,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = user.userId,
             uri = user.uri.toString(),
             webFinger = user.webFinger,
-            platform = platformEntityAdapter.fromPlatform(user.platform),
+            platform = user.platform.toEntity(),
             baseUrl = user.baseUrl,
             name = user.userName,
             description = user.description,
@@ -73,6 +73,25 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             token = token,
         )
     }
+
+    private fun ActivityPubLoggedAccountEntity.BlogPlatformEntity.toPlatform(): BlogPlatform =
+        BlogPlatform(
+            uri = uri,
+            name = name,
+            description = description,
+            baseUrl = baseUrl,
+            thumbnail = thumbnail,
+            protocol = protocol,
+        )
+
+    private fun BlogPlatform.toEntity() = ActivityPubLoggedAccountEntity.BlogPlatformEntity(
+        uri = uri,
+        name = name,
+        description = description,
+        baseUrl = baseUrl,
+        thumbnail = thumbnail,
+        protocol = protocol,
+    )
 
     private fun accountToWebFinger(account: ActivityPubAccountEntity): WebFinger {
         WebFinger.create(account.acct)?.let { return it }

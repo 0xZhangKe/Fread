@@ -2,8 +2,8 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.screen.server.adapter.ServiceDetailUiStateAdapter
-import com.zhangke.utopia.activitypub.app.internal.usecase.GetInstanceUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 internal class ServerDetailViewModel @Inject constructor(
-    private val getInstance: GetInstanceUseCase,
+    private val platformRepo: ActivityPubPlatformRepo,
     private val uiStateAdapter: ServiceDetailUiStateAdapter,
 ) : ViewModel() {
 
@@ -41,7 +41,7 @@ internal class ServerDetailViewModel @Inject constructor(
 
     fun onPageResume() {
         launchInViewModel {
-            getInstance(serverBaseUrl)
+            platformRepo.getInstanceEntity(serverBaseUrl)
                 .onSuccess {
                     _uiState.value = uiStateAdapter.createUiState(
                         entity = it,

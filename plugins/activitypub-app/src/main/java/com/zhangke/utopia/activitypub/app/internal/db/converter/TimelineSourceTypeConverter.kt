@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.db
+package com.zhangke.utopia.activitypub.app.internal.db.converter
 
 import androidx.room.TypeConverter
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType

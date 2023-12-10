@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.db
+package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubPollEntity
 import com.zhangke.utopia.status.blog.BlogPoll

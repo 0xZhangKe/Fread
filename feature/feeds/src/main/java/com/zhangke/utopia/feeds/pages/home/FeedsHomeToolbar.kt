@@ -93,7 +93,10 @@ fun FeedsHomeTopBar(
             ) {
                 platformList.forEach { source ->
                     DropdownMenuItem(
-                        onClick = { onServerItemClick(source) },
+                        onClick = {
+                            showSelectSourcePopup = false
+                            onServerItemClick(source)
+                        },
                         text = {
                             Text(text = source.name)
                         }

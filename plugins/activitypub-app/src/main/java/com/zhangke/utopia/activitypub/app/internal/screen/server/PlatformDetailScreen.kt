@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
@@ -164,210 +165,214 @@ class PlatformDetailScreen(private val serverBaseUrl: String) : AndroidScreen() 
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
         }
-        CollapsableTopBarLayout(
-            modifier = Modifier.statusBarsPadding(),
-            minTopBarHeight = toolbarHeight,
-            contentCanScrollBackward = contentCanScrollBackward,
-            topBar = { collapsableProgress ->
-                MotionLayout(
-                    modifier = Modifier.fillMaxWidth(),
-                    motionScene = motionScene,
-                    progress = collapsableProgress,
-                ) {
-                    AsyncImage(
-                        modifier = Modifier
-                            .layoutId("banner")
-                            .utopiaPlaceholder(uiState.loading),
-                        model = uiState.thumbnail,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Thumbnail",
-                    )
-                    Surface(modifier = Modifier.layoutId("content")) {
-                        Column(
-                            modifier = Modifier.padding(
-                                start = 10.dp,
-                                top = 10.dp,
-                                end = 10.dp,
-                                bottom = 10.dp,
-                            )
-                        ) {
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 40.dp)
-                                    .utopiaPlaceholder(visible = uiState.loading),
-                                text = uiState.title,
-                                fontSize = 18.sp,
-                                fontWeight = FontWeight.Bold,
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 4.dp)
-                                    .utopiaPlaceholder(visible = uiState.loading),
-                                text = uiState.baseUrl,
-                                fontSize = 12.sp,
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 4.dp)
-                                    .utopiaPlaceholder(visible = uiState.loading),
-                                text = uiState.description,
-                                maxLines = 4,
-                                overflow = TextOverflow.Ellipsis,
-                                fontSize = 14.sp,
-                            )
-                            val languageString = uiState.languages.joinToString(", ")
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 4.dp)
-                                    .utopiaPlaceholder(visible = uiState.loading),
-                                text = "语言：$languageString",
-                                maxLines = 3,
-                                fontSize = 14.sp,
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(top = 4.dp)
-                                    .utopiaPlaceholder(visible = uiState.loading),
-                                text = "月活：${uiState.activeMonth}",
-                                fontSize = 14.sp,
-                            )
-
-                            if (uiState.contract != null) {
-                                Row(
+        Scaffold { paddings ->
+            CollapsableTopBarLayout(
+                modifier = Modifier
+                    .statusBarsPadding()
+                    .padding(paddings),
+                minTopBarHeight = toolbarHeight,
+                contentCanScrollBackward = contentCanScrollBackward,
+                topBar = { collapsableProgress ->
+                    MotionLayout(
+                        modifier = Modifier.fillMaxWidth(),
+                        motionScene = motionScene,
+                        progress = collapsableProgress,
+                    ) {
+                        AsyncImage(
+                            modifier = Modifier
+                                .layoutId("banner")
+                                .utopiaPlaceholder(uiState.loading),
+                            model = uiState.thumbnail,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "Thumbnail",
+                        )
+                        Surface(modifier = Modifier.layoutId("content")) {
+                            Column(
+                                modifier = Modifier.padding(
+                                    start = 10.dp,
+                                    top = 10.dp,
+                                    end = 10.dp,
+                                    bottom = 10.dp,
+                                )
+                            ) {
+                                Text(
                                     modifier = Modifier
-                                        .fillMaxWidth()
+                                        .padding(top = 40.dp)
                                         .utopiaPlaceholder(visible = uiState.loading),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    Text(
-                                        modifier = Modifier
-                                            .background(
-                                                Color(0x6644429F),
-                                                RoundedCornerShape(3.dp),
-                                            )
-                                            .padding(vertical = 2.dp, horizontal = 4.dp),
-                                        text = "MOD",
-                                        fontSize = 14.sp,
-                                        fontWeight = FontWeight.Bold,
-                                    )
+                                    text = uiState.title,
+                                    fontSize = 18.sp,
+                                    fontWeight = FontWeight.Bold,
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(top = 4.dp)
+                                        .utopiaPlaceholder(visible = uiState.loading),
+                                    text = uiState.baseUrl,
+                                    fontSize = 12.sp,
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(top = 4.dp)
+                                        .utopiaPlaceholder(visible = uiState.loading),
+                                    text = uiState.description,
+                                    maxLines = 4,
+                                    overflow = TextOverflow.Ellipsis,
+                                    fontSize = 14.sp,
+                                )
+                                val languageString = uiState.languages.joinToString(", ")
+                                Text(
+                                    modifier = Modifier
+                                        .padding(top = 4.dp)
+                                        .utopiaPlaceholder(visible = uiState.loading),
+                                    text = "语言：$languageString",
+                                    maxLines = 3,
+                                    fontSize = 14.sp,
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(top = 4.dp)
+                                        .utopiaPlaceholder(visible = uiState.loading),
+                                    text = "月活：${uiState.activeMonth}",
+                                    fontSize = 14.sp,
+                                )
 
-                                    AsyncImage(
+                                if (uiState.contract != null) {
+                                    Row(
                                         modifier = Modifier
-                                            .padding(start = 6.dp)
-                                            .size(18.dp)
-                                            .clip(CircleShape),
-                                        model = uiState.contract.account.avatar,
-                                        contentDescription = "Mod avatar",
-                                    )
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(start = 4.dp),
-                                        text = uiState.contract.account.name,
-                                        fontSize = 14.sp,
-                                    )
-                                    Text(
-                                        modifier = Modifier
-                                            .padding(start = 4.dp),
-                                        text = uiState.contract.email,
-                                        fontSize = 14.sp,
-                                    )
+                                            .fillMaxWidth()
+                                            .utopiaPlaceholder(visible = uiState.loading),
+                                        verticalAlignment = Alignment.CenterVertically,
+                                    ) {
+                                        Text(
+                                            modifier = Modifier
+                                                .background(
+                                                    Color(0x6644429F),
+                                                    RoundedCornerShape(3.dp),
+                                                )
+                                                .padding(vertical = 2.dp, horizontal = 4.dp),
+                                            text = "MOD",
+                                            fontSize = 14.sp,
+                                            fontWeight = FontWeight.Bold,
+                                        )
+
+                                        AsyncImage(
+                                            modifier = Modifier
+                                                .padding(start = 6.dp)
+                                                .size(18.dp)
+                                                .clip(CircleShape),
+                                            model = uiState.contract.account.avatar,
+                                            contentDescription = "Mod avatar",
+                                        )
+                                        Text(
+                                            modifier = Modifier
+                                                .padding(start = 4.dp),
+                                            text = uiState.contract.account.name,
+                                            fontSize = 14.sp,
+                                        )
+                                        Text(
+                                            modifier = Modifier
+                                                .padding(start = 4.dp),
+                                            text = uiState.contract.email,
+                                            fontSize = 14.sp,
+                                        )
+                                    }
                                 }
                             }
                         }
-                    }
-                    Surface(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(toolbarHeight)
-                            .background(Color.White)
-                            .layoutId("toolbarPlaceholder"),
-                        shadowElevation = 2.dp,
-                    ) {}
-                    AsyncImage(
-                        modifier = Modifier
-                            .size(64.dp)
-                            .clip(CircleShape)
-                            .border(2.dp, Color.White, CircleShape)
-                            .layoutId("avatar")
-                            .utopiaPlaceholder(visible = uiState.loading),
-                        model = uiState.thumbnail,
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "avatar",
-                    )
-                    val backIconProperties = motionProperties(id = "backIcon")
-                    Box(
-                        modifier = Modifier
-                            .height(ToolbarTokens.ContainerHeight)
-                            .padding(start = ToolbarTokens.TopAppBarHorizontalPadding)
-                            .layoutId("backIcon"),
-                        contentAlignment = Alignment.Center,
-                    ) {
-                        IconButton(onClick = onBackClick) {
-                            Icon(
-                                modifier = Modifier.size(ToolbarTokens.LeadingIconSize),
-                                painter = rememberVectorPainter(Icons.Default.ArrowBack),
-                                contentDescription = "back",
-                                tint = backIconProperties.value.color("color"),
-                            )
-                        }
-                    }
-                    val toolbarTitleProperties = motionProperties(id = "toolbarTitle")
-                    val toolbarTitleVisible = toolbarTitleProperties.value.float("visible")
-                    Text(
-                        modifier = Modifier.layoutId("toolbarTitle"),
-                        text = uiState.title,
-                        fontSize = 18.sp,
-                        fontWeight = FontWeight.Bold,
-                        color = Color.Black.copy(alpha = if (toolbarTitleVisible >= 1F) 1F else 0F),
-                    )
-                }
-            }
-        ) {
-            Column {
-                val tabs = uiState.tabs
-                val pagerState = rememberPagerState(
-                    initialPage = 0,
-                    pageCount = tabs::size,
-                )
-                TabRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    selectedTabIndex = pagerState.currentPage,
-                ) {
-                    tabs.forEachIndexed { index, item ->
-                        Tab(
-                            selected = pagerState.currentPage == index,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.scrollToPage(index)
-                                }
-                            },
+                        Surface(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .height(toolbarHeight)
+                                .background(Color.White)
+                                .layoutId("toolbarPlaceholder"),
+                            shadowElevation = 2.dp,
+                        ) {}
+                        AsyncImage(
+                            modifier = Modifier
+                                .size(64.dp)
+                                .clip(CircleShape)
+                                .border(2.dp, Color.White, CircleShape)
+                                .layoutId("avatar")
+                                .utopiaPlaceholder(visible = uiState.loading),
+                            model = uiState.thumbnail,
+                            contentScale = ContentScale.Crop,
+                            contentDescription = "avatar",
+                        )
+                        val backIconProperties = motionProperties(id = "backIcon")
+                        Box(
+                            modifier = Modifier
+                                .height(ToolbarTokens.ContainerHeight)
+                                .padding(start = ToolbarTokens.TopAppBarHorizontalPadding)
+                                .layoutId("backIcon"),
+                            contentAlignment = Alignment.Center,
                         ) {
-                            Box(
-                                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                            ) {
-                                Text(
-                                    text = textString(item.title),
+                            IconButton(onClick = onBackClick) {
+                                Icon(
+                                    modifier = Modifier.size(ToolbarTokens.LeadingIconSize),
+                                    painter = rememberVectorPainter(Icons.Default.ArrowBack),
+                                    contentDescription = "back",
+                                    tint = backIconProperties.value.color("color"),
                                 )
                             }
                         }
+                        val toolbarTitleProperties = motionProperties(id = "toolbarTitle")
+                        val toolbarTitleVisible = toolbarTitleProperties.value.float("visible")
+                        Text(
+                            modifier = Modifier.layoutId("toolbarTitle"),
+                            text = uiState.title,
+                            fontSize = 18.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = Color.Black.copy(alpha = if (toolbarTitleVisible >= 1F) 1F else 0F),
+                        )
                     }
                 }
-                HorizontalPager(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1F),
-                    state = pagerState,
-                ) { currentPage ->
-                    // TODO check this, why need Screen params but receiver
-                    val host = uiState.baseUrl
-                    if (host.isNotEmpty()) {
-                        tabs[currentPage].content(
-                            this@PlatformDetailScreen,
-                            uiState.baseUrl,
-                            uiState.rules,
-                            contentCanScrollBackward,
-                        )
+            ) {
+                Column {
+                    val tabs = uiState.tabs
+                    val pagerState = rememberPagerState(
+                        initialPage = 0,
+                        pageCount = tabs::size,
+                    )
+                    TabRow(
+                        modifier = Modifier
+                            .fillMaxWidth(),
+                        selectedTabIndex = pagerState.currentPage,
+                    ) {
+                        tabs.forEachIndexed { index, item ->
+                            Tab(
+                                selected = pagerState.currentPage == index,
+                                onClick = {
+                                    coroutineScope.launch {
+                                        pagerState.scrollToPage(index)
+                                    }
+                                },
+                            ) {
+                                Box(
+                                    modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                                ) {
+                                    Text(
+                                        text = textString(item.title),
+                                    )
+                                }
+                            }
+                        }
+                    }
+                    HorizontalPager(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1F),
+                        state = pagerState,
+                    ) { currentPage ->
+                        // TODO check this, why need Screen params but receiver
+                        val host = uiState.baseUrl
+                        if (host.isNotEmpty()) {
+                            tabs[currentPage].content(
+                                this@PlatformDetailScreen,
+                                uiState.baseUrl,
+                                uiState.rules,
+                                contentCanScrollBackward,
+                            )
+                        }
                     }
                 }
             }

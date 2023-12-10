@@ -26,16 +26,17 @@ data class ActivityPubLoggedAccountEntity(
     val homepage: String?,
     val active: Boolean,
     val token: ActivityPubTokenEntity,
-)
+) {
 
-data class BlogPlatformEntity(
-    val uri: String,
-    val name: String,
-    val description: String,
-    val baseUrl: String,
-    val protocol: String,
-    val thumbnail: String?,
-)
+    data class BlogPlatformEntity(
+        val uri: String,
+        val name: String,
+        val description: String,
+        val baseUrl: String,
+        val protocol: String,
+        val thumbnail: String?,
+    )
+}
 
 @Dao
 interface ActivityPubLoggerAccountDao {

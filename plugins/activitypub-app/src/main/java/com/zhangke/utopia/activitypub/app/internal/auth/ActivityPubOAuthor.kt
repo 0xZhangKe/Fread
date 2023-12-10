@@ -7,6 +7,8 @@ import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
+import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -22,13 +24,17 @@ class ActivityPubOAuthor @Inject constructor(
     private val repo: ActivityPubLoggedAccountRepo,
     private val applicationRepo: ActivityPubApplicationRepo,
     private val clientManager: ActivityPubClientManager,
-    private val accountAdapter: ActivityPubLoggedAccountAdapter
+    private val accountAdapter: ActivityPubLoggedAccountAdapter,
+    private val platformEntityAdapter: ActivityPubPlatformEntityAdapter,
+    private val activityPubDatabases: ActivityPubDatabases,
 ) {
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
     suspend fun startOauth(baseUrl: String): Result<Boolean> {
-        val app = applicationRepo.getApplicationByBaseUrl(baseUrl) ?: return Result.failure(IllegalStateException("Can not get application info by $baseUrl"))
+        val app = applicationRepo.getApplicationByBaseUrl(baseUrl) ?: return Result.failure(
+            IllegalStateException("Can not get application info by $baseUrl")
+        )
         val client = clientManager.getClient(baseUrl)
         val oauthUrl = client.oauthRepo.buildOAuthUrl(
             baseUrl = baseUrl,
@@ -39,6 +45,8 @@ class ActivityPubOAuthor @Inject constructor(
         val code = oauthCodeFlow.first()
         val account = try {
             val instance = client.instanceRepo.getInstanceInformation().getOrThrow()
+            activityPubDatabases.getPlatformDao()
+                .insert(platformEntityAdapter.toEntity(baseUrl, instance))
             val token = client.oauthRepo.getToken(
                 code = code,
                 clientId = app.clientId,

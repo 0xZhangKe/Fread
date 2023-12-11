@@ -14,10 +14,12 @@ class GetUserStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         userUriInsights: UserUriInsights,
         limit: Int,
+        sinceId: String?,
     ): Result<List<Status>> {
         return getClientUseCase().accountRepo.getStatuses(
             id = userUriInsights.userId,
             limit = limit,
+            sinceId = sinceId,
         ).map { it.map(activityPubStatusAdapter::adapt) }
     }
 }

@@ -28,7 +28,12 @@ private const val DB_VERSION = 1
     WebFingerConverter::class,
 )
 @Database(
-    entities = [StatusSourceEntity::class, FeedsConfigEntity::class, StatusContentEntity::class],
+    entities = [
+        StatusSourceEntity::class,
+        FeedsConfigEntity::class,
+        StatusContentEntity::class,
+        StatusLinkedEntity::class,
+    ],
     version = DB_VERSION,
     exportSchema = false,
 )
@@ -39,6 +44,8 @@ abstract class StatusDatabase : RoomDatabase() {
     abstract fun getFeedsConfigDao(): FeedsConfigDao
 
     abstract fun getStatusContentDao(): StatusContentDao
+
+    abstract fun getStatusLinkedDao(): StatusLinkedDao
 
     companion object {
 

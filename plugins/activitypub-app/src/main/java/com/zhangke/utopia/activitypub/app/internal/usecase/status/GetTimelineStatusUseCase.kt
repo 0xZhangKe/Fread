@@ -15,12 +15,13 @@ class GetTimelineStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         timelineUriInsights: TimelineSourceUriInsights,
         limit: Int,
+        sinceId: String?,
     ): Result<List<Status>> {
         val timelineRepo = getClientUseCase(timelineUriInsights.serverBaseUrl).timelinesRepo
         return when (timelineUriInsights.type) {
-            TimelineSourceType.HOME -> timelineRepo.homeTimeline(limit = limit)
-            TimelineSourceType.LOCAL -> timelineRepo.localTimelines(limit = limit)
-            TimelineSourceType.PUBLIC -> timelineRepo.publicTimelines(limit = limit)
+            TimelineSourceType.HOME -> timelineRepo.homeTimeline(limit = limit, sinceId = sinceId)
+            TimelineSourceType.LOCAL -> timelineRepo.localTimelines(limit = limit, sinceId = sinceId)
+            TimelineSourceType.PUBLIC -> timelineRepo.publicTimelines(limit = limit, sinceId = sinceId)
         }.map { it.map(activityPubStatusAdapter::adapt) }
     }
 }

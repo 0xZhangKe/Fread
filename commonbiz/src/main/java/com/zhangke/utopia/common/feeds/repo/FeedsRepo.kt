@@ -3,8 +3,10 @@ package com.zhangke.utopia.common.feeds.repo
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
+import com.zhangke.utopia.common.status.repo.StatusLinkedRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.uri.StatusProviderUri
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -14,6 +16,7 @@ import javax.inject.Inject
 class FeedsRepo @Inject constructor(
     private val statusContentRepo: StatusContentRepo,
     private val statusProvider: StatusProvider,
+    private val statusLinkedRepo: StatusLinkedRepo,
 ) {
 
     suspend fun fetchStatusByFeedsConfig(
@@ -31,7 +34,7 @@ class FeedsRepo @Inject constructor(
         resultList.forEach { (uri, result) ->
             val list = result.getOrNull()
             if (!list.isNullOrEmpty()) {
-                statusContentRepo.insert(uri, list)
+                saveStatusContentToLocal(uri, list)
             }
         }
         val hasSuccess = resultList.any { it.second.isSuccess }
@@ -43,7 +46,44 @@ class FeedsRepo @Inject constructor(
         }
     }
 
+    private suspend fun saveStatusContentToLocal(uri: StatusProviderUri, statusList: List<Status>) {
+        statusContentRepo.insert(uri, statusList)
+        val linkedList = statusList.mapIndexedNotNull { index, status ->
+            if (index == statusList.lastIndex) {
+                null
+            } else {
+                status.id to statusList[index + 1].id
+            }
+        }
+        statusLinkedRepo.insertList(linkedList)
+    }
+
     fun getStatusFlowByFeedsConfig(feedsConfig: FeedsConfig): Flow<List<Status>> {
         return statusContentRepo.queryBySourceUriList(feedsConfig.sourceUriList)
+    }
+
+    suspend fun loadMore(
+        feedsConfig: FeedsConfig,
+        latestStatusId: String,
+        limit: Int = 30,
+    ): Result<Unit> {
+        val nextId = statusLinkedRepo.getNextId(latestStatusId)
+        if (nextId == null) {
+            statusProvider.statusResolver.getStatusList()
+        }
+        return Result.success(Unit)
+    }
+
+    private suspend fun loadMoreByUri(
+        uri: StatusProviderUri,
+        latestStatusId: String,
+        limit: Int,
+    ): Result<Unit> {
+        val nextId = statusLinkedRepo.getNextId(latestStatusId)
+        if (nextId.isNullOrEmpty()){
+            statusProvider.statusResolver.getStatusList(uri = uri, limit = limit, sinceId = latestStatusId)
+        }else{
+
+        }
     }
 }

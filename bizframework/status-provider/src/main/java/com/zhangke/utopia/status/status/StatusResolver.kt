@@ -30,10 +30,11 @@ class StatusResolver(
 
     suspend fun getStatusList(
         uri: StatusProviderUri,
-        pageSie: Int,
+        limit: Int,
+        sinceId: String? = null,
     ): Result<List<Status>> {
         for (statusResolver in resolverList) {
-            statusResolver.getStatusList(uri, pageSie)?.let { return it }
+            statusResolver.getStatusList(uri, limit, sinceId)?.let { return it }
         }
         return Result.failure(IllegalArgumentException("Unsupported uri:$uri!"))
     }
@@ -44,7 +45,7 @@ interface IStatusResolver {
     /**
      * @return null if un-support
      */
-    suspend fun getStatusList(uri: StatusProviderUri, limit: Int): Result<List<Status>>?
+    suspend fun getStatusList(uri: StatusProviderUri, limit: Int, sinceId: String?): Result<List<Status>>?
 
     fun getStatusDataSourceByUri(uri: StatusProviderUri): StatusDataSource<*, Status>?
 }

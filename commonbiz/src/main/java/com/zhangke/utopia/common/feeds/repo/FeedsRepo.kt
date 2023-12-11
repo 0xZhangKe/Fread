@@ -19,6 +19,14 @@ class FeedsRepo @Inject constructor(
     private val statusLinkedRepo: StatusLinkedRepo,
 ) {
 
+    suspend fun getStatus(
+        feedsConfig: FeedsConfig,
+
+        limit: Int = 50,
+    ): Result<List<Status>> {
+
+    }
+
     suspend fun fetchStatusByFeedsConfig(
         feedsConfig: FeedsConfig,
         limit: Int = 30,
@@ -46,6 +54,49 @@ class FeedsRepo @Inject constructor(
         }
     }
 
+    fun getStatusFlowByFeedsConfig(feedsConfig: FeedsConfig): Flow<List<Status>> {
+        return statusContentRepo.queryBySourceUriList(feedsConfig.sourceUriList)
+    }
+
+//    suspend fun loadMore(
+//        feedsConfig: FeedsConfig,
+//        latestStatusId: String,
+//        limit: Int = 30,
+//    ): Result<Unit> {
+//        val nextId = statusLinkedRepo.getNextId(latestStatusId)
+//        if (nextId == null) {
+//            statusProvider.statusResolver.getStatusList()
+//        }
+//        return Result.success(Unit)
+//    }
+//
+//    private suspend fun loadMoreByUri(
+//        uri: StatusProviderUri,
+//        latestStatusId: String,
+//        limit: Int,
+//    ): Result<Unit> {
+//        val nextId = statusLinkedRepo.getNextId(latestStatusId)
+//        if (nextId.isNullOrEmpty()){
+//            statusProvider.statusResolver.getStatusList(uri = uri, limit = limit, sinceId = latestStatusId)
+//        }else{
+//
+//        }
+//    }
+
+    private suspend fun requestStatusFromFeedsConfig(
+        feedsConfig: FeedsConfig,
+        limit: Int = 30,
+    ): List<Pair<StatusProviderUri, Result<List<Status>>>> {
+        val statusResolver = statusProvider.statusResolver
+        return coroutineScope {
+            feedsConfig.sourceUriList.map {
+                async {
+                    it to statusResolver.getStatusList(it, limit)
+                }
+            }.awaitAll()
+        }
+    }
+
     private suspend fun saveStatusContentToLocal(uri: StatusProviderUri, statusList: List<Status>) {
         statusContentRepo.insert(uri, statusList)
         val linkedList = statusList.mapIndexedNotNull { index, status ->
@@ -56,34 +107,5 @@ class FeedsRepo @Inject constructor(
             }
         }
         statusLinkedRepo.insertList(linkedList)
-    }
-
-    fun getStatusFlowByFeedsConfig(feedsConfig: FeedsConfig): Flow<List<Status>> {
-        return statusContentRepo.queryBySourceUriList(feedsConfig.sourceUriList)
-    }
-
-    suspend fun loadMore(
-        feedsConfig: FeedsConfig,
-        latestStatusId: String,
-        limit: Int = 30,
-    ): Result<Unit> {
-        val nextId = statusLinkedRepo.getNextId(latestStatusId)
-        if (nextId == null) {
-            statusProvider.statusResolver.getStatusList()
-        }
-        return Result.success(Unit)
-    }
-
-    private suspend fun loadMoreByUri(
-        uri: StatusProviderUri,
-        latestStatusId: String,
-        limit: Int,
-    ): Result<Unit> {
-        val nextId = statusLinkedRepo.getNextId(latestStatusId)
-        if (nextId.isNullOrEmpty()){
-            statusProvider.statusResolver.getStatusList(uri = uri, limit = limit, sinceId = latestStatusId)
-        }else{
-
-        }
     }
 }

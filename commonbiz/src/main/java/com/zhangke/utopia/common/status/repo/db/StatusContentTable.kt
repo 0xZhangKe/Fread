@@ -12,8 +12,6 @@ import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.StatusType
 import com.zhangke.utopia.status.uri.StatusProviderUri
-import kotlinx.coroutines.flow.Flow
-import java.util.Date
 
 private const val TABLE_NAME = "status_content"
 
@@ -31,7 +29,7 @@ data class StatusContentEntity(
     val statusIdOfPlatform: String,
     val title: String?,
     val content: String,
-    val date: Date,
+    val createTimestamp: Long,
     val forwardCount: Int?,
     val likeCount: Int?,
     val repliesCount: Int?,
@@ -47,10 +45,21 @@ interface StatusContentDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri")
     suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<StatusContentEntity>
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY date DESC")
-    fun queryBySourceUriList(
-        sourceUriList: List<StatusProviderUri>
-    ): Flow<List<StatusContentEntity>>
+    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
+    suspend fun queryBySourceUriList(
+        sourceUriList: List<StatusProviderUri>,
+        limit: Int,
+    ): List<StatusContentEntity>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
+    suspend fun queryById(id: String): StatusContentEntity?
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
+    suspend fun queryBySourceUriListBefore(
+        sourceUriList: List<StatusProviderUri>,
+        createTimestamp: Long,
+        limit: Int,
+    ): List<StatusContentEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: StatusContentEntity)

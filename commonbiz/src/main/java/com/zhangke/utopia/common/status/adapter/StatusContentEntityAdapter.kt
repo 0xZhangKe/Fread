@@ -21,11 +21,11 @@ class StatusContentEntityAdapter @Inject constructor(
     fun toEntityList(
         sourceUri: StatusProviderUri,
         statusList: List<Status>,
-        nextIdOdLatest: String? = null,
+        nextIdOfLatest: String? = null,
     ): List<StatusContentEntity> {
         return statusList.mapIndexed { index, status ->
             val nextStatusId = if (index == statusList.lastIndex) {
-                nextIdOdLatest
+                nextIdOfLatest
             } else {
                 statusList[index + 1].id
             }

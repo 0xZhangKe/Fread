@@ -3,7 +3,6 @@ package com.zhangke.utopia.common.feeds.repo
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
-import com.zhangke.utopia.common.status.repo.StatusLinkedRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri
@@ -13,10 +12,9 @@ import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
-class FeedsRepo @Inject constructor(
+class FeedsRepo @Inject internal constructor(
     private val statusContentRepo: StatusContentRepo,
     private val statusProvider: StatusProvider,
-    private val statusLinkedRepo: StatusLinkedRepo,
 ) {
 
     suspend fun getStatus(
@@ -52,10 +50,6 @@ class FeedsRepo @Inject constructor(
         } else {
             Result.failure(exception ?: IllegalStateException("fetch failed!"))
         }
-    }
-
-    fun getStatusFlowByFeedsConfig(feedsConfig: FeedsConfig): Flow<List<Status>> {
-        return statusContentRepo.queryBySourceUriList(feedsConfig.sourceUriList)
     }
 
 //    suspend fun loadMore(

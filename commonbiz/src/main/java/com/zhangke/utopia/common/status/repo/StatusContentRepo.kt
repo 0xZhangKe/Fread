@@ -2,39 +2,51 @@ package com.zhangke.utopia.common.status.repo
 
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.db.StatusContentDao
+import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
-import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
-class StatusContentRepo @Inject constructor(
+internal class StatusContentRepo @Inject constructor(
     private val statusDatabase: StatusDatabase,
     private val sourceContentEntityAdapter: StatusContentEntityAdapter,
 ) {
 
     private val statusContentDao: StatusContentDao get() = statusDatabase.getStatusContentDao()
 
-    suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<Status> {
+    suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<StatusContentEntity> {
         return statusContentDao.queryBySourceUri(sourceUri)
-            .map(sourceContentEntityAdapter::toStatus)
     }
 
-    fun queryBySourceUriList(
-        sourceUriList: List<StatusProviderUri>
-    ): Flow<List<Status>> {
-        return statusContentDao.queryBySourceUriList(sourceUriList)
-            .map { it.map(sourceContentEntityAdapter::toStatus) }
+    suspend fun querySourceById(id: String): StatusContentEntity? {
+        return statusContentDao.queryById(id)
     }
 
-    suspend fun insert(statusSourceUri: StatusProviderUri, status: Status) {
-        statusContentDao.insert(sourceContentEntityAdapter.toEntity(statusSourceUri, status))
+    suspend fun queryBySourceUriListBefore(
+        sourceUriList: List<StatusProviderUri>,
+        createTimestamp: Long,
+        limit: Int,
+    ): List<StatusContentEntity> {
+        return statusContentDao.queryBySourceUriListBefore(
+            sourceUriList = sourceUriList,
+            createTimestamp = createTimestamp,
+            limit = limit,
+        )
     }
 
-    suspend fun insert(statusSourceUri: StatusProviderUri, statusList: List<Status>) {
-        statusList.map { sourceContentEntityAdapter.toEntity(statusSourceUri, it) }
-            .let { statusContentDao.insert(it) }
+    suspend fun queryBySourceUriList(
+        sourceUriList: List<StatusProviderUri>,
+        limit: Int,
+    ): List<StatusContentEntity> {
+        return statusContentDao.queryBySourceUriList(sourceUriList, limit)
+    }
+
+    suspend fun insert(status: StatusContentEntity) {
+        statusContentDao.insert(status)
+    }
+
+    suspend fun insert(statusList: List<StatusContentEntity>) {
+        statusContentDao.insert(statusList)
     }
 
     suspend fun deleteById(id: Long) {

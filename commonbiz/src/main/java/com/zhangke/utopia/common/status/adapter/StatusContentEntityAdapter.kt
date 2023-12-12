@@ -7,6 +7,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusType
 import com.zhangke.utopia.status.uri.StatusProviderUri
+import java.util.Date
 import javax.inject.Inject
 
 class StatusContentEntityAdapter @Inject constructor(
@@ -17,10 +18,30 @@ class StatusContentEntityAdapter @Inject constructor(
         return Status.NewBlog(toBlog(entity))
     }
 
-    fun toEntity(sourceUri: StatusProviderUri, status: Status): StatusContentEntity {
+    fun toEntityList(
+        sourceUri: StatusProviderUri,
+        statusList: List<Status>,
+        nextIdOdLatest: String? = null,
+    ): List<StatusContentEntity> {
+        return statusList.mapIndexed { index, status ->
+            val nextStatusId = if (index == statusList.lastIndex) {
+                nextIdOdLatest
+            } else {
+                statusList[index + 1].id
+            }
+            toEntity(sourceUri = sourceUri, status = status, nextStatusId = nextStatusId)
+        }
+    }
+
+    fun toEntity(
+        sourceUri: StatusProviderUri,
+        status: Status,
+        nextStatusId: String?,
+    ): StatusContentEntity {
         val blog = (status as Status.NewBlog).blog
         return StatusContentEntity(
             id = statusIdGenerator.generate(sourceUri, status),
+            nextStatusId = nextStatusId,
             sourceUri = sourceUri,
             type = StatusType.BLOG,
             statusIdOfPlatform = blog.id,
@@ -31,7 +52,7 @@ class StatusContentEntityAdapter @Inject constructor(
             authorAvatar = blog.author.avatar,
             title = blog.title,
             content = blog.content,
-            date = blog.date,
+            createTimestamp = blog.date.time,
             forwardCount = blog.forwardCount,
             likeCount = blog.likeCount,
             repliesCount = blog.repliesCount,
@@ -48,7 +69,7 @@ class StatusContentEntityAdapter @Inject constructor(
             author = toAuthor(entity),
             title = entity.title,
             content = entity.content,
-            date = entity.date,
+            date = Date(entity.createTimestamp),
             forwardCount = entity.forwardCount,
             likeCount = entity.likeCount,
             repliesCount = entity.repliesCount,

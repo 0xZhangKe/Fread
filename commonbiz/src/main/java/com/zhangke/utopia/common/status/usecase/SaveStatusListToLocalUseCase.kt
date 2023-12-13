@@ -14,12 +14,12 @@ class SaveStatusListToLocalUseCase @Inject internal constructor(
     suspend operator fun invoke(
         statusSourceUri: StatusProviderUri,
         statusList: List<Status>,
-        previousId: String? = null,
+        sinceId: String? = null,
         nextIdOfLatest: String? = null,
     ) {
         if (statusList.isEmpty()) return
-        if (previousId != null) {
-            updateStatusNextId(previousId, statusList.first().id)
+        if (sinceId != null) {
+            updateStatusNextId(sinceId, statusList.first().id)
         }
         val entityList = statusContentEntityAdapter.toEntityList(
             sourceUri = statusSourceUri,

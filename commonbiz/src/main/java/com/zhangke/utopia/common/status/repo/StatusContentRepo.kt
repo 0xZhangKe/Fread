@@ -39,6 +39,25 @@ internal class StatusContentRepo @Inject constructor(
         )
     }
 
+    suspend fun queryBySourceUriListAfter(
+        sourceUriList: List<StatusProviderUri>,
+        createTimestamp: Long,
+        limit: Int? = null
+    ): List<StatusContentEntity> {
+        return if (limit != null) {
+            statusContentDao.queryBySourceUriListAfter(
+                sourceUriList = sourceUriList,
+                createTimestamp = createTimestamp,
+                limit = limit,
+            )
+        } else {
+            statusContentDao.queryBySourceUriListAfter(
+                sourceUriList = sourceUriList,
+                createTimestamp = createTimestamp,
+            )
+        }
+    }
+
     suspend fun queryBySourceUriList(
         sourceUriList: List<StatusProviderUri>,
         limit: Int,

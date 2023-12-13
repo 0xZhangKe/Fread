@@ -2,6 +2,8 @@ package com.zhangke.utopia.common.status.usecase
 
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
+import com.zhangke.utopia.common.status.repo.StatusContentRepo
+import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
@@ -17,9 +19,15 @@ class GetStatusUseCase @Inject internal constructor(
         limit: Int = 50,
     ): Result<List<Status>> {
         val statusList = getStatusFromLocalUseCase(feedsConfig, sinceId, limit)
-        if (statusList.isNotEmpty()) {
+        if (statusList.size >= limit || areAllStatusIsTheirSourceFirst(statusList)) {
             return Result.success(statusList.map(statusContentEntityAdapter::toStatus))
         }
         return getStatusFromServerUseCase(feedsConfig, sinceId, limit)
+    }
+
+    private fun areAllStatusIsTheirSourceFirst(statusList: List<StatusContentEntity>): Boolean {
+        return statusList.groupBy { it.sourceUri }
+            .map { it.value.lastOrNull()?.nextStatusId == StatusContentRepo.STATUS_END_MAGIC_NUMBER }
+            .reduce { acc, b -> acc && b }
     }
 }

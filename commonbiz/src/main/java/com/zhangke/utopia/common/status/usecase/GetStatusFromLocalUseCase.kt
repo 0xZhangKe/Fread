@@ -22,11 +22,13 @@ internal class GetStatusFromLocalUseCase @Inject internal constructor(
                 getStatus(feedsConfig, limit)
             }
         }
-//        val fractureIndex = list.indexOfFirst { it.nextStatusId.isNullOrEmpty() }
-//        if (fractureIndex != -1) {
-//            return list.subList(0, fractureIndex + 1)
-//        }
-        return list
+        val groupedList = list.groupBy { it.sourceUri }
+        val maxCreateTime = groupedList.mapNotNull { (_, statusList) ->
+            statusList.firstOrNull { it.nextStatusId.isNullOrEmpty() }?.createTimestamp
+        }.maxOrNull() ?: 0L
+        return groupedList.flatMap { (_, statusList) ->
+            statusList.filter { it.createTimestamp >= maxCreateTime }
+        }.sortedByDescending { it.createTimestamp }
     }
 
     private suspend fun getStatusBeforeSinceId(

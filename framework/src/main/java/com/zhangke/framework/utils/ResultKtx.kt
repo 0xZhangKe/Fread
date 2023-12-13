@@ -1,7 +1,7 @@
 package com.zhangke.framework.utils
 
 fun <T> List<Result<List<T>>>.collect(): Result<List<T>> {
-    if (isNotEmpty() && firstOrNull { it.isSuccess } == null) {
+    if (isNotEmpty() && any { it.isSuccess }.not()) {
         return first()
     }
     return mapNotNull {

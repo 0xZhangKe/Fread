@@ -12,6 +12,11 @@ internal class StatusContentRepo @Inject constructor(
     private val sourceContentEntityAdapter: StatusContentEntityAdapter,
 ) {
 
+    companion object {
+
+        const val STATUS_END_MAGIC_NUMBER = "status_end_42"
+    }
+
     private val statusContentDao: StatusContentDao get() = statusDatabase.getStatusContentDao()
 
     suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<StatusContentEntity> {

@@ -20,10 +20,10 @@ sealed interface Status {
         val blog: Blog,
     ) : Status {
 
-        override val id: String = blog.id
+        override val id: String get() = blog.id
 
-        override val datetime: Long = blog.date.time
+        override val datetime: Long get() = blog.date.time
 
-        override val authId: String = blog.author.uri.toString()
+        override val authId: String get() = blog.author.uri.toString()
     }
 }

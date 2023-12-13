@@ -1,11 +1,11 @@
 package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.framework.feeds.fetcher.StatusDataSource
 import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusDataSourceFromUriUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsTimelineFirstStatusUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsUserFirstStatusUseCase
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri
@@ -16,7 +16,8 @@ class ActivityPubStatusResolver @Inject constructor(
     private val getTimelineStatus: GetTimelineStatusUseCase,
     private val userUriTransformer: UserUriTransformer,
     private val timelineUriTransformer: TimelineUriTransformer,
-    private val getUserStatusFromUri: GetUserStatusDataSourceFromUriUseCase,
+    private val isUserFirstStatus: IsUserFirstStatusUseCase,
+    private val isTimelineFirstStatus: IsTimelineFirstStatusUseCase,
 ) : IStatusResolver {
 
     override suspend fun getStatusList(uri: StatusProviderUri, limit: Int, sinceId: String?): Result<List<Status>>? {
@@ -31,7 +32,15 @@ class ActivityPubStatusResolver @Inject constructor(
         return null
     }
 
-    override fun getStatusDataSourceByUri(uri: StatusProviderUri): StatusDataSource<*, Status>? {
-        return getUserStatusFromUri(uri)
+    override suspend fun checkIsFirstStatus(sourceUri: StatusProviderUri, statusId: String): Result<Boolean>? {
+        val userInsights = userUriTransformer.parse(sourceUri)
+        if (userInsights != null) {
+            return isUserFirstStatus(userInsights, statusId)
+        }
+        val timelineInsights = timelineUriTransformer.parse(sourceUri)
+        if (timelineInsights != null) {
+            return isTimelineFirstStatus(timelineInsights, statusId)
+        }
+        return null
     }
 }

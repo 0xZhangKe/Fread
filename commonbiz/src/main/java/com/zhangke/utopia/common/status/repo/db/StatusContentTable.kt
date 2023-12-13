@@ -61,6 +61,12 @@ interface StatusContentDao {
         limit: Int,
     ): List<StatusContentEntity>
 
+    suspend fun queryBySourceUriListAfter(
+        sourceUriList: List<StatusProviderUri>,
+        createTimestamp: Long,
+        limit: Int,
+    ): List<StatusContentEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: StatusContentEntity)
 

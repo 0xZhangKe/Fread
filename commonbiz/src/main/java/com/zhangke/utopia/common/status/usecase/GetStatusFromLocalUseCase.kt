@@ -5,14 +5,14 @@ import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import javax.inject.Inject
 
-class GetStatusFromLocalUseCase @Inject internal constructor(
+internal class GetStatusFromLocalUseCase @Inject internal constructor(
     private val statusContentRepo: StatusContentRepo,
 ) {
 
     suspend operator fun invoke(
         feedsConfig: FeedsConfig,
         sinceId: String?,
-        limit: Int = 50,
+        limit: Int,
     ): List<StatusContentEntity> {
         val list = if (sinceId.isNullOrEmpty()) {
             getStatus(feedsConfig, limit)
@@ -22,10 +22,10 @@ class GetStatusFromLocalUseCase @Inject internal constructor(
                 getStatus(feedsConfig, limit)
             }
         }
-        val fractureIndex = list.indexOfFirst { it.nextStatusId.isNullOrEmpty() }
-        if (fractureIndex != -1) {
-            return list.subList(0, fractureIndex + 1)
-        }
+//        val fractureIndex = list.indexOfFirst { it.nextStatusId.isNullOrEmpty() }
+//        if (fractureIndex != -1) {
+//            return list.subList(0, fractureIndex + 1)
+//        }
         return list
     }
 

@@ -1,32 +1,12 @@
 package com.zhangke.utopia.status.status
 
-import com.zhangke.framework.collections.mapFirstOrNull
-import com.zhangke.framework.feeds.fetcher.FeedsFetcher
-import com.zhangke.framework.feeds.fetcher.FeedsGenerator
-import com.zhangke.framework.feeds.fetcher.StatusDataSource
+import com.zhangke.framework.collections.mapFirst
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.StatusProviderUri
 
 class StatusResolver(
     private val resolverList: List<IStatusResolver>,
 ) {
-
-    fun getStatusDataSourceByUri(
-        uris: List<StatusProviderUri>
-    ): List<StatusDataSource<*, Status>> {
-        return uris.mapNotNull { uri ->
-            resolverList.mapFirstOrNull {
-                it.getStatusDataSourceByUri(uri)
-            }
-        }
-    }
-
-    fun getStatusFeedsByUris(
-        uris: List<StatusProviderUri>,
-        pageSize: Int,
-    ): FeedsFetcher<Status> {
-        return FeedsFetcher(getStatusDataSourceByUri(uris), pageSize, FeedsGenerator())
-    }
 
     suspend fun getStatusList(
         uri: StatusProviderUri,
@@ -38,6 +18,15 @@ class StatusResolver(
         }
         return Result.failure(IllegalArgumentException("Unsupported uri:$uri!"))
     }
+
+    /**
+     * check this status is the first status of this source
+     */
+    suspend fun checkIsFirstStatus(sourceUri: StatusProviderUri, statusId: String): Result<Boolean> {
+        return resolverList.mapFirst {
+            it.checkIsFirstStatus(sourceUri, statusId)
+        }
+    }
 }
 
 interface IStatusResolver {
@@ -47,5 +36,5 @@ interface IStatusResolver {
      */
     suspend fun getStatusList(uri: StatusProviderUri, limit: Int, sinceId: String?): Result<List<Status>>?
 
-    fun getStatusDataSourceByUri(uri: StatusProviderUri): StatusDataSource<*, Status>?
+    suspend fun checkIsFirstStatus(sourceUri: StatusProviderUri, statusId: String): Result<Boolean>?
 }

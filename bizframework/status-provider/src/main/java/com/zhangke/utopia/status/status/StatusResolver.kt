@@ -12,9 +12,15 @@ class StatusResolver(
         uri: StatusProviderUri,
         limit: Int,
         sinceId: String? = null,
+        minId: String? = null,
     ): Result<List<Status>> {
         for (statusResolver in resolverList) {
-            statusResolver.getStatusList(uri, limit, sinceId)?.let { return it }
+            statusResolver.getStatusList(
+                uri = uri,
+                limit = limit,
+                sinceId = sinceId,
+                minId = minId,
+            )?.let { return it }
         }
         return Result.failure(IllegalArgumentException("Unsupported uri:$uri!"))
     }
@@ -34,7 +40,7 @@ interface IStatusResolver {
     /**
      * @return null if un-support
      */
-    suspend fun getStatusList(uri: StatusProviderUri, limit: Int, sinceId: String?): Result<List<Status>>?
+    suspend fun getStatusList(uri: StatusProviderUri, limit: Int, sinceId: String?, minId: String?): Result<List<Status>>?
 
     suspend fun checkIsFirstStatus(sourceUri: StatusProviderUri, statusId: String): Result<Boolean>?
 }

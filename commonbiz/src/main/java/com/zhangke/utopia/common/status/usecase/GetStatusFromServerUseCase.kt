@@ -86,7 +86,7 @@ internal class GetStatusFromServerUseCase @Inject constructor(
         val sinceStatus =
             statusContentRepo.querySourceById(sinceId) ?: return sourceUriList.map { it to null }
         val minTime = sinceStatus.createTimestamp
-        val statusList = statusContentRepo.queryBySourceUriListAfter(
+        val statusList = statusContentRepo.queryAfter(
             sourceUriList = sourceUriList,
             createTimestamp = minTime,
         )

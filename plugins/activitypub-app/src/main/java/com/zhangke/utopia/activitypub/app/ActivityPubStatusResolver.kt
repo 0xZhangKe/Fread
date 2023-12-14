@@ -20,14 +20,29 @@ class ActivityPubStatusResolver @Inject constructor(
     private val isTimelineFirstStatus: IsTimelineFirstStatusUseCase,
 ) : IStatusResolver {
 
-    override suspend fun getStatusList(uri: StatusProviderUri, limit: Int, sinceId: String?): Result<List<Status>>? {
+    override suspend fun getStatusList(
+        uri: StatusProviderUri,
+        limit: Int,
+        sinceId: String?,
+        minId: String?,
+    ): Result<List<Status>>? {
         val userInsights = userUriTransformer.parse(uri)
         if (userInsights != null) {
-            return getUserStatus(userInsights, limit, sinceId)
+            return getUserStatus(
+                userUriInsights = userInsights,
+                limit = limit,
+                sinceId = sinceId,
+                minId = minId,
+            )
         }
         val timelineInsights = timelineUriTransformer.parse(uri)
         if (timelineInsights != null) {
-            return getTimelineStatus(timelineInsights, limit, sinceId)
+            return getTimelineStatus(
+                timelineUriInsights = timelineInsights,
+                limit = limit,
+                sinceId = sinceId,
+                minId = minId,
+            )
         }
         return null
     }

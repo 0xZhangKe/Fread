@@ -4,7 +4,7 @@ import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.db.StatusContentDao
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 internal class StatusContentRepo @Inject constructor(
@@ -19,7 +19,7 @@ internal class StatusContentRepo @Inject constructor(
 
     private val statusContentDao: StatusContentDao get() = statusDatabase.getStatusContentDao()
 
-    suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<StatusContentEntity> {
+    suspend fun queryBySourceUri(sourceUri: FormalUri): List<StatusContentEntity> {
         return statusContentDao.query(sourceUri)
     }
 
@@ -28,7 +28,7 @@ internal class StatusContentRepo @Inject constructor(
     }
 
     suspend fun queryBefore(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity> {
@@ -40,7 +40,7 @@ internal class StatusContentRepo @Inject constructor(
     }
 
     suspend fun queryAfter(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int? = null
     ): List<StatusContentEntity> {
@@ -59,17 +59,17 @@ internal class StatusContentRepo @Inject constructor(
     }
 
     suspend fun query(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         limit: Int,
     ): List<StatusContentEntity> {
         return statusContentDao.query(sourceUriList, limit)
     }
 
-    suspend fun queryFirst(sourceUri: StatusProviderUri): StatusContentEntity? {
+    suspend fun queryFirst(sourceUri: FormalUri): StatusContentEntity? {
         return statusContentDao.queryFirst(sourceUri)
     }
 
-    suspend fun queryLatest(sourceUri: StatusProviderUri): StatusContentEntity? {
+    suspend fun queryLatest(sourceUri: FormalUri): StatusContentEntity? {
         return statusContentDao.queryLatest(sourceUri)
     }
 

@@ -4,7 +4,7 @@ import com.zhangke.utopia.activitypub.app.internal.source.TimelineSourceTransfor
 import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ResolveTimelineSourceByUriUseCase @Inject constructor(
@@ -13,7 +13,7 @@ class ResolveTimelineSourceByUriUseCase @Inject constructor(
     private val getPlatform: GetActivityPubPlatformUseCase,
 ) {
 
-    suspend operator fun invoke(uri: StatusProviderUri): Result<StatusSource?> {
+    suspend operator fun invoke(uri: FormalUri): Result<StatusSource?> {
         val timelineUriData = timelineUriTransformer.parse(uri) ?: return Result.success(null)
         val platform = getPlatform(timelineUriData.serverBaseUrl).getOrNull() ?: return Result.success(null)
         return Result.success(

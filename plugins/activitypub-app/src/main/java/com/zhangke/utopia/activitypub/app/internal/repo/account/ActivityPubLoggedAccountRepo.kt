@@ -6,7 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggerAccountDao
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -63,7 +63,7 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         accountDao.insert(insertList)
     }
 
-    suspend fun updateCurrentAccount(uri: StatusProviderUri) {
+    suspend fun updateCurrentAccount(uri: FormalUri) {
         val insertList = mutableListOf<ActivityPubLoggedAccountEntity>()
         accountDao.queryAll()
             .forEach { entity ->
@@ -88,7 +88,7 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
     suspend fun insert(entries: List<ActivityPubLoggedAccount>) =
         accountDao.insert(entries.map(adapter::recovery))
 
-    suspend fun deleteByUri(uri: StatusProviderUri) = accountDao.deleteByUri(uri.toString())
+    suspend fun deleteByUri(uri: FormalUri) = accountDao.deleteByUri(uri.toString())
 
     suspend fun clear() = accountDao.nukeTable()
 }

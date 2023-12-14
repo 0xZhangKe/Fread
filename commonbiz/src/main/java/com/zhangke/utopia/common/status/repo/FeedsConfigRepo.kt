@@ -5,7 +5,7 @@ import com.zhangke.utopia.common.status.adapter.FeedsConfigEntityAdapter
 import com.zhangke.utopia.common.status.repo.db.FeedsConfigDao
 import com.zhangke.utopia.common.status.repo.db.FeedsConfigEntity
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class FeedsConfigRepo @Inject constructor(
@@ -27,7 +27,7 @@ class FeedsConfigRepo @Inject constructor(
         return feedsConfigDao.queryByName(name).isNotEmpty()
     }
 
-    suspend fun insert(name: String, sourceList: List<StatusProviderUri>) {
+    suspend fun insert(name: String, sourceList: List<FormalUri>) {
         feedsConfigDao.insertOrReplace(
             FeedsConfigEntity(
                 id = 0L,

@@ -6,7 +6,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusType
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import java.util.Date
 import javax.inject.Inject
 
@@ -19,7 +19,7 @@ class StatusContentEntityAdapter @Inject constructor(
     }
 
     fun toEntityList(
-        sourceUri: StatusProviderUri,
+        sourceUri: FormalUri,
         statusList: List<Status>,
         nextIdOfLatest: String? = null,
     ): List<StatusContentEntity> {
@@ -34,7 +34,7 @@ class StatusContentEntityAdapter @Inject constructor(
     }
 
     fun toEntity(
-        sourceUri: StatusProviderUri,
+        sourceUri: FormalUri,
         status: Status,
         nextStatusId: String?,
     ): StatusContentEntity {

@@ -1,12 +1,12 @@
 package com.zhangke.utopia.status.source
 
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 class StatusSourceResolver(
     private val resolverList: List<IStatusSourceResolver>,
 ) {
 
-    suspend fun resolveSourceByUri(uri: StatusProviderUri): Result<StatusSource?>{
+    suspend fun resolveSourceByUri(uri: FormalUri): Result<StatusSource?>{
         resolverList.forEach {
             val result = it.resolveSourceByUri(uri)
             if (result.getOrNull() != null) return result
@@ -17,5 +17,5 @@ class StatusSourceResolver(
 
 interface IStatusSourceResolver {
 
-    suspend fun resolveSourceByUri(uri: StatusProviderUri): Result<StatusSource?>
+    suspend fun resolveSourceByUri(uri: FormalUri): Result<StatusSource?>
 }

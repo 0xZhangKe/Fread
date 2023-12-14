@@ -10,7 +10,7 @@ import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -65,7 +65,7 @@ internal class EditFeedsViewModel @Inject constructor(
         }
     }
 
-    fun onAddSources(uriList: List<StatusProviderUri>) {
+    fun onAddSources(uriList: List<FormalUri>) {
         launchInViewModel {
             val sourceList = _uiState.value.requireSuccessData().sourceList.toMutableList()
             val sourceUriList = sourceList.map { it.uri }
@@ -139,7 +139,7 @@ internal class EditFeedsViewModel @Inject constructor(
         }
     }
 
-    private fun MutableStateFlow<LoadableState<EditFeedsUiState>>.getUriList(): List<StatusProviderUri> {
+    private fun MutableStateFlow<LoadableState<EditFeedsUiState>>.getUriList(): List<FormalUri> {
         return value.requireSuccessData().sourceList.map { it.uri }
     }
 }

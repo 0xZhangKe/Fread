@@ -4,7 +4,7 @@ import com.zhangke.utopia.common.status.adapter.StatusSourceEntityAdapter
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
 import com.zhangke.utopia.common.status.repo.db.StatusSourceDao
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class StatusSourceRepo @Inject constructor(
@@ -18,7 +18,7 @@ class StatusSourceRepo @Inject constructor(
         return statusSourceDao.queryAllSource().map(sourceEntityAdapter::toSource)
     }
 
-    suspend fun queryByUri(uri: StatusProviderUri): StatusSource?{
+    suspend fun queryByUri(uri: FormalUri): StatusSource?{
         return statusSourceDao.queryByUri(uri)?.let(sourceEntityAdapter::toSource)
     }
 

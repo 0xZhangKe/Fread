@@ -5,11 +5,10 @@ import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class FeedsRepo @Inject internal constructor(
@@ -80,7 +79,7 @@ class FeedsRepo @Inject internal constructor(
     private suspend fun requestStatusFromFeedsConfig(
         feedsConfig: FeedsConfig,
         limit: Int = 30,
-    ): List<Pair<StatusProviderUri, Result<List<Status>>>> {
+    ): List<Pair<FormalUri, Result<List<Status>>>> {
         val statusResolver = statusProvider.statusResolver
         return coroutineScope {
             feedsConfig.sourceUriList.map {
@@ -91,7 +90,7 @@ class FeedsRepo @Inject internal constructor(
         }
     }
 
-    private suspend fun saveStatusContentToLocal(uri: StatusProviderUri, statusList: List<Status>) {
+    private suspend fun saveStatusContentToLocal(uri: FormalUri, statusList: List<Status>) {
         statusContentRepo.insert(uri, statusList)
         val linkedList = statusList.mapIndexedNotNull { index, status ->
             if (index == statusList.lastIndex) {

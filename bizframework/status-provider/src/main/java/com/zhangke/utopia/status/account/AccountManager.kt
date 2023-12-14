@@ -1,8 +1,7 @@
 package com.zhangke.utopia.status.account
 
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
-import com.zhangke.utopia.status.utils.collect
+import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
@@ -59,13 +58,13 @@ class AccountManager @Inject constructor(
         return result
     }
 
-    suspend fun activeAccount(uri: StatusProviderUri) {
+    suspend fun activeAccount(uri: FormalUri) {
         accountManagerList.forEach { manager ->
             if (manager.activeAccount(uri)) return@forEach
         }
     }
 
-    suspend fun logout(uri: StatusProviderUri) {
+    suspend fun logout(uri: FormalUri) {
         accountManagerList.forEach {
             if (it.logout(uri)) return@forEach
         }
@@ -89,7 +88,7 @@ interface IAccountManager {
     /**
      * @return active success
      */
-    suspend fun activeAccount(uri: StatusProviderUri): Boolean
+    suspend fun activeAccount(uri: FormalUri): Boolean
 
-    suspend fun logout(uri: StatusProviderUri): Boolean
+    suspend fun logout(uri: FormalUri): Boolean
 }

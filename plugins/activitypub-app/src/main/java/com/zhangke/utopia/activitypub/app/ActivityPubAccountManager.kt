@@ -11,7 +11,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.auth.ActivityPubSourc
 import com.zhangke.utopia.status.account.IAccountManager
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
@@ -47,13 +47,13 @@ class ActivityPubAccountManager @Inject constructor(
         return oAuthor.startOauth(baseUrl)
     }
 
-    override suspend fun activeAccount(uri: StatusProviderUri): Boolean {
+    override suspend fun activeAccount(uri: FormalUri): Boolean {
         userUriTransformer.parse(uri) ?: return false
         activeAccount.invoke(uri)
         return true
     }
 
-    override suspend fun logout(uri: StatusProviderUri): Boolean {
+    override suspend fun logout(uri: FormalUri): Boolean {
         userUriTransformer.parse(uri) ?: return false
         logout.invoke(uri)
         return true

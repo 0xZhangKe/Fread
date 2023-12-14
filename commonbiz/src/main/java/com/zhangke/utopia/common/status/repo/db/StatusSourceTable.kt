@@ -7,13 +7,13 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 private const val TABLE_NAME = "status_source"
 
 @Entity(tableName = TABLE_NAME)
 data class StatusSourceEntity(
-    @PrimaryKey val uri: StatusProviderUri,
+    @PrimaryKey val uri: FormalUri,
     val name: String,
     val description: String,
     val thumbnail: String?,
@@ -26,7 +26,7 @@ interface StatusSourceDao {
     suspend fun queryAllSource(): List<StatusSourceEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE uri=:uri")
-    suspend fun queryByUri(uri: StatusProviderUri): StatusSourceEntity?
+    suspend fun queryByUri(uri: FormalUri): StatusSourceEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplace(entity: StatusSourceEntity)

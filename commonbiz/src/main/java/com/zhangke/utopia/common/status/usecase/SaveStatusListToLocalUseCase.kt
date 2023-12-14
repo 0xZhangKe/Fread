@@ -4,7 +4,7 @@ import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class SaveStatusListToLocalUseCase @Inject internal constructor(
@@ -13,7 +13,7 @@ class SaveStatusListToLocalUseCase @Inject internal constructor(
 ) {
 
     suspend operator fun invoke(
-        statusSourceUri: StatusProviderUri,
+        statusSourceUri: FormalUri,
         statusList: List<Status>,
         sinceId: String? = null,
         nextIdOfLatest: String? = null,

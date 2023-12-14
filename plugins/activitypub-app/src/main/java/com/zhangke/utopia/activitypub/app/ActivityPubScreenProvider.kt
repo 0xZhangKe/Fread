@@ -5,14 +5,14 @@ import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatus
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubScreenProvider @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
 ) : IStatusScreenProvider {
 
-    override fun getServerDetailScreen(platformUri: StatusProviderUri): Any? {
+    override fun getServerDetailScreen(platformUri: FormalUri): Any? {
         val platformUriData = platformUriTransformer.parse(platformUri) ?: return null
         return PlatformDetailScreen(platformUriData.serverBaseUrl)
     }

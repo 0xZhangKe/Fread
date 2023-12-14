@@ -33,12 +33,12 @@ class SaveStatusListToLocalUseCase @Inject internal constructor(
     }
 
     private suspend fun getLocalNextId(statusId: String): String? {
-        val entity = statusContentRepo.querySourceById(statusId) ?: return null
+        val entity = statusContentRepo.query(statusId) ?: return null
         return entity.nextStatusId
     }
 
     private suspend fun updateStatusNextId(statusId: String, nextStatusId: String) {
-        val entity = statusContentRepo.querySourceById(statusId)
+        val entity = statusContentRepo.query(statusId)
             ?.copy(nextStatusId = nextStatusId) ?: return
         statusContentRepo.insert(entity)
     }

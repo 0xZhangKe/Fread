@@ -84,7 +84,7 @@ internal class GetStatusFromServerUseCase @Inject constructor(
         }
         val list = mutableListOf<Pair<FormalUri, String?>>()
         val sinceStatus =
-            statusContentRepo.querySourceById(sinceId) ?: return sourceUriList.map { it to null }
+            statusContentRepo.query(sinceId) ?: return sourceUriList.map { it to null }
         val minTime = sinceStatus.createTimestamp
         val statusList = statusContentRepo.queryAfter(
             sourceUriList = sourceUriList,

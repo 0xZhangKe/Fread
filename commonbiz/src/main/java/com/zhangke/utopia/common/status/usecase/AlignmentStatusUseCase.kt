@@ -12,6 +12,9 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
 
+/**
+ * 根据基准时间，向上或向下对其所有的 source 的 status。
+ */
 class AlignmentStatusUseCase @Inject internal constructor(
     private val statusProvider: StatusProvider,
     private val statusContentRepo: StatusContentRepo,
@@ -21,8 +24,9 @@ class AlignmentStatusUseCase @Inject internal constructor(
 
     suspend operator fun invoke(
         sourceUriList: List<FormalUri>,
-        baselineEntity: StatusContentEntity,
+        sinceId: String,
     ): Result<Unit> {
+        val baselineEntity = statusContentRepo.query(sinceId) ?: return Result.success(Unit)
         val alignUpResult = alignUp(sourceUriList, baselineEntity)
         val alignmentDown = alignDown(sourceUriList, baselineEntity)
         if (alignUpResult.isFailure) return alignUpResult
@@ -96,10 +100,10 @@ class AlignmentStatusUseCase @Inject internal constructor(
         // resolver sort by datetime DESC
         val firstStatusInResolved = resultStatusList.last()
         if (resultStatusList.size < limit) {
-            if (firstStatusInResolved.datetime <= sinceSourceEntity.createTimestamp) {
-                return Result.success(Unit)
+            return if (firstStatusInResolved.datetime <= sinceSourceEntity.createTimestamp) {
+                Result.success(Unit)
             } else {
-                return Result.failure(IllegalStateException("Can't load next page!"))
+                Result.failure(IllegalStateException("Can't load next page!"))
             }
         }
         if (firstStatusInResolved.datetime <= sinceSourceEntity.createTimestamp) {
@@ -113,12 +117,15 @@ class AlignmentStatusUseCase @Inject internal constructor(
         return alignDownSourceToBaseline(sourceUri, firstStatusEntity)
     }
 
+    /**
+     * 将最新一条早于基准时间的 source 向上对齐。
+     */
     private suspend fun alignUp(
         sourceUriList: List<FormalUri>,
         sinceSourceEntity: StatusContentEntity,
     ): Result<Unit> {
         val needLoadPreviousSourceToStatus = sourceUriList.map {
-            it to statusContentRepo.queryFirst(it)
+            it to statusContentRepo.queryLatest(it)
         }.filter { (_, entity) ->
             entity != null && entity.createTimestamp < sinceSourceEntity.createTimestamp
         }

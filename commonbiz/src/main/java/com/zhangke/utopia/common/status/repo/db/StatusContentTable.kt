@@ -43,36 +43,42 @@ data class StatusContentEntity(
 interface StatusContentDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri")
-    suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<StatusContentEntity>
+    suspend fun query(sourceUri: StatusProviderUri): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
-    suspend fun queryBySourceUriList(
+    suspend fun query(
         sourceUriList: List<StatusProviderUri>,
         limit: Int,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
-    suspend fun queryById(id: String): StatusContentEntity?
+    suspend fun query(id: String): StatusContentEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
-    suspend fun queryBySourceUriListBefore(
+    suspend fun queryBefore(
         sourceUriList: List<StatusProviderUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
-    suspend fun queryBySourceUriListAfter(
+    suspend fun queryAfter(
         sourceUriList: List<StatusProviderUri>,
         createTimestamp: Long,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
-    suspend fun queryBySourceUriListAfter(
+    suspend fun queryAfter(
         sourceUriList: List<StatusProviderUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri ORDER BY createTimestamp LIMIT 1")
+    suspend fun queryFirst(sourceUri: StatusProviderUri): StatusContentEntity?
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri ORDER BY createTimestamp DESC LIMIT 1")
+    suspend fun queryLatest(sourceUri: StatusProviderUri): StatusContentEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: StatusContentEntity)

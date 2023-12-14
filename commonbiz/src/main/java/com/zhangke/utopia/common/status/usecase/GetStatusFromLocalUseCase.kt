@@ -37,7 +37,7 @@ internal class GetStatusFromLocalUseCase @Inject internal constructor(
         limit: Int,
     ): List<StatusContentEntity> {
         val statusEntity = statusContentRepo.querySourceById(sinceId) ?: return emptyList()
-        return statusContentRepo.queryBySourceUriListBefore(
+        return statusContentRepo.queryBefore(
             sourceUriList = feedsConfig.sourceUriList,
             createTimestamp = statusEntity.createTimestamp,
             limit = limit,
@@ -45,6 +45,6 @@ internal class GetStatusFromLocalUseCase @Inject internal constructor(
     }
 
     private suspend fun getStatus(feedsConfig: FeedsConfig, limit: Int): List<StatusContentEntity> {
-        return statusContentRepo.queryBySourceUriList(feedsConfig.sourceUriList, limit)
+        return statusContentRepo.query(feedsConfig.sourceUriList, limit)
     }
 }

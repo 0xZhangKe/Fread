@@ -20,49 +20,57 @@ internal class StatusContentRepo @Inject constructor(
     private val statusContentDao: StatusContentDao get() = statusDatabase.getStatusContentDao()
 
     suspend fun queryBySourceUri(sourceUri: StatusProviderUri): List<StatusContentEntity> {
-        return statusContentDao.queryBySourceUri(sourceUri)
+        return statusContentDao.query(sourceUri)
     }
 
     suspend fun querySourceById(id: String): StatusContentEntity? {
-        return statusContentDao.queryById(id)
+        return statusContentDao.query(id)
     }
 
-    suspend fun queryBySourceUriListBefore(
+    suspend fun queryBefore(
         sourceUriList: List<StatusProviderUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity> {
-        return statusContentDao.queryBySourceUriListBefore(
+        return statusContentDao.queryBefore(
             sourceUriList = sourceUriList,
             createTimestamp = createTimestamp,
             limit = limit,
         )
     }
 
-    suspend fun queryBySourceUriListAfter(
+    suspend fun queryAfter(
         sourceUriList: List<StatusProviderUri>,
         createTimestamp: Long,
         limit: Int? = null
     ): List<StatusContentEntity> {
         return if (limit != null) {
-            statusContentDao.queryBySourceUriListAfter(
+            statusContentDao.queryAfter(
                 sourceUriList = sourceUriList,
                 createTimestamp = createTimestamp,
                 limit = limit,
             )
         } else {
-            statusContentDao.queryBySourceUriListAfter(
+            statusContentDao.queryAfter(
                 sourceUriList = sourceUriList,
                 createTimestamp = createTimestamp,
             )
         }
     }
 
-    suspend fun queryBySourceUriList(
+    suspend fun query(
         sourceUriList: List<StatusProviderUri>,
         limit: Int,
     ): List<StatusContentEntity> {
-        return statusContentDao.queryBySourceUriList(sourceUriList, limit)
+        return statusContentDao.query(sourceUriList, limit)
+    }
+
+    suspend fun queryFirst(sourceUri: StatusProviderUri): StatusContentEntity? {
+        return statusContentDao.queryFirst(sourceUri)
+    }
+
+    suspend fun queryLatest(sourceUri: StatusProviderUri): StatusContentEntity? {
+        return statusContentDao.queryLatest(sourceUri)
     }
 
     suspend fun insert(status: StatusContentEntity) {

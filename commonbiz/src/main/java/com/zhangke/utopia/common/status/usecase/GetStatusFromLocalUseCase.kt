@@ -23,12 +23,19 @@ internal class GetStatusFromLocalUseCase @Inject internal constructor(
             }
         }
         val groupedList = list.groupBy { it.sourceUri }
-        val maxCreateTime = groupedList.mapNotNull { (_, statusList) ->
-            statusList.firstOrNull { it.nextStatusId.isNullOrEmpty() }?.createTimestamp
-        }.maxOrNull() ?: 0L
+            .filter { it.value.isNotEmpty() }
+            .map { (uri, statusList) ->
+                val breakIndex = statusList.indexOfFirst { it.nextStatusId.isNullOrEmpty() }
+                if (breakIndex >= 0) {
+                    uri to statusList.subList(0, breakIndex + 1)
+                } else {
+                    uri to statusList
+                }
+            }
+        val maxCreateTime = groupedList.maxOf { it.second.first().createTimestamp }
         return groupedList.flatMap { (_, statusList) ->
             statusList.filter { it.createTimestamp >= maxCreateTime }
-        }.sortedByDescending { it.createTimestamp }
+        }.filter { it.id != sinceId }.sortedByDescending { it.createTimestamp }.take(limit)
     }
 
     private suspend fun getStatusBeforeSinceId(

@@ -5,25 +5,36 @@ import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import javax.inject.Inject
 
-class GetPreviousStatusFromLocalUseCase @Inject internal constructor(
+internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
     private val statusContentRepo: StatusContentRepo,
 ) {
 
     suspend operator fun invoke(
         feedsConfig: FeedsConfig,
-        maxId: String?,
+        sinceId: String,
         limit: Int,
     ): List<StatusContentEntity> {
-
-        return emptyList()
+        val sinceStatus = statusContentRepo.query(sinceId) ?: return emptyList()
+        return statusContentRepo.queryAfter(
+            sourceUriList = feedsConfig.sourceUriList,
+            createTimestamp = sinceStatus.createTimestamp,
+            limit = limit,
+        ).filter { it.id != sinceId }
+            .groupBy { it.sourceUri }
+            .flatMap { (_, statusList) ->
+                val index = statusList.indexOfLast { it.nextStatusId.isNullOrEmpty() }
+                if (index >= 0) {
+                    val startIndex = index + 1
+                    if (startIndex > statusList.lastIndex) {
+                        emptyList()
+                    } else {
+                        statusList.subList(startIndex, statusList.size)
+                    }
+                } else {
+                    statusList
+                }
+            }
+            .sortedByDescending { it.createTimestamp }
+            .takeLast(limit)
     }
-
-//    private suspend fun getStatusAfterMaxId(
-//        feedsConfig: FeedsConfig,
-//        maxId: String,
-//        limit: Int,
-//    ): List<StatusContentEntity> {
-//        val statusEntity = statusContentRepo.querySourceById(maxId) ?: return emptyList()
-//
-//    }
 }

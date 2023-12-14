@@ -13,3 +13,7 @@ fun <T> List<Result<List<T>>>.collect(): Result<List<T>> {
         }
     }.let { Result.success(it) }
 }
+
+fun <T> Result<T>.exceptionOrThrow(): Throwable {
+    return exceptionOrNull() ?: throw IllegalStateException("Result is success!")
+}

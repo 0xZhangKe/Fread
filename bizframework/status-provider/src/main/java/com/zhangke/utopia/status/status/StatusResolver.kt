@@ -40,7 +40,12 @@ interface IStatusResolver {
     /**
      * @return null if un-support
      */
-    suspend fun getStatusList(uri: FormalUri, limit: Int, sinceId: String?, minId: String?): Result<List<Status>>?
+    suspend fun getStatusList(
+        uri: FormalUri,
+        limit: Int,
+        sinceId: String?,
+        minId: String?
+    ): Result<List<Status>>?
 
     suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>?
 }

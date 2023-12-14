@@ -16,13 +16,13 @@ class FeedsRepo @Inject internal constructor(
     private val statusProvider: StatusProvider,
 ) {
 
-    suspend fun getStatus(
-        feedsConfig: FeedsConfig,
-
-        limit: Int = 50,
-    ): Result<List<Status>> {
-
-    }
+//    suspend fun getStatus(
+//        feedsConfig: FeedsConfig,
+//
+//        limit: Int = 50,
+//    ): Result<List<Status>> {
+//
+//    }
 
     suspend fun fetchStatusByFeedsConfig(
         feedsConfig: FeedsConfig,
@@ -91,14 +91,14 @@ class FeedsRepo @Inject internal constructor(
     }
 
     private suspend fun saveStatusContentToLocal(uri: FormalUri, statusList: List<Status>) {
-        statusContentRepo.insert(uri, statusList)
-        val linkedList = statusList.mapIndexedNotNull { index, status ->
-            if (index == statusList.lastIndex) {
-                null
-            } else {
-                status.id to statusList[index + 1].id
-            }
-        }
-        statusLinkedRepo.insertList(linkedList)
+//        statusContentRepo.insert(uri, statusList)
+//        val linkedList = statusList.mapIndexedNotNull { index, status ->
+//            if (index == statusList.lastIndex) {
+//                null
+//            } else {
+//                status.id to statusList[index + 1].id
+//            }
+//        }
+//        statusLinkedRepo.insertList(linkedList)
     }
 }

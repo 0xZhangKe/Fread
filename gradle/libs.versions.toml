@@ -1,6 +1,7 @@
 [versions]
 kotlin = "1.9.10"
 kotlin-coroutine = "1.7.1"
+kotlin-coroutine-test = "1.7.1"
 
 androidxComposeCompiler = "1.5.3"
 
@@ -56,6 +57,9 @@ androidGradlePlugin = "8.0.2"
 hiltAndroidGradlePlugin = "2.46.1"
 
 compose-wheel-picker = "1.0.0-alpha19"
+
+mockk = "1.13.8"
+
 
 [bundles]
 androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]
@@ -137,6 +141,7 @@ accompanist-placeholder-material = { group = "com.google.accompanist", name = "a
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin.coroutine" }
 kotlin-coroutine-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlin.coroutine" }
+kotlin-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlin.coroutine.test" }
 
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
@@ -160,6 +165,8 @@ auto-service = { group = "com.google.auto.service", name = "auto-service", versi
 
 filt-annotaions = { group = "com.github.0xZhangKe.Filt", name = "annotaions", version.ref = "filt" }
 filt-compiler = { group = "com.github.0xZhangKe.Filt", name = "compiler", version.ref = "filt" }
+
+mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

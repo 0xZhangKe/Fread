@@ -15,14 +15,15 @@ class GetPreviousStatusFromLocalUseCase @Inject internal constructor(
         limit: Int,
     ): List<StatusContentEntity> {
 
+        return emptyList()
     }
 
-    private suspend fun getStatusAfterMaxId(
-        feedsConfig: FeedsConfig,
-        maxId: String,
-        limit: Int,
-    ): List<StatusContentEntity> {
-        val statusEntity = statusContentRepo.querySourceById(maxId) ?: return emptyList()
-
-    }
+//    private suspend fun getStatusAfterMaxId(
+//        feedsConfig: FeedsConfig,
+//        maxId: String,
+//        limit: Int,
+//    ): List<StatusContentEntity> {
+//        val statusEntity = statusContentRepo.querySourceById(maxId) ?: return emptyList()
+//
+//    }
 }

@@ -11,6 +11,8 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import java.io.FileNotFoundException
+import java.net.URI
+import java.net.URLEncoder
 
 fun Uri.toContentProviderFile(): ContentProviderFile? {
     val contentResolver = appContext.contentResolver
@@ -40,7 +42,8 @@ fun Uri.toContentProviderFile(): ContentProviderFile? {
                     uri = this,
                     fileName = fileName,
                     size = size,
-                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension).orEmpty(),
+                    mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
+                        .orEmpty(),
                     inputStreamProvider = { descriptor.createInputStream() }
                 )
             }
@@ -102,7 +105,10 @@ fun Uri.getThumbnail(): Bitmap? {
                 cursor.moveToFirst()
                 val columnIndex = cursor.getColumnIndex(filePathColumn[0])
                 val picturePath = cursor.getString(columnIndex)
-                return ThumbnailUtils.createVideoThumbnail(picturePath, MediaStore.Video.Thumbnails.MICRO_KIND)
+                return ThumbnailUtils.createVideoThumbnail(
+                    picturePath,
+                    MediaStore.Video.Thumbnails.MICRO_KIND
+                )
             }
     } catch (_: Throwable) {
     }
@@ -131,7 +137,9 @@ fun uriString(
     builder.append(fixedPath)
     if (queries.isNotEmpty()) {
         val query = queries.entries
-            .joinToString(prefix = "?", separator = "&") { "${it.key}=${Uri.encode(it.value)}" }
+            .joinToString(prefix = "?", separator = "&") {
+                "${it.key}=${URLEncoder.encode(it.value, "UTF-8")}"
+            }
         builder.append(query)
     }
     return builder.toString()

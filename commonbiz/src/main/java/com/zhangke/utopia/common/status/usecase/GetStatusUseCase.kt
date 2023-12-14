@@ -8,6 +8,7 @@ import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
 class GetStatusUseCase @Inject internal constructor(
+    private val alignmentStatus: AlignmentStatusUseCase,
     private val getStatusFromLocalUseCase: GetStatusFromLocalUseCase,
     private val getStatusFromServerUseCase: GetStatusFromServerUseCase,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
@@ -18,6 +19,12 @@ class GetStatusUseCase @Inject internal constructor(
         sinceId: String?,
         limit: Int = 50,
     ): Result<List<Status>> {
+        if (sinceId != null) {
+            val alignmentResult = alignmentStatus(feedsConfig.sourceUriList, sinceId)
+            if (alignmentResult.isFailure) {
+                return Result.failure(alignmentResult.exceptionOrNull()!!)
+            }
+        }
         val statusList = getStatusFromLocalUseCase(feedsConfig, sinceId, limit)
         if (statusList.size >= limit || areAllStatusIsTheirSourceFirst(statusList)) {
             return Result.success(statusList.map(statusContentEntityAdapter::toStatus))

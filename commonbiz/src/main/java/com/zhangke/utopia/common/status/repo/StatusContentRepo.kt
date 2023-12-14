@@ -19,11 +19,11 @@ internal class StatusContentRepo @Inject constructor(
 
     private val statusContentDao: StatusContentDao get() = statusDatabase.getStatusContentDao()
 
-    suspend fun queryBySourceUri(sourceUri: FormalUri): List<StatusContentEntity> {
+    suspend fun query(sourceUri: FormalUri): List<StatusContentEntity> {
         return statusContentDao.query(sourceUri)
     }
 
-    suspend fun querySourceById(id: String): StatusContentEntity? {
+    suspend fun query(id: String): StatusContentEntity? {
         return statusContentDao.query(id)
     }
 

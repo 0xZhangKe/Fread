@@ -6,7 +6,7 @@ import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 internal class GetStatusFromServerUseCase @Inject constructor(
@@ -46,7 +46,7 @@ internal class GetStatusFromServerUseCase @Inject constructor(
     }
 
     private suspend fun getStatusFromServer(
-        sourceUri: StatusProviderUri,
+        sourceUri: FormalUri,
         sinceId: String?,
     ): Result<List<Status>> {
         val statusListResult = statusResolver.getStatusList(
@@ -77,12 +77,12 @@ internal class GetStatusFromServerUseCase @Inject constructor(
      */
     private suspend fun getUriToSinceId(
         sinceId: String?,
-        sourceUriList: List<StatusProviderUri>,
-    ): List<Pair<StatusProviderUri, String?>> {
+        sourceUriList: List<FormalUri>,
+    ): List<Pair<FormalUri, String?>> {
         if (sinceId.isNullOrEmpty()) {
             return sourceUriList.map { it to null }
         }
-        val list = mutableListOf<Pair<StatusProviderUri, String?>>()
+        val list = mutableListOf<Pair<FormalUri, String?>>()
         val sinceStatus =
             statusContentRepo.querySourceById(sinceId) ?: return sourceUriList.map { it to null }
         val minTime = sinceStatus.createTimestamp

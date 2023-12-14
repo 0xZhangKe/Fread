@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.uri
 
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class UserUriTransformer @Inject constructor() {
@@ -13,7 +13,7 @@ class UserUriTransformer @Inject constructor() {
         private const val QUERY_FINGER = "finger"
     }
 
-    fun parse(uri: StatusProviderUri): UserUriInsights? {
+    fun parse(uri: FormalUri): UserUriInsights? {
         if (!uri.isActivityPubUri) return null
         if (uri.path != ActivityPubUriPath.USER) return null
         val userId = uri.queries[QUERY_ID]?.takeIf { it.isNotEmpty() } ?: return null
@@ -25,7 +25,7 @@ class UserUriTransformer @Inject constructor() {
         )
     }
 
-    fun build(userId: String, webFinger: WebFinger): StatusProviderUri {
+    fun build(userId: String, webFinger: WebFinger): FormalUri {
         val queries = mutableMapOf<String, String>()
         queries[QUERY_ID] = userId
         queries[QUERY_FINGER] = webFinger.toString()

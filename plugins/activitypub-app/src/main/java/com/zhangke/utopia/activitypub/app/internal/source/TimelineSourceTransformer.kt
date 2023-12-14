@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.source
 import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class TimelineSourceTransformer @Inject constructor(
@@ -11,7 +11,7 @@ class TimelineSourceTransformer @Inject constructor(
 ) {
 
     fun createByPlatform(
-        uri: StatusProviderUri,
+        uri: FormalUri,
         platform: BlogPlatform,
     ): StatusSource {
         return StatusSource(

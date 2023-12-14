@@ -1,5 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.uri
 
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
-val StatusProviderUri.isActivityPubUri: Boolean get() = host == ACTIVITY_PUB_HOST
+val FormalUri.isActivityPubUri: Boolean get() = host == ACTIVITY_PUB_HOST

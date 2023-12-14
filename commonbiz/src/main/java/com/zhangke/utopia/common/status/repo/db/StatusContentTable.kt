@@ -11,7 +11,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.StatusType
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 private const val TABLE_NAME = "status_content"
 
@@ -19,12 +19,12 @@ private const val TABLE_NAME = "status_content"
 data class StatusContentEntity(
     @PrimaryKey val id: String,
     val nextStatusId: String?,
-    val authorUri: StatusProviderUri,
+    val authorUri: FormalUri,
     val authorWebFinger: WebFinger,
     val authorName: String,
     val authorDescription: String,
     val authorAvatar: String?,
-    val sourceUri: StatusProviderUri,
+    val sourceUri: FormalUri,
     val type: StatusType,
     val statusIdOfPlatform: String,
     val title: String?,
@@ -43,11 +43,11 @@ data class StatusContentEntity(
 interface StatusContentDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri")
-    suspend fun query(sourceUri: StatusProviderUri): List<StatusContentEntity>
+    suspend fun query(sourceUri: FormalUri): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun query(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         limit: Int,
     ): List<StatusContentEntity>
 
@@ -56,29 +56,29 @@ interface StatusContentDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryBefore(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
     suspend fun queryAfter(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         createTimestamp: Long,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryAfter(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri ORDER BY createTimestamp LIMIT 1")
-    suspend fun queryFirst(sourceUri: StatusProviderUri): StatusContentEntity?
+    suspend fun queryFirst(sourceUri: FormalUri): StatusContentEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri ORDER BY createTimestamp DESC LIMIT 1")
-    suspend fun queryLatest(sourceUri: StatusProviderUri): StatusContentEntity?
+    suspend fun queryLatest(sourceUri: FormalUri): StatusContentEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: StatusContentEntity)

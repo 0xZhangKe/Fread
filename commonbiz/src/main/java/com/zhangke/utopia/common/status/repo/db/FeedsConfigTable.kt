@@ -7,7 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 private const val TABLE_NAME = "feeds_configs"
 
@@ -15,7 +15,7 @@ private const val TABLE_NAME = "feeds_configs"
 data class FeedsConfigEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String,
-    val sourceUriList: List<StatusProviderUri>,
+    val sourceUriList: List<FormalUri>,
 )
 
 @Dao

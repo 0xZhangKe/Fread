@@ -14,7 +14,7 @@ import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -46,7 +46,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
     val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
 
-    fun onAddSources(uriList: List<StatusProviderUri>) {
+    fun onAddSources(uriList: List<FormalUri>) {
         launchInViewModel {
             val sourceList = mutableListOf<StatusSource>()
             sourceList.addAll(viewModelState.value.sourceList)

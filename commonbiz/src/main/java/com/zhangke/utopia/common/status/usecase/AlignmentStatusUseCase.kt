@@ -6,7 +6,7 @@ import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.coroutineScope
@@ -20,7 +20,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
 ) {
 
     suspend operator fun invoke(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         baselineEntity: StatusContentEntity,
     ): Result<Unit> {
         val alignUpResult = alignUp(sourceUriList, baselineEntity)
@@ -34,7 +34,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
      * 对齐所有最早那个帖子时间大于基准时间的Source。
      */
     private suspend fun alignDown(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         sinceSourceEntity: StatusContentEntity,
     ): Result<Unit> {
         val needLoadNextSourceToStatus = sourceUriList.map {
@@ -57,7 +57,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
     }
 
     private suspend fun alignDownSourceToBaseline(
-        sourceUri: StatusProviderUri,
+        sourceUri: FormalUri,
         sinceSourceEntity: StatusContentEntity,
     ): Result<Unit> {
         val limit = StatusConfigurationDefault.config.loadFromServerLimit
@@ -114,7 +114,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
     }
 
     private suspend fun alignUp(
-        sourceUriList: List<StatusProviderUri>,
+        sourceUriList: List<FormalUri>,
         sinceSourceEntity: StatusContentEntity,
     ): Result<Unit> {
         val needLoadPreviousSourceToStatus = sourceUriList.map {
@@ -133,7 +133,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
     }
 
     private suspend fun alignUpSourceToBaseline(
-        sourceUri: StatusProviderUri,
+        sourceUri: FormalUri,
         sinceSourceEntity: StatusContentEntity,
     ): Result<Unit> {
         val limit = StatusConfigurationDefault.config.loadFromServerLimit

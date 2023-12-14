@@ -6,7 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityP
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.platform.IPlatformResolver
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubPlatformResolver @Inject constructor(
@@ -15,7 +15,7 @@ class ActivityPubPlatformResolver @Inject constructor(
     private val timelineUriTransformer: TimelineUriTransformer,
 ) : IPlatformResolver {
 
-    override suspend fun resolveBySourceUri(sourceUri: StatusProviderUri): Result<BlogPlatform?> {
+    override suspend fun resolveBySourceUri(sourceUri: FormalUri): Result<BlogPlatform?> {
         var baseUrl = userUriTransformer.parse(sourceUri)?.webFinger?.host?.toBaseUrl()
         if (baseUrl.isNullOrEmpty()) {
             baseUrl = timelineUriTransformer.parse(sourceUri)?.serverBaseUrl

@@ -24,7 +24,7 @@ import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.PostStatusUseCase
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -93,7 +93,7 @@ class PostStatusViewModel @Inject constructor(
         launchInViewModel {
             _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
                 .distinctUntilChanged()
-                .mapNotNull { StatusProviderUri.from(it.uri) }
+                .mapNotNull { FormalUri.from(it.uri) }
                 .mapNotNull { platformUriTransformer.parse(it) }
                 .mapNotNull { getCustomEmoji(it.serverBaseUrl).getOrNull() }
                 .map { emojiAdapter.toEmojiCell(7, it) }

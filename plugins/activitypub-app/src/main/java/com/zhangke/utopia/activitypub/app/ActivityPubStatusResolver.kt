@@ -8,7 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsTimelineFirs
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsUserFirstStatusUseCase
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubStatusResolver @Inject constructor(
@@ -21,7 +21,7 @@ class ActivityPubStatusResolver @Inject constructor(
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
-        uri: StatusProviderUri,
+        uri: FormalUri,
         limit: Int,
         sinceId: String?,
         minId: String?,
@@ -47,7 +47,7 @@ class ActivityPubStatusResolver @Inject constructor(
         return null
     }
 
-    override suspend fun checkIsFirstStatus(sourceUri: StatusProviderUri, statusId: String): Result<Boolean>? {
+    override suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>? {
         val userInsights = userUriTransformer.parse(sourceUri)
         if (userInsights != null) {
             return isUserFirstStatus(userInsights, statusId)

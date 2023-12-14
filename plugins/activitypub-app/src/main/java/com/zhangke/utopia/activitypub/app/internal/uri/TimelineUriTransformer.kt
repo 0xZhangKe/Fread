@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.uri
 
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceUriInsights
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class TimelineUriTransformer @Inject constructor() {
@@ -13,7 +13,7 @@ class TimelineUriTransformer @Inject constructor() {
         private const val QUERY_TYPE = "type"
     }
 
-    fun parse(uri: StatusProviderUri): TimelineSourceUriInsights? {
+    fun parse(uri: FormalUri): TimelineSourceUriInsights? {
         if (!uri.isActivityPubUri) return null
         if (uri.path != ActivityPubUriPath.TIMELINE) return null
         val serverBaseUrl = uri.queries[QUERY_SERVER_BASE_URL]
@@ -26,7 +26,7 @@ class TimelineUriTransformer @Inject constructor() {
         )
     }
 
-    fun build(serverBaseUrl: String, type: TimelineSourceType): StatusProviderUri {
+    fun build(serverBaseUrl: String, type: TimelineSourceType): FormalUri {
         val queries = mutableMapOf<String, String>()
         queries[QUERY_SERVER_BASE_URL] = serverBaseUrl
         queries[QUERY_TYPE] = type.stringValue

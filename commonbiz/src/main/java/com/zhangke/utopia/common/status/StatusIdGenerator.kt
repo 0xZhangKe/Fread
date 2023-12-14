@@ -1,12 +1,12 @@
 package com.zhangke.utopia.common.status
 
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class StatusIdGenerator @Inject constructor() {
 
-    fun generate(sourceUri: StatusProviderUri, status: Status): String {
+    fun generate(sourceUri: FormalUri, status: Status): String {
         return "${sourceUri}_${status.id}"
     }
 }

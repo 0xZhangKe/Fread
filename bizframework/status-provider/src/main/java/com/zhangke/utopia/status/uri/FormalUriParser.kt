@@ -6,13 +6,13 @@ private val defaultUriDecoder: (String) -> String = { url ->
     Uri.decode(url)
 }
 
-class StatusProviderUriParser(
+class FormalUriParser(
     val uriDecoder: (String) -> String = defaultUriDecoder,
 ) {
 
     fun parse(uriString: String): Triple<String, String, Map<String, String>>? {
         val scheme = findScheme(uriString)
-        if (scheme != StatusProviderUri.SCHEME) return null
+        if (scheme != FormalUri.SCHEME) return null
         val host = findHost(uriString)
         if (host.isNullOrEmpty()) return null
         val path = findPath(uriString)

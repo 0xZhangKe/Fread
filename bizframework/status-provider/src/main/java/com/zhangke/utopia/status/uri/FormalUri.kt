@@ -2,7 +2,7 @@ package com.zhangke.utopia.status.uri
 
 import com.zhangke.framework.utils.uriString
 
-class StatusProviderUri private constructor(
+class FormalUri private constructor(
     val host: String,
     /**
      * format like "/xxx"
@@ -40,17 +40,17 @@ class StatusProviderUri private constructor(
 
         const val SCHEME = "utopiaapp"
 
-        fun create(host: String, path: String, queries: Map<String, String>): StatusProviderUri {
-            return StatusProviderUri(
+        fun create(host: String, path: String, queries: Map<String, String>): FormalUri {
+            return FormalUri(
                 host = host,
                 path = path,
                 queries = queries,
             )
         }
 
-        fun from(uri: String): StatusProviderUri? {
-            val (host, path, queries) = StatusProviderUriParser().parse(uri) ?: return null
-            return StatusProviderUri(host, path, queries)
+        fun from(uri: String): FormalUri? {
+            val (host, path, queries) = FormalUriParser().parse(uri) ?: return null
+            return FormalUri(host, path, queries)
         }
     }
 }

@@ -4,7 +4,6 @@ import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLogge
 import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ActivityPubUriValidateUseCase
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
 import javax.inject.Inject
 
 class ActivityPubSourceListAuthValidateUseCase @Inject constructor(

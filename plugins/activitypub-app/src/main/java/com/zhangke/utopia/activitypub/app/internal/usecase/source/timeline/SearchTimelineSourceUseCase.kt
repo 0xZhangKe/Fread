@@ -7,7 +7,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityP
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubUrl
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class SearchTimelineSourceUseCase @Inject constructor(
@@ -23,7 +23,7 @@ class SearchTimelineSourceUseCase @Inject constructor(
     }
 
     private suspend fun searchAsUri(query: String): List<StatusSource> {
-        return StatusProviderUri.from(query)
+        return FormalUri.from(query)
             ?.let { resolveTimelineSourceByUri(it) }
             ?.getOrNull()
             ?.let { source -> listOf(source) }

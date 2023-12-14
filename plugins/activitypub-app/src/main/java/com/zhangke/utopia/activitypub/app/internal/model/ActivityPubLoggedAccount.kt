@@ -4,11 +4,11 @@ import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.platform.BlogPlatform
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 class ActivityPubLoggedAccount(
     val userId: String,
-    uri: StatusProviderUri,
+    uri: FormalUri,
     webFinger: WebFinger,
     platform: BlogPlatform,
     val baseUrl: String,

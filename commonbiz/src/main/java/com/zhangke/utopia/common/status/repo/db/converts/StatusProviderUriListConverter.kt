@@ -3,19 +3,19 @@ package com.zhangke.utopia.common.status.repo.db.converts
 import androidx.room.TypeConverter
 import com.google.gson.reflect.TypeToken
 import com.zhangke.framework.architect.json.globalGson
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 class StatusProviderUriListConverter {
 
     @TypeConverter
-    fun fromString(text: String): List<StatusProviderUri> {
+    fun fromString(text: String): List<FormalUri> {
         val stringList: List<String> =
             globalGson.fromJson(text, object : TypeToken<List<String>>() {}.type)
-        return stringList.map { StatusProviderUri.from(it)!! }
+        return stringList.map { FormalUri.from(it)!! }
     }
 
     @TypeConverter
-    fun toString(uriList: List<StatusProviderUri>): String {
+    fun toString(uriList: List<FormalUri>): String {
         val stringList = uriList.map { it.toString() }
         return globalGson.toJson(stringList).toString()
     }

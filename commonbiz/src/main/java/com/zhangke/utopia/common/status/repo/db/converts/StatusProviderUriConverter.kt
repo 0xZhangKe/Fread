@@ -1,17 +1,17 @@
 package com.zhangke.utopia.common.status.repo.db.converts
 
 import androidx.room.TypeConverter
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 class StatusProviderUriConverter {
 
     @TypeConverter
-    fun fromString(uri: String): StatusProviderUri {
-        return StatusProviderUri.from(uri)!!
+    fun fromString(uri: String): FormalUri {
+        return FormalUri.from(uri)!!
     }
 
     @TypeConverter
-    fun toString(uri: StatusProviderUri): String {
+    fun toString(uri: FormalUri): String {
         return uri.toString()
     }
 }

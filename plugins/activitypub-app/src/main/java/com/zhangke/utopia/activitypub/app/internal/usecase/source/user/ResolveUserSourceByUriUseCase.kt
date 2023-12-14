@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.source.user
 import com.zhangke.utopia.activitypub.app.internal.repo.user.UserRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.source.StatusSource
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ResolveUserSourceByUriUseCase @Inject constructor(
@@ -11,7 +11,7 @@ class ResolveUserSourceByUriUseCase @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
 ) {
 
-    suspend operator fun invoke(uri: StatusProviderUri): Result<StatusSource?> {
+    suspend operator fun invoke(uri: FormalUri): Result<StatusSource?> {
         val uriData = userUriTransformer.parse(uri) ?: return Result.success(null)
         return userRepo.getUserSource(uriData)
     }

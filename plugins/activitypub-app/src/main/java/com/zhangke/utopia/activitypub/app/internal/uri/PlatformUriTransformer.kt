@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.uri
 
 import com.zhangke.utopia.activitypub.app.internal.model.PlatformUriInsights
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class PlatformUriTransformer @Inject constructor() {
@@ -10,7 +10,7 @@ class PlatformUriTransformer @Inject constructor() {
         private const val QUERY_SERVER_BASE_URL = "serverBaseUrl"
     }
 
-    fun build(serverBaseUrl: String): StatusProviderUri {
+    fun build(serverBaseUrl: String): FormalUri {
         val queries = mutableMapOf<String, String>()
         queries[QUERY_SERVER_BASE_URL] = serverBaseUrl
         return createActivityPubUri(
@@ -19,7 +19,7 @@ class PlatformUriTransformer @Inject constructor() {
         )
     }
 
-    fun parse(uri: StatusProviderUri): PlatformUriInsights? {
+    fun parse(uri: FormalUri): PlatformUriInsights? {
         if (!uri.isActivityPubUri) return null
         if (uri.path != ActivityPubUriPath.PLATFORM) return null
         val serverBaseUrl = uri.queries[QUERY_SERVER_BASE_URL]

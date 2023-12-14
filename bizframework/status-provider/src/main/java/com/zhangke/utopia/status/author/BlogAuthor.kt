@@ -1,10 +1,10 @@
 package com.zhangke.utopia.status.author
 
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.status.uri.StatusProviderUri
+import com.zhangke.utopia.status.uri.FormalUri
 
 class BlogAuthor (
-    val uri: StatusProviderUri,
+    val uri: FormalUri,
     val webFinger: WebFinger,
     val name: String,
     val description: String,

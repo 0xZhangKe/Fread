@@ -45,6 +45,11 @@ interface StatusContentDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri")
     suspend fun query(sourceUri: FormalUri): List<StatusContentEntity>
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
+    suspend fun query(
+        sourceUriList: List<FormalUri>,
+    ): List<StatusContentEntity>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun query(
         sourceUriList: List<FormalUri>,
@@ -53,6 +58,12 @@ interface StatusContentDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
     suspend fun query(id: String): StatusContentEntity?
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
+    suspend fun queryBefore(
+        sourceUriList: List<FormalUri>,
+        createTimestamp: Long,
+    ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryBefore(

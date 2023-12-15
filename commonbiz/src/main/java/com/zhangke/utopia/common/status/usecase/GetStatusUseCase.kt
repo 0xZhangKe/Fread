@@ -33,6 +33,7 @@ class GetStatusUseCase @Inject internal constructor(
     }
 
     private fun areAllStatusIsTheirSourceFirst(statusList: List<StatusContentEntity>): Boolean {
+        if (statusList.isEmpty()) return false
         return statusList.groupBy { it.sourceUri }
             .map { it.value.lastOrNull()?.nextStatusId == StatusContentRepo.STATUS_END_MAGIC_NUMBER }
             .reduce { acc, b -> acc && b }

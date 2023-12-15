@@ -33,37 +33,45 @@ class FeedsViewModel @AssistedInject constructor(
             mutableState.update {
                 it.copy(loading = true)
             }
-            feedsRepo.getStatusFlowByFeedsConfig(config)
-                .collect { newFeeds ->
+            feedsRepo.getStatus(config)
+                .onSuccess {list ->
                     mutableState.update {
                         it.copy(
                             loading = false,
-                            feeds = newFeeds,
+                            feeds = list,
                         )
-                    }
-                }
-        }
-    }
-
-    fun onRefresh() {
-        screenModelScope.launch {
-            mutableState.update {
-                it.copy(refreshing = true)
-            }
-            feedsRepo.fetchStatusByFeedsConfig(config)
-                .onSuccess {
-                    mutableState.update {
-                        it.copy(refreshing = false)
                     }
                 }.onFailure { e ->
                     e.message?.let(::textOf)?.let {
                         _errorMessageFlow.emit(it)
                     }
                     mutableState.update {
-                        it.copy(refreshing = false)
+                        it.copy(loading = false)
                     }
+
                 }
         }
+    }
+
+    fun onRefresh() {
+//        screenModelScope.launch {
+//            mutableState.update {
+//                it.copy(refreshing = true)
+//            }
+//            feedsRepo.fetchStatusByFeedsConfig(config)
+//                .onSuccess {
+//                    mutableState.update {
+//                        it.copy(refreshing = false)
+//                    }
+//                }.onFailure { e ->
+//                    e.message?.let(::textOf)?.let {
+//                        _errorMessageFlow.emit(it)
+//                    }
+//                    mutableState.update {
+//                        it.copy(refreshing = false)
+//                    }
+//                }
+//        }
     }
 
     fun onLoadMore() {

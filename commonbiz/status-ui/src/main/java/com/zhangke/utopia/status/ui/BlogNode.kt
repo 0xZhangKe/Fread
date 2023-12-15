@@ -183,7 +183,7 @@ fun BlogContentUi(
                 BlogMedias(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 8.dp, top = 6.dp, end = 8.dp),
+                        .padding(start = 8.dp, top = 6.dp, end = 8.dp, bottom = 8.dp),
                     mediaList = blog.mediaList,
                     indexInList = indexInList,
                     sensitive = sensitive,

@@ -1,6 +1,5 @@
 package com.zhangke.utopia.common.status.usecase
 
-import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.utils.collect
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
@@ -33,10 +32,8 @@ internal class GetStatusFromServerUseCase @Inject constructor(
         ).map { (uri, sinceId) ->
             getStatusFromServer(sourceUri = uri, sinceId = sinceId)
         }
-        if (!resultList.any { it.isSuccess }) {
-            val exception = resultList.mapFirstOrNull { it.exceptionOrNull() }
-                ?: IllegalStateException("fetch failed!")
-            return Result.failure(exception)
+        if (resultList.all { it.isFailure }) {
+            return Result.failure(resultList.first { it.isFailure }.exceptionOrNull()!!)
         }
         val statusList = resultList.collect()
             .getOrThrow()

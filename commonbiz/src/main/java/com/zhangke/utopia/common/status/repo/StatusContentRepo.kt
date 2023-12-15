@@ -30,6 +30,16 @@ internal class StatusContentRepo @Inject constructor(
     suspend fun queryBefore(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
+    ): List<StatusContentEntity> {
+        return statusContentDao.queryBefore(
+            sourceUriList = sourceUriList,
+            createTimestamp = createTimestamp,
+        )
+    }
+
+    suspend fun queryBefore(
+        sourceUriList: List<FormalUri>,
+        createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity> {
         return statusContentDao.queryBefore(
@@ -63,6 +73,12 @@ internal class StatusContentRepo @Inject constructor(
         limit: Int,
     ): List<StatusContentEntity> {
         return statusContentDao.query(sourceUriList, limit)
+    }
+
+    suspend fun query(
+        sourceUriList: List<FormalUri>,
+    ): List<StatusContentEntity> {
+        return statusContentDao.query(sourceUriList)
     }
 
     suspend fun queryFirst(sourceUri: FormalUri): StatusContentEntity? {

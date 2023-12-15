@@ -18,7 +18,6 @@ internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
         return statusContentRepo.queryAfter(
             sourceUriList = feedsConfig.sourceUriList,
             createTimestamp = sinceStatus.createTimestamp,
-            limit = limit,
         ).filter { it.id != sinceId }
             .groupBy { it.sourceUri }
             .flatMap { (_, statusList) ->

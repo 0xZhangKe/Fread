@@ -21,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -49,7 +48,6 @@ fun LoadableInlineVideoLazyColumn(
     content: LazyListScope.() -> Unit,
 ) {
     val lazyListState = state.lazyListState
-    // 获取 lazyList 布局信息
     val listLayoutInfo by remember { derivedStateOf { lazyListState.layoutInfo } }
     Box(
         modifier = modifier
@@ -89,32 +87,19 @@ fun LoadableInlineVideoLazyColumn(
             scale = true,
         )
     }
-    // 上次是否正在滑动
-    var lastTimeIsScrollInProgress by remember {
-        mutableStateOf(lazyListState.isScrollInProgress)
-    }
-    // 上次滑动结束后最后一个可见的index
-    var lastTimeLastVisibleIndex by remember {
-        mutableIntStateOf(listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0)
-    }
-    // 当前是否正在滑动
-    val currentIsScrollInProgress = lazyListState.isScrollInProgress
-    // 当前最后一个可见的 index
     val currentLastVisibleIndex = listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-    if (!currentIsScrollInProgress && lastTimeIsScrollInProgress) {
-        if (currentLastVisibleIndex != lastTimeLastVisibleIndex) {
-            val isScrollDown = currentLastVisibleIndex > lastTimeLastVisibleIndex
-            val remainCount = listLayoutInfo.totalItemsCount - currentLastVisibleIndex - 1
-            if (isScrollDown && remainCount <= state.loadMoreState.loadMoreRemainCountThreshold) {
-                LaunchedEffect(Unit) {
-                    state.loadMoreState.onLoadMore()
-                }
-            }
-        }
-        // 滑动结束后再更新值
-        lastTimeLastVisibleIndex = currentLastVisibleIndex
+    var inLoadingMoreZone by remember {
+        mutableStateOf(false)
     }
-    lastTimeIsScrollInProgress = currentIsScrollInProgress
+    val remainCount = listLayoutInfo.totalItemsCount - currentLastVisibleIndex - 1
+    inLoadingMoreZone = listLayoutInfo.totalItemsCount > 0 &&
+            remainCount <= state.loadMoreState.loadMoreRemainCountThreshold &&
+            listLayoutInfo.totalItemsCount > state.loadMoreState.loadMoreRemainCountThreshold
+    if (inLoadingMoreZone) {
+        LaunchedEffect(Unit) {
+            state.loadMoreState.onLoadMore()
+        }
+    }
 }
 
 @Composable

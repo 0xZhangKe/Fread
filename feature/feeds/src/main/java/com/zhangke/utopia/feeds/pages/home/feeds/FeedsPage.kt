@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -20,15 +17,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
-import cafe.adriel.voyager.navigator.tab.Tab
-import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
-import kotlinx.coroutines.flow.SharedFlow
 
 @Composable
 fun Screen.FeedsTab(
@@ -59,6 +52,7 @@ private fun FeedsTabContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
 ) {
+
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,

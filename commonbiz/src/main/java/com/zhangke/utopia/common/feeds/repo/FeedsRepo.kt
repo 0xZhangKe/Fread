@@ -1,28 +1,20 @@
 package com.zhangke.utopia.common.feeds.repo
 
-import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.common.status.FeedsConfig
-import com.zhangke.utopia.common.status.repo.StatusContentRepo
-import com.zhangke.utopia.common.status.usecase.GetStatusUseCase
-import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.common.status.usecase.GetPreviousStatusUseCase
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.FormalUri
-import kotlinx.coroutines.async
-import kotlinx.coroutines.awaitAll
-import kotlinx.coroutines.coroutineScope
 import javax.inject.Inject
-import kotlin.math.sin
 
 class FeedsRepo @Inject internal constructor(
-    private val getStatusUseCase: GetStatusUseCase,
+    private val getPreviousStatusUseCase: GetPreviousStatusUseCase,
 ) {
 
-    suspend fun getStatus(
+    suspend fun getPreviousStatus(
         feedsConfig: FeedsConfig,
         sinceId: String? = null,
         limit: Int = 50,
     ): Result<List<Status>> {
-        return getStatusUseCase(
+        return getPreviousStatusUseCase(
             feedsConfig = feedsConfig,
             limit = limit,
             sinceId = sinceId,

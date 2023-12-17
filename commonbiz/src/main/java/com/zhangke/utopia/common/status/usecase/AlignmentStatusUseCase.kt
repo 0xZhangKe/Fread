@@ -71,7 +71,10 @@ class AlignmentStatusUseCase @Inject internal constructor(
             sinceId = sinceSourceEntity.id,
         )
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
-        val resultStatusList = result.getOrNull()!!
+        val resultStatusList = statusContentEntityAdapter.toEntityList(
+            sourceUri = sourceUri,
+            statusList = result.getOrNull()!!,
+        )
         if (resultStatusList.isEmpty()) {
             if (sinceSourceEntity.nextStatusId.isNullOrEmpty()) {
                 val isFirstStatus = statusProvider.statusResolver
@@ -92,29 +95,22 @@ class AlignmentStatusUseCase @Inject internal constructor(
             null
         }
         saveStatusListToLocal(
-            statusSourceUri = sourceUri,
             statusList = resultStatusList,
             sinceId = sinceSourceEntity.id,
             nextIdOfLatest = nextIdOfLatest,
         )
-        // resolver sort by datetime DESC
-        val firstStatusInResolved = resultStatusList.last()
+        val lastStatus = resultStatusList.last()
         if (resultStatusList.size < limit) {
-            return if (firstStatusInResolved.datetime <= sinceSourceEntity.createTimestamp) {
+            return if (lastStatus.createTimestamp <= sinceSourceEntity.createTimestamp) {
                 Result.success(Unit)
             } else {
                 Result.failure(IllegalStateException("Can't load next page!"))
             }
         }
-        if (firstStatusInResolved.datetime <= sinceSourceEntity.createTimestamp) {
+        if (lastStatus.createTimestamp <= sinceSourceEntity.createTimestamp) {
             return Result.success(Unit)
         }
-        val firstStatusEntity = statusContentEntityAdapter.toEntity(
-            sourceUri = sourceUri,
-            status = firstStatusInResolved,
-            nextStatusId = nextIdOfLatest,
-        )
-        return alignDownSourceToBaseline(sourceUri, firstStatusEntity)
+        return alignDownSourceToBaseline(sourceUri, lastStatus)
     }
 
     /**
@@ -150,29 +146,26 @@ class AlignmentStatusUseCase @Inject internal constructor(
             minId = sinceSourceEntity.id,
         )
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
-        val resultStatusList = result.getOrNull()!!
+        val resultStatusList = statusContentEntityAdapter.toEntityList(
+            sourceUri = sourceUri,
+            statusList = result.getOrNull()!!,
+        )
         if (resultStatusList.isEmpty()) {
             return Result.success(Unit)
         }
         saveStatusListToLocal(
-            statusSourceUri = sourceUri,
             statusList = resultStatusList,
             sinceId = null,
             nextIdOfLatest = sinceSourceEntity.id,
         )
         // latest is mean the order by time
         val latestStatus = resultStatusList.first()
-        if (latestStatus.datetime >= sinceSourceEntity.createTimestamp || resultStatusList.size < limit) {
+        if (latestStatus.createTimestamp >= sinceSourceEntity.createTimestamp || resultStatusList.size < limit) {
             return Result.success(Unit)
         }
-        val latestStatusEntity = statusContentEntityAdapter.toEntity(
-            sourceUri = sourceUri,
-            status = latestStatus,
-            nextStatusId = resultStatusList.getOrNull(1)?.id,
-        )
         return alignUpSourceToBaseline(
             sourceUri = sourceUri,
-            sinceSourceEntity = latestStatusEntity,
+            sinceSourceEntity = latestStatus,
         )
     }
 }

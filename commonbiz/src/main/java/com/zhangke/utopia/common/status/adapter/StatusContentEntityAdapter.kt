@@ -65,7 +65,7 @@ class StatusContentEntityAdapter @Inject constructor(
 
     fun toBlog(entity: StatusContentEntity): Blog {
         return Blog(
-            id = entity.statusIdOfPlatform,
+            id = entity.id,
             author = toAuthor(entity),
             title = entity.title,
             content = entity.content,

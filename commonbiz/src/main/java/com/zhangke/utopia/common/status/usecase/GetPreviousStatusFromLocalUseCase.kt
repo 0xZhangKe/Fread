@@ -5,35 +5,54 @@ import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import javax.inject.Inject
 
-internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
+/**
+ * 获取更早的 status 列表。
+ * 如果传入了 sinceId，那就获取这个 sinceId 之前的 status。
+ */
+internal class GetPreviousStatusFromLocalUseCase @Inject internal constructor(
     private val statusContentRepo: StatusContentRepo,
 ) {
 
     suspend operator fun invoke(
         feedsConfig: FeedsConfig,
-        sinceId: String,
+        sinceId: String?,
         limit: Int,
     ): List<StatusContentEntity> {
-        val sinceStatus = statusContentRepo.query(sinceId) ?: return emptyList()
-        return statusContentRepo.queryAfter(
-            sourceUriList = feedsConfig.sourceUriList,
-            createTimestamp = sinceStatus.createTimestamp,
-        ).filter { it.id != sinceId }
-            .groupBy { it.sourceUri }
+        val list = if (sinceId.isNullOrEmpty()) {
+            getStatus(feedsConfig)
+        } else {
+            val statusList = getStatusBeforeSinceId(feedsConfig, sinceId)
+            statusList.ifEmpty {
+                getStatus(feedsConfig)
+            }
+        }
+        return list.groupBy { it.sourceUri }
+            .filter { it.value.isNotEmpty() }
             .flatMap { (_, statusList) ->
-                val index = statusList.indexOfLast { it.nextStatusId.isNullOrEmpty() }
-                if (index >= 0) {
-                    val startIndex = index + 1
-                    if (startIndex > statusList.lastIndex) {
-                        emptyList()
-                    } else {
-                        statusList.subList(startIndex, statusList.size)
-                    }
+                val breakIndex = statusList.indexOfFirst { it.nextStatusId.isNullOrEmpty() }
+                if (breakIndex >= 0) {
+                    statusList.subList(0, breakIndex + 1)
                 } else {
                     statusList
                 }
             }
+            .filter { it.id != sinceId }
             .sortedByDescending { it.createTimestamp }
-            .takeLast(limit)
+            .take(limit)
+    }
+
+    private suspend fun getStatusBeforeSinceId(
+        feedsConfig: FeedsConfig,
+        sinceId: String,
+    ): List<StatusContentEntity> {
+        val statusEntity = statusContentRepo.query(sinceId) ?: return emptyList()
+        return statusContentRepo.queryBefore(
+            sourceUriList = feedsConfig.sourceUriList,
+            createTimestamp = statusEntity.createTimestamp,
+        )
+    }
+
+    private suspend fun getStatus(feedsConfig: FeedsConfig): List<StatusContentEntity> {
+        return statusContentRepo.query(feedsConfig.sourceUriList)
     }
 }

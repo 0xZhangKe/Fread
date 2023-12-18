@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.repo
 
+import android.util.Log
 import com.zhangke.utopia.common.status.repo.db.StatusContentDao
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
@@ -18,11 +19,24 @@ internal class StatusContentRepo @Inject constructor(
     private val statusContentDao: StatusContentDao get() = statusDatabase.getStatusContentDao()
 
     suspend fun query(sourceUri: FormalUri): List<StatusContentEntity> {
-        return statusContentDao.query(sourceUri)
+        return statusContentDao.queryBySource(sourceUri)
     }
 
     suspend fun query(id: String): StatusContentEntity? {
         return statusContentDao.query(id)
+    }
+
+    suspend fun query(
+        sourceUriList: List<FormalUri>,
+        limit: Int,
+    ): List<StatusContentEntity> {
+        return statusContentDao.queryBySource(sourceUriList, limit)
+    }
+
+    suspend fun query(
+        sourceUriList: List<FormalUri>,
+    ): List<StatusContentEntity> {
+        return statusContentDao.queryBySource(sourceUriList)
     }
 
     suspend fun queryBefore(
@@ -66,19 +80,6 @@ internal class StatusContentRepo @Inject constructor(
         }
     }
 
-    suspend fun query(
-        sourceUriList: List<FormalUri>,
-        limit: Int,
-    ): List<StatusContentEntity> {
-        return statusContentDao.query(sourceUriList, limit)
-    }
-
-    suspend fun query(
-        sourceUriList: List<FormalUri>,
-    ): List<StatusContentEntity> {
-        return statusContentDao.query(sourceUriList)
-    }
-
     suspend fun queryFirst(sourceUri: FormalUri): StatusContentEntity? {
         return statusContentDao.queryFirst(sourceUri)
     }
@@ -88,10 +89,19 @@ internal class StatusContentRepo @Inject constructor(
     }
 
     suspend fun insert(status: StatusContentEntity) {
+        Log.d("U_TEST", "insert $status")
         statusContentDao.insert(status)
     }
 
     suspend fun insert(statusList: List<StatusContentEntity>) {
+        statusList.joinToString(",") { it.id }.let {
+            Log.d("U_TEST", "insert list $it")
+        }
+        statusContentDao.query(statusList.map { it.id })
+            .joinToString(", ") { it.id }
+            .let {
+                Log.d("U_TEST", "source exist is $it")
+            }
         statusContentDao.insert(statusList)
     }
 

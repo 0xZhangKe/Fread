@@ -24,7 +24,7 @@ class ActivityPubStatusResolver @Inject constructor(
         uri: FormalUri,
         limit: Int,
         sinceId: String?,
-        minId: String?,
+        maxId: String?,
     ): Result<List<Status>>? {
         val userInsights = userUriTransformer.parse(uri)
         if (userInsights != null) {
@@ -32,7 +32,7 @@ class ActivityPubStatusResolver @Inject constructor(
                 userUriInsights = userInsights,
                 limit = limit,
                 sinceId = sinceId,
-                minId = minId,
+                maxId = maxId,
             )
         }
         val timelineInsights = timelineUriTransformer.parse(uri)
@@ -41,7 +41,7 @@ class ActivityPubStatusResolver @Inject constructor(
                 timelineUriInsights = timelineInsights,
                 limit = limit,
                 sinceId = sinceId,
-                minId = minId,
+                maxId = maxId,
             )
         }
         return null

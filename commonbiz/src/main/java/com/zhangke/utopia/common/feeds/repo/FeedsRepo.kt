@@ -11,13 +11,13 @@ class FeedsRepo @Inject internal constructor(
 
     suspend fun getPreviousStatus(
         feedsConfig: FeedsConfig,
-        sinceId: String? = null,
+        maxId: String? = null,
         limit: Int = 50,
     ): Result<List<Status>> {
         return getPreviousStatusUseCase(
             feedsConfig = feedsConfig,
             limit = limit,
-            sinceId = sinceId,
+            maxId = maxId,
         )
     }
 

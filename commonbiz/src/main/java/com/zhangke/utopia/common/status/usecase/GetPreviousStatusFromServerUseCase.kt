@@ -1,6 +1,6 @@
 package com.zhangke.utopia.common.status.usecase
 
-import com.zhangke.framework.utils.collect
+import android.util.Log
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
@@ -14,6 +14,7 @@ internal class GetPreviousStatusFromServerUseCase @Inject constructor(
     private val statusContentRepo: StatusContentRepo,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
     private val saveStatusListToLocal: SaveStatusListToLocalUseCase,
+    private val getPreviousStatusFromLocal: GetPreviousStatusFromLocalUseCase,
 ) {
 
     companion object {
@@ -25,33 +26,33 @@ internal class GetPreviousStatusFromServerUseCase @Inject constructor(
 
     suspend operator fun invoke(
         feedsConfig: FeedsConfig,
-        sinceId: String?,
+        maxId: String?,
         limit: Int,
     ): Result<List<StatusContentEntity>> {
+        Log.d("U_TEST", "GetPreviousStatusFromServer feeds is ${feedsConfig.name}, sinceId is $maxId")
         val resultList = getUriToSinceId(
-            sinceId = sinceId,
+            maxId = maxId,
             sourceUriList = feedsConfig.sourceUriList,
-        ).map { (uri, sinceId) ->
-            getStatusFromServer(sourceUri = uri, sinceId = sinceId)
+        ).map { (uri, sinceStatus) ->
+            getStatusFromServer(sourceUri = uri, sinceStatus = sinceStatus)
         }
         if (resultList.all { it.isFailure }) {
-            return Result.failure(resultList.first { it.isFailure }.exceptionOrNull()!!)
+            val e = resultList.first { it.isFailure }.exceptionOrNull()!!
+            Log.d("U_TEST", "GetPreviousStatusFromServer all failure, cause ${e.message}")
+            return Result.failure(e)
         }
-        val statusList = resultList.collect()
-            .getOrThrow()
-            .sortedByDescending { it.createTimestamp }
-            .take(limit)
-        return Result.success(statusList)
+        Log.d("U_TEST", "GetPreviousStatusFromServer statusList size is ${resultList.flatMap { it.getOrNull() ?: emptyList() }.size}")
+        return Result.success(getPreviousStatusFromLocal(feedsConfig, maxId, limit))
     }
 
     private suspend fun getStatusFromServer(
         sourceUri: FormalUri,
-        sinceId: String?,
+        sinceStatus: StatusContentEntity?,
     ): Result<List<StatusContentEntity>> {
         val statusListResult = statusResolver.getStatusList(
             uri = sourceUri,
             limit = FETCH_FROM_SERVER_LIMIT,
-            sinceId = sinceId,
+            maxId = sinceStatus?.statusIdOfPlatform,
         ).map { list ->
             list.map {
                 statusContentEntityAdapter.toEntity(
@@ -61,18 +62,20 @@ internal class GetPreviousStatusFromServerUseCase @Inject constructor(
                 )
             }
         }
+        Log.d("U_TEST", "getStatusFromServer($sourceUri) since ${sinceStatus?.statusIdOfPlatform} result size is ${statusListResult.getOrNull()?.size}.")
         val statusList = statusListResult.getOrNull() ?: return statusListResult
         if (statusList.isEmpty()) return statusListResult
         val nextIdOfLatest = if (statusList.size < FETCH_FROM_SERVER_LIMIT) {
-            val isFirstStatus = statusResolver.checkIsFirstStatus(sourceUri, statusList.last().id)
+            val isFirstStatus = statusResolver.checkIsFirstStatus(sourceUri, statusList.last().statusIdOfPlatform)
                 .getOrNull() == true
             if (isFirstStatus) StatusContentRepo.STATUS_END_MAGIC_NUMBER else null
         } else {
             null
         }
+        Log.d("U_TEST", "nextIdOfLatest $nextIdOfLatest")
         saveStatusListToLocal(
             statusList = statusList,
-            sinceId = sinceId,
+            maxId = sinceStatus?.id,
             nextIdOfLatest = nextIdOfLatest,
         )
         return statusListResult
@@ -82,30 +85,34 @@ internal class GetPreviousStatusFromServerUseCase @Inject constructor(
      * @return size of return list maybe not same with size of sourceUriList params
      */
     private suspend fun getUriToSinceId(
-        sinceId: String?,
+        maxId: String?,
         sourceUriList: List<FormalUri>,
-    ): List<Pair<FormalUri, String?>> {
-        if (sinceId.isNullOrEmpty()) {
+    ): List<Pair<FormalUri, StatusContentEntity?>> {
+        if (maxId.isNullOrEmpty()) {
             return sourceUriList.map { it to null }
         }
-        val list = mutableListOf<Pair<FormalUri, String?>>()
-        val sinceStatus =
-            statusContentRepo.query(sinceId) ?: return sourceUriList.map { it to null }
+        val list = mutableListOf<Pair<FormalUri, StatusContentEntity?>>()
+        val sinceStatus = statusContentRepo.query(maxId)
+        if (sinceStatus == null) {
+            Log.d("U_TEST", "getUriToSinceId($maxId) cant query this since status from local.")
+            return sourceUriList.map { it to null }
+        }
         val minTime = sinceStatus.createTimestamp
         val statusList = statusContentRepo.queryAfter(
             sourceUriList = sourceUriList,
             createTimestamp = minTime,
         )
+        Log.d("U_TEST", "getUriToSinceId($maxId) local statusList size is ${statusList.size}.")
         sourceUriList.forEach { uri ->
-            // 对于没有已经没有下一个数据的 status，不再请求
             val thisStatus = statusList.lastOrNull { it.sourceUri == uri }
+            // 对于没有已经没有下一个数据的 status，不再请求
             if (thisStatus?.nextStatusId == StatusContentRepo.STATUS_END_MAGIC_NUMBER) {
                 return@forEach
             }
             list += if (uri == sinceStatus.sourceUri) {
-                uri to sinceId
+                uri to sinceStatus
             } else {
-                uri to thisStatus?.id
+                uri to thisStatus
             }
         }
         return list

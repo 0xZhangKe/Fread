@@ -7,6 +7,6 @@ import javax.inject.Inject
 class StatusIdGenerator @Inject constructor() {
 
     fun generate(sourceUri: FormalUri, status: Status): String {
-        return "${sourceUri}_${status.id}"
+        return "${sourceUri.host}_${sourceUri.path}_${status.id}"
     }
 }

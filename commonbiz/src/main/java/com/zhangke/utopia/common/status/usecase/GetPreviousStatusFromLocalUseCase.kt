@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.usecase
 
+import android.util.Log
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
@@ -15,17 +16,20 @@ internal class GetPreviousStatusFromLocalUseCase @Inject internal constructor(
 
     suspend operator fun invoke(
         feedsConfig: FeedsConfig,
-        sinceId: String?,
+        maxId: String?,
         limit: Int,
     ): List<StatusContentEntity> {
-        val list = if (sinceId.isNullOrEmpty()) {
+        Log.d("U_TEST", "GetPreviousStatusFromLocal feeds is ${feedsConfig.name}, sinceId is ${maxId}")
+        val list = if (maxId.isNullOrEmpty()) {
             getStatus(feedsConfig)
         } else {
-            val statusList = getStatusBeforeSinceId(feedsConfig, sinceId)
+            val statusList = getStatusBeforeSinceId(feedsConfig, maxId)
+            Log.d("U_TEST", "getStatusBeforeSinceId result size is ${statusList.size}")
             statusList.ifEmpty {
                 getStatus(feedsConfig)
             }
         }
+        Log.d("U_TEST", "getStatusBeforeSinceId local result status size is ${list.size}")
         return list.groupBy { it.sourceUri }
             .filter { it.value.isNotEmpty() }
             .flatMap { (_, statusList) ->
@@ -36,16 +40,16 @@ internal class GetPreviousStatusFromLocalUseCase @Inject internal constructor(
                     statusList
                 }
             }
-            .filter { it.id != sinceId }
+            .filter { it.id != maxId }
             .sortedByDescending { it.createTimestamp }
             .take(limit)
     }
 
     private suspend fun getStatusBeforeSinceId(
         feedsConfig: FeedsConfig,
-        sinceId: String,
+        maxId: String,
     ): List<StatusContentEntity> {
-        val statusEntity = statusContentRepo.query(sinceId) ?: return emptyList()
+        val statusEntity = statusContentRepo.query(maxId) ?: return emptyList()
         return statusContentRepo.queryBefore(
             sourceUriList = feedsConfig.sourceUriList,
             createTimestamp = statusEntity.createTimestamp,

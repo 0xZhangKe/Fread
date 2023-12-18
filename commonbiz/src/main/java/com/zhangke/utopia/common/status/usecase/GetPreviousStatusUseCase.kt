@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.usecase
 
+import android.util.Log
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
@@ -16,20 +17,21 @@ class GetPreviousStatusUseCase @Inject internal constructor(
 
     suspend operator fun invoke(
         feedsConfig: FeedsConfig,
-        sinceId: String?,
+        maxId: String?,
         limit: Int = 50,
     ): Result<List<Status>> {
-        if (sinceId != null) {
-            val alignmentResult = alignmentStatus(feedsConfig.sourceUriList, sinceId)
+        Log.d("U_TEST", "GetPreviousStatusUseCase feeds is ${feedsConfig.name}, sinceId is ${maxId}")
+        if (maxId != null) {
+            val alignmentResult = alignmentStatus(feedsConfig.sourceUriList, maxId)
             if (alignmentResult.isFailure) {
                 return Result.failure(alignmentResult.exceptionOrNull()!!)
             }
         }
-        val statusList = getPreviousStatusFromLocalUseCase(feedsConfig, sinceId, limit)
+        val statusList = getPreviousStatusFromLocalUseCase(feedsConfig, maxId, limit)
         if (statusList.size >= limit || areAllStatusIsTheirSourceFirst(statusList)) {
             return Result.success(statusList.map(statusContentEntityAdapter::toStatus))
         }
-        return getPreviousStatusFromServerUseCase(feedsConfig, sinceId, limit).map {
+        return getPreviousStatusFromServerUseCase(feedsConfig, maxId, limit).map {
             it.map(statusContentEntityAdapter::toStatus)
         }
     }

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.usecase
 
+import android.util.Log
 import com.zhangke.framework.collections.updateIndex
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
@@ -11,27 +12,52 @@ class SaveStatusListToLocalUseCase @Inject internal constructor(
 
     suspend operator fun invoke(
         statusList: List<StatusContentEntity>,
-        sinceId: String? = null,
+        maxId: String? = null,
         nextIdOfLatest: String? = null,
     ) {
+        Log.d("U_TEST", "SaveStatusListToLocal status size is ${statusList.size}, sinceId is $maxId, nextIdOfLatest is $nextIdOfLatest")
         if (statusList.isEmpty()) return
-        if (sinceId != null) {
-            updateStatusNextId(sinceId, statusList.first().id)
+        if (maxId != null) {
+            updateStatusNextId(maxId, statusList.first().id)
         }
-        var entityList = statusList
-        if (nextIdOfLatest != null) {
-            entityList = entityList.updateIndex(statusList.lastIndex) {
+        var entityList = updateNextIdOfLatest(statusList, nextIdOfLatest)
+        entityList = updateEachStatusNextId(entityList)
+        statusContentRepo.insert(entityList)
+        Log.d("U_TEST", "insert to local success.")
+    }
+
+    private suspend fun updateNextIdOfLatest(
+        statusList: List<StatusContentEntity>,
+        nextIdOfLatest: String? = null,
+    ): List<StatusContentEntity> {
+        return if (nextIdOfLatest != null) {
+            statusList.updateIndex(statusList.lastIndex) {
                 it.copy(nextStatusId = nextIdOfLatest)
             }
-        } else if (entityList.last().nextStatusId.isNullOrEmpty()) {
-            val nextStatusId = getLocalNextId(entityList.last().id)
+        } else if (statusList.last().nextStatusId.isNullOrEmpty()) {
+            val nextStatusId = getLocalNextId(statusList.last().id)
+            Log.d("U_TEST", "local next id is $nextStatusId")
             if (nextStatusId != null) {
-                entityList = entityList.updateIndex(entityList.lastIndex) {
+                statusList.updateIndex(statusList.lastIndex) {
                     it.copy(nextStatusId = nextStatusId)
                 }
+            } else {
+                statusList
             }
+        } else {
+            statusList
         }
-        statusContentRepo.insert(entityList)
+    }
+
+    private fun updateEachStatusNextId(statusList: List<StatusContentEntity>): List<StatusContentEntity> {
+        return statusList.mapIndexed { index, entity ->
+            val nextStatusId = if (entity.nextStatusId.isNullOrEmpty() && index < statusList.lastIndex) {
+                statusList[index + 1].id
+            } else {
+                entity.nextStatusId
+            }
+            entity.copy(nextStatusId = nextStatusId)
+        }
     }
 
     private suspend fun getLocalNextId(statusId: String): String? {
@@ -40,8 +66,12 @@ class SaveStatusListToLocalUseCase @Inject internal constructor(
     }
 
     private suspend fun updateStatusNextId(statusId: String, nextStatusId: String) {
-        val entity = statusContentRepo.query(statusId)
-            ?.copy(nextStatusId = nextStatusId) ?: return
+        val entity = statusContentRepo.query(statusId)?.copy(nextStatusId = nextStatusId)
+        if (entity == null) {
+            Log.d("U_TEST", "can query this since id from local.")
+            return
+        }
+        Log.d("U_TEST", "update nextStatusId of entity to local.")
         statusContentRepo.insert(entity)
     }
 }

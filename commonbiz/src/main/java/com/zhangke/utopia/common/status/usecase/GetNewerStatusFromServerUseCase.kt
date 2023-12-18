@@ -29,7 +29,7 @@ internal class GetNewerStatusFromServerUseCase @Inject constructor(
             .mapNotNull { (uri, statusList) ->
                 val thisSinceStatus = statusList.chooseSinceStatus(sinceStatus, limit)
                 if (thisSinceStatus != null) {
-                    loadPreviousStatus(uri, thisSinceStatus, limit)
+                    loadNewerStatus(uri, thisSinceStatus, limit)
                 } else {
                     null
                 }
@@ -65,14 +65,14 @@ internal class GetNewerStatusFromServerUseCase @Inject constructor(
         return get(sinceIndex)
     }
 
-    private suspend fun loadPreviousStatus(
+    private suspend fun loadNewerStatus(
         sourceUri: FormalUri,
         sinceStatus: StatusContentEntity,
         limit: Int,
     ): Result<Unit> {
         val result = statusProvider.statusResolver.getStatusList(
             uri = sourceUri,
-            minId = sinceStatus.id,
+            sinceId = sinceStatus.statusIdOfPlatform,
             limit = limit,
         ).map { list ->
             list.map {
@@ -88,7 +88,7 @@ internal class GetNewerStatusFromServerUseCase @Inject constructor(
         if (statusList.isEmpty()) return Result.success(Unit)
         saveStatusListToLocal(
             statusList = statusList,
-            sinceId = null,
+            maxId = null,
             nextIdOfLatest = sinceStatus.id,
         )
         return Result.success(Unit)

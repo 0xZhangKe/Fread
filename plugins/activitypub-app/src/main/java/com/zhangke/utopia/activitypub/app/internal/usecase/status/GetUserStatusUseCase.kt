@@ -16,14 +16,14 @@ class GetUserStatusUseCase @Inject constructor(
         userUriInsights: UserUriInsights,
         limit: Int,
         sinceId: String?,
-        minId: String?,
+        maxId: String?,
     ): Result<List<Status>> {
         return getClientUseCase(userUriInsights.webFinger.host.toBaseUrl())
             .accountRepo.getStatuses(
                 id = userUriInsights.userId,
                 limit = limit,
                 sinceId = sinceId,
-                minId = minId,
+                maxId = maxId,
             ).map { it.map(activityPubStatusAdapter::adapt) }
     }
 }

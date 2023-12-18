@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.usecase
 
+import android.util.Log
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
@@ -24,9 +25,11 @@ class AlignmentStatusUseCase @Inject internal constructor(
 
     suspend operator fun invoke(
         sourceUriList: List<FormalUri>,
-        sinceId: String,
+        baselineId: String,
     ): Result<Unit> {
-        val baselineEntity = statusContentRepo.query(sinceId) ?: return Result.success(Unit)
+        Log.d("U_TEST", "AlignmentStatusUseCase: baselineId = $baselineId")
+        val baselineEntity = statusContentRepo.query(baselineId) ?: return Result.success(Unit)
+        Log.d("U_TEST", "AlignmentStatusUseCase: baselineEntity = $baselineEntity")
         val alignUpResult = alignUp(sourceUriList, baselineEntity)
         val alignmentDown = alignDown(sourceUriList, baselineEntity)
         if (alignUpResult.isFailure) return alignUpResult
@@ -50,13 +53,22 @@ class AlignmentStatusUseCase @Inject internal constructor(
                 entity != null && entity.createTimestamp > sinceSourceEntity.createTimestamp
             }
         }
-        if (needLoadNextSourceToStatus.isEmpty()) return Result.success(Unit)
+        if (needLoadNextSourceToStatus.isEmpty()) {
+            Log.d("U_TEST", "do not need align down, since to $sinceSourceEntity")
+            return Result.success(Unit)
+        }
+        Log.d("U_TEST", "start align down, since to $sinceSourceEntity")
         val resultList = coroutineScope {
             needLoadNextSourceToStatus.map {
                 async { alignDownSourceToBaseline(it.first, it.second!!) }
             }.awaitAll()
         }
-        if (resultList.any { it.isFailure }) return Result.failure(resultList.mapFirst { it.exceptionOrNull() })
+        if (resultList.any { it.isFailure }) {
+            val e = resultList.mapFirst { it.exceptionOrNull() }
+            Log.d("U_TEST", "align down failed, case ${e.message}, since to $sinceSourceEntity")
+            return Result.failure(e)
+        }
+        Log.d("U_TEST", "align down success, since to $sinceSourceEntity")
         return Result.success(Unit)
     }
 
@@ -68,7 +80,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
         val result = statusProvider.statusResolver.getStatusList(
             uri = sourceUri,
             limit = limit,
-            sinceId = sinceSourceEntity.id,
+            maxId = sinceSourceEntity.statusIdOfPlatform,
         )
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
         val resultStatusList = statusContentEntityAdapter.toEntityList(
@@ -78,7 +90,10 @@ class AlignmentStatusUseCase @Inject internal constructor(
         if (resultStatusList.isEmpty()) {
             if (sinceSourceEntity.nextStatusId.isNullOrEmpty()) {
                 val isFirstStatus = statusProvider.statusResolver
-                    .checkIsFirstStatus(sourceUri = sourceUri, statusId = sinceSourceEntity.id)
+                    .checkIsFirstStatus(
+                        sourceUri = sourceUri,
+                        statusId = sinceSourceEntity.statusIdOfPlatform,
+                    )
                     .getOrNull() == true
                 if (isFirstStatus) {
                     statusContentRepo.insert(sinceSourceEntity.copy(nextStatusId = StatusContentRepo.STATUS_END_MAGIC_NUMBER))
@@ -88,7 +103,10 @@ class AlignmentStatusUseCase @Inject internal constructor(
         }
         val nextIdOfLatest = if (resultStatusList.size < limit) {
             val isFirstStatus = statusProvider.statusResolver
-                .checkIsFirstStatus(sourceUri = sourceUri, statusId = resultStatusList.last().id)
+                .checkIsFirstStatus(
+                    sourceUri = sourceUri,
+                    statusId = resultStatusList.last().statusIdOfPlatform,
+                )
                 .getOrNull() == true
             if (isFirstStatus) StatusContentRepo.STATUS_END_MAGIC_NUMBER else null
         } else {
@@ -96,7 +114,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
         }
         saveStatusListToLocal(
             statusList = resultStatusList,
-            sinceId = sinceSourceEntity.id,
+            maxId = sinceSourceEntity.id,
             nextIdOfLatest = nextIdOfLatest,
         )
         val lastStatus = resultStatusList.last()
@@ -125,13 +143,22 @@ class AlignmentStatusUseCase @Inject internal constructor(
         }.filter { (_, entity) ->
             entity != null && entity.createTimestamp < sinceSourceEntity.createTimestamp
         }
-        if (needLoadPreviousSourceToStatus.isEmpty()) return Result.success(Unit)
+        if (needLoadPreviousSourceToStatus.isEmpty()) {
+            Log.d("U_TEST", "do not need align up, since to $sinceSourceEntity")
+            return Result.success(Unit)
+        }
+        Log.d("U_TEST", "start align up, since to $sinceSourceEntity")
         val resultList = coroutineScope {
             needLoadPreviousSourceToStatus.map {
                 async { alignUpSourceToBaseline(it.first, it.second!!) }
             }.awaitAll()
         }
-        if (resultList.any { it.isFailure }) return Result.failure(resultList.mapFirst { it.exceptionOrNull() })
+        if (resultList.any { it.isFailure }) {
+            val e = resultList.mapFirst { it.exceptionOrNull() }
+            Log.d("U_TEST", "align up failure, case ${e.message}, since is $sinceSourceEntity")
+            return Result.failure(e)
+        }
+        Log.d("U_TEST", "align up success, since to $sinceSourceEntity")
         return Result.success(Unit)
     }
 
@@ -143,7 +170,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
         val result = statusProvider.statusResolver.getStatusList(
             uri = sourceUri,
             limit = limit,
-            minId = sinceSourceEntity.id,
+            sinceId = sinceSourceEntity.statusIdOfPlatform,
         )
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
         val resultStatusList = statusContentEntityAdapter.toEntityList(
@@ -155,7 +182,7 @@ class AlignmentStatusUseCase @Inject internal constructor(
         }
         saveStatusListToLocal(
             statusList = resultStatusList,
-            sinceId = null,
+            maxId = null,
             nextIdOfLatest = sinceSourceEntity.id,
         )
         // latest is mean the order by time

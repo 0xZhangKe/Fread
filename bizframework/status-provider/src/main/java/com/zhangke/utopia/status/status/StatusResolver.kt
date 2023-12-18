@@ -12,14 +12,14 @@ class StatusResolver(
         uri: FormalUri,
         limit: Int,
         sinceId: String? = null,
-        minId: String? = null,
+        maxId: String? = null,
     ): Result<List<Status>> {
         for (statusResolver in resolverList) {
             statusResolver.getStatusList(
                 uri = uri,
                 limit = limit,
                 sinceId = sinceId,
-                minId = minId,
+                maxId = maxId,
             )?.let { return it }
         }
         return Result.failure(IllegalArgumentException("Unsupported uri:$uri!"))
@@ -44,7 +44,7 @@ interface IStatusResolver {
         uri: FormalUri,
         limit: Int,
         sinceId: String?,
-        minId: String?
+        maxId: String?
     ): Result<List<Status>>?
 
     suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>?

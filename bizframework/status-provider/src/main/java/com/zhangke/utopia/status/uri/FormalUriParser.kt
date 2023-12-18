@@ -11,13 +11,14 @@ class FormalUriParser(
 ) {
 
     fun parse(uriString: String): Triple<String, String, Map<String, String>>? {
-        val scheme = findScheme(uriString)
+        val fixedUriString = uriString.trim()
+        val scheme = findScheme(fixedUriString)
         if (scheme != FormalUri.SCHEME) return null
-        val host = findHost(uriString)
+        val host = findHost(fixedUriString)
         if (host.isNullOrEmpty()) return null
-        val path = findPath(uriString)
+        val path = findPath(fixedUriString)
         if (path.isNullOrEmpty()) return null
-        val queries = findQueries(uriString)
+        val queries = findQueries(fixedUriString)
         return Triple(host, path, queries)
     }
 

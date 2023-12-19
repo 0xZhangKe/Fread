@@ -45,6 +45,9 @@ interface StatusContentDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri")
     suspend fun queryBySource(sourceUri: FormalUri): List<StatusContentEntity>
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri LIMIT :limit")
+    suspend fun queryBySource(sourceUri: FormalUri, limit: Int): List<StatusContentEntity>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
     suspend fun queryBySource(
         sourceUriList: List<FormalUri>,
@@ -64,27 +67,34 @@ interface StatusContentDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
     suspend fun query(id: String): StatusContentEntity?
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri= :sourceUri ORDER BY createTimestamp DESC LIMIT :limit")
+    suspend fun queryPrevious(
+        sourceUri: FormalUri,
+        createTimestamp: Long,
+        limit: Int,
+    ): List<StatusContentEntity>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
-    suspend fun queryBefore(
+    suspend fun queryPrevious(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
-    suspend fun queryBefore(
+    suspend fun queryPrevious(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
-    suspend fun queryAfter(
+    suspend fun queryNewer(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
     ): List<StatusContentEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC LIMIT :limit")
-    suspend fun queryAfter(
+    suspend fun queryNewer(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int,

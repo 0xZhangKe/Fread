@@ -22,6 +22,10 @@ internal class StatusContentRepo @Inject constructor(
         return statusContentDao.queryBySource(sourceUri)
     }
 
+    suspend fun query(sourceUri: FormalUri, limit: Int): List<StatusContentEntity> {
+        return statusContentDao.queryBySource(sourceUri, limit)
+    }
+
     suspend fun query(id: String): StatusContentEntity? {
         return statusContentDao.query(id)
     }
@@ -39,41 +43,53 @@ internal class StatusContentRepo @Inject constructor(
         return statusContentDao.queryBySource(sourceUriList)
     }
 
-    suspend fun queryBefore(
+    suspend fun queryPrevious(
+        sourceUri: FormalUri,
+        createTimestamp: Long,
+        limit: Int,
+    ): List<StatusContentEntity> {
+        return statusContentDao.queryPrevious(
+            sourceUri = sourceUri,
+            createTimestamp = createTimestamp,
+            limit = limit,
+        )
+    }
+
+    suspend fun queryPrevious(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
     ): List<StatusContentEntity> {
-        return statusContentDao.queryBefore(
+        return statusContentDao.queryPrevious(
             sourceUriList = sourceUriList,
             createTimestamp = createTimestamp,
         )
     }
 
-    suspend fun queryBefore(
+    suspend fun queryPrevious(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity> {
-        return statusContentDao.queryBefore(
+        return statusContentDao.queryPrevious(
             sourceUriList = sourceUriList,
             createTimestamp = createTimestamp,
             limit = limit,
         )
     }
 
-    suspend fun queryAfter(
+    suspend fun queryNewer(
         sourceUriList: List<FormalUri>,
         createTimestamp: Long,
         limit: Int? = null
     ): List<StatusContentEntity> {
         return if (limit != null) {
-            statusContentDao.queryAfter(
+            statusContentDao.queryNewer(
                 sourceUriList = sourceUriList,
                 createTimestamp = createTimestamp,
                 limit = limit,
             )
         } else {
-            statusContentDao.queryAfter(
+            statusContentDao.queryNewer(
                 sourceUriList = sourceUriList,
                 createTimestamp = createTimestamp,
             )

@@ -15,7 +15,7 @@ internal class GetNewerStatusFromLocalUseCase @Inject constructor(
         limit: Int,
     ): List<StatusContentEntity> {
         val sinceStatus = statusContentRepo.query(sinceId) ?: return emptyList()
-        return statusContentRepo.queryAfter(
+        return statusContentRepo.queryNewer(
             sourceUriList = feedsConfig.sourceUriList,
             createTimestamp = sinceStatus.createTimestamp,
         ).filter { it.id != sinceId }

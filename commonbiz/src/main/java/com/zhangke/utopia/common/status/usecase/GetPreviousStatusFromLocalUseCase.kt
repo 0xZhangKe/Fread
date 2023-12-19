@@ -50,7 +50,7 @@ internal class GetPreviousStatusFromLocalUseCase @Inject internal constructor(
         maxId: String,
     ): List<StatusContentEntity> {
         val statusEntity = statusContentRepo.query(maxId) ?: return emptyList()
-        return statusContentRepo.queryBefore(
+        return statusContentRepo.queryPrevious(
             sourceUriList = feedsConfig.sourceUriList,
             createTimestamp = statusEntity.createTimestamp,
         )

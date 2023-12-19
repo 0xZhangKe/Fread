@@ -12,13 +12,13 @@ internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUri: FormalUri,
         limit: Int,
-        maxId: String?,
+        maxStatus: StatusContentEntity?,
     ): Result<List<StatusContentEntity>> {
-        if (maxId.isNullOrEmpty()) {
-            return Result.success(statusContentRepo.query(sourceUri, limit))
+        val statusList = if (maxStatus == null) {
+            statusContentRepo.query(sourceUri, limit)
+        } else {
+            statusContentRepo.queryPrevious(sourceUri, maxStatus.createTimestamp, limit)
         }
-        val maxStatus = statusContentRepo.query(maxId) ?: return Result.failure(IllegalArgumentException("Can't find record by id $maxId"))
-        return statusContentRepo.queryPrevious(sourceUri, maxStatus.createTimestamp, limit)
-            .let { Result.success(it) }
+        return Result.success(statusList)
     }
 }

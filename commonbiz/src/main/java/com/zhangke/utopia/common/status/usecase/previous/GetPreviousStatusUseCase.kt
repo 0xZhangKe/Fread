@@ -1,10 +1,12 @@
 package com.zhangke.utopia.common.status.usecase.previous
 
+import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 internal class GetPreviousStatusUseCase @Inject constructor(
+    private val statusContentRepo: StatusContentRepo,
     private val getPreviousStatusFromLocal: GetPreviousStatusFromLocalUseCase,
     private val syncPreviousStatus: SyncPreviousStatusUseCase,
 ) {
@@ -14,15 +16,21 @@ internal class GetPreviousStatusUseCase @Inject constructor(
         maxId: String?,
         limit: Int,
     ): Result<List<StatusContentEntity>> {
-        val statusFromLocalResult = getPreviousStatusFromLocal(sourceUri, limit, maxId)
+        val maxStatus = if (maxId.isNullOrEmpty()) {
+            null
+        } else {
+            statusContentRepo.query(maxId)
+                ?: return Result.failure(IllegalArgumentException("Can't find record by id $maxId"))
+        }
+        val statusFromLocalResult = getPreviousStatusFromLocal(sourceUri, limit, maxStatus)
         if (statusFromLocalResult.isSuccess) {
             val statusFromLocal = statusFromLocalResult.getOrNull()
             if (statusFromLocal != null && statusFromLocal.size >= limit) {
                 return Result.success(statusFromLocal)
             }
         }
-        val syncResult = syncPreviousStatus(sourceUri, limit, maxId)
+        val syncResult = syncPreviousStatus(sourceUri, limit, maxStatus)
         if (syncResult.isFailure) return Result.failure(syncResult.exceptionOrNull()!!)
-        return getPreviousStatusFromLocal(sourceUri, limit, maxId)
+        return getPreviousStatusFromLocal(sourceUri, limit, maxStatus)
     }
 }

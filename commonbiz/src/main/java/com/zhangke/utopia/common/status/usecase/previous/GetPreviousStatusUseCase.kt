@@ -7,14 +7,13 @@ import javax.inject.Inject
 
 internal class GetPreviousStatusUseCase @Inject constructor(
     private val statusContentRepo: StatusContentRepo,
-    private val getPreviousStatusFromLocal: GetPreviousStatusFromLocalUseCase,
-    private val syncPreviousStatus: SyncPreviousStatusUseCase,
+    private val getSingleSourcePreviousStatus: GetSingleSourcePreviousStatusUseCase,
 ) {
 
     suspend operator fun invoke(
-        sourceUri: FormalUri,
-        maxId: String?,
+        sourceUriList: List<FormalUri>,
         limit: Int,
+        maxId: String?,
     ): Result<List<StatusContentEntity>> {
         val maxStatus = if (maxId.isNullOrEmpty()) {
             null
@@ -22,15 +21,17 @@ internal class GetPreviousStatusUseCase @Inject constructor(
             statusContentRepo.query(maxId)
                 ?: return Result.failure(IllegalArgumentException("Can't find record by id $maxId"))
         }
-        val statusFromLocalResult = getPreviousStatusFromLocal(sourceUri, limit, maxStatus)
-        if (statusFromLocalResult.isSuccess) {
-            val statusFromLocal = statusFromLocalResult.getOrNull()
-            if (statusFromLocal != null && statusFromLocal.size >= limit) {
-                return Result.success(statusFromLocal)
-            }
+        val resultList = sourceUriList.map { sourceUri ->
+            getSingleSourcePreviousStatus(
+                sourceUri = sourceUri,
+                limit = limit,
+                maxStatus = maxStatus,
+            )
         }
-        val syncResult = syncPreviousStatus(sourceUri, limit, maxStatus)
-        if (syncResult.isFailure) return Result.failure(syncResult.exceptionOrNull()!!)
-        return getPreviousStatusFromLocal(sourceUri, limit, maxStatus)
+        if (resultList.all { it.isFailure }) return Result.failure(resultList.first().exceptionOrNull()!!)
+        val statusList = resultList.flatMap { it.getOrNull() ?: emptyList() }
+            .sortedByDescending { it.createTimestamp }
+            .take(limit)
+        return Result.success(statusList)
     }
 }

@@ -1,52 +1,37 @@
 package com.zhangke.utopia.common.status.usecase
 
-import android.util.Log
-import com.zhangke.framework.collections.updateIndex
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
+import com.zhangke.utopia.status.StatusProvider
 import javax.inject.Inject
 
 class SaveStatusListToLocalUseCase @Inject internal constructor(
     private val statusContentRepo: StatusContentRepo,
+    private val statusProvider: StatusProvider,
 ) {
 
     suspend operator fun invoke(
         statusList: List<StatusContentEntity>,
         maxId: String? = null,
-        nextIdOfLatest: String? = null,
+        needCheckFirstStatus: Boolean = false,
     ) {
-        Log.d("U_TEST", "SaveStatusListToLocal status size is ${statusList.size}, sinceId is $maxId, nextIdOfLatest is $nextIdOfLatest")
         if (statusList.isEmpty()) return
         if (maxId != null) {
             updateStatusNextId(maxId, statusList.first().id)
         }
-        var entityList = updateNextIdOfLatest(statusList, nextIdOfLatest)
-        entityList = updateEachStatusNextId(entityList)
-        statusContentRepo.insert(entityList)
-        Log.d("U_TEST", "insert to local success.")
-    }
-
-    private suspend fun updateNextIdOfLatest(
-        statusList: List<StatusContentEntity>,
-        nextIdOfLatest: String? = null,
-    ): List<StatusContentEntity> {
-        return if (nextIdOfLatest != null) {
-            statusList.updateIndex(statusList.lastIndex) {
-                it.copy(nextStatusId = nextIdOfLatest)
-            }
-        } else if (statusList.last().nextStatusId.isNullOrEmpty()) {
-            val nextStatusId = getLocalNextId(statusList.last().id)
-            Log.d("U_TEST", "local next id is $nextStatusId")
-            if (nextStatusId != null) {
-                statusList.updateIndex(statusList.lastIndex) {
-                    it.copy(nextStatusId = nextStatusId)
+        var entityList = updateEachStatusNextId(statusList)
+        if (needCheckFirstStatus) {
+            val firstStatus = entityList.minBy { it.createTimestamp }
+            val markedStatus = markFirstStatus(firstStatus)
+            entityList = entityList.map {
+                if (it.id == markedStatus.id) {
+                    markedStatus
+                } else {
+                    it
                 }
-            } else {
-                statusList
             }
-        } else {
-            statusList
         }
+        statusContentRepo.insert(entityList)
     }
 
     private fun updateEachStatusNextId(statusList: List<StatusContentEntity>): List<StatusContentEntity> {
@@ -60,18 +45,27 @@ class SaveStatusListToLocalUseCase @Inject internal constructor(
         }
     }
 
-    private suspend fun getLocalNextId(statusId: String): String? {
-        val entity = statusContentRepo.query(statusId) ?: return null
-        return entity.nextStatusId
+    private suspend fun updateStatusNextId(statusId: String, nextStatusId: String) {
+        val entity = statusContentRepo.query(statusId)?.copy(nextStatusId = nextStatusId) ?: return
+        statusContentRepo.insert(entity)
     }
 
-    private suspend fun updateStatusNextId(statusId: String, nextStatusId: String) {
-        val entity = statusContentRepo.query(statusId)?.copy(nextStatusId = nextStatusId)
-        if (entity == null) {
-            Log.d("U_TEST", "can query this since id from local.")
-            return
+    private suspend fun markFirstStatus(
+        status: StatusContentEntity,
+    ): StatusContentEntity {
+        if (status.nextStatusId.isNullOrEmpty().not()) return status
+        val existStatusEntity = statusContentRepo.query(status.id)
+        if (existStatusEntity?.nextStatusId.isNullOrEmpty().not()) {
+            return status.copy(nextStatusId = existStatusEntity?.nextStatusId)
         }
-        Log.d("U_TEST", "update nextStatusId of entity to local.")
-        statusContentRepo.insert(entity)
+        val isFirstStatus = statusProvider.statusResolver.checkIsFirstStatus(
+            sourceUri = status.sourceUri,
+            statusId = status.statusIdOfPlatform,
+        ).getOrNull() == true
+        return if (isFirstStatus) {
+            status.copy(nextStatusId = StatusContentRepo.STATUS_END_MAGIC_NUMBER)
+        } else {
+            status
+        }
     }
 }

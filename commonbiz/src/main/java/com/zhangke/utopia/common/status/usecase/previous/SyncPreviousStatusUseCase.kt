@@ -1,7 +1,6 @@
 package com.zhangke.utopia.common.status.usecase.previous
 
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
-import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.usecase.SaveStatusListToLocalUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -21,43 +20,34 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
         limit: Int,
         maxStatus: StatusContentEntity?,
     ): Result<Unit> {
-        return if (maxStatus == null) {
-            getStatus(sourceUri, limit)
-        } else {
-            Result.success(Unit)
-        }
+        return syncStatusAndSaveToLocal(sourceUri, limit, limit, maxStatus = maxStatus)
     }
 
-    private suspend fun getStatus(
+    private suspend fun syncStatusAndSaveToLocal(
         sourceUri: FormalUri,
-        limit: Int,
+        targetSize: Int,
+        pageLimit: Int,
+        maxStatus: StatusContentEntity?,
     ): Result<Unit> {
-        val result = statusResolver.getStatusList(sourceUri, limit)
-            .map { list ->
-                statusContentEntityAdapter.toEntityList(sourceUri, list, null)
-            }
-        if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
-        val statusList = result.getOrNull()
-        if (statusList.isNullOrEmpty()) return Result.success(Unit)
-        var nextIdOfLatest: String? = null
-        if (statusList.size < limit) {
-            val latestStatus = statusList.last()
-            val isFirstStatus = statusResolver.checkIsFirstStatus(
-                sourceUri = sourceUri,
-                statusId = latestStatus.statusIdOfPlatform,
-            ).getOrNull() == true
-            //接着加载下一页，直到满足 limit
-            nextIdOfLatest = if (isFirstStatus) {
-                StatusContentRepo.STATUS_END_MAGIC_NUMBER
-            } else {
-                null
-            }
+        val result = statusResolver.getStatusList(
+            uri = sourceUri,
+            limit = pageLimit,
+            maxId = maxStatus?.statusIdOfPlatform,
+        ).map { list ->
+            statusContentEntityAdapter.toEntityList(sourceUri, list, null)
         }
+        if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
+        val statusList = result.getOrThrow()
         saveStatusListToLocal(
             statusList = statusList,
-            maxId = null,
-            nextIdOfLatest = nextIdOfLatest,
+            maxId = maxStatus?.id,
+            needCheckFirstStatus = statusList.size < pageLimit,
         )
+        if (statusList.isEmpty()) return Result.success(Unit)
+        val leftCount = targetSize - statusList.size
+        if (leftCount > 0) {
+            return syncStatusAndSaveToLocal(sourceUri, leftCount, pageLimit, statusList.last())
+        }
         return Result.success(Unit)
     }
 }

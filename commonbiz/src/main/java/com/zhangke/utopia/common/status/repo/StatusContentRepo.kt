@@ -96,6 +96,18 @@ internal class StatusContentRepo @Inject constructor(
         }
     }
 
+    suspend fun queryNewer(
+        sourceUri: FormalUri,
+        createTimestamp: Long,
+        limit: Int,
+    ): List<StatusContentEntity>{
+        return statusContentDao.queryNewer(
+            sourceUri = sourceUri,
+            createTimestamp = createTimestamp,
+            limit = limit,
+        )
+    }
+
     suspend fun queryFirst(sourceUri: FormalUri): StatusContentEntity? {
         return statusContentDao.queryFirst(sourceUri)
     }

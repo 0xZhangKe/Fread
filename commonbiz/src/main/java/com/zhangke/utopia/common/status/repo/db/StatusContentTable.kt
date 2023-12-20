@@ -87,6 +87,13 @@ interface StatusContentDao {
         limit: Int,
     ): List<StatusContentEntity>
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri=:sourceUri ORDER BY createTimestamp DESC")
+    suspend fun queryNewer(
+        sourceUri: FormalUri,
+        createTimestamp: Long,
+        limit: Int,
+    ): List<StatusContentEntity>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp>=:createTimestamp AND sourceUri IN (:sourceUriList) ORDER BY createTimestamp DESC")
     suspend fun queryNewer(
         sourceUriList: List<FormalUri>,

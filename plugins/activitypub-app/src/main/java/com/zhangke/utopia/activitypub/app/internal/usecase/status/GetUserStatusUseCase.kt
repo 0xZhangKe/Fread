@@ -24,6 +24,6 @@ class GetUserStatusUseCase @Inject constructor(
                 limit = limit,
                 sinceId = sinceId,
                 maxId = maxId,
-            ).map { it.map(activityPubStatusAdapter::adapt) }
+            ).map { it.map(activityPubStatusAdapter::toStatus) }
     }
 }

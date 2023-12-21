@@ -19,7 +19,7 @@ class ServerTrendingDataSource(
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Status> {
         val offset = params.key ?: 0
         val result = getServerTrending(baseUrl = host, offset = offset, limit = params.loadSize)
-            .map { list -> list.map { statusAdapter.adapt(it) } }
+            .map { list -> list.map { statusAdapter.toStatus(it) } }
         return if (result.isSuccess) {
             val resultList = result.getOrNull() ?: emptyList()
             LoadResult.Page(

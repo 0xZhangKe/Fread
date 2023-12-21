@@ -2,6 +2,7 @@ package com.zhangke.utopia.common.status.usecase
 
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
+import com.zhangke.utopia.common.utils.markToFirstStatus
 import com.zhangke.utopia.status.StatusProvider
 import javax.inject.Inject
 
@@ -36,11 +37,12 @@ internal class SaveStatusListToLocalUseCase @Inject internal constructor(
 
     private fun updateEachStatusNextId(statusList: List<StatusContentEntity>): List<StatusContentEntity> {
         return statusList.mapIndexed { index, entity ->
-            val nextStatusId = if (entity.nextStatusId.isNullOrEmpty() && index < statusList.lastIndex) {
-                statusList[index + 1].id
-            } else {
-                entity.nextStatusId
-            }
+            val nextStatusId =
+                if (entity.nextStatusId.isNullOrEmpty() && index < statusList.lastIndex) {
+                    statusList[index + 1].id
+                } else {
+                    entity.nextStatusId
+                }
             entity.copy(nextStatusId = nextStatusId)
         }
     }
@@ -63,7 +65,7 @@ internal class SaveStatusListToLocalUseCase @Inject internal constructor(
             statusId = status.statusIdOfPlatform,
         ).getOrNull() == true
         return if (isFirstStatus) {
-            status.copy(nextStatusId = StatusContentRepo.STATUS_END_MAGIC_NUMBER)
+            status.markToFirstStatus()
         } else {
             status
         }

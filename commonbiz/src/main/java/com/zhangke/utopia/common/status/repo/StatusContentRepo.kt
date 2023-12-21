@@ -1,6 +1,5 @@
 package com.zhangke.utopia.common.status.repo
 
-import android.util.Log
 import com.zhangke.utopia.common.status.repo.db.StatusContentDao
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
@@ -100,12 +99,32 @@ internal class StatusContentRepo @Inject constructor(
         sourceUri: FormalUri,
         createTimestamp: Long,
         limit: Int,
-    ): List<StatusContentEntity>{
+    ): List<StatusContentEntity> {
         return statusContentDao.queryNewer(
             sourceUri = sourceUri,
             createTimestamp = createTimestamp,
             limit = limit,
         )
+    }
+
+    suspend fun queryRecentPrevious(
+        sourceUri: FormalUri,
+        createTimestamp: Long,
+    ): StatusContentEntity? {
+        return statusContentDao.queryRecentPrevious(
+            sourceUri = sourceUri,
+            createTimestamp = createTimestamp,
+        ).maxByOrNull { it.createTimestamp }
+    }
+
+    suspend fun queryRecentNewer(
+        sourceUri: FormalUri,
+        createTimestamp: Long,
+    ): StatusContentEntity? {
+        return statusContentDao.queryRecentNewer(
+            sourceUri = sourceUri,
+            createTimestamp = createTimestamp,
+        ).minByOrNull { it.createTimestamp }
     }
 
     suspend fun queryFirst(sourceUri: FormalUri): StatusContentEntity? {
@@ -117,19 +136,10 @@ internal class StatusContentRepo @Inject constructor(
     }
 
     suspend fun insert(status: StatusContentEntity) {
-        Log.d("U_TEST", "insert $status")
         statusContentDao.insert(status)
     }
 
     suspend fun insert(statusList: List<StatusContentEntity>) {
-        statusList.joinToString(",") { it.id }.let {
-            Log.d("U_TEST", "insert list $it")
-        }
-        statusContentDao.query(statusList.map { it.id })
-            .joinToString(", ") { it.id }
-            .let {
-                Log.d("U_TEST", "source exist is $it")
-            }
         statusContentDao.insert(statusList)
     }
 

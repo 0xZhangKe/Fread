@@ -1,6 +1,5 @@
 package com.zhangke.utopia.status.status
 
-import android.util.Log
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
@@ -16,16 +15,13 @@ class StatusResolver(
         maxId: String? = null,
     ): Result<List<Status>> {
         for (statusResolver in resolverList) {
-            statusResolver.getStatusList(
+            val result = statusResolver.getStatusList(
                 uri = uri,
                 limit = limit,
                 sinceId = sinceId,
                 maxId = maxId,
-            )?.let {
-                val logText = it.getOrNull()?.joinToString(",") { s -> s.id }
-                Log.d("U_TEST", "getStatusList($uri, $sinceId) result is $logText")
-                return it
-            }
+            )
+            if (result != null) return result
         }
         return Result.failure(IllegalArgumentException("Unsupported uri:$uri!"))
     }

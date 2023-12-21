@@ -13,16 +13,16 @@ internal class GetSingleSourceNewerStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUri: FormalUri,
         limit: Int,
-        minStatus: StatusContentEntity,
+        minCreateTime: Long,
     ): Result<List<StatusContentEntity>> {
-        Log.d("U_TEST", "GetSingleSourceNewerStatusUseCase($sourceUri, $limit, $minStatus")
-        val statusFromLocal = getNewerStatusFromLocal(sourceUri, limit, minStatus)
+        Log.d("U_TEST", "GetSingleSourceNewerStatusUseCase($sourceUri, $limit, $minCreateTime")
+        val statusFromLocal = getNewerStatusFromLocal(sourceUri, limit, minCreateTime)
         Log.d("U_TEST", "GetSingleSourceNewerStatusUseCase: statusFromLocal size is ${statusFromLocal.size}")
         if (statusFromLocal.size >= limit) return Result.success(statusFromLocal)
-        val syncResult = syncNewerStatus(sourceUri, limit, minStatus)
+        val syncResult = syncNewerStatus(sourceUri, limit, minCreateTime)
         Log.d("U_TEST", "GetSingleSourceNewerStatusUseCase: sync result is $syncResult")
         if (syncResult.isFailure) return Result.failure(syncResult.exceptionOrNull()!!)
-        return getNewerStatusFromLocal(sourceUri, limit, minStatus)
+        return getNewerStatusFromLocal(sourceUri, limit, minCreateTime)
             .let { Result.success(it) }
             .also {
                 Log.d("U_TEST", "GetSingleSourceNewerStatusUseCase: getNewerStatusFromLocal result success == ${it.isSuccess}, size is ${it.getOrNull()?.size}")

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.usecase.previous
 
+import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.uri.FormalUri
@@ -13,12 +14,12 @@ internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
         sourceUri: FormalUri,
         limit: Int,
         maxCreateTime: Long?,
-    ): Result<List<StatusContentEntity>> {
-        val statusList = if (maxStatus == null) {
-            statusContentRepo.query(sourceUri, limit)
+    ): List<StatusContentEntity> {
+        val realLimit = limit + StatusConfigurationDefault.config.loadFromLocalRedundancies
+        return if (maxCreateTime == null) {
+            statusContentRepo.query(sourceUri, realLimit)
         } else {
-            statusContentRepo.queryPrevious(sourceUri, maxStatus.createTimestamp, limit)
+            statusContentRepo.queryPrevious(sourceUri, maxCreateTime, realLimit)
         }
-        return Result.success(statusList)
     }
 }

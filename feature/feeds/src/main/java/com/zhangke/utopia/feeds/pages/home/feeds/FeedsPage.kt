@@ -9,9 +9,12 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -42,6 +45,7 @@ fun Screen.FeedsTab(
         uiState = uiState,
         onRefresh = viewModel::onRefresh,
         onLoadMore = viewModel::onLoadMore,
+        onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
     )
 }
 
@@ -51,12 +55,24 @@ private fun FeedsTabContent(
     uiState: FeedsScreenUiState,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
+    onCatchMinFirstVisibleIndex: (Int) -> Unit,
 ) {
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,
         onLoadMore = onLoadMore,
     )
+    val firstVisibleIndex by remember { derivedStateOf { state.lazyListState.firstVisibleItemIndex } }
+    var minFirstVisibleIndex = remember {
+        Int.MAX_VALUE
+    }
+    minFirstVisibleIndex = minOf(minFirstVisibleIndex, firstVisibleIndex)
+    DisposableEffect(Unit) {
+
+        onDispose {
+            onCatchMinFirstVisibleIndex(minFirstVisibleIndex)
+        }
+    }
     LoadableInlineVideoLazyColumn(
         modifier = Modifier
             .fillMaxSize(),

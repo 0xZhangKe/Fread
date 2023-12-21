@@ -19,8 +19,8 @@ internal class GetNewerStatusUseCase @Inject constructor(
         minStatusId: String,
     ): Result<List<Status>> {
         Log.d("U_TEST", "GetNewerStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $minStatusId")
-        val minStatus = statusContentRepo.query(minStatusId)
-        if (minStatus == null) {
+        val minCreateTime = statusContentRepo.query(minStatusId)?.createTimestamp
+        if (minCreateTime == null) {
             Log.d("U_TEST", "GetNewerStatusUseCase: Can't find record by id $minStatusId")
             return Result.failure(IllegalArgumentException("Can't find record by id $minStatusId"))
         }
@@ -28,7 +28,7 @@ internal class GetNewerStatusUseCase @Inject constructor(
             getSingleSourceNewerStatus(
                 sourceUri = sourceUri,
                 limit = limit,
-                minStatus = minStatus,
+                minCreateTime = minCreateTime,
             )
         }
         if (resultList.all { it.isFailure }) {

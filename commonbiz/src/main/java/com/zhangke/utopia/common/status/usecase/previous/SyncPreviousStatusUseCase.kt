@@ -1,6 +1,8 @@
 package com.zhangke.utopia.common.status.usecase.previous
 
+import android.util.Log
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
+import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.usecase.SaveStatusListToLocalUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -9,6 +11,7 @@ import javax.inject.Inject
 
 internal class SyncPreviousStatusUseCase @Inject constructor(
     private val statusProvider: StatusProvider,
+    private val statusContentRepo: StatusContentRepo,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
     private val saveStatusListToLocal: SaveStatusListToLocalUseCase,
 ) {
@@ -18,9 +21,13 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUri: FormalUri,
         limit: Int,
-        maxStatus: StatusContentEntity?,
+        maxCreateTime: Long?,
     ): Result<Unit> {
-        return syncStatusAndSaveToLocal(sourceUri, limit, limit, maxStatus = maxStatus)
+        return syncStatusAndSaveToLocal(
+            sourceUri = sourceUri,
+            targetSize = limit,
+            pageLimit = limit,
+            maxStatus = maxCreateTime?.let { decideMaxStatus(sourceUri, maxCreateTime) })
     }
 
     private suspend fun syncStatusAndSaveToLocal(
@@ -46,8 +53,28 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
         if (statusList.isEmpty()) return Result.success(Unit)
         val leftCount = targetSize - statusList.size
         if (leftCount > 0) {
-            return syncStatusAndSaveToLocal(sourceUri, leftCount, pageLimit, statusList.minBy { it.createTimestamp })
+            return syncStatusAndSaveToLocal(
+                sourceUri,
+                leftCount,
+                pageLimit,
+                statusList.minBy { it.createTimestamp })
         }
         return Result.success(Unit)
+    }
+
+    private suspend fun decideMaxStatus(
+        sourceUri: FormalUri,
+        maxCreateTime: Long,
+    ): StatusContentEntity? {
+        // 这里获取从该时间点开始最近的切更新的一条记录，因为要通过这个记录开始获取更早的数据
+        return statusContentRepo.queryRecentNewer(
+            sourceUri = sourceUri,
+            createTimestamp = maxCreateTime,
+        ).also {
+            Log.d(
+                "U_TEST",
+                "decideMaxStatus id is ${it?.statusIdOfPlatform}, content is ${it?.content}"
+            )
+        }
     }
 }

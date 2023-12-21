@@ -1,6 +1,7 @@
 package com.zhangke.utopia.common.status.usecase.newer
 
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
+import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.usecase.SaveStatusListToLocalUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -9,6 +10,7 @@ import javax.inject.Inject
 
 internal class SyncNewerStatusUseCase @Inject constructor(
     private val statusProvider: StatusProvider,
+    private val statusContentRepo: StatusContentRepo,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
     private val saveStatusListToLocal: SaveStatusListToLocalUseCase,
 ) {
@@ -16,13 +18,13 @@ internal class SyncNewerStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUri: FormalUri,
         limit: Int,
-        sinceStatus: StatusContentEntity,
+        minCreateTime: Long,
     ): Result<Unit> {
         return syncStatusAndSaveToLocal(
             sourceUri = sourceUri,
             targetSize = limit,
             pageLimit = limit,
-            sinceStatus = sinceStatus,
+            sinceStatus = decideMinStatus(sourceUri, minCreateTime),
         )
     }
 
@@ -50,6 +52,21 @@ internal class SyncNewerStatusUseCase @Inject constructor(
         )
         val leftCount = targetSize - statusEntityList.size
         if (leftCount <= 0) return Result.success(Unit)
-        return syncStatusAndSaveToLocal(sourceUri, leftCount, pageLimit, statusEntityList.maxBy { it.createTimestamp })
+        return syncStatusAndSaveToLocal(
+            sourceUri,
+            leftCount,
+            pageLimit,
+            statusEntityList.maxBy { it.createTimestamp })
+    }
+
+    private suspend fun decideMinStatus(
+        sourceUri: FormalUri,
+        minCreateTime: Long,
+    ): StatusContentEntity? {
+        // 这里获取从该时间点开始最近的且更早的一条记录，因为要通过这个记录开始获取更新的数据
+        return statusContentRepo.queryRecentPrevious(
+            sourceUri = sourceUri,
+            createTimestamp = minCreateTime,
+        )
     }
 }

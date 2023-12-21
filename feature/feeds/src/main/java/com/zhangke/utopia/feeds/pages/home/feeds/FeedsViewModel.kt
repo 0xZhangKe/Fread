@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import android.util.Log
 import cafe.adriel.voyager.core.model.StateScreenModel
 import cafe.adriel.voyager.core.model.screenModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
@@ -7,6 +8,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.FeedsConfig
+import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,6 +20,7 @@ import kotlinx.coroutines.launch
 class FeedsViewModel @AssistedInject constructor(
     @Assisted val config: FeedsConfig,
     private val feedsRepo: FeedsRepo,
+    private val feedsConfigRepo: FeedsConfigRepo,
 ) : StateScreenModel<FeedsScreenUiState>(FeedsScreenUiState.initialUiState) {
 
     @AssistedFactory
@@ -54,24 +57,34 @@ class FeedsViewModel @AssistedInject constructor(
     }
 
     fun onRefresh() {
-//        screenModelScope.launch {
-//            mutableState.update {
-//                it.copy(refreshing = true)
-//            }
-//            feedsRepo.fetchStatusByFeedsConfig(config)
-//                .onSuccess {
-//                    mutableState.update {
-//                        it.copy(refreshing = false)
-//                    }
-//                }.onFailure { e ->
-//                    e.message?.let(::textOf)?.let {
-//                        _errorMessageFlow.emit(it)
-//                    }
-//                    mutableState.update {
-//                        it.copy(refreshing = false)
-//                    }
-//                }
-//        }
+        val uiState = mutableState.value
+        if (uiState.refreshing) return
+        if (uiState.loading) return
+        val feeds = uiState.feeds
+        if (feeds.isEmpty()) return
+        screenModelScope.launch {
+            mutableState.update {
+                it.copy(refreshing = true)
+            }
+            feedsRepo.getNewerStatus(
+                feedsConfig = config,
+                minStatusId = feeds.first().id,
+            ).onSuccess { list ->
+                mutableState.update {
+                    it.copy(
+                        refreshing = false,
+                        feeds = list + feeds,
+                    )
+                }
+            }.onFailure { e ->
+                e.message?.let(::textOf)?.let {
+                    _errorMessageFlow.emit(it)
+                }
+                mutableState.update {
+                    it.copy(refreshing = false)
+                }
+            }
+        }
     }
 
     fun onLoadMore() {
@@ -100,6 +113,20 @@ class FeedsViewModel @AssistedInject constructor(
                         it.copy(loading = false)
                     }
                 }
+        }
+    }
+
+    fun onCatchMinFirstVisibleIndex(index: Int) {
+        Log.d("U_TEST", "onCatchMinFirstVisibleIndex index is $index")
+        val uiState = mutableState.value
+        val feeds = uiState.feeds
+        if (feeds.isEmpty()) return
+        val fixedIndex = index.coerceAtLeast(0).coerceAtMost(feeds.lastIndex)
+        screenModelScope.launch {
+            feedsConfigRepo.updateLastReadStatusId(
+                feedsConfig = config,
+                lastReadStatusId = feeds[fixedIndex].id,
+            )
         }
     }
 }

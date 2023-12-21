@@ -3,6 +3,7 @@ package com.zhangke.utopia.common.status.usecase.previous
 import android.util.Log
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
+import com.zhangke.utopia.common.utils.isFirstStatus
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
@@ -18,22 +19,34 @@ internal class GetPreviousStatusUseCase @Inject constructor(
         limit: Int,
         maxId: String?,
     ): Result<List<Status>> {
-        Log.d("U_TEST", "GetPreviousStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $maxId")
+        Log.d(
+            "U_TEST",
+            "GetPreviousStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $maxId"
+        )
         val maxStatus = if (maxId.isNullOrEmpty()) {
             null
         } else {
             statusContentRepo.query(maxId)
                 ?: return Result.failure(IllegalArgumentException("Can't find record by id $maxId"))
         }
+        if (maxStatus?.isFirstStatus() == true) {
+            return Result.success(emptyList())
+        }
+        val maxCreateTime = maxStatus?.createTimestamp
         val resultList = sourceUriList.map { sourceUri ->
             getSingleSourcePreviousStatus(
                 sourceUri = sourceUri,
                 limit = limit,
-                maxStatus = maxStatus,
+                maxCreateTime = maxCreateTime,
             )
         }
         if (resultList.all { it.isFailure }) {
-            Log.d("U_TEST", "GetPreviousStatusUseCase: result all failure, case ${resultList.first().exceptionOrNull()}")
+            Log.d(
+                "U_TEST",
+                "GetPreviousStatusUseCase: result all failure, case ${
+                    resultList.first().exceptionOrNull()
+                }"
+            )
             return Result.failure(resultList.first().exceptionOrNull()!!)
         }
         val statusList = resultList.flatMap { it.getOrNull() ?: emptyList() }

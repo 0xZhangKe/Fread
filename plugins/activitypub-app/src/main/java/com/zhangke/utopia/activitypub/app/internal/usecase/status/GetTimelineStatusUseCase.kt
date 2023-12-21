@@ -23,6 +23,6 @@ class GetTimelineStatusUseCase @Inject constructor(
             TimelineSourceType.HOME -> timelineRepo.homeTimeline(limit = limit, sinceId = sinceId, maxId = maxId,)
             TimelineSourceType.LOCAL -> timelineRepo.localTimelines(limit = limit, sinceId = sinceId, maxId = maxId,)
             TimelineSourceType.PUBLIC -> timelineRepo.publicTimelines(limit = limit, sinceId = sinceId, maxId = maxId,)
-        }.map { it.map(activityPubStatusAdapter::adapt) }
+        }.map { it.map(activityPubStatusAdapter::toStatus) }
     }
 }

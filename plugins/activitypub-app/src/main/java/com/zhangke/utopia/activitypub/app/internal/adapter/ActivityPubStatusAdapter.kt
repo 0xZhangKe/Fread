@@ -16,14 +16,26 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val pollAdapter: ActivityPubPollAdapter,
 ) {
 
-    fun adapt(entity: ActivityPubStatusEntity): Status {
-        //fixme temporary code
-        return try {
-            Status.NewBlog(entity.toBlog())
-        } catch (e: Throwable) {
-            e.printStackTrace()
-            throw e
+    fun toStatus(entity: ActivityPubStatusEntity): Status {
+        return if (entity.reblog != null) {
+            entity.toReblog()
+        } else {
+            entity.toNewBlog()
         }
+    }
+
+    private fun ActivityPubStatusEntity.toNewBlog(): Status.NewBlog {
+        return Status.NewBlog(toBlog())
+    }
+
+    private fun ActivityPubStatusEntity.toReblog(): Status.Reblog {
+        val reblog = toBlog()
+        return Status.Reblog(
+            author = activityPubAccountEntityAdapter.toAuthor(account),
+            id = id,
+            datetime = formatDatetimeToDate(createdAt).time,
+            reblog = reblog,
+        )
     }
 
     private fun ActivityPubStatusEntity.toBlog(): Blog {

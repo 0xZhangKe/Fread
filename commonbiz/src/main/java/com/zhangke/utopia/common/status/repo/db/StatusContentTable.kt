@@ -10,10 +10,22 @@ import androidx.room.Query
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusType
 import com.zhangke.utopia.status.uri.FormalUri
 
 private const val TABLE_NAME = "status_content"
+
+@Entity(tableName = TABLE_NAME)
+data class StatusContentTableNewNewNew(
+    val id: String,
+    val nextStatusId: String?,
+    val type: StatusType,
+    val statusIdOfPlatform: String,
+    val sourceUri: FormalUri,
+    val createTimestamp: Long,
+    val payload: String,
+)
 
 @Entity(tableName = TABLE_NAME)
 data class StatusContentEntity(

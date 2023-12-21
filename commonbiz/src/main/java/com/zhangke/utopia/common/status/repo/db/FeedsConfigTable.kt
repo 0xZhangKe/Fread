@@ -16,6 +16,7 @@ data class FeedsConfigEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,
     val name: String,
     val sourceUriList: List<FormalUri>,
+    val lastReadStatusId: String?,
 )
 
 @Dao
@@ -32,6 +33,18 @@ interface FeedsConfigDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplace(entity: FeedsConfigEntity)
+
+    @Query("UPDATE $TABLE_NAME SET sourceUriList=:sourceUriList WHERE id=:feedsId")
+    suspend fun updateSourceList(
+        feedsId: Long,
+        sourceUriList: List<FormalUri>,
+    )
+
+    @Query("UPDATE $TABLE_NAME SET name=:name WHERE id=:feedsId")
+    suspend fun updateFeedsName(
+        feedsId: Long,
+        name: String,
+    )
 
     @Delete
     suspend fun delete(entity: FeedsConfigEntity)

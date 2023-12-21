@@ -33,8 +33,8 @@ class FeedsViewModel @AssistedInject constructor(
             mutableState.update {
                 it.copy(loading = true)
             }
-            feedsRepo.getPreviousStatus(config)
-                .onSuccess {list ->
+            feedsRepo.getPreviousStatus(config, maxId = config.lastReadStatusId)
+                .onSuccess { list ->
                     mutableState.update {
                         it.copy(
                             loading = false,
@@ -80,12 +80,11 @@ class FeedsViewModel @AssistedInject constructor(
         if (uiState.loading) return
         val feeds = uiState.feeds
         if (feeds.isEmpty()) return
-        val lastStatus = feeds.last()
         screenModelScope.launch {
             mutableState.update {
                 it.copy(loading = true)
             }
-            feedsRepo.getPreviousStatus(config, lastStatus.id)
+            feedsRepo.getPreviousStatus(config, maxId = feeds.last().id)
                 .onSuccess { list ->
                     mutableState.update {
                         it.copy(

@@ -5,7 +5,7 @@ import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.StatusProvider
 import javax.inject.Inject
 
-class SaveStatusListToLocalUseCase @Inject internal constructor(
+internal class SaveStatusListToLocalUseCase @Inject internal constructor(
     private val statusContentRepo: StatusContentRepo,
     private val statusProvider: StatusProvider,
 ) {

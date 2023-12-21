@@ -1,23 +1,42 @@
 package com.zhangke.utopia.common.feeds.repo
 
 import com.zhangke.utopia.common.status.FeedsConfig
-import com.zhangke.utopia.common.status.usecase.GetPreviousStatusUseCase
+import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
+import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
 class FeedsRepo @Inject internal constructor(
     private val getPreviousStatusUseCase: GetPreviousStatusUseCase,
+    private val getNewerStatusUseCase: GetNewerStatusUseCase,
 ) {
+
+    companion object {
+
+        private const val DEFAULT_PAGE_SIZE = 10
+    }
 
     suspend fun getPreviousStatus(
         feedsConfig: FeedsConfig,
+        limit: Int = DEFAULT_PAGE_SIZE,
         maxId: String? = null,
-        limit: Int = 50,
     ): Result<List<Status>> {
         return getPreviousStatusUseCase(
-            feedsConfig = feedsConfig,
+            sourceUriList = feedsConfig.sourceUriList,
             limit = limit,
             maxId = maxId,
+        )
+    }
+
+    suspend fun getNewerStatus(
+        feedsConfig: FeedsConfig,
+        minStatusId: String,
+        limit: Int = DEFAULT_PAGE_SIZE,
+    ): Result<List<Status>> {
+        return getNewerStatusUseCase(
+            sourceUriList = feedsConfig.sourceUriList,
+            limit = limit,
+            minStatusId = minStatusId,
         )
     }
 

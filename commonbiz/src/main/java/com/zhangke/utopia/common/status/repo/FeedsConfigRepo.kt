@@ -27,14 +27,38 @@ class FeedsConfigRepo @Inject constructor(
         return feedsConfigDao.queryByName(name).isNotEmpty()
     }
 
-    suspend fun insert(name: String, sourceList: List<FormalUri>) {
+    suspend fun insert(
+        name: String,
+        sourceList: List<FormalUri>,
+        lastReadStatusId: String? = null,
+    ) {
         feedsConfigDao.insertOrReplace(
             FeedsConfigEntity(
                 id = 0L,
                 name = name,
                 sourceUriList = sourceList,
+                lastReadStatusId = lastReadStatusId,
             )
         )
+    }
+
+    suspend fun updateLastReadStatusId(feedsConfig: FeedsConfig, lastReadStatusId: String?) {
+        val newConfig = feedsConfig.copy(lastReadStatusId = lastReadStatusId)
+        feedsConfigDao.insertOrReplace(entityAdapter.toEntity(newConfig))
+    }
+
+    suspend fun updateSourceList(
+        feedsConfigId: Long,
+        newSourceList: List<FormalUri>,
+    ) {
+        feedsConfigDao.updateSourceList(feedsConfigId, newSourceList)
+    }
+
+    suspend fun editFeedsName(
+        feedsConfigId: Long,
+        newName: String
+    ) {
+        feedsConfigDao.updateFeedsName(feedsConfigId, newName)
     }
 
     suspend fun insertOrReplace(config: FeedsConfig) {

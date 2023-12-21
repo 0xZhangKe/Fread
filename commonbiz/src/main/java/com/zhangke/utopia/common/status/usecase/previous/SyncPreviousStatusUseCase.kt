@@ -46,7 +46,7 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
         if (statusList.isEmpty()) return Result.success(Unit)
         val leftCount = targetSize - statusList.size
         if (leftCount > 0) {
-            return syncStatusAndSaveToLocal(sourceUri, leftCount, pageLimit, statusList.last())
+            return syncStatusAndSaveToLocal(sourceUri, leftCount, pageLimit, statusList.minBy { it.createTimestamp })
         }
         return Result.success(Unit)
     }

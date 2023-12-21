@@ -10,11 +10,13 @@ class FeedsConfigEntityAdapter @Inject constructor() {
         id = entity.id,
         name = entity.name,
         sourceUriList = entity.sourceUriList,
+        lastReadStatusId = entity.lastReadStatusId,
     )
 
     fun toEntity(config: FeedsConfig) = FeedsConfigEntity(
         id = config.id,
         name = config.name,
         sourceUriList = config.sourceUriList,
+        lastReadStatusId = config.lastReadStatusId,
     )
 }

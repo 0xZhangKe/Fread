@@ -52,7 +52,6 @@ private fun FeedsTabContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
 ) {
-
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,

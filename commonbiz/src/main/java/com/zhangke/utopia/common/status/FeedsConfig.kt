@@ -6,4 +6,5 @@ data class FeedsConfig(
     val id: Long,
     val name: String,
     val sourceUriList: List<FormalUri>,
+    val lastReadStatusId: String?,
 )

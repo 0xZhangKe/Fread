@@ -45,12 +45,9 @@ internal class EditFeedsViewModel @Inject constructor(
                 .requireSuccessData()
                 .sourceList
                 .filter { it != source }
-            feedsConfigRepo.insertOrReplace(
-                FeedsConfig(
-                    id = feedsId,
-                    name = _uiState.value.requireSuccessData().name,
-                    sourceUriList = newSourceList.map { it.uri },
-                )
+            feedsConfigRepo.updateSourceList(
+                feedsConfigId = feedsId,
+                newSourceList = newSourceList.map { it.uri },
             )
             _uiState.updateOnSuccess {
                 it.copy(sourceList = newSourceList)
@@ -87,6 +84,7 @@ internal class EditFeedsViewModel @Inject constructor(
                     id = feedsId,
                     name = _uiState.value.requireSuccessData().name,
                     sourceUriList = sourceList.map { it.uri },
+                    lastReadStatusId = null,
                 )
             )
             loadFeedsDetail()
@@ -126,13 +124,7 @@ internal class EditFeedsViewModel @Inject constructor(
                 }
                 return@launchInViewModel
             }
-            feedsConfigRepo.insertOrReplace(
-                FeedsConfig(
-                    id = feedsId,
-                    name = newName,
-                    sourceUriList = _uiState.getUriList(),
-                )
-            )
+            feedsConfigRepo.editFeedsName(feedsId, newName)
             _uiState.updateOnSuccess {
                 it.copy(name = newName)
             }

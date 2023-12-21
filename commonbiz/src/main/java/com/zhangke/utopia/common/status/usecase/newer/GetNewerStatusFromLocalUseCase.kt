@@ -13,7 +13,7 @@ internal class GetNewerStatusFromLocalUseCase @Inject constructor(
         sourceUri: FormalUri,
         limit: Int,
         minStatus: StatusContentEntity,
-    ): Result<List<StatusContentEntity>> {
-        return Result.success(statusContentRepo.queryNewer(sourceUri, minStatus.createTimestamp, limit))
+    ): List<StatusContentEntity> {
+        return statusContentRepo.queryNewer(sourceUri, minStatus.createTimestamp, limit)
     }
 }

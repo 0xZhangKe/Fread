@@ -12,7 +12,7 @@ internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUri: FormalUri,
         limit: Int,
-        maxStatus: StatusContentEntity?,
+        maxCreateTime: Long?,
     ): Result<List<StatusContentEntity>> {
         val statusList = if (maxStatus == null) {
             statusContentRepo.query(sourceUri, limit)

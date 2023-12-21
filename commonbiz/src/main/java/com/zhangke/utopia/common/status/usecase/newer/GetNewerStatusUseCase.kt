@@ -1,4 +1,4 @@
-package com.zhangke.utopia.common.status.usecase.previous
+package com.zhangke.utopia.common.status.usecase.newer
 
 import android.util.Log
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
@@ -7,41 +7,40 @@ import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
-internal class GetPreviousStatusUseCase @Inject constructor(
+internal class GetNewerStatusUseCase @Inject constructor(
     private val statusContentRepo: StatusContentRepo,
-    private val getSingleSourcePreviousStatus: GetSingleSourcePreviousStatusUseCase,
+    private val getSingleSourceNewerStatus: GetSingleSourceNewerStatusUseCase,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
 ) {
 
     suspend operator fun invoke(
         sourceUriList: List<FormalUri>,
         limit: Int,
-        maxId: String?,
+        minStatusId: String,
     ): Result<List<Status>> {
-        Log.d("U_TEST", "GetPreviousStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $maxId")
-        val maxStatus = if (maxId.isNullOrEmpty()) {
-            null
-        } else {
-            statusContentRepo.query(maxId)
-                ?: return Result.failure(IllegalArgumentException("Can't find record by id $maxId"))
+        Log.d("U_TEST", "GetNewerStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $minStatusId")
+        val minStatus = statusContentRepo.query(minStatusId)
+        if (minStatus == null) {
+            Log.d("U_TEST", "GetNewerStatusUseCase: Can't find record by id $minStatusId")
+            return Result.failure(IllegalArgumentException("Can't find record by id $minStatusId"))
         }
         val resultList = sourceUriList.map { sourceUri ->
-            getSingleSourcePreviousStatus(
+            getSingleSourceNewerStatus(
                 sourceUri = sourceUri,
                 limit = limit,
-                maxStatus = maxStatus,
+                minStatus = minStatus,
             )
         }
         if (resultList.all { it.isFailure }) {
-            Log.d("U_TEST", "GetPreviousStatusUseCase: result all failure, case ${resultList.first().exceptionOrNull()}")
+            Log.d("U_TEST", "GetNewerStatusUseCase: result all failure, case ${resultList.first().exceptionOrNull()}")
             return Result.failure(resultList.first().exceptionOrNull()!!)
         }
         val statusList = resultList.flatMap { it.getOrNull() ?: emptyList() }
-            .filter { it.id != maxId }
+            .filter { it.id != minStatusId }
             .sortedByDescending { it.createTimestamp }
             .take(limit)
             .map(statusContentEntityAdapter::toStatus)
-        Log.d("U_TEST", "GetPreviousStatusUseCase: get success, size is ${statusList.size}")
+        Log.d("U_TEST", "GetNewerStatusUseCase: get success, size is ${statusList.size}")
         return Result.success(statusList)
     }
 }

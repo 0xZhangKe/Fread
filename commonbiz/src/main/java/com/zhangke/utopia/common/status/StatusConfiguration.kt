@@ -6,5 +6,5 @@ data class StatusConfiguration(
 
 object StatusConfigurationDefault {
 
-    val config = StatusConfiguration(100)
+    val config = StatusConfiguration(5)
 }

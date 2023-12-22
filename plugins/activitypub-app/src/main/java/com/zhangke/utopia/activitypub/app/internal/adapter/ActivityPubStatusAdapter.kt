@@ -29,12 +29,11 @@ class ActivityPubStatusAdapter @Inject constructor(
     }
 
     private fun ActivityPubStatusEntity.toReblog(): Status.Reblog {
-        val reblog = toBlog()
         return Status.Reblog(
             author = activityPubAccountEntityAdapter.toAuthor(account),
             id = id,
             datetime = formatDatetimeToDate(createdAt).time,
-            reblog = reblog,
+            reblog = reblog!!.toBlog(),
         )
     }
 

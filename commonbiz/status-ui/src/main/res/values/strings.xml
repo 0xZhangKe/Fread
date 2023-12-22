@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="status_ui_forward">转发</string>
+
     <string name="status_ui_image_sensitive_label">敏感内容</string>
     <string name="status_ui_image_content_show_hidden_label">显示更多</string>
     <string name="status_ui_image_content_hide_hidden_label">隐藏内容</string>

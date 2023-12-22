@@ -52,6 +52,9 @@ interface StatusContentDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
     suspend fun query(id: String): StatusContentEntity?
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE statusIdOfPlatform=:id")
+    suspend fun queryByPlatformId(id: String): StatusContentEntity?
+
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri= :sourceUri ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryPrevious(
         sourceUri: FormalUri,

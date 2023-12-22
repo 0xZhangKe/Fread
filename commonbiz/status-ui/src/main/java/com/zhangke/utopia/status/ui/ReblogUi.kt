@@ -1,0 +1,65 @@
+package com.zhangke.utopia.status.ui
+
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.Icon
+import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
+import com.zhangke.utopia.statusui.R
+
+@Composable
+fun ReblogUi(
+    modifier: Modifier = Modifier,
+    reblog: Status.Reblog,
+    indexInList: Int,
+    onMediaClick: OnBlogMediaClick,
+) {
+    Column(modifier = modifier) {
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(8.dp)
+        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = Icons.Default.SwapHoriz,
+                contentDescription = null,
+            )
+            Text(
+                modifier = Modifier.padding(start = 6.dp),
+                text = reblog.author.name,
+                style = MaterialTheme.typography.bodySmall,
+            )
+            Text(
+                modifier = Modifier.padding(start = 4.dp),
+                text = stringResource(R.string.status_ui_forward),
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+        BlogContentUi(
+            modifier = Modifier,
+            blog = reblog.reblog,
+            indexInList = indexInList,
+            onMediaClick = onMediaClick,
+            reblogAuthor = reblog.author,
+        )
+    }
+}

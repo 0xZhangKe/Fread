@@ -12,14 +12,23 @@ fun StatusUi(
     indexInList: Int,
     onMediaClick: OnBlogMediaClick,
 ) {
-    val blog = when (status) {
-        is Status.NewBlog -> status.blog
-        is Status.Reblog -> status.reblog
+    when (status) {
+        is Status.Reblog -> {
+            ReblogUi(
+                modifier = modifier,
+                reblog = status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+            )
+        }
+
+        is Status.NewBlog -> {
+            BlogContentUi(
+                modifier = modifier,
+                blog = status.blog,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+            )
+        }
     }
-    BlogContentUi(
-        modifier = modifier,
-        blog = blog,
-        indexInList = indexInList,
-        onMediaClick = onMediaClick,
-    )
 }

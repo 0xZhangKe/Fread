@@ -1,6 +1,7 @@
 package com.zhangke.utopia.common.feeds.repo
 
 import com.zhangke.utopia.common.status.FeedsConfig
+import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
 import com.zhangke.utopia.status.status.model.Status

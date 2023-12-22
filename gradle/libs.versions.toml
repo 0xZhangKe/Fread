@@ -79,7 +79,7 @@ androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okht
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
-coil = ["coil", "coil.compose", "coil.gif"]
+coil = ["coil", "coil.compose", "coil.compose.base", "coil.gif"]
 
 voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.android", "voyager.hilt"]
 
@@ -160,6 +160,7 @@ gson = { group = "com.google.code.gson", name = "gson", version.ref = "gson" }
 
 coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
+coil-compose-base = { group = "io.coil-kt", name = "coil-compose-base", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 
 joda-time = { group = "joda-time", name = "joda-time", version.ref = "joda.time" }

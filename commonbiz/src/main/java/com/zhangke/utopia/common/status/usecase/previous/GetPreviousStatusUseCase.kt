@@ -26,7 +26,7 @@ internal class GetPreviousStatusUseCase @Inject constructor(
         val maxStatus = if (maxId.isNullOrEmpty()) {
             null
         } else {
-            statusContentRepo.query(maxId)
+            statusContentRepo.queryByPlatformId(maxId)
                 ?: return Result.failure(IllegalArgumentException("Can't find record by id $maxId"))
         }
         if (maxStatus?.isFirstStatus() == true) {
@@ -50,7 +50,7 @@ internal class GetPreviousStatusUseCase @Inject constructor(
             return Result.failure(resultList.first().exceptionOrNull()!!)
         }
         val statusList = resultList.flatMap { it.getOrNull() ?: emptyList() }
-            .filter { it.id != maxId }
+            .filter { it.id != maxStatus?.id }
             .sortedByDescending { it.createTimestamp }
             .take(limit)
             .map(statusContentEntityAdapter::toStatus)

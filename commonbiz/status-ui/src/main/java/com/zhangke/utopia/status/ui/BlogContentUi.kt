@@ -1,8 +1,10 @@
 package com.zhangke.utopia.status.ui
 
 import android.widget.TextView
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -21,6 +23,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -50,6 +53,7 @@ fun BlogContentUi(
     blog: Blog,
     indexInList: Int,
     onMediaClick: OnBlogMediaClick,
+    reblogAuthor: BlogAuthor? = null,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -57,17 +61,16 @@ fun BlogContentUi(
         Column(modifier = Modifier.fillMaxWidth()) {
             ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
                 val (avatar, name, guideline, dateTime, userId) = createRefs()
-                AsyncImage(
+                BlogAuthorAvatar(
                     modifier = Modifier
                         .size(40.dp)
-                        .clip(RoundedCornerShape(6.dp))
                         .constrainAs(avatar) {
                             top.linkTo(parent.top, 10.dp)
                             start.linkTo(parent.start, 8.dp)
                             bottom.linkTo(parent.bottom)
                         },
-                    model = blog.author.avatar,
-                    contentDescription = "avatar"
+                    reblogAvatar = reblogAuthor?.avatar,
+                    authorAvatar = blog.author.avatar,
                 )
 
                 Spacer(
@@ -200,7 +203,7 @@ fun BlogContentUi(
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(1.dp)
+                    .height(0.5.dp)
             )
         }
     }
@@ -211,6 +214,54 @@ private val statusDateFormatLocal = ThreadLocal<SimpleDateFormat>()
 private fun formatStatusDateTime(date: Date): String {
     val format = statusDateFormatLocal.getOrSet { SimpleDateFormat("MM-dd HH:mm:ss", Locale.ROOT) }
     return format.format(date)
+}
+
+@Composable
+private fun BlogAuthorAvatar(
+    modifier: Modifier,
+    reblogAvatar: String?,
+    authorAvatar: String?,
+) {
+    if (reblogAvatar.isNullOrEmpty()) {
+        BlogAuthorAvatar(
+            modifier = modifier,
+            imageUrl = reblogAvatar,
+        )
+    } else {
+        Box(modifier = modifier) {
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(end = 6.dp, bottom = 6.dp)
+            ) {
+                BlogAuthorAvatar(
+                    modifier = Modifier.fillMaxSize(),
+                    imageUrl = authorAvatar,
+                )
+            }
+            BlogAuthorAvatar(
+                modifier = Modifier
+                    .size(18.dp)
+                    .align(Alignment.BottomEnd),
+                imageUrl = reblogAvatar,
+            )
+        }
+    }
+}
+
+@Composable
+private fun BlogAuthorAvatar(
+    modifier: Modifier,
+    imageUrl: String?,
+) {
+    AsyncImage(
+        modifier = modifier
+            .clip(RoundedCornerShape(6.dp)),
+        model = imageUrl,
+//        error = Icons.Default.AccountCircle,
+//        placeholder = Icons.Default.AccountCircle,
+        contentDescription = null,
+    )
 }
 
 @Preview

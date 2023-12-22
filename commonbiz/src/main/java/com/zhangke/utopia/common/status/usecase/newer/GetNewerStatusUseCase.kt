@@ -18,8 +18,12 @@ internal class GetNewerStatusUseCase @Inject constructor(
         limit: Int,
         minStatusId: String,
     ): Result<List<Status>> {
-        Log.d("U_TEST", "GetNewerStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $minStatusId")
-        val minCreateTime = statusContentRepo.query(minStatusId)?.createTimestamp
+        Log.d(
+            "U_TEST",
+            "GetNewerStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $minStatusId"
+        )
+        val minStatus = statusContentRepo.queryByPlatformId(minStatusId)
+        val minCreateTime = minStatus?.createTimestamp
         if (minCreateTime == null) {
             Log.d("U_TEST", "GetNewerStatusUseCase: Can't find record by id $minStatusId")
             return Result.failure(IllegalArgumentException("Can't find record by id $minStatusId"))
@@ -32,11 +36,16 @@ internal class GetNewerStatusUseCase @Inject constructor(
             )
         }
         if (resultList.all { it.isFailure }) {
-            Log.d("U_TEST", "GetNewerStatusUseCase: result all failure, case ${resultList.first().exceptionOrNull()}")
+            Log.d(
+                "U_TEST",
+                "GetNewerStatusUseCase: result all failure, case ${
+                    resultList.first().exceptionOrNull()
+                }"
+            )
             return Result.failure(resultList.first().exceptionOrNull()!!)
         }
         val statusList = resultList.flatMap { it.getOrNull() ?: emptyList() }
-            .filter { it.id != minStatusId }
+            .filter { it.id != minStatus.id }
             .sortedByDescending { it.createTimestamp }
             .take(limit)
             .map(statusContentEntityAdapter::toStatus)

@@ -42,6 +42,12 @@ internal class StatusContentRepo @Inject constructor(
         return statusContentDao.queryBySource(sourceUriList)
     }
 
+    suspend fun queryByPlatformId(
+        statusIdOfPlatform: String,
+    ): StatusContentEntity? {
+        return statusContentDao.queryByPlatformId(statusIdOfPlatform)
+    }
+
     suspend fun queryPrevious(
         sourceUri: FormalUri,
         createTimestamp: Long,

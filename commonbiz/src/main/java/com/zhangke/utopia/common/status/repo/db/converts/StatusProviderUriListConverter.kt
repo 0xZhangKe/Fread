@@ -11,12 +11,20 @@ class StatusProviderUriListConverter {
     fun fromString(text: String): List<FormalUri> {
         val stringList: List<String> =
             globalGson.fromJson(text, object : TypeToken<List<String>>() {}.type)
-        return stringList.map { FormalUri.from(it)!! }
+        return stringList.map(::stringToUri)
     }
 
     @TypeConverter
     fun toString(uriList: List<FormalUri>): String {
-        val stringList = uriList.map { it.toString() }
+        val stringList = uriList.map(::uriToString)
         return globalGson.toJson(stringList).toString()
+    }
+
+    internal fun stringToUri(string: String): FormalUri {
+        return FormalUri.from(string)!!
+    }
+
+    internal fun uriToString(uri: FormalUri): String {
+        return uri.toString()
     }
 }

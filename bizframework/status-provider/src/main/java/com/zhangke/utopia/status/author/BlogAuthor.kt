@@ -2,7 +2,9 @@ package com.zhangke.utopia.status.author
 
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.serialization.Serializable
 
+@Serializable
 class BlogAuthor (
     val uri: FormalUri,
     val webFinger: WebFinger,

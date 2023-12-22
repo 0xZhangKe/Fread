@@ -1,20 +1,22 @@
 package com.zhangke.utopia.status.uri
 
 import com.zhangke.framework.utils.uriString
+import kotlinx.serialization.Serializable
 
-class FormalUri private constructor(
+@Serializable
+class FormalUri constructor(
     val host: String,
     /**
      * format like "/xxx"
      */
-    path: String,
+    private val rawPath: String,
     val queries: Map<String, String>,
 ) {
 
     @Suppress("MemberVisibilityCanBePrivate")
     val scheme = SCHEME
 
-    val path = fixPath(path)
+    val path = fixPath(rawPath)
 
     override fun toString(): String {
         return uriString(
@@ -43,7 +45,7 @@ class FormalUri private constructor(
         fun create(host: String, path: String, queries: Map<String, String>): FormalUri {
             return FormalUri(
                 host = host,
-                path = path,
+                rawPath = path,
                 queries = queries,
             )
         }

@@ -1,5 +1,8 @@
 package com.zhangke.utopia.status.blog
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class BlogMedia(
     val id: String,
     val url: String,

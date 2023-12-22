@@ -1,13 +1,18 @@
 package com.zhangke.utopia.status.blog
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 sealed class BlogMediaMeta {
 
+    @Serializable
     data class ImageMeta(
         val original: LayoutMeta?,
         val small: LayoutMeta?,
         val focus: FocusMeta?,
     ) : BlogMediaMeta() {
 
+        @Serializable
         data class LayoutMeta(
             val width: Int?,
             val height: Int?,
@@ -15,12 +20,14 @@ sealed class BlogMediaMeta {
             val aspect: Float?,
         )
 
+        @Serializable
         data class FocusMeta(
             val x: Float?,
             val y: Float?,
         )
     }
 
+    @Serializable
     data class VideoMeta(
         val length: String?,
         val duration: Double?,
@@ -36,6 +43,7 @@ sealed class BlogMediaMeta {
         val small: LayoutMeta?,
     ) : BlogMediaMeta() {
 
+        @Serializable
         data class LayoutMeta(
             val width: Int?,
             val height: Int?,
@@ -47,6 +55,7 @@ sealed class BlogMediaMeta {
         )
     }
 
+    @Serializable
     data class GifvMeta(
         val length: String?,
         val duration: Double?,
@@ -59,6 +68,7 @@ sealed class BlogMediaMeta {
         val small: LayoutMeta?,
     ) : BlogMediaMeta() {
 
+        @Serializable
         data class LayoutMeta(
             val width: Int?,
             val height: Int?,
@@ -70,6 +80,7 @@ sealed class BlogMediaMeta {
         )
     }
 
+    @Serializable
     data class AudioMeta(
         val length: String?,
         val duration: Double?,
@@ -79,6 +90,7 @@ sealed class BlogMediaMeta {
         val original: FrameMeta?,
     ) : BlogMediaMeta() {
 
+        @Serializable
         data class FrameMeta(
             val duration: Double?,
             val bitrate: Int?,
@@ -89,4 +101,3 @@ sealed class BlogMediaMeta {
 fun BlogMediaMeta.asImageMeta(): BlogMediaMeta.ImageMeta = this as BlogMediaMeta.ImageMeta
 
 fun BlogMediaMeta.asImageMetaOrNull(): BlogMediaMeta.ImageMeta? = this as? BlogMediaMeta.ImageMeta
-

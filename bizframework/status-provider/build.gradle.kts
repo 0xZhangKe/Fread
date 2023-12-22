@@ -27,4 +27,7 @@ dependencies {
     kapt(libs.hilt.compiler)
     implementation(libs.androidx.room)
     ksp(libs.krouter.compiler)
+
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
 }

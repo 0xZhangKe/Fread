@@ -7,9 +7,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.status.blog.BlogMedia
-import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusType
 import com.zhangke.utopia.status.uri.FormalUri
@@ -17,38 +14,14 @@ import com.zhangke.utopia.status.uri.FormalUri
 private const val TABLE_NAME = "status_content"
 
 @Entity(tableName = TABLE_NAME)
-data class StatusContentTableNewNewNew(
-    val id: String,
-    val nextStatusId: String?,
-    val type: StatusType,
-    val statusIdOfPlatform: String,
-    val sourceUri: FormalUri,
-    val createTimestamp: Long,
-    val payload: String,
-)
-
-@Entity(tableName = TABLE_NAME)
 data class StatusContentEntity(
     @PrimaryKey val id: String,
     val nextStatusId: String?,
-    val authorUri: FormalUri,
-    val authorWebFinger: WebFinger,
-    val authorName: String,
-    val authorDescription: String,
-    val authorAvatar: String?,
-    val sourceUri: FormalUri,
     val type: StatusType,
     val statusIdOfPlatform: String,
-    val title: String?,
-    val content: String,
+    val sourceUri: FormalUri,
     val createTimestamp: Long,
-    val forwardCount: Int?,
-    val likeCount: Int?,
-    val repliesCount: Int?,
-    val sensitive: Boolean,
-    val spoilerText: String,
-    val mediaList: List<BlogMedia>,
-    val poll: BlogPoll?,
+    val status: Status,
 )
 
 @Dao

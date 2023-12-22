@@ -1,0 +1,18 @@
+package com.zhangke.utopia.common.status.repo.db.converts
+
+import androidx.room.TypeConverter
+import com.zhangke.utopia.status.status.model.Status
+import kotlinx.serialization.json.Json
+
+class StatusConverter {
+
+    @TypeConverter
+    fun fromString(string: String): Status {
+        return Json.decodeFromString(Status.serializer(), string)
+    }
+
+    @TypeConverter
+    fun toString(status: Status): String {
+        return Json.encodeToString(Status.serializer(), status)
+    }
+}

@@ -74,4 +74,7 @@ dependencies {
     implementation(libs.bundles.voyager)
     implementation(libs.krouter.core)
     api(libs.compose.wheel.picker)
+
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
 }

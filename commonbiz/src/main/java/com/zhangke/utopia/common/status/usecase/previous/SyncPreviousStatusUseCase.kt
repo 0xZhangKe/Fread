@@ -1,6 +1,5 @@
 package com.zhangke.utopia.common.status.usecase.previous
 
-import android.util.Log
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
@@ -70,11 +69,6 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
         return statusContentRepo.queryRecentNewer(
             sourceUri = sourceUri,
             createTimestamp = maxCreateTime,
-        ).also {
-            Log.d(
-                "U_TEST",
-                "decideMaxStatus id is ${it?.statusIdOfPlatform}, content is ${it?.content}"
-            )
-        }
+        )
     }
 }

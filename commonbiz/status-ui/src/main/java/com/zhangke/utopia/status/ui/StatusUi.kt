@@ -14,6 +14,7 @@ fun StatusUi(
 ) {
     val blog = when (status) {
         is Status.NewBlog -> status.blog
+        is Status.Reblog -> status.reblog
     }
     BlogContentUi(
         modifier = modifier,

@@ -2,32 +2,33 @@ package com.zhangke.utopia.status.status.model
 
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
+import kotlinx.serialization.Serializable
 
-/**
- * Created by ZhangKe on 2022/12/4.
- */
-sealed interface Status {
+@Serializable
+sealed class Status {
 
-    val datetime: Long
+    abstract val datetime: Long
 
     /**
      * identify of this status, must non-empty
      */
-    val id: String
+    abstract val id: String
 
+    @Serializable
     data class NewBlog(
         val blog: Blog,
-    ) : Status {
+    ) : Status() {
 
         override val id: String get() = blog.id
 
         override val datetime: Long get() = blog.date.time
     }
 
+    @Serializable
     data class Reblog(
         val author: BlogAuthor,
         override val id: String,
         override val datetime: Long,
         val reblog: Blog,
-    ) : Status
+    ) : Status()
 }

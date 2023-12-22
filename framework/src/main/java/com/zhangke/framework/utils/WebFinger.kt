@@ -1,5 +1,7 @@
 package com.zhangke.framework.utils
 
+import kotlinx.serialization.Serializable
+
 /**
  * Supported:
  * - jw@jakewharton.com
@@ -10,6 +12,7 @@ package com.zhangke.framework.utils
  * - m.cmx.im/@jw@jakewharton.com
  * - jakewharton.com/@jw
  */
+@Serializable
 class WebFinger private constructor(
     val name: String,
     val host: String,

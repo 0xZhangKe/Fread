@@ -2,6 +2,7 @@
 kotlin = "1.9.10"
 kotlin-coroutine = "1.7.1"
 kotlin-coroutine-test = "1.7.1"
+kotlinx-serialization = "1.6.2"
 
 androidxComposeCompiler = "1.5.3"
 
@@ -143,6 +144,9 @@ kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-corou
 kotlin-coroutine-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlin.coroutine" }
 kotlin-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlin.coroutine.test" }
 
+kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx.serialization" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx.serialization" }
+
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
 
@@ -194,3 +198,4 @@ android-library = { id = "com.android.library", version.ref = "androidGradlePlug
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidGradlePlugin" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }

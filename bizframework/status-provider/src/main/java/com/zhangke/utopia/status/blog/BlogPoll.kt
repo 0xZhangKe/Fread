@@ -1,5 +1,8 @@
 package com.zhangke.utopia.status.blog
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class BlogPoll(
     val id: String,
     /**
@@ -24,6 +27,7 @@ data class BlogPoll(
     val ownVotes: List<Int>,
 ) {
 
+    @Serializable
     data class Option(
         val title: String,
         val votesCount: Int?,

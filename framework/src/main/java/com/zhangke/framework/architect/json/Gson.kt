@@ -2,6 +2,7 @@ package com.zhangke.framework.architect.json
 
 import com.google.gson.Gson
 import com.google.gson.GsonBuilder
+import com.google.gson.JsonObject
 import com.google.gson.TypeAdapter
 import com.google.gson.TypeAdapterFactory
 import com.google.gson.internal.`$Gson$Types`
@@ -14,6 +15,14 @@ val globalGson: Gson by lazy {
     GsonBuilder()
         .registerTypeAdapterFactory(EnumTypeAdapterFactory())
         .create()
+}
+
+inline fun <reified T> Gson.fromJson(jsonObject: JsonObject): T {
+    return this.fromJson(jsonObject, T::class.java)
+}
+
+inline fun <reified T> Gson.fromJson(jsonString: String): T {
+    return this.fromJson(jsonString, T::class.java)
 }
 
 private class EnumTypeAdapterFactory : TypeAdapterFactory {

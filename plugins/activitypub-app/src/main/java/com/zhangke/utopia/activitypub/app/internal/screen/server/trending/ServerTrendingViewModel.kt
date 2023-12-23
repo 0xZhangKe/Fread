@@ -7,6 +7,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.cachedIn
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusSupportActionUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -14,6 +15,7 @@ import javax.inject.Inject
 class ServerTrendingViewModel @Inject constructor(
     private val getServerTrending: GetServerTrendingUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
+    private val getStatusSupportAction: GetStatusSupportActionUseCase,
 ) : ViewModel() {
 
     lateinit var baseUrl: String
@@ -21,7 +23,12 @@ class ServerTrendingViewModel @Inject constructor(
     private var dataSource: ServerTrendingDataSource? = null
 
     val statusFlow = Pager(PagingConfig(pageSize = 40)) {
-        ServerTrendingDataSource(baseUrl, getServerTrending, statusAdapter).also {
+        ServerTrendingDataSource(
+            host = baseUrl,
+            getServerTrending = getServerTrending,
+            getStatusSupportAction = getStatusSupportAction,
+            statusAdapter = statusAdapter,
+        ).also {
             dataSource = it
         }
     }.flow.cachedIn(viewModelScope)

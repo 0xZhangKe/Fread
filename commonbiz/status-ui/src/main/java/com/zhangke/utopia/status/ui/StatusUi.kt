@@ -26,6 +26,7 @@ fun StatusUi(
             BlogContentUi(
                 modifier = modifier,
                 blog = status.blog,
+                supportActions = status.supportActions,
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
             )

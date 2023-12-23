@@ -7,6 +7,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.status.model.StatusAction
 import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
@@ -16,24 +17,28 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val pollAdapter: ActivityPubPollAdapter,
 ) {
 
-    fun toStatus(entity: ActivityPubStatusEntity): Status {
+    fun toStatus(
+        entity: ActivityPubStatusEntity,
+        supportActions: List<StatusAction>,
+    ): Status {
         return if (entity.reblog != null) {
-            entity.toReblog()
+            entity.toReblog(supportActions)
         } else {
-            entity.toNewBlog()
+            entity.toNewBlog(supportActions)
         }
     }
 
-    private fun ActivityPubStatusEntity.toNewBlog(): Status.NewBlog {
-        return Status.NewBlog(toBlog())
+    private fun ActivityPubStatusEntity.toNewBlog(supportActions: List<StatusAction>): Status.NewBlog {
+        return Status.NewBlog(toBlog(), supportActions)
     }
 
-    private fun ActivityPubStatusEntity.toReblog(): Status.Reblog {
+    private fun ActivityPubStatusEntity.toReblog(supportActions: List<StatusAction>): Status.Reblog {
         return Status.Reblog(
             author = activityPubAccountEntityAdapter.toAuthor(account),
             id = id,
             datetime = formatDatetimeToDate(createdAt).time,
             reblog = reblog!!.toBlog(),
+            supportActions = supportActions,
         )
     }
 

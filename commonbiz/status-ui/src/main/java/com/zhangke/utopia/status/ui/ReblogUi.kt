@@ -57,6 +57,7 @@ fun ReblogUi(
         BlogContentUi(
             modifier = Modifier,
             blog = reblog.reblog,
+            supportActions = reblog.supportActions,
             indexInList = indexInList,
             onMediaClick = onMediaClick,
             reblogAuthor = reblog.author,

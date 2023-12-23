@@ -10,6 +10,7 @@ import javax.inject.Inject
 class GetUserStatusUseCase @Inject constructor(
     private val getClientUseCase: GetClientUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+    private val getStatusSupportAction: GetStatusSupportActionUseCase,
 ) {
 
     suspend operator fun invoke(
@@ -24,6 +25,11 @@ class GetUserStatusUseCase @Inject constructor(
                 limit = limit,
                 sinceId = sinceId,
                 maxId = maxId,
-            ).map { it.map(activityPubStatusAdapter::toStatus) }
+            ).map { list ->
+                list.map {
+                    val supportActions = getStatusSupportAction(it)
+                    activityPubStatusAdapter.toStatus(it, supportActions)
+                }
+            }
     }
 }

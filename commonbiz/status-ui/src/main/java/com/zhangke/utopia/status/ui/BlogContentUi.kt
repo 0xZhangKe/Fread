@@ -38,6 +38,8 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.status.model.StatusAction
+import com.zhangke.utopia.status.ui.action.StatusActionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.poll.BlogPoll
 import com.zhangke.utopia.status.uri.FormalUri
@@ -51,6 +53,7 @@ import kotlin.concurrent.getOrSet
 fun BlogContentUi(
     modifier: Modifier = Modifier,
     blog: Blog,
+    supportActions: List<StatusAction>,
     indexInList: Int,
     onMediaClick: OnBlogMediaClick,
     reblogAuthor: BlogAuthor? = null,
@@ -200,6 +203,12 @@ fun BlogContentUi(
                     onVote = {},
                 )
             }
+            StatusActionPanel(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                actions = supportActions,
+            )
             Divider(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -289,5 +298,5 @@ private fun PreviewBlogContentComposable() {
         repliesCount = 10,
         poll = null,
     )
-    BlogContentUi(blog = blog, indexInList = 1, onMediaClick = { _ -> })
+    BlogContentUi(blog = blog, indexInList = 1, onMediaClick = { _ -> }, supportActions = emptyList())
 }

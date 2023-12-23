@@ -6,7 +6,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
 import javax.inject.Inject
 
-class AccountManager @Inject constructor(
+class AccountManager(
     private val accountManagerList: List<IAccountManager>,
 ) {
 

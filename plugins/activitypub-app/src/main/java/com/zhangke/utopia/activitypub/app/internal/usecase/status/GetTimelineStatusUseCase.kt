@@ -10,6 +10,7 @@ import javax.inject.Inject
 class GetTimelineStatusUseCase @Inject constructor(
     private val getClientUseCase: GetClientUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+    private val getStatusSupportAction: GetStatusSupportActionUseCase,
 ) {
 
     suspend operator fun invoke(
@@ -20,9 +21,28 @@ class GetTimelineStatusUseCase @Inject constructor(
     ): Result<List<Status>> {
         val timelineRepo = getClientUseCase(timelineUriInsights.serverBaseUrl).timelinesRepo
         return when (timelineUriInsights.type) {
-            TimelineSourceType.HOME -> timelineRepo.homeTimeline(limit = limit, sinceId = sinceId, maxId = maxId,)
-            TimelineSourceType.LOCAL -> timelineRepo.localTimelines(limit = limit, sinceId = sinceId, maxId = maxId,)
-            TimelineSourceType.PUBLIC -> timelineRepo.publicTimelines(limit = limit, sinceId = sinceId, maxId = maxId,)
-        }.map { it.map(activityPubStatusAdapter::toStatus) }
+            TimelineSourceType.HOME -> timelineRepo.homeTimeline(
+                limit = limit,
+                sinceId = sinceId,
+                maxId = maxId,
+            )
+
+            TimelineSourceType.LOCAL -> timelineRepo.localTimelines(
+                limit = limit,
+                sinceId = sinceId,
+                maxId = maxId,
+            )
+
+            TimelineSourceType.PUBLIC -> timelineRepo.publicTimelines(
+                limit = limit,
+                sinceId = sinceId,
+                maxId = maxId,
+            )
+        }.map { list ->
+            list.map {
+                val supportActions = getStatusSupportAction(it)
+                activityPubStatusAdapter.toStatus(it, supportActions)
+            }
+        }
     }
 }

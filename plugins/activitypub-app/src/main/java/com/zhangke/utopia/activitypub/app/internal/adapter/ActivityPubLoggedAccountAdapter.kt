@@ -93,7 +93,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         protocol = protocol,
     )
 
-    private fun accountToWebFinger(account: ActivityPubAccountEntity): WebFinger {
+    fun accountToWebFinger(account: ActivityPubAccountEntity): WebFinger {
         WebFinger.create(account.acct)?.let { return it }
         WebFinger.create(account.url)!!.let { return it }
     }

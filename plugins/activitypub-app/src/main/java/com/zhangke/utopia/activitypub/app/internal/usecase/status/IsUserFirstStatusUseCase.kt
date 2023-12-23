@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
-import android.util.Log
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.usecase.client.GetClientUseCase
 import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
@@ -20,8 +19,6 @@ class IsUserFirstStatusUseCase @Inject constructor(
                 id = userUriInsights.userId,
                 limit = 1,
                 maxId = statusId,
-            ).map { it.isEmpty() }.also {
-                Log.d("U_TEST", "isUserFirstStatus($userUriInsights , $statusId) result is ${it.getOrNull()}")
-            }
+            ).map { it.isEmpty() }
     }
 }

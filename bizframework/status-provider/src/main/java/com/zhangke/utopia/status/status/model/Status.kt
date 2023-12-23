@@ -14,9 +14,12 @@ sealed class Status {
      */
     abstract val id: String
 
+    abstract val supportActions: List<StatusAction>
+
     @Serializable
     data class NewBlog(
         val blog: Blog,
+        override val supportActions: List<StatusAction>,
     ) : Status() {
 
         override val id: String get() = blog.id
@@ -30,5 +33,6 @@ sealed class Status {
         override val id: String,
         override val datetime: Long,
         val reblog: Blog,
+        override val supportActions: List<StatusAction>,
     ) : Status()
 }

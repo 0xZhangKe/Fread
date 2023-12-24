@@ -20,7 +20,7 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
 ) {
 
     private val accountDao: ActivityPubLoggerAccountDao
-        get() = databases.getActivityPubUserDao()
+        get() = databases.getLoggedAccountDao()
 
     private val baseUrlToAccountCache = ConcurrentHashMap<String, ActivityPubLoggedAccount>()
 

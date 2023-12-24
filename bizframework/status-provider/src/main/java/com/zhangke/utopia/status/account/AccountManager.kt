@@ -4,7 +4,6 @@ import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
-import javax.inject.Inject
 
 class AccountManager(
     private val accountManagerList: List<IAccountManager>,
@@ -52,7 +51,7 @@ class AccountManager(
     suspend fun launchAuthBySource(baseUrl: String): Result<Boolean> {
         var result: Result<Boolean> = Result.failure(RuntimeException("Can't auth!"))
         for (manager in accountManagerList) {
-            result = manager.launchAuthBySource(baseUrl)
+            result = manager.launchAuth(baseUrl)
             if (result.getOrNull() == true) break
         }
         return result
@@ -83,7 +82,7 @@ interface IAccountManager {
         sourceList: List<StatusSource>
     ): Result<SourcesAuthValidateResult>
 
-    suspend fun launchAuthBySource(baseUrl: String): Result<Boolean>
+    suspend fun launchAuth(baseUrl: String): Result<Boolean>
 
     /**
      * @return active success

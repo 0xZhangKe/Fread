@@ -5,15 +5,19 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
+import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Comment
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.outlined.ChatBubble
+import androidx.compose.material.icons.outlined.Comment
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -25,7 +29,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.zhangke.framework.collections.mapFirstOrNull
+import com.zhangke.framework.composable.size
 import com.zhangke.utopia.status.status.model.StatusAction
 import com.zhangke.utopia.statusui.R
 
@@ -53,9 +59,10 @@ fun StatusActionPanel(
         val normalColor = MaterialTheme.colorScheme.onSurface
         Box(modifier = Modifier.weight(1F)) {
             StatusActionIcon(
-                imageVector = Icons.Default.Comment,
+                imageVector = Icons.Default.ChatBubbleOutline,
                 enabled = commentAction?.enable == true,
                 contentDescription = stringResource(R.string.status_ui_comment),
+                text = commentAction?.commentCount?.toString(),
                 tint = normalColor,
                 onClick = {},
             )
@@ -65,6 +72,7 @@ fun StatusActionPanel(
                 imageVector = Icons.Default.SwapHoriz,
                 enabled = forwardAction?.enable == true,
                 contentDescription = stringResource(R.string.status_ui_forward),
+                text = forwardAction?.forwardCount?.toString(),
                 tint = normalColor,
                 onClick = {},
             )
@@ -78,6 +86,7 @@ fun StatusActionPanel(
                 },
                 enabled = likeAction?.enable == true,
                 contentDescription = stringResource(R.string.status_ui_like),
+                text = likeAction?.likeCount?.toString(),
                 tint = if (likeAction?.liked == true) highlightColor else normalColor,
                 onClick = {},
             )
@@ -111,6 +120,7 @@ private fun StatusActionIcon(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
+                modifier = Modifier.size(18.dp),
                 imageVector = imageVector,
                 contentDescription = contentDescription,
                 tint = tint,

@@ -234,7 +234,7 @@ private fun BlogAuthorAvatar(
     if (reblogAvatar.isNullOrEmpty()) {
         BlogAuthorAvatar(
             modifier = modifier,
-            imageUrl = reblogAvatar,
+            imageUrl = authorAvatar,
         )
     } else {
         Box(modifier = modifier) {

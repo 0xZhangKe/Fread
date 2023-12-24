@@ -32,7 +32,7 @@ private const val DB_VERSION = 1
 )
 abstract class ActivityPubDatabases : RoomDatabase() {
 
-    abstract fun getActivityPubUserDao(): ActivityPubLoggerAccountDao
+    abstract fun getLoggedAccountDao(): ActivityPubLoggerAccountDao
 
     abstract fun getApplicationDao(): ActivityPubApplicationsDao
 

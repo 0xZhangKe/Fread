@@ -43,7 +43,7 @@ class ActivityPubAccountManager @Inject constructor(
         return validateAuthOfSourceList.invoke(sourceList)
     }
 
-    override suspend fun launchAuthBySource(baseUrl: String): Result<Boolean> {
+    override suspend fun launchAuth(baseUrl: String): Result<Boolean> {
         return oAuthor.startOauth(baseUrl)
     }
 

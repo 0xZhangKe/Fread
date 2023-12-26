@@ -1,14 +1,14 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceUriInsights
-import com.zhangke.utopia.activitypub.app.internal.usecase.client.GetClientUseCase
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
 class GetTimelineStatusUseCase @Inject constructor(
-    private val getClientUseCase: GetClientUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val getStatusSupportAction: GetStatusSupportActionUseCase,
 ) {
@@ -19,7 +19,7 @@ class GetTimelineStatusUseCase @Inject constructor(
         sinceId: String?,
         maxId: String?,
     ): Result<List<Status>> {
-        val timelineRepo = getClientUseCase(timelineUriInsights.serverBaseUrl).timelinesRepo
+        val timelineRepo = clientManager.getClient(timelineUriInsights.serverBaseUrl).timelinesRepo
         return when (timelineUriInsights.type) {
             TimelineSourceType.HOME -> timelineRepo.homeTimeline(
                 limit = limit,

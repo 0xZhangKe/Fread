@@ -13,7 +13,7 @@ class UserSourceTransformer @Inject constructor(
 
     fun createByUserEntity(entity: ActivityPubAccountEntity): StatusSource {
         val webFinger = accountEntityAdapter.toWebFinger(entity)
-        val uri = userUriTransformer.build(entity.id, webFinger)
+        val uri = userUriTransformer.build(webFinger)
         return StatusSource(
             uri = uri,
             name = entity.displayName,

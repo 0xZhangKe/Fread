@@ -29,7 +29,7 @@ class ActivityPubStatusResolver @Inject constructor(
         val userInsights = userUriTransformer.parse(uri)
         if (userInsights != null) {
             return getUserStatus(
-                userUriInsights = userInsights,
+                userInsights = userInsights,
                 limit = limit,
                 sinceId = sinceId,
                 maxId = maxId,

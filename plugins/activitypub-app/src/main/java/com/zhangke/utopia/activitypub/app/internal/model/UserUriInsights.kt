@@ -5,6 +5,5 @@ import com.zhangke.utopia.status.uri.FormalUri
 
 data class UserUriInsights(
     val uri: FormalUri,
-    val userId: String,
     val webFinger: WebFinger,
 )

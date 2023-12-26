@@ -33,6 +33,7 @@ class ChooseBaseUrlUseCase @Inject constructor(
         userUriTransformer.parse(sourceUri)
             ?.webFinger
             ?.let { getBaseUrlFromWebFinger(it) }
+            ?.getOrNull()
             ?.takeIf { it.isNotEmpty() }
             ?.let { return it }
         return getBasicCommonBaseUrl()

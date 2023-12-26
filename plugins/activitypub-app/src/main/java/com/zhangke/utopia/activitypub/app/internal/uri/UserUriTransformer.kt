@@ -9,25 +9,21 @@ class UserUriTransformer @Inject constructor() {
 
     companion object {
 
-        private const val QUERY_ID = "userId"
         private const val QUERY_FINGER = "finger"
     }
 
     fun parse(uri: FormalUri): UserUriInsights? {
         if (!uri.isActivityPubUri) return null
         if (uri.path != ActivityPubUriPath.USER) return null
-        val userId = uri.queries[QUERY_ID]?.takeIf { it.isNotEmpty() } ?: return null
         val webFinger = uri.queries[QUERY_FINGER]?.let { WebFinger.create(it) } ?: return null
         return UserUriInsights(
             uri = uri,
-            userId = userId,
             webFinger = webFinger,
         )
     }
 
-    fun build(userId: String, webFinger: WebFinger): FormalUri {
+    fun build(webFinger: WebFinger): FormalUri {
         val queries = mutableMapOf<String, String>()
-        queries[QUERY_ID] = userId
         queries[QUERY_FINGER] = webFinger.toString()
         return createActivityPubUri(
             path = ActivityPubUriPath.USER,

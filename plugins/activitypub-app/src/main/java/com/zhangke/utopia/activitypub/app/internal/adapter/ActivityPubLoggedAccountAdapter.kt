@@ -21,7 +21,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
             userId = entity.userId,
-            uri = userUriTransformer.build(entity.userId, entity.webFinger),
+            uri = userUriTransformer.build(entity.webFinger),
             webFinger = entity.webFinger,
             platform = entity.platform.toPlatform(),
             baseUrl = entity.baseUrl,
@@ -61,7 +61,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         val webFinger = accountToWebFinger(account)
         return ActivityPubLoggedAccount(
             userId = account.id,
-            uri = userUriTransformer.build(account.id, webFinger),
+            uri = userUriTransformer.build(webFinger),
             webFinger = webFinger,
             platform = instanceAdapter.toPlatform(instance),
             baseUrl = instance.domain.toBaseUrl(),

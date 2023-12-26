@@ -15,7 +15,7 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
     ): BlogAuthor {
         val webFinger = toWebFinger(entity)
         return BlogAuthor(
-            uri = userUriTransformer.build(entity.id, webFinger),
+            uri = userUriTransformer.build(webFinger),
             webFinger = webFinger,
             name = entity.displayName,
             description = entity.note,

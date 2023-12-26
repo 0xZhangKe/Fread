@@ -3,14 +3,14 @@ package com.zhangke.utopia.activitypub.app.internal.repo.platform
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
-import com.zhangke.utopia.activitypub.app.internal.usecase.client.GetClientUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
 import javax.inject.Inject
 
 class ActivityPubPlatformRepo @Inject constructor(
     databases: ActivityPubDatabases,
-    private val getClient: GetClientUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val activityPubPlatformEntityAdapter: ActivityPubPlatformEntityAdapter,
     private val activityPubInstanceAdapter: ActivityPubInstanceAdapter,
 ) {
@@ -31,7 +31,7 @@ class ActivityPubPlatformRepo @Inject constructor(
         platformDao.queryByBaseUrl(baseUrl)?.let {
             return Result.success(it.instanceEntity)
         }
-        val instanceResult = getClient(baseUrl).instanceRepo.getInstanceInformation()
+        val instanceResult = clientManager.getClient(baseUrl).instanceRepo.getInstanceInformation()
         if (instanceResult.isFailure) {
             return Result.failure(instanceResult.exceptionOrNull()!!)
         }

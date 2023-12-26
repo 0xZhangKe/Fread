@@ -41,6 +41,8 @@ abstract class ActivityPubDatabases : RoomDatabase() {
 
     abstract fun getWebFingerToBaseUrlDao(): WebFingerToBaseUrlDao
 
+    abstract fun getUserIdDao(): WebFingerBaseurlToIdDao
+
     companion object {
 
         val instance: ActivityPubDatabases by lazy { createDatabase() }

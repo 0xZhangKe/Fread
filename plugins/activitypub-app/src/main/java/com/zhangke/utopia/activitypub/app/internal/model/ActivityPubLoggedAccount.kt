@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.model
 
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -11,7 +12,7 @@ class ActivityPubLoggedAccount(
     uri: FormalUri,
     webFinger: WebFinger,
     platform: BlogPlatform,
-    val baseUrl: String,
+    val baseUrl: FormalBaseUrl,
     name: String,
     description: String?,
     avatar: String?,

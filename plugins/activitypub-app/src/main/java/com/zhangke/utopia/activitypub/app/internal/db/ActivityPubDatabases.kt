@@ -7,6 +7,7 @@ import androidx.room.TypeConverters
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubInstanceEntityConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubUserTokenConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalBaseUrlConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.PlatformEntityTypeConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.TimelineSourceTypeConverter
 import com.zhangke.utopia.common.utils.WebFingerConverter
@@ -20,6 +21,7 @@ private const val DB_VERSION = 1
     PlatformEntityTypeConverter::class,
     ActivityPubUserTokenConverter::class,
     ActivityPubInstanceEntityConverter::class,
+    FormalBaseUrlConverter::class,
 )
 @Database(
     entities = [
@@ -27,6 +29,7 @@ private const val DB_VERSION = 1
         ActivityPubApplicationEntity::class,
         ActivityPubInstanceInfoEntity::class,
         WebFingerToBaseUrlEntity::class,
+        WebFingerBaseurlToIdEntity::class,
     ],
     version = DB_VERSION,
     exportSchema = false

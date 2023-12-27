@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.baseurl
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.uri.FormalUri
@@ -15,11 +16,10 @@ class ChooseBaseUrlUseCase @Inject constructor(
 
     suspend operator fun invoke(
         sourceUri: FormalUri? = null,
-    ): String {
+    ): FormalBaseUrl {
         if (sourceUri != null) {
             timelineUriTransformer.parse(sourceUri)
                 ?.serverBaseUrl
-                ?.takeIf { it.isNotEmpty() }
                 ?.let { return it }
         }
         chooseBaseUrlFromLoggedAccount()?.let { return it }
@@ -28,7 +28,6 @@ class ChooseBaseUrlUseCase @Inject constructor(
                 ?.webFinger
                 ?.let { getBaseUrlFromWebFinger(it) }
                 ?.getOrNull()
-                ?.takeIf { it.isNotEmpty() }
                 ?.let { return it }
         }
         return getBasicCommonBaseUrl()

@@ -1,13 +1,15 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.source.timeline
 
+import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.network.HttpScheme
+import com.zhangke.framework.network.addProtocolIfNecessary
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 import com.zhangke.utopia.activitypub.app.internal.source.TimelineSourceTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubUrl
-import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
+import java.net.URL
 import javax.inject.Inject
 
 class SearchTimelineSourceUseCase @Inject constructor(
@@ -31,8 +33,12 @@ class SearchTimelineSourceUseCase @Inject constructor(
     }
 
     private suspend fun searchAsUrl(query: String): List<StatusSource> {
-        val url = ActivityPubUrl.create(query) ?: return emptyList()
-        val baseUrl = url.host.toBaseUrl()
+        val url = try {
+            URL(query.addProtocolIfNecessary())
+        } catch (e: Throwable) {
+            return emptyList()
+        }
+        val baseUrl = FormalBaseUrl.build(url.protocol, url.host)
         val platform = getPlatform(baseUrl).getOrNull() ?: return emptyList()
         return listOf(
             platformUriTransformer.build(serverBaseUrl = baseUrl, TimelineSourceType.HOME),

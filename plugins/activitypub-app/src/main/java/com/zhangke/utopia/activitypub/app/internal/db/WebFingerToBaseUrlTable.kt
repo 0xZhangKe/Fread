@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 
 private const val TABLE_NAME = "webFingerToBaseUrl"
@@ -14,14 +15,14 @@ private const val TABLE_NAME = "webFingerToBaseUrl"
 @Entity(tableName = TABLE_NAME)
 data class WebFingerToBaseUrlEntity(
     @PrimaryKey val webFinger: WebFinger,
-    val baseUrl: String,
+    val baseUrl: FormalBaseUrl,
 )
 
 @Dao
 interface WebFingerToBaseUrlDao {
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE webFinger = :webFinger")
-    suspend fun queryBaseUrl(webFinger: WebFinger): String?
+    @Query("SELECT baseUrl FROM $TABLE_NAME WHERE webFinger = :webFinger")
+    suspend fun queryBaseUrl(webFinger: WebFinger): FormalBaseUrl?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: WebFingerToBaseUrlEntity)

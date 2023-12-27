@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
@@ -64,7 +65,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             uri = userUriTransformer.build(webFinger),
             webFinger = webFinger,
             platform = instanceAdapter.toPlatform(instance),
-            baseUrl = instance.domain.toBaseUrl(),
+            baseUrl = FormalBaseUrl.parse(instance.domain)!!,
             name = account.displayName,
             description = account.note,
             avatar = account.avatar,
@@ -79,7 +80,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             uri = uri,
             name = name,
             description = description,
-            baseUrl = baseUrl,
+            baseUrl = baseUrl.toString(),
             thumbnail = thumbnail,
             protocol = protocol,
         )
@@ -88,7 +89,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         uri = uri,
         name = name,
         description = description,
-        baseUrl = baseUrl,
+        baseUrl = FormalBaseUrl.parse(baseUrl)!!,
         thumbnail = thumbnail,
         protocol = protocol,
     )

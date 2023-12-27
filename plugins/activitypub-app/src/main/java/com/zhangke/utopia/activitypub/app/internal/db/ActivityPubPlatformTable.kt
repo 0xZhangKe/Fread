@@ -8,13 +8,14 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
+import com.zhangke.framework.network.FormalBaseUrl
 
 private const val TABLE_NAME = "platform_info"
 
 @Entity(tableName = TABLE_NAME)
 data class ActivityPubInstanceInfoEntity(
     @PrimaryKey val uri: String,
-    val baseUrl: String,
+    val baseUrl: FormalBaseUrl,
     val instanceEntity: ActivityPubInstanceEntity,
 )
 
@@ -25,7 +26,7 @@ interface ActivityPubPlatformDao {
     suspend fun queryByUri(uri: String): ActivityPubInstanceInfoEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl")
-    suspend fun queryByBaseUrl(baseUrl: String): ActivityPubInstanceInfoEntity?
+    suspend fun queryByBaseUrl(baseUrl: FormalBaseUrl): ActivityPubInstanceInfoEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: ActivityPubInstanceInfoEntity)

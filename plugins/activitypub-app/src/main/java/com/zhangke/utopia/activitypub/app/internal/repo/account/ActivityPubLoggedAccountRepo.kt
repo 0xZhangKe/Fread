@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.account
 
 import com.zhangke.framework.architect.coroutines.ApplicationScope
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
@@ -22,7 +23,7 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
     private val accountDao: ActivityPubLoggerAccountDao
         get() = databases.getLoggedAccountDao()
 
-    private val baseUrlToAccountCache = ConcurrentHashMap<String, ActivityPubLoggedAccount>()
+    private val baseUrlToAccountCache = ConcurrentHashMap<FormalBaseUrl, ActivityPubLoggedAccount>()
 
     init {
         ApplicationScope.launch(Dispatchers.IO) {
@@ -38,7 +39,7 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         }
     }
 
-    suspend fun getUserByBaseUrl(baseUrl: String): ActivityPubLoggedAccount? {
+    suspend fun getUserByBaseUrl(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
         return baseUrlToAccountCache.getOrPut(baseUrl) {
             val accountList = accountDao.queryByBaseUrl(baseUrl)
             var account = accountList.firstOrNull { it.active }?.let(adapter::adapt)

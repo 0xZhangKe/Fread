@@ -1,5 +1,6 @@
 package com.zhangke.framework.utils
 
+import com.zhangke.framework.network.HttpScheme
 import kotlinx.serialization.Serializable
 
 /**
@@ -44,8 +45,8 @@ class WebFinger private constructor(
 
         private fun createAsUrl(content: String): WebFinger? {
             val maybeUrl = content
-                .removePrefix("http://")
-                .removePrefix("https://")
+                .removePrefix(HttpScheme.HTTP)
+                .removePrefix(HttpScheme.HTTPS)
             val split = maybeUrl.split('/')
             if (split.size != 2) return null
             val urlHost = split[0]

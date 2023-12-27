@@ -10,7 +10,7 @@ class ActivityPubAccountValidationUseCase @Inject constructor() {
 
     suspend operator fun invoke(userEntity: ActivityPubLoggedAccount): Result<Boolean> {
         val client = ActivityPubClient(
-            baseUrl = userEntity.baseUrl,
+            baseUrl = "${userEntity.baseUrl}/",
             httpClient = GlobalOkHttpClient.client,
             gson = globalGson,
             tokenProvider = {

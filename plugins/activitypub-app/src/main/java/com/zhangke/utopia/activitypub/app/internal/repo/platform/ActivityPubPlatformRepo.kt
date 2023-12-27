@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.platform
 
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
@@ -17,17 +18,17 @@ class ActivityPubPlatformRepo @Inject constructor(
 
     private val platformDao = databases.getPlatformDao()
 
-    suspend fun getPlatform(baseUrl: String): Result<BlogPlatform> {
+    suspend fun getPlatform(baseUrl: FormalBaseUrl): Result<BlogPlatform> {
         return getInstanceEntity(baseUrl).map {
             activityPubInstanceAdapter.toPlatform(it)
         }
     }
 
-    suspend fun getInstanceEntity(baseUrl: String): Result<ActivityPubInstanceEntity> {
+    suspend fun getInstanceEntity(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {
         return getInstanceInfo(baseUrl)
     }
 
-    private suspend fun getInstanceInfo(baseUrl: String): Result<ActivityPubInstanceEntity> {
+    private suspend fun getInstanceInfo(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {
         platformDao.queryByBaseUrl(baseUrl)?.let {
             return Result.success(it.instanceEntity)
         }

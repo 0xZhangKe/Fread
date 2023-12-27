@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.WebFingerToBaseUrlEntity
@@ -11,11 +12,11 @@ class WebFingerToBaseUrlRepo @Inject constructor(
 
     private val webFingerToBaseUrlDao = activityPubDatabases.getWebFingerToBaseUrlDao()
 
-    suspend fun queryBaseUrl(webFinger: WebFinger): String? {
+    suspend fun queryBaseUrl(webFinger: WebFinger): FormalBaseUrl? {
         return webFingerToBaseUrlDao.queryBaseUrl(webFinger)
     }
 
-    suspend fun insert(webFinger: WebFinger, baseUrl: String) {
+    suspend fun insert(webFinger: WebFinger, baseUrl: FormalBaseUrl) {
         webFingerToBaseUrlDao.insert(WebFingerToBaseUrlEntity(webFinger, baseUrl))
     }
 

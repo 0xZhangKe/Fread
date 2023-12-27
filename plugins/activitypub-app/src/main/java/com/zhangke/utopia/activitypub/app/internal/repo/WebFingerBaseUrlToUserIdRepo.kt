@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
@@ -13,7 +14,7 @@ class WebFingerBaseUrlToUserIdRepo @Inject constructor(
 
     private val userIdDao = activityPubDatabases.getUserIdDao()
 
-    suspend fun getUserId(webFinger: WebFinger, baseUrl: String): Result<String> {
+    suspend fun getUserId(webFinger: WebFinger, baseUrl: FormalBaseUrl): Result<String> {
         val userIdFromLocal = userIdDao.queryUserId(webFinger, baseUrl)
         if (userIdFromLocal.isNullOrEmpty().not()) return Result.success(userIdFromLocal!!)
         val result = clientManager.getClient(baseUrl).accountRepo.lookup(webFinger.toString())
@@ -24,7 +25,7 @@ class WebFingerBaseUrlToUserIdRepo @Inject constructor(
         return Result.success(account.id)
     }
 
-    suspend fun insert(webFinger: WebFinger, baseUrl: String, userId: String) {
+    suspend fun insert(webFinger: WebFinger, baseUrl: FormalBaseUrl, userId: String) {
         userIdDao.insert(WebFingerBaseurlToIdEntity(webFinger, baseUrl, userId))
     }
 

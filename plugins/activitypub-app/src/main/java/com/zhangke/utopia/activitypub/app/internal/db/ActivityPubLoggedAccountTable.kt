@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.db
 
 import androidx.room.*
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import kotlinx.coroutines.flow.Flow
 
@@ -19,7 +20,7 @@ data class ActivityPubLoggedAccountEntity(
     val userId: String,
     val webFinger: WebFinger,
     val platform: BlogPlatformEntity,
-    val baseUrl: String,
+    val baseUrl: FormalBaseUrl,
     val name: String,
     val description: String?,
     val avatar: String?,
@@ -32,7 +33,7 @@ data class ActivityPubLoggedAccountEntity(
         val uri: String,
         val name: String,
         val description: String,
-        val baseUrl: String,
+        val baseUrl: FormalBaseUrl,
         val protocol: String,
         val thumbnail: String?,
     )
@@ -54,7 +55,7 @@ interface ActivityPubLoggerAccountDao {
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccountEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl")
-    suspend fun queryByBaseUrl(baseUrl: String): List<ActivityPubLoggedAccountEntity>
+    suspend fun queryByBaseUrl(baseUrl: FormalBaseUrl): List<ActivityPubLoggedAccountEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entry: ActivityPubLoggedAccountEntity)

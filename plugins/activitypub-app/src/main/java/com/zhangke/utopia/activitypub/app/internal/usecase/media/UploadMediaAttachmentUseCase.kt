@@ -4,7 +4,6 @@ import android.net.Uri
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -20,7 +19,7 @@ class UploadMediaAttachmentUseCase @Inject constructor(
     ): Result<String> {
         val contentFile = withContext(Dispatchers.IO) { fileUri.toContentProviderFile() }
             ?: return Result.failure(RuntimeException("File invalid!"))
-        val client = clientManager.getClient(account.webFinger.host.toBaseUrl())
+        val client = clientManager.getClient(account.baseUrl)
         try {
             contentFile.openInputStream().use { inputStream ->
                 if (inputStream == null) return Result.failure(RuntimeException("File invalid!"))

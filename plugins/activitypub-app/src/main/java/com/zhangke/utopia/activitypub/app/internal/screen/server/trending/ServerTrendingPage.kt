@@ -5,7 +5,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
@@ -13,12 +16,12 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.canScrollBackward
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -28,11 +31,19 @@ internal fun Screen.ServerTrendingPage(
 ) {
     val viewModel = getViewModel<ServerTrendingViewModel>()
     viewModel.baseUrl = baseUrl
-    ServerTrendingContent(
-        statusFlow = viewModel.statusFlow,
-        contentCanScrollBackward = contentCanScrollBackward,
-        onInteractive = viewModel::onInteractive,
-    )
+    LaunchedEffect(Unit) {
+        viewModel.onPrepared()
+    }
+    val statusFlow by viewModel.statusFlow.collectAsState()
+    LoadableLayout(
+        state = statusFlow,
+    ) {
+        ServerTrendingContent(
+            statusFlow = it,
+            contentCanScrollBackward = contentCanScrollBackward,
+            onInteractive = viewModel::onInteractive,
+        )
+    }
 }
 
 @Composable

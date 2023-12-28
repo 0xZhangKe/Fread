@@ -58,4 +58,13 @@ class ActivityPubStatusResolver @Inject constructor(
         }
         return null
     }
+
+    override suspend fun likeStatus(status: Status): Result<Unit>? {
+        val blog = when(status){
+            is Status.NewBlog -> status.blog
+            is Status.Reblog -> status.reblog
+        }
+        blog.author
+        return null
+    }
 }

@@ -34,6 +34,10 @@ class StatusResolver(
             it.checkIsFirstStatus(sourceUri, statusId)
         }
     }
+
+    suspend fun likeStatus(status: Status): Result<Unit> {
+        return resolverList.mapFirst { it.likeStatus(status) }
+    }
 }
 
 interface IStatusResolver {
@@ -49,4 +53,6 @@ interface IStatusResolver {
     ): Result<List<Status>>?
 
     suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>?
+
+    suspend fun likeStatus(status: Status): Result<Unit>?
 }

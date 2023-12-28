@@ -4,6 +4,7 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdap
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceUriInsights
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
@@ -11,6 +12,7 @@ class GetTimelineStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val getStatusSupportInteractive: GetStatusInteractionUseCase,
+    private val platformRepo: ActivityPubPlatformRepo,
 ) {
 
     suspend operator fun invoke(
@@ -19,7 +21,11 @@ class GetTimelineStatusUseCase @Inject constructor(
         sinceId: String?,
         maxId: String?,
     ): Result<List<Status>> {
-        val timelineRepo = clientManager.getClient(timelineUriInsights.serverBaseUrl).timelinesRepo
+        val baseUrl = timelineUriInsights.serverBaseUrl
+        val timelineRepo = clientManager.getClient(baseUrl).timelinesRepo
+        val platformResult = platformRepo.getPlatform(baseUrl)
+        if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
+        val platform = platformResult.getOrThrow()
         return when (timelineUriInsights.type) {
             TimelineSourceType.HOME -> timelineRepo.homeTimeline(
                 limit = limit,
@@ -41,7 +47,7 @@ class GetTimelineStatusUseCase @Inject constructor(
         }.map { list ->
             list.map {
                 val supportActions = getStatusSupportInteractive(it)
-                activityPubStatusAdapter.toStatus(it, supportActions)
+                activityPubStatusAdapter.toStatus(it, platform, supportActions)
             }
         }
     }

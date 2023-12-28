@@ -4,8 +4,10 @@ import androidx.paging.PagingSource
 import androidx.paging.PagingState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 
 class ServerTrendingDataSource(
@@ -13,6 +15,7 @@ class ServerTrendingDataSource(
     private val getServerTrending: GetServerTrendingUseCase,
     private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
+    private val platform: BlogPlatform,
 ) : PagingSource<Int, Status>() {
 
     override fun getRefreshKey(state: PagingState<Int, Status>): Int {
@@ -25,7 +28,7 @@ class ServerTrendingDataSource(
             .map { list ->
                 list.map {
                     val supportActions = getStatusSupportAction(it)
-                    statusAdapter.toStatus(it, supportActions)
+                    statusAdapter.toStatus(it, platform, supportActions)
                 }
             }
         return if (result.isSuccess) {

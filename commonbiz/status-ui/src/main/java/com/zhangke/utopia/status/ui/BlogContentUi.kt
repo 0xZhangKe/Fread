@@ -33,7 +33,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -41,7 +40,6 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
@@ -50,7 +48,6 @@ import com.zhangke.utopia.status.ui.action.actionName
 import com.zhangke.utopia.status.ui.action.logo
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.poll.BlogPoll
-import com.zhangke.utopia.status.uri.FormalUri
 import com.zhangke.utopia.statusui.R
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -334,39 +331,4 @@ private fun MoreOption(
             }
         }
     }
-}
-
-@Preview
-@Composable
-private fun PreviewBlogContentComposable() {
-    val author = BlogAuthor(
-        name = "zhangke",
-        webFinger = WebFinger.create("@zhangke@m.cmx.im")!!,
-        uri = FormalUri.from("@zhangke@m.cmx.im")!!,
-        description = "一个落魄Android开发",
-        avatar = "https://media.cmx.edu.kg/accounts/avatars/109/305/640/413/684/932/original/2804adcd878c37c9.png",
-    )
-
-    val blog = Blog(
-        id = "",
-        author = author,
-        title = "什么时候才能搞定啊",
-        content = "什么时候才能搞定啊, 从去年就开始做了，零零星星的做了好长时间，需求也越做越多，没想到刚开始很简单的想法最后竟然花了这么久才做完，也不知道最终结果如何。",
-        mediaList = emptyList(),
-        date = Date(),
-        forwardCount = 10321,
-        likeCount = 38747,
-        sensitive = true,
-        spoilerText = "",
-        repliesCount = 10,
-        poll = null,
-    )
-    BlogContentUi(
-        blog = blog,
-        indexInList = 1,
-        onMediaClick = { _ -> },
-        bottomPanelInteractions = emptyList(),
-        moreInteractions = emptyList(),
-        onInteractive = { _ -> },
-    )
 }

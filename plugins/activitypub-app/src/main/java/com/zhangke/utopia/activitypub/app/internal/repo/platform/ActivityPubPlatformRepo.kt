@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.platform
 
+import android.util.Log
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
@@ -19,8 +20,19 @@ class ActivityPubPlatformRepo @Inject constructor(
     private val platformDao = databases.getPlatformDao()
 
     suspend fun getPlatform(baseUrl: FormalBaseUrl): Result<BlogPlatform> {
-        return getInstanceEntity(baseUrl).map {
-            activityPubInstanceAdapter.toPlatform(it)
+        val entity = getInstanceInfo(baseUrl)
+        Log.d("U_TEST", "getPlatform $entity")
+        return entity.map {
+            try {
+                activityPubInstanceAdapter.toPlatform(it)
+            } catch (e: Throwable) {
+                e.printStackTrace()
+                throw e
+            }
+        }.onSuccess {
+            Log.d("U_TEST", "onSuccess $it")
+        }.onFailure {
+            Log.d("U_TEST", "onFailure $it")
         }
     }
 
@@ -29,9 +41,17 @@ class ActivityPubPlatformRepo @Inject constructor(
     }
 
     private suspend fun getInstanceInfo(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {
-        platformDao.queryByBaseUrl(baseUrl)?.let {
-            return Result.success(it.instanceEntity)
+        val instanceFromLocal = platformDao.queryByBaseUrl(baseUrl)
+        if (instanceFromLocal != null) {
+            Log.d("U_TEST", "queryByBaseUrl $instanceFromLocal")
+            try {
+                return Result.success(instanceFromLocal.instanceEntity)
+            }catch (e: Throwable){
+                e.printStackTrace()
+                Log.d("U_TEST", "queryByBaseUrl catching: $e")
+            }
         }
+        Log.d("U_TEST", "getInstanceInfo by api")
         val instanceResult = clientManager.getClient(baseUrl).instanceRepo.getInstanceInformation()
         if (instanceResult.isFailure) {
             return Result.failure(instanceResult.exceptionOrNull()!!)

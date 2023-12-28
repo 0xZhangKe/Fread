@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.statusui.R
@@ -25,6 +26,9 @@ fun ReblogUi(
     modifier: Modifier = Modifier,
     reblog: Status.Reblog,
     indexInList: Int,
+    bottomPanelInteractions: List<StatusUiInteraction>,
+    moreInteractions: List<StatusUiInteraction>,
+    onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
     Column(modifier = modifier) {
@@ -57,7 +61,9 @@ fun ReblogUi(
         BlogContentUi(
             modifier = Modifier,
             blog = reblog.reblog,
-            supportActions = reblog.supportActions,
+            bottomPanelInteractions = bottomPanelInteractions,
+            moreInteractions = moreInteractions,
+            onInteractive = onInteractive,
             indexInList = indexInList,
             onMediaClick = onMediaClick,
             reblogAuthor = reblog.author,

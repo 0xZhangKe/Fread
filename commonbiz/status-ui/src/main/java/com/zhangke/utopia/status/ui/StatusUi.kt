@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.ui
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
@@ -10,6 +11,9 @@ fun StatusUi(
     modifier: Modifier = Modifier,
     status: Status,
     indexInList: Int,
+    bottomPanelInteractions: List<StatusUiInteraction>,
+    moreInteractions: List<StatusUiInteraction>,
+    onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
     when (status) {
@@ -18,6 +22,9 @@ fun StatusUi(
                 modifier = modifier,
                 reblog = status,
                 indexInList = indexInList,
+                bottomPanelInteractions = bottomPanelInteractions,
+                moreInteractions = moreInteractions,
+                onInteractive = onInteractive,
                 onMediaClick = onMediaClick,
             )
         }
@@ -26,8 +33,10 @@ fun StatusUi(
             BlogContentUi(
                 modifier = modifier,
                 blog = status.blog,
-                supportActions = status.supportActions,
+                bottomPanelInteractions = bottomPanelInteractions,
+                moreInteractions = moreInteractions,
                 indexInList = indexInList,
+                onInteractive = onInteractive,
                 onMediaClick = onMediaClick,
             )
         }

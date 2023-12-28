@@ -15,6 +15,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.canScrollBackward
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
@@ -29,13 +31,15 @@ internal fun Screen.ServerTrendingPage(
     ServerTrendingContent(
         statusFlow = viewModel.statusFlow,
         contentCanScrollBackward = contentCanScrollBackward,
+        onInteractive = viewModel::onInteractive,
     )
 }
 
 @Composable
 private fun ServerTrendingContent(
-    statusFlow: Flow<PagingData<Status>>,
+    statusFlow: Flow<PagingData<StatusUiState>>,
     contentCanScrollBackward: MutableState<Boolean>,
+    onInteractive: (StatusUiInteraction) -> Unit,
 ) {
     val listState = rememberLazyListState()
     contentCanScrollBackward.value = canScrollBackward(listState)
@@ -49,7 +53,10 @@ private fun ServerTrendingContent(
             if (status != null) {
                 FeedsStatusNode(
                     modifier = Modifier,
-                    status = status,
+                    status = status.status,
+                    bottomPanelInteractions = status.bottomInteractions,
+                    moreInteractions = status.moreInteractions,
+                    onInteractive = onInteractive,
                     indexInList = index,
                 )
             }

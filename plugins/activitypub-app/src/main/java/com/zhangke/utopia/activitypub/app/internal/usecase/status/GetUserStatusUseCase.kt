@@ -13,7 +13,7 @@ class GetUserStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
-    private val getStatusSupportAction: GetStatusSupportActionUseCase,
+    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
 ) {
 
     suspend operator fun invoke(
@@ -34,7 +34,7 @@ class GetUserStatusUseCase @Inject constructor(
                 maxId = maxId,
             ).map { list ->
                 list.map {
-                    val supportActions = getStatusSupportAction(it)
+                    val supportActions = getStatusSupportInteraction(it)
                     activityPubStatusAdapter.toStatus(it, supportActions)
                 }
             }

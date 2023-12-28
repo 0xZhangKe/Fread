@@ -24,6 +24,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.utopia.common.status.FeedsConfig
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 
 @Composable
@@ -43,6 +44,7 @@ fun Screen.FeedsTab(
     }
     FeedsTabContent(
         uiState = uiState,
+        onInteractive = viewModel::onInteractive,
         onRefresh = viewModel::onRefresh,
         onLoadMore = viewModel::onLoadMore,
         onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
@@ -53,6 +55,7 @@ fun Screen.FeedsTab(
 @Composable
 private fun FeedsTabContent(
     uiState: FeedsScreenUiState,
+    onInteractive: (StatusUiInteraction) -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onCatchMinFirstVisibleIndex: (Int) -> Unit,
@@ -99,12 +102,15 @@ private fun FeedsTabContent(
             itemsIndexed(
                 items = uiState.feeds,
                 key = { _, item ->
-                    item.id
+                    item.status.id
                 },
             ) { index, item ->
                 FeedsStatusNode(
                     modifier = Modifier,
-                    status = item,
+                    status = item.status,
+                    bottomPanelInteractions = item.bottomInteractions,
+                    moreInteractions = item.moreInteractions,
+                    onInteractive = onInteractive,
                     indexInList = index,
                 )
             }

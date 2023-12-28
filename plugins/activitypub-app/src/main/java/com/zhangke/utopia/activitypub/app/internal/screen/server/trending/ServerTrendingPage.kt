@@ -14,13 +14,14 @@ import androidx.paging.compose.itemsIndexed
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.canScrollBackward
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 
 @Composable
 internal fun Screen.ServerTrendingPage(
-    baseUrl: String,
+    baseUrl: FormalBaseUrl,
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
     val viewModel = getViewModel<ServerTrendingViewModel>()

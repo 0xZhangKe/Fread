@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
@@ -43,7 +44,7 @@ class ActivityPubAccountManager @Inject constructor(
         return validateAuthOfSourceList.invoke(sourceList)
     }
 
-    override suspend fun launchAuth(baseUrl: String): Result<Boolean> {
+    override suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean> {
         return oAuthor.startOauth(baseUrl)
     }
 

@@ -5,7 +5,6 @@ import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.baseurl.GetBaseUrlFromWebFingerUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
-import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.platform.IPlatformResolver
 import com.zhangke.utopia.status.uri.FormalUri

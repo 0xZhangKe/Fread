@@ -55,9 +55,10 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
+import com.zhangke.framework.network.FormalBaseUrl
 import kotlinx.coroutines.launch
 
-class PlatformDetailScreen(private val serverBaseUrl: String) : AndroidScreen() {
+class PlatformDetailScreen(private val serverBaseUrl: FormalBaseUrl) : AndroidScreen() {
 
     @Composable
     override fun Content() {
@@ -207,7 +208,7 @@ class PlatformDetailScreen(private val serverBaseUrl: String) : AndroidScreen() 
                                     modifier = Modifier
                                         .padding(top = 4.dp)
                                         .utopiaPlaceholder(visible = uiState.loading),
-                                    text = uiState.baseUrl,
+                                    text = uiState.baseUrl.toString(),
                                     fontSize = 12.sp,
                                 )
                                 Text(
@@ -364,8 +365,7 @@ class PlatformDetailScreen(private val serverBaseUrl: String) : AndroidScreen() 
                         state = pagerState,
                     ) { currentPage ->
                         // TODO check this, why need Screen params but receiver
-                        val host = uiState.baseUrl
-                        if (host.isNotEmpty()) {
+                        if (uiState.baseUrl != null) {
                             tabs[currentPage].content(
                                 this@PlatformDetailScreen,
                                 uiState.baseUrl,

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTag
@@ -10,7 +11,7 @@ class GetServerTrendTagsUseCase @Inject constructor(
     private val activityPubTagAdapter: ActivityPubTagAdapter,
 ) {
 
-    suspend operator fun invoke(baseUrl: String): Result<List<ActivityPubTag>> {
+    suspend operator fun invoke(baseUrl: FormalBaseUrl): Result<List<ActivityPubTag>> {
         return clientManager.getClient(baseUrl).instanceRepo
             .getTrendsTags(
                 limit = 10,

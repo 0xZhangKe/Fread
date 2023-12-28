@@ -4,6 +4,7 @@ import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
 import com.zhangke.activitypub.api.ActivityPubScope
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
@@ -31,13 +32,13 @@ class ActivityPubOAuthor @Inject constructor(
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
-    suspend fun startOauth(baseUrl: String): Result<Boolean> {
+    suspend fun startOauth(baseUrl: FormalBaseUrl): Result<Boolean> {
         val app = applicationRepo.getApplicationByBaseUrl(baseUrl) ?: return Result.failure(
             IllegalStateException("Can not get application info by $baseUrl")
         )
         val client = clientManager.getClient(baseUrl)
         val oauthUrl = client.oauthRepo.buildOAuthUrl(
-            baseUrl = baseUrl,
+            baseUrl = baseUrl.toString(),
             clientId = app.clientId,
             redirectUri = app.redirectUri,
         )

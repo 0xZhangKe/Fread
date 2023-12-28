@@ -28,6 +28,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.CardInfoSection
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.Destination
 import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.profile.R
@@ -49,7 +50,7 @@ class LoginScreen : AndroidScreen() {
             LoginScreenContent(
                 uiState = uiState,
                 onPlatformClick = {
-                    viewModel.onServerHostConfirmClick(it.baseUrl)
+                    viewModel.onServerHostConfirmClick(FormalBaseUrl.parse(it.baseUrl)!!)
                     navigator.hide()
                 },
                 onInputClick = { showInputContent = true },
@@ -59,7 +60,7 @@ class LoginScreen : AndroidScreen() {
             InputServerHostContent(
                 onBackClick = { showInputContent = false },
                 onConfirmClick = {
-                    viewModel.onServerHostConfirmClick(it)
+                    viewModel.onServerHostConfirmClick(FormalBaseUrl.parse(it)!!)
                     navigator.hide()
                 },
             )

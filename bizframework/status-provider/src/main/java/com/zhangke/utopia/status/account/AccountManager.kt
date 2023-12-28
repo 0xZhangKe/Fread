@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.account
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -48,7 +49,7 @@ class AccountManager(
         )
     }
 
-    suspend fun launchAuthBySource(baseUrl: String): Result<Boolean> {
+    suspend fun launchAuthBySource(baseUrl: FormalBaseUrl): Result<Boolean> {
         var result: Result<Boolean> = Result.failure(RuntimeException("Can't auth!"))
         for (manager in accountManagerList) {
             result = manager.launchAuth(baseUrl)
@@ -82,7 +83,7 @@ interface IAccountManager {
         sourceList: List<StatusSource>
     ): Result<SourcesAuthValidateResult>
 
-    suspend fun launchAuth(baseUrl: String): Result<Boolean>
+    suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>
 
     /**
      * @return active success

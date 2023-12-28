@@ -2,13 +2,14 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server.trending
 
 import androidx.paging.PagingSource
 import androidx.paging.PagingState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusSupportActionUseCase
 import com.zhangke.utopia.status.status.model.Status
 
 class ServerTrendingDataSource(
-    private val host: String,
+    private val baseUrl: FormalBaseUrl,
     private val getServerTrending: GetServerTrendingUseCase,
     private val getStatusSupportAction: GetStatusSupportActionUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
@@ -20,7 +21,7 @@ class ServerTrendingDataSource(
 
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, Status> {
         val offset = params.key ?: 0
-        val result = getServerTrending(baseUrl = host, offset = offset, limit = params.loadSize)
+        val result = getServerTrending(baseUrl = baseUrl, offset = offset, limit = params.loadSize)
             .map { list ->
                 list.map {
                     val supportActions = getStatusSupportAction(it)

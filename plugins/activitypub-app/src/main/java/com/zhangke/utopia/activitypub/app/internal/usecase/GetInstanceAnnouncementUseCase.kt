@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase
 
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import javax.inject.Inject
 
@@ -10,7 +11,7 @@ class GetInstanceAnnouncementUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        baseUrl: String,
+        baseUrl: FormalBaseUrl,
         justActive: Boolean = true,
     ): Result<List<ActivityPubAnnouncementEntity>> {
         val client = clientManager.getClient(baseUrl)

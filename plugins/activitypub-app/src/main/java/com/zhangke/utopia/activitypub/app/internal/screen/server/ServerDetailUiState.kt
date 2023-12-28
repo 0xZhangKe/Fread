@@ -1,11 +1,12 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.server
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.status.author.BlogAuthor
 
 internal data class ServerDetailUiState(
     val loading: Boolean,
-    val baseUrl: String,
+    val baseUrl: FormalBaseUrl?,
     val title: String,
     val description: String,
     val thumbnail: String,

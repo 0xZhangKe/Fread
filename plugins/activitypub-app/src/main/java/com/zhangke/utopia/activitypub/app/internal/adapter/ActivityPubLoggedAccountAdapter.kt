@@ -8,7 +8,6 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.utopia.activitypub.app.internal.utils.toBaseUrl
 import com.zhangke.utopia.status.platform.BlogPlatform
 import javax.inject.Inject
 

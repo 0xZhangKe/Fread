@@ -7,6 +7,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
@@ -115,7 +116,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     fun onAuthItemClick(platform: BlogPlatform) {
         launchInViewModel {
             statusProvider.accountManager
-                .launchAuthBySource(platform.baseUrl)
+                .launchAuthBySource(FormalBaseUrl.parse(platform.baseUrl)!!)
                 .onSuccess {
                     _errorMessageFlow.emit(
                         textOf(com.zhangke.utopia.commonbiz.R.string.auth_success)

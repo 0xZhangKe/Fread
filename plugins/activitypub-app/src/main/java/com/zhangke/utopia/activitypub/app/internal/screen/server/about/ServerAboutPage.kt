@@ -27,12 +27,13 @@ import androidx.core.text.HtmlCompat
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 
 @Composable
 internal fun Screen.ServerAboutPage(
-    baseUrl: String,
+    baseUrl: FormalBaseUrl,
     rules: List<ActivityPubInstanceRule> = emptyList(),
     contentCanScrollBackward: MutableState<Boolean>,
 ) {

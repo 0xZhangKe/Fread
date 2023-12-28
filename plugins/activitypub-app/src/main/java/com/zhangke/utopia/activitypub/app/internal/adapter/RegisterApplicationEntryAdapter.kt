@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.RegisterApplicationEntry
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubApplication
 import javax.inject.Inject
 
@@ -8,7 +9,7 @@ class RegisterApplicationEntryAdapter @Inject constructor() {
 
     fun toApplication(
         entity: RegisterApplicationEntry,
-        baseUrl: String,
+        baseUrl: FormalBaseUrl,
     ) = ActivityPubApplication(
         baseUrl = baseUrl,
         id = entity.id,

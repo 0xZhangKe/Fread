@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.source.timeline
 
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.network.addProtocolIfNecessary
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 import com.zhangke.utopia.activitypub.app.internal.source.TimelineSourceTransformer
@@ -38,6 +37,7 @@ class SearchTimelineSourceUseCase @Inject constructor(
         } catch (e: Throwable) {
             return emptyList()
         }
+        if (url.host.isNullOrEmpty()) return emptyList()
         val baseUrl = FormalBaseUrl.build(url.protocol, url.host)
         val platform = getPlatform(baseUrl).getOrNull() ?: return emptyList()
         return listOf(

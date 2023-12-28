@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.application
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubApplicationEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.RegisterApplicationEntryAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
@@ -18,7 +19,7 @@ class ActivityPubApplicationRepo @Inject constructor(
 
     private val applicationsDao: ActivityPubApplicationsDao get() = databases.getApplicationDao()
 
-    suspend fun getApplicationByBaseUrl(baseUrl: String): ActivityPubApplication? {
+    suspend fun getApplicationByBaseUrl(baseUrl: FormalBaseUrl): ActivityPubApplication? {
         applicationsDao.queryByBaseUrl(baseUrl)
             ?.let(applicationEntityAdapter::toApplication)
             ?.let { return it }

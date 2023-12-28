@@ -30,12 +30,13 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.BezierCurve
 import com.zhangke.framework.composable.BezierCurveStyle
 import com.zhangke.framework.composable.textString
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.toPx
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTag
 
 @Composable
 internal fun Screen.ServerTrendsTagsPage(
-    baseUrl: String,
+    baseUrl: FormalBaseUrl,
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
     val viewModel = getViewModel<ServerTrendsTagsViewModel>()

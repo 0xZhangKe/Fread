@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server.trending.tags
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendTagsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ class ServerTrendsTagsViewModel @Inject constructor(
     private val getServerTrendsTags: GetServerTrendTagsUseCase,
 ) : ViewModel() {
 
-    lateinit var baseUrl: String
+    lateinit var baseUrl: FormalBaseUrl
 
     private val _uiState = MutableStateFlow(ServerTrendsTagsUiState(emptyList()))
     val uiState: StateFlow<ServerTrendsTagsUiState> = _uiState

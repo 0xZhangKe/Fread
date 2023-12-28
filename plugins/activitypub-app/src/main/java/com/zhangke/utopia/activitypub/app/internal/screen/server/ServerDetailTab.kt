@@ -15,6 +15,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.screen.server.about.ServerAboutPage
@@ -24,7 +25,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.server.trending.tags.S
 internal enum class ServerDetailTab(
     val title: TextString,
     val content: @Composable Screen.(
-        baseUrl: String,
+        baseUrl: FormalBaseUrl,
         rules: List<ActivityPubInstanceRule>,
         contentCanScrollBackward: MutableState<Boolean>,
     ) -> Unit,

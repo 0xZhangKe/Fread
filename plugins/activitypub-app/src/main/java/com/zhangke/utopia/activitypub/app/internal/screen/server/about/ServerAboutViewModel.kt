@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server.about
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.usecase.account.HaveLoggedUserUseCase
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetInstanceAnnouncementUseCase
@@ -17,7 +18,7 @@ internal class ServerAboutViewModel @Inject constructor(
     private val getInstanceAnnouncementUseCase: GetInstanceAnnouncementUseCase,
 ) : ViewModel() {
 
-    lateinit var baseUrl: String
+    lateinit var baseUrl: FormalBaseUrl
 
     var rules: List<ActivityPubInstanceRule> = emptyList()
 

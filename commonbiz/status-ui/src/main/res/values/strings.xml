@@ -2,10 +2,11 @@
 <resources>
 
     <string name="status_ui_forward">转发</string>
-    <string name="status_ui_like">点赞</string>
+    <string name="status_ui_like">喜欢</string>
     <string name="status_ui_comment">评论</string>
     <string name="status_ui_delete">删除</string>
     <string name="status_ui_share">分享</string>
+    <string name="status_ui_bookmark">收藏</string>
 
     <string name="status_ui_image_sensitive_label">敏感内容</string>
     <string name="status_ui_image_content_show_hidden_label">显示更多</string>

@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.blog
 
 import com.zhangke.framework.serialize.DateSerializer
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.platform.BlogPlatform
 import kotlinx.serialization.Serializable
 import java.util.Date
 
@@ -22,6 +23,7 @@ data class Blog(
     val repliesCount: Int?,
     val sensitive: Boolean,
     val spoilerText: String,
+    val platform: BlogPlatform,
     val mediaList: List<BlogMedia>,
     val poll: BlogPoll?,
 )

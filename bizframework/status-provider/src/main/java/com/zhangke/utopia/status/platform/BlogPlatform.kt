@@ -2,7 +2,9 @@ package com.zhangke.utopia.status.platform
 
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
+import kotlinx.serialization.Serializable
 
+@Serializable
 @Parcelize
 data class BlogPlatform(
     val uri: String,

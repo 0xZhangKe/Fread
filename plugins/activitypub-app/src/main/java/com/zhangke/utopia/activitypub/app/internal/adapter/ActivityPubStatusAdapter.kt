@@ -6,6 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDate
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusInteraction
 import javax.inject.Inject
@@ -19,30 +20,37 @@ class ActivityPubStatusAdapter @Inject constructor(
 
     fun toStatus(
         entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
         supportActions: List<StatusInteraction>,
     ): Status {
         return if (entity.reblog != null) {
-            entity.toReblog(supportActions)
+            entity.toReblog(supportActions, platform)
         } else {
-            entity.toNewBlog(supportActions)
+            entity.toNewBlog(supportActions, platform)
         }
     }
 
-    private fun ActivityPubStatusEntity.toNewBlog(supportActions: List<StatusInteraction>): Status.NewBlog {
-        return Status.NewBlog(toBlog(), supportActions)
+    private fun ActivityPubStatusEntity.toNewBlog(
+        supportActions: List<StatusInteraction>,
+        platform: BlogPlatform,
+    ): Status.NewBlog {
+        return Status.NewBlog(toBlog(platform), supportActions)
     }
 
-    private fun ActivityPubStatusEntity.toReblog(supportActions: List<StatusInteraction>): Status.Reblog {
+    private fun ActivityPubStatusEntity.toReblog(
+        supportActions: List<StatusInteraction>,
+        platform: BlogPlatform,
+    ): Status.Reblog {
         return Status.Reblog(
             author = activityPubAccountEntityAdapter.toAuthor(account),
             id = id,
             datetime = formatDatetimeToDate(createdAt).time,
-            reblog = reblog!!.toBlog(),
+            reblog = reblog!!.toBlog(platform),
             supportInteraction = supportActions,
         )
     }
 
-    private fun ActivityPubStatusEntity.toBlog(): Blog {
+    private fun ActivityPubStatusEntity.toBlog(platform: BlogPlatform): Blog {
         return Blog(
             id = id,
             author = activityPubAccountEntityAdapter.toAuthor(account),
@@ -54,6 +62,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
             repliesCount = repliesCount,
+            platform = platform,
             mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = poll?.let(pollAdapter::adapt)
         )

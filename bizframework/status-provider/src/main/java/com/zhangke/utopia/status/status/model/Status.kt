@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.status.model
 
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.platform.BlogPlatform
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,6 +17,8 @@ sealed class Status {
 
     abstract val supportInteraction: List<StatusInteraction>
 
+    abstract val platform: BlogPlatform
+
     @Serializable
     data class NewBlog(
         val blog: Blog,
@@ -25,6 +28,9 @@ sealed class Status {
         override val id: String get() = blog.id
 
         override val datetime: Long get() = blog.date.time
+
+        override val platform: BlogPlatform
+            get() = blog.platform
     }
 
     @Serializable
@@ -34,5 +40,9 @@ sealed class Status {
         override val datetime: Long,
         val reblog: Blog,
         override val supportInteraction: List<StatusInteraction>,
-    ) : Status()
+    ) : Status(){
+
+        override val platform: BlogPlatform
+            get() = reblog.platform
+    }
 }

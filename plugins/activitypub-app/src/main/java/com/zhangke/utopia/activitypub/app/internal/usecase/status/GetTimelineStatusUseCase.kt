@@ -10,7 +10,7 @@ import javax.inject.Inject
 class GetTimelineStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
-    private val getStatusSupportAction: GetStatusSupportActionUseCase,
+    private val getStatusSupportInteractive: GetStatusInteractionUseCase,
 ) {
 
     suspend operator fun invoke(
@@ -40,7 +40,7 @@ class GetTimelineStatusUseCase @Inject constructor(
             )
         }.map { list ->
             list.map {
-                val supportActions = getStatusSupportAction(it)
+                val supportActions = getStatusSupportInteractive(it)
                 activityPubStatusAdapter.toStatus(it, supportActions)
             }
         }

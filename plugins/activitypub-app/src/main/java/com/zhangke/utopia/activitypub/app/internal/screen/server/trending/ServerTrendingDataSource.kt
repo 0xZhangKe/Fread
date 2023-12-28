@@ -5,13 +5,13 @@ import androidx.paging.PagingState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusSupportActionUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.status.status.model.Status
 
 class ServerTrendingDataSource(
     private val baseUrl: FormalBaseUrl,
     private val getServerTrending: GetServerTrendingUseCase,
-    private val getStatusSupportAction: GetStatusSupportActionUseCase,
+    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
 ) : PagingSource<Int, Status>() {
 

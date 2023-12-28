@@ -1,9 +1,9 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
-import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.common.status.model.StatusUiState
 
 data class FeedsScreenUiState(
-    val feeds: List<Status>,
+    val feeds: List<StatusUiState>,
     val refreshing: Boolean,
     val loading: Boolean,
     val loadMoreError: Boolean,

@@ -17,6 +17,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,13 +42,14 @@ import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.status.model.StatusAction
-import com.zhangke.utopia.status.ui.action.StatusActionPanel
+import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
+import com.zhangke.utopia.status.ui.action.actionName
+import com.zhangke.utopia.status.ui.action.logo
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.poll.BlogPoll
-import com.zhangke.utopia.status.ui.action.actionName
 import com.zhangke.utopia.status.uri.FormalUri
 import com.zhangke.utopia.statusui.R
 import java.text.SimpleDateFormat
@@ -59,7 +61,9 @@ import kotlin.concurrent.getOrSet
 fun BlogContentUi(
     modifier: Modifier = Modifier,
     blog: Blog,
-    supportActions: List<StatusAction>,
+    bottomPanelInteractions: List<StatusUiInteraction>,
+    moreInteractions: List<StatusUiInteraction>,
+    onInteractive: (StatusUiInteraction) -> Unit,
     indexInList: Int,
     onMediaClick: OnBlogMediaClick,
     reblogAuthor: BlogAuthor? = null,
@@ -120,10 +124,11 @@ fun BlogContentUi(
                 )
                 MoreOption(
                     modifier = Modifier.constrainAs(moreOptions) {
-                        end.linkTo(parent.end, 16.dp)
+                        end.linkTo(parent.end)
                         top.linkTo(name.top)
                     },
-                    onClick = { /*TODO*/ },
+                    moreActionList = moreInteractions,
+                    onActionClick = onInteractive,
                 )
             }
             val sensitive = blog.sensitive
@@ -216,11 +221,12 @@ fun BlogContentUi(
                     onVote = {},
                 )
             }
-            StatusActionPanel(
+            StatusBottomInteractionPanel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
-                actions = supportActions,
+                interactions = bottomPanelInteractions,
+                onInteractive = onInteractive,
             )
             Divider(
                 modifier = Modifier
@@ -289,9 +295,10 @@ private fun BlogAuthorAvatar(
 @Composable
 private fun MoreOption(
     modifier: Modifier,
-    moreActionList: List<StatusAction>,
-    onActionClick: (StatusAction) -> Unit,
+    moreActionList: List<StatusUiInteraction>,
+    onActionClick: (StatusUiInteraction) -> Unit,
 ) {
+    if (moreActionList.isEmpty()) return
     var showMorePopup by remember {
         mutableStateOf(false)
     }
@@ -312,6 +319,12 @@ private fun MoreOption(
                 DropdownMenuItem(
                     text = {
                         Text(text = it.actionName)
+                    },
+                    leadingIcon = {
+                        Icon(
+                            imageVector = it.logo,
+                            contentDescription = it.actionName,
+                        )
                     },
                     onClick = {
                         onActionClick(it)
@@ -348,5 +361,12 @@ private fun PreviewBlogContentComposable() {
         repliesCount = 10,
         poll = null,
     )
-    BlogContentUi(blog = blog, indexInList = 1, onMediaClick = { _ -> }, supportActions = emptyList())
+    BlogContentUi(
+        blog = blog,
+        indexInList = 1,
+        onMediaClick = { _ -> },
+        bottomPanelInteractions = emptyList(),
+        moreInteractions = emptyList(),
+        onInteractive = { _ -> },
+    )
 }

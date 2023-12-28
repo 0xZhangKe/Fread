@@ -11,8 +11,12 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Divider
+import androidx.compose.material3.DropdownMenu
+import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,6 +39,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.core.text.HtmlCompat
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
@@ -42,6 +47,7 @@ import com.zhangke.utopia.status.status.model.StatusAction
 import com.zhangke.utopia.status.ui.action.StatusActionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.poll.BlogPoll
+import com.zhangke.utopia.status.ui.action.actionName
 import com.zhangke.utopia.status.uri.FormalUri
 import com.zhangke.utopia.statusui.R
 import java.text.SimpleDateFormat
@@ -63,7 +69,7 @@ fun BlogContentUi(
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
-                val (avatar, name, guideline, dateTime, userId) = createRefs()
+                val (avatar, name, guideline, dateTime, userId, moreOptions) = createRefs()
                 BlogAuthorAvatar(
                     modifier = Modifier
                         .size(40.dp)
@@ -111,6 +117,13 @@ fun BlogContentUi(
                     },
                     text = blog.author.webFinger.toString(),
                     fontSize = 12.sp,
+                )
+                MoreOption(
+                    modifier = Modifier.constrainAs(moreOptions) {
+                        end.linkTo(parent.end, 16.dp)
+                        top.linkTo(name.top)
+                    },
+                    onClick = { /*TODO*/ },
                 )
             }
             val sensitive = blog.sensitive
@@ -271,6 +284,43 @@ private fun BlogAuthorAvatar(
 //        placeholder = Icons.Default.AccountCircle,
         contentDescription = null,
     )
+}
+
+@Composable
+private fun MoreOption(
+    modifier: Modifier,
+    moreActionList: List<StatusAction>,
+    onActionClick: (StatusAction) -> Unit,
+) {
+    var showMorePopup by remember {
+        mutableStateOf(false)
+    }
+    Box(modifier = modifier) {
+        SimpleIconButton(
+            onClick = {
+                showMorePopup = !showMorePopup
+            },
+            imageVector = Icons.Default.MoreVert,
+            contentDescription = "More",
+        )
+
+        DropdownMenu(
+            expanded = showMorePopup,
+            onDismissRequest = { showMorePopup = false },
+        ) {
+            moreActionList.forEach {
+                DropdownMenuItem(
+                    text = {
+                        Text(text = it.actionName)
+                    },
+                    onClick = {
+                        onActionClick(it)
+                        showMorePopup = false
+                    },
+                )
+            }
+        }
+    }
 }
 
 @Preview

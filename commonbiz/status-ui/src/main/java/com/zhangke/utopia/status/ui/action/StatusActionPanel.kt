@@ -46,17 +46,16 @@ fun StatusActionPanel(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(40.dp),
+            .height(36.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        val commentAction = actions.mapFirstOrNull { it as? StatusAction.Comment }
-        val forwardAction = actions.mapFirstOrNull { it as? StatusAction.Forward }
-        val likeAction = actions.mapFirstOrNull { it as? StatusAction.Like }
-        val bookmarkAction = actions.mapFirstOrNull { it as? StatusAction.Bookmark }
-        val deleteAction = actions.mapFirstOrNull { it as? StatusAction.Delete }
+        val commentAction = actions.mapFirstOrNull { it as? StatusAction.Comment } ?: StatusAction.Comment(0, false)
+        val forwardAction = actions.mapFirstOrNull { it as? StatusAction.Forward } ?: StatusAction.Forward(0, false)
+        val likeAction = actions.mapFirstOrNull { it as? StatusAction.Like } ?: StatusAction.Like(0, liked = false, enable = false)
 
         val highlightColor = MaterialTheme.colorScheme.primary
         val normalColor = MaterialTheme.colorScheme.onSurface
+
         Box(modifier = Modifier.weight(1F)) {
             StatusActionIcon(
                 imageVector = Icons.Default.ChatBubbleOutline,

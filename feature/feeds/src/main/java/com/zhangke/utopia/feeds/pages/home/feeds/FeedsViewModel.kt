@@ -10,6 +10,8 @@ import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.status.model.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -23,6 +25,7 @@ class FeedsViewModel @AssistedInject constructor(
     private val feedsRepo: FeedsRepo,
     private val feedsConfigRepo: FeedsConfigRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusProvider: StatusProvider,
 ) : StateScreenModel<FeedsScreenUiState>(FeedsScreenUiState.initialUiState) {
 
     @AssistedFactory
@@ -131,6 +134,30 @@ class FeedsViewModel @AssistedInject constructor(
         }
     }
 
-    fun onInteractive(interaction: StatusUiInteraction) {
+    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+        screenModelScope.launch {
+            val interaction = uiInteraction.statusInteraction ?: return@launch
+            statusProvider.statusResolver
+                .interactive(status, interaction)
+                .onSuccess { newStatus ->
+                    feedsRepo.updateStatus(newStatus)
+                    val currentValue = mutableState.value
+                    mutableState.value = currentValue.copy(
+                        feeds = currentValue.feeds
+                            .map { uiState ->
+                                if (uiState.status.id == newStatus.id) {
+                                    buildStatusUiState(newStatus)
+                                } else {
+                                    uiState
+                                }
+                            }
+                    )
+                }.onFailure {
+                    it.message?.takeIf { it.isNotEmpty() }
+                        ?.let { message ->
+                            _errorMessageFlow.emit(textOf(message))
+                        }
+                }
+        }
     }
 }

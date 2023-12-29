@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.status.model.StatusInteraction
 import com.zhangke.utopia.status.uri.FormalUri
 
 class StatusResolver(
@@ -35,8 +36,8 @@ class StatusResolver(
         }
     }
 
-    suspend fun likeStatus(status: Status): Result<Unit> {
-        return resolverList.mapFirst { it.likeStatus(status) }
+    suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status> {
+        return resolverList.mapFirst { it.interactive(status, interaction) }
     }
 }
 
@@ -54,5 +55,5 @@ interface IStatusResolver {
 
     suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>?
 
-    suspend fun likeStatus(status: Status): Result<Unit>?
+    suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status>?
 }

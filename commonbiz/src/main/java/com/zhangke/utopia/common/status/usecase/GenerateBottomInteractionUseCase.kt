@@ -32,6 +32,7 @@ class GenerateBottomInteractionUseCase @Inject constructor() {
         if (forwardInteraction == null) {
             forwardInteraction = StatusInteraction.Forward(
                 forwardCount = 0,
+                forwarded = false,
                 enable = false,
             )
         }

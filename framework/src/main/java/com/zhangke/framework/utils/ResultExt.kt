@@ -17,3 +17,5 @@ fun <T> List<Result<List<T>>>.collect(): Result<List<T>> {
 fun <T> Result<T>.exceptionOrThrow(): Throwable {
     return exceptionOrNull() ?: throw IllegalStateException("Result is success!")
 }
+
+fun Result<*>.ignoreContent(): Result<Unit> = map {}

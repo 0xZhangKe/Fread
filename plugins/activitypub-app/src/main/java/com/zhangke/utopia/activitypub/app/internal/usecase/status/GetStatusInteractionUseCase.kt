@@ -26,6 +26,7 @@ class GetStatusInteractionUseCase @Inject constructor(
         )
         actionList += StatusInteraction.Forward(
             forwardCount = entity.reblogsCount,
+            forwarded = entity.reblogged ?: false,
             enable = hasActiveUser,
         )
         actionList += StatusInteraction.Comment(

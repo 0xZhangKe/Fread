@@ -26,6 +26,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
+import com.zhangke.utopia.status.status.model.Status
 
 @Composable
 fun Screen.FeedsTab(
@@ -55,7 +56,7 @@ fun Screen.FeedsTab(
 @Composable
 private fun FeedsTabContent(
     uiState: FeedsScreenUiState,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    onInteractive: (Status, StatusUiInteraction) -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onCatchMinFirstVisibleIndex: (Int) -> Unit,
@@ -71,7 +72,6 @@ private fun FeedsTabContent(
     }
     minFirstVisibleIndex = minOf(minFirstVisibleIndex, firstVisibleIndex)
     DisposableEffect(Unit) {
-
         onDispose {
             onCatchMinFirstVisibleIndex(minFirstVisibleIndex)
         }

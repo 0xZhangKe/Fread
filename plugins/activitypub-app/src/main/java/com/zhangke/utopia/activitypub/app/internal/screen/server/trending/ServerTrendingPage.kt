@@ -22,6 +22,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
+import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -50,7 +51,7 @@ internal fun Screen.ServerTrendingPage(
 private fun ServerTrendingContent(
     statusFlow: Flow<PagingData<StatusUiState>>,
     contentCanScrollBackward: MutableState<Boolean>,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    onInteractive: (Status, StatusUiInteraction) -> Unit,
 ) {
     val listState = rememberLazyListState()
     contentCanScrollBackward.value = canScrollBackward(listState)

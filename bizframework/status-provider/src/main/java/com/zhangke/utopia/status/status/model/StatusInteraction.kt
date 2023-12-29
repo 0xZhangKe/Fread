@@ -17,6 +17,7 @@ sealed class StatusInteraction {
     @Serializable
     data class Forward(
         val forwardCount: Int,
+        val forwarded: Boolean,
         override val enable: Boolean,
     ) : StatusInteraction()
 

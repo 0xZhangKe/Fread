@@ -20,7 +20,7 @@ fun FeedsStatusNode(
     indexInList: Int,
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    onInteractive: (Status, StatusUiInteraction) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -30,7 +30,9 @@ fun FeedsStatusNode(
         indexInList = indexInList,
         bottomPanelInteractions = bottomPanelInteractions,
         moreInteractions = moreInteractions,
-        onInteractive = onInteractive,
+        onInteractive = {
+            onInteractive(status, it)
+        },
         onMediaClick = { event ->
             when (event) {
                 is BlogMediaClickEvent.BlogImageClickEvent -> {

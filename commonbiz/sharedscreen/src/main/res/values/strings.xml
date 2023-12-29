@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="shared_select_language_title">选择语言</string>
+    <string name="shared_status_context_screen_title">详情</string>
 </resources>

@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusContextUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsTimelineFirstStatusUseCase
@@ -9,6 +10,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsUserFirstSta
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.status.model.StatusContext
 import com.zhangke.utopia.status.status.model.StatusInteraction
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
@@ -21,6 +23,7 @@ class ActivityPubStatusResolver @Inject constructor(
     private val isUserFirstStatus: IsUserFirstStatusUseCase,
     private val isTimelineFirstStatus: IsTimelineFirstStatusUseCase,
     private val statusInteractive: StatusInteractiveUseCase,
+    private val getStatusContextUseCase: GetStatusContextUseCase,
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
@@ -68,6 +71,11 @@ class ActivityPubStatusResolver @Inject constructor(
     ): Result<Status>? {
         if (status.notThisPlatform()) return null
         return statusInteractive(status, interaction)
+    }
+
+    override suspend fun getStatusContext(status: Status): Result<StatusContext>? {
+        if (status.notThisPlatform()) return null
+        return getStatusContextUseCase(status)
     }
 
     private fun Status.notThisPlatform(): Boolean {

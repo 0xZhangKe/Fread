@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.status.model.StatusContext
 import com.zhangke.utopia.status.status.model.StatusInteraction
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -39,6 +40,10 @@ class StatusResolver(
     suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status> {
         return resolverList.mapFirst { it.interactive(status, interaction) }
     }
+
+    suspend fun getStatusContext(status: Status): Result<StatusContext> {
+        return resolverList.mapFirst { it.getStatusContext(status) }
+    }
 }
 
 interface IStatusResolver {
@@ -56,4 +61,6 @@ interface IStatusResolver {
     suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>?
 
     suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status>?
+
+    suspend fun getStatusContext(status: Status): Result<StatusContext>?
 }

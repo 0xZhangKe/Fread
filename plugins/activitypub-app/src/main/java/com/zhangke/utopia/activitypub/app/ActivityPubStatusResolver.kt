@@ -6,8 +6,10 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineSta
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsTimelineFirstStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsUserFirstStatusUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.status.model.StatusInteraction
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
@@ -18,6 +20,7 @@ class ActivityPubStatusResolver @Inject constructor(
     private val timelineUriTransformer: TimelineUriTransformer,
     private val isUserFirstStatus: IsUserFirstStatusUseCase,
     private val isTimelineFirstStatus: IsTimelineFirstStatusUseCase,
+    private val statusInteractive: StatusInteractiveUseCase,
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
@@ -59,12 +62,15 @@ class ActivityPubStatusResolver @Inject constructor(
         return null
     }
 
-    override suspend fun likeStatus(status: Status): Result<Unit>? {
-        val blog = when(status){
-            is Status.NewBlog -> status.blog
-            is Status.Reblog -> status.reblog
-        }
-        blog.author
-        return null
+    override suspend fun interactive(
+        status: Status,
+        interaction: StatusInteraction,
+    ): Result<Status>? {
+        if (status.notThisPlatform()) return null
+        return statusInteractive(status, interaction)
+    }
+
+    private fun Status.notThisPlatform(): Boolean {
+        return this.platform.protocol != ACTIVITY_PUB_PROTOCOL
     }
 }

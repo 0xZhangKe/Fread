@@ -10,6 +10,16 @@ sealed class StatusUiInteraction {
 
     open val highLight: Boolean = false
 
+    val statusInteraction: StatusInteraction?
+        get() = when (this) {
+            is Like -> interaction
+            is Comment -> interaction
+            is Forward -> interaction
+            is Bookmark -> interaction
+            is Delete -> interaction
+            is Share -> null
+        }
+
     data class Like(val interaction: StatusInteraction.Like) : StatusUiInteraction() {
 
         override val enabled: Boolean get() = interaction.enable

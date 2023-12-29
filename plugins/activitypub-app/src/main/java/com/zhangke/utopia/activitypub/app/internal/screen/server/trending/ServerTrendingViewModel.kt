@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.server.trending
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -19,6 +18,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -40,16 +40,15 @@ class ServerTrendingViewModel @Inject constructor(
     private var dataSource: ServerTrendingDataSource? = null
 
     private val _statusFlow =
-        MutableStateFlow<LoadableState<Flow<PagingData<StatusUiState>>>>(LoadableState.Loading())
+        MutableStateFlow<LoadableState<Flow<PagingData<StatusUiState>>>>(LoadableState.Idle())
 
     val statusFlow: StateFlow<LoadableState<Flow<PagingData<StatusUiState>>>> = _statusFlow
 
     fun onPrepared() {
         if (_statusFlow.value is LoadableState.Loading) return
         launchInViewModel {
-            Log.d("U_TEST", "start getting blog platform")
+            _statusFlow.value = LoadableState.Loading()
             val blogPlatformResult = platformRepo.getPlatform(baseUrl)
-            Log.d("U_TEST", "blogPlatformResult is $blogPlatformResult")
             if (blogPlatformResult.isFailure) {
                 _statusFlow.value = LoadableState.Failed(blogPlatformResult.exceptionOrNull()!!)
                 return@launchInViewModel
@@ -74,14 +73,12 @@ class ServerTrendingViewModel @Inject constructor(
             .map {
                 it.map(buildStatusUiState::invoke)
             }
-
     }
 
     fun onRefresh() {
         dataSource?.invalidate()
     }
 
-    fun onInteractive(interaction: StatusUiInteraction) {
-
+    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
     }
 }

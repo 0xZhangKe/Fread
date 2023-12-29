@@ -1,6 +1,5 @@
 package com.zhangke.utopia.common.status.usecase.previous
 
-import android.util.Log
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.utils.isFirstStatus
@@ -19,10 +18,6 @@ internal class GetPreviousStatusUseCase @Inject constructor(
         limit: Int,
         maxId: String?,
     ): Result<List<Status>> {
-        Log.d(
-            "U_TEST",
-            "GetPreviousStatusUseCase(${sourceUriList.joinToString(",")}, $limit, $maxId"
-        )
         val maxStatus = if (maxId.isNullOrEmpty()) {
             null
         } else {
@@ -41,12 +36,6 @@ internal class GetPreviousStatusUseCase @Inject constructor(
             )
         }
         if (resultList.all { it.isFailure }) {
-            Log.d(
-                "U_TEST",
-                "GetPreviousStatusUseCase: result all failure, case ${
-                    resultList.first().exceptionOrNull()
-                }"
-            )
             return Result.failure(resultList.first().exceptionOrNull()!!)
         }
         val statusList = resultList.flatMap { it.getOrNull() ?: emptyList() }
@@ -54,7 +43,6 @@ internal class GetPreviousStatusUseCase @Inject constructor(
             .sortedByDescending { it.createTimestamp }
             .take(limit)
             .map(statusContentEntityAdapter::toStatus)
-        Log.d("U_TEST", "GetPreviousStatusUseCase: get success, size is ${statusList.size}")
         return Result.success(statusList)
     }
 }

@@ -2,7 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server.trending
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,6 +18,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.canScrollBackward
+import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -56,7 +57,7 @@ private fun ServerTrendingContent(
     val listState = rememberLazyListState()
     contentCanScrollBackward.value = canScrollBackward(listState)
     val statusList = statusFlow.collectAsLazyPagingItems()
-    LazyColumn(
+    InlineVideoLazyColumn(
         modifier = Modifier.fillMaxSize(),
         state = listState,
         contentPadding = PaddingValues(start = 15.dp, top = 15.dp, end = 15.dp, bottom = 20.dp)
@@ -64,7 +65,7 @@ private fun ServerTrendingContent(
         itemsIndexed(statusList) { index, status ->
             if (status != null) {
                 FeedsStatusNode(
-                    modifier = Modifier,
+                    modifier = Modifier.fillMaxWidth(),
                     status = status.status,
                     bottomPanelInteractions = status.bottomInteractions,
                     moreInteractions = status.moreInteractions,

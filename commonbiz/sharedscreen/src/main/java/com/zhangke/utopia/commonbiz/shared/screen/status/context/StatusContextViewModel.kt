@@ -90,8 +90,8 @@ class StatusContextViewModel(
                         }
                         state.copy(contextStatus = contextStatus)
                     }
-                }.onFailure {
-                    it.message?.takeIf { it.isNotEmpty() }
+                }.onFailure { e ->
+                    e.message?.takeIf { it.isNotEmpty() }
                         ?.let { message ->
                             _errorMessageFlow.emit(textOf(message))
                         }

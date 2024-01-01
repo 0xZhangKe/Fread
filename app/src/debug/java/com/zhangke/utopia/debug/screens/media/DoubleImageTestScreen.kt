@@ -16,7 +16,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.second
 import com.zhangke.utopia.status.blog.BlogMedia
-import com.zhangke.utopia.status.ui.BlogMedias
+import com.zhangke.utopia.status.ui.media.BlogMedias
 
 class DoubleImageTestScreen : AndroidScreen() {
 

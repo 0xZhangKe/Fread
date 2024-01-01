@@ -106,7 +106,7 @@ private fun FeedsTabContent(
                 },
             ) { index, item ->
                 FeedsStatusNode(
-                    modifier = Modifier,
+                    modifier = Modifier.fillMaxWidth(),
                     status = item.status,
                     bottomPanelInteractions = item.bottomInteractions,
                     moreInteractions = item.moreInteractions,

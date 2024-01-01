@@ -30,7 +30,7 @@ fun StatusUi(
         }
 
         is Status.NewBlog -> {
-            BlogContentUi(
+            BlogUi(
                 modifier = modifier,
                 blog = status.blog,
                 bottomPanelInteractions = bottomPanelInteractions,

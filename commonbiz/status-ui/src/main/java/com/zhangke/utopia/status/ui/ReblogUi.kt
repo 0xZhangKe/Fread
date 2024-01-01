@@ -58,7 +58,7 @@ fun ReblogUi(
                 style = MaterialTheme.typography.bodySmall,
             )
         }
-        BlogContentUi(
+        BlogUi(
             modifier = Modifier,
             blog = reblog.reblog,
             bottomPanelInteractions = bottomPanelInteractions,

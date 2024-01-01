@@ -17,7 +17,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.second
 import com.zhangke.framework.ktx.third
 import com.zhangke.utopia.status.blog.BlogMedia
-import com.zhangke.utopia.status.ui.BlogMedias
+import com.zhangke.utopia.status.ui.media.BlogMedias
 
 class SixfoldImageTestScreen : AndroidScreen() {
 

@@ -27,7 +27,6 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.BlogContentUi
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -148,17 +147,17 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
         val statusUiState = statusInContext.status
         val status = statusUiState.status
         val blog = (status as Status.NewBlog).blog
-        BlogContentUi(
-            modifier = modifier,
-            blog = blog,
-            bottomPanelInteractions = statusUiState.bottomInteractions,
-            moreInteractions = statusUiState.moreInteractions,
-            onInteractive = {
-                onInteractive(status, it)
-            },
-            indexInList = indexInList,
-            onMediaClick = onMediaClick,
-        )
+//        BlogContentUiWithUserLine(
+//            modifier = modifier,
+//            blog = blog,
+//            bottomPanelInteractions = statusUiState.bottomInteractions,
+//            moreInteractions = statusUiState.moreInteractions,
+//            onInteractive = {
+//                onInteractive(status, it)
+//            },
+//            indexInList = indexInList,
+//            onMediaClick = onMediaClick,
+//        )
     }
 
     @Composable

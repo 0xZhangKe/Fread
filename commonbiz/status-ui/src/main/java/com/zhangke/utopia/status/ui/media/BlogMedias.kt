@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.ui
+package com.zhangke.utopia.status.ui.media
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.Icon

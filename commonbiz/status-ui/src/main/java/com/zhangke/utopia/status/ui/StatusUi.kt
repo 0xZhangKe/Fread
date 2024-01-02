@@ -6,12 +6,15 @@ import androidx.compose.ui.Modifier
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
+import com.zhangke.utopia.status.ui.style.StatusStyle
+import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
 @Composable
 fun StatusUi(
     modifier: Modifier = Modifier,
     status: Status,
     indexInList: Int,
+    style: StatusStyle = defaultStatusStyle(),
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
@@ -40,6 +43,7 @@ fun StatusUi(
                     bottomPanelInteractions = bottomPanelInteractions,
                     moreInteractions = moreInteractions,
                     indexInList = indexInList,
+                    style = style,
                     onInteractive = onInteractive,
                     onMediaClick = onMediaClick,
                 )

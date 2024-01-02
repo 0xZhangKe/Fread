@@ -1,11 +1,20 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.ui.BlogContent
+import com.zhangke.utopia.status.ui.StatusInfoLine
+import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import java.util.Date
 
@@ -20,18 +29,35 @@ fun AnchorBlogUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
-
-    Divider()
-}
-
-@Composable
-fun AnchorBlogInfoLine(
-    modifier: Modifier,
-    blogAuthor: BlogAuthor,
-    lastEditTime: Date,
-    moreInteractions: List<StatusUiInteraction>,
-    onInteractive: (StatusUiInteraction) -> Unit,
-    reblogAuthor: BlogAuthor? = null,
-){
-
+    Surface(modifier = modifier) {
+        Column(modifier = Modifier.fillMaxWidth()) {
+            StatusInfoLine(
+                modifier = Modifier,
+                blogAuthor = blog.author,
+                lastEditTime = blog.date,
+                showUpThread = true,
+                moreInteractions = moreInteractions,
+                onInteractive = onInteractive,
+                reblogAuthor = reblogAuthor,
+            )
+            BlogContent(
+                modifier = Modifier.fillMaxWidth(),
+                blog = blog,
+                indexOfFeeds = indexInList,
+                onMediaClick = onMediaClick,
+            )
+            StatusBottomInteractionPanel(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                interactions = bottomPanelInteractions,
+                onInteractive = onInteractive,
+            )
+            Divider(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(0.5.dp)
+            )
+        }
+    }
 }

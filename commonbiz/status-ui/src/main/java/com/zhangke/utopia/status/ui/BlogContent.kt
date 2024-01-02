@@ -21,6 +21,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.media.BlogMedias
 import com.zhangke.utopia.status.ui.poll.BlogPoll
+import com.zhangke.utopia.status.ui.style.BlogStyle
 import com.zhangke.utopia.statusui.R
 
 /**
@@ -30,6 +31,7 @@ import com.zhangke.utopia.statusui.R
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
+    style: BlogStyle,
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
 ) {
@@ -49,6 +51,7 @@ fun BlogContent(
                     .wrapContentHeight()
                     .padding(start = 15.dp, end = 15.dp, top = 8.dp),
                 text = spoilerText,
+                fontSp = style.spoilerFontSizeSp,
             )
         }
         val hasContent = blog.content.isNotEmpty()
@@ -69,9 +72,9 @@ fun BlogContent(
                 RichText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(start = 15.dp, end = 15.dp, top = 8.dp),
+                        .wrapContentHeight(),
                     text = blog.content,
+                    fontSp = style.contentFontSizeSp,
                 )
                 if (canHidden) {
                     TextButton(
@@ -91,8 +94,7 @@ fun BlogContent(
         if (blog.mediaList.isNotEmpty()) {
             BlogMedias(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp, top = 6.dp, end = 8.dp, bottom = 8.dp),
+                    .fillMaxWidth(),
                 mediaList = blog.mediaList,
                 indexInList = indexOfFeeds,
                 sensitive = sensitive,

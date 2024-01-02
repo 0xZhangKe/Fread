@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.ui
 
+import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -16,29 +17,33 @@ fun StatusUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
-    when (status) {
-        is Status.Reblog -> {
-            ReblogUi(
-                modifier = modifier,
-                reblog = status,
-                indexInList = indexInList,
-                bottomPanelInteractions = bottomPanelInteractions,
-                moreInteractions = moreInteractions,
-                onInteractive = onInteractive,
-                onMediaClick = onMediaClick,
-            )
-        }
+    Surface(
+        modifier = modifier,
+    ) {
+        when (status) {
+            is Status.Reblog -> {
+                ReblogUi(
+                    modifier = Modifier,
+                    reblog = status,
+                    indexInList = indexInList,
+                    bottomPanelInteractions = bottomPanelInteractions,
+                    moreInteractions = moreInteractions,
+                    onInteractive = onInteractive,
+                    onMediaClick = onMediaClick,
+                )
+            }
 
-        is Status.NewBlog -> {
-            BlogUi(
-                modifier = modifier,
-                blog = status.blog,
-                bottomPanelInteractions = bottomPanelInteractions,
-                moreInteractions = moreInteractions,
-                indexInList = indexInList,
-                onInteractive = onInteractive,
-                onMediaClick = onMediaClick,
-            )
+            is Status.NewBlog -> {
+                BlogUi(
+                    modifier = Modifier,
+                    blog = status.blog,
+                    bottomPanelInteractions = bottomPanelInteractions,
+                    moreInteractions = moreInteractions,
+                    indexInList = indexInList,
+                    onInteractive = onInteractive,
+                    onMediaClick = onMediaClick,
+                )
+            }
         }
     }
 }

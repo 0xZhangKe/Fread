@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Divider
-import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -25,37 +24,33 @@ fun BlogUi(
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
-){
-    Surface(
-        modifier = modifier,
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            StatusInfoLine(
-                modifier = Modifier.fillMaxWidth(),
-                blogAuthor = blog.author,
-                lastEditTime = blog.date,
-                moreInteractions = moreInteractions,
-                onInteractive = onInteractive,
-                reblogAuthor = reblogAuthor,
-            )
-            BlogContent(
-                modifier = Modifier.fillMaxWidth(),
-                blog = blog,
-                indexOfFeeds = indexInList,
-                onMediaClick = onMediaClick,
-            )
-            StatusBottomInteractionPanel(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
-                interactions = bottomPanelInteractions,
-                onInteractive = onInteractive,
-            )
-            Divider(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(0.5.dp)
-            )
-        }
+) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        StatusInfoLine(
+            modifier = Modifier.fillMaxWidth(),
+            blogAuthor = blog.author,
+            lastEditTime = blog.date,
+            moreInteractions = moreInteractions,
+            onInteractive = onInteractive,
+            reblogAuthor = reblogAuthor,
+        )
+        BlogContent(
+            modifier = Modifier.fillMaxWidth(),
+            blog = blog,
+            indexOfFeeds = indexInList,
+            onMediaClick = onMediaClick,
+        )
+        StatusBottomInteractionPanel(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+            interactions = bottomPanelInteractions,
+            onInteractive = onInteractive,
+        )
+        Divider(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(0.5.dp)
+        )
     }
 }

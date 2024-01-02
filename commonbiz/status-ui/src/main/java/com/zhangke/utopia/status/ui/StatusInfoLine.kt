@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,10 +18,12 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
+import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.action.StatusMoreInteractionIcon
+import com.zhangke.utopia.status.ui.threads.StatusThread
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
@@ -36,12 +38,24 @@ fun StatusInfoLine(
     modifier: Modifier,
     blogAuthor: BlogAuthor,
     lastEditTime: Date,
+    showUpThread: Boolean = false,
+    showDownThread: Boolean = false,
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
     reblogAuthor: BlogAuthor? = null,
 ) {
     ConstraintLayout(modifier = modifier) {
-        val (avatar, name, guideline, dateTime, userId, moreOptions) = createRefs()
+        val (
+            avatar,
+            upThread,
+            downThread,
+            name,
+            guideline,
+            dateTime,
+            userId,
+            moreOptions,
+        ) = createRefs()
+
         BlogAuthorAvatar(
             modifier = Modifier
                 .size(40.dp)
@@ -53,6 +67,37 @@ fun StatusInfoLine(
             reblogAvatar = reblogAuthor?.avatar,
             authorAvatar = blogAuthor.avatar,
         )
+
+        if (showUpThread) {
+            StatusThread(
+                modifier = Modifier.constrainAs(upThread) {
+                    start.linkTo(avatar.start)
+                    end.linkTo(avatar.end)
+                    top.linkTo(parent.top)
+                    bottom.linkTo(avatar.top, 1.dp)
+                    height = Dimension.fillToConstraints
+                },
+            )
+        } else {
+            Box(modifier = Modifier.constrainAs(upThread) {
+                start.linkTo(avatar.end)
+                top.linkTo(avatar.top)
+            })
+        }
+        if (showDownThread) {
+            StatusThread(modifier = Modifier.constrainAs(downThread) {
+                start.linkTo(avatar.start)
+                end.linkTo(avatar.end)
+                top.linkTo(parent.bottom, 1.dp)
+                bottom.linkTo(parent.bottom)
+                height = Dimension.fillToConstraints
+            })
+        } else {
+            Box(modifier = Modifier.constrainAs(downThread) {
+                start.linkTo(avatar.end)
+                top.linkTo(avatar.top)
+            })
+        }
 
         Spacer(
             modifier = Modifier
@@ -141,14 +186,13 @@ private fun BlogAuthorAvatar(
 ) {
     AsyncImage(
         modifier = modifier
-            .clip(RoundedCornerShape(6.dp)),
+            .clip(CircleShape),
         model = imageUrl,
 //        error = Icons.Default.AccountCircle,
 //        placeholder = Icons.Default.AccountCircle,
         contentDescription = null,
     )
 }
-
 
 private val statusDateFormatLocal = ThreadLocal<SimpleDateFormat>()
 

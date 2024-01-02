@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -16,13 +15,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.action.StatusMoreInteractionIcon
+import com.zhangke.utopia.status.ui.style.StatusInfoStyle
 import com.zhangke.utopia.status.ui.threads.StatusThread
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -38,6 +37,7 @@ fun StatusInfoLine(
     modifier: Modifier,
     blogAuthor: BlogAuthor,
     lastEditTime: Date,
+    style: StatusInfoStyle,
     showUpThread: Boolean = false,
     showDownThread: Boolean = false,
     moreInteractions: List<StatusUiInteraction>,
@@ -58,10 +58,10 @@ fun StatusInfoLine(
 
         BlogAuthorAvatar(
             modifier = Modifier
-                .size(40.dp)
+                .size(style.avatarSize)
                 .constrainAs(avatar) {
-                    top.linkTo(parent.top, 10.dp)
-                    start.linkTo(parent.start, 8.dp)
+                    top.linkTo(parent.top)
+                    start.linkTo(parent.start)
                     bottom.linkTo(parent.bottom)
                 },
             reblogAvatar = reblogAuthor?.avatar,
@@ -74,7 +74,7 @@ fun StatusInfoLine(
                     start.linkTo(avatar.start)
                     end.linkTo(avatar.end)
                     top.linkTo(parent.top)
-                    bottom.linkTo(avatar.top, 1.dp)
+                    bottom.linkTo(avatar.top)
                     height = Dimension.fillToConstraints
                 },
             )
@@ -88,7 +88,7 @@ fun StatusInfoLine(
             StatusThread(modifier = Modifier.constrainAs(downThread) {
                 start.linkTo(avatar.start)
                 end.linkTo(avatar.end)
-                top.linkTo(parent.bottom, 1.dp)
+                top.linkTo(parent.bottom)
                 bottom.linkTo(parent.bottom)
                 height = Dimension.fillToConstraints
             })
@@ -112,28 +112,28 @@ fun StatusInfoLine(
 
         Text(
             modifier = Modifier.constrainAs(name) {
-                start.linkTo(avatar.end, margin = 8.dp)
+                start.linkTo(avatar.end, margin = style.avatarToNamePadding)
                 bottom.linkTo(guideline.top)
             },
             text = blogAuthor.name,
-            style = MaterialTheme.typography.titleMedium,
+            style = style.nameStyle,
         )
         Text(
             modifier = Modifier.constrainAs(dateTime) {
                 start.linkTo(name.start)
-                top.linkTo(name.bottom, 4.dp)
+                top.linkTo(name.bottom, style.nameToTimePadding)
             },
             text = remember(lastEditTime) { formatStatusDateTime(lastEditTime) },
-            style = MaterialTheme.typography.bodySmall,
+            style = style.descStyle,
         )
 
         Text(
             modifier = Modifier.constrainAs(userId) {
                 baseline.linkTo(dateTime.baseline)
-                start.linkTo(dateTime.end, 2.dp)
+                start.linkTo(dateTime.end, style.timeToIdPadding)
             },
             text = blogAuthor.webFinger.toString(),
-            fontSize = 12.sp,
+            style = style.descStyle,
         )
         StatusMoreInteractionIcon(
             modifier = Modifier.constrainAs(moreOptions) {
@@ -147,7 +147,7 @@ fun StatusInfoLine(
 }
 
 @Composable
-private fun BlogAuthorAvatar(
+fun BlogAuthorAvatar(
     modifier: Modifier,
     reblogAvatar: String?,
     authorAvatar: String?,
@@ -196,7 +196,7 @@ private fun BlogAuthorAvatar(
 
 private val statusDateFormatLocal = ThreadLocal<SimpleDateFormat>()
 
-private fun formatStatusDateTime(date: Date): String {
+fun formatStatusDateTime(date: Date): String {
     val format = statusDateFormatLocal.getOrSet { SimpleDateFormat("MM-dd HH:mm:ss", Locale.ROOT) }
     return format.format(date)
 }

@@ -13,12 +13,15 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
+import com.zhangke.utopia.status.ui.style.StatusStyle
+import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
 @Composable
 fun BlogUi(
     modifier: Modifier,
     blog: Blog,
     indexInList: Int,
+    style: StatusStyle,
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
     reblogAuthor: BlogAuthor? = null,
@@ -32,25 +35,22 @@ fun BlogUi(
             lastEditTime = blog.date,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,
+            style = style.statusInfoStyle,
             reblogAuthor = reblogAuthor,
         )
         BlogContent(
             modifier = Modifier.fillMaxWidth(),
             blog = blog,
             indexOfFeeds = indexInList,
+            style = style.blogStyle,
             onMediaClick = onMediaClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 8.dp, end = 8.dp, bottom = 8.dp),
+                .fillMaxWidth(),
             interactions = bottomPanelInteractions,
             onInteractive = onInteractive,
         )
-        Divider(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(0.5.dp)
-        )
+        BlogDivider()
     }
 }

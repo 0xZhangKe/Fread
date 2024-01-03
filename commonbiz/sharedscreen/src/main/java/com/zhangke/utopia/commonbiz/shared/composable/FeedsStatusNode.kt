@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
@@ -28,7 +29,7 @@ fun FeedsStatusNode(
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            navigator.push(StatusContextScreen(status))
+            navigator.rootNavigator.push(StatusContextScreen(status))
         },
         status = status,
         indexInList = indexInList,

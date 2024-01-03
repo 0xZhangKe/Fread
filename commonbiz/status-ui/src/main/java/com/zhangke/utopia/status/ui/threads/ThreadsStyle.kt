@@ -13,7 +13,7 @@ data class ThreadsStyle(
 
 object ThreadsStyleDefaults {
 
-    val width = 1.dp
+    val width = 1.5.dp
 
     val color: Color @Composable get() = DividerDefaults.color
 }

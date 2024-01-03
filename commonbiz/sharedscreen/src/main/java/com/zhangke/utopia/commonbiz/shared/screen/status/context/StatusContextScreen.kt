@@ -1,5 +1,6 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -70,6 +71,9 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
             },
             onBackClick = navigator::pop,
             onInteractive = viewModel::onInteractive,
+            onStatusClick = {
+                navigator.push(StatusContextScreen(it.status.status))
+            },
         )
     }
 
@@ -80,6 +84,7 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
         onBackClick: () -> Unit = {},
         onMediaClick: OnBlogMediaClick,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
+        onStatusClick: (StatusInContext) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = snackbarMessageFlow)
@@ -117,7 +122,11 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
                             items = contextStatus,
                         ) { index, statusInContext ->
                             StatusInContextUi(
-                                modifier = Modifier.fillMaxWidth(),
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .clickable {
+                                        onStatusClick(statusInContext)
+                                    },
                                 statusInContext = statusInContext,
                                 indexInList = index,
                                 onMediaClick = onMediaClick,

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.commonbiz.shared.composable
 
+import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
@@ -9,6 +10,7 @@ import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
@@ -25,7 +27,9 @@ fun FeedsStatusNode(
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
-        modifier = modifier,
+        modifier = modifier.clickable {
+            navigator.push(StatusContextScreen(status))
+        },
         status = status,
         indexInList = indexInList,
         bottomPanelInteractions = bottomPanelInteractions,

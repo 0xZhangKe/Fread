@@ -1,16 +1,14 @@
 package com.zhangke.utopia.status.ui.style
 
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 
 data class StatusStyle(
-    val startPadding: Dp,
-    val topPadding: Dp,
-    val endPadding: Dp,
-    val bottomPadding: Dp,
+    val containerPaddings: PaddingValues,
+    val iconStartPadding: Dp,
+    val iconEndPadding: Dp,
     val statusInfoStyle: StatusInfoStyle,
     val blogStyle: BlogStyle,
 )
@@ -25,14 +23,21 @@ object StatusStyleDefaults {
 
     val bottomPadding = 8.dp
 
+    val iconStartPadding = 8.dp
+
+    val iconEndPadding = 8.dp
 }
 
 @Composable
 fun defaultStatusStyle() = StatusStyle(
-    startPadding = StatusStyleDefaults.startPadding,
-    topPadding = StatusStyleDefaults.topPadding,
-    endPadding = StatusStyleDefaults.endPadding,
-    bottomPadding = StatusStyleDefaults.bottomPadding,
+    containerPaddings = PaddingValues(
+        start = StatusStyleDefaults.startPadding,
+        top = StatusStyleDefaults.topPadding,
+        end = StatusStyleDefaults.endPadding,
+        bottom = StatusStyleDefaults.bottomPadding,
+    ),
+    iconStartPadding = StatusStyleDefaults.iconStartPadding,
+    iconEndPadding = StatusStyleDefaults.iconEndPadding,
     statusInfoStyle = defaultStatusInfoStyle(),
     blogStyle = defaultBlogStyle(),
 )

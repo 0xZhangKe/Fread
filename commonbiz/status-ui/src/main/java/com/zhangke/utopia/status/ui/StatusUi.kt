@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.ui
 
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -32,6 +33,7 @@ fun StatusUi(
                     bottomPanelInteractions = bottomPanelInteractions,
                     moreInteractions = moreInteractions,
                     onInteractive = onInteractive,
+                    style = style,
                     onMediaClick = onMediaClick,
                 )
             }

@@ -3,7 +3,6 @@ package com.zhangke.utopia.commonbiz.shared.screen.status.context
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
@@ -14,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.core.net.toUri
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -23,10 +23,15 @@ import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
+import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -35,15 +40,34 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val transparentNavigator = LocalTransparentNavigator.current
         val viewModel: StatusContextViewModel = getViewModel()
         viewModel.anchorStatus = status
         LaunchedEffect(status) {
-            viewModel.onPrepares()
+            viewModel.onPrepared()
         }
         val uiState by viewModel.uiState.collectAsState()
         StatusContextContent(
             loadableState = uiState,
             snackbarMessageFlow = viewModel.errorMessageFlow,
+            onMediaClick = { event ->
+                when (event) {
+                    is BlogMediaClickEvent.BlogImageClickEvent -> {
+                        transparentNavigator.push(
+                            ImageViewerScreen(
+                                mediaList = event.mediaList,
+                                selectedIndex = event.index,
+                                coordinatesList = event.coordinatesList,
+                                onDismiss = event.onDismiss,
+                            )
+                        )
+                    }
+
+                    is BlogMediaClickEvent.BlogVideoClickEvent -> {
+                        navigator.push(FullVideoScreen(event.media.url.toUri()))
+                    }
+                }
+            },
             onBackClick = navigator::pop,
             onInteractive = viewModel::onInteractive,
         )
@@ -54,6 +78,7 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
         loadableState: LoadableState<StatusContextUiState>,
         snackbarMessageFlow: SharedFlow<TextString>,
         onBackClick: () -> Unit = {},
+        onMediaClick: OnBlogMediaClick,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
@@ -70,7 +95,9 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
             },
             content = { contentPaddings ->
                 LoadableLayout(
-                    modifier = Modifier.padding(contentPaddings),
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(contentPaddings),
                     state = loadableState,
                 ) { uiState ->
                     val contextStatus = uiState.contextStatus
@@ -82,7 +109,7 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
                             state.animateScrollToItem(anchorIndex)
                         }
                     }
-                    LazyColumn(
+                    InlineVideoLazyColumn(
                         modifier = Modifier.fillMaxSize(),
                         state = state,
                     ) {
@@ -93,6 +120,7 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
                                 modifier = Modifier.fillMaxWidth(),
                                 statusInContext = statusInContext,
                                 indexInList = index,
+                                onMediaClick = onMediaClick,
                                 onInteractive = onInteractive,
                             )
                         }
@@ -107,67 +135,48 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
         modifier: Modifier = Modifier,
         statusInContext: StatusInContext,
         indexInList: Int,
+        onMediaClick: OnBlogMediaClick,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
     ) {
+        val blog = statusInContext.status.status.intrinsicBlog
         when (statusInContext.type) {
-            StatusInContextType.ANCHOR -> AnchorStatusUi(
+            StatusInContextType.ANCESTOR -> AncestorBlogUi(
                 modifier = modifier,
-                statusInContext = statusInContext,
+                blog = blog,
                 indexInList = indexInList,
-                onMediaClick = {},
-                onInteractive = { _, _ -> },
+                isFirst = indexInList == 0,
+                bottomPanelInteractions = statusInContext.status.bottomInteractions,
+                moreInteractions = statusInContext.status.moreInteractions,
+                onMediaClick = onMediaClick,
+                onInteractive = {
+                    onInteractive(statusInContext.status.status, it)
+                },
             )
 
-            StatusInContextType.ANCESTOR -> AssociatedStatusUi(
+            StatusInContextType.ANCHOR -> AnchorBlogUi(
                 modifier = modifier,
-                statusInContext = statusInContext,
+                blog = blog,
                 indexInList = indexInList,
-                onMediaClick = {},
-                onInteractive = { _, _ -> },
+                showUpThread = indexInList > 0,
+                onMediaClick = onMediaClick,
+                bottomPanelInteractions = statusInContext.status.bottomInteractions,
+                moreInteractions = statusInContext.status.moreInteractions,
+                onInteractive = {
+                    onInteractive(statusInContext.status.status, it)
+                },
             )
 
-            StatusInContextType.DESCENDANT -> AssociatedStatusUi(
+            StatusInContextType.DESCENDANT -> DescendantStatusUi(
                 modifier = modifier,
-                statusInContext = statusInContext,
+                blog = blog,
+                bottomPanelInteractions = statusInContext.status.bottomInteractions,
+                moreInteractions = statusInContext.status.moreInteractions,
                 indexInList = indexInList,
-                onMediaClick = {},
-                onInteractive = { _, _ -> },
+                onMediaClick = onMediaClick,
+                onInteractive = {
+                    onInteractive(statusInContext.status.status, it)
+                },
             )
         }
-    }
-
-    @Composable
-    private fun AnchorStatusUi(
-        modifier: Modifier,
-        statusInContext: StatusInContext,
-        indexInList: Int,
-        onMediaClick: OnBlogMediaClick,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
-    ) {
-        val statusUiState = statusInContext.status
-        val status = statusUiState.status
-        val blog = (status as Status.NewBlog).blog
-//        BlogContentUiWithUserLine(
-//            modifier = modifier,
-//            blog = blog,
-//            bottomPanelInteractions = statusUiState.bottomInteractions,
-//            moreInteractions = statusUiState.moreInteractions,
-//            onInteractive = {
-//                onInteractive(status, it)
-//            },
-//            indexInList = indexInList,
-//            onMediaClick = onMediaClick,
-//        )
-    }
-
-    @Composable
-    private fun AssociatedStatusUi(
-        modifier: Modifier,
-        statusInContext: StatusInContext,
-        indexInList: Int,
-        onMediaClick: OnBlogMediaClick,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
-    ) {
-
     }
 }

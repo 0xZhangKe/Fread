@@ -18,10 +18,11 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.startPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.action.StatusMoreInteractionIcon
-import com.zhangke.utopia.status.ui.style.StatusInfoStyle
+import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.threads.StatusThread
 import java.text.SimpleDateFormat
 import java.util.Date
@@ -37,14 +38,15 @@ fun StatusInfoLine(
     modifier: Modifier,
     blogAuthor: BlogAuthor,
     lastEditTime: Date,
-    style: StatusInfoStyle,
+    style: StatusStyle,
     showUpThread: Boolean = false,
     showDownThread: Boolean = false,
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
     reblogAuthor: BlogAuthor? = null,
 ) {
-    ConstraintLayout(modifier = modifier) {
+    val infoStyle = style.statusInfoStyle
+    ConstraintLayout(modifier = modifier.startPadding(style.containerPaddings)) {
         val (
             avatar,
             upThread,
@@ -56,34 +58,34 @@ fun StatusInfoLine(
             moreOptions,
         ) = createRefs()
 
-        BlogAuthorAvatar(
-            modifier = Modifier
-                .size(style.avatarSize)
-                .constrainAs(avatar) {
-                    top.linkTo(parent.top)
-                    start.linkTo(parent.start)
-                    bottom.linkTo(parent.bottom)
-                },
-            reblogAvatar = reblogAuthor?.avatar,
-            authorAvatar = blogAuthor.avatar,
-        )
-
         if (showUpThread) {
             StatusThread(
                 modifier = Modifier.constrainAs(upThread) {
                     start.linkTo(avatar.start)
                     end.linkTo(avatar.end)
                     top.linkTo(parent.top)
-                    bottom.linkTo(avatar.top)
-                    height = Dimension.fillToConstraints
+                    height = Dimension.value(style.containerPaddings.calculateTopPadding())
                 },
             )
         } else {
             Box(modifier = Modifier.constrainAs(upThread) {
                 start.linkTo(avatar.end)
-                top.linkTo(avatar.top)
+                top.linkTo(parent.top)
+                height = Dimension.value(style.containerPaddings.calculateTopPadding())
             })
         }
+
+        BlogAuthorAvatar(
+            modifier = Modifier
+                .size(infoStyle.avatarSize)
+                .constrainAs(avatar) {
+                    top.linkTo(upThread.bottom, 2.dp)
+                    start.linkTo(parent.start)
+                },
+            reblogAvatar = reblogAuthor?.avatar,
+            authorAvatar = blogAuthor.avatar,
+        )
+
         if (showDownThread) {
             StatusThread(modifier = Modifier.constrainAs(downThread) {
                 start.linkTo(avatar.start)
@@ -112,32 +114,32 @@ fun StatusInfoLine(
 
         Text(
             modifier = Modifier.constrainAs(name) {
-                start.linkTo(avatar.end, margin = style.avatarToNamePadding)
+                start.linkTo(avatar.end, margin = infoStyle.avatarToNamePadding)
                 bottom.linkTo(guideline.top)
             },
             text = blogAuthor.name,
-            style = style.nameStyle,
+            style = infoStyle.nameStyle,
         )
         Text(
             modifier = Modifier.constrainAs(dateTime) {
                 start.linkTo(name.start)
-                top.linkTo(name.bottom, style.nameToTimePadding)
+                top.linkTo(name.bottom, infoStyle.nameToTimePadding)
             },
             text = remember(lastEditTime) { formatStatusDateTime(lastEditTime) },
-            style = style.descStyle,
+            style = infoStyle.descStyle,
         )
 
         Text(
             modifier = Modifier.constrainAs(userId) {
                 baseline.linkTo(dateTime.baseline)
-                start.linkTo(dateTime.end, style.timeToIdPadding)
+                start.linkTo(dateTime.end, infoStyle.timeToIdPadding)
             },
             text = blogAuthor.webFinger.toString(),
-            style = style.descStyle,
+            style = infoStyle.descStyle,
         )
         StatusMoreInteractionIcon(
             modifier = Modifier.constrainAs(moreOptions) {
-                end.linkTo(parent.end)
+                end.linkTo(parent.end, style.iconEndPadding)
                 top.linkTo(name.top)
             },
             moreActionList = moreInteractions,

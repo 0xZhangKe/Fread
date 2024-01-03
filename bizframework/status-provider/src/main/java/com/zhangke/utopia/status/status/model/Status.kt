@@ -19,6 +19,11 @@ sealed class Status {
 
     abstract val platform: BlogPlatform
 
+    val intrinsicBlog: Blog get() =  when (this) {
+        is NewBlog -> blog
+        is Reblog -> reblog
+    }
+
     @Serializable
     data class NewBlog(
         val blog: Blog,
@@ -40,7 +45,7 @@ sealed class Status {
         override val datetime: Long,
         val reblog: Blog,
         override val supportInteraction: List<StatusInteraction>,
-    ) : Status(){
+    ) : Status() {
 
         override val platform: BlogPlatform
             get() = reblog.platform

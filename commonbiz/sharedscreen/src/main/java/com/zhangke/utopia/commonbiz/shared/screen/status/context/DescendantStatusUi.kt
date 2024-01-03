@@ -22,26 +22,25 @@ import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
 @Composable
-fun AnchorBlogUi(
+fun DescendantStatusUi(
     modifier: Modifier,
     blog: Blog,
-    indexInList: Int,
-    showUpThread: Boolean,
     style: StatusStyle = defaultStatusStyle(),
+    indexInList: Int,
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
-    Surface(modifier = modifier) {
+    Surface(
+        modifier = modifier,
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
-
             StatusInfoLine(
                 modifier = Modifier,
                 blogAuthor = blog.author,
                 lastEditTime = blog.date,
-                showUpThread = showUpThread,
                 style = style,
                 moreInteractions = moreInteractions,
                 onInteractive = onInteractive,

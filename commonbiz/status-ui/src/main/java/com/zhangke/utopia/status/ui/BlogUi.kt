@@ -1,20 +1,18 @@
 package com.zhangke.utopia.status.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Divider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
-import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
 @Composable
 fun BlogUi(
@@ -30,16 +28,19 @@ fun BlogUi(
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         StatusInfoLine(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth(),
             blogAuthor = blog.author,
             lastEditTime = blog.date,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,
-            style = style.statusInfoStyle,
+            style = style,
             reblogAuthor = reblogAuthor,
         )
         BlogContent(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .horizontalPadding(style.containerPaddings),
             blog = blog,
             indexOfFeeds = indexInList,
             style = style.blogStyle,
@@ -47,9 +48,15 @@ fun BlogUi(
         )
         StatusBottomInteractionPanel(
             modifier = Modifier
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .horizontalPadding(style.containerPaddings),
             interactions = bottomPanelInteractions,
             onInteractive = onInteractive,
+        )
+        Spacer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(style.containerPaddings.calculateBottomPadding())
         )
         BlogDivider()
     }

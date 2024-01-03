@@ -1,7 +1,6 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.model.screenModelScope
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
@@ -16,13 +15,15 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 
-class StatusContextViewModel(
+@HiltViewModel
+class StatusContextViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
@@ -36,7 +37,7 @@ class StatusContextViewModel(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
-    fun onPrepares() {
+    fun onPrepared() {
         loadStatusContext()
     }
 

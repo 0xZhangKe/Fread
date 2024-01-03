@@ -12,6 +12,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -27,6 +28,7 @@ class StatusContextViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ViewModel() {
 
     lateinit var anchorStatus: Status
@@ -37,7 +39,10 @@ class StatusContextViewModel @Inject constructor(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
+    private lateinit var fixedAnchorStatus: Status
+
     fun onPrepared() {
+        fixedAnchorStatus = refactorToNewBlog(anchorStatus)
         loadStatusContext()
     }
 
@@ -46,7 +51,7 @@ class StatusContextViewModel @Inject constructor(
         launchInViewModel {
             _uiState.updateToLoading()
             statusProvider.statusResolver
-                .getStatusContext(anchorStatus)
+                .getStatusContext(fixedAnchorStatus)
                 .onSuccess {
                     _uiState.updateToSuccess(it.toUiState())
                 }.onFailure {
@@ -60,10 +65,10 @@ class StatusContextViewModel @Inject constructor(
         contextStatus += this.ancestors.sortedBy { it.datetime }
             .map { StatusInContext(buildStatusUiState(it), StatusInContextType.ANCESTOR) }
         contextStatus += StatusInContext(
-            buildStatusUiState(anchorStatus),
+            buildStatusUiState(fixedAnchorStatus),
             StatusInContextType.ANCHOR,
         )
-        contextStatus += this.descendants.sortedByDescending { it.datetime }
+        contextStatus += this.descendants.sortedBy { it.datetime }
             .map { StatusInContext(buildStatusUiState(it), StatusInContextType.DESCENDANT) }
         return StatusContextUiState(
             contextStatus = contextStatus.filter {

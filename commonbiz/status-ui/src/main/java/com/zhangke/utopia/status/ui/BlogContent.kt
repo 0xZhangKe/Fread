@@ -16,12 +16,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.framework.composable.text.RichText
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.media.BlogMedias
 import com.zhangke.utopia.status.ui.poll.BlogPoll
 import com.zhangke.utopia.status.ui.style.BlogStyle
+import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.statusui.R
 
 /**

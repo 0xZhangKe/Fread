@@ -1,28 +1,29 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Surface
-import androidx.compose.material3.Divider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import com.zhangke.framework.composable.endPadding
+import com.zhangke.framework.composable.startPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 import com.zhangke.utopia.status.ui.BlogContent
-import com.zhangke.utopia.status.ui.BlogDivider
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.utopia.status.ui.formatStatusDateTime
@@ -44,8 +45,12 @@ fun AncestorBlogUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
-    Surface(modifier = modifier) {
-        ConstraintLayout(modifier = Modifier.fillMaxWidth()) {
+    Surface(modifier = modifier.background(Color.Blue)) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .startPadding(style.containerPaddings)
+        ) {
             val (
                 avatar,
                 upThread,
@@ -58,40 +63,35 @@ fun AncestorBlogUi(
                 blogContent,
             ) = createRefs()
 
+            val upThreadModifier = Modifier.constrainAs(upThread) {
+                start.linkTo(avatar.start)
+                end.linkTo(avatar.end)
+                top.linkTo(parent.top)
+                height = Dimension.value(style.containerPaddings.calculateTopPadding())
+            }
+
+            if (isFirst) {
+                Box(modifier = upThreadModifier)
+            } else {
+                StatusThread(modifier = upThreadModifier)
+            }
+
             val statusInfoStyle = style.statusInfoStyle
             BlogAuthorAvatar(
                 modifier = Modifier
                     .size(statusInfoStyle.avatarSize)
                     .constrainAs(avatar) {
-                        top.linkTo(parent.top)
+                        top.linkTo(upThread.bottom, 2.dp)
                         start.linkTo(parent.start)
-                        bottom.linkTo(parent.bottom)
                     },
                 reblogAvatar = reblogAuthor?.avatar,
                 authorAvatar = blog.author.avatar,
             )
 
-            if (isFirst) {
-                Box(modifier = Modifier.constrainAs(upThread) {
-                    start.linkTo(avatar.end)
-                    top.linkTo(avatar.top)
-                })
-            } else {
-                StatusThread(
-                    modifier = Modifier.constrainAs(upThread) {
-                        start.linkTo(avatar.start)
-                        end.linkTo(avatar.end)
-                        top.linkTo(parent.top)
-                        bottom.linkTo(avatar.top)
-                        height = Dimension.fillToConstraints
-                    },
-                )
-            }
-
             StatusThread(modifier = Modifier.constrainAs(downThread) {
                 start.linkTo(avatar.start)
                 end.linkTo(avatar.end)
-                top.linkTo(parent.bottom)
+                top.linkTo(avatar.bottom, 2.dp)
                 bottom.linkTo(parent.bottom)
                 height = Dimension.fillToConstraints
             })
@@ -134,32 +134,40 @@ fun AncestorBlogUi(
             )
             StatusMoreInteractionIcon(
                 modifier = Modifier.constrainAs(moreOptions) {
-                    end.linkTo(parent.end)
+                    end.linkTo(parent.end, style.iconEndPadding)
                     top.linkTo(name.top)
                 },
                 moreActionList = moreInteractions,
                 onActionClick = onInteractive,
             )
 
-            BlogContent(
-                modifier = Modifier.constrainAs(blogContent) {
+            Column(modifier = Modifier
+                .constrainAs(blogContent) {
                     start.linkTo(name.start)
                     end.linkTo(parent.end)
                     top.linkTo(dateTime.bottom)
                     width = Dimension.fillToConstraints
-                },
-                blog = blog,
-                style = style.blogStyle,
-                indexOfFeeds = indexInList,
-                onMediaClick = onMediaClick,
-            )
-            StatusBottomInteractionPanel(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                interactions = bottomPanelInteractions,
-                onInteractive = onInteractive,
-            )
-            BlogDivider()
+                }) {
+                BlogContent(
+                    modifier = Modifier.endPadding(style.containerPaddings),
+                    blog = blog,
+                    style = style.blogStyle,
+                    indexOfFeeds = indexInList,
+                    onMediaClick = onMediaClick,
+                )
+                StatusBottomInteractionPanel(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .endPadding(style.containerPaddings),
+                    interactions = bottomPanelInteractions,
+                    onInteractive = onInteractive,
+                )
+                Spacer(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(style.containerPaddings.calculateBottomPadding())
+                )
+            }
         }
     }
 }

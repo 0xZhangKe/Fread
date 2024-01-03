@@ -12,7 +12,7 @@ fun BlogDivider(
     modifier: Modifier = Modifier,
 ) {
     Divider(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .height(0.5.dp)
     )

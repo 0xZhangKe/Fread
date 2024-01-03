@@ -16,6 +16,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
@@ -34,15 +35,8 @@ fun ReblogUi(
     onMediaClick: OnBlogMediaClick,
 ) {
     Column(modifier = modifier) {
-        Spacer(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(8.dp)
-        )
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+            modifier = Modifier.fillMaxWidth().horizontalPadding(style.containerPaddings),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(

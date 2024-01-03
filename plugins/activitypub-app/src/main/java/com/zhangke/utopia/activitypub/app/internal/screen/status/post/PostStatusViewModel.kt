@@ -24,6 +24,7 @@ import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.PostStatusUseCase
+import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -56,13 +57,15 @@ class PostStatusViewModel @Inject constructor(
         const val MAX_CONTENT = 1000
     }
 
+    var replayToBlog: Blog? = null
+
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
     val uiState: StateFlow<LoadableState<PostStatusUiState>> = _uiState.asStateFlow()
 
     private val _postState = MutableSharedFlow<LoadableState<Unit>>()
     val postState: SharedFlow<LoadableState<Unit>> = _postState.asSharedFlow()
 
-    init {
+    fun onPrepared() {
         launchInViewModel {
             val loggedAccount = accountManager.getActiveAccount()
             val allLoggedAccount = accountManager.getAllLoggedAccount()
@@ -359,6 +362,7 @@ class PostStatusViewModel @Inject constructor(
                 content = currentUiState.content,
                 attachment = attachment,
                 sensitive = currentUiState.sensitive,
+                replyToId = replayToBlog?.id,
                 spoilerText = currentUiState.warningContent,
                 visibility = currentUiState.visibility,
                 language = currentUiState.language,

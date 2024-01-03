@@ -44,12 +44,10 @@ fun ConsumeSnackbarFlow(
     duration: SnackbarDuration = SnackbarDuration.Short
 ) {
     val context = LocalContext.current
-    LaunchedEffect(Unit) {
-        messageTextFlow.collect {
-            val message = it.getString(context)
-            if (message.isNotEmpty()) {
-                hostState.showSnackbar(message, actionLabel, duration = duration)
-            }
+    ConsumeFlow(messageTextFlow) {
+        val message = it.getString(context)
+        if (message.isNotEmpty()) {
+            hostState.showSnackbar(message, actionLabel, duration = duration)
         }
     }
 }

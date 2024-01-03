@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import android.net.Uri
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
 import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
@@ -16,11 +17,13 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Reply
 import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -35,6 +38,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
@@ -65,15 +69,21 @@ import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
+import com.zhangke.utopia.status.blog.Blog
 import java.util.Locale
 import kotlin.time.Duration
+import com.zhangke.utopia.statusui.R as StatusUiR
 
-class PostStatusScreen : AndroidScreen() {
+class PostStatusScreen(private val replyToBlog: Blog? = null) : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PostStatusViewModel>()
+        viewModel.replayToBlog = replyToBlog
+        LaunchedEffect(replyToBlog) {
+            viewModel.onPrepared()
+        }
         val loadableUiState by viewModel.uiState.collectAsState()
         val postStatus by viewModel.postState.collectAsState(initial = LoadableState.idle())
         LoadableLayout(
@@ -220,6 +230,7 @@ class PostStatusScreen : AndroidScreen() {
                     .verticalScroll(rememberScrollState())
             ) {
                 val (
+                    replayToBlogRef,
                     avatarRef,
                     nameRef,
                     visibilityRef,
@@ -228,12 +239,42 @@ class PostStatusScreen : AndroidScreen() {
                     inputRef,
                     statusAttachmentRef,
                 ) = createRefs()
+                if (replyToBlog != null) {
+                    Row(
+                        modifier = Modifier.constrainAs(replayToBlogRef) {
+                            top.linkTo(parent.top, 8.dp)
+                            start.linkTo(parent.start, 16.dp)
+                            end.linkTo(parent.end)
+                            width = Dimension.fillToConstraints
+                            height = Dimension.wrapContent
+                        },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Reply,
+                            contentDescription = null,
+                        )
+                        val replyLabel = stringResource(StatusUiR.string.status_ui_reply)
+                        Text(
+                            modifier = Modifier.padding(start = 4.dp),
+                            text = "$replyLabel ${replyToBlog.author.name}",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
+                    }
+                } else {
+                    Box(modifier = Modifier.constrainAs(replayToBlogRef) {
+                        top.linkTo(parent.top)
+                        start.linkTo(parent.start)
+                        width = Dimension.value(0.dp)
+                        height = Dimension.value(0.dp)
+                    })
+                }
                 AsyncImage(
                     modifier = Modifier
                         .clip(CircleShape)
                         .constrainAs(avatarRef) {
-                            start.linkTo(parent.start, 16.dp)
-                            top.linkTo(parent.top)
+                            start.linkTo(parent.start, 8.dp)
+                            top.linkTo(replayToBlogRef.bottom, 16.dp)
                             width = Dimension.value(36.dp)
                             height = Dimension.value(36.dp)
                         },

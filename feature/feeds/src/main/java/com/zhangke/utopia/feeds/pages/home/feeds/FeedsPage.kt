@@ -20,9 +20,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
@@ -33,6 +38,7 @@ fun Screen.FeedsTab(
     feedsConfig: FeedsConfig,
     showSnakeMessage: (TextString) -> Unit,
 ) {
+    val navigator = LocalNavigator.currentOrThrow
     val viewModel =
         getScreenModel<FeedsViewModel, FeedsViewModel.Factory>(
             feedsConfig.hashCode().toString()
@@ -50,6 +56,9 @@ fun Screen.FeedsTab(
         onLoadMore = viewModel::onLoadMore,
         onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
     )
+    ConsumeFlow(viewModel.openScreenFlow) {
+        navigator.rootNavigator.tryPush(it)
+    }
 }
 
 @OptIn(ExperimentalMaterialApi::class)

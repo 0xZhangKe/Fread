@@ -39,6 +39,9 @@ class StatusContextViewModel @Inject constructor(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
+    private val _openScreenFlow = MutableSharedFlow<Any>()
+    val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
+
     private lateinit var fixedAnchorStatus: Status
 
     fun onPrepared() {
@@ -79,6 +82,14 @@ class StatusContextViewModel @Inject constructor(
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
         launchInViewModel {
+            if (uiInteraction is StatusUiInteraction.Comment) {
+                statusProvider.screenProvider
+                    .getReplyBlogScreen(status.intrinsicBlog)
+                    ?.let {
+                        _openScreenFlow.emit(it)
+                    }
+                return@launchInViewModel
+            }
             val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
             statusProvider.statusResolver
                 .interactive(status, interaction)

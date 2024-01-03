@@ -7,6 +7,7 @@
     <string name="status_ui_delete">Delete</string>
     <string name="status_ui_share">Share</string>
     <string name="status_ui_bookmark">Bookmark</string>
+    <string name="status_ui_reply">Reply</string>
 
     <string name="status_ui_image_sensitive_label">Media hidden</string>
     <string name="status_ui_image_content_show_hidden_label">Show more</string>

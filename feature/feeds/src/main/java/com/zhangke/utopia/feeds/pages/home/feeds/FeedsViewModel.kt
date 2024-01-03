@@ -36,6 +36,9 @@ class FeedsViewModel @AssistedInject constructor(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
+    private val _openScreenFlow = MutableSharedFlow<Any>()
+    val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
+
     init {
         screenModelScope.launch {
             mutableState.update {
@@ -134,8 +137,16 @@ class FeedsViewModel @AssistedInject constructor(
         }
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
         screenModelScope.launch {
+            if (uiInteraction is StatusUiInteraction.Comment) {
+                statusProvider.screenProvider
+                    .getReplyBlogScreen(status.intrinsicBlog)
+                    ?.let {
+                        _openScreenFlow.emit(it)
+                    }
+                return@launch
+            }
             val interaction = uiInteraction.statusInteraction ?: return@launch
             statusProvider.statusResolver
                 .interactive(status, interaction)
@@ -159,5 +170,4 @@ class FeedsViewModel @AssistedInject constructor(
                         }
                 }
         }
-    }
 }

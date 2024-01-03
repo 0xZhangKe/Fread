@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
+import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -15,9 +16,17 @@ class StatusScreenProvider(
         }
     }
 
-    fun getPostStatusScreen(platform: BlogPlatform): Any? {
+    fun getPostStatusScreen(
+        platform: BlogPlatform,
+    ): Any? {
         return providerList.mapFirstOrNull {
             it.getPostStatusScreen(platform)
+        }
+    }
+
+    fun getReplyBlogScreen(blog: Blog): Any? {
+        return providerList.mapFirstOrNull {
+            it.getReplyBlogScreen(blog)
         }
     }
 }
@@ -27,4 +36,6 @@ interface IStatusScreenProvider {
     fun getServerDetailScreen(platformUri: FormalUri): Any?
 
     fun getPostStatusScreen(platform: BlogPlatform): Any?
+
+    fun getReplyBlogScreen(blog: Blog): Any?
 }

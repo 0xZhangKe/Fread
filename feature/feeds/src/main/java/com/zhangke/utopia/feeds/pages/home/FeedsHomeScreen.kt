@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.home
 
-import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -33,7 +32,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.topout.TopOutTopBarLayout
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.framework.voyager.tryPush
-import com.zhangke.utopia.commonbiz.shared.screen.PostStatusMediumScreen
+import com.zhangke.utopia.commonbiz.shared.screen.PostStatusIntermediaryScreen
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsTab
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
@@ -59,7 +58,7 @@ class FeedsHomeScreen : AndroidScreen() {
             floatingActionButton = {
                 FloatingActionButton(
                     onClick = {
-                        navigator.push(PostStatusMediumScreen())
+                        navigator.push(PostStatusIntermediaryScreen())
                     },
                 ) {
                     Icon(
@@ -141,8 +140,3 @@ class FeedsHomeScreen : AndroidScreen() {
         }
     }
 }
-
-//@OptIn(ExperimentalFoundationApi::class)
-//@Composable
-//fun Tab.FeedsHomeScreen() {
-//}

@@ -1,6 +1,5 @@
 package com.zhangke.utopia.commonbiz.shared.screen
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -22,12 +21,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-class PostStatusMediumScreen : AndroidScreen() {
+class PostStatusIntermediaryScreen : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel: PostStatusMediumViewModel = getViewModel()
+        val viewModel: PostStatusIntermediaryViewModel = getViewModel()
         val loadableState by viewModel.platform.collectAsState()
         when (loadableState) {
             is LoadableState.Failed -> LaunchedEffect(Unit) {
@@ -47,7 +46,7 @@ class PostStatusMediumScreen : AndroidScreen() {
 }
 
 @HiltViewModel
-class PostStatusMediumViewModel @Inject constructor(
+class PostStatusIntermediaryViewModel @Inject constructor(
     private val statusProvider: StatusProvider
 ) : ViewModel() {
 

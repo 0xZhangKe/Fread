@@ -20,6 +20,7 @@ class PostStatusUseCase @Inject constructor(
         attachment: PostStatusAttachment?,
         sensitive: Boolean? = null,
         spoilerText: String? = null,
+        replyToId: String? = null,
         visibility: PostStatusVisibility? = null,
         language: Locale? = null,
     ): Result<Unit> {
@@ -45,6 +46,7 @@ class PostStatusUseCase @Inject constructor(
             mediaIds = mediaIds,
             poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
             sensitive = sensitive,
+            replyToId = replyToId,
             spoilerText = spoilerText,
             visibility = visibility?.toEntity(),
             language = language?.isO3Language,

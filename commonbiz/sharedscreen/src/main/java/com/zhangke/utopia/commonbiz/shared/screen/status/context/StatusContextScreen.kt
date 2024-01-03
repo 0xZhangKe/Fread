@@ -19,6 +19,7 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
@@ -27,6 +28,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
@@ -75,6 +77,9 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
                 navigator.push(StatusContextScreen(it.status.status))
             },
         )
+        ConsumeFlow(viewModel.openScreenFlow) {
+            navigator.tryPush(it)
+        }
     }
 
     @Composable

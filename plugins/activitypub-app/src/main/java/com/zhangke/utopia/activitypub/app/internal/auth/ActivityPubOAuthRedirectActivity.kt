@@ -6,6 +6,7 @@ import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.utopia.activitypub.app.R
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -22,13 +23,14 @@ class ActivityPubOAuthRedirectActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         val code = intent.data?.getQueryParameter("code")
-        if (code.isNullOrEmpty()) {
-            toast(getString(R.string.activity_pub_login_exception))
-        } else {
-            lifecycleScope.launch {
+        lifecycleScope.launch {
+            if (code.isNullOrEmpty()) {
+                toast(getString(R.string.activity_pub_login_exception))
+                delay(2000)
+            } else {
                 author.onOauthSuccess(code)
             }
+            finish()
         }
-        finish()
     }
 }

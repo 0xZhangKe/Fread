@@ -6,6 +6,8 @@ import com.zhangke.utopia.common.status.repo.db.FeedsConfigDao
 import com.zhangke.utopia.common.status.repo.db.FeedsConfigEntity
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class FeedsConfigRepo @Inject constructor(
@@ -17,6 +19,12 @@ class FeedsConfigRepo @Inject constructor(
 
     suspend fun getAllConfig(): List<FeedsConfig> {
         return feedsConfigDao.queryAllFeedsConfig().map(entityAdapter::toFeedsConfig)
+    }
+
+    fun getAllFeedsConfigFlow(): Flow<List<FeedsConfig>> {
+        return feedsConfigDao.getAllFeedsConfigFlow().map { list ->
+            list.map(entityAdapter::toFeedsConfig)
+        }
     }
 
     suspend fun getConfigById(id: Long): FeedsConfig? {
@@ -45,6 +53,10 @@ class FeedsConfigRepo @Inject constructor(
     suspend fun updateLastReadStatusId(feedsConfig: FeedsConfig, lastReadStatusId: String?) {
         val newConfig = feedsConfig.copy(lastReadStatusId = lastReadStatusId)
         feedsConfigDao.insertOrReplace(entityAdapter.toEntity(newConfig))
+    }
+
+    suspend fun clearAllLastReadStatusId() {
+        feedsConfigDao.clearAllLastReadStatusId()
     }
 
     suspend fun updateSourceList(

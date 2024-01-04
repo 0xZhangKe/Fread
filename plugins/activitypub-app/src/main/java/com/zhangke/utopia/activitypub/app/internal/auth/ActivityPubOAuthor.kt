@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.auth
 
+import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
@@ -7,12 +8,12 @@ import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
-import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
@@ -24,6 +25,7 @@ import javax.inject.Singleton
  */
 @Singleton
 class ActivityPubOAuthor @Inject constructor(
+    @ApplicationContext private val context: Context,
     private val repo: ActivityPubLoggedAccountRepo,
     private val applicationRepo: ActivityPubApplicationRepo,
     private val clientManager: ActivityPubClientManager,
@@ -80,6 +82,6 @@ class ActivityPubOAuthor @Inject constructor(
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        customTabsIntent.launchUrl(appContext, Uri.parse(oauthUrl))
+        customTabsIntent.launchUrl(context, Uri.parse(oauthUrl))
     }
 }

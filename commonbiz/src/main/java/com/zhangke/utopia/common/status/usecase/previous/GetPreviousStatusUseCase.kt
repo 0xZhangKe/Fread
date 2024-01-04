@@ -22,7 +22,6 @@ internal class GetPreviousStatusUseCase @Inject constructor(
             null
         } else {
             statusContentRepo.queryByPlatformId(maxId)
-                ?: return Result.failure(IllegalArgumentException("Can't find record by id $maxId"))
         }
         if (maxStatus?.isFirstStatus() == true) {
             return Result.success(emptyList())

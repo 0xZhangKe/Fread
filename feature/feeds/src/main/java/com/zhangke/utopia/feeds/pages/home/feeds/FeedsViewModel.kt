@@ -15,6 +15,7 @@ import com.zhangke.utopia.status.status.model.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.update
@@ -41,27 +42,45 @@ class FeedsViewModel @AssistedInject constructor(
 
     init {
         screenModelScope.launch {
-            mutableState.update {
-                it.copy(loading = true)
-            }
-            feedsRepo.getPreviousStatus(config, maxId = config.lastReadStatusId)
-                .onSuccess { list ->
-                    mutableState.update {
-                        it.copy(
-                            loading = false,
-                            feeds = list.map(buildStatusUiState::invoke),
-                        )
-                    }
-                }.onFailure { e ->
-                    e.message?.let(::textOf)?.let {
-                        _errorMessageFlow.emit(it)
-                    }
-                    mutableState.update {
-                        it.copy(loading = false)
-                    }
-
-                }
+            loadPreviousStatus()
+            clearFeedsWhenAccountChanged()
         }
+    }
+
+    private suspend fun loadPreviousStatus() {
+        mutableState.update {
+            it.copy(loading = true)
+        }
+        feedsRepo.getPreviousStatus(config, maxId = config.lastReadStatusId)
+            .onSuccess { list ->
+                mutableState.update {
+                    it.copy(
+                        loading = false,
+                        feeds = list.map(buildStatusUiState::invoke),
+                    )
+                }
+            }.onFailure { e ->
+                e.message?.let(::textOf)?.let {
+                    _errorMessageFlow.emit(it)
+                }
+                mutableState.update {
+                    it.copy(loading = false)
+                }
+            }
+    }
+
+    private suspend fun clearFeedsWhenAccountChanged() {
+        statusProvider.accountManager
+            .getAllAccountFlow()
+            .collect {
+                mutableState.emit(
+                    mutableState.value.copy(
+                        feeds = emptyList(),
+                    )
+                )
+                delay(200)
+                loadPreviousStatus()
+            }
     }
 
     fun onRefresh() {

@@ -1,10 +1,10 @@
 package com.zhangke.utopia.common.status.repo.db
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.common.status.repo.db.converts.BlogMediaListConverter
 import com.zhangke.utopia.common.status.repo.db.converts.BlogPollConverter
 import com.zhangke.utopia.common.status.repo.db.converts.StatusConverter
@@ -14,6 +14,7 @@ import com.zhangke.utopia.common.status.repo.db.converts.StatusTypeConverter
 import com.zhangke.utopia.common.utils.DateTypeConverter
 import com.zhangke.utopia.common.utils.ListStringConverter
 import com.zhangke.utopia.common.utils.WebFingerConverter
+import dagger.hilt.android.qualifiers.ApplicationContext
 
 private const val DB_NAME = "StatusDatabase.db"
 private const val DB_VERSION = 1
@@ -48,11 +49,22 @@ abstract class StatusDatabase : RoomDatabase() {
 
     companion object {
 
-        val instance: StatusDatabase by lazy { createDatabase() }
+        private var instance: StatusDatabase? = null
 
-        private fun createDatabase(): StatusDatabase {
+        fun getInstance(context: Context): StatusDatabase {
+            if (instance == null) {
+                synchronized(StatusDatabase::class.java) {
+                    if (instance == null) {
+                        instance = createDatabase(context)
+                    }
+                }
+            }
+            return instance!!
+        }
+
+        private fun createDatabase(context: Context): StatusDatabase {
             return Room.databaseBuilder(
-                appContext,
+                context,
                 StatusDatabase::class.java,
                 DB_NAME,
             ).build()

@@ -39,25 +39,27 @@ class FeedsHomeViewModel @Inject constructor(
     private fun loadFeedsConfigList() {
         launchInViewModel {
             _uiState.value = LoadableState.loading()
-            val feedsConfigList = feedsConfigRepo.getAllConfig()
-            val state = FeedsHomeUiState(
-                selectedIndex = 0,
-                feedsConfigList = feedsConfigList.map {
-                    FeedsConfigWithPlatforms(it, emptyList())
-                },
-            )
-            _uiState.value = LoadableState.success(state)
-            val finalFeedsConfigList = feedsConfigList.map { config ->
-                async {
-                    val platformList = statusProvider.platformResolver
-                        .resolveBySourceUriList(config.sourceUriList)
-                        .getOrNull()
-                    FeedsConfigWithPlatforms(config, platformList ?: emptyList())
+            feedsConfigRepo.getAllFeedsConfigFlow()
+                .collect { feedsConfigList ->
+                    val state = FeedsHomeUiState(
+                        selectedIndex = 0,
+                        feedsConfigList = feedsConfigList.map {
+                            FeedsConfigWithPlatforms(it, emptyList())
+                        },
+                    )
+                    _uiState.value = LoadableState.success(state)
+                    val finalFeedsConfigList = feedsConfigList.map { config ->
+                        async {
+                            val platformList = statusProvider.platformResolver
+                                .resolveBySourceUriList(config.sourceUriList)
+                                .getOrNull()
+                            FeedsConfigWithPlatforms(config, platformList ?: emptyList())
+                        }
+                    }.awaitAll()
+                    _uiState.updateOnSuccess {
+                        it.copy(feedsConfigList = finalFeedsConfigList)
+                    }
                 }
-            }.awaitAll()
-            _uiState.updateOnSuccess {
-                it.copy(feedsConfigList = finalFeedsConfigList)
-            }
         }
     }
 

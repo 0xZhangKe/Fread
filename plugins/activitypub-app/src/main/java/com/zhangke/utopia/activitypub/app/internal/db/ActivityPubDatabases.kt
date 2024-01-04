@@ -1,10 +1,10 @@
 package com.zhangke.utopia.activitypub.app.internal.db
 
+import android.content.Context
 import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubInstanceEntityConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubUserTokenConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalBaseUrlConverter
@@ -48,11 +48,22 @@ abstract class ActivityPubDatabases : RoomDatabase() {
 
     companion object {
 
-        val instance: ActivityPubDatabases by lazy { createDatabase() }
+        private var instance: ActivityPubDatabases? = null
 
-        private fun createDatabase(): ActivityPubDatabases {
+        fun getInstance(context: Context): ActivityPubDatabases {
+            if (instance == null) {
+                synchronized(ActivityPubDatabases::class.java) {
+                    if (instance == null) {
+                        instance = createDatabase(context)
+                    }
+                }
+            }
+            return instance!!
+        }
+
+        private fun createDatabase(context: Context): ActivityPubDatabases {
             return Room.databaseBuilder(
-                appContext,
+                context,
                 ActivityPubDatabases::class.java,
                 ACTIVITY_PUB_DB_NAME
             ).build()

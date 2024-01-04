@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.coroutines.flow.Flow
 
 private const val TABLE_NAME = "feeds_configs"
 
@@ -25,6 +26,9 @@ interface FeedsConfigDao {
     @Query("SELECT * FROM $TABLE_NAME")
     suspend fun queryAllFeedsConfig(): List<FeedsConfigEntity>
 
+    @Query("SELECT * FROM $TABLE_NAME")
+    fun getAllFeedsConfigFlow(): Flow<List<FeedsConfigEntity>>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
     suspend fun queryById(id: Long): FeedsConfigEntity?
 
@@ -33,6 +37,9 @@ interface FeedsConfigDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertOrReplace(entity: FeedsConfigEntity)
+
+    @Query("UPDATE $TABLE_NAME SET lastReadStatusId=null")
+    suspend fun clearAllLastReadStatusId()
 
     @Query("UPDATE $TABLE_NAME SET sourceUriList=:sourceUriList WHERE id=:feedsId")
     suspend fun updateSourceList(

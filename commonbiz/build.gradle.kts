@@ -1,5 +1,6 @@
 plugins {
     id("utopia.android.library")
+    id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
@@ -27,6 +28,9 @@ dependencies {
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
     implementation(libs.gson)
+
+    implementation(libs.filt.annotaions)
+    ksp(libs.filt.compiler)
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)

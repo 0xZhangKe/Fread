@@ -9,6 +9,8 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreen
+import com.zhangke.utopia.feeds.pages.home.NewFeedsHomeScreen
+import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectFeedsTypeScreen
 
 object FeedsHomeTab : Tab {
 
@@ -24,6 +26,8 @@ object FeedsHomeTab : Tab {
 
     @Composable
     override fun Content() {
-        Navigator(FeedsHomeScreen())
+//        Navigator(FeedsHomeScreen())
+//        Navigator(NewFeedsHomeScreen())
+        Navigator(SelectFeedsTypeScreen())
     }
 }

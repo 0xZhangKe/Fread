@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.server
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstance
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.screen.server.adapter.ServiceDetailUiStateAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,13 +23,16 @@ internal class ServerDetailViewModel @Inject constructor(
         ServerDetailUiState(
             loading = true,
             baseUrl = null,
-            title = "",
-            description = "",
-            thumbnail = "",
-            version = "",
-            activeMonth = 0,
-            languages = emptyList(),
-            rules = emptyList(),
+            instance = ActivityPubInstance(
+                baseUrl = null,
+                title = "",
+                description = "",
+                thumbnail = "",
+                version = "",
+                activeMonth = 0,
+                languages = emptyList(),
+                rules = emptyList(),
+            ),
             tabs = listOf(
                 ServerDetailTab.TRENDS,
                 ServerDetailTab.TRENDS_TAG,

@@ -34,4 +34,8 @@
     <string name="post_status_scope_follower_only">仅关注着可见</string>
     <string name="post_status_scope_mentioned_only">仅提及用户可见</string>
     <string name="post_status_failed">发送失败</string>
+
+    <string name="add_instance_screen_title">添加实例</string>
+    <string name="add_instance_input_service_hint">请输入服务器地址</string>
+    <string name="add_instance_input_service_error">请输入正确的服务器地址</string>
 </resources>

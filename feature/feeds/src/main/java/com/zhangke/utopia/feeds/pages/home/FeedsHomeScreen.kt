@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.ModalDrawer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material3.Button
@@ -68,6 +69,14 @@ class FeedsHomeScreen : AndroidScreen() {
                 }
             },
         ) { paddings ->
+            ModalDrawer(
+                modifier = Modifier.padding(paddings),
+                drawerContent = {
+
+                },
+            ) {
+
+            }
             LoadableLayout(
                 modifier = Modifier.padding(paddings),
                 state = uiState,

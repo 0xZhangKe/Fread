@@ -10,6 +10,8 @@
 
     <string name="add_feeds_page_title">ADD</string>
 
+    <string name="select_feeds_type_screen_title">Select Content Type</string>
+
     <string name="add_feeds_page_empty_name_tips">Please enter a name</string>
 
     <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>

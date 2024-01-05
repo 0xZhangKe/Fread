@@ -10,6 +10,8 @@
 
     <string name="add_feeds_page_title">添加</string>
 
+    <string name="select_feeds_type_screen_title">请选择内容类型</string>
+
     <string name="add_feeds_page_empty_name_tips">请输入一个名字</string>
 
     <string name="add_feeds_page_empty_source_tips">请添加信息源</string>

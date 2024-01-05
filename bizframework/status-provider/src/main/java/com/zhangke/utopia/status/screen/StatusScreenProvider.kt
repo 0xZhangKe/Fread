@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.model.StatusProviderType
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -29,6 +30,12 @@ class StatusScreenProvider(
             it.getReplyBlogScreen(blog)
         }
     }
+
+    fun getAddContentScreen(statusProviderType: StatusProviderType): Any?{
+        return providerList.mapFirstOrNull {
+            it.getAddContentScreen(statusProviderType)
+        }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -38,4 +45,6 @@ interface IStatusScreenProvider {
     fun getPostStatusScreen(platform: BlogPlatform): Any?
 
     fun getReplyBlogScreen(blog: Blog): Any?
+
+    fun getAddContentScreen(statusProviderType: StatusProviderType): Any?
 }

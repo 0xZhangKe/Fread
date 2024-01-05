@@ -19,4 +19,7 @@
 
     <string name="video">视频</string>
 
+    <string name="status_provider_type_mixed">混合内容</string>
+    <string name="status_provider_type_activity_pub">长毛象</string>
+
 </resources>

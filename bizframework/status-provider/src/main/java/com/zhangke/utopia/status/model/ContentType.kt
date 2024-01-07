@@ -1,6 +1,6 @@
 package com.zhangke.utopia.status.model
 
-enum class StatusProviderType {
+enum class ContentType {
 
     MIXED,
     ACTIVITY_PUB,

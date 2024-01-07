@@ -5,7 +5,8 @@ import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailS
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.model.StatusProviderType
+import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.uri.FormalUri
@@ -30,8 +31,8 @@ class ActivityPubScreenProvider @Inject constructor(
         return PostStatusScreen(replyToBlog = blog)
     }
 
-    override fun getAddContentScreen(statusProviderType: StatusProviderType): Any? {
-        if (statusProviderType != StatusProviderType.ACTIVITY_PUB) return null
-        return AddInstanceScreen()
+    override fun performAddContent(contentType: ContentType, onContentSelected: (ContentConfig)) {
+        if (contentType != ContentType.ACTIVITY_PUB) return
+        AddInstanceScreen()
     }
 }

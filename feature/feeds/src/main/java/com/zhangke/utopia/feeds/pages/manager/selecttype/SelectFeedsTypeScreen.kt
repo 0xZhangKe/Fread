@@ -26,7 +26,7 @@ import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.ext.nameResId
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
-import com.zhangke.utopia.status.model.StatusProviderType
+import com.zhangke.utopia.status.model.ContentType
 
 class SelectFeedsTypeScreen : AndroidScreen() {
 
@@ -53,17 +53,17 @@ class SelectFeedsTypeScreen : AndroidScreen() {
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
                 val typeList = remember {
-                    StatusProviderType.entries
+                    ContentType.entries
                 }
                 typeList.forEachIndexed { index, type ->
                     TextButton(
                         onClick = {
                             when (type) {
-                                StatusProviderType.MIXED -> {
+                                ContentType.MIXED -> {
                                     navigator.push(AddFeedsManagerScreen())
                                 }
 
-                                StatusProviderType.ACTIVITY_PUB -> {
+                                ContentType.ACTIVITY_PUB -> {
                                     viewModel.onTypeClick(type)
                                 }
                             }

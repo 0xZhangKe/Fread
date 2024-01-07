@@ -1,7 +1,9 @@
 package com.zhangke.framework.network
 
+import kotlinx.serialization.Serializable
 import java.net.URL
 
+@Serializable
 class FormalBaseUrl private constructor(
     val scheme: String,
     val host: String,

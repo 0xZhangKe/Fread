@@ -57,7 +57,8 @@ class PostStatusViewModel @Inject constructor(
         const val MAX_CONTENT = 1000
     }
 
-    var replayToBlog: Blog? = null
+    var replyToId: String? = null
+    var replyToName: String? = null
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
     val uiState: StateFlow<LoadableState<PostStatusUiState>> = _uiState.asStateFlow()
@@ -82,6 +83,7 @@ class PostStatusViewModel @Inject constructor(
                         visibility = PostStatusVisibility.PUBLIC,
                         sensitive = false,
                         maxContent = MAX_CONTENT,
+                        replyToAuthorName = replyToName,
                         warningContent = "",
                         emojiList = emptyList(),
                         language = Locale.ROOT,
@@ -362,7 +364,7 @@ class PostStatusViewModel @Inject constructor(
                 content = currentUiState.content,
                 attachment = attachment,
                 sensitive = currentUiState.sensitive,
-                replyToId = replayToBlog?.id,
+                replyToId = replyToId,
                 spoilerText = currentUiState.warningContent,
                 visibility = currentUiState.visibility,
                 language = currentUiState.language,

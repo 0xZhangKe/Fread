@@ -39,8 +39,8 @@ class StatusContextViewModel @Inject constructor(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
-    private val _openScreenFlow = MutableSharedFlow<Any>()
-    val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
+    private val _openScreenFlow = MutableSharedFlow<String>()
+    val openScreenFlow: SharedFlow<String> get() = _openScreenFlow
 
     private lateinit var fixedAnchorStatus: Status
 

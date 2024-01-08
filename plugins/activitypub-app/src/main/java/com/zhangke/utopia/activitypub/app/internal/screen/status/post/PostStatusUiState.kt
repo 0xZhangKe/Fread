@@ -17,6 +17,7 @@ data class PostStatusUiState(
     val visibility: PostStatusVisibility,
     val sensitive: Boolean,
     val warningContent: String,
+    val replyToAuthorName: String?,
     val emojiList: List<CustomEmojiCell>,
     val language: Locale,
 ) {

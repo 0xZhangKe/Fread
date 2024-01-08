@@ -17,22 +17,25 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ExperimentalMotionApi
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.textString
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import kotlinx.coroutines.launch
 
-class PlatformDetailScreen(private val serverBaseUrl: FormalBaseUrl) : AndroidScreen() {
+@Destination(PlatformDetailRoute.ROUTE)
+class PlatformDetailScreen(
+    @Router private val route: String = "",
+) : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val viewModel: ServerDetailViewModel = getViewModel()
-        viewModel.serverBaseUrl = serverBaseUrl
-        LaunchedEffect(Unit) {
+        LaunchedEffect(route) {
+            viewModel.serverBaseUrl = PlatformDetailRoute.parseBaseUrl(route)
             viewModel.onPageResume()
         }
         val uiState by viewModel.uiState.collectAsState()

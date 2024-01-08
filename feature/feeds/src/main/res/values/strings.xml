@@ -18,6 +18,8 @@
 
     <string name="add_feeds_choose_auth_dialog_title">请选择要登录的服务器</string>
 
+    <string name="add_content_success_snackbar">添加成功</string>
+
     <string name="search_feeds_title_hint">请输入感兴趣的内容</string>
 
 </resources>

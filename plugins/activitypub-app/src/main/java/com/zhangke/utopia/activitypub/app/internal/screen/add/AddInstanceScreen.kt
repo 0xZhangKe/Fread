@@ -32,21 +32,26 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.textString
+import com.zhangke.framework.voyager.navigationResult
+import com.zhangke.krouter.Destination
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstance
 import com.zhangke.utopia.activitypub.app.internal.screen.server.InstanceDetailScaffold
 import com.zhangke.utopia.activitypub.app.internal.screen.server.about.ServerAboutPage
 
+@Destination(AddInstanceScreenRoute.ROOT)
 class AddInstanceScreen : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val navigationResult = navigator.navigationResult
         val viewModel: AddInstanceViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         AddInstanceContent(
@@ -63,6 +68,9 @@ class AddInstanceScreen : AndroidScreen() {
             onErrorMessageDismiss = viewModel::onErrorMessageDismiss,
             onConfirmClick = viewModel::onConfirmClick,
         )
+        ConsumeFlow(viewModel.contentConfigFlow) {
+            navigationResult.popWithResult(it)
+        }
     }
 
     @OptIn(ExperimentalFoundationApi::class)

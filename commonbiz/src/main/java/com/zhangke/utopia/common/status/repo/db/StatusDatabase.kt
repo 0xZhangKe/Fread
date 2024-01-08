@@ -7,6 +7,8 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.utopia.common.status.repo.db.converts.BlogMediaListConverter
 import com.zhangke.utopia.common.status.repo.db.converts.BlogPollConverter
+import com.zhangke.utopia.common.status.repo.db.converts.ContentTypeConverter
+import com.zhangke.utopia.common.status.repo.db.converts.FormalBaseUrlConverter
 import com.zhangke.utopia.common.status.repo.db.converts.StatusConverter
 import com.zhangke.utopia.common.status.repo.db.converts.StatusProviderUriConverter
 import com.zhangke.utopia.common.status.repo.db.converts.StatusProviderUriListConverter
@@ -14,7 +16,6 @@ import com.zhangke.utopia.common.status.repo.db.converts.StatusTypeConverter
 import com.zhangke.utopia.common.utils.DateTypeConverter
 import com.zhangke.utopia.common.utils.ListStringConverter
 import com.zhangke.utopia.common.utils.WebFingerConverter
-import dagger.hilt.android.qualifiers.ApplicationContext
 
 private const val DB_NAME = "StatusDatabase.db"
 private const val DB_VERSION = 1
@@ -29,12 +30,15 @@ private const val DB_VERSION = 1
     DateTypeConverter::class,
     WebFingerConverter::class,
     StatusConverter::class,
+    ContentTypeConverter::class,
+    FormalBaseUrlConverter::class,
 )
 @Database(
     entities = [
         StatusSourceEntity::class,
-        FeedsConfigEntity::class,
         StatusContentEntity::class,
+        ContentConfigEntity::class,
+        FeedsConfigEntity::class,
     ],
     version = DB_VERSION,
     exportSchema = false,
@@ -46,6 +50,8 @@ abstract class StatusDatabase : RoomDatabase() {
     abstract fun getFeedsConfigDao(): FeedsConfigDao
 
     abstract fun getStatusContentDao(): StatusContentDao
+
+    abstract fun getContentConfigDao(): ContentConfigDao
 
     companion object {
 

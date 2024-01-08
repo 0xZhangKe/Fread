@@ -9,15 +9,23 @@ sealed interface ContentConfig {
 
     @Serializable
     data class MixedContent(
-        val id: String,
+        val id: Long,
         val name: String,
         val sourceUriList: List<FormalUri>,
         val lastReadStatusId: String?,
     ) : ContentConfig
 
     @Serializable
-    data class MastodonContent(
-        private val name: String,
-        private val baseUrl: FormalBaseUrl,
+    data class ActivityPubContent(
+        val id: Long,
+        val name: String,
+        val baseUrl: FormalBaseUrl,
     ) : ContentConfig
+
+    val configName: String
+        get() = when (this) {
+            is MixedContent -> name
+            is ActivityPubContent -> name
+        }
 }
+

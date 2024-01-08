@@ -2,7 +2,6 @@ package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
@@ -32,9 +31,9 @@ class StatusScreenProvider(
         }
     }
 
-    fun performAddContent(contentType: ContentType, onContentSelected: (ContentConfig)) {
-        return providerList.forEach {
-            it.performAddContent(contentType, onContentSelected)
+    fun getAddContentScreenRoute(contentType: ContentType): String? {
+        return providerList.mapFirstOrNull {
+            it.getAddContentScreenRoute(contentType)
         }
     }
 }
@@ -47,5 +46,5 @@ interface IStatusScreenProvider {
 
     fun getReplyBlogScreen(blog: Blog): String?
 
-    fun performAddContent(contentType: ContentType, onContentSelected: (ContentConfig))
+    fun getAddContentScreenRoute(contentType: ContentType): String?
 }

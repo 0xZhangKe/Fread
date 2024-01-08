@@ -24,7 +24,7 @@ internal class ServerDetailViewModel @Inject constructor(
             loading = true,
             baseUrl = null,
             instance = ActivityPubInstance(
-                baseUrl = null,
+                baseUrl = FormalBaseUrl.build("", ""),
                 title = "",
                 description = "",
                 thumbnail = "",

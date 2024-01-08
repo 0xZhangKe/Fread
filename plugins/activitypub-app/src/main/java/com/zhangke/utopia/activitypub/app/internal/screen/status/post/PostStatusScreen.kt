@@ -58,6 +58,8 @@ import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
@@ -69,19 +71,22 @@ import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
-import com.zhangke.utopia.status.blog.Blog
 import java.util.Locale
 import kotlin.time.Duration
 import com.zhangke.utopia.statusui.R as StatusUiR
 
-class PostStatusScreen(private val replyToBlog: Blog? = null) : AndroidScreen() {
+@Destination(PostStatusScreenRoute.ROUTE)
+class PostStatusScreen(
+    @Router private val route: String = "",
+) : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PostStatusViewModel>()
-        viewModel.replayToBlog = replyToBlog
-        LaunchedEffect(replyToBlog) {
+        LaunchedEffect(route) {
+            viewModel.replyToId = PostStatusScreenRoute.parseReplyToBlogId(route)
+            viewModel.replyToName = PostStatusScreenRoute.parseReplyToAuthorName(route)
             viewModel.onPrepared()
         }
         val loadableUiState by viewModel.uiState.collectAsState()
@@ -239,7 +244,7 @@ class PostStatusScreen(private val replyToBlog: Blog? = null) : AndroidScreen() 
                     inputRef,
                     statusAttachmentRef,
                 ) = createRefs()
-                if (replyToBlog != null) {
+                if (uiState.replyToAuthorName.isNullOrEmpty().not()) {
                     Row(
                         modifier = Modifier.constrainAs(replayToBlogRef) {
                             top.linkTo(parent.top, 8.dp)
@@ -257,7 +262,7 @@ class PostStatusScreen(private val replyToBlog: Blog? = null) : AndroidScreen() 
                         val replyLabel = stringResource(StatusUiR.string.status_ui_reply)
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
-                            text = "$replyLabel ${replyToBlog.author.name}",
+                            text = "$replyLabel ${uiState.replyToAuthorName}",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }

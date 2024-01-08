@@ -1,8 +1,8 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.utopia.activitypub.app.internal.screen.add.AddInstanceScreen
-import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailScreen
-import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailRoute
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
@@ -16,19 +16,19 @@ class ActivityPubScreenProvider @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
 ) : IStatusScreenProvider {
 
-    override fun getServerDetailScreen(platformUri: FormalUri): Any? {
+    override fun getServerDetailScreenRoute(platformUri: FormalUri): String? {
         val platformUriData = platformUriTransformer.parse(platformUri) ?: return null
-        return PlatformDetailScreen(platformUriData.serverBaseUrl)
+        return PlatformDetailRoute.buildRoute(platformUriData.serverBaseUrl)
     }
 
-    override fun getPostStatusScreen(platform: BlogPlatform): Any? {
+    override fun getPostStatusScreen(platform: BlogPlatform): String? {
         if (platform.protocol != ACTIVITY_PUB_PROTOCOL) return null
-        return PostStatusScreen()
+        return PostStatusScreenRoute.ROUTE
     }
 
-    override fun getReplyBlogScreen(blog: Blog): Any? {
+    override fun getReplyBlogScreen(blog: Blog): String? {
         if (blog.platform.protocol != ACTIVITY_PUB_PROTOCOL) return null
-        return PostStatusScreen(replyToBlog = blog)
+        return PostStatusScreenRoute.buildRoute(blog.id, blog.author.name)
     }
 
     override fun performAddContent(contentType: ContentType, onContentSelected: (ContentConfig)) {

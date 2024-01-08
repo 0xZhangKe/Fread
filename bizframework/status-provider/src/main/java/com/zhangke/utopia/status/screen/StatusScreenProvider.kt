@@ -11,22 +11,22 @@ class StatusScreenProvider(
     private val providerList: List<IStatusScreenProvider>
 ) {
 
-    fun getPlatformDetailScreen(platformUri: String): Any? {
+    fun getPlatformDetailScreenRoute(platformUri: String): String? {
         val uri = FormalUri.from(platformUri) ?: return null
         return providerList.mapFirstOrNull {
-            it.getServerDetailScreen(uri)
+            it.getServerDetailScreenRoute(uri)
         }
     }
 
     fun getPostStatusScreen(
         platform: BlogPlatform,
-    ): Any? {
+    ): String? {
         return providerList.mapFirstOrNull {
             it.getPostStatusScreen(platform)
         }
     }
 
-    fun getReplyBlogScreen(blog: Blog): Any? {
+    fun getReplyBlogScreen(blog: Blog): String? {
         return providerList.mapFirstOrNull {
             it.getReplyBlogScreen(blog)
         }
@@ -41,11 +41,11 @@ class StatusScreenProvider(
 
 interface IStatusScreenProvider {
 
-    fun getServerDetailScreen(platformUri: FormalUri): Any?
+    fun getServerDetailScreenRoute(platformUri: FormalUri): String?
 
-    fun getPostStatusScreen(platform: BlogPlatform): Any?
+    fun getPostStatusScreen(platform: BlogPlatform): String?
 
-    fun getReplyBlogScreen(blog: Blog): Any?
+    fun getReplyBlogScreen(blog: Blog): String?
 
     fun performAddContent(contentType: ContentType, onContentSelected: (ContentConfig))
 }

@@ -31,8 +31,8 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.topout.TopOutTopBarLayout
+import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.commonbiz.shared.screen.PostStatusIntermediaryScreen
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsTab
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
@@ -103,8 +103,8 @@ class FeedsHomeScreen : AndroidScreen() {
                                 },
                                 onServerItemClick = {
                                     viewModel.screenProvider
-                                        .getPlatformDetailScreen(it.uri)
-                                        ?.let(navigator::tryPush)
+                                        .getPlatformDetailScreenRoute(it.uri)
+                                        ?.let(navigator::pushDestination)
                                 },
                             )
                         },

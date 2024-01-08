@@ -12,7 +12,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.voyager.tryPush
+import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -37,7 +37,7 @@ class PostStatusIntermediaryScreen : AndroidScreen() {
                 navigator.pop()
                 viewModel.screenProvider
                     .getPostStatusScreen(loadableState.requireSuccessData())
-                    ?.let(navigator::tryPush)
+                    ?.let(navigator::pushDestination)
             }
 
             else -> {}

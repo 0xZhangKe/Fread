@@ -28,6 +28,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
@@ -78,7 +79,7 @@ class StatusContextScreen(private val status: Status) : AndroidScreen() {
             },
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.tryPush(it)
+            navigator.pushDestination(it)
         }
     }
 

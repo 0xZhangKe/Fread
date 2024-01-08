@@ -1,0 +1,17 @@
+package com.zhangke.utopia.common.status.repo.db.converts
+
+import androidx.room.TypeConverter
+import com.zhangke.utopia.status.model.ContentType
+
+class ContentTypeConverter {
+
+    @TypeConverter
+    fun fromString(text: String): ContentType {
+        return ContentType.valueOf(text)
+    }
+
+    @TypeConverter
+    fun toString(type: ContentType): String {
+        return type.name
+    }
+}

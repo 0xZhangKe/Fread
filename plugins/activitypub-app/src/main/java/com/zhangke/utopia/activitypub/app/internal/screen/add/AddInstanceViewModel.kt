@@ -7,8 +7,11 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.status.model.ContentConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -21,7 +24,7 @@ class AddInstanceViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         AddInstanceUiState(
-            query = null,
+            query = "m.cmx.im",
             searching = false,
             errorMessage = null,
             inInstanceDetailPage = false,
@@ -29,6 +32,9 @@ class AddInstanceViewModel @Inject constructor(
         )
     )
     val uiState: StateFlow<AddInstanceUiState> = _uiState
+
+    private val _contentConfigFlow = MutableSharedFlow<ContentConfig>()
+    val contentConfigFlow: SharedFlow<ContentConfig> get() = _contentConfigFlow
 
     fun onBackClick() {
         _uiState.value = _uiState.value.copy(
@@ -83,6 +89,14 @@ class AddInstanceViewModel @Inject constructor(
     }
 
     fun onConfirmClick() {
-
+        val instance = _uiState.value.instance ?: return
+        launchInViewModel {
+            val config = ContentConfig.ActivityPubContent(
+                id = 0,
+                name = instance.title,
+                baseUrl = instance.baseUrl,
+            )
+            _contentConfigFlow.emit(config)
+        }
     }
 }

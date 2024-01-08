@@ -8,9 +8,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.zhangke.utopia.feeds.pages.home.FeedsHomeScreen
-import com.zhangke.utopia.feeds.pages.home.NewFeedsHomeScreen
-import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectFeedsTypeScreen
+import com.zhangke.utopia.feeds.pages.home.ContentHomeScreen
 
 object FeedsHomeTab : Tab {
 
@@ -27,7 +25,6 @@ object FeedsHomeTab : Tab {
     @Composable
     override fun Content() {
 //        Navigator(FeedsHomeScreen())
-//        Navigator(NewFeedsHomeScreen())
-        Navigator(SelectFeedsTypeScreen())
+        Navigator(ContentHomeScreen())
     }
 }

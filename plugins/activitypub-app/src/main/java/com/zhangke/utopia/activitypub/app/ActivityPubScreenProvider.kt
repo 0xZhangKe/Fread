@@ -1,11 +1,10 @@
 package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.utopia.activitypub.app.internal.screen.add.AddInstanceScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.add.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
@@ -31,8 +30,8 @@ class ActivityPubScreenProvider @Inject constructor(
         return PostStatusScreenRoute.buildRoute(blog.id, blog.author.name)
     }
 
-    override fun performAddContent(contentType: ContentType, onContentSelected: (ContentConfig)) {
-        if (contentType != ContentType.ACTIVITY_PUB) return
-        AddInstanceScreen()
+    override fun getAddContentScreenRoute(contentType: ContentType): String? {
+        if (contentType != ContentType.ACTIVITY_PUB) return null
+        return AddInstanceScreenRoute.ROOT
     }
 }

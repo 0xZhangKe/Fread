@@ -5,32 +5,35 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.DrawerValue
 import androidx.compose.material.ModalDrawer
 import androidx.compose.material.rememberDrawerState
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
+import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
 
-class NewFeedsHomeScreen : AndroidScreen() {
+class ContentHomeScreen : AndroidScreen() {
 
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         ModalDrawer(
             drawerState = drawerState,
             drawerContent = {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = "Drawer",
-                    )
-                }
+                ContentHomeDrawer()
             }) {
             Box(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = "Content",
-                )
+                Button(
+                    onClick = {
+                        navigator.push(SelectContentTypeScreen())
+                    },
+                ) {
+                    Text(text = "Add Content")
+                }
             }
         }
     }

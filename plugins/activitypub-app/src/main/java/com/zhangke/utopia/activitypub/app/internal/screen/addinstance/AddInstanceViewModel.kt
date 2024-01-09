@@ -1,13 +1,15 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.add
+package com.zhangke.utopia.activitypub.app.internal.screen.addinstance
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,6 +22,7 @@ import javax.inject.Inject
 class AddInstanceViewModel @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
+    private val accountManager: ActivityPubAccountManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -32,6 +35,9 @@ class AddInstanceViewModel @Inject constructor(
         )
     )
     val uiState: StateFlow<AddInstanceUiState> = _uiState
+
+    private val _openLoginFlow = MutableSharedFlow<List<BlogPlatform>>()
+    val openLoginFlow: SharedFlow<List<BlogPlatform>> get() = _openLoginFlow
 
     private val _contentConfigFlow = MutableSharedFlow<ContentConfig>()
     val contentConfigFlow: SharedFlow<ContentConfig> get() = _contentConfigFlow
@@ -91,12 +97,16 @@ class AddInstanceViewModel @Inject constructor(
     fun onConfirmClick() {
         val instance = _uiState.value.instance ?: return
         launchInViewModel {
-            val config = ContentConfig.ActivityPubContent(
-                id = 0,
-                name = instance.title,
-                baseUrl = instance.baseUrl,
-            )
-            _contentConfigFlow.emit(config)
+            if (accountManager.getAllLoggedAccount().isEmpty()) {
+                _openLoginFlow.emit(listOf(instanceAdapter.toPlatform(instance)))
+            } else {
+                val config = ContentConfig.ActivityPubContent(
+                    id = 0,
+                    name = instance.title,
+                    baseUrl = instance.baseUrl,
+                )
+                _contentConfigFlow.emit(config)
+            }
         }
     }
 }

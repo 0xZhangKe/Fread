@@ -1,4 +1,4 @@
-package com.zhangke.utopia.profile.pages.login
+package com.zhangke.utopia.commonbiz.shared.screen.login
 
 import com.zhangke.utopia.status.platform.BlogPlatform
 

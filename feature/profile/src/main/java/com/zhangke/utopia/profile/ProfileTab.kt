@@ -8,14 +8,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.utopia.profile.pages.home.ProfileHomePage
 import com.zhangke.utopia.profile.pages.home.ProfileHomeViewModel
-import com.zhangke.utopia.profile.pages.login.LoginScreen
+import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 
 object ProfileTab : Tab {
 
@@ -37,7 +35,7 @@ object ProfileTab : Tab {
         ProfileHomePage(
             uiState = uiState,
             onAddAccountClick = {
-                bottomSheetNavigator.show(LoginScreen())
+                bottomSheetNavigator.show(LoginBottomSheetScreen())
             },
             onActiveClick = viewModel::onActiveClick,
             onLogoutClick = viewModel::onLogoutClick,

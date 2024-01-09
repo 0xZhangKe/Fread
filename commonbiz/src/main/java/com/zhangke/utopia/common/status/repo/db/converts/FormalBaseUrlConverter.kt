@@ -6,12 +6,14 @@ import com.zhangke.framework.network.FormalBaseUrl
 class FormalBaseUrlConverter {
 
     @TypeConverter
-    fun fromString(text: String): FormalBaseUrl {
+    fun fromString(text: String?): FormalBaseUrl? {
+        text ?: return null
         return FormalBaseUrl.parse(text)!!
     }
 
     @TypeConverter
-    fun toString(baseUrl: FormalBaseUrl): String {
+    fun toString(baseUrl: FormalBaseUrl?): String? {
+        baseUrl ?: return null
         return baseUrl.toString()
     }
 }

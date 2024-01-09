@@ -1,6 +1,5 @@
 package com.zhangke.framework.voyager
 
-import android.util.Log
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
@@ -34,7 +33,6 @@ class VoyagerResultExtension(
         val currentScreen = navigator.lastItem
         results[currentScreen.key] = result
         navigator.pop()
-        Log.d("U_TEST", "popWithResult ${currentScreen.key} to $result")
     }
 
     public fun clearResults() {
@@ -52,8 +50,6 @@ class VoyagerResultExtension(
         val log = results.keys.joinToString(", ") { key ->
             "$key:${results[key]}"
         }
-        Log.d("U_TEST", "all result is: $log")
-        Log.d("U_TEST", "results: ${results[screenKey]}, as T: ${results[screenKey] as? T}}")
         val result = results[screenKey] as? T
         val resultState = remember(screenKey, result) {
             derivedStateOf {

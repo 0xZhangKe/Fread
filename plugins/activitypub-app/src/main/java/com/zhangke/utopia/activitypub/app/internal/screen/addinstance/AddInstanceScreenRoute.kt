@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.add
+package com.zhangke.utopia.activitypub.app.internal.screen.addinstance
 
 import com.zhangke.utopia.activitypub.app.internal.route.ActivityPubRoutes
 

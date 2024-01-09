@@ -30,6 +30,20 @@ class ActivityPubInstanceAdapter @Inject constructor(
         )
     }
 
+    fun toPlatform(
+        instance: ActivityPubInstance
+    ): BlogPlatform {
+        val uri = platformUriTransformer.build(instance.baseUrl)
+        return BlogPlatform(
+            uri = uri.toString(),
+            baseUrl = instance.baseUrl.toString(),
+            name = instance.title,
+            description = instance.description,
+            protocol = ACTIVITY_PUB_PROTOCOL,
+            thumbnail = instance.thumbnail,
+        )
+    }
+
     internal fun toInstance(
         entity: ActivityPubInstanceEntity,
     ): ActivityPubInstance {

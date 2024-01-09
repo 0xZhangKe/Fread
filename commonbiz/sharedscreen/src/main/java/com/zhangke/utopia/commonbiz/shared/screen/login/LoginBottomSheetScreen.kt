@@ -1,4 +1,4 @@
-package com.zhangke.utopia.profile.pages.login
+package com.zhangke.utopia.commonbiz.shared.screen.login
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,18 +30,21 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.CardInfoSection
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.krouter.Destination
-import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
-import com.zhangke.utopia.profile.R
+import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.platform.BlogPlatform
 
-@Destination(SharedRouter.Profile.login)
-class LoginScreen : AndroidScreen() {
+class LoginBottomSheetScreen(
+    private val defaultBlogPlatform: List<BlogPlatform> = emptyList(),
+) : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<LoginViewModel>()
+        LaunchedEffect(Unit){
+            viewModel.defaultBlogPlatform = defaultBlogPlatform
+            viewModel.onPrepared()
+        }
         val uiState by viewModel.uiState.collectAsState()
         var showInputContent by remember {
             mutableStateOf(false)

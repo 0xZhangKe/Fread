@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.add
+package com.zhangke.utopia.activitypub.app.internal.screen.addinstance
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -31,6 +31,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
@@ -44,6 +45,7 @@ import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstance
 import com.zhangke.utopia.activitypub.app.internal.screen.server.InstanceDetailScaffold
 import com.zhangke.utopia.activitypub.app.internal.screen.server.about.ServerAboutPage
+import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 
 @Destination(AddInstanceScreenRoute.ROOT)
 class AddInstanceScreen : AndroidScreen() {
@@ -51,6 +53,7 @@ class AddInstanceScreen : AndroidScreen() {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetDialog = LocalBottomSheetNavigator.current
         val navigationResult = navigator.navigationResult
         val viewModel: AddInstanceViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
@@ -70,6 +73,9 @@ class AddInstanceScreen : AndroidScreen() {
         )
         ConsumeFlow(viewModel.contentConfigFlow) {
             navigationResult.popWithResult(it)
+        }
+        ConsumeFlow(viewModel.openLoginFlow) {
+            bottomSheetDialog.push(LoginBottomSheetScreen(it))
         }
     }
 
@@ -214,7 +220,7 @@ class AddInstanceScreen : AndroidScreen() {
             }
         ) { canScrollBackward ->
             ServerAboutPage(
-                baseUrl = instance.baseUrl!!,
+                baseUrl = instance.baseUrl,
                 contentCanScrollBackward = canScrollBackward,
             )
         }

@@ -13,6 +13,7 @@ import androidx.compose.material3.Card
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -27,6 +28,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.utopia.pages.main.MainPage
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -38,7 +40,11 @@ class UtopiaScreen : AndroidScreen() {
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        MainPage()
+        CompositionLocalProvider(
+            LocalGlobalNavigator provides LocalNavigator.currentOrThrow
+        ) {
+            MainPage()
+        }
 
 //        val navigator = LocalNavigator.currentOrThrow
 //        LaunchedEffect(Unit) {

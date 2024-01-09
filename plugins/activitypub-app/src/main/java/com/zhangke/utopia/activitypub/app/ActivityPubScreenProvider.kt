@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
-import com.zhangke.utopia.activitypub.app.internal.screen.add.AddInstanceScreenRoute
+import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer

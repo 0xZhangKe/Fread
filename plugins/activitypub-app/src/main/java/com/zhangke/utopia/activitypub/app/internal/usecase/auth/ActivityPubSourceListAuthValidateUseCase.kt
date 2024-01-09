@@ -8,7 +8,6 @@ import javax.inject.Inject
 
 class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
     private val userRepo: ActivityPubLoggedAccountRepo,
-    private val userValidateUseCase: ActivityPubAccountValidationUseCase,
     private val activityPubUriValidate: ActivityPubUriValidateUseCase,
 ) {
 
@@ -23,18 +22,12 @@ class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
         }
         val user = userRepo.getCurrentAccount()
         if (user != null) {
-            val userValidateResult = userValidateUseCase(user)
-            if (userValidateResult.isFailure) {
-                return Result.failure(userValidateResult.exceptionOrNull()!!)
-            }
-            if (userValidateResult.getOrThrow()) {
-                return Result.success(
-                    SourcesAuthValidateResult(
-                        validateList = activityPubSourceList,
-                        invalidateList = emptyList(),
-                    )
+            return Result.success(
+                SourcesAuthValidateResult(
+                    validateList = activityPubSourceList,
+                    invalidateList = emptyList(),
                 )
-            }
+            )
         }
         return Result.success(
             SourcesAuthValidateResult(

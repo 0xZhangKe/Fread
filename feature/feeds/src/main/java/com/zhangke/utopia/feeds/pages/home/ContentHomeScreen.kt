@@ -10,8 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.androidx.AndroidScreen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
 
@@ -19,7 +18,7 @@ class ContentHomeScreen : AndroidScreen() {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
+        val navigator = LocalGlobalNavigator.current
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         ModalDrawer(
             drawerState = drawerState,

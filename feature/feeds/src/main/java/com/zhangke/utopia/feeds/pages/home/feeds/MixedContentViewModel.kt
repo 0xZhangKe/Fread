@@ -28,7 +28,7 @@ class MixedContentViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    lateinit var contentConfig: ContentConfig.MixedContent
+    var configId: Long = 0L
 
     private val _uiState = MutableStateFlow(MixedContentUiState.initialUiState)
     val uiState: StateFlow<MixedContentUiState> get() = _uiState
@@ -39,6 +39,8 @@ class MixedContentViewModel @Inject constructor(
     private val _openScreenFlow = MutableSharedFlow<Any>()
     val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
 
+    private var mixedContent: ContentConfig.MixedContent? = null
+
     init {
         launchInViewModel {
             clearFeedsWhenAccountChanged()
@@ -47,18 +49,20 @@ class MixedContentViewModel @Inject constructor(
 
     fun onPrepared() {
         launchInViewModel {
-
+            mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
             loadPreviousStatus()
         }
     }
 
     private suspend fun loadPreviousStatus() {
+        val sourceList = mixedContent?.sourceUriList ?: return
+        val lastReadStatusId = mixedContent?.lastReadStatusId
         _uiState.update {
             it.copy(loading = true)
         }
         feedsRepo.getPreviousStatus(
-            contentConfig.sourceUriList,
-            maxId = contentConfig.lastReadStatusId,
+            sourceList,
+            maxId = lastReadStatusId,
         ).onSuccess { list ->
             _uiState.update {
                 it.copy(
@@ -82,12 +86,13 @@ class MixedContentViewModel @Inject constructor(
         if (uiState.loading) return
         val feeds = uiState.feeds
         if (feeds.isEmpty()) return
+        val sourceList = mixedContent?.sourceUriList ?: return
         launchInViewModel {
             _uiState.update {
                 it.copy(refreshing = true)
             }
             feedsRepo.getNewerStatus(
-                sourceUriList = contentConfig.sourceUriList,
+                sourceUriList = sourceList,
                 minStatusId = feeds.first().status.id,
             ).onSuccess { list ->
                 _uiState.update {
@@ -113,12 +118,13 @@ class MixedContentViewModel @Inject constructor(
         if (uiState.loading) return
         val feeds = uiState.feeds
         if (feeds.isEmpty()) return
+        val sourceList = mixedContent?.sourceUriList ?: return
         launchInViewModel {
             _uiState.update {
                 it.copy(loading = true)
             }
             feedsRepo.getPreviousStatus(
-                contentConfig.sourceUriList,
+                sourceList,
                 maxId = feeds.last().status.id,
             ).onSuccess { list ->
                 _uiState.update {
@@ -145,7 +151,7 @@ class MixedContentViewModel @Inject constructor(
         val fixedIndex = index.coerceAtLeast(0).coerceAtMost(feeds.lastIndex)
         launchInViewModel {
             contentConfigRepo.updateLatestStatusId(
-                id = contentConfig.id,
+                id = configId,
                 latestStatusId = feeds[fixedIndex].status.id,
             )
         }

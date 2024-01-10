@@ -28,17 +28,16 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.status.model.Status
 
-class MixedContentScreen(private val contentConfig: ContentConfig.MixedContent) : AndroidScreen() {
+class MixedContentScreen(private val configId: Long) : AndroidScreen() {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: MixedContentViewModel = getViewModel()
         LaunchedEffect(Unit) {
-            viewModel.contentConfig = contentConfig
+            viewModel.configId = configId
             viewModel.onPrepared()
         }
         val uiState by viewModel.uiState.collectAsState()

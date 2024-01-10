@@ -26,7 +26,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreHoriz
 import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -45,18 +44,14 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import cafe.adriel.voyager.androidx.AndroidScreen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.AvatarHorizontalStack
 import com.zhangke.framework.composable.theme.TopAppBarDefault
 import com.zhangke.framework.ktx.isSingle
-import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.utopia.feeds.pages.home.FeedsConfigWithPlatforms
-import com.zhangke.utopia.feeds.pages.home.feeds.FeedsScreenUiState
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 import com.zhangke.utopia.feeds.pages.manager.edit.EditFeedsScreen
-import com.zhangke.utopia.status.platform.BlogPlatform
 
 internal class AllFeedsManagerScreen(
     private val feedsConfigWithPlatformList: List<FeedsConfigWithPlatforms>,
@@ -65,7 +60,7 @@ internal class AllFeedsManagerScreen(
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow.rootNavigator
+        val navigator = LocalGlobalNavigator.current
         AllFeedsManagerScreenContent(
             feedsConfigWithPlatformList = feedsConfigWithPlatformList,
             onAddFeedsClick = {

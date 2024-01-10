@@ -4,6 +4,8 @@ import com.zhangke.utopia.common.status.adapter.ContentConfigAdapter
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ContentConfigRepo @Inject constructor(
@@ -15,6 +17,12 @@ class ContentConfigRepo @Inject constructor(
 
     suspend fun getAllConfig(): List<ContentConfig> {
         return contentConfigDao.queryAllContentConfig().map(contentConfigAdapter::toContentConfig)
+    }
+
+    fun getAllConfigFlow(): Flow<List<ContentConfig>> {
+        return contentConfigDao.queryAllContentConfigFlow().map {
+            it.map(contentConfigAdapter::toContentConfig)
+        }
     }
 
     suspend fun getConfigById(id: Long): ContentConfig? {
@@ -31,6 +39,10 @@ class ContentConfigRepo @Inject constructor(
 
     suspend fun updateContentName(id: Long, name: String) {
         contentConfigDao.updateName(id, name)
+    }
+
+    suspend fun updateLatestStatusId(id: Long, latestStatusId: String) {
+        contentConfigDao.updateLatestStatusId(id, latestStatusId)
     }
 
     suspend fun clearAllLastReadStatusId() {

@@ -7,7 +7,7 @@ class SearchEngine(
 ) {
 
     suspend fun search(query: String): Result<List<SearchResult>> {
-        return engineList.map { it.search(query) }.collect()
+        return engineList.map { it.search(query.trim()) }.collect()
     }
 }
 

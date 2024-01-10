@@ -93,6 +93,7 @@ class SelectContentTypeScreen : AndroidScreen() {
                             when (type) {
                                 ContentType.MIXED -> {
                                     navigator.push(AddFeedsManagerScreen())
+                                    lastItemKey = navigator.lastItem.key
                                 }
 
                                 ContentType.ACTIVITY_PUB -> {

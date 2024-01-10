@@ -31,7 +31,7 @@ fun TransparentNavigator(
     transparentContent: TransparentNavigatorContent = { CurrentScreen() },
     content: TransparentNavigatorContent
 ) {
-    Navigator(HiddenTransparentScreen, onBackPressed = null, key = key) { navigator ->
+    Navigator(HiddenTransparentScreen, onBackPressed = null, key = "--------TransparentNavigator-----") { navigator ->
         val transparentNavigator = remember(navigator) {
             TransparentNavigator(navigator)
         }

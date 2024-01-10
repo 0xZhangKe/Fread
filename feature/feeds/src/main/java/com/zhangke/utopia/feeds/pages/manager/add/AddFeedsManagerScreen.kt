@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.manager.add
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -8,35 +7,32 @@ import androidx.compose.material.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.PostAdd
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
-import com.zhangke.framework.ktx.CollectOnComposable
+import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.krouter.Destination
 import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
+import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.feeds.R
-import com.zhangke.utopia.feeds.composable.BlogPlatformSection
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
-import com.zhangke.utopia.feeds.composable.StatusSourceSection
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
-import com.zhangke.utopia.status.platform.BlogPlatform
 import kotlinx.coroutines.flow.Flow
 
 @Destination(SharedRouter.Feeds.add)
@@ -45,6 +41,8 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val navigationResult = navigator.navigationResult
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel: AddFeedsManagerViewModel = getViewModel()
         FeedsManager(
             uiState = viewModel.uiState.collectAsState().value,
@@ -60,21 +58,11 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
             onNameInputValueChanged = viewModel::onSourceNameInput,
             onRemoveSourceClick = viewModel::onRemoveSource,
         )
-        viewModel.finishPage.CollectOnComposable {
-            navigator.pop()
+        ConsumeFlow(viewModel.contentConfigFlow) {
+            navigationResult.popWithResult(it)
         }
-        var platformList: List<BlogPlatform>? by remember {
-            mutableStateOf(null)
-        }
-        viewModel.loginRecommendPlatform.CollectOnComposable {
-            platformList = it
-        }
-        if (platformList != null) {
-            LoginDialog(
-                platformList = platformList!!,
-                onPlatformClick = viewModel::onAuthItemClick,
-                onDismissRequest = { platformList = null },
-            )
+        ConsumeFlow(viewModel.loginRecommendPlatform) {
+            bottomSheetNavigator.show(LoginBottomSheetScreen(it))
         }
     }
 
@@ -151,70 +139,5 @@ internal class AddFeedsManagerScreen : AndroidScreen() {
                 }
             }
         }
-    }
-
-    @Composable
-    private fun ChooseSourceDialog(
-        sourceList: List<StatusSourceUiState>,
-        onSourceItemClick: (StatusSourceUiState) -> Unit,
-        onDismissRequest: () -> Unit,
-    ) {
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp
-        UtopiaDialog(
-            onDismissRequest = onDismissRequest,
-            title = stringResource(id = R.string.add_feeds_choose_auth_dialog_title),
-            content = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = screenHeight)
-                ) {
-                    items(sourceList) { item ->
-                        StatusSourceSection(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    onSourceItemClick(item)
-                                },
-                            source = item,
-                        )
-                    }
-                }
-            }
-        )
-    }
-
-    @Composable
-    private fun LoginDialog(
-        platformList: List<BlogPlatform>,
-        onPlatformClick: (platform: BlogPlatform) -> Unit,
-        onDismissRequest: () -> Unit,
-    ) {
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp
-        UtopiaDialog(
-            onDismissRequest = onDismissRequest,
-            title = stringResource(id = R.string.add_feeds_choose_auth_dialog_title),
-            content = {
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(max = screenHeight * 0.7F)
-                ) {
-                    items(platformList) { item ->
-                        BlogPlatformSection(
-                            modifier = Modifier
-                                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                                .fillMaxWidth()
-                                .clickable {
-                                    onPlatformClick(item)
-                                },
-                            platform = item,
-                        )
-                    }
-                }
-            }
-        )
     }
 }

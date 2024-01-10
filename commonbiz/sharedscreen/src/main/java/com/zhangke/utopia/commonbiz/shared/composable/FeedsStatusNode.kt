@@ -4,10 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
@@ -25,11 +23,11 @@ fun FeedsStatusNode(
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
+    val navigator = LocalGlobalNavigator.current
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            navigator.rootNavigator.push(StatusContextScreen(status))
+            navigator.push(StatusContextScreen(status))
         },
         status = status,
         indexInList = indexInList,

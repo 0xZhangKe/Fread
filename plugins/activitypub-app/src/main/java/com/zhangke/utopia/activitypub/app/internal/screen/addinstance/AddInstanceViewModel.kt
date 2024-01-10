@@ -27,7 +27,7 @@ class AddInstanceViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         AddInstanceUiState(
-            query = "m.cmx.im",
+            query = "m.cmx.im",//TODO change to empty string
             searching = false,
             errorMessage = null,
             inInstanceDetailPage = false,
@@ -41,6 +41,19 @@ class AddInstanceViewModel @Inject constructor(
 
     private val _contentConfigFlow = MutableSharedFlow<ContentConfig>()
     val contentConfigFlow: SharedFlow<ContentConfig> get() = _contentConfigFlow
+
+    init {
+        launchInViewModel {
+            val initAccountList = accountManager.getAllLoggedAccount()
+            accountManager.getAllAccountFlow()
+                .collect { currentAccountList ->
+                    if (initAccountList.isNotEmpty()) return@collect
+                    if (currentAccountList.isEmpty()) return@collect
+                    if (_uiState.value.instance == null) return@collect
+                    emitCurrentContentConfigFlow()
+                }
+        }
+    }
 
     fun onBackClick() {
         _uiState.value = _uiState.value.copy(
@@ -100,13 +113,18 @@ class AddInstanceViewModel @Inject constructor(
             if (accountManager.getAllLoggedAccount().isEmpty()) {
                 _openLoginFlow.emit(listOf(instanceAdapter.toPlatform(instance)))
             } else {
-                val config = ContentConfig.ActivityPubContent(
-                    id = 0,
-                    name = instance.title,
-                    baseUrl = instance.baseUrl,
-                )
-                _contentConfigFlow.emit(config)
+                emitCurrentContentConfigFlow()
             }
         }
+    }
+
+    private suspend fun emitCurrentContentConfigFlow() {
+        val instance = _uiState.value.instance ?: return
+        val config = ContentConfig.ActivityPubContent(
+            id = 0,
+            name = instance.title,
+            baseUrl = instance.baseUrl,
+        )
+        _contentConfigFlow.emit(config)
     }
 }

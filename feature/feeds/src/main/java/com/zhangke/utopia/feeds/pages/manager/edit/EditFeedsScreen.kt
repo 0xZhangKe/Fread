@@ -39,13 +39,13 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.successDataOrNull
-import com.zhangke.framework.ktx.CollectOnComposable
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
@@ -75,7 +75,7 @@ class EditFeedsScreen(private val feedsId: Long) : AndroidScreen() {
             },
             onDeleteClick = viewModel::onDeleteFeeds,
         )
-        viewModel.finishScreenFlow.CollectOnComposable {
+        ConsumeFlow(viewModel.finishScreenFlow) {
             navigator.pop()
         }
     }

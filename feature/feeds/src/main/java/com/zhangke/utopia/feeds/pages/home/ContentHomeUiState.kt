@@ -7,5 +7,5 @@ data class ContentHomeUiState(
     val contentConfigList: List<ContentConfig>,
 ) {
 
-    val currentConfig: ContentConfig get() = contentConfigList[currentPageIndex]
+    val currentConfig: ContentConfig? get() = contentConfigList.getOrNull(currentPageIndex)
 }

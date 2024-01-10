@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
+import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
@@ -38,6 +39,6 @@ class ActivityPubScreenProvider @Inject constructor(
 
     override fun getContentScreen(contentConfig: ContentConfig): Any? {
         if (contentConfig !is ContentConfig.ActivityPubContent) return null
-
+        return ActivityPubContentScreen(contentConfig.id)
     }
 }

@@ -20,109 +20,107 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.FeedsConfig
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.status.model.Status
 
-@Composable
-fun Screen.FeedsTab(
-    feedsConfig: FeedsConfig,
-    showSnakeMessage: (TextString) -> Unit,
-) {
-    val navigator = LocalNavigator.currentOrThrow
-    val viewModel =
-        getScreenModel<FeedsViewModel, FeedsViewModel.Factory>(
-            feedsConfig.hashCode().toString()
-        ) { factory ->
-            factory.create(feedsConfig)
-        }
-    val uiState by viewModel.state.collectAsState()
-    LaunchedEffect(viewModel.errorMessageFlow) {
-        viewModel.errorMessageFlow.collect(showSnakeMessage)
-    }
-    FeedsTabContent(
-        uiState = uiState,
-        onInteractive = viewModel::onInteractive,
-        onRefresh = viewModel::onRefresh,
-        onLoadMore = viewModel::onLoadMore,
-        onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
-    )
-    ConsumeFlow(viewModel.openScreenFlow) {
-        navigator.rootNavigator.tryPush(it)
-    }
-}
-
-@OptIn(ExperimentalMaterialApi::class)
-@Composable
-private fun FeedsTabContent(
-    uiState: FeedsScreenUiState,
-    onInteractive: (Status, StatusUiInteraction) -> Unit,
-    onRefresh: () -> Unit,
-    onLoadMore: () -> Unit,
-    onCatchMinFirstVisibleIndex: (Int) -> Unit,
-) {
-    val state = rememberLoadableInlineVideoLazyColumnState(
-        refreshing = uiState.refreshing,
-        onRefresh = onRefresh,
-        onLoadMore = onLoadMore,
-    )
-    val firstVisibleIndex by remember { derivedStateOf { state.lazyListState.firstVisibleItemIndex } }
-    var minFirstVisibleIndex = remember {
-        Int.MAX_VALUE
-    }
-    minFirstVisibleIndex = minOf(minFirstVisibleIndex, firstVisibleIndex)
-    DisposableEffect(Unit) {
-        onDispose {
-            onCatchMinFirstVisibleIndex(minFirstVisibleIndex)
-        }
-    }
-    LoadableInlineVideoLazyColumn(
-        modifier = Modifier
-            .fillMaxSize(),
-        state = state,
-        refreshing = uiState.refreshing,
-        loading = uiState.loading,
-        contentPadding = PaddingValues(
-            bottom = 20.dp,
-        )
-    ) {
-        if (uiState.feeds.isEmpty()) {
-            item {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        modifier = Modifier
-                            .padding(top = 48.dp)
-                            .fillMaxWidth(),
-                        text = "Empty Placeholder",
-                        textAlign = TextAlign.Center,
-                    )
-                }
-            }
-        } else {
-            itemsIndexed(
-                items = uiState.feeds,
-                key = { _, item ->
-                    item.status.id
-                },
-            ) { index, item ->
-                FeedsStatusNode(
-                    modifier = Modifier.fillMaxWidth(),
-                    status = item.status,
-                    bottomPanelInteractions = item.bottomInteractions,
-                    moreInteractions = item.moreInteractions,
-                    onInteractive = onInteractive,
-                    indexInList = index,
-                )
-            }
-        }
-    }
-}
+//@Composable
+//fun Screen.FeedsTab(
+//    feedsConfig: FeedsConfig,
+//    showSnakeMessage: (TextString) -> Unit,
+//) {
+//    val navigator = LocalGlobalNavigator.current
+//    val viewModel =
+//        getScreenModel<FeedsViewModel, FeedsViewModel.Factory>(
+//            feedsConfig.hashCode().toString()
+//        ) { factory ->
+//            factory.create(feedsConfig)
+//        }
+//    val uiState by viewModel.state.collectAsState()
+//    LaunchedEffect(viewModel.errorMessageFlow) {
+//        viewModel.errorMessageFlow.collect(showSnakeMessage)
+//    }
+//    FeedsTabContent(
+//        uiState = uiState,
+//        onInteractive = viewModel::onInteractive,
+//        onRefresh = viewModel::onRefresh,
+//        onLoadMore = viewModel::onLoadMore,
+//        onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
+//    )
+//    ConsumeFlow(viewModel.openScreenFlow) {
+//        navigator.tryPush(it)
+//    }
+//}
+//
+//@OptIn(ExperimentalMaterialApi::class)
+//@Composable
+//private fun FeedsTabContent(
+//    uiState: FeedsScreenUiState,
+//    onInteractive: (Status, StatusUiInteraction) -> Unit,
+//    onRefresh: () -> Unit,
+//    onLoadMore: () -> Unit,
+//    onCatchMinFirstVisibleIndex: (Int) -> Unit,
+//) {
+//    val state = rememberLoadableInlineVideoLazyColumnState(
+//        refreshing = uiState.refreshing,
+//        onRefresh = onRefresh,
+//        onLoadMore = onLoadMore,
+//    )
+//    val firstVisibleIndex by remember { derivedStateOf { state.lazyListState.firstVisibleItemIndex } }
+//    var minFirstVisibleIndex = remember {
+//        Int.MAX_VALUE
+//    }
+//    minFirstVisibleIndex = minOf(minFirstVisibleIndex, firstVisibleIndex)
+//    DisposableEffect(Unit) {
+//        onDispose {
+//            onCatchMinFirstVisibleIndex(minFirstVisibleIndex)
+//        }
+//    }
+//    LoadableInlineVideoLazyColumn(
+//        modifier = Modifier
+//            .fillMaxSize(),
+//        state = state,
+//        refreshing = uiState.refreshing,
+//        loading = uiState.loading,
+//        contentPadding = PaddingValues(
+//            bottom = 20.dp,
+//        )
+//    ) {
+//        if (uiState.feeds.isEmpty()) {
+//            item {
+//                Box(modifier = Modifier.fillMaxSize()) {
+//                    Text(
+//                        modifier = Modifier
+//                            .padding(top = 48.dp)
+//                            .fillMaxWidth(),
+//                        text = "Empty Placeholder",
+//                        textAlign = TextAlign.Center,
+//                    )
+//                }
+//            }
+//        } else {
+//            itemsIndexed(
+//                items = uiState.feeds,
+//                key = { _, item ->
+//                    item.status.id
+//                },
+//            ) { index, item ->
+//                FeedsStatusNode(
+//                    modifier = Modifier.fillMaxWidth(),
+//                    status = item.status,
+//                    bottomPanelInteractions = item.bottomInteractions,
+//                    moreInteractions = item.moreInteractions,
+//                    onInteractive = onInteractive,
+//                    indexInList = index,
+//                )
+//            }
+//        }
+//    }
+//}

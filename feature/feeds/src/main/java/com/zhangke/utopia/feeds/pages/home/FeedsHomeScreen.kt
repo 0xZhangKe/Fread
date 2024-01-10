@@ -24,15 +24,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.topout.TopOutTopBarLayout
+import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.framework.voyager.pushDestination
-import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.commonbiz.shared.screen.PostStatusIntermediaryScreen
 import com.zhangke.utopia.feeds.pages.home.feeds.FeedsTab
 import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
@@ -43,7 +41,7 @@ class FeedsHomeScreen : AndroidScreen() {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow.rootNavigator
+        val navigator = LocalGlobalNavigator.current
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel: FeedsHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()

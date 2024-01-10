@@ -6,6 +6,7 @@ import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class FeedsRepo @Inject internal constructor(
@@ -21,24 +22,24 @@ class FeedsRepo @Inject internal constructor(
     }
 
     suspend fun getPreviousStatus(
-        feedsConfig: FeedsConfig,
+        sourceUriList: List<FormalUri>,
         limit: Int = DEFAULT_PAGE_SIZE,
         maxId: String? = null,
     ): Result<List<Status>> {
         return getPreviousStatusUseCase(
-            sourceUriList = feedsConfig.sourceUriList,
+            sourceUriList = sourceUriList,
             limit = limit,
             maxId = maxId,
         )
     }
 
     suspend fun getNewerStatus(
-        feedsConfig: FeedsConfig,
+        sourceUriList: List<FormalUri>,
         minStatusId: String,
         limit: Int = DEFAULT_PAGE_SIZE,
     ): Result<List<Status>> {
         return getNewerStatusUseCase(
-            sourceUriList = feedsConfig.sourceUriList,
+            sourceUriList = sourceUriList,
             limit = limit,
             minStatusId = minStatusId,
         )

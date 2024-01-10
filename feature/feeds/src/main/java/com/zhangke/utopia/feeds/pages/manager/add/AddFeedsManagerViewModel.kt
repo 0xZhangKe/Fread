@@ -7,12 +7,11 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
-import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
@@ -30,7 +29,6 @@ import javax.inject.Inject
 internal class AddFeedsManagerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
-    private val feedsConfigRepo: FeedsConfigRepo,
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
@@ -41,11 +39,24 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: Flow<TextString> = _errorMessageFlow.asSharedFlow()
 
-    private val _finishPage = MutableSharedFlow<Boolean>()
-    val finishPage: SharedFlow<Boolean> get() = _finishPage.asSharedFlow()
+    private val _contentConfigFlow = MutableSharedFlow<ContentConfig>()
+    val contentConfigFlow: SharedFlow<ContentConfig> get() = _contentConfigFlow
 
     private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
     val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
+
+    init {
+        launchInViewModel {
+            val initAccountList = statusProvider.accountManager.getAllLoggedAccount()
+            statusProvider.accountManager
+                .getAllAccountFlow()
+                .collect { currentAccountList ->
+                    if (initAccountList.isNotEmpty()) return@collect
+                    if (currentAccountList.isEmpty()) return@collect
+                    onConfirmClick()
+                }
+        }
+    }
 
     fun onAddSources(uriList: List<FormalUri>) {
         launchInViewModel {
@@ -90,7 +101,8 @@ internal class AddFeedsManagerViewModel @Inject constructor(
                 _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
                 return@launchInViewModel
             }
-            statusProvider.accountManager.validateAuthOfSourceList(sourceList)
+            statusProvider.accountManager
+                .validateAuthOfSourceList(sourceList)
                 .onFailure {
                     _errorMessageFlow.emit(textOf(it.message.orEmpty()))
                 }.onSuccess {
@@ -113,30 +125,18 @@ internal class AddFeedsManagerViewModel @Inject constructor(
             }
     }
 
-    fun onAuthItemClick(platform: BlogPlatform) {
-        launchInViewModel {
-            statusProvider.accountManager
-                .launchAuthBySource(FormalBaseUrl.parse(platform.baseUrl)!!)
-                .onSuccess {
-                    _errorMessageFlow.emit(
-                        textOf(com.zhangke.utopia.commonbiz.R.string.auth_success)
-                    )
-                    onConfirmClick()
-                }.onFailure {
-                    _errorMessageFlow.emit(
-                        textOf(com.zhangke.utopia.commonbiz.R.string.auth_failed)
-                    )
-                }
-        }
-    }
-
     private fun onReadyToAdd() {
         val currentState = viewModelState.value
         val sourceUriList = currentState.sourceList.map { it.uri }
         val sourceName = currentState.sourceName
         launchInViewModel {
-            feedsConfigRepo.insert(sourceName, sourceUriList)
-            _finishPage.emit(true)
+            val contentConfig = ContentConfig.MixedContent(
+                id = 0,
+                name = sourceName,
+                sourceUriList = sourceUriList,
+                lastReadStatusId = null,
+            )
+            _contentConfigFlow.emit(contentConfig)
         }
     }
 

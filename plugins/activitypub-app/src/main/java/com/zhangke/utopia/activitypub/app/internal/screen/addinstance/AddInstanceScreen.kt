@@ -53,7 +53,7 @@ class AddInstanceScreen : AndroidScreen() {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val bottomSheetDialog = LocalBottomSheetNavigator.current
+        val bottomSheetDialogNavigator = LocalBottomSheetNavigator.current
         val navigationResult = navigator.navigationResult
         val viewModel: AddInstanceViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
@@ -75,7 +75,7 @@ class AddInstanceScreen : AndroidScreen() {
             navigationResult.popWithResult(it)
         }
         ConsumeFlow(viewModel.openLoginFlow) {
-            bottomSheetDialog.push(LoginBottomSheetScreen(it))
+            bottomSheetDialogNavigator.show(LoginBottomSheetScreen(it))
         }
     }
 

@@ -1,9 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
-import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
@@ -16,17 +16,17 @@ class GetTimelineStatusUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        timelineUriInsights: TimelineSourceUriInsights,
+        serverBaseUrl: FormalBaseUrl,
+        type: TimelineSourceType,
         limit: Int,
         sinceId: String?,
         maxId: String?,
     ): Result<List<Status>> {
-        val baseUrl = timelineUriInsights.serverBaseUrl
-        val timelineRepo = clientManager.getClient(baseUrl).timelinesRepo
-        val platformResult = platformRepo.getPlatform(baseUrl)
+        val timelineRepo = clientManager.getClient(serverBaseUrl).timelinesRepo
+        val platformResult = platformRepo.getPlatform(serverBaseUrl)
         if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
         val platform = platformResult.getOrThrow()
-        return when (timelineUriInsights.type) {
+        return when (type) {
             TimelineSourceType.HOME -> timelineRepo.homeTimeline(
                 limit = limit,
                 sinceId = sinceId,

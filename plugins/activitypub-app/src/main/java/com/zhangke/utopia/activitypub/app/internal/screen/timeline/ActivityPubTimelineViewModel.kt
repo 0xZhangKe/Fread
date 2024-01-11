@@ -1,15 +1,15 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.timeline
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import androidx.paging.Pager
+import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.ktx.launchInViewModel
+import androidx.paging.cachedIn
+import androidx.paging.map
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
-import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.screen.trending.ServerTrendingDataSource
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -18,35 +18,39 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 @HiltViewModel
 class ActivityPubTimelineViewModel @Inject constructor(
-    private val getStatusSupportAction: GetStatusInteractionUseCase,
-    private val statusAdapter: ActivityPubStatusAdapter,
+    private val getTimelineStatus: GetTimelineStatusUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val platformRepo: ActivityPubPlatformRepo,
 ) : ViewModel() {
 
     lateinit var baseUrl: FormalBaseUrl
     lateinit var timelineType: TimelineSourceType
 
-    private var dataSource: ServerTrendingDataSource? = null
+    private var dataSource: TimelineDataSource? = null
 
     private val _statusFlow =
-        MutableStateFlow<LoadableState<Flow<PagingData<StatusUiState>>>>(LoadableState.Idle())
+        MutableStateFlow<Flow<PagingData<StatusUiState>>>(MutableStateFlow(PagingData.empty()))
 
-    val statusFlow: StateFlow<LoadableState<Flow<PagingData<StatusUiState>>>> = _statusFlow
+    val statusFlow: StateFlow<Flow<PagingData<StatusUiState>>> = _statusFlow
 
     fun onPrepared() {
-        launchInViewModel {
-            platformRepo.getPlatform(baseUrl)
-                .onSuccess {
+        _statusFlow.value = createTimelineFlow()
+    }
 
-                }.onFailure {
-
-                }
-        }
+    private fun createTimelineFlow(): Flow<PagingData<StatusUiState>> {
+        return Pager(PagingConfig(pageSize = 40)) {
+            TimelineDataSource(
+                baseUrl = baseUrl,
+                timelineSourceType = timelineType,
+                getTimelineStatus = getTimelineStatus,
+            ).also {
+                dataSource = it
+            }
+        }.flow.cachedIn(viewModelScope).map { it.map(buildStatusUiState::invoke) }
     }
 
     fun onRefresh() {

@@ -38,4 +38,9 @@
     <string name="add_instance_screen_title">Add Instance</string>
     <string name="add_instance_input_service_hint">Please enter server address</string>
     <string name="add_instance_input_service_error">Please enter the correct server address</string>
+
+    <string name="activity_pub_content_tab_home">Home</string>
+    <string name="activity_pub_content_tab_local_timeline">Local</string>
+    <string name="activity_pub_content_tab_public_timeline">Public</string>
+    <string name="activity_pub_content_tab_trending">Trending</string>
 </resources>

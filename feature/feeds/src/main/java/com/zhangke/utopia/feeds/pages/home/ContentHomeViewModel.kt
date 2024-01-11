@@ -35,7 +35,7 @@ class ContentHomeViewModel @Inject constructor(
     }
 
     fun getContentScreen(contentConfig: ContentConfig): Screen? {
-        if (contentConfig is ContentConfig.MixedContent) return MixedContentScreen(contentConfig)
+        if (contentConfig is ContentConfig.MixedContent) return MixedContentScreen(contentConfig.id)
         return statusProvider.screenProvider.getContentScreen(contentConfig) as? Screen
     }
 

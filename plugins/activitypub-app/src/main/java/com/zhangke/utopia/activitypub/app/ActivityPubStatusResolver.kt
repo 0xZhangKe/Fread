@@ -44,7 +44,8 @@ class ActivityPubStatusResolver @Inject constructor(
         val timelineInsights = timelineUriTransformer.parse(uri)
         if (timelineInsights != null) {
             return getTimelineStatus(
-                timelineUriInsights = timelineInsights,
+                serverBaseUrl = timelineInsights.serverBaseUrl,
+                type = timelineInsights.type,
                 limit = limit,
                 sinceId = sinceId,
                 maxId = maxId,

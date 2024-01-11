@@ -10,15 +10,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.Button
+import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.voyager.LocalGlobalNavigator
-import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
 import com.zhangke.utopia.status.model.ContentConfig
 
 @Composable
@@ -40,29 +39,31 @@ private fun ContentHomeDrawerContent(
     onContentConfigClick: (ContentConfig) -> Unit,
     onAddContentClick: () -> Unit,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize()
-    ) {
-        LazyColumn(
-            modifier = Modifier
-                .fillMaxWidth()
-                .weight(1F)
+    Surface(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize()
         ) {
-            items(contentConfigList) { contentConfig ->
-                ContentConfigItem(
-                    modifier = Modifier.fillMaxWidth(),
-                    contentConfig = contentConfig,
-                    onClick = { onContentConfigClick(contentConfig) },
-                )
+            LazyColumn(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1F)
+            ) {
+                items(contentConfigList) { contentConfig ->
+                    ContentConfigItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        contentConfig = contentConfig,
+                        onClick = { onContentConfigClick(contentConfig) },
+                    )
+                }
             }
-        }
-        Button(
-            modifier = Modifier
-                .padding(vertical = 16.dp)
-                .align(Alignment.CenterHorizontally),
-            onClick = onAddContentClick
-        ) {
-            Text(text = "Add")
+            Button(
+                modifier = Modifier
+                    .padding(vertical = 16.dp)
+                    .align(Alignment.CenterHorizontally),
+                onClick = onAddContentClick
+            ) {
+                Text(text = "Add")
+            }
         }
     }
 }
@@ -81,9 +82,10 @@ private fun ContentConfigItem(
     ) {
         Text(
             modifier = Modifier.align(Alignment.CenterStart),
-            text = contentConfig.configName + contentConfig.configName + contentConfig.configName + contentConfig.configName,
+            text = contentConfig.configName,
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

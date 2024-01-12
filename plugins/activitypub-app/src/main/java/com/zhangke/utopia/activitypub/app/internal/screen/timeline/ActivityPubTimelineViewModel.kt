@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.timeline
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -37,7 +38,12 @@ class ActivityPubTimelineViewModel @Inject constructor(
 
     val statusFlow: StateFlow<Flow<PagingData<StatusUiState>>> = _statusFlow
 
+    init {
+        Log.d("U_TEST", "ActivityPubTimelineViewModel@${hashCode()} init")
+    }
+
     fun onPrepared() {
+        Log.d("U_TEST", "ActivityPubTimelineViewModel@${hashCode()} onPrepared")
         _statusFlow.value = createTimelineFlow()
     }
 

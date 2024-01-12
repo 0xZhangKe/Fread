@@ -25,6 +25,7 @@ import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.NavigatorDisposeBehavior
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
@@ -92,7 +93,10 @@ class ActivityPubContentScreen(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,
             ) { pageIndex ->
-                Navigator(tabList[pageIndex].screen)
+                Navigator(
+                    tabList[pageIndex].screen,
+                    disposeBehavior = NavigatorDisposeBehavior(disposeNestedNavigators = false),
+                )
             }
         }
     }

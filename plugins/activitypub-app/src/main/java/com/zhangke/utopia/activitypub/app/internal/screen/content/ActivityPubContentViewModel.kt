@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.updateToFailed
@@ -24,7 +25,12 @@ class ActivityPubContentViewModel @Inject constructor(
         MutableStateFlow<LoadableState<ActivityPubContentUiState>>(LoadableState.idle())
     val uiState = _uiState.asStateFlow()
 
+    init {
+        Log.d("U_TEST", "ActivityPubContentViewModel@${hashCode()} init")
+    }
+
     fun onPrepared() {
+        Log.d("U_TEST", "ActivityPubContentViewModel@${hashCode()} onPrepared")
         if (_uiState.value.isLoading) return
         launchInViewModel {
             _uiState.updateToLoading()

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.trending
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.Pager
@@ -47,7 +48,12 @@ class TrendingStatusViewModel @Inject constructor(
 
     val statusFlow: StateFlow<LoadableState<Flow<PagingData<StatusUiState>>>> = _statusFlow
 
+    init {
+        Log.d("U_TEST", "TrendingStatusViewModel@${hashCode()} init")
+    }
+
     fun onPrepared() {
+        Log.d("U_TEST", "TrendingStatusViewModel@${hashCode()} onPrepared")
         launchInViewModel {
             _statusFlow.updateToLoading()
             platformRepo.getPlatform(baseUrl)

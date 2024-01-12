@@ -1,116 +1,174 @@
 package com.zhangke.utopia.pages
 
 import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.voyager.LocalGlobalNavigator
-import com.zhangke.utopia.pages.main.MainPage
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asStateFlow
+import cafe.adriel.voyager.navigator.tab.CurrentTab
+import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
+import cafe.adriel.voyager.navigator.tab.Tab
+import cafe.adriel.voyager.navigator.tab.TabNavigator
+import cafe.adriel.voyager.navigator.tab.TabOptions
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 class UtopiaScreen : AndroidScreen() {
 
-    @OptIn(ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        CompositionLocalProvider(
-            LocalGlobalNavigator provides LocalNavigator.currentOrThrow
-        ) {
-            MainPage()
-        }
-
-//        val navigator = LocalNavigator.currentOrThrow
-//        LaunchedEffect(Unit) {
-//            navigator.push(TabTestScreen())
+//        CompositionLocalProvider(
+//            LocalGlobalNavigator provides LocalNavigator.currentOrThrow
+//        ) {
+//            MainPage()
 //        }
 
-//        val viewModel = getViewModel<TestViewModel>()
-//        val list by viewModel.list.collectAsState()
-//        val state = rememberLazyListState()
-//        val layoutInfo by remember { derivedStateOf { state.layoutInfo } }
-//        LazyColumn(
-//            modifier = Modifier.fillMaxSize(),
-//            state = state,
-//        ) {
-//            items(
-//                items = list,
-//                key = {
-//                    it
-//                }
-//            ) { item ->
-//                Box(
-//                    modifier = Modifier
-//                        .padding(16.dp)
-//                        .fillMaxWidth()
-//                        .height(40.dp)
-//                ) {
-//                    Card(
-//                        modifier = Modifier
-//                            .fillMaxSize()
-//                    ) {
-//                        Box(modifier = Modifier.fillMaxSize()) {
-//                            Text(
-//                                modifier = Modifier.align(Alignment.Center),
-//                                text = item
-//                            )
-//                        }
+        val tabs = remember {
+            listOf(
+                FirstTab(),
+                SecondTab(),
+                ThirdTab(),
+            )
+        }
+        TabNavigator(tabs.first()) {
+            val pagerState = rememberPagerState {
+                tabs.size
+            }
+            val tabNavigator = LocalTabNavigator.current
+            LaunchedEffect(pagerState.currentPage) {
+                Log.d("U_TEST", "currentPage has changed to ${pagerState.currentPage}")
+                tabNavigator.current = tabs[pagerState.currentPage]
+            }
+//            Column(modifier = Modifier.fillMaxSize()) {
+//                Row(modifier = Modifier.fillMaxWidth()) {
+//                    Button(onClick = {
+//                        tabNavigator.current = tabs.first()
+//                    }) {
+//                        Text(text = "First")
+//                    }
+//                    Button(onClick = {
+//                        tabNavigator.current = tabs[1]
+//                    }) {
+//                        Text(text = "Second")
+//                    }
+//                    Button(onClick = {
+//                        tabNavigator.current = tabs[2]
+//                    }) {
+//                        Text(text = "Third")
 //                    }
 //                }
+//                Box(modifier = Modifier.fillMaxSize()) {
+//                    CurrentTab()
+//                }
 //            }
-//        }
+            HorizontalPager(
+                modifier = Modifier.fillMaxSize(),
+                state = pagerState,
+            ) {
+                Log.d("U_TEST", "current page index is $it")
+                CurrentTab()
+            }
+        }
     }
 }
 
-//class TestViewModel : ViewModel() {
-//
-//    private val _list = MutableStateFlow<List<String>>(emptyList())
-//    val list: StateFlow<List<String>> = _list.asStateFlow()
-//
-//    init {
-//        launchInViewModel {
-//            var header = 1000
-//            var tail = 1010
-//            while (true) {
-//                val currentList = _list.value.toMutableList()
-//                Log.d("U_TEST", currentList.joinToString(","))
-//                repeat(10) {
-//                    currentList.add(0, "${header--}")
-//                }
-//                repeat(10) {
-//                    currentList += "${tail++}"
-//                }
-//                _list.value = currentList
-//                delay(1000)
-//            }
-//        }
-//    }
-//}
+class FirstTab : Tab {
+
+    override val options: TabOptions
+        @Composable get() = TabOptions(
+            index = 0.toUShort(),
+            title = "First",
+            icon = null,
+        )
+
+    @Composable
+    override fun Content() {
+        val viewModel: FirstViewModel = getViewModel()
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "First",
+            )
+        }
+    }
+}
+
+@HiltViewModel
+class FirstViewModel @Inject constructor() : ViewModel() {
+
+    init {
+        Log.d("U_TEST", "FirstViewModel@${hashCode()} init")
+    }
+}
 
 
+class SecondTab : Tab {
+
+    override val options: TabOptions
+        @Composable get() = TabOptions(
+            index = 1.toUShort(),
+            title = "Second",
+            icon = null,
+        )
+
+    @Composable
+    override fun Content() {
+        val viewModel: SecondViewModel = getViewModel()
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "Second",
+            )
+        }
+    }
+}
+
+@HiltViewModel
+class SecondViewModel @Inject constructor() : ViewModel() {
+
+    init {
+        Log.d("U_TEST", "SecondViewModel@${hashCode()} init")
+    }
+}
+
+
+class ThirdTab : Tab {
+
+    override val options: TabOptions
+        @Composable get() = TabOptions(
+            index = 2.toUShort(),
+            title = "Third",
+            icon = null,
+        )
+
+    @Composable
+    override fun Content() {
+        val viewModel: ThirdViewModel = getViewModel()
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = "Third",
+            )
+        }
+    }
+}
+
+@HiltViewModel
+class ThirdViewModel @Inject constructor() : ViewModel() {
+
+    init {
+        Log.d("U_TEST", "ThirdViewModel@${hashCode()} init")
+    }
+}

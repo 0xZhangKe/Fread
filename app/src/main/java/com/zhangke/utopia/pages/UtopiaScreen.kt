@@ -9,48 +9,48 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabNavigator
-import cafe.adriel.voyager.navigator.tab.TabOptions
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.voyager.LocalGlobalNavigator
+import com.zhangke.utopia.pages.main.MainPage
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 
-class UtopiaScreen : AndroidScreen() {
+class UtopiaScreen : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-//        CompositionLocalProvider(
-//            LocalGlobalNavigator provides LocalNavigator.currentOrThrow
-//        ) {
+        CompositionLocalProvider(
+            LocalGlobalNavigator provides LocalNavigator.currentOrThrow
+        ) {
 //            MainPage()
-//        }
-
-        val tabs = remember {
-            listOf(
-                FirstTab(),
-                SecondTab(),
-                ThirdTab(),
-            )
+            Navigator(TabTestScreen())
         }
-        TabNavigator(tabs.first()) {
-            val pagerState = rememberPagerState {
-                tabs.size
-            }
-            val tabNavigator = LocalTabNavigator.current
-            LaunchedEffect(pagerState.currentPage) {
-                Log.d("U_TEST", "currentPage has changed to ${pagerState.currentPage}")
-                tabNavigator.current = tabs[pagerState.currentPage]
-            }
+
+//        val tabs: List<PagerTab> = remember {
+//            listOf(
+//                FirstTab(0),
+//                FirstTab(1),
+//                SecondTab(2),
+//                ThirdTab(3),
+//            )
+//        }
+//        val pagerState = rememberPagerState {
+//            tabs.size
+//        }
 //            Column(modifier = Modifier.fillMaxSize()) {
 //                Row(modifier = Modifier.fillMaxWidth()) {
 //                    Button(onClick = {
@@ -73,59 +73,74 @@ class UtopiaScreen : AndroidScreen() {
 //                    CurrentTab()
 //                }
 //            }
-            HorizontalPager(
-                modifier = Modifier.fillMaxSize(),
-                state = pagerState,
-            ) {
-                Log.d("U_TEST", "current page index is $it")
-                CurrentTab()
-            }
-        }
+//        HorizontalPager(
+//            modifier = Modifier.fillMaxSize(),
+//            state = pagerState,
+//        ) {
+//            Log.d("U_TEST", "current page index is $it")
+//            with(tabs[it]) {
+//                TabContent()
+//            }
+//        }
     }
 }
 
-class FirstTab : Tab {
+interface PagerTab {
 
-    override val options: TabOptions
-        @Composable get() = TabOptions(
-            index = 0.toUShort(),
-            title = "First",
-            icon = null,
-        )
+    val title: String
+        @Composable get
 
     @Composable
-    override fun Content() {
-        val viewModel: FirstViewModel = getViewModel()
+    fun Screen.TabContent()
+}
+
+class FirstTab(private val pageIndex: Int) : PagerTab {
+
+    override val title: String
+        @Composable get() = "$pageIndex"
+
+    @OptIn(ExperimentalVoyagerApi::class)
+    @Composable
+    override fun Screen.TabContent() {
+        val viewModel = getViewModel<FirstViewModel, FirstViewModel.Factory> {
+            it.create(pageIndex)
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = "First",
+                text = title,
             )
         }
     }
 }
 
-@HiltViewModel
-class FirstViewModel @Inject constructor() : ViewModel() {
+@HiltViewModel(assistedFactory = FirstViewModel.Factory::class)
+class FirstViewModel @AssistedInject constructor(
+    @Assisted val pageIndex: Int,
+) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(pageIndex: Int): FirstViewModel
+    }
 
     init {
-        Log.d("U_TEST", "FirstViewModel@${hashCode()} init")
+        Log.d("U_TEST", "FirstViewModel@${hashCode()} init, index is $pageIndex")
     }
 }
 
 
-class SecondTab : Tab {
+class SecondTab(private val pageIndex: Int) : PagerTab {
 
-    override val options: TabOptions
-        @Composable get() = TabOptions(
-            index = 1.toUShort(),
-            title = "Second",
-            icon = null,
-        )
+    override val title: String
+        @Composable get() = "$pageIndex"
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun Content() {
-        val viewModel: SecondViewModel = getViewModel()
+    override fun Screen.TabContent() {
+        val viewModel: SecondViewModel = getViewModel<SecondViewModel, SecondViewModel.Factory> {
+            it.create(pageIndex)
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
@@ -135,27 +150,33 @@ class SecondTab : Tab {
     }
 }
 
-@HiltViewModel
-class SecondViewModel @Inject constructor() : ViewModel() {
+@HiltViewModel(assistedFactory = SecondViewModel.Factory::class)
+class SecondViewModel @AssistedInject constructor(
+    @Assisted val pageIndex: Int,
+) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(pageIndex: Int): SecondViewModel
+    }
 
     init {
-        Log.d("U_TEST", "SecondViewModel@${hashCode()} init")
+        Log.d("U_TEST", "SecondViewModel@${hashCode()} init, index is $pageIndex")
     }
 }
 
 
-class ThirdTab : Tab {
+class ThirdTab(private val pageIndex: Int) : PagerTab {
 
-    override val options: TabOptions
-        @Composable get() = TabOptions(
-            index = 2.toUShort(),
-            title = "Third",
-            icon = null,
-        )
+    override val title: String
+        @Composable get() = "$pageIndex"
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun Content() {
-        val viewModel: ThirdViewModel = getViewModel()
+    override fun Screen.TabContent() {
+        val viewModel: ThirdViewModel = getViewModel<ThirdViewModel, ThirdViewModel.Factory> {
+            it.create(pageIndex)
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
@@ -164,11 +185,58 @@ class ThirdTab : Tab {
         }
     }
 }
+@HiltViewModel(assistedFactory = ThirdViewModel.Factory::class)
+class ThirdViewModel @AssistedInject constructor(
+    @Assisted val pageIndex: Int,
+) : ViewModel() {
 
-@HiltViewModel
-class ThirdViewModel @Inject constructor() : ViewModel() {
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(pageIndex: Int): ThirdViewModel
+    }
 
     init {
-        Log.d("U_TEST", "ThirdViewModel@${hashCode()} init")
+        Log.d("U_TEST", "ThirdViewModel@${hashCode()} init, index is $pageIndex")
     }
 }
+
+//@Module
+//@InstallIn(ActivityComponent::class)
+//abstract class HiltModule {
+//
+//    @Binds
+//    @IntoMap
+//    @ScreenModelFactoryKey(FirstViewModel.Factory::class)
+//    abstract fun bindFirstScreenModelFactory(
+//        hiltDetailsScreenModelFactory: FirstViewModel.Factory
+//    ): ScreenModelFactory
+//
+//    @Binds
+//    @IntoMap
+//    @ScreenModelKey(FirstViewModel::class)
+//    abstract fun bindFirstScreenModel(testScreenModel: FirstViewModel): ScreenModel
+//
+//    @Binds
+//    @IntoMap
+//    @ScreenModelFactoryKey(SecondViewModel.Factory::class)
+//    abstract fun bindSecondScreenModelFactory(
+//        hiltDetailsScreenModelFactory: SecondViewModel.Factory
+//    ): ScreenModelFactory
+//
+//    @Binds
+//    @IntoMap
+//    @ScreenModelKey(SecondViewModel::class)
+//    abstract fun bindSecondScreenModel(testScreenModel: SecondViewModel): ScreenModel
+//
+//    @Binds
+//    @IntoMap
+//    @ScreenModelFactoryKey(ThirdViewModel.Factory::class)
+//    abstract fun bindThirdScreenModelFactory(
+//        hiltDetailsScreenModelFactory: ThirdViewModel.Factory
+//    ): ScreenModelFactory
+//
+//    @Binds
+//    @IntoMap
+//    @ScreenModelKey(ThirdViewModel::class)
+//    abstract fun bindThirdScreenModel(testScreenModel: ThirdViewModel): ScreenModel
+//}

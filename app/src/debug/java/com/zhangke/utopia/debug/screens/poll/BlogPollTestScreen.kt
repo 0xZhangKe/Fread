@@ -17,13 +17,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.poll.BlogPoll
 
-class BlogPollTestScreen : AndroidScreen() {
+class BlogPollTestScreen : Screen {
 
     @Composable
     override fun Content() {

@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
@@ -36,7 +36,7 @@ import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 import kotlinx.coroutines.flow.Flow
 
 @Destination(SharedRouter.Feeds.add)
-internal class AddFeedsManagerScreen : AndroidScreen() {
+internal class AddFeedsManagerScreen : Screen {
 
     @Composable
     override fun Content() {

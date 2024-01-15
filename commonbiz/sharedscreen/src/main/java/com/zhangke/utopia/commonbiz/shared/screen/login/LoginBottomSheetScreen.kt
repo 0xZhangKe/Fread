@@ -24,7 +24,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.CardInfoSection
@@ -35,7 +35,7 @@ import com.zhangke.utopia.status.platform.BlogPlatform
 
 class LoginBottomSheetScreen(
     private val defaultBlogPlatform: List<BlogPlatform> = emptyList(),
-) : AndroidScreen() {
+) : Screen {
 
     @Composable
     override fun Content() {

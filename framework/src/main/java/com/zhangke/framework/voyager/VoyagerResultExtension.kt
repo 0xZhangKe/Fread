@@ -14,12 +14,11 @@ import cafe.adriel.voyager.navigator.lifecycle.NavigatorLifecycleStore
 @OptIn(ExperimentalVoyagerApi::class)
 val Navigator.navigationResult: VoyagerResultExtension
     @Composable get() = remember {
-        NavigatorLifecycleStore.register(this) {
+        NavigatorLifecycleStore.get(this) {
             VoyagerResultExtension(this)
         }
     }
 
-@OptIn(ExperimentalVoyagerApi::class)
 class VoyagerResultExtension(
     private val navigator: Navigator
 ) : NavigatorDisposable {

@@ -31,7 +31,7 @@ androidx-media3 = "1.0.0-rc01"
 
 accompanist-placeholder-material = "0.31.5-beta"
 
-hilt = "2.47"
+hilt = "2.49"
 
 okhttp3 = "4.11.0"
 
@@ -49,7 +49,7 @@ ksp = "1.9.10-1.0.13"
 
 filt = "1.0.4"
 
-voyager = "1.0.0-rc10"
+voyager = "1.1.0-alpha02"
 
 krouter = "0.1.6"
 
@@ -80,7 +80,7 @@ kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
 coil = ["coil", "coil.compose", "coil.compose.base", "coil.gif"]
 
-voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.android", "voyager.hilt"]
+voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.screenModel", "voyager.hilt"]
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
@@ -178,12 +178,12 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
 
-voyager-navigator = { group = "cafe.adriel.voyager", name = "voyager-navigator", version.ref = "voyager" }
-voyager-bottom-sheet-navigator = { group = "cafe.adriel.voyager", name = "voyager-bottom-sheet-navigator", version.ref = "voyager" }
-voyager-tab-navigator = { group = "cafe.adriel.voyager", name = "voyager-tab-navigator", version.ref = "voyager" }
-voyager-transitions = { group = "cafe.adriel.voyager", name = "voyager-transitions", version.ref = "voyager" }
-voyager-android = { group = "cafe.adriel.voyager", name = "voyager-androidx", version.ref = "voyager" }
-voyager-hilt = { group = "cafe.adriel.voyager", name = "voyager-hilt", version.ref = "voyager" }
+voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
+voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
+voyager-bottom-sheet-navigator = {  module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
+voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
+voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
+voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
 
 krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", version.ref = "krouter"}
 krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.ref = "krouter"}

@@ -24,7 +24,7 @@ import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.toSize
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
@@ -43,7 +43,7 @@ class ImageViewerScreen(
     private val mediaList: List<BlogMedia>,
     private val coordinatesList: List<LayoutCoordinates?>,
     private val onDismiss: () -> Unit,
-) : AndroidScreen() {
+) : Screen {
 
     private val backgroundCommonAlpha = 0.95F
 

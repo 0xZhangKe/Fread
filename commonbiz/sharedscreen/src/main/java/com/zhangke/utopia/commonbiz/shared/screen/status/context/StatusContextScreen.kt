@@ -15,7 +15,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.core.net.toUri
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -29,7 +29,6 @@ import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.pushDestination
-import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
@@ -39,7 +38,7 @@ import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import kotlinx.coroutines.flow.SharedFlow
 
-class StatusContextScreen(private val status: Status) : AndroidScreen() {
+class StatusContextScreen(private val status: Status) : Screen {
 
     @Composable
     override fun Content() {

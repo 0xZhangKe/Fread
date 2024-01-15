@@ -11,14 +11,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.second
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.ui.media.BlogMedias
 
-class DoubleImageTestScreen : AndroidScreen() {
+class DoubleImageTestScreen : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

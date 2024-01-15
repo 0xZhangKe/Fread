@@ -21,7 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.utopia.status.blog.BlogMedia
@@ -29,7 +29,7 @@ import com.zhangke.utopia.status.blog.BlogMediaMeta
 import com.zhangke.utopia.status.blog.BlogMediaType
 import com.zhangke.utopia.status.blog.asImageMeta
 
-class ImageMediaTestScreen : AndroidScreen() {
+class ImageMediaTestScreen : Screen {
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable

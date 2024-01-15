@@ -19,14 +19,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
-import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.utopia.status.ui.video.inline.InlineVideo
 
-class InlineVideoPlayerScreen : AndroidScreen() {
+class InlineVideoPlayerScreen : Screen {
 
     @Composable
     override fun Content() {

@@ -17,7 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -29,7 +29,7 @@ import kotlinx.coroutines.launch
 @Destination(PlatformDetailRoute.ROUTE)
 class PlatformDetailScreen(
     @Router private val route: String = "",
-) : AndroidScreen() {
+) : Screen {
 
     @Composable
     override fun Content() {

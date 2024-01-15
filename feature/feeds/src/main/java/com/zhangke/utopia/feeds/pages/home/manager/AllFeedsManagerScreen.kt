@@ -43,7 +43,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.AvatarHorizontalStack
 import com.zhangke.framework.composable.theme.TopAppBarDefault
@@ -56,7 +56,7 @@ import com.zhangke.utopia.feeds.pages.manager.edit.EditFeedsScreen
 internal class AllFeedsManagerScreen(
     private val feedsConfigWithPlatformList: List<FeedsConfigWithPlatforms>,
     private val onItemClick: (index: Int) -> Unit,
-) : AndroidScreen() {
+) : Screen {
 
     @Composable
     override fun Content() {

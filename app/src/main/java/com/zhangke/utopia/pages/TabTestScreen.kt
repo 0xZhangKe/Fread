@@ -1,170 +1,264 @@
 package com.zhangke.utopia.pages
 
+import android.content.Context
+import android.content.ContextWrapper
 import android.util.Log
+import androidx.activity.ComponentActivity
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Home
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Card
+import androidx.compose.material3.Tab
+import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.HasDefaultViewModelProviderFactory
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.androidx.AndroidScreen
-import cafe.adriel.voyager.core.model.ScreenModel
-import cafe.adriel.voyager.core.model.screenModelScope
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
-import cafe.adriel.voyager.hilt.ScreenModelFactoryKey
-import cafe.adriel.voyager.hilt.ScreenModelKey
-import cafe.adriel.voyager.hilt.getScreenModel
-import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.hilt.VoyagerHiltViewModelFactories
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.zhangke.framework.composable.UtopiaTabRow
-import dagger.Binds
-import dagger.Module
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.InstallIn
-import dagger.hilt.android.components.ActivityComponent
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.multibindings.IntoMap
+import dagger.hilt.android.lifecycle.withCreationCallback
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-//class TabTestScreen : AndroidScreen() {
-//
-//    @Composable
-//    override fun Content() {
-//        val tabList = remember {
-//            mutableListOf<Tab>().also { list ->
-//                repeat(10) {
-//                    list += TestTab(it)
-//                }
-//            }
-//        }
-//        var currentIndex by remember {
-//            mutableIntStateOf(0)
-//        }
-//        val tabCount = 10
+class TabTestScreen : Screen {
+
+    @OptIn(ExperimentalFoundationApi::class)
+    @Composable
+    override fun Content() {
+        val tabs: List<Tab> = remember {
+            listOf(
+                FooScreen(0),
+                FooScreen(1),
+                BarScreen(2),
+            )
+        }
+        val coroutineScope = rememberCoroutineScope()
 //        TabNavigator(
-//            tab = tabList.first()
-//        ) {
-//            val tabNavigator = LocalTabNavigator.current
-//            LaunchedEffect(currentIndex) {
-//                tabNavigator.current = tabList[currentIndex]
-//            }
-//            Column(modifier = Modifier.fillMaxSize()) {
-//                UtopiaTabRow(
-//                    modifier = Modifier.fillMaxWidth(),
-//                    selectedTabIndex = currentIndex,
-//                    selectedIndex = currentIndex,
-//                    tabCount = tabCount,
-//                    tabContent = { index ->
-//                        Box(
-//                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-//                        ) {
-//                            Text(
-//                                text = "$index tab",
-//                            )
-//                        }
-//                    },
-//                    onTabClick = { index ->
-//                        currentIndex = index
-//                    }
-//                )
-//                Box(
-//                    modifier = Modifier
-//                        .fillMaxWidth()
-//                        .weight(1F)
-//                ) {
-//                    CurrentTab()
+//            tab = tabs.first(),
+//            disposeNestedNavigators = true,
+//        ) { tabNavigator ->
+            Column(modifier = Modifier.fillMaxSize()) {
+                val pagerState = rememberPagerState {
+                    tabs.size
+                }
+//                LaunchedEffect(pagerState.currentPage) {
+//                    tabNavigator.current = tabs[pagerState.currentPage]
 //                }
+                TabRow(
+                    modifier = Modifier
+                        .fillMaxWidth(),
+                    selectedTabIndex = pagerState.currentPage,
+                ) {
+                    tabs.forEachIndexed { index, item ->
+                        Tab(
+                            selected = pagerState.currentPage == index,
+                            onClick = {
+                                coroutineScope.launch {
+                                    pagerState.scrollToPage(index)
+                                }
+                            },
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                            ) {
+                                Text(text = item.options.title)
+                            }
+                        }
+                    }
+                }
+                HorizontalPager(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1F),
+                    state = pagerState,
+                ) { pageIndex ->
+                    Navigator(tabs[pageIndex])
+//                    Box(modifier = Modifier.fillMaxSize()) {
+//                        tabs[pageIndex].Content()
+//                    }
+                }
 //            }
-//        }
-//    }
-//}
+        }
+    }
+}
 
-//class TestTab(private val tabIndex: Int) : Tab {
-//
-//    override val options: TabOptions
-//        @Composable get() {
-//            val icon = rememberVectorPainter(Icons.Default.Home)
-//            return remember {
-//                TabOptions(
-//                    index = 0u, title = "Home", icon = icon
-//                )
-//            }
-//        }
+class FooScreen(private val pageIndex: Int) : Tab {
 
-//    @Composable
-//    override fun Content() {
-//        val viewModel = getScreenModel<TestViewModel, TestViewModel.Factory> { factory ->
-//            factory.create(tabIndex)
-//        }
-//        viewModel.tabIndex = tabIndex
-//        LaunchedEffect(viewModel, tabIndex) {
-//            Log.d("U_TEST", "Tab is $tabIndex")
-//            viewModel.onPrepared()
-//        }
-//        Box(modifier = Modifier.fillMaxSize()) {
-//            Text(
-//                modifier = Modifier.align(Alignment.Center),
-//                text = "$tabIndex",
-//            )
-//        }
-//    }
-//}
+    override val options: TabOptions
+        @Composable get() = TabOptions(
+            title = "Foo$pageIndex",
+            index = pageIndex.toUShort(),
+            icon = null,
+        )
 
-//class TestViewModel @AssistedInject constructor(
-//    @Assisted val index: Int
-//) : ScreenModel {
-//
-//    @AssistedFactory
-//    interface Factory : ScreenModelFactory {
-//        fun create(index: Int): TestViewModel
-//    }
-//
-//    var tabIndex: Int = -1
-//
-//    fun onPrepared() {
-//        Log.d("U_TEST", "TestViewModel@${hashCode()} init index:$tabIndex")
-//    }
-//
-//    override fun onDispose() {
-//        super.onDispose()
-//        Log.d("U_TEST", "TestViewModel@${hashCode()} onCleared index:$tabIndex")
-//    }
-//}
+    @OptIn(ExperimentalVoyagerApi::class)
+    @Composable
+    override fun Content() {
+        val viewModel: FooViewModel =
+            getViewModelTest<FooViewModel, FooViewModel.Factory>(additionKey = pageIndex) {
+                it.create(pageIndex)
+            }
+        Box(modifier = Modifier.fillMaxSize()) {
+            Card(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
+                Text(text = "$pageIndex$pageIndex")
+            }
+        }
+    }
+}
 
-//@Module
-//@InstallIn(ActivityComponent::class)
-//abstract class HiltModule {
-//
-//    @Binds
-//    @IntoMap
-//    @ScreenModelFactoryKey(TestViewModel.Factory::class)
-//    abstract fun bindHiltDetailsScreenModelFactory(
-//        hiltDetailsScreenModelFactory: TestViewModel.Factory
-//    ): ScreenModelFactory
+@HiltViewModel(assistedFactory = FooViewModel.Factory::class)
+class FooViewModel @AssistedInject constructor(
+    @Assisted val pageIndex: Int,
+) : ViewModel() {
 
-//    @Binds
-//    @IntoMap
-//    @ScreenModelKey(TestViewModel::class)
-//    abstract fun bindHiltScreenModel(testScreenModel: TestViewModel): ScreenModel
-//}
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(pageIndex: Int): FooViewModel
+    }
+
+    init {
+        Log.d("U_TEST", "FooViewModel@${hashCode()} init, page index is $pageIndex")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("U_TEST", "FooViewModel@${hashCode()} onCleared")
+    }
+}
+
+class BarScreen(private val pageIndex: Int) : Tab {
+
+    override val options: TabOptions
+        @Composable get() = TabOptions(
+            title = "Bar$pageIndex",
+            index = pageIndex.toUShort(),
+            icon = null,
+        )
+
+    @OptIn(ExperimentalVoyagerApi::class)
+    @Composable
+    override fun Content() {
+        val viewModel: BarViewModel =
+            getViewModelTest<BarViewModel, BarViewModel.Factory>(additionKey = pageIndex) {
+                it.create(pageIndex)
+            }
+        Box(modifier = Modifier.fillMaxSize()) {
+            Card(
+                modifier = Modifier
+                    .align(Alignment.Center)
+                    .padding(horizontal = 16.dp)
+                    .fillMaxWidth()
+                    .height(60.dp)
+            ) {
+                Text(text = "$pageIndex$pageIndex")
+            }
+        }
+    }
+}
+
+@HiltViewModel(assistedFactory = BarViewModel.Factory::class)
+class BarViewModel @AssistedInject constructor(
+    @Assisted val pageIndex: Int,
+) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(pageIndex: Int): BarViewModel
+    }
+
+    init {
+        Log.d("U_TEST", "BarViewModel@${hashCode()} init, page index is $pageIndex")
+    }
+
+    override fun onCleared() {
+        super.onCleared()
+        Log.d("U_TEST", "BarViewModel@${hashCode()} onCleared")
+    }
+}
+
+@Composable
+@ExperimentalVoyagerApi
+public inline fun <reified VM : ViewModel, F> Screen.getViewModelTest(
+    viewModelProviderFactory: ViewModelProvider.Factory? = null,
+    additionKey: Any? = null,
+    noinline viewModelFactory: (F) -> VM,
+): VM {
+    val context = LocalContext.current
+    val lifecycleOwner = LocalLifecycleOwner.current
+    val viewModelStoreOwner = checkNotNull(LocalViewModelStoreOwner.current) {
+        "No ViewModelStoreOwner was provided via LocalViewModelStoreOwner"
+    }
+    return remember(key1 = VM::class) {
+        val hasDefaultViewModelProviderFactory =
+            requireNotNull(lifecycleOwner as? HasDefaultViewModelProviderFactory) {
+                "$lifecycleOwner is not a androidx.lifecycle.HasDefaultViewModelProviderFactory"
+            }
+        val viewModelStore = requireNotNull(viewModelStoreOwner?.viewModelStore) {
+            "$viewModelStoreOwner is null or have a null viewModelStore"
+        }
+
+        val creationExtras = hasDefaultViewModelProviderFactory.defaultViewModelCreationExtras
+            .withCreationCallback(viewModelFactory)
+
+        val factory = VoyagerHiltViewModelFactories.getVoyagerFactory(
+            activity = context.componentActivity,
+            delegateFactory = viewModelProviderFactory
+                ?: hasDefaultViewModelProviderFactory.defaultViewModelProviderFactory
+        )
+
+        val provider = ViewModelProvider(
+            store = viewModelStore,
+            factory = factory,
+            defaultCreationExtras = creationExtras
+        )
+
+        provider[VM::class.java]
+    }
+}
+
+private inline fun <reified T> findOwner(context: Context): T? {
+    var innerContext = context
+    while (innerContext is ContextWrapper) {
+        if (innerContext is T) {
+            return innerContext
+        }
+        innerContext = innerContext.baseContext
+    }
+    return null
+}
+
+val Context.componentActivity: ComponentActivity
+    get() = findOwner<ComponentActivity>(this)
+        ?: error("Context must be a androidx.activity.ComponentActivity. Current is $this")

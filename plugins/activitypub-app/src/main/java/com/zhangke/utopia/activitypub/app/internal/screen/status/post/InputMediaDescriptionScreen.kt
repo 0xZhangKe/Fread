@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
@@ -34,7 +34,7 @@ import com.zhangke.utopia.activitypub.app.R
 class InputMediaDescriptionScreen(
     private val file: PostStatusFile,
     private val onDescriptionInputted: (String) -> Unit,
-) : AndroidScreen() {
+) : Screen {
 
     @Composable
     override fun Content() {

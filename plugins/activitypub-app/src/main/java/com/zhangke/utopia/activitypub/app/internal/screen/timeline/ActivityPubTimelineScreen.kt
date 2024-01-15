@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemsIndexed
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.network.FormalBaseUrl
@@ -19,7 +19,7 @@ import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 class ActivityPubTimelineScreen(
     private val baseUrl: FormalBaseUrl,
     private val type: TimelineSourceType
-) : AndroidScreen() {
+) : Screen {
 
     @Composable
     override fun Content() {

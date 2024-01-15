@@ -25,7 +25,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.composable.SimpleIconButton
@@ -34,7 +34,7 @@ import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
 import kotlinx.coroutines.launch
 
-class ContentHomeScreen : AndroidScreen() {
+class ContentHomeScreen : Screen {
 
     @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
     @Composable

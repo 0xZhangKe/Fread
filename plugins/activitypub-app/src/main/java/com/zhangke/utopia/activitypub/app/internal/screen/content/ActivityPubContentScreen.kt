@@ -21,7 +21,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.Navigator
@@ -35,7 +34,7 @@ import kotlinx.coroutines.launch
 
 class ActivityPubContentScreen(
     private val configId: Long,
-) : AndroidScreen() {
+) : Screen {
 
     @Composable
     override fun Content() {

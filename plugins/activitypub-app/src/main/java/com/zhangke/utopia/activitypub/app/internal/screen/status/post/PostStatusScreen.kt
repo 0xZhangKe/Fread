@@ -49,7 +49,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -78,7 +78,7 @@ import com.zhangke.utopia.statusui.R as StatusUiR
 @Destination(PostStatusScreenRoute.ROUTE)
 class PostStatusScreen(
     @Router private val route: String = "",
-) : AndroidScreen() {
+) : Screen {
 
     @Composable
     override fun Content() {

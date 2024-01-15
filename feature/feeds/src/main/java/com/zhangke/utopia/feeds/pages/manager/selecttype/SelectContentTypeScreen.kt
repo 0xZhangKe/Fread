@@ -23,7 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -38,7 +38,7 @@ import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 
-class SelectContentTypeScreen : AndroidScreen() {
+class SelectContentTypeScreen : Screen {
 
     @Composable
     override fun Content() {

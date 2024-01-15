@@ -1,6 +1,5 @@
 package com.zhangke.framework.voyager
 
-import cafe.adriel.voyager.androidx.AndroidScreen
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.krouter.KRouter
@@ -25,6 +24,5 @@ fun TransparentNavigator.pushDestination(routerDestination: String): Boolean {
 
 private fun KRouter.routeScreen(destination: String): Screen? {
     route<Screen>(destination)?.let { return it }
-    route<AndroidScreen>(destination)?.let { return it }
     return null
 }

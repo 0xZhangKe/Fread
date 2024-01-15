@@ -28,7 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.androidx.AndroidScreen
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
@@ -48,7 +48,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.server.about.ServerAbo
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 
 @Destination(AddInstanceScreenRoute.ROOT)
-class AddInstanceScreen : AndroidScreen() {
+class AddInstanceScreen : Screen {
 
     @Composable
     override fun Content() {

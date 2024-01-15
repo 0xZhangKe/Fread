@@ -22,7 +22,6 @@
 //import androidx.compose.runtime.getValue
 //import androidx.compose.ui.Alignment
 //import androidx.compose.ui.Modifier
-//import cafe.adriel.voyager.androidx.AndroidScreen
 //import cafe.adriel.voyager.hilt.getViewModel
 //import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 //import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -36,7 +35,7 @@
 //import com.zhangke.utopia.feeds.pages.home.manager.AllFeedsManagerScreen
 //import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 //
-//class FeedsHomeScreen : AndroidScreen() {
+//class FeedsHomeScreen : Screen {
 //
 //    @OptIn(ExperimentalFoundationApi::class)
 //    @Composable

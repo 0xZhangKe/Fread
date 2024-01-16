@@ -12,16 +12,16 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.activitypub.entities.ActivityPubListEntity
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
@@ -37,19 +37,23 @@ class ActivityPubContentScreen(
     override val options: PagerTabOptions?
         @Composable get() = null
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Screen.TabContent() {
-        val viewModel: ActivityPubContentViewModel = getViewModel()
+        val viewModel =
+            getViewModel<ActivityPubContentViewModel, ActivityPubContentViewModel.Factory> {
+                it.create(configId)
+            }
         val loadableState by viewModel.uiState.collectAsState()
-        LaunchedEffect(Unit) {
-            viewModel.configId = configId
-            viewModel.onPrepared()
-        }
+        val lists by viewModel.lists.collectAsState()
         LoadableLayout(
             modifier = Modifier.fillMaxSize(),
             state = loadableState,
         ) { uiState ->
-            ActivityPubContentUi(uiState)
+            ActivityPubContentUi(
+                uiState = uiState,
+                lists = lists,
+            )
         }
     }
 
@@ -57,12 +61,12 @@ class ActivityPubContentScreen(
     @Composable
     private fun Screen.ActivityPubContentUi(
         uiState: ActivityPubContentUiState,
+        lists: List<ActivityPubListEntity>,
     ) {
-        val context = LocalContext.current
         val coroutineScope = rememberCoroutineScope()
         Column(modifier = Modifier.fillMaxSize()) {
             val tabList = remember {
-                createScreens(uiState)
+                createScreens(uiState, lists)
             }
             val pagerState = rememberPagerState {
                 tabList.size
@@ -102,6 +106,7 @@ class ActivityPubContentScreen(
 
     private fun createScreens(
         uiState: ActivityPubContentUiState,
+        lists: List<ActivityPubListEntity>,
     ): List<PagerTab> {
         val screenList = mutableListOf<PagerTab>()
         screenList += ActivityPubTimelineTab(

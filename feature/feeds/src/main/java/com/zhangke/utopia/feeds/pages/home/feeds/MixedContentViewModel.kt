@@ -20,15 +20,14 @@ class MixedContentViewModel @Inject constructor(
 
     fun getSubViewModel(configId: Long): MixedContentSubViewModel {
         val key = configId.toString()
-        subViewModelStore[key]?.let { return it }
-        val subViewModel = MixedContentSubViewModel(
-            contentConfigRepo = contentConfigRepo,
-            feedsRepo = feedsRepo,
-            buildStatusUiState = buildStatusUiState,
-            statusProvider = statusProvider,
-            configId = configId,
-        )
-        addCloseable(subViewModel)
-        return subViewModel
+        return subViewModelStore.getOrPut(key) {
+            MixedContentSubViewModel(
+                contentConfigRepo = contentConfigRepo,
+                feedsRepo = feedsRepo,
+                buildStatusUiState = buildStatusUiState,
+                statusProvider = statusProvider,
+                configId = configId,
+            )
+        }.also { addCloseable(it) }
     }
 }

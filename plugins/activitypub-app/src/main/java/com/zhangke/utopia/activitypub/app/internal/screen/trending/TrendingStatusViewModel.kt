@@ -25,16 +25,15 @@ class TrendingStatusViewModel @Inject constructor(
         baseUrl: FormalBaseUrl,
     ): TrendingStatusSubViewModel {
         val key = baseUrl.toString()
-        subViewModelStore[key]?.let { return it }
-        val subViewModel = TrendingStatusSubViewModel(
-            getServerTrending = getServerTrending,
-            getStatusSupportAction = getStatusSupportAction,
-            statusAdapter = statusAdapter,
-            buildStatusUiState = buildStatusUiState,
-            platformRepo = platformRepo,
-            baseUrl = baseUrl,
-        )
-        addCloseable(subViewModel)
-        return subViewModel
+        return subViewModelStore.getOrPut(key) {
+            TrendingStatusSubViewModel(
+                getServerTrending = getServerTrending,
+                getStatusSupportAction = getStatusSupportAction,
+                statusAdapter = statusAdapter,
+                buildStatusUiState = buildStatusUiState,
+                platformRepo = platformRepo,
+                baseUrl = baseUrl,
+            )
+        }.also { addCloseable(it) }
     }
 }

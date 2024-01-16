@@ -66,7 +66,7 @@ class ServerTrendingViewModel @Inject constructor(
                 getServerTrending = getServerTrending,
                 getStatusSupportAction = getStatusSupportAction,
                 statusAdapter = statusAdapter,
-                platform = blogPlatform,
+                platformRepo = platformRepo,
             ).also {
                 dataSource = it
             }

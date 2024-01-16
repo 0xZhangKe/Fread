@@ -7,7 +7,7 @@ internal class TimelineSourceTypeConverter {
 
     @TypeConverter
     fun fromType(type: TimelineSourceType): String {
-        return type.stringValue
+        return type.name
     }
 
     @TypeConverter

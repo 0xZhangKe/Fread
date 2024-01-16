@@ -11,11 +11,11 @@ data class TimelineSourceUriInsights(
     val type: TimelineSourceType,
 )
 
-enum class TimelineSourceType(val stringValue: String) {
+enum class TimelineSourceType {
 
-    PUBLIC("public"),
-    LOCAL("local"),
-    HOME("home");
+    PUBLIC,
+    LOCAL,
+    HOME;
 
     val nickName: String
         get() = when (this) {
@@ -26,8 +26,8 @@ enum class TimelineSourceType(val stringValue: String) {
 
     companion object {
 
-        fun valurOfOrNull(stringValue: String): TimelineSourceType? {
-            return entries.firstOrNull { it.stringValue == stringValue }
+        fun valurOfOrNull(name: String): TimelineSourceType? {
+            return entries.firstOrNull { it.name == name }
         }
     }
 }

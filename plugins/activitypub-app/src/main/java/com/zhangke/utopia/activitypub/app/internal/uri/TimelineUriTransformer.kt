@@ -30,7 +30,7 @@ class TimelineUriTransformer @Inject constructor() {
     fun build(serverBaseUrl: FormalBaseUrl, type: TimelineSourceType): FormalUri {
         val queries = mutableMapOf<String, String>()
         queries[QUERY_SERVER_BASE_URL] = serverBaseUrl.toString()
-        queries[QUERY_TYPE] = type.stringValue
+        queries[QUERY_TYPE] = type.name
         return createActivityPubUri(
             path = ActivityPubUriPath.TIMELINE,
             queries = queries,

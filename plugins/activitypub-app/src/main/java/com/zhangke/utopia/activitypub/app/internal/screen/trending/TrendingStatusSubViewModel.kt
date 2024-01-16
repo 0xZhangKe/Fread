@@ -5,11 +5,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import androidx.paging.map
-import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.updateToFailed
-import com.zhangke.framework.composable.updateToLoading
-import com.zhangke.framework.composable.updateToSuccess
-import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -19,7 +14,6 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -37,32 +31,18 @@ class TrendingStatusSubViewModel(
 
     private var dataSource: ServerTrendingDataSource? = null
 
-    private val _statusFlow =
-        MutableStateFlow<LoadableState<Flow<PagingData<StatusUiState>>>>(LoadableState.Idle())
+    private val _statusFlow = MutableStateFlow(createStatusFlow())
 
-    val statusFlow: StateFlow<LoadableState<Flow<PagingData<StatusUiState>>>> = _statusFlow
+    val statusFlow: StateFlow<Flow<PagingData<StatusUiState>>> = _statusFlow
 
-    init {
-        launchInViewModel {
-            _statusFlow.updateToLoading()
-            platformRepo.getPlatform(baseUrl)
-                .onSuccess { blogPlatform ->
-                    val flow = createStatusFlow(blogPlatform)
-                    _statusFlow.updateToSuccess(flow)
-                }.onFailure { e ->
-                    _statusFlow.updateToFailed(e)
-                }
-        }
-    }
-
-    private fun createStatusFlow(blogPlatform: BlogPlatform): Flow<PagingData<StatusUiState>> {
+    private fun createStatusFlow(): Flow<PagingData<StatusUiState>> {
         return Pager(PagingConfig(pageSize = 40)) {
             ServerTrendingDataSource(
                 baseUrl = baseUrl,
                 getServerTrending = getServerTrending,
                 getStatusSupportAction = getStatusSupportAction,
                 statusAdapter = statusAdapter,
-                platform = blogPlatform,
+                platformRepo = platformRepo,
             ).also {
                 dataSource = it
             }

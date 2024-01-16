@@ -21,14 +21,13 @@ class ActivityPubTimelineViewModel @Inject constructor(
         timelineSourceType: TimelineSourceType,
     ): ActivityPubTimeSubViewModel {
         val key = "${baseUrl}_${timelineSourceType.name}"
-        subViewModelStore[key]?.let { return it }
-        val subViewModel = ActivityPubTimeSubViewModel(
-            getTimelineStatus = getTimelineStatus,
-            buildStatusUiState = buildStatusUiState,
-            baseUrl = baseUrl,
-            timelineType = timelineSourceType,
-        )
-        addCloseable(subViewModel)
-        return subViewModel
+        return subViewModelStore.getOrPut(key) {
+            ActivityPubTimeSubViewModel(
+                getTimelineStatus = getTimelineStatus,
+                buildStatusUiState = buildStatusUiState,
+                baseUrl = baseUrl,
+                timelineType = timelineSourceType,
+            )
+        }.also { addCloseable(it) }
     }
 }

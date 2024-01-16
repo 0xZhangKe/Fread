@@ -14,6 +14,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -117,6 +118,8 @@ fun StatusInfoLine(
                 start.linkTo(avatar.end, margin = infoStyle.avatarToNamePadding)
                 bottom.linkTo(guideline.top)
             },
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
             text = blogAuthor.name,
             style = infoStyle.nameStyle,
         )
@@ -127,6 +130,8 @@ fun StatusInfoLine(
             },
             text = remember(lastEditTime) { formatStatusDateTime(lastEditTime) },
             style = infoStyle.descStyle,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
 
         Text(
@@ -136,6 +141,8 @@ fun StatusInfoLine(
             },
             text = blogAuthor.webFinger.toString(),
             style = infoStyle.descStyle,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
         StatusMoreInteractionIcon(
             modifier = Modifier.constrainAs(moreOptions) {

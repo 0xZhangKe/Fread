@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailRoute
@@ -37,7 +38,7 @@ class ActivityPubScreenProvider @Inject constructor(
         return AddInstanceScreenRoute.ROOT
     }
 
-    override fun getContentScreen(contentConfig: ContentConfig): Any? {
+    override fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
         if (contentConfig !is ContentConfig.ActivityPubContent) return null
         return ActivityPubContentScreen(contentConfig.id)
     }

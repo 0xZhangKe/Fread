@@ -1,7 +1,7 @@
 package com.zhangke.utopia.feeds.pages.home
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.pages.home.feeds.MixedContentScreen
@@ -34,9 +34,9 @@ class ContentHomeViewModel @Inject constructor(
         }
     }
 
-    fun getContentScreen(contentConfig: ContentConfig): Screen? {
+    fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
         if (contentConfig is ContentConfig.MixedContent) return MixedContentScreen(contentConfig.id)
-        return statusProvider.screenProvider.getContentScreen(contentConfig) as? Screen
+        return statusProvider.screenProvider.getContentScreen(contentConfig)
     }
 
     fun onCurrentPageChange(currentPage: Int) {

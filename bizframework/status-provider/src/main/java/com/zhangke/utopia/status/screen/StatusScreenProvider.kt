@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
+import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
@@ -38,7 +39,7 @@ class StatusScreenProvider(
         }
     }
 
-    fun getContentScreen(contentConfig: ContentConfig): Any? {
+    fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
         return providerList.mapFirstOrNull {
             it.getContentScreen(contentConfig)
         }
@@ -55,5 +56,5 @@ interface IStatusScreenProvider {
 
     fun getAddContentScreenRoute(contentType: ContentType): String?
 
-    fun getContentScreen(contentConfig: ContentConfig): Any?
+    fun getContentScreen(contentConfig: ContentConfig): PagerTab?
 }

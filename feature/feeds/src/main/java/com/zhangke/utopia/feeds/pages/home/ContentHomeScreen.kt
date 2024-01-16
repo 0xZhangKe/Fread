@@ -27,7 +27,6 @@ import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
@@ -119,8 +118,12 @@ class ContentHomeScreen : Screen {
                 ) { pageIndex ->
                     val currentScreen =
                         viewModel.getContentScreen(uiState.contentConfigList[pageIndex])
-                    if (currentScreen != null) {
-                        Navigator(currentScreen)
+                    if (currentScreen == null) {
+                        Text(text = "Error! can't find any tab fro this config!")
+                    } else {
+                        with(currentScreen) {
+                            TabContent()
+                        }
                     }
                 }
             }

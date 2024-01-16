@@ -18,7 +18,6 @@ import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
@@ -34,11 +33,8 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.VoyagerHiltViewModelFactories
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.tab.CurrentTab
-import cafe.adriel.voyager.navigator.tab.Tab
-import cafe.adriel.voyager.navigator.tab.TabNavigator
-import cafe.adriel.voyager.navigator.tab.TabOptions
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -51,7 +47,7 @@ class TabTestScreen : Screen {
     @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        val tabs: List<Tab> = remember {
+        val tabs: List<Screen> = remember {
             listOf(
                 FooScreen(0),
                 FooScreen(1),
@@ -63,67 +59,59 @@ class TabTestScreen : Screen {
 //            tab = tabs.first(),
 //            disposeNestedNavigators = true,
 //        ) { tabNavigator ->
-            Column(modifier = Modifier.fillMaxSize()) {
-                val pagerState = rememberPagerState {
-                    tabs.size
-                }
+        Column(modifier = Modifier.fillMaxSize()) {
+            val pagerState = rememberPagerState {
+                tabs.size
+            }
 //                LaunchedEffect(pagerState.currentPage) {
 //                    tabNavigator.current = tabs[pagerState.currentPage]
 //                }
-                TabRow(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    selectedTabIndex = pagerState.currentPage,
-                ) {
-                    tabs.forEachIndexed { index, item ->
-                        Tab(
-                            selected = pagerState.currentPage == index,
-                            onClick = {
-                                coroutineScope.launch {
-                                    pagerState.scrollToPage(index)
-                                }
-                            },
-                        ) {
-                            Box(
-                                modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                            ) {
-                                Text(text = item.options.title)
+            TabRow(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                selectedTabIndex = pagerState.currentPage,
+            ) {
+                tabs.forEachIndexed { index, item ->
+                    Tab(
+                        selected = pagerState.currentPage == index,
+                        onClick = {
+                            coroutineScope.launch {
+                                pagerState.scrollToPage(index)
                             }
+                        },
+                    ) {
+                        Box(
+                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                        ) {
+                            Text(text = "$index")
                         }
                     }
                 }
-                HorizontalPager(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1F),
-                    state = pagerState,
-                ) { pageIndex ->
-                    Navigator(tabs[pageIndex])
+            }
+            HorizontalPager(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(1F),
+                state = pagerState,
+            ) { pageIndex ->
+                Navigator(tabs[pageIndex])
 //                    Box(modifier = Modifier.fillMaxSize()) {
 //                        tabs[pageIndex].Content()
 //                    }
-                }
+            }
 //            }
         }
     }
 }
 
-class FooScreen(private val pageIndex: Int) : Tab {
-
-    override val options: TabOptions
-        @Composable get() = TabOptions(
-            title = "Foo$pageIndex",
-            index = pageIndex.toUShort(),
-            icon = null,
-        )
+class FooScreen(private val pageIndex: Int) : Screen {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
-        val viewModel: FooViewModel =
-            getViewModelTest<FooViewModel, FooViewModel.Factory>(additionKey = pageIndex) {
-                it.create(pageIndex)
-            }
+        val viewModel: FooViewModel = getViewModel<FooViewModel, FooViewModel.Factory> {
+            it.create(pageIndex)
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             Card(
                 modifier = Modifier
@@ -158,22 +146,14 @@ class FooViewModel @AssistedInject constructor(
     }
 }
 
-class BarScreen(private val pageIndex: Int) : Tab {
-
-    override val options: TabOptions
-        @Composable get() = TabOptions(
-            title = "Bar$pageIndex",
-            index = pageIndex.toUShort(),
-            icon = null,
-        )
+class BarScreen(private val pageIndex: Int) : Screen {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
-        val viewModel: BarViewModel =
-            getViewModelTest<BarViewModel, BarViewModel.Factory>(additionKey = pageIndex) {
-                it.create(pageIndex)
-            }
+        val viewModel: BarViewModel = getViewModel<BarViewModel, BarViewModel.Factory> {
+            it.create(pageIndex)
+        }
         Box(modifier = Modifier.fillMaxSize()) {
             Card(
                 modifier = Modifier

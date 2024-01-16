@@ -36,8 +36,8 @@ class UtopiaScreen : Screen {
         CompositionLocalProvider(
             LocalGlobalNavigator provides LocalNavigator.currentOrThrow
         ) {
-//            MainPage()
-            Navigator(TabTestScreen())
+            MainPage()
+//            Navigator(TabTestScreen())
         }
 
 //        val tabs: List<PagerTab> = remember {

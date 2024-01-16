@@ -10,7 +10,6 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -23,6 +22,8 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.voyager.tryPush
@@ -30,16 +31,15 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.status.model.Status
 
-class MixedContentScreen(private val configId: Long) : Screen {
+class MixedContentScreen(private val configId: Long) : PagerTab {
+
+    override val options: PagerTabOptions?
+        @Composable get() = null
 
     @Composable
-    override fun Content() {
+    override fun Screen.TabContent() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel: MixedContentViewModel = getViewModel()
-        LaunchedEffect(Unit) {
-            viewModel.configId = configId
-            viewModel.onPrepared()
-        }
+        val viewModel = getViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         ConsumeFlow(viewModel.errorMessageFlow) {
             //TODO handle it

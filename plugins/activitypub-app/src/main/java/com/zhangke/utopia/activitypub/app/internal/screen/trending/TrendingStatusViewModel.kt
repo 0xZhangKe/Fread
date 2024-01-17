@@ -1,6 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.trending
 
-import androidx.lifecycle.ViewModel
+import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
@@ -17,23 +17,28 @@ class TrendingStatusViewModel @Inject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
-) : ViewModel() {
+) : ContainerViewModel<TrendingStatusSubViewModel, TrendingStatusViewModel.Params>() {
 
-    private val subViewModelStore = mutableMapOf<String, TrendingStatusSubViewModel>()
+    override fun createSubViewModel(params: Params): TrendingStatusSubViewModel {
+        return TrendingStatusSubViewModel(
+            getServerTrending = getServerTrending,
+            getStatusSupportAction = getStatusSupportAction,
+            statusAdapter = statusAdapter,
+            buildStatusUiState = buildStatusUiState,
+            platformRepo = platformRepo,
+            baseUrl = params.baseUrl,
+        )
+    }
 
     fun getSubViewModel(
         baseUrl: FormalBaseUrl,
     ): TrendingStatusSubViewModel {
-        val key = baseUrl.toString()
-        return subViewModelStore.getOrPut(key) {
-            TrendingStatusSubViewModel(
-                getServerTrending = getServerTrending,
-                getStatusSupportAction = getStatusSupportAction,
-                statusAdapter = statusAdapter,
-                buildStatusUiState = buildStatusUiState,
-                platformRepo = platformRepo,
-                baseUrl = baseUrl,
-            )
-        }.also { addCloseable(it) }
+        val params = Params(baseUrl)
+        return obtainSubViewModel(params)
+    }
+
+    class Params(val baseUrl: FormalBaseUrl) : SubViewModelParams() {
+        override val key: String
+            get() = baseUrl.toString()
     }
 }

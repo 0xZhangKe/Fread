@@ -5,5 +5,6 @@ enum class ActivityPubStatusSourceType {
     TIMELINE_HOME,
     TIMELINE_LOCAL,
     TIMELINE_PUBLIC,
-    TIMELINE_TRENDING,
+    TRENDING,
+    LIST,
 }

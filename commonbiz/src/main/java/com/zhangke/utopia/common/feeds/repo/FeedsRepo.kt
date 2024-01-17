@@ -1,7 +1,5 @@
 package com.zhangke.utopia.common.feeds.repo
 
-import com.zhangke.utopia.common.status.FeedsConfig
-import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
@@ -13,12 +11,11 @@ class FeedsRepo @Inject internal constructor(
     private val getPreviousStatusUseCase: GetPreviousStatusUseCase,
     private val getNewerStatusUseCase: GetNewerStatusUseCase,
     private val statusContentRepo: StatusContentRepo,
-    private val statusContentEntityAdapter: StatusContentEntityAdapter,
 ) {
 
     companion object {
 
-        private const val DEFAULT_PAGE_SIZE = 10
+        private const val DEFAULT_PAGE_SIZE = 40
     }
 
     suspend fun getPreviousStatus(

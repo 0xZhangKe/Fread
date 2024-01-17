@@ -1,6 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
-import androidx.lifecycle.ViewModel
+import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -14,20 +14,25 @@ class MixedContentViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
-) : ViewModel() {
+) : ContainerViewModel<MixedContentSubViewModel, MixedContentViewModel.Params>() {
 
-    private val subViewModelStore = mutableMapOf<String, MixedContentSubViewModel>()
+    override fun createSubViewModel(params: Params): MixedContentSubViewModel {
+        return MixedContentSubViewModel(
+            contentConfigRepo = contentConfigRepo,
+            feedsRepo = feedsRepo,
+            buildStatusUiState = buildStatusUiState,
+            statusProvider = statusProvider,
+            configId = params.configId,
+        )
+    }
 
     fun getSubViewModel(configId: Long): MixedContentSubViewModel {
-        val key = configId.toString()
-        return subViewModelStore.getOrPut(key) {
-            MixedContentSubViewModel(
-                contentConfigRepo = contentConfigRepo,
-                feedsRepo = feedsRepo,
-                buildStatusUiState = buildStatusUiState,
-                statusProvider = statusProvider,
-                configId = configId,
-            )
-        }.also { addCloseable(it) }
+        val params = Params(configId)
+        return obtainSubViewModel(params)
+    }
+
+    class Params(val configId: Long) : SubViewModelParams() {
+        override val key: String
+            get() = configId.toString()
     }
 }

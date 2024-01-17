@@ -20,12 +20,7 @@ class ActivityPubPlatformRepo @Inject constructor(
 
     suspend fun getPlatform(baseUrl: FormalBaseUrl): Result<BlogPlatform> {
         return getInstanceInfo(baseUrl).map {
-            try {
-                activityPubInstanceAdapter.toPlatform(it)
-            } catch (e: Throwable) {
-                e.printStackTrace()
-                throw e
-            }
+            activityPubInstanceAdapter.toPlatform(it)
         }
     }
 

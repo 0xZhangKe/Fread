@@ -46,4 +46,10 @@ class ContentHomeViewModel @Inject constructor(
             currentPageIndex = currentPage,
         )
     }
+
+    fun switchPageIndex(pageIndex: Int) {
+        val pageList = _uiState.value.contentConfigList
+        if (pageIndex !in pageList.indices) return
+        onCurrentPageChange(pageIndex)
+    }
 }

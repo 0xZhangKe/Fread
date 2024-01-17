@@ -19,9 +19,9 @@ class TimelineDataSource(
         val result = getTimelineStatus(
             serverBaseUrl = baseUrl,
             type = timelineSourceType,
-            sinceId = params.key,
+            sinceId = null,
             limit = params.loadSize,
-            maxId = null,
+            maxId = params.key,
         )
         return if (result.isSuccess) {
             val resultList = result.getOrNull() ?: emptyList()

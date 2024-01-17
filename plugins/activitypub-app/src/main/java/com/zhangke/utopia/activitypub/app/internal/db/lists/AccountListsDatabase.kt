@@ -29,7 +29,7 @@ data class AccountListsEntity(
 interface AccountListsDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE accountId = :accountId")
-    fun observeAccountLists(accountId: String): Flow<AccountListsEntity>
+    fun observeAccountLists(accountId: String): Flow<List<AccountListsEntity>>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE accountId = :accountId")
     suspend fun queryByAccountId(accountId: String): AccountListsEntity?
@@ -37,7 +37,7 @@ interface AccountListsDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: AccountListsEntity)
 
-    @Delete
+    @Query("DELETE FROM $TABLE_NAME WHERE accountId=:id")
     suspend fun deleteById(id: String)
 }
 

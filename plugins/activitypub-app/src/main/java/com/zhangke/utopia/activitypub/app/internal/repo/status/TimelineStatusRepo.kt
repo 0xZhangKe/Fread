@@ -9,7 +9,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDate
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import javax.inject.Inject
 
-class ListStatusRepo @Inject constructor(
+class TimelineStatusRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     statusDatabase: ActivityPubStatusDatabase,
     formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
@@ -22,52 +22,68 @@ class ListStatusRepo @Inject constructor(
         limit: Int,
         listId: String?
     ): Result<List<ActivityPubStatusEntity>> {
-        val timelinesRepo = clientManager.getClient(serverBaseUrl).timelinesRepo
-        return timelinesRepo.getTimelineList(
-            listId = listId!!,
-            limit = limit,
-            maxId = maxId,
-        )
+        val timelineRepo = clientManager.getClient(serverBaseUrl).timelinesRepo
+        return when (type) {
+            ActivityPubStatusSourceType.TIMELINE_HOME -> timelineRepo.homeTimeline(
+                limit = limit,
+                sinceId = null,
+                maxId = maxId,
+            )
+
+            ActivityPubStatusSourceType.TIMELINE_LOCAL -> timelineRepo.localTimelines(
+                limit = limit,
+                sinceId = null,
+                maxId = maxId,
+            )
+
+            ActivityPubStatusSourceType.TIMELINE_PUBLIC -> timelineRepo.publicTimelines(
+                limit = limit,
+                sinceId = null,
+                maxId = maxId,
+            )
+
+            else -> throw IllegalStateException("Unsupported type: $type")
+        }
     }
 
     suspend fun getLocalStatus(
         serverBaseUrl: FormalBaseUrl,
-        listId: String,
+        type: ActivityPubStatusSourceType,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
     ): List<ActivityPubStatusEntity> {
         return getLocalStatusInternal(
             serverBaseUrl = serverBaseUrl,
-            type = ActivityPubStatusSourceType.LIST,
+            type = type,
             limit = limit,
-            listId = listId,
+            listId = null,
         )
     }
 
     suspend fun getRemoteStatus(
         serverBaseUrl: FormalBaseUrl,
-        listId: String,
+        type: ActivityPubStatusSourceType,
         limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
     ): Result<List<ActivityPubStatusEntity>> {
         return getRemoteStatusInternal(
             serverBaseUrl = serverBaseUrl,
-            type = ActivityPubStatusSourceType.LIST,
+            type = type,
             limit = limit,
-            listId = listId,
+            listId = null,
         )
     }
 
     suspend fun loadMore(
         serverBaseUrl: FormalBaseUrl,
-        listId: String,
+        type: ActivityPubStatusSourceType,
         maxId: String,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
     ): Result<List<ActivityPubStatusEntity>> {
         return loadMoreInternal(
             serverBaseUrl = serverBaseUrl,
-            type = ActivityPubStatusSourceType.LIST,
+            type = type,
             maxId = maxId,
             limit = limit,
-            listId = listId,
+            listId = null,
         )
     }
 }

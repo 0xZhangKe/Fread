@@ -22,7 +22,7 @@ class AccountListsRepo @Inject constructor(
     suspend fun updateAccountLists(account: ActivityPubLoggedAccount) {
         val accountId = account.userId
         val accountRepo = clientManager.getClient(account.baseUrl).accountRepo
-        accountRepo.getAccountLists(accountId)
+        accountRepo.getAccountLists()
             .onSuccess {
                 accountListsDao.insert(AccountListsEntity(accountId, it))
             }
@@ -30,6 +30,6 @@ class AccountListsRepo @Inject constructor(
 
     fun observeAccountLists(accountId: String): Flow<List<ActivityPubListEntity>> {
         return accountListsDao.observeAccountLists(accountId)
-            .map { it.lists }
+            .map { it.firstOrNull()?.lists ?: emptyList() }
     }
 }

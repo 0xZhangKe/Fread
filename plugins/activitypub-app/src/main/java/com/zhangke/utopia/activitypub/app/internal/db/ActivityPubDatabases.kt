@@ -23,7 +23,6 @@ private const val DB_VERSION = 1
     ActivityPubUserTokenConverter::class,
     ActivityPubInstanceEntityConverter::class,
     FormalBaseUrlConverter::class,
-    ActivityPubStatusSourceTypeConverter::class,
 )
 @Database(
     entities = [

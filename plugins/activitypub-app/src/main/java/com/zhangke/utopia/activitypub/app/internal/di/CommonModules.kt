@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.di
 import android.content.Context
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.lists.AccountListsDatabase
+import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -21,5 +22,10 @@ internal class CommonModules {
     @Provides
     fun provideAccountListsDatabase(@ApplicationContext context: Context): AccountListsDatabase {
         return AccountListsDatabase.getInstance(context)
+    }
+
+    @Provides
+    fun provideActivityPubStatusDatabase(@ApplicationContext context: Context): ActivityPubStatusDatabase {
+        return ActivityPubStatusDatabase.getInstance(context)
     }
 }

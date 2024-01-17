@@ -1,31 +1,30 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.lists
 
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import dagger.assisted.AssistedFactory
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ActivityPubListStatusViewModel @Inject constructor(
+    private val platformRepo: ActivityPubPlatformRepo,
     private val listStatusRepo: ListStatusRepo,
-    private val clientManager: ActivityPubClientManager,
+    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusAdapter: ActivityPubStatusAdapter,
 ) : ContainerViewModel<ActivityPubListStatusSubViewModel, ActivityPubListStatusViewModel.Params>() {
-
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
-        fun create(listId: String): ActivityPubListStatusViewModel
-    }
 
     override fun createSubViewModel(params: Params) = ActivityPubListStatusSubViewModel(
         listStatusRepo = listStatusRepo,
-        clientManager = clientManager,
+        platformRepo = platformRepo,
+        getStatusSupportAction = getStatusSupportAction,
         buildStatusUiState = buildStatusUiState,
+        statusAdapter = statusAdapter,
         serverBaseUrl = params.baseUrl,
         listId = params.listId,
     )

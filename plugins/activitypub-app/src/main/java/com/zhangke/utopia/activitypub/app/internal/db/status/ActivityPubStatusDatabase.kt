@@ -15,6 +15,7 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubStatusEntityConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalBaseUrlConverter
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 
 private const val DB_VERSION = 1
@@ -78,6 +79,7 @@ interface ActivityPubStatusDao {
 }
 
 @TypeConverters(
+    FormalBaseUrlConverter::class,
     ActivityPubStatusSourceTypeConverter::class,
     ActivityPubStatusEntityConverter::class,
 )

@@ -26,6 +26,7 @@ import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
+import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
 import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
 import com.zhangke.utopia.activitypub.app.internal.screen.trending.TrendingStatusTab
 import kotlinx.coroutines.launch
@@ -65,7 +66,7 @@ class ActivityPubContentScreen(
     ) {
         val coroutineScope = rememberCoroutineScope()
         Column(modifier = Modifier.fillMaxSize()) {
-            val tabList = remember {
+            val tabList = remember(uiState, lists) {
                 createScreens(uiState, lists)
             }
             val pagerState = rememberPagerState {
@@ -113,9 +114,13 @@ class ActivityPubContentScreen(
             baseUrl = uiState.config.baseUrl,
             type = TimelineSourceType.HOME,
         )
-        screenList += TrendingStatusTab(
-            baseUrl = uiState.config.baseUrl,
-        )
+        screenList += lists.map {
+            ActivityPubListStatusTab(
+                baseUrl = uiState.config.baseUrl,
+                listId = it.id,
+                listTitle = it.title,
+            )
+        }
         screenList += ActivityPubTimelineTab(
             baseUrl = uiState.config.baseUrl,
             type = TimelineSourceType.LOCAL,
@@ -123,6 +128,9 @@ class ActivityPubContentScreen(
         screenList += ActivityPubTimelineTab(
             baseUrl = uiState.config.baseUrl,
             type = TimelineSourceType.PUBLIC,
+        )
+        screenList += TrendingStatusTab(
+            baseUrl = uiState.config.baseUrl,
         )
         return screenList
     }

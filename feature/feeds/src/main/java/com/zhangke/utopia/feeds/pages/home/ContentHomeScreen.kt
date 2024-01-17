@@ -1,12 +1,18 @@
 package com.zhangke.utopia.feeds.pages.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
@@ -22,8 +28,10 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -42,7 +50,6 @@ class ContentHomeScreen : Screen {
         val viewModel: ContentHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
-        val pagerState = rememberPagerState(pageCount = { uiState.contentConfigList.size })
         val coroutineScope = rememberCoroutineScope()
 
         ModalNavigationDrawer(
@@ -54,7 +61,7 @@ class ContentHomeScreen : Screen {
                         onContentConfigClick = {
                             coroutineScope.launch {
                                 drawerState.close()
-                                pagerState.animateScrollToPage(uiState.contentConfigList.indexOf(it))
+                                viewModel.switchPageIndex(uiState.contentConfigList.indexOf(it))
                             }
                         },
                         onAddContentClick = {
@@ -92,11 +99,7 @@ class ContentHomeScreen : Screen {
                         actions = {
                             SimpleIconButton(
                                 onClick = {
-                                    coroutineScope.launch {
-                                        if (pagerState.currentPage < (pagerState.pageCount - 1)) {
-                                            pagerState.animateScrollToPage(pagerState.currentPage + 1)
-                                        }
-                                    }
+                                    viewModel.switchPageIndex(uiState.currentPageIndex + 1)
                                 },
                                 imageVector = Icons.Default.ArrowRightAlt,
                                 contentDescription = "Next Content"
@@ -105,24 +108,42 @@ class ContentHomeScreen : Screen {
                     )
                 },
             ) { paddingValues ->
-                val currentPage = pagerState.currentPage
-                LaunchedEffect(currentPage) {
-                    viewModel.onCurrentPageChange(currentPage)
-                }
-                LaunchedEffect(uiState.currentPageIndex) {
-                    pagerState.animateScrollToPage(uiState.currentPageIndex)
-                }
-                HorizontalPager(
-                    modifier = Modifier.padding(paddingValues),
-                    state = pagerState,
-                ) { pageIndex ->
-                    val currentScreen =
-                        viewModel.getContentScreen(uiState.contentConfigList[pageIndex])
-                    if (currentScreen == null) {
-                        Text(text = "Error! can't find any tab fro this config!")
-                    } else {
-                        with(currentScreen) {
-                            TabContent()
+                if (uiState.contentConfigList.isEmpty()) {
+                    Column(
+                        modifier = Modifier.fillMaxSize(),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center,
+                    ) {
+                        Text(text = "Please add content first")
+                        Box(modifier = Modifier.height(8.dp))
+                        Button(onClick = {
+                            navigator.push(SelectContentTypeScreen())
+                        }) {
+                            Text(text = "Add Content")
+                        }
+                    }
+                } else {
+                    val pagerState =
+                        rememberPagerState(pageCount = { uiState.contentConfigList.size })
+                    val currentPage = pagerState.currentPage
+                    LaunchedEffect(currentPage) {
+                        viewModel.onCurrentPageChange(currentPage)
+                    }
+                    LaunchedEffect(uiState.currentPageIndex) {
+                        pagerState.animateScrollToPage(uiState.currentPageIndex)
+                    }
+                    HorizontalPager(
+                        modifier = Modifier.padding(paddingValues),
+                        state = pagerState,
+                    ) { pageIndex ->
+                        val currentScreen =
+                            viewModel.getContentScreen(uiState.contentConfigList[pageIndex])
+                        if (currentScreen == null) {
+                            Text(text = "Error! can't find any tab fro this config!")
+                        } else {
+                            with(currentScreen) {
+                                TabContent()
+                            }
                         }
                     }
                 }

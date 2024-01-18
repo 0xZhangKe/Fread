@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
-import android.util.Log
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
@@ -11,8 +10,10 @@ import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.common.status.model.updateById
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
@@ -22,12 +23,14 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 abstract class StatusViewModel(
     private val platformRepo: ActivityPubPlatformRepo,
     private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
+    private val statusInteractive: StatusInteractiveUseCase,
     protected val serverBaseUrl: FormalBaseUrl,
 ) : SubViewModel() {
 
@@ -37,7 +40,9 @@ abstract class StatusViewModel(
 
     abstract suspend fun loadMore(maxId: String): Result<List<ActivityPubStatusEntity>>
 
-    private val _uiState = MutableStateFlow(
+    abstract suspend fun updateLocalStatus(status: ActivityPubStatusEntity)
+
+    protected val _uiState = MutableStateFlow(
         FeedsStatusUiState(
             status = emptyList(),
             refreshing = false,
@@ -66,8 +71,7 @@ abstract class StatusViewModel(
             _uiState.value = _uiState.value.copy(
                 status = statusFromLocal.toUiStates(platform),
             )
-            Log.d("U_TEST", "statusFromLocal: ${statusFromLocal.joinToString(",") { it.id }}")
-            refreshStatus(false)
+            refreshStatus(statusFromLocal.isEmpty())
         }
     }
 
@@ -91,7 +95,6 @@ abstract class StatusViewModel(
                 status = it.toUiStates(platform),
                 refreshing = false,
             )
-            Log.d("U_TEST", "refreshStatus: ${it.joinToString(",") { it.id }}")
         }.onFailure {
             updateRefreshState(showRefreshing, false)
             _snackMessage.emit(textOf(it.message.orEmpty()))
@@ -124,7 +127,6 @@ abstract class StatusViewModel(
                         status = currentState.status + it.toUiStates(platform),
                         loadMoreState = LoadState.Idle,
                     )
-                    Log.d("U_TEST", "onLoadMore(${latestStatus.status.id}): ${it.joinToString(",") { it.id }}")
                 }.onFailure {
                     _uiState.value = _uiState.value.copy(
                         loadMoreState = LoadState.Failed(it),
@@ -133,15 +135,35 @@ abstract class StatusViewModel(
         }
     }
 
-    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
+    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+        val interaction = uiInteraction.statusInteraction ?: return
+        launchInViewModel {
+            statusInteractive(status, interaction)
+                .onSuccess { newStatus ->
+                    _uiState.update { current ->
+                        current.copy(
+                            status = current.status.updateById(newStatus.id) {
+                                newStatus.toUiState(status.platform)
+                            }
+                        )
+                    }
+                    updateLocalStatus(newStatus)
+                }.onFailure {
+                    _snackMessage.emit(textOf(it.message.orEmpty()))
+                }
+        }
     }
 
     private suspend fun List<ActivityPubStatusEntity>.toUiStates(platform: BlogPlatform): List<StatusUiState> {
         return this.map { entity ->
-            val supportActions = getStatusSupportAction(entity)
-            val status = statusAdapter.toStatus(entity, platform, supportActions)
-            buildStatusUiState(status)
+            entity.toUiState(platform)
         }
+    }
+
+    private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): StatusUiState {
+        val supportActions = getStatusSupportAction(this)
+        val status = statusAdapter.toStatus(this, platform, supportActions)
+        return buildStatusUiState(status)
     }
 
     private suspend fun getBlogPlatform(): Result<BlogPlatform> {

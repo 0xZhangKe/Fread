@@ -12,8 +12,8 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubStatusUi
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.status.model.Status
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -45,7 +45,7 @@ internal fun ActivityPubListStatusContent(
                     item.status.id
                 },
             ) { index, status ->
-                FeedsStatusNode(
+                ActivityPubStatusUi(
                     modifier = Modifier.fillMaxWidth(),
                     status = status.status,
                     bottomPanelInteractions = status.bottomInteractions,

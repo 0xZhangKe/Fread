@@ -18,12 +18,14 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -35,7 +37,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
@@ -73,8 +77,12 @@ class ContentHomeScreen : Screen {
         ) {
             val scrollBehavior =
                 TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+            val snackbarHostState = rememberSnackbarHostState()
             Scaffold(
                 modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+                snackbarHost = {
+                    SnackbarHost(hostState = snackbarHostState)
+                },
                 topBar = {
                     TopAppBar(
                         modifier = Modifier,
@@ -107,7 +115,8 @@ class ContentHomeScreen : Screen {
                         },
                     )
                 },
-            ) { paddingValues ->
+
+                ) { paddingValues ->
                 if (uiState.contentConfigList.isEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxSize(),
@@ -138,11 +147,15 @@ class ContentHomeScreen : Screen {
                     ) { pageIndex ->
                         val currentScreen =
                             viewModel.getContentScreen(uiState.contentConfigList[pageIndex])
-                        if (currentScreen == null) {
-                            Text(text = "Error! can't find any tab fro this config!")
-                        } else {
-                            with(currentScreen) {
-                                TabContent()
+                        CompositionLocalProvider(
+                            LocalSnackbarHostState provides snackbarHostState,
+                        ) {
+                            if (currentScreen == null) {
+                                Text(text = "Error! can't find any tab fro this config!")
+                            } else {
+                                with(currentScreen) {
+                                    TabContent()
+                                }
                             }
                         }
                     }

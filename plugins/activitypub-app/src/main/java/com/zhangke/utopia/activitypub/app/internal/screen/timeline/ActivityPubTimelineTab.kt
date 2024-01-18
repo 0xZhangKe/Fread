@@ -6,7 +6,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.network.FormalBaseUrl
@@ -30,6 +31,7 @@ class ActivityPubTimelineTab(
 
     @Composable
     override fun Screen.TabContent() {
+        val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = getViewModel<ActivityPubTimelineViewModel>().getSubViewModel(baseUrl, type)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubListStatusContent(
@@ -38,8 +40,6 @@ class ActivityPubTimelineTab(
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
         )
-        ConsumeFlow(viewModel.snackMessage) {
-            // TODO handle this message in UI
-        }
+        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.snackMessage)
     }
 }

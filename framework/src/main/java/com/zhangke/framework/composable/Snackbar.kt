@@ -38,11 +38,12 @@ fun ObserveSnackbar(
 
 @Composable
 fun ConsumeSnackbarFlow(
-    hostState: SnackbarHostState,
+    hostState: SnackbarHostState?,
     messageTextFlow: Flow<TextString>,
     actionLabel: String? = null,
     duration: SnackbarDuration = SnackbarDuration.Short
 ) {
+    hostState ?: return
     val context = LocalContext.current
     ConsumeFlow(messageTextFlow) {
         val message = it.getString(context)

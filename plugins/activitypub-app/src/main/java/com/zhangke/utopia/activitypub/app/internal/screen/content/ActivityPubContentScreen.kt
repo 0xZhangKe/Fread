@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +9,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
@@ -72,9 +75,8 @@ class ActivityPubContentScreen(
             val pagerState = rememberPagerState {
                 tabList.size
             }
-            TabRow(
-                modifier = Modifier
-                    .fillMaxWidth(),
+            ScrollableTabRow(
+                modifier = Modifier.fillMaxWidth(),
                 selectedTabIndex = pagerState.currentPage,
             ) {
                 tabList.forEachIndexed { index, item ->
@@ -89,7 +91,10 @@ class ActivityPubContentScreen(
                         Box(
                             modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
                         ) {
-                            Text(text = item.options?.title.orEmpty())
+                            Text(
+                                text = item.options?.title.orEmpty(),
+                                maxLines = 1,
+                            )
                         }
                     }
                 }

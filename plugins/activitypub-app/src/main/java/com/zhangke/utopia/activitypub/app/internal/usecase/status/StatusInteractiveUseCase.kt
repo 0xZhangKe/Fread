@@ -1,7 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
+import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.status.account.unauthenticatedResult
 import com.zhangke.utopia.status.status.model.Status
@@ -11,14 +11,12 @@ import javax.inject.Inject
 class StatusInteractiveUseCase @Inject constructor(
     private val accountManager: ActivityPubAccountManager,
     private val clientManager: ActivityPubClientManager,
-    private val activityPubStatusAdapter: ActivityPubStatusAdapter,
-    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
 ) {
 
     suspend operator fun invoke(
         status: Status,
         interaction: StatusInteraction,
-    ): Result<Status> {
+    ): Result<ActivityPubStatusEntity> {
         val statusId = status.id
         val platform = status.platform
         val activeAccount = accountManager.getActiveAccount() ?: return unauthenticatedResult()
@@ -53,9 +51,6 @@ class StatusInteractiveUseCase @Inject constructor(
             else -> {
                 Result.failure(IllegalArgumentException("Unknown interaction: $interaction"))
             }
-        }.map { entity ->
-            val supportActions = getStatusSupportInteraction(entity)
-            activityPubStatusAdapter.toStatus(entity, platform, supportActions)
         }
     }
 }

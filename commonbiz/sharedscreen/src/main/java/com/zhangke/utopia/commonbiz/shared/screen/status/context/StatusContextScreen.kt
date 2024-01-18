@@ -157,6 +157,7 @@ class StatusContextScreen(private val status: Status) : Screen {
             StatusInContextType.ANCESTOR -> AncestorBlogUi(
                 modifier = modifier,
                 blog = blog,
+                displayTime = statusInContext.status.displayTime,
                 indexInList = indexInList,
                 isFirst = indexInList == 0,
                 bottomPanelInteractions = statusInContext.status.bottomInteractions,
@@ -170,6 +171,7 @@ class StatusContextScreen(private val status: Status) : Screen {
             StatusInContextType.ANCHOR -> AnchorBlogUi(
                 modifier = modifier,
                 blog = blog,
+                displayTime = statusInContext.status.displayTime,
                 indexInList = indexInList,
                 showUpThread = indexInList > 0,
                 onMediaClick = onMediaClick,
@@ -183,6 +185,7 @@ class StatusContextScreen(private val status: Status) : Screen {
             StatusInContextType.DESCENDANT -> DescendantStatusUi(
                 modifier = modifier,
                 blog = blog,
+                displayTime = statusInContext.status.displayTime,
                 bottomPanelInteractions = statusInContext.status.bottomInteractions,
                 moreInteractions = statusInContext.status.moreInteractions,
                 indexInList = indexInList,

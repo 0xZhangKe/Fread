@@ -27,6 +27,7 @@ import com.zhangke.utopia.statusui.R
 fun ReblogUi(
     modifier: Modifier = Modifier,
     reblog: Status.Reblog,
+    displayTime: String,
     indexInList: Int,
     style: StatusStyle,
     bottomPanelInteractions: List<StatusUiInteraction>,
@@ -57,6 +58,7 @@ fun ReblogUi(
         BlogUi(
             modifier = Modifier,
             blog = reblog.reblog,
+            displayTime = displayTime,
             bottomPanelInteractions = bottomPanelInteractions,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,

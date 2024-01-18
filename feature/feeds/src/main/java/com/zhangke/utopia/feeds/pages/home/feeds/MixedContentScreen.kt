@@ -112,9 +112,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                 ) { index, item ->
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
-                        status = item.status,
-                        bottomPanelInteractions = item.bottomInteractions,
-                        moreInteractions = item.moreInteractions,
+                        status = item,
                         onInteractive = onInteractive,
                         indexInList = index,
                     )

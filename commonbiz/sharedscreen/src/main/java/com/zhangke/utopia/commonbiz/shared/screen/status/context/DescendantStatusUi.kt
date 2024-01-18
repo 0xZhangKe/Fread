@@ -25,6 +25,7 @@ import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 fun DescendantStatusUi(
     modifier: Modifier,
     blog: Blog,
+    displayTime: String,
     style: StatusStyle = defaultStatusStyle(),
     indexInList: Int,
     bottomPanelInteractions: List<StatusUiInteraction>,
@@ -40,7 +41,7 @@ fun DescendantStatusUi(
             StatusInfoLine(
                 modifier = Modifier,
                 blogAuthor = blog.author,
-                lastEditTime = blog.date,
+                displayTime = displayTime,
                 style = style,
                 moreInteractions = moreInteractions,
                 onInteractive = onInteractive,

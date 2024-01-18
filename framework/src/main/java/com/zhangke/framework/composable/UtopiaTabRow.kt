@@ -1,15 +1,15 @@
 package com.zhangke.framework.composable
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.LocalContentColor
 import androidx.compose.material.Tab
 import androidx.compose.material3.Divider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRowDefaults
@@ -59,10 +59,8 @@ fun UtopiaTabRow(
     var tabEdgePadding by rememberSaveable(saver = StateSaver.MutableDpSaver) {
         mutableStateOf(0.dp)
     }
-    Log.d("U_TEST", "tabEdgePadding:$tabEdgePadding")
     if (tabContainerWidth != null && allTabSumWidth != null) {
         LaunchedEffect(tabContainerWidth, allTabSumWidth) {
-            Log.d("U_TEST", "tabContainerWidth:$tabContainerWidth, allTabSumWidth: $allTabSumWidth")
             tabEdgePadding = if (tabContainerWidth!! <= allTabSumWidth!!) {
                 0.dp
             } else {
@@ -105,7 +103,6 @@ fun UtopiaTabRow(
         Divider()
     },
     tabCount: Int,
-    selectedIndex: Int,
     tabContent: @Composable (index: Int) -> Unit,
     onTabClick: (index: Int) -> Unit,
 ) {
@@ -119,13 +116,12 @@ fun UtopiaTabRow(
         containerColor = containerColor,
         contentColor = contentColor,
         indicator = { tabPositions ->
-            val position = tabPositions[selectedIndex]
+            val position = tabPositions[selectedTabIndex]
             Column(
                 modifier = Modifier
                     .ownTabIndicatorOffset(
                         currentTabPosition = position,
-                        currentTabWidth = tabContentWidth[selectedTabIndex]
-                            ?: position.width,
+                        currentTabWidth = tabContentWidth[selectedTabIndex] ?: 0.dp,
                     ),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
@@ -137,13 +133,15 @@ fun UtopiaTabRow(
         tabs = {
             repeat(tabCount) { index ->
                 Tab(
-                    selected = index == selectedIndex,
+                    selected = index == selectedTabIndex,
                     onClick = { onTabClick(index) },
                 ) {
                     Box(
-                        modifier = Modifier.onGloballyPositioned {
-                            tabContentWidth[index] = it.size.width.pxToDp(density)
-                        }
+                        modifier = Modifier
+                            .onGloballyPositioned {
+                                tabContentWidth[index] = it.size.width.pxToDp(density)
+                            }
+                            .padding(8.dp)
                     ) {
                         tabContent(index)
                     }
@@ -155,23 +153,19 @@ fun UtopiaTabRow(
 
 object UtopiaTabRowDefault {
 
-    val IndicatorHeight = androidx.compose.material.TabRowDefaults.IndicatorHeight
+    private val IndicatorHeight = 3.dp
 
     @Composable
     fun Indicator(
         modifier: Modifier = Modifier,
         height: Dp = IndicatorHeight,
-        color: Color = LocalContentColor.current,
-        shape: Shape = RoundedCornerShape(2.dp),
+        color: Color = MaterialTheme.colorScheme.primary,
+        shape: Shape = RoundedCornerShape(3.dp),
     ) {
         Box(
-            modifier
-                .fillMaxWidth()
+            modifier.fillMaxWidth()
                 .height(height)
-                .background(
-                    color = color,
-                    shape = shape
-                )
+                .background(color = color, shape = shape)
         )
     }
 }

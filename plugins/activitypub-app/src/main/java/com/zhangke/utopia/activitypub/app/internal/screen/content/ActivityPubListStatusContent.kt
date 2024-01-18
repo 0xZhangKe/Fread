@@ -47,9 +47,7 @@ internal fun ActivityPubListStatusContent(
             ) { index, status ->
                 ActivityPubStatusUi(
                     modifier = Modifier.fillMaxWidth(),
-                    status = status.status,
-                    bottomPanelInteractions = status.bottomInteractions,
-                    moreInteractions = status.moreInteractions,
+                    status = status,
                     onInteractive = onInteractive,
                     indexInList = index,
                 )

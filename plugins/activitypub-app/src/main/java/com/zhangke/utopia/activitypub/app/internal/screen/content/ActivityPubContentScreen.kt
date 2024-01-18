@@ -1,14 +1,11 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -16,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -75,27 +71,19 @@ class ActivityPubContentScreen(
             UtopiaTabRow(
                 modifier = Modifier.fillMaxWidth(),
                 selectedTabIndex = pagerState.currentPage,
-            ) {
-                tabList.forEachIndexed { index, item ->
-                    Tab(
-                        selected = pagerState.currentPage == index,
-                        onClick = {
-                            coroutineScope.launch {
-                                pagerState.scrollToPage(index)
-                            }
-                        },
-                    ) {
-                        Box(
-                            modifier = Modifier.padding(8.dp),
-                        ) {
-                            Text(
-                                text = item.options?.title.orEmpty(),
-                                maxLines = 1,
-                            )
-                        }
+                tabCount = tabList.size,
+                tabContent = {
+                    Text(
+                        text = tabList[it].options?.title.orEmpty(),
+                        maxLines = 1,
+                    )
+                },
+                onTabClick = {
+                    coroutineScope.launch {
+                        pagerState.scrollToPage(it)
                     }
                 }
-            }
+            )
             HorizontalPager(
                 modifier = Modifier.fillMaxSize(),
                 state = pagerState,

@@ -22,4 +22,9 @@
     <string name="status_provider_type_mixed">混合内容</string>
     <string name="status_provider_type_activity_pub">长毛象</string>
 
+    <string name="date_time_ago">前</string>
+    <string name="date_time_day">天</string>
+    <string name="date_time_hour">小时</string>
+    <string name="date_time_minute">分</string>
+    <string name="date_time_second">秒</string>
 </resources>

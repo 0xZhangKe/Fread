@@ -11,8 +11,8 @@ import javax.inject.Inject
 
 class ListStatusRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    statusDatabase: ActivityPubStatusDatabase,
-    formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
+    private val statusDatabase: ActivityPubStatusDatabase,
+    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
 ) : StatusRepo(statusDatabase, formatDatetimeToDate) {
 
     override suspend fun loadStatusFromServer(

@@ -6,6 +6,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.updateById
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -167,14 +168,9 @@ class MixedContentSubViewModel(
                     feedsRepo.updateStatus(newStatus)
                     val currentValue = _uiState.value
                     _uiState.value = currentValue.copy(
-                        feeds = currentValue.feeds
-                            .map { state ->
-                                if (state.status.id == newStatus.id) {
-                                    buildStatusUiState(newStatus)
-                                } else {
-                                    state
-                                }
-                            }
+                        feeds = currentValue.feeds.updateById(newStatus.id) { state ->
+                            buildStatusUiState(newStatus)
+                        }
                     )
                 }.onFailure {
                     it.message?.takeIf { it.isNotEmpty() }

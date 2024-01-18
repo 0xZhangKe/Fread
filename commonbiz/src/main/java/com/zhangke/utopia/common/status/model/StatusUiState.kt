@@ -7,3 +7,16 @@ data class StatusUiState (
     val bottomInteractions: List<StatusUiInteraction>,
     val moreInteractions: List<StatusUiInteraction>,
 )
+
+inline fun List<StatusUiState>.updateById(
+    statusId: String,
+    block: (StatusUiState) -> StatusUiState,
+): List<StatusUiState> {
+    return map {
+        if (it.status.id == statusId) {
+            block(it)
+        } else {
+            it
+        }
+    }
+}

@@ -1,8 +1,10 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusContextUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsTimelineFirstStatusUseCase
@@ -23,6 +25,8 @@ class ActivityPubStatusResolver @Inject constructor(
     private val isUserFirstStatus: IsUserFirstStatusUseCase,
     private val isTimelineFirstStatus: IsTimelineFirstStatusUseCase,
     private val statusInteractive: StatusInteractiveUseCase,
+    private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
     private val getStatusContextUseCase: GetStatusContextUseCase,
 ) : IStatusResolver {
 
@@ -71,7 +75,11 @@ class ActivityPubStatusResolver @Inject constructor(
         interaction: StatusInteraction,
     ): Result<Status>? {
         if (status.notThisPlatform()) return null
-        return statusInteractive(status, interaction)
+        return statusInteractive(status, interaction).map { entity ->
+            val platform = status.platform
+            val supportActions = getStatusSupportInteraction(entity)
+            activityPubStatusAdapter.toStatus(entity, platform, supportActions)
+        }
     }
 
     override suspend fun getStatusContext(status: Status): Result<StatusContext>? {

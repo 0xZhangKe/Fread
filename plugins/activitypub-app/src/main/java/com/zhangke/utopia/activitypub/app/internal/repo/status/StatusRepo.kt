@@ -5,7 +5,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusTableEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 
 abstract class StatusRepo(
@@ -148,6 +147,15 @@ abstract class StatusRepo(
             )
         }
         statusDao.insert(tableEntities)
+    }
+
+    suspend fun updateEntity(entity: ActivityPubStatusEntity) {
+        val originEntity = statusDao.query(entity.id) ?: return
+        val newEntity = originEntity.copy(
+            status = entity,
+            createTimestamp = formatDatetimeToDate(entity.createdAt).time,
+        )
+        statusDao.insert(newEntity)
     }
 
     private fun ActivityPubStatusEntity.toTableEntity(

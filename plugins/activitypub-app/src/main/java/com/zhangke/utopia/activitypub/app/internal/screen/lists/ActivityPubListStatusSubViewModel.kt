@@ -7,6 +7,7 @@ import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlat
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
 import com.zhangke.utopia.activitypub.app.internal.screen.content.StatusViewModel
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 
 class ActivityPubListStatusSubViewModel(
@@ -15,6 +16,7 @@ class ActivityPubListStatusSubViewModel(
     getStatusSupportAction: GetStatusInteractionUseCase,
     buildStatusUiState: BuildStatusUiStateUseCase,
     statusAdapter: ActivityPubStatusAdapter,
+    statusInteractive: StatusInteractiveUseCase,
     serverBaseUrl: FormalBaseUrl,
     private val listId: String,
 ) : StatusViewModel(
@@ -22,6 +24,7 @@ class ActivityPubListStatusSubViewModel(
     getStatusSupportAction = getStatusSupportAction,
     buildStatusUiState = buildStatusUiState,
     statusAdapter = statusAdapter,
+    statusInteractive = statusInteractive,
     serverBaseUrl = serverBaseUrl,
 ) {
 
@@ -49,5 +52,9 @@ class ActivityPubListStatusSubViewModel(
             listId = listId,
             maxId = maxId,
         )
+    }
+
+    override suspend fun updateLocalStatus(status: ActivityPubStatusEntity) {
+        listStatusRepo.updateEntity(status)
     }
 }

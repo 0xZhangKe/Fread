@@ -1,24 +1,14 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.trending
 
-import androidx.paging.Pager
-import androidx.paging.PagingConfig
-import androidx.paging.PagingData
-import androidx.paging.cachedIn
-import androidx.paging.map
-import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.activitypub.app.internal.screen.content.StatusViewModel
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.status.status.model.Status
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.map
 
 class TrendingStatusSubViewModel(
     private val getServerTrending: GetServerTrendingUseCase,
@@ -26,35 +16,35 @@ class TrendingStatusSubViewModel(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
+    private val statusInteractive: StatusInteractiveUseCase,
     private val baseUrl: FormalBaseUrl,
-) : SubViewModel() {
+) : StatusViewModel(
+    platformRepo = platformRepo,
+    getStatusSupportAction = getStatusSupportAction,
+    buildStatusUiState = buildStatusUiState,
+    statusAdapter = statusAdapter,
+    statusInteractive = statusInteractive,
+    serverBaseUrl = baseUrl,
+) {
 
-    private var dataSource: ServerTrendingDataSource? = null
-
-    private val _statusFlow = MutableStateFlow(createStatusFlow())
-
-    val statusFlow: StateFlow<Flow<PagingData<StatusUiState>>> = _statusFlow
-
-    private fun createStatusFlow(): Flow<PagingData<StatusUiState>> {
-        return Pager(PagingConfig(pageSize = 40)) {
-            ServerTrendingDataSource(
-                baseUrl = baseUrl,
-                getServerTrending = getServerTrending,
-                getStatusSupportAction = getStatusSupportAction,
-                statusAdapter = statusAdapter,
-                platformRepo = platformRepo,
-            ).also {
-                dataSource = it
-            }
-        }.flow
-            .cachedIn(viewModelScope)
-            .map { it.map(buildStatusUiState::invoke) }
+    init {
+        prepare()
     }
 
-    fun onRefresh() {
-        dataSource?.invalidate()
+    override suspend fun getLocalStatus(): List<ActivityPubStatusEntity> {
+        return emptyList()
     }
 
-    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
+    override suspend fun getRemoteStatus(): Result<List<ActivityPubStatusEntity>> {
+        return getServerTrending(baseUrl)
     }
+
+    override suspend fun loadMore(maxId: String): Result<List<ActivityPubStatusEntity>> {
+        return getServerTrending(
+            baseUrl = baseUrl,
+            offset = _uiState.value.status.size,
+        )
+    }
+
+    override suspend fun updateLocalStatus(status: ActivityPubStatusEntity) {}
 }

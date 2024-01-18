@@ -22,6 +22,8 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
@@ -38,12 +40,11 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
 
     @Composable
     override fun Screen.TabContent() {
+        val snackbarHostState = LocalSnackbarHostState.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
-        ConsumeFlow(viewModel.errorMessageFlow) {
-            //TODO handle it
-        }
+        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.errorMessageFlow)
         MixedContentUi(
             uiState = uiState,
             onInteractive = viewModel::onInteractive,

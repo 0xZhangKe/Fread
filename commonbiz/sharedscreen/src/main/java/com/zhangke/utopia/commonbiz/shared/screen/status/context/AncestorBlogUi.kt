@@ -11,7 +11,6 @@ import androidx.compose.material.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
@@ -26,7 +25,6 @@ import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.action.StatusMoreInteractionIcon
-import com.zhangke.utopia.status.ui.formatStatusDateTime
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
@@ -36,6 +34,7 @@ import com.zhangke.utopia.status.ui.threads.StatusThread
 fun AncestorBlogUi(
     modifier: Modifier,
     blog: Blog,
+    displayTime: String,
     isFirst: Boolean,
     style: StatusStyle = defaultStatusStyle(),
     indexInList: Int,
@@ -120,7 +119,7 @@ fun AncestorBlogUi(
                     start.linkTo(name.start)
                     top.linkTo(name.bottom, statusInfoStyle.nameToTimePadding)
                 },
-                text = remember(blog.date) { formatStatusDateTime(blog.date) },
+                text = displayTime,
                 style = statusInfoStyle.descStyle,
             )
 

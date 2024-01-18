@@ -25,6 +25,7 @@ import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 fun AnchorBlogUi(
     modifier: Modifier,
     blog: Blog,
+    displayTime: String,
     indexInList: Int,
     showUpThread: Boolean,
     style: StatusStyle = defaultStatusStyle(),
@@ -40,7 +41,7 @@ fun AnchorBlogUi(
             StatusInfoLine(
                 modifier = Modifier,
                 blogAuthor = blog.author,
-                lastEditTime = blog.date,
+                displayTime = displayTime,
                 showUpThread = showUpThread,
                 style = style,
                 moreInteractions = moreInteractions,

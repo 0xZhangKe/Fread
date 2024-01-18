@@ -110,16 +110,11 @@ fun FeedsHomeTopBar(
             selectedTabIndex = selectedIndex,
             tabCount = feedsConfigList.size,
             containerColor = Color.Transparent,
-            selectedIndex = selectedIndex,
             onTabClick = onTabClick,
             tabContent = { index ->
-                Box(
-                    modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                ) {
-                    Text(
-                        text = feedsConfigList[index].name,
-                    )
-                }
+                Text(
+                    text = feedsConfigList[index].name,
+                )
             }
         )
     }

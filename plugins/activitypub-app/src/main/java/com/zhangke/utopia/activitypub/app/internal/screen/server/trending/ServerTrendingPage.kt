@@ -66,9 +66,7 @@ private fun ServerTrendingContent(
             if (status != null) {
                 FeedsStatusNode(
                     modifier = Modifier.fillMaxWidth(),
-                    status = status.status,
-                    bottomPanelInteractions = status.bottomInteractions,
-                    moreInteractions = status.moreInteractions,
+                    status = status,
                     onInteractive = onInteractive,
                     indexInList = index,
                 )

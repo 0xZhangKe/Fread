@@ -7,6 +7,7 @@ import androidx.core.net.toUri
 import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
@@ -17,24 +18,20 @@ import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 @Composable
 fun FeedsStatusNode(
     modifier: Modifier = Modifier,
-    status: Status,
+    status: StatusUiState,
     indexInList: Int,
-    bottomPanelInteractions: List<StatusUiInteraction>,
-    moreInteractions: List<StatusUiInteraction>,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
 ) {
     val navigator = LocalGlobalNavigator.current
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            navigator.push(StatusContextScreen(status))
+            navigator.push(StatusContextScreen(status.status))
         },
         status = status,
         indexInList = indexInList,
-        bottomPanelInteractions = bottomPanelInteractions,
-        moreInteractions = moreInteractions,
         onInteractive = {
-            onInteractive(status, it)
+            onInteractive(status.status, it)
         },
         onMediaClick = { event ->
             when (event) {

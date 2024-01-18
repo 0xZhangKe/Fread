@@ -7,11 +7,13 @@ import javax.inject.Inject
 class BuildStatusUiStateUseCase @Inject constructor(
     private val generateBottomInteractionUseCase: GenerateBottomInteractionUseCase,
     private val generateMoreInteraction: GenerateMoreInteraction,
+    private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
 ) {
 
     operator fun invoke(status: Status): StatusUiState {
         return StatusUiState(
             status = status,
+            displayTime = formatStatusDisplayTime(status.datetime),
             bottomInteractions = generateBottomInteractionUseCase(status.supportInteraction),
             moreInteractions = generateMoreInteraction(status.supportInteraction),
         )

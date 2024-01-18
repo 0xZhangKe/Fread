@@ -1,10 +1,10 @@
 package com.zhangke.utopia.status.ui
 
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
@@ -13,25 +13,24 @@ import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 @Composable
 fun StatusUi(
     modifier: Modifier = Modifier,
-    status: Status,
+    status: StatusUiState,
     indexInList: Int,
     style: StatusStyle = defaultStatusStyle(),
-    bottomPanelInteractions: List<StatusUiInteraction>,
-    moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
     Surface(
         modifier = modifier,
     ) {
-        when (status) {
+        when (val rawStatus = status.status) {
             is Status.Reblog -> {
                 ReblogUi(
                     modifier = Modifier,
-                    reblog = status,
+                    reblog = rawStatus,
+                    displayTime = status.displayTime,
                     indexInList = indexInList,
-                    bottomPanelInteractions = bottomPanelInteractions,
-                    moreInteractions = moreInteractions,
+                    bottomPanelInteractions = status.bottomInteractions,
+                    moreInteractions = status.moreInteractions,
                     onInteractive = onInteractive,
                     style = style,
                     onMediaClick = onMediaClick,
@@ -41,9 +40,10 @@ fun StatusUi(
             is Status.NewBlog -> {
                 BlogUi(
                     modifier = Modifier,
-                    blog = status.blog,
-                    bottomPanelInteractions = bottomPanelInteractions,
-                    moreInteractions = moreInteractions,
+                    blog = rawStatus.blog,
+                    displayTime = status.displayTime,
+                    bottomPanelInteractions = status.bottomInteractions,
+                    moreInteractions = status.moreInteractions,
                     indexInList = indexInList,
                     style = style,
                     onInteractive = onInteractive,

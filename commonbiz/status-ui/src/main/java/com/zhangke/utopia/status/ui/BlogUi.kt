@@ -18,6 +18,7 @@ import com.zhangke.utopia.status.ui.style.StatusStyle
 fun BlogUi(
     modifier: Modifier,
     blog: Blog,
+    displayTime: String,
     indexInList: Int,
     style: StatusStyle,
     bottomPanelInteractions: List<StatusUiInteraction>,
@@ -31,7 +32,7 @@ fun BlogUi(
             modifier = Modifier
                 .fillMaxWidth(),
             blogAuthor = blog.author,
-            lastEditTime = blog.date,
+            displayTime = displayTime,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,
             style = style,

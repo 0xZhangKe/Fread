@@ -7,16 +7,15 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.status.model.Status
 
 @Composable
 fun ActivityPubStatusUi(
     modifier: Modifier = Modifier,
-    status: Status,
+    status: StatusUiState,
     indexInList: Int,
-    bottomPanelInteractions: List<StatusUiInteraction>,
-    moreInteractions: List<StatusUiInteraction>,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
@@ -24,18 +23,16 @@ fun ActivityPubStatusUi(
         modifier = modifier,
         status = status,
         indexInList = indexInList,
-        bottomPanelInteractions = bottomPanelInteractions,
-        moreInteractions = moreInteractions,
         onInteractive = { _, interaction ->
             if (interaction is StatusUiInteraction.Comment) {
                 navigator.pushDestination(
                     PostStatusScreenRoute.buildRoute(
-                        replyToBlogId = status.id,
-                        replyAuthorName = status.intrinsicBlog.author.name,
+                        replyToBlogId = status.status.id,
+                        replyAuthorName = status.status.intrinsicBlog.author.name,
                     )
                 )
             } else {
-                onInteractive(status, interaction)
+                onInteractive(status.status, interaction)
             }
         },
     )

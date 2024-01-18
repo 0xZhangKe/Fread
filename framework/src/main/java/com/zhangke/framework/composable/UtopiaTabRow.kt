@@ -1,8 +1,8 @@
 package com.zhangke.framework.composable
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -15,6 +15,7 @@ import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.mutableStateOf
@@ -58,10 +59,15 @@ fun UtopiaTabRow(
     var tabEdgePadding by rememberSaveable(saver = StateSaver.MutableDpSaver) {
         mutableStateOf(0.dp)
     }
+    Log.d("U_TEST", "tabEdgePadding:$tabEdgePadding")
     if (tabContainerWidth != null && allTabSumWidth != null) {
-        val edgePadding = (tabContainerWidth!! - allTabSumWidth!!) / 2
-        if (edgePadding > 0.dp) {
-            tabEdgePadding = edgePadding
+        LaunchedEffect(tabContainerWidth, allTabSumWidth) {
+            Log.d("U_TEST", "tabContainerWidth:$tabContainerWidth, allTabSumWidth: $allTabSumWidth")
+            tabEdgePadding = if (tabContainerWidth!! <= allTabSumWidth!!) {
+                0.dp
+            } else {
+                (tabContainerWidth!! - allTabSumWidth!!) / 2
+            }
         }
     }
     ScrollableTabRow(

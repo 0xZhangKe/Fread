@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -9,10 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.Tab
-import androidx.compose.material3.TabRow
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,6 +24,7 @@ import com.zhangke.activitypub.entities.ActivityPubListEntity
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
 import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
 import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
@@ -75,7 +72,7 @@ class ActivityPubContentScreen(
             val pagerState = rememberPagerState {
                 tabList.size
             }
-            ScrollableTabRow(
+            UtopiaTabRow(
                 modifier = Modifier.fillMaxWidth(),
                 selectedTabIndex = pagerState.currentPage,
             ) {
@@ -89,7 +86,7 @@ class ActivityPubContentScreen(
                         },
                     ) {
                         Box(
-                            modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                            modifier = Modifier.padding(8.dp),
                         ) {
                             Text(
                                 text = item.options?.title.orEmpty(),

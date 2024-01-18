@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.entities.ActivityPubListEntity
@@ -76,10 +75,8 @@ class ActivityPubContentViewModel @AssistedInject constructor(
                 .filterNotNull()
                 .onEach(accountListsRepo::updateAccountLists)
                 .flatMapMerge { account ->
-                    Log.d("U_TEST", "observeAccountLists with $account")
                     accountListsRepo.observeAccountLists(account.userId)
                 }.collect { lists ->
-                    Log.d("U_TEST", "observeAccountLists result $lists")
                     _lists.value = lists
                 }
         }

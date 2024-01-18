@@ -81,7 +81,7 @@ abstract class StatusRepo(
         return loadStatusFromServer(
             serverBaseUrl = serverBaseUrl,
             type = type,
-            maxId = null,
+            maxId = maxId,
             limit = limit,
             listId = listId,
         ).onSuccess {

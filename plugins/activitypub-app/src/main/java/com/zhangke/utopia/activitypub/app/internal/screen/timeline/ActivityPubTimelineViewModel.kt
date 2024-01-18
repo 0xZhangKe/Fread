@@ -2,31 +2,41 @@ package com.zhangke.utopia.activitypub.app.internal.screen.timeline
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ActivityPubTimelineViewModel @Inject constructor(
-    private val getTimelineStatus: GetTimelineStatusUseCase,
+    private val timelineStatusRepo: TimelineStatusRepo,
+    private val platformRepo: ActivityPubPlatformRepo,
+    private val statusAdapter: ActivityPubStatusAdapter,
+    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
-) : ContainerViewModel<ActivityPubTimeSubViewModel, ActivityPubTimelineViewModel.Params>() {
+) : ContainerViewModel<ActivityPubTimelineSubViewModel, ActivityPubTimelineViewModel.Params>() {
 
-    override fun createSubViewModel(params: Params): ActivityPubTimeSubViewModel {
-        return ActivityPubTimeSubViewModel(
-            getTimelineStatus = getTimelineStatus,
+    override fun createSubViewModel(params: Params): ActivityPubTimelineSubViewModel {
+        return ActivityPubTimelineSubViewModel(
+            timelineStatusRepo = timelineStatusRepo,
+            platformRepo = platformRepo,
+            statusAdapter = statusAdapter,
             buildStatusUiState = buildStatusUiState,
+            getStatusSupportAction = getStatusSupportAction,
             baseUrl = params.baseUrl,
-            timelineType = params.timelineSourceType,
+            type = params.timelineSourceType.toSourceType(),
         )
     }
 
     fun getSubViewModel(
         baseUrl: FormalBaseUrl,
         timelineSourceType: TimelineSourceType,
-    ): ActivityPubTimeSubViewModel {
+    ): ActivityPubTimelineSubViewModel {
         val params = Params(baseUrl, timelineSourceType)
         return obtainSubViewModel(params)
     }
@@ -37,5 +47,13 @@ class ActivityPubTimelineViewModel @Inject constructor(
     ) : SubViewModelParams() {
         override val key: String
             get() = "${baseUrl}_${timelineSourceType.name}"
+    }
+
+    private fun TimelineSourceType.toSourceType(): ActivityPubStatusSourceType {
+        return when (this) {
+            TimelineSourceType.HOME -> ActivityPubStatusSourceType.TIMELINE_HOME
+            TimelineSourceType.LOCAL -> ActivityPubStatusSourceType.TIMELINE_LOCAL
+            TimelineSourceType.PUBLIC -> ActivityPubStatusSourceType.TIMELINE_PUBLIC
+        }
     }
 }

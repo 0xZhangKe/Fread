@@ -21,14 +21,14 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
             userId = entity.userId,
-            uri = userUriTransformer.build(entity.webFinger),
+            uri = userUriTransformer.build(entity.webFinger, FormalBaseUrl.parse(entity.url)!!),
             webFinger = entity.webFinger,
             platform = entity.platform.toPlatform(),
             baseUrl = entity.baseUrl,
             name = entity.name,
             description = entity.description,
             avatar = entity.avatar,
-            homepage = entity.homepage,
+            url = entity.url,
             active = entity.active,
             token = entity.token,
         )
@@ -46,7 +46,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             name = user.userName,
             description = user.description,
             avatar = user.avatar,
-            homepage = user.homepage,
+            url = user.url,
             active = user.active,
             token = user.token,
         )
@@ -61,14 +61,14 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         val webFinger = accountToWebFinger(account)
         return ActivityPubLoggedAccount(
             userId = account.id,
-            uri = userUriTransformer.build(webFinger),
+            uri = userUriTransformer.build(webFinger, FormalBaseUrl.parse(account.url)!!),
             webFinger = webFinger,
             platform = instanceAdapter.toPlatform(instance),
             baseUrl = FormalBaseUrl.parse(instance.domain)!!,
             name = account.displayName,
             description = account.note,
             avatar = account.avatar,
-            homepage = account.url,
+            url = account.url,
             active = active,
             token = token,
         )
@@ -79,7 +79,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             uri = uri,
             name = name,
             description = description,
-            baseUrl = baseUrl.toString(),
+            baseUrl = baseUrl,
             thumbnail = thumbnail,
             protocol = protocol,
         )
@@ -88,7 +88,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         uri = uri,
         name = name,
         description = description,
-        baseUrl = FormalBaseUrl.parse(baseUrl)!!,
+        baseUrl = baseUrl,
         thumbnail = thumbnail,
         protocol = protocol,
     )

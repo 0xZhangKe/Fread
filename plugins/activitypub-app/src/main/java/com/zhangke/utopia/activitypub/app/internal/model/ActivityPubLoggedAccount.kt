@@ -16,7 +16,7 @@ class ActivityPubLoggedAccount(
     name: String,
     description: String?,
     avatar: String?,
-    val homepage: String?,
+    val url: String,
     active: Boolean,
     val token: ActivityPubTokenEntity,
 ) : LoggedAccount(

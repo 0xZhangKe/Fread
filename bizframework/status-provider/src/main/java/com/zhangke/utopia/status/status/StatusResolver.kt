@@ -31,9 +31,9 @@ class StatusResolver(
     /**
      * check this status is the first status of this source
      */
-    suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean> {
+    suspend fun checkIsFirstStatus(status: Status): Result<Boolean> {
         return resolverList.mapFirst {
-            it.checkIsFirstStatus(sourceUri, statusId)
+            it.checkIsFirstStatus(status)
         }
     }
 
@@ -58,7 +58,7 @@ interface IStatusResolver {
         maxId: String?
     ): Result<List<Status>>?
 
-    suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>?
+    suspend fun checkIsFirstStatus(status: Status): Result<Boolean>?
 
     suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status>?
 

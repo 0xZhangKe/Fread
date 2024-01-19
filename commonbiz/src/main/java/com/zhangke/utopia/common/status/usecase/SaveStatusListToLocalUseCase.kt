@@ -60,10 +60,9 @@ internal class SaveStatusListToLocalUseCase @Inject internal constructor(
         if (existStatusEntity?.nextStatusId.isNullOrEmpty().not()) {
             return status.copy(nextStatusId = existStatusEntity?.nextStatusId)
         }
-        val isFirstStatus = statusProvider.statusResolver.checkIsFirstStatus(
-            sourceUri = status.sourceUri,
-            statusId = status.statusIdOfPlatform,
-        ).getOrNull() == true
+        val isFirstStatus = statusProvider.statusResolver
+            .checkIsFirstStatus(status.status)
+            .getOrNull() == true
         return if (isFirstStatus) {
             status.markToFirstStatus()
         } else {

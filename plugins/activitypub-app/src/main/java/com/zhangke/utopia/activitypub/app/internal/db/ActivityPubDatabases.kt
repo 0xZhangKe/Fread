@@ -6,11 +6,9 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubInstanceEntityConverter
-import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubUserTokenConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalBaseUrlConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.PlatformEntityTypeConverter
-import com.zhangke.utopia.activitypub.app.internal.db.converter.TimelineSourceTypeConverter
 import com.zhangke.utopia.common.utils.WebFingerConverter
 
 internal const val ACTIVITY_PUB_DB_NAME = "ActivityPubStatusProvider"
@@ -18,7 +16,6 @@ private const val DB_VERSION = 1
 
 @TypeConverters(
     WebFingerConverter::class,
-    TimelineSourceTypeConverter::class,
     PlatformEntityTypeConverter::class,
     ActivityPubUserTokenConverter::class,
     ActivityPubInstanceEntityConverter::class,

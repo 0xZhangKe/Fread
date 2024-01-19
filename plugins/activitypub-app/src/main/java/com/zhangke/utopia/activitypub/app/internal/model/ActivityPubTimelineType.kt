@@ -1,17 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.model
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.status.uri.FormalUri
 
-data class TimelineSourceUriInsights(
-    val uri: FormalUri,
-    val serverBaseUrl: FormalBaseUrl,
-    val type: TimelineSourceType,
-)
-
-enum class TimelineSourceType {
+enum class ActivityPubTimelineType {
 
     PUBLIC,
     LOCAL,
@@ -26,7 +18,7 @@ enum class TimelineSourceType {
 
     companion object {
 
-        fun valurOfOrNull(name: String): TimelineSourceType? {
+        fun valurOfOrNull(name: String): ActivityPubTimelineType? {
             return entries.firstOrNull { it.name == name }
         }
     }

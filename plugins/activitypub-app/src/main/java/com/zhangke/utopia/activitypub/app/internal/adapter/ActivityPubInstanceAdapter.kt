@@ -22,7 +22,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
         val uri = platformUriTransformer.build(baseUrl)
         return BlogPlatform(
             uri = uri.toString(),
-            baseUrl = baseUrl.toString(),
+            baseUrl = baseUrl,
             name = instance.title,
             description = instance.description,
             protocol = ACTIVITY_PUB_PROTOCOL,
@@ -36,7 +36,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
         val uri = platformUriTransformer.build(instance.baseUrl)
         return BlogPlatform(
             uri = uri.toString(),
-            baseUrl = instance.baseUrl.toString(),
+            baseUrl = instance.baseUrl,
             name = instance.title,
             description = instance.description,
             protocol = ACTIVITY_PUB_PROTOCOL,

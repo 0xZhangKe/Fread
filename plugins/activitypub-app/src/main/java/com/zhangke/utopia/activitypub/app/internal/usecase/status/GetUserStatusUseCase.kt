@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
@@ -10,7 +11,7 @@ import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
 class GetUserStatusUseCase @Inject constructor(
-    private val chooseBaseUrlUseCase: ChooseBaseUrlUseCase,
+    private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
@@ -24,7 +25,7 @@ class GetUserStatusUseCase @Inject constructor(
         sinceId: String?,
         maxId: String?,
     ): Result<List<Status>> {
-        val baseUrl = chooseBaseUrlUseCase(userInsights.uri)
+        val baseUrl = baseUrlManager.decideBaseUrl(userInsights.baseUrl)
         val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsights.webFinger, baseUrl)
         if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
         val userId = userIdResult.getOrThrow()

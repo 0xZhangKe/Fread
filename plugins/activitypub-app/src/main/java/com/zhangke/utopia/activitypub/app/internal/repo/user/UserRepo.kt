@@ -1,23 +1,24 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.user
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.source.UserSourceTransformer
-import com.zhangke.utopia.activitypub.app.internal.usecase.baseurl.ChooseBaseUrlUseCase
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
 class UserRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
-    private val chooseBaseUrl: ChooseBaseUrlUseCase,
     private val userSourceTransformer: UserSourceTransformer,
 ) {
 
-    suspend fun getUserSource(userUriInsights: UserUriInsights): Result<StatusSource> {
-        val baseUrl = chooseBaseUrl(userUriInsights.uri)
+    suspend fun getUserSource(
+        baseUrl: FormalBaseUrl,
+        userUriInsights: UserUriInsights,
+    ): Result<StatusSource> {
         val userIdResult =
             webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, baseUrl)
         if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
@@ -28,15 +29,20 @@ class UserRepo @Inject constructor(
             .map(userSourceTransformer::createByUserEntity)
     }
 
-    suspend fun lookupUserSource(webFinger: WebFinger): Result<StatusSource?> {
-        val baseUrl = chooseBaseUrl()
+    suspend fun lookupUserSource(
+        baseUrl: FormalBaseUrl,
+        acct: String,
+    ): Result<StatusSource?> {
         return clientManager.getClient(baseUrl).accountRepo
-            .lookup(webFinger.toString())
-            .map {
+            .lookup(acct)
+            .onSuccess {
                 if (it != null) {
-                    webFingerBaseUrlToUserIdRepo.insert(webFinger, baseUrl, it.id)
+                    val webFinger = WebFinger.create(it.acct)
+                    if (webFinger != null) {
+                        webFingerBaseUrlToUserIdRepo.insert(webFinger, baseUrl, it.id)
+                    }
                 }
-                it?.let(userSourceTransformer::createByUserEntity)
             }
+            .map { it?.let(userSourceTransformer::createByUserEntity) }
     }
 }

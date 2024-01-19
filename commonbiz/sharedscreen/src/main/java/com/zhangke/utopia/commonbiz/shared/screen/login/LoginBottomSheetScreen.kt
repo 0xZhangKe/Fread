@@ -54,7 +54,7 @@ class LoginBottomSheetScreen(
             LoginScreenContent(
                 uiState = uiState,
                 onPlatformClick = {
-                    viewModel.onServerHostConfirmClick(FormalBaseUrl.parse(it.baseUrl)!!)
+                    viewModel.onServerHostConfirmClick(it.baseUrl)
                     navigator.hide()
                 },
                 onInputClick = { showInputContent = true },

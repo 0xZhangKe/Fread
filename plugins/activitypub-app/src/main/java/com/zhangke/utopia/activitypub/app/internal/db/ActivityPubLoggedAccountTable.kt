@@ -24,7 +24,7 @@ data class ActivityPubLoggedAccountEntity(
     val name: String,
     val description: String?,
     val avatar: String?,
-    val homepage: String?,
+    val url: String,
     val active: Boolean,
     val token: ActivityPubTokenEntity,
 ) {

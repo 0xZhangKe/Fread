@@ -21,7 +21,7 @@ import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.UtopiaTabRow
-import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
 import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
 import com.zhangke.utopia.activitypub.app.internal.screen.trending.TrendingStatusTab
@@ -102,7 +102,7 @@ class ActivityPubContentScreen(
         val screenList = mutableListOf<PagerTab>()
         screenList += ActivityPubTimelineTab(
             baseUrl = uiState.config.baseUrl,
-            type = TimelineSourceType.HOME,
+            type = ActivityPubTimelineType.HOME,
         )
         screenList += lists.map {
             ActivityPubListStatusTab(
@@ -113,11 +113,11 @@ class ActivityPubContentScreen(
         }
         screenList += ActivityPubTimelineTab(
             baseUrl = uiState.config.baseUrl,
-            type = TimelineSourceType.LOCAL,
+            type = ActivityPubTimelineType.LOCAL,
         )
         screenList += ActivityPubTimelineTab(
             baseUrl = uiState.config.baseUrl,
-            type = TimelineSourceType.PUBLIC,
+            type = ActivityPubTimelineType.PUBLIC,
         )
         screenList += TrendingStatusTab(
             baseUrl = uiState.config.baseUrl,

@@ -4,7 +4,7 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.utopia.activitypub.app.internal.model.TimelineSourceType
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
@@ -38,7 +38,7 @@ class ActivityPubTimelineViewModel @Inject constructor(
 
     fun getSubViewModel(
         baseUrl: FormalBaseUrl,
-        timelineSourceType: TimelineSourceType,
+        timelineSourceType: ActivityPubTimelineType,
     ): ActivityPubTimelineSubViewModel {
         val params = Params(baseUrl, timelineSourceType)
         return obtainSubViewModel(params)
@@ -46,17 +46,17 @@ class ActivityPubTimelineViewModel @Inject constructor(
 
     class Params(
         val baseUrl: FormalBaseUrl,
-        val timelineSourceType: TimelineSourceType,
+        val timelineSourceType: ActivityPubTimelineType,
     ) : SubViewModelParams() {
         override val key: String
             get() = "${baseUrl}_${timelineSourceType.name}"
     }
 
-    private fun TimelineSourceType.toSourceType(): ActivityPubStatusSourceType {
+    private fun ActivityPubTimelineType.toSourceType(): ActivityPubStatusSourceType {
         return when (this) {
-            TimelineSourceType.HOME -> ActivityPubStatusSourceType.TIMELINE_HOME
-            TimelineSourceType.LOCAL -> ActivityPubStatusSourceType.TIMELINE_LOCAL
-            TimelineSourceType.PUBLIC -> ActivityPubStatusSourceType.TIMELINE_PUBLIC
+            ActivityPubTimelineType.HOME -> ActivityPubStatusSourceType.TIMELINE_HOME
+            ActivityPubTimelineType.LOCAL -> ActivityPubStatusSourceType.TIMELINE_LOCAL
+            ActivityPubTimelineType.PUBLIC -> ActivityPubStatusSourceType.TIMELINE_PUBLIC
         }
     }
 }

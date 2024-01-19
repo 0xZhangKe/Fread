@@ -1,13 +1,10 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypub.app.internal.uri.TimelineUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusContextUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsTimelineFirstStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsUserFirstStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.status.status.IStatusResolver
@@ -19,11 +16,8 @@ import javax.inject.Inject
 
 class ActivityPubStatusResolver @Inject constructor(
     private val getUserStatus: GetUserStatusUseCase,
-    private val getTimelineStatus: GetTimelineStatusUseCase,
     private val userUriTransformer: UserUriTransformer,
-    private val timelineUriTransformer: TimelineUriTransformer,
     private val isUserFirstStatus: IsUserFirstStatusUseCase,
-    private val isTimelineFirstStatus: IsTimelineFirstStatusUseCase,
     private val statusInteractive: StatusInteractiveUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val getStatusSupportInteraction: GetStatusInteractionUseCase,
@@ -45,29 +39,11 @@ class ActivityPubStatusResolver @Inject constructor(
                 maxId = maxId,
             )
         }
-        val timelineInsights = timelineUriTransformer.parse(uri)
-        if (timelineInsights != null) {
-            return getTimelineStatus(
-                serverBaseUrl = timelineInsights.serverBaseUrl,
-                type = timelineInsights.type,
-                limit = limit,
-                sinceId = sinceId,
-                maxId = maxId,
-            )
-        }
         return null
     }
 
-    override suspend fun checkIsFirstStatus(sourceUri: FormalUri, statusId: String): Result<Boolean>? {
-        val userInsights = userUriTransformer.parse(sourceUri)
-        if (userInsights != null) {
-            return isUserFirstStatus(userInsights, statusId)
-        }
-        val timelineInsights = timelineUriTransformer.parse(sourceUri)
-        if (timelineInsights != null) {
-            return isTimelineFirstStatus(timelineInsights, statusId)
-        }
-        return null
+    override suspend fun checkIsFirstStatus(status: Status): Result<Boolean>? {
+        return isUserFirstStatus(status)
     }
 
     override suspend fun interactive(

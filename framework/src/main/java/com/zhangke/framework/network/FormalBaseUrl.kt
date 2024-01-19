@@ -1,13 +1,16 @@
 package com.zhangke.framework.network
 
+import android.os.Parcelable
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import java.net.URL
 
+@Parcelize
 @Serializable
 class FormalBaseUrl private constructor(
     val scheme: String,
     val host: String,
-) {
+): Parcelable {
 
     override fun toString(): String {
         return "$scheme$SCHEME_SEPARATOR$host"
@@ -20,7 +23,7 @@ class FormalBaseUrl private constructor(
     override fun equals(other: Any?): Boolean {
         if (other == null) return false
         if (other !is FormalBaseUrl) return false
-        return other.scheme == scheme && other.host == host
+        return (other.scheme == scheme) && (other.host == host)
     }
 
     companion object {

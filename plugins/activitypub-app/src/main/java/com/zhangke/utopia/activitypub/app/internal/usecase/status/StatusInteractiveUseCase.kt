@@ -1,15 +1,12 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.status.account.unauthenticatedResult
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusInteraction
 import javax.inject.Inject
 
 class StatusInteractiveUseCase @Inject constructor(
-    private val accountManager: ActivityPubAccountManager,
     private val clientManager: ActivityPubClientManager,
 ) {
 
@@ -19,8 +16,7 @@ class StatusInteractiveUseCase @Inject constructor(
     ): Result<ActivityPubStatusEntity> {
         val statusId = status.id
         val platform = status.platform
-        val activeAccount = accountManager.getActiveAccount() ?: return unauthenticatedResult()
-        val statusRepo = clientManager.getClient(activeAccount.baseUrl).statusRepo
+        val statusRepo = clientManager.getClient(platform.baseUrl).statusRepo
         return when (interaction) {
             is StatusInteraction.Like -> {
                 if (interaction.liked) {

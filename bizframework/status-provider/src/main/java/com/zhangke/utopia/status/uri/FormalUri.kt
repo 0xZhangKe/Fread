@@ -38,6 +38,16 @@ class FormalUri constructor(
         return newPath
     }
 
+    override fun hashCode(): Int {
+        return host.hashCode() + path.hashCode() + queries.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (other !is FormalUri) return false
+        return (host == other.host) && (path == other.path) && (queries == other.queries)
+    }
+
     companion object {
 
         const val SCHEME = "utopiaapp"

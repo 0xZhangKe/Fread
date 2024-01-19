@@ -26,7 +26,6 @@ private const val DB_VERSION = 1
         ActivityPubLoggedAccountEntity::class,
         ActivityPubApplicationEntity::class,
         ActivityPubInstanceInfoEntity::class,
-        WebFingerToBaseUrlEntity::class,
         WebFingerBaseurlToIdEntity::class,
     ],
     version = DB_VERSION,
@@ -39,8 +38,6 @@ abstract class ActivityPubDatabases : RoomDatabase() {
     abstract fun getApplicationDao(): ActivityPubApplicationsDao
 
     abstract fun getPlatformDao(): ActivityPubPlatformDao
-
-    abstract fun getWebFingerToBaseUrlDao(): WebFingerToBaseUrlDao
 
     abstract fun getUserIdDao(): WebFingerBaseurlToIdDao
 

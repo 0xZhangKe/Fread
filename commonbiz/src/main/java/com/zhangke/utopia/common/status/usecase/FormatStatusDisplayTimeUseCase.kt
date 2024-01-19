@@ -1,11 +1,9 @@
 package com.zhangke.utopia.common.status.usecase
 
 import android.content.Context
-import android.util.Log
 import com.zhangke.utopia.commonbiz.R
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.text.DateFormat
-import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
 import javax.inject.Inject
@@ -29,16 +27,10 @@ class FormatStatusDisplayTimeUseCase @Inject constructor(
     ): String {
         val duration = (System.currentTimeMillis() - datetime).milliseconds
         val inWholeDays = duration.inWholeDays
-        val formattedDateTime =
-            SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.getDefault()).format(Date(datetime))
         if (inWholeDays > 3) {
-            return dateFormat.format(Date(duration.inWholeMilliseconds)).also {
-                Log.d("U_TEST", "$formattedDateTime -> $it")
-            }
+            return dateFormat.format(Date(duration.inWholeMilliseconds))
         }
-        return "${formatDuration(config, duration)} ${config.ago}".also {
-            Log.d("U_TEST", "$formattedDateTime -> $it")
-        }
+        return "${formatDuration(config, duration)} ${config.ago}"
     }
 
     private fun formatDuration(config: DatetimeFormatConfig, duration: Duration): String {

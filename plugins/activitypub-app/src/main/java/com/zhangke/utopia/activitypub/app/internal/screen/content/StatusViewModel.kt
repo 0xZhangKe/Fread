@@ -82,11 +82,12 @@ abstract class StatusViewModel(
     }
 
     private suspend fun refreshStatus(showRefreshing: Boolean) {
-        updateRefreshState(showRefreshing, true)
+        updateRefreshState(showRefreshing, true, null)
         val platformResult = getBlogPlatform()
         if (platformResult.isFailure) {
-            updateRefreshState(showRefreshing, false)
-            _snackMessage.emit(textOf(platformResult.exceptionOrNull()!!.message.orEmpty()))
+            val errorMessage = textOf(platformResult.exceptionOrNull()!!.message.orEmpty())
+            updateRefreshState(showRefreshing, false, errorMessage)
+            _snackMessage.emit(errorMessage)
             return
         }
         val platform = platformResult.getOrThrow()
@@ -94,15 +95,24 @@ abstract class StatusViewModel(
             _uiState.value = _uiState.value.copy(
                 status = it.toUiStates(platform),
                 refreshing = false,
+                errorMessage = null,
             )
         }.onFailure {
-            updateRefreshState(showRefreshing, false)
-            _snackMessage.emit(textOf(it.message.orEmpty()))
+            val errorMessage = textOf(it.message.orEmpty())
+            updateRefreshState(showRefreshing, false, errorMessage)
+            _snackMessage.emit(errorMessage)
         }
     }
 
-    private fun updateRefreshState(showRefreshing: Boolean, refreshing: Boolean) {
-        _uiState.value = _uiState.value.copy(refreshing = showRefreshing && refreshing)
+    private fun updateRefreshState(
+        showRefreshing: Boolean,
+        refreshing: Boolean,
+        errorMessage: TextString? = _uiState.value.errorMessage,
+    ) {
+        _uiState.value = _uiState.value.copy(
+            refreshing = showRefreshing && refreshing,
+            errorMessage = errorMessage,
+        )
     }
 
     fun onLoadMore() {

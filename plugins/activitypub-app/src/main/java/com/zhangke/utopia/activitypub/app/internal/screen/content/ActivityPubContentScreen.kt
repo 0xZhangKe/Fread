@@ -13,7 +13,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubListEntity
@@ -34,13 +33,9 @@ class ActivityPubContentScreen(
     override val options: PagerTabOptions?
         @Composable get() = null
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Screen.TabContent() {
-        val viewModel =
-            getViewModel<ActivityPubContentViewModel, ActivityPubContentViewModel.Factory> {
-                it.create(configId)
-            }
+        val viewModel = getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
         val loadableState by viewModel.uiState.collectAsState()
         val lists by viewModel.lists.collectAsState()
         LoadableLayout(

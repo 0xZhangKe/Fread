@@ -14,6 +14,12 @@ class GetStatusInteractionUseCase @Inject constructor(
     suspend operator fun invoke(
         entity: ActivityPubStatusEntity,
     ): List<StatusInteraction> {
+        return getStatusInteraction(entity.reblog ?: entity)
+    }
+
+    private suspend fun getStatusInteraction(
+        entity: ActivityPubStatusEntity,
+    ): List<StatusInteraction> {
         val activeAccount = accountManager.getActiveAccount()
         val statusAuthorWebFinger = loggedAccountAdapter.accountToWebFinger(entity.account)
         val isSelfStatus = activeAccount?.webFinger == statusAuthorWebFinger

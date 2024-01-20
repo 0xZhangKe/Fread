@@ -1,6 +1,5 @@
 package com.zhangke.utopia.profile.pages.home
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,7 +29,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -45,7 +43,6 @@ import com.zhangke.utopia.status.platform.BlogPlatform
 internal fun ProfileHomePage(
     uiState: ProfileHomeUiState,
     onAddAccountClick: () -> Unit,
-    onActiveClick: (LoggedAccount) -> Unit,
     onLogoutClick: (LoggedAccount) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxSize()) {
@@ -65,7 +62,6 @@ internal fun ProfileHomePage(
                 AccountGroupItem(
                     platform = item.first,
                     accountList = item.second,
-                    onActiveClick = onActiveClick,
                     onLogoutClick = onLogoutClick,
                 )
             }
@@ -89,7 +85,6 @@ internal fun ProfileHomePage(
 private fun AccountGroupItem(
     platform: BlogPlatform,
     accountList: List<LoggedAccount>,
-    onActiveClick: (LoggedAccount) -> Unit,
     onLogoutClick: (LoggedAccount) -> Unit,
 ) {
     Card(
@@ -107,9 +102,6 @@ private fun AccountGroupItem(
             accountList.forEach { account ->
                 LoggedAccountSection(
                     account = account,
-                    onActiveClick = {
-                        onActiveClick(account)
-                    },
                     onLogoutClick = {
                         onLogoutClick(account)
                     }
@@ -122,7 +114,6 @@ private fun AccountGroupItem(
 @Composable
 private fun LoggedAccountSection(
     account: LoggedAccount,
-    onActiveClick: () -> Unit,
     onLogoutClick: () -> Unit,
 ) {
     ConstraintLayout(
@@ -165,16 +156,6 @@ private fun LoggedAccountSection(
                     color = MaterialTheme.colorScheme.onSurface,
                     style = MaterialTheme.typography.bodyLarge,
                 )
-                if (account.active) {
-                    Box(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 6.dp)
-                            .clip(CircleShape)
-                            .size(8.dp)
-                            .background(Color(0xFF00BF00))
-                    )
-                }
             }
             if (account.description.isNullOrEmpty().not()) {
                 Text(
@@ -208,17 +189,6 @@ private fun LoggedAccountSection(
                 expanded = showMorePopup,
                 onDismissRequest = { showMorePopup = false },
             ) {
-                if (!account.active) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.select))
-                        },
-                        onClick = {
-                            onActiveClick()
-                            showMorePopup = false
-                        },
-                    )
-                }
                 DropdownMenuItem(
                     text = {
                         Text(text = stringResource(com.zhangke.utopia.commonbiz.R.string.logout))

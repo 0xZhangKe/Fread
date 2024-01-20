@@ -53,7 +53,7 @@ class ActivityPubStatusResolver @Inject constructor(
         if (status.notThisPlatform()) return null
         return statusInteractive(status, interaction).map { entity ->
             val platform = status.platform
-            val supportActions = getStatusSupportInteraction(entity)
+            val supportActions = getStatusSupportInteraction(entity, platform)
             activityPubStatusAdapter.toStatus(entity, platform, supportActions)
         }
     }

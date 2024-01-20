@@ -58,7 +58,7 @@ class PostStatusIntermediaryViewModel @Inject constructor(
     init {
         launchInViewModel {
             val postToPlatform = statusProvider.accountManager
-                .getActiveAccountList()
+                .getAllLoggedAccount()
                 .firstOrNull()
                 ?.platform
             if (postToPlatform == null) {

@@ -15,14 +15,14 @@ import com.zhangke.utopia.profile.pages.home.ProfileHomePage
 import com.zhangke.utopia.profile.pages.home.ProfileHomeViewModel
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 
-object ProfileTab : Tab {
+class ProfileTab(private val tabIndex: UShort) : Tab {
 
     override val options: TabOptions
         @Composable get() {
             val icon = rememberVectorPainter(Icons.Default.Settings)
             return remember {
                 TabOptions(
-                    index = 0u, title = "Profile", icon = icon
+                    index = tabIndex, title = "Profile", icon = icon
                 )
             }
         }
@@ -37,7 +37,6 @@ object ProfileTab : Tab {
             onAddAccountClick = {
                 bottomSheetNavigator.show(LoginBottomSheetScreen())
             },
-            onActiveClick = viewModel::onActiveClick,
             onLogoutClick = viewModel::onLogoutClick,
         )
     }

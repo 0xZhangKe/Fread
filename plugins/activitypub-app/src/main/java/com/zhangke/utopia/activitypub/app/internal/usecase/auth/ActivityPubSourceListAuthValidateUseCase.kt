@@ -1,27 +1,26 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.auth
 
-import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.uri.ActivityPubUriValidateUseCase
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
 class ActivityPubSourceListAuthValidateUseCase @Inject constructor(
-    private val userRepo: ActivityPubLoggedAccountRepo,
-    private val activityPubUriValidate: ActivityPubUriValidateUseCase,
+    private val accountManager: ActivityPubAccountManager,
+    private val userUriTransformer: UserUriTransformer,
 ) {
 
     suspend operator fun invoke(
         sourceList: List<StatusSource>,
     ): Result<SourcesAuthValidateResult> {
         val activityPubSourceList = sourceList.filter {
-            activityPubUriValidate(it.uri)
+            userUriTransformer.parse(it.uri) != null
         }
         if (activityPubSourceList.isEmpty()) {
             return Result.success(SourcesAuthValidateResult(emptyList(), emptyList()))
         }
-        val user = userRepo.getCurrentAccount()
-        if (user != null) {
+        if (accountManager.getAllLoggedAccount().isNotEmpty()) {
             return Result.success(
                 SourcesAuthValidateResult(
                     validateList = activityPubSourceList,

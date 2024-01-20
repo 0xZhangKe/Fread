@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -18,6 +19,7 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zhangke.utopia.explore.ExploreTab
+import com.zhangke.utopia.feature.message.NotificationsTab
 import com.zhangke.utopia.feeds.FeedsHomeTab
 import com.zhangke.utopia.profile.ProfileTab
 import com.zhangke.utopia.publish.PublishTab
@@ -25,8 +27,11 @@ import com.zhangke.utopia.publish.PublishTab
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun MainPage() {
+    val tabs = remember {
+        createMainTabs()
+    }
     TabNavigator(
-        tab = FeedsHomeTab,
+        tab = tabs.first(),
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
             Box(
@@ -39,13 +44,22 @@ fun MainPage() {
             NavigationBar(
                 modifier = Modifier.height(60.dp),
             ) {
-                TabNavigationItem(FeedsHomeTab)
-                TabNavigationItem(ExploreTab)
-                TabNavigationItem(PublishTab)
-                TabNavigationItem(ProfileTab)
+                tabs.forEach { tab ->
+                    TabNavigationItem(tab)
+                }
             }
         }
     }
+}
+
+private fun createMainTabs(): List<Tab> {
+    return listOf(
+        FeedsHomeTab(0u),
+        ExploreTab(1u),
+        PublishTab(2u),
+        NotificationsTab(3u),
+        ProfileTab(4u),
+    )
 }
 
 @Composable

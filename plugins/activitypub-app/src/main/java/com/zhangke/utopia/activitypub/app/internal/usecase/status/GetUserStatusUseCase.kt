@@ -39,7 +39,7 @@ class GetUserStatusUseCase @Inject constructor(
                 maxId = maxId,
             ).map { list ->
                 list.map {
-                    val supportActions = getStatusSupportInteraction(it)
+                    val supportActions = getStatusSupportInteraction(it, platform)
                     activityPubStatusAdapter.toStatus(it, platform, supportActions)
                 }
             }

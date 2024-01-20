@@ -13,14 +13,14 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 
-object PublishTab : Tab {
+class PublishTab(private val tabIndex: UShort) : Tab {
 
     override val options: TabOptions
         @Composable get() {
             val icon = rememberVectorPainter(Icons.Default.Publish)
             return remember {
                 TabOptions(
-                    index = 0u, title = "Home", icon = icon
+                    index = tabIndex, title = "Publish", icon = icon
                 )
             }
         }

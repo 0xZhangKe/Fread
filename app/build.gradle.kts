@@ -98,6 +98,7 @@ dependencies {
     implementation(project(path = ":feature:explore"))
     implementation(project(path = ":feature:publish"))
     implementation(project(path = ":feature:profile"))
+    implementation(project(path = ":feature:notifications"))
 
     testImplementation("junit:junit:4.+")
     androidTestImplementation("androidx.test.ext:junit:1.1.5")

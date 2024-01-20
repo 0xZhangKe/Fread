@@ -59,6 +59,10 @@ hiltAndroidGradlePlugin = "2.46.1"
 compose-wheel-picker = "1.0.0-alpha19"
 
 mockk = "1.13.8"
+junit = "4.13.2"
+androidx-test-ext-junit = "1.1.5"
+espresso-core = "3.5.1"
+material = "1.9.0"
 
 
 [bundles]
@@ -189,6 +193,10 @@ krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", 
 krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.ref = "krouter"}
 
 compose-wheel-picker = { group = "com.github.zj565061763", name = "compose-wheel-picker", version.ref = "compose.wheel.picker"}
+junit = { group = "junit", name = "junit", version.ref = "junit" }
+androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
+espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

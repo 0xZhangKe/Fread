@@ -29,7 +29,7 @@ class ServerTrendingDataSource(
         val result = getServerTrending(baseUrl = baseUrl, offset = offset, limit = params.loadSize)
             .map { list ->
                 list.map {
-                    val supportActions = getStatusSupportAction(it)
+                    val supportActions = getStatusSupportAction(it, platform)
                     statusAdapter.toStatus(it, platform, supportActions)
                 }
             }

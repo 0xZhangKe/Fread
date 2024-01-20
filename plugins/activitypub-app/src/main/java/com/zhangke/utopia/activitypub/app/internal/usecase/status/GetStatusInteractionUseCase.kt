@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.status
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.StatusInteraction
 import javax.inject.Inject
 
@@ -13,17 +14,20 @@ class GetStatusInteractionUseCase @Inject constructor(
 
     suspend operator fun invoke(
         entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
     ): List<StatusInteraction> {
-        return getStatusInteraction(entity.reblog ?: entity)
+        return getStatusInteraction(entity.reblog ?: entity, platform)
     }
 
     private suspend fun getStatusInteraction(
         entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
     ): List<StatusInteraction> {
-        val activeAccount = accountManager.getActiveAccount()
+        val account = accountManager.getAllLoggedAccount()
+            .firstOrNull { it.platform.uri == platform.uri }
         val statusAuthorWebFinger = loggedAccountAdapter.accountToWebFinger(entity.account)
-        val isSelfStatus = activeAccount?.webFinger == statusAuthorWebFinger
-        val hasActiveUser = activeAccount != null
+        val isSelfStatus = account?.webFinger == statusAuthorWebFinger
+        val hasActiveUser = account != null
         val actionList = mutableListOf<StatusInteraction>()
         actionList += StatusInteraction.Like(
             likeCount = entity.favouritesCount,

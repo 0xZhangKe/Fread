@@ -68,7 +68,7 @@ class PostStatusViewModel @Inject constructor(
 
     fun onPrepared() {
         launchInViewModel {
-            val loggedAccount = accountManager.getActiveAccount()
+            val loggedAccount = accountManager.getAllLoggedAccount().firstOrNull()
             val allLoggedAccount = accountManager.getAllLoggedAccount()
             if (loggedAccount == null) {
                 _uiState.updateToFailed(IllegalStateException("Not login!"))

@@ -10,14 +10,14 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.utopia.feeds.pages.home.ContentHomeScreen
 
-object FeedsHomeTab : Tab {
+class FeedsHomeTab(private val tabIndex: UShort) : Tab {
 
     override val options: TabOptions
         @Composable get() {
             val icon = rememberVectorPainter(Icons.Default.Home)
             return remember {
                 TabOptions(
-                    index = 0u, title = "Home", icon = icon
+                    index = tabIndex, title = "Home", icon = icon
                 )
             }
         }

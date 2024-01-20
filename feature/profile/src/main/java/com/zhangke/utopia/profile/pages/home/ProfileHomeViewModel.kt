@@ -39,10 +39,4 @@ class ProfileHomeViewModel @Inject constructor(
             statusProvider.accountManager.logout(account.uri)
         }
     }
-
-    fun onActiveClick(account: LoggedAccount) {
-        viewModelScope.launch {
-            statusProvider.accountManager.activeAccount(account.uri)
-        }
-    }
 }

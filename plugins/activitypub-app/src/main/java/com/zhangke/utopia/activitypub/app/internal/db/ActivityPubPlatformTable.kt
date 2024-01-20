@@ -22,6 +22,9 @@ data class ActivityPubInstanceInfoEntity(
 @Dao
 interface ActivityPubPlatformDao {
 
+    @Query("SELECT * FROM $TABLE_NAME")
+    suspend fun queryAll(): List<ActivityPubInstanceInfoEntity>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE uri=:uri")
     suspend fun queryByUri(uri: String): ActivityPubInstanceInfoEntity?
 

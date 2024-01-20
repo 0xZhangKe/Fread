@@ -21,9 +21,15 @@ class PlatformResolver constructor(
         if (exception != null) return Result.failure(exception)
         return Result.success(emptyList())
     }
+
+    suspend fun getAllRecordedPlatform(): List<BlogPlatform> {
+        return resolverList.flatMap { it.getAllRecordedPlatform() }
+    }
 }
 
 interface IPlatformResolver {
 
     suspend fun resolveBySourceUri(sourceUri: FormalUri): Result<BlogPlatform?>
+
+    suspend fun getAllRecordedPlatform(): List<BlogPlatform>
 }

@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.common.status.usecase.QueryAllPlatformByLocalSourceUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,7 +17,6 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val queryAllPlatform: QueryAllPlatformByLocalSourceUseCase,
 ) : ViewModel() {
 
     lateinit var defaultBlogPlatform: List<BlogPlatform>
@@ -29,14 +27,9 @@ class LoginViewModel @Inject constructor(
     fun onPrepared() {
         _uiState.update { it.copy(platformList = defaultBlogPlatform) }
         viewModelScope.launch {
-            queryAllPlatform()
-                .onSuccess { platformList ->
-                    val newPlatformList = defaultBlogPlatform.plus(platformList)
-                        .distinctBy { it.uri }
-                    _uiState.update { it.copy(platformList = newPlatformList) }
-                }.onFailure {
-
-                }
+            val allRecordedPlatform = statusProvider.platformResolver.getAllRecordedPlatform()
+            val allPlatforms = defaultBlogPlatform.plus(allRecordedPlatform).distinctBy { it.uri }
+            _uiState.update { it.copy(platformList = allPlatforms) }
         }
     }
 

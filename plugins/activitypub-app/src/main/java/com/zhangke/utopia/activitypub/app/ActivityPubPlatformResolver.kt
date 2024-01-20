@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -8,6 +9,7 @@ import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubPlatformResolver @Inject constructor(
+    private val platformRepo: ActivityPubPlatformRepo,
     private val getActivityPubServer: GetActivityPubPlatformUseCase,
     private val userUriTransformer: UserUriTransformer,
 ) : IPlatformResolver {
@@ -16,5 +18,9 @@ class ActivityPubPlatformResolver @Inject constructor(
         val baseUrl = userUriTransformer.parse(sourceUri)?.baseUrl
             ?: return Result.failure(IllegalArgumentException("$sourceUri not ActivityPub uri"))
         return getActivityPubServer(baseUrl)
+    }
+
+    override suspend fun getAllRecordedPlatform(): List<BlogPlatform> {
+        return platformRepo.getAllLocalPlatform()
     }
 }

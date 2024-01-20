@@ -24,6 +24,12 @@ class ActivityPubPlatformRepo @Inject constructor(
         }
     }
 
+    suspend fun getAllLocalPlatform(): List<BlogPlatform> {
+        return platformDao.queryAll().map {
+            activityPubInstanceAdapter.toPlatform(it.instanceEntity)
+        }
+    }
+
     suspend fun getInstanceEntity(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {
         return getInstanceInfo(baseUrl)
     }

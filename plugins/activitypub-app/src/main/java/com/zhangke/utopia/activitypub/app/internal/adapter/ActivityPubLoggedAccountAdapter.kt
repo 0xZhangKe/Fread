@@ -29,7 +29,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             description = entity.description,
             avatar = entity.avatar,
             url = entity.url,
-            active = entity.active,
             token = entity.token,
         )
     }
@@ -47,7 +46,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             description = user.description,
             avatar = user.avatar,
             url = user.url,
-            active = user.active,
             token = user.token,
         )
     }
@@ -56,7 +54,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         instance: ActivityPubInstanceEntity,
         account: ActivityPubAccountEntity,
         token: ActivityPubTokenEntity,
-        active: Boolean,
     ): ActivityPubLoggedAccount {
         val webFinger = accountToWebFinger(account)
         return ActivityPubLoggedAccount(
@@ -69,7 +66,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             description = account.note,
             avatar = account.avatar,
             url = account.url,
-            active = active,
             token = token,
         )
     }

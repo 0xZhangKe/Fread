@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
@@ -44,6 +45,12 @@ class StatusScreenProvider(
             it.getContentScreen(contentConfig)
         }
     }
+
+    fun getNotificationScreen(account: LoggedAccount): PagerTab?{
+        return providerList.mapFirstOrNull {
+            it.getNotificationScreen(account)
+        }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -57,4 +64,6 @@ interface IStatusScreenProvider {
     fun getAddContentScreenRoute(contentType: ContentType): String?
 
     fun getContentScreen(contentConfig: ContentConfig): PagerTab?
+
+    fun getNotificationScreen(account: LoggedAccount): PagerTab?
 }

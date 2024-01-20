@@ -171,7 +171,7 @@ abstract class StatusViewModel(
     }
 
     private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): StatusUiState {
-        val supportActions = getStatusSupportAction(this)
+        val supportActions = getStatusSupportAction(this, platform)
         val status = statusAdapter.toStatus(this, platform, supportActions)
         return buildStatusUiState(status)
     }

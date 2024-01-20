@@ -17,7 +17,6 @@ class ActivityPubLoggedAccount(
     description: String?,
     avatar: String?,
     val url: String,
-    active: Boolean,
     val token: ActivityPubTokenEntity,
 ) : LoggedAccount(
     uri = uri,
@@ -26,5 +25,4 @@ class ActivityPubLoggedAccount(
     userName = name,
     description = description,
     avatar = avatar,
-    active = active,
 )

@@ -1,6 +1,11 @@
 package com.zhangke.utopia.activitypub.app.internal.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Entity
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.PrimaryKey
+import androidx.room.Query
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
@@ -25,7 +30,6 @@ data class ActivityPubLoggedAccountEntity(
     val description: String?,
     val avatar: String?,
     val url: String,
-    val active: Boolean,
     val token: ActivityPubTokenEntity,
 ) {
 
@@ -44,9 +48,6 @@ interface ActivityPubLoggerAccountDao {
 
     @Query("SELECT * FROM $TABLE_NAME")
     fun queryAllFlow(): Flow<List<ActivityPubLoggedAccountEntity>>
-
-    @Query("SELECT * FROM $TABLE_NAME WHERE active=1")
-    suspend fun queryActiveAccount(): ActivityPubLoggedAccountEntity?
 
     @Query("SELECT * FROM $TABLE_NAME")
     suspend fun queryAll(): List<ActivityPubLoggedAccountEntity>

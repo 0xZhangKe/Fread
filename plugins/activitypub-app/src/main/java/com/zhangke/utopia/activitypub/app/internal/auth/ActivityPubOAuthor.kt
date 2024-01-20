@@ -63,12 +63,12 @@ class ActivityPubOAuthor @Inject constructor(
                 ).getOrThrow()
                 val accountEntity =
                     client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
-                accountAdapter.createFromAccount(instance, accountEntity, token, true)
+                accountAdapter.createFromAccount(instance, accountEntity, token)
             } catch (e: Exception) {
                 toast(e.message)
                 return@async Result.failure(e)
             }
-            repo.updateCurrentAccount(account)
+            repo.insert(account)
             return@async Result.success(true)
         }
         return oauthDeferred.await()

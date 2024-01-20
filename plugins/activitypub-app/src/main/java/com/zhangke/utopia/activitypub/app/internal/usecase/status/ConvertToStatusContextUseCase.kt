@@ -27,7 +27,11 @@ class ConvertToStatusContextUseCase @Inject constructor(
         platform: BlogPlatform,
     ): List<Status> {
         return this.map { statusEntity ->
-            activityPubStatusAdapter.toStatus(statusEntity, platform, getStatusSupportInteraction(statusEntity))
+            activityPubStatusAdapter.toStatus(
+                entity = statusEntity,
+                platform = platform,
+                supportActions = getStatusSupportInteraction(statusEntity, platform)
+            )
         }
     }
 }

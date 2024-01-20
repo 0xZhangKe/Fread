@@ -10,10 +10,6 @@ class AccountManager(
     private val accountManagerList: List<IAccountManager>,
 ) {
 
-    suspend fun getActiveAccountList(): List<LoggedAccount> {
-        return accountManagerList.mapNotNull { it.getActiveAccount() }
-    }
-
     suspend fun getAllLoggedAccount(): List<LoggedAccount> {
         return accountManagerList.flatMap { it.getAllLoggedAccount() }
     }
@@ -58,12 +54,6 @@ class AccountManager(
         return result
     }
 
-    suspend fun activeAccount(uri: FormalUri) {
-        accountManagerList.forEach { manager ->
-            if (manager.activeAccount(uri)) return@forEach
-        }
-    }
-
     suspend fun logout(uri: FormalUri) {
         accountManagerList.forEach {
             if (it.logout(uri)) return@forEach
@@ -72,8 +62,6 @@ class AccountManager(
 }
 
 interface IAccountManager {
-
-    suspend fun getActiveAccount(): LoggedAccount?
 
     suspend fun getAllLoggedAccount(): List<LoggedAccount>
 
@@ -84,11 +72,6 @@ interface IAccountManager {
     ): Result<SourcesAuthValidateResult>
 
     suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>
-
-    /**
-     * @return active success
-     */
-    suspend fun activeAccount(uri: FormalUri): Boolean
 
     suspend fun logout(uri: FormalUri): Boolean
 }

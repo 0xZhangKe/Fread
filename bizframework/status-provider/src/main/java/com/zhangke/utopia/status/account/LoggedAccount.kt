@@ -11,5 +11,4 @@ open class LoggedAccount(
     val userName: String,
     val description: String?,
     val avatar: String?,
-    val active: Boolean,
 )

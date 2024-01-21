@@ -3,9 +3,12 @@ package com.zhangke.utopia.activitypub.app
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
+import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
@@ -16,6 +19,7 @@ import javax.inject.Inject
 
 class ActivityPubScreenProvider @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
+    private val userUriTransformer: UserUriTransformer,
 ) : IStatusScreenProvider {
 
     override fun getServerDetailScreenRoute(platformUri: FormalUri): String? {
@@ -41,5 +45,11 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
         if (contentConfig !is ContentConfig.ActivityPubContent) return null
         return ActivityPubContentScreen(contentConfig.id)
+    }
+
+    override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
+        if (account.platform.protocol != ACTIVITY_PUB_PROTOCOL) return null
+        val userInsights = userUriTransformer.parse(account.uri) ?: return null
+        return ActivityPubNotificationsScreen(userInsights)
     }
 }

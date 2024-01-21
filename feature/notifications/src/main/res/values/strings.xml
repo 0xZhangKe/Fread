@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="notifications_account_empty_tip">当前没有已登陆账号</string>
+</resources>

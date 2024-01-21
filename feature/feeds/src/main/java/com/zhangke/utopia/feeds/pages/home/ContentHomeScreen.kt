@@ -115,8 +115,7 @@ class ContentHomeScreen : Screen {
                         },
                     )
                 },
-
-                ) { paddingValues ->
+            ) { paddingValues ->
                 if (uiState.contentConfigList.isEmpty()) {
                     Column(
                         modifier = Modifier.fillMaxSize(),

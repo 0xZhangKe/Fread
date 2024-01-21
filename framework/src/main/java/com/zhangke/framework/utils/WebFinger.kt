@@ -1,6 +1,8 @@
 package com.zhangke.framework.utils
 
+import android.os.Parcelable
 import com.zhangke.framework.network.HttpScheme
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
 /**
@@ -13,14 +15,26 @@ import kotlinx.serialization.Serializable
  * - m.cmx.im/@jw@jakewharton.com
  * - jakewharton.com/@jw
  */
+
+@Parcelize
 @Serializable
 class WebFinger private constructor(
     val name: String,
     val host: String,
-) {
+) : Parcelable {
 
     override fun toString(): String {
         return "@$name@$host"
+    }
+
+    override fun hashCode(): Int {
+        return name.hashCode() + host.hashCode()
+    }
+
+    override fun equals(other: Any?): Boolean {
+        if (other == null) return false
+        if (other !is WebFinger) return false
+        return (other.name == name) && (other.host == host)
     }
 
     companion object {

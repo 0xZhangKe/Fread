@@ -1,21 +1,27 @@
 package com.zhangke.utopia.status.uri
 
+import android.os.Parcelable
 import com.zhangke.framework.utils.uriString
+import kotlinx.parcelize.IgnoredOnParcel
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
+@Parcelize
 @Serializable
-class FormalUri constructor(
+class FormalUri private constructor(
     val host: String,
     /**
      * format like "/xxx"
      */
     private val rawPath: String,
     val queries: Map<String, String>,
-) {
+) : Parcelable {
 
+    @IgnoredOnParcel
     @Suppress("MemberVisibilityCanBePrivate")
     val scheme = SCHEME
 
+    @IgnoredOnParcel
     val path = fixPath(rawPath)
 
     override fun toString(): String {

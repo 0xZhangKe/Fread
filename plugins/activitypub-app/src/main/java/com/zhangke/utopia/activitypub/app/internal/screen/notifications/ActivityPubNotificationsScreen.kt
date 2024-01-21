@@ -1,6 +1,12 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.PagerTab
@@ -21,8 +27,15 @@ class ActivityPubNotificationsScreen(
 
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun ActivityPubNotificationsContent() {
-        MultiChoiceSegmentedButtonRow
+        Column(modifier = Modifier.fillMaxSize()) {
+            MultiChoiceSegmentedButtonRow(
+                modifier = Modifier.fillMaxWidth(),
+            ){
+
+            }
+        }
     }
 }

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.model
+package com.zhangke.utopia.activitypub.app.internal.model
 
 import java.util.Date
 

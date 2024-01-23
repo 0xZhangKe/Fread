@@ -14,7 +14,6 @@ class GetUserStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
-    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
 ) {
 
@@ -39,8 +38,7 @@ class GetUserStatusUseCase @Inject constructor(
                 maxId = maxId,
             ).map { list ->
                 list.map {
-                    val supportActions = getStatusSupportInteraction(it, platform)
-                    activityPubStatusAdapter.toStatus(it, platform, supportActions)
+                    activityPubStatusAdapter.toStatus(it, platform)
                 }
             }
     }

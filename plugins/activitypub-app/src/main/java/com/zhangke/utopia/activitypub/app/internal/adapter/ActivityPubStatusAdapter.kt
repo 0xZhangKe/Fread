@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
@@ -13,16 +14,17 @@ import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
+    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
     private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
 ) {
 
-    fun toStatus(
+    suspend fun toStatus(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
-        supportActions: List<StatusInteraction>,
     ): Status {
+        val supportActions = getStatusSupportInteraction(entity, platform)
         return if (entity.reblog != null) {
             entity.toReblog(supportActions, platform)
         } else {

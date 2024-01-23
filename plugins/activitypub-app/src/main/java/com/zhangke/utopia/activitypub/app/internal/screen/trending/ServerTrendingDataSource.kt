@@ -6,14 +6,12 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 
 class ServerTrendingDataSource(
     private val baseUrl: FormalBaseUrl,
     private val getServerTrending: GetServerTrendingUseCase,
-    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
 ) : PagingSource<Int, Status>() {
@@ -29,8 +27,7 @@ class ServerTrendingDataSource(
         val result = getServerTrending(baseUrl = baseUrl, offset = offset, limit = params.loadSize)
             .map { list ->
                 list.map {
-                    val supportActions = getStatusSupportAction(it, platform)
-                    statusAdapter.toStatus(it, platform, supportActions)
+                    statusAdapter.toStatus(it, platform)
                 }
             }
         return if (result.isSuccess) {

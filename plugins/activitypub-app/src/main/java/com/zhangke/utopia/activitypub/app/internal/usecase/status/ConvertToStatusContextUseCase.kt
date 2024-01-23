@@ -10,7 +10,6 @@ import javax.inject.Inject
 
 class ConvertToStatusContextUseCase @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
-    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
 ) {
 
     suspend operator fun invoke(
@@ -30,7 +29,6 @@ class ConvertToStatusContextUseCase @Inject constructor(
             activityPubStatusAdapter.toStatus(
                 entity = statusEntity,
                 platform = platform,
-                supportActions = getStatusSupportInteraction(statusEntity, platform)
             )
         }
     }

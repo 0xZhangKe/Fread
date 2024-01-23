@@ -7,6 +7,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import cafe.adriel.voyager.core.lifecycle.LifecycleEffect
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.PagerTab
@@ -25,6 +26,9 @@ class ActivityPubNotificationsScreen(
         val viewModel = getViewModel<ActivityPubNotificationsViewModel>()
             .getSubViewModel(userUriInsights)
 
+        LifecycleEffect(
+            onDisposed = {}
+        )
     }
 
     @OptIn(ExperimentalMaterial3Api::class)

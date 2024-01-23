@@ -17,5 +17,6 @@ enum class StatusNotificationType {
      * A status you boosted with has been edited
      */
     UPDATE,
+    SEVERED_RELATIONSHIPS,
     UNKNOWN;
 }

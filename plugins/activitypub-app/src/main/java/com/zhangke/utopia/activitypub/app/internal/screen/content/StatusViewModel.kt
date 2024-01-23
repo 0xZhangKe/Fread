@@ -9,7 +9,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -27,7 +26,6 @@ import kotlinx.coroutines.flow.update
 
 abstract class StatusViewModel(
     private val platformRepo: ActivityPubPlatformRepo,
-    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusInteractive: StatusInteractiveUseCase,
@@ -171,8 +169,7 @@ abstract class StatusViewModel(
     }
 
     private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): StatusUiState {
-        val supportActions = getStatusSupportAction(this, platform)
-        val status = statusAdapter.toStatus(this, platform, supportActions)
+        val status = statusAdapter.toStatus(this, platform)
         return buildStatusUiState(status)
     }
 

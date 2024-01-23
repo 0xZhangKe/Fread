@@ -5,13 +5,11 @@ import androidx.compose.runtime.State
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.mutableStateMapOf
 import androidx.compose.runtime.remember
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.lifecycle.NavigatorDisposable
 import cafe.adriel.voyager.navigator.lifecycle.NavigatorLifecycleStore
 
-@OptIn(ExperimentalVoyagerApi::class)
 val Navigator.navigationResult: VoyagerResultExtension
     @Composable get() = remember {
         NavigatorLifecycleStore.get(this) {

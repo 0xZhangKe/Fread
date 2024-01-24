@@ -43,4 +43,7 @@
     <string name="activity_pub_content_tab_local_timeline">本地时间轴</string>
     <string name="activity_pub_content_tab_public_timeline">跨站时间轴</string>
     <string name="activity_pub_content_tab_trending">趋势</string>
+
+    <string name="activity_pub_notification_tab_title_all">所有</string>
+    <string name="activity_pub_notification_tab_title_mention">提及</string>
 </resources>

@@ -12,7 +12,6 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 
 class TrendingStatusSubViewModel(
     private val getServerTrending: GetServerTrendingUseCase,
-    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
@@ -20,7 +19,6 @@ class TrendingStatusSubViewModel(
     private val baseUrl: FormalBaseUrl,
 ) : StatusViewModel(
     platformRepo = platformRepo,
-    getStatusSupportAction = getStatusSupportAction,
     buildStatusUiState = buildStatusUiState,
     statusAdapter = statusAdapter,
     statusInteractive = statusInteractive,

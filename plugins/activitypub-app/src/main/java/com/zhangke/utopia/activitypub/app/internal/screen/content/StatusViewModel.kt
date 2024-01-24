@@ -80,6 +80,7 @@ abstract class StatusViewModel(
     }
 
     private suspend fun refreshStatus(showRefreshing: Boolean) {
+        if (_uiState.value.refreshing || _uiState.value.loadMoreState == LoadState.Loading) return
         updateRefreshState(showRefreshing, true, null)
         val platformResult = getBlogPlatform()
         if (platformResult.isFailure) {

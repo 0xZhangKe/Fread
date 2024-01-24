@@ -13,7 +13,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.PagingData
 import androidx.paging.compose.collectAsLazyPagingItems
-import androidx.paging.compose.itemsIndexed
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.LoadableLayout
@@ -62,7 +61,8 @@ private fun ServerTrendingContent(
         state = listState,
         contentPadding = PaddingValues(start = 15.dp, top = 15.dp, end = 15.dp, bottom = 20.dp)
     ) {
-        itemsIndexed(statusList) { index, status ->
+        items(statusList.itemCount) { index ->
+            val status = statusList[index]
             if (status != null) {
                 FeedsStatusNode(
                     modifier = Modifier.fillMaxWidth(),

@@ -14,7 +14,6 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdap
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.screen.trending.ServerTrendingDataSource
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -31,7 +30,6 @@ import javax.inject.Inject
 class ServerTrendingViewModel @Inject constructor(
     private val getServerTrending: GetServerTrendingUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
-    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
 ) : ViewModel() {
@@ -64,7 +62,6 @@ class ServerTrendingViewModel @Inject constructor(
             ServerTrendingDataSource(
                 baseUrl = baseUrl,
                 getServerTrending = getServerTrending,
-                getStatusSupportAction = getStatusSupportAction,
                 statusAdapter = statusAdapter,
                 platformRepo = platformRepo,
             ).also {

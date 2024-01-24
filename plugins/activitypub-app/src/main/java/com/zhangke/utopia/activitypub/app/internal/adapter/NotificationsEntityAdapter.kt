@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.utopia.activitypub.app.internal.db.notifications.NotificationsEntity
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
+import com.zhangke.utopia.status.uri.FormalUri
 import java.util.Date
 import javax.inject.Inject
 
@@ -20,7 +21,7 @@ class NotificationsEntityAdapter @Inject constructor() {
 
     fun toEntity(
         notification: StatusNotification,
-        accountOwnershipUri: String,
+        accountOwnershipUri: FormalUri,
     ): NotificationsEntity {
         return NotificationsEntity(
             notificationId = notification.id,

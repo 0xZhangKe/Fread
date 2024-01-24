@@ -26,8 +26,8 @@ androidx-compose-bom = "2023.10.01"
 androidx-compose-material3 = "1.2.0-beta02"
 androidx-constraintlayout-compose = "1.1.0-alpha04"
 androidx-lifecycle = "2.4.1"
-androidx-paging = "3.1.1"
-androidx-paging-compose = "1.0.0-alpha18"
+androidx-paging = "3.2.1"
+androidx-paging-compose = "3.2.1"
 androidx-media3 = "1.0.0-rc01"
 
 

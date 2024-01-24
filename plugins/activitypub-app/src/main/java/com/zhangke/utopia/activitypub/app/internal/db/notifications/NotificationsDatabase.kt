@@ -12,10 +12,12 @@ import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.utopia.activitypub.app.internal.db.converter.BlogAuthorConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalUriConverter
 import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.uri.FormalUri
 
 private const val DB_VERSION = 1
 private const val DB_NAME = "notifications.db"
@@ -26,7 +28,7 @@ private const val TABLE_NAME = "notifications"
 data class NotificationsEntity(
     @PrimaryKey val notificationId: String,
     val type: StatusNotificationType,
-    val accountOwnershipUri: String,
+    val accountOwnershipUri: FormalUri,
     val createTimestamp: Long,
     val account: BlogAuthor,
     val status: Status?,
@@ -36,19 +38,29 @@ data class NotificationsEntity(
 @Dao
 interface NotificationsDao {
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE notificationId = :notificationId")
+    suspend fun query(notificationId: String): NotificationsEntity?
+
     @Query("SELECT * FROM $TABLE_NAME WHERE accountOwnershipUri = :accountOwnershipUri ORDER BY createTimestamp DESC")
-    suspend fun query(accountOwnershipUri: String): List<NotificationsEntity>
+    suspend fun query(accountOwnershipUri: FormalUri): List<NotificationsEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: NotificationsEntity)
 
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insert(list: List<NotificationsEntity>)
+
     @Query("DELETE FROM $TABLE_NAME WHERE notificationId=:notificationId")
     suspend fun delete(notificationId: String)
+
+    @Query("DELETE FROM $TABLE_NAME WHERE accountOwnershipUri=:accountOwnershipUri")
+    suspend fun deleteByAccountUri(accountOwnershipUri: FormalUri)
 }
 
 @TypeConverters(
     NotificationsEntity::class,
     BlogAuthorConverter::class,
+    FormalUriConverter::class,
 )
 @Database(entities = [NotificationsEntity::class], version = DB_VERSION, exportSchema = false)
 abstract class NotificationsDatabase : RoomDatabase() {

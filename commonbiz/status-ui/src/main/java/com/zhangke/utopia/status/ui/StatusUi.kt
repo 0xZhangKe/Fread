@@ -1,6 +1,6 @@
 package com.zhangke.utopia.status.ui
 
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.utopia.common.status.model.StatusUiInteraction

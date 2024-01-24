@@ -7,7 +7,6 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSource
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
 import com.zhangke.utopia.activitypub.app.internal.screen.content.StatusViewModel
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 
@@ -15,14 +14,12 @@ class ActivityPubTimelineSubViewModel(
     private val timelineStatusRepo: TimelineStatusRepo,
     platformRepo: ActivityPubPlatformRepo,
     statusAdapter: ActivityPubStatusAdapter,
-    getStatusSupportAction: GetStatusInteractionUseCase,
     buildStatusUiState: BuildStatusUiStateUseCase,
     statusInteractive: StatusInteractiveUseCase,
     baseUrl: FormalBaseUrl,
     private val type: ActivityPubStatusSourceType,
 ) : StatusViewModel(
     platformRepo = platformRepo,
-    getStatusSupportAction = getStatusSupportAction,
     buildStatusUiState = buildStatusUiState,
     statusInteractive = statusInteractive,
     statusAdapter = statusAdapter,

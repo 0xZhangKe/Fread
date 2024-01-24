@@ -49,12 +49,7 @@ class NotificationsRepo @Inject constructor(
             limit = limit,
             types = types,
         ).map { list ->
-            list.map {
-                activityPubNotificationEntityAdapter.toNotification(
-                    entity = it,
-                    platform = platform,
-                )
-            }
+            list.map { activityPubNotificationEntityAdapter.toNotification(it, platform) }
         }.onSuccess { list ->
             replaceLocalNotifications(list, account.uri)
         }
@@ -102,6 +97,10 @@ class NotificationsRepo @Inject constructor(
         }.onSuccess { list ->
             appendToLocal(list, maxId, account.uri)
         }
+    }
+
+    suspend fun updateNotifications(notification: StatusNotification){
+
     }
 
     private suspend fun replaceLocalNotifications(

@@ -43,4 +43,7 @@
     <string name="activity_pub_content_tab_local_timeline">Local</string>
     <string name="activity_pub_content_tab_public_timeline">Public</string>
     <string name="activity_pub_content_tab_trending">Trending</string>
+
+    <string name="activity_pub_notification_tab_title_all">All</string>
+    <string name="activity_pub_notification_tab_title_mention">Mention</string>
 </resources>

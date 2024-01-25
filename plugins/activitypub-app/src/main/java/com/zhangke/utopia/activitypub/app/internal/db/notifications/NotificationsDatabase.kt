@@ -13,8 +13,11 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.utopia.activitypub.app.internal.db.converter.BlogAuthorConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalUriConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.RelationshipSeveranceEventConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.StatusNotificationTypeConverter
 import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
+import com.zhangke.utopia.common.status.repo.db.converts.StatusConverter
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
@@ -58,9 +61,11 @@ interface NotificationsDao {
 }
 
 @TypeConverters(
-    NotificationsEntity::class,
+    RelationshipSeveranceEventConverter::class,
+    StatusNotificationTypeConverter::class,
     BlogAuthorConverter::class,
     FormalUriConverter::class,
+    StatusConverter::class,
 )
 @Database(entities = [NotificationsEntity::class], version = DB_VERSION, exportSchema = false)
 abstract class NotificationsDatabase : RoomDatabase() {

@@ -1,24 +1,37 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthor
+import com.zhangke.utopia.activitypub.app.internal.auth.TokenManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.utopia.activitypub.app.internal.usecase.auth.ActivityPubSourceListAuthValidateUseCase
 import com.zhangke.utopia.status.account.IAccountManager
 import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 class ActivityPubAccountManager @Inject constructor(
-    private val validateAuthOfSourceList: ActivityPubSourceListAuthValidateUseCase,
     private val oAuthor: ActivityPubOAuthor,
+    private val tokenManager: TokenManager,
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val userUriTransformer: UserUriTransformer,
 ) : IAccountManager {
+
+    init {
+        ApplicationScope.launch {
+            accountRepo.getAllAccountFlow()
+                .collect {
+                    for (account in it) {
+                        tokenManager.setToken(account.baseUrl, account.token)
+                    }
+                }
+        }
+    }
 
     override suspend fun getAllLoggedAccount(): List<ActivityPubLoggedAccount> {
         return accountRepo.queryAll()
@@ -31,7 +44,26 @@ class ActivityPubAccountManager @Inject constructor(
     override suspend fun validateAuthOfSourceList(
         sourceList: List<StatusSource>,
     ): Result<SourcesAuthValidateResult> {
-        return validateAuthOfSourceList.invoke(sourceList)
+        val activityPubSourceList = sourceList.filter {
+            userUriTransformer.parse(it.uri) != null
+        }
+        if (activityPubSourceList.isEmpty()) {
+            return Result.success(SourcesAuthValidateResult(emptyList(), emptyList()))
+        }
+        if (getAllLoggedAccount().isNotEmpty()) {
+            return Result.success(
+                SourcesAuthValidateResult(
+                    validateList = activityPubSourceList,
+                    invalidateList = emptyList(),
+                )
+            )
+        }
+        return Result.success(
+            SourcesAuthValidateResult(
+                validateList = emptyList(),
+                invalidateList = activityPubSourceList,
+            )
+        )
     }
 
     override suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean> {

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
+import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -39,7 +40,6 @@ import com.zhangke.framework.utils.LoadState
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.notifications.StatusNotificationUi
-import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 
@@ -56,6 +56,8 @@ class ActivityPubNotificationsScreen(
         val viewModel = getViewModel<ActivityPubNotificationsViewModel>()
             .getSubViewModel(userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
+        val sss = uiState.notificationList.joinToString(",") { it.type.name }
+        Log.d("U_TEST", "${uiState.inMentionsTab} -> $sss")
         ActivityPubNotificationsContent(
             uiState = uiState,
             onTabCheckedChange = viewModel::onTabCheckedChange,
@@ -75,10 +77,6 @@ class ActivityPubNotificationsScreen(
         onLoadMore: () -> Unit,
         onInteractive: (NotificationUiState, StatusUiInteraction) -> Unit,
     ) {
-        var containerHeight: Dp? by remember {
-            mutableStateOf(null)
-        }
-        val density = LocalDensity.current
         Column(modifier = Modifier.fillMaxSize()) {
             NotificationTabTitle(
                 uiState = uiState,
@@ -91,11 +89,7 @@ class ActivityPubNotificationsScreen(
             )
             LoadableInlineVideoLazyColumn(
                 state = state,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .onGloballyPositioned {
-                        containerHeight = it.size.height.pxToDp(density)
-                    },
+                modifier = Modifier.fillMaxSize(),
                 refreshing = uiState.refreshing,
                 loading = uiState.loadMoreState == LoadState.Loading,
                 contentPadding = PaddingValues(

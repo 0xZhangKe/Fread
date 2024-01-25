@@ -7,12 +7,13 @@ import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEv
 class RelationshipSeveranceEventConverter {
 
     @TypeConverter
-    fun fromType(platform: RelationshipSeveranceEvent): String {
+    fun fromType(platform: RelationshipSeveranceEvent?): String? {
         return globalGson.toJson(platform)
     }
 
     @TypeConverter
-    fun toType(text: String): RelationshipSeveranceEvent {
+    fun toType(text: String?): RelationshipSeveranceEvent? {
+        if (text.isNullOrEmpty()) return null
         return globalGson.fromJson(text, RelationshipSeveranceEvent::class.java)
     }
 }

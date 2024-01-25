@@ -25,8 +25,10 @@ class NotificationsRepo @Inject constructor(
 
     suspend fun getLocalNotifications(
         accountOwnershipUri: FormalUri,
+        onlyMentions: Boolean = false,
     ): List<StatusNotification> {
         return notificationDao.query(accountOwnershipUri)
+            .filter { if (onlyMentions) it.type == StatusNotificationType.MENTION else true }
             .map(notificationsEntityAdapter::toStatusNotification)
     }
 
@@ -99,8 +101,10 @@ class NotificationsRepo @Inject constructor(
         }
     }
 
-    suspend fun updateNotifications(notification: StatusNotification){
-
+    suspend fun updateNotifications(notification: StatusNotification) {
+        notificationDao.insert(
+            notificationsEntityAdapter.toEntity(notification, notification.account.uri)
+        )
     }
 
     private suspend fun replaceLocalNotifications(
@@ -108,7 +112,12 @@ class NotificationsRepo @Inject constructor(
         accountOwnershipUri: FormalUri,
     ) {
         notificationDao.deleteByAccountUri(accountOwnershipUri)
-        notificationDao.insert(list.map { notificationsEntityAdapter.toEntity(it, accountOwnershipUri) })
+        notificationDao.insert(list.map {
+            notificationsEntityAdapter.toEntity(
+                it,
+                accountOwnershipUri
+            )
+        })
     }
 
     private suspend fun appendToLocal(
@@ -117,6 +126,11 @@ class NotificationsRepo @Inject constructor(
         accountOwnershipUri: FormalUri,
     ) {
         if (notificationDao.query(maxId) == null) return
-        notificationDao.insert(list.map { notificationsEntityAdapter.toEntity(it, accountOwnershipUri) })
+        notificationDao.insert(list.map {
+            notificationsEntityAdapter.toEntity(
+                it,
+                accountOwnershipUri
+            )
+        })
     }
 }

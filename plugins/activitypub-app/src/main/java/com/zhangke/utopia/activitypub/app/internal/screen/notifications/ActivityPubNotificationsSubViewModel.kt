@@ -49,29 +49,14 @@ class ActivityPubNotificationsSubViewModel(
     private var loggedAccount: ActivityPubLoggedAccount? = null
 
     init {
-        launchInViewModel {
-            var account = loggedAccount
-            account = accountManager.getAllLoggedAccount()
-                .firstOrNull { it.uri == userUriInsights.uri }
-            loggedAccount = account
-            if (account == null) {
-                _uiState.value = _uiState.value.copy(
-                    errorMessage = textOf("Account not found: ${userUriInsights.uri}"),
-                )
-                return@launchInViewModel
-            }
-            notificationsRepo.getLocalNotifications(account.uri)
-                .takeIf { it.isNotEmpty() }
-                ?.map { it.toUiState() }
-                ?.let { _uiState.value = _uiState.value.copy(notificationList = it) }
-            refresh(false)
-        }
+        loadNotifications()
     }
 
     fun onTabCheckedChange(inMentionsTab: Boolean) {
         _uiState.value = _uiState.value.copy(
             inMentionsTab = inMentionsTab,
         )
+        loadNotifications()
     }
 
     fun onRefresh() {
@@ -80,14 +65,39 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
+    private fun loadNotifications() {
+        _uiState.value = _uiState.value.copy(
+            notificationList = emptyList(),
+        )
+        launchInViewModel {
+            val account = loggedAccount ?: accountManager.getAllLoggedAccount()
+                .firstOrNull { it.uri == userUriInsights.uri }
+            loggedAccount = account
+            if (account == null) {
+                _uiState.value = _uiState.value.copy(
+                    errorMessage = textOf("Account not found: ${userUriInsights.uri}"),
+                )
+                return@launchInViewModel
+            }
+
+            notificationsRepo.getLocalNotifications(
+                accountOwnershipUri = account.uri,
+                onlyMentions = _uiState.value.inMentionsTab,
+            ).takeIf { it.isNotEmpty() }
+                ?.map { it.toUiState() }
+                ?.let { _uiState.value = _uiState.value.copy(notificationList = it) }
+            refresh(false)
+        }
+    }
+
     private suspend fun refresh(showRefreshing: Boolean) {
         if (_uiState.value.refreshing || _uiState.value.loadMoreState == LoadState.Loading) return
         val account = loggedAccount ?: return
         updateRefreshState(showRefreshing, true, null)
-        notificationsRepo.getRemoteNotifications(account)
-            .map {
-                it.map { notification -> notification.toUiState() }
-            }
+        notificationsRepo.getRemoteNotifications(
+            account = account,
+            onlyMentions = _uiState.value.inMentionsTab,
+        ).map { it.map { notification -> notification.toUiState() } }
             .onSuccess {
                 _uiState.value = _uiState.value.copy(
                     notificationList = it,
@@ -112,6 +122,7 @@ class ActivityPubNotificationsSubViewModel(
             notificationsRepo.loadMoreNotifications(
                 account = account,
                 maxId = latestNotification.id,
+                onlyMentions = _uiState.value.inMentionsTab,
             ).map {
                 it.map { notification -> notification.toUiState() }
             }.onSuccess {

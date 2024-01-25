@@ -90,7 +90,12 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     )
 
     fun accountToWebFinger(account: ActivityPubAccountEntity): WebFinger {
-        WebFinger.create(account.acct)?.let { return it }
-        WebFinger.create(account.url)!!.let { return it }
+        try {
+            WebFinger.create(account.acct)?.let { return it }
+            WebFinger.create(account.url)!!.let { return it }
+        } catch (e: Throwable) {
+            e.printStackTrace()
+            throw e
+        }
     }
 }

@@ -4,7 +4,7 @@ kotlin-coroutine = "1.7.3"
 kotlin-coroutine-test = "1.7.3"
 kotlinx-serialization = "1.6.2"
 
-androidxComposeCompiler = "1.5.7"
+androidxComposeCompiler = "1.5.8"
 
 androidx-core = "1.12.0"
 androidx-fragment = "1.6.2"
@@ -21,7 +21,7 @@ androidx-viewpager2 = "1.0.0"
 androidx-browser = "1.4.0"
 androidx-nav = "2.5.3"
 androidx-hilt-nav-compose = "1.0.0"
-androidx-compose-bom = "2023.10.01"
+androidx-compose-bom = "2024.01.00"
 #TODO 后面升级 ComposeBOM之后移除 material3 的版本
 androidx-compose-material3 = "1.2.0-beta02"
 androidx-constraintlayout-compose = "1.1.0-alpha04"

@@ -189,7 +189,7 @@ fun BlogAuthorAvatar(
 }
 
 @Composable
-private fun BlogAuthorAvatar(
+fun BlogAuthorAvatar(
     modifier: Modifier,
     imageUrl: String?,
 ) {

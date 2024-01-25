@@ -51,7 +51,6 @@ class WebFinger private constructor(
             val split = maybeAcct.split('@')
             if (split.size != 2) return null
             val name = split[0]
-            if (!nameValidate(name)) return null
             val host = split[1]
             if (!hostValidate(host)) return null
             return WebFinger(name, host)
@@ -75,20 +74,6 @@ class WebFinger private constructor(
 
         private fun hostValidate(host: String): Boolean {
             return RegexFactory.getDomainRegex().matches(host)
-        }
-
-        private fun nameValidate(name: String): Boolean {
-            if (name.isEmpty()) return false
-            name.toCharArray().forEach {
-                if (!isValidateNameSymbol(it)) return false
-            }
-            return true
-        }
-
-        private fun isValidateNameSymbol(symbol: Char): Boolean {
-            return symbol == '_'
-                    || symbol.isDigit()
-                    || symbol.isLetter()
         }
     }
 }

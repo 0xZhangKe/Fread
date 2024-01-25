@@ -3,6 +3,7 @@ package com.zhangke.framework.composable
 import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.material.Text
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -38,7 +39,7 @@ fun SearchToolbar(
         leadingIcon = {
             IconButton(onClick = { onBackClick() }) {
                 Icon(
-                    painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
+                    painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.ArrowBack),
                     "back"
                 )
             }

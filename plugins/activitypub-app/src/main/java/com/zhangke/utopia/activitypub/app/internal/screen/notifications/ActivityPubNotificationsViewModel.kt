@@ -1,15 +1,35 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
+import com.zhangke.utopia.activitypub.app.internal.repo.NotificationsRepo
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
-class ActivityPubNotificationsViewModel(
-    private val userUriInsights: UserUriInsights,
+@HiltViewModel
+class ActivityPubNotificationsViewModel @Inject constructor(
+    private val accountManager: ActivityPubAccountManager,
+    private val statusInteractive: StatusInteractiveUseCase,
+    private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+    private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val notificationsRepo: NotificationsRepo,
 ) : ContainerViewModel<ActivityPubNotificationsSubViewModel, ActivityPubNotificationsViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubNotificationsSubViewModel {
         return ActivityPubNotificationsSubViewModel(
-            userUriInsights = userUriInsights,
+            userUriInsights = params.userUriInsights,
+            accountManager = accountManager,
+            statusInteractive = statusInteractive,
+            activityPubStatusAdapter = activityPubStatusAdapter,
+            formatStatusDisplayTime = formatStatusDisplayTime,
+            buildStatusUiState = buildStatusUiState,
+            notificationsRepo = notificationsRepo,
         )
     }
 
@@ -18,7 +38,7 @@ class ActivityPubNotificationsViewModel(
         return obtainSubViewModel(params)
     }
 
-    class Params(private val userUriInsights: UserUriInsights) : SubViewModelParams() {
+    class Params(val userUriInsights: UserUriInsights) : SubViewModelParams() {
 
         override val key: String
             get() = userUriInsights.toString()

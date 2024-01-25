@@ -4,13 +4,12 @@ import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.framework.architect.http.GlobalOkHttpClient
 import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
 class ActivityPubClientManager @Inject constructor(
-    private val accountManager: ActivityPubAccountManager,
+    private val tokenManager: TokenManager,
 ) {
 
     private val clientList = mutableListOf<ActivityPubClient>()
@@ -28,7 +27,7 @@ class ActivityPubClientManager @Inject constructor(
             httpClient = GlobalOkHttpClient.client,
             gson = globalGson,
             tokenProvider = {
-                accountManager.getAllLoggedAccount().firstOrNull { it.baseUrl == baseUrl }?.token
+                tokenManager.getToken(baseUrl)
             },
             onAuthorizeFailed = {
 

@@ -7,7 +7,6 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSource
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -19,7 +18,6 @@ class ActivityPubTimelineViewModel @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusInteractive: StatusInteractiveUseCase,
-    private val getStatusSupportAction: GetStatusInteractionUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
 ) : ContainerViewModel<ActivityPubTimelineSubViewModel, ActivityPubTimelineViewModel.Params>() {
 
@@ -30,7 +28,6 @@ class ActivityPubTimelineViewModel @Inject constructor(
             statusAdapter = statusAdapter,
             buildStatusUiState = buildStatusUiState,
             statusInteractive = statusInteractive,
-            getStatusSupportAction = getStatusSupportAction,
             baseUrl = params.baseUrl,
             type = params.timelineSourceType.toSourceType(),
         )

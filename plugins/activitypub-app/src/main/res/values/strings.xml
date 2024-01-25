@@ -46,4 +46,6 @@
 
     <string name="activity_pub_notification_tab_title_all">所有</string>
     <string name="activity_pub_notification_tab_title_mention">提及</string>
+    <string name="activity_pub_notification_favourited_desc">喜欢了你的动态</string>
+    <string name="activity_pub_notification_unknown_desc">未知通知</string>
 </resources>

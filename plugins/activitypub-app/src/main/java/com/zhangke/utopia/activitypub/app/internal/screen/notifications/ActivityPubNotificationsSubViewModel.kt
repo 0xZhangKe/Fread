@@ -14,6 +14,7 @@ import com.zhangke.utopia.activitypub.app.internal.repo.NotificationsRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -26,6 +27,7 @@ class ActivityPubNotificationsSubViewModel(
     private val accountManager: ActivityPubAccountManager,
     private val statusInteractive: StatusInteractiveUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+    private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val notificationsRepo: NotificationsRepo,
 ) : SubViewModel() {
@@ -173,6 +175,7 @@ class ActivityPubNotificationsSubViewModel(
             type = type,
             createdAt = createdAt,
             account = account,
+            displayTime = formatStatusDisplayTime(createdAt.time),
             status = status?.let { buildStatusUiState(it) },
             relationshipSeveranceEvent = relationshipSeveranceEvent,
         )

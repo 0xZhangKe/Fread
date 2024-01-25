@@ -20,6 +20,7 @@ data class NotificationUiState(
     val id: String,
     val type: StatusNotificationType,
     val createdAt: Date,
+    val displayTime: String,
     /**
      * The account that performed the action that generated the notification.
      */

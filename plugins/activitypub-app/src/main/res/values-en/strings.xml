@@ -47,5 +47,9 @@
     <string name="activity_pub_notification_tab_title_all">All</string>
     <string name="activity_pub_notification_tab_title_mention">Mention</string>
     <string name="activity_pub_notification_favourited_desc">favourited your post</string>
+    <string name="activity_pub_notification_reblog_desc">reblog your post</string>
     <string name="activity_pub_notification_unknown_desc">Unknown Notification</string>
+    <string name="activity_pub_notification_poll_desc">View previous voting results</string>
+    <string name="activity_pub_notification_poll_count">%s votes · Closed</string>
+
 </resources>

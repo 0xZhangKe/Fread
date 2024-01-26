@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
+import android.util.Log
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
@@ -69,6 +70,7 @@ class ActivityPubNotificationsSubViewModel(
         _uiState.value = _uiState.value.copy(
             notificationList = emptyList(),
         )
+        Log.d("U_TEST", "loadNotifications start  only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
         launchInViewModel {
             val account = loggedAccount ?: accountManager.getAllLoggedAccount()
                 .firstOrNull { it.uri == userUriInsights.uri }
@@ -85,7 +87,10 @@ class ActivityPubNotificationsSubViewModel(
                 onlyMentions = _uiState.value.inMentionsTab,
             ).takeIf { it.isNotEmpty() }
                 ?.map { it.toUiState() }
-                ?.let { _uiState.value = _uiState.value.copy(notificationList = it) }
+                ?.let {
+                    _uiState.value = _uiState.value.copy(notificationList = it)
+                    Log.d("U_TEST", "loadNotifications success only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
+                }
             refresh(false)
         }
     }
@@ -93,12 +98,14 @@ class ActivityPubNotificationsSubViewModel(
     private suspend fun refresh(showRefreshing: Boolean) {
         if (_uiState.value.refreshing || _uiState.value.loadMoreState == LoadState.Loading) return
         val account = loggedAccount ?: return
+        Log.d("U_TEST", "refresh before only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
         updateRefreshState(showRefreshing, true, null)
         notificationsRepo.getRemoteNotifications(
             account = account,
             onlyMentions = _uiState.value.inMentionsTab,
         ).map { it.map { notification -> notification.toUiState() } }
             .onSuccess {
+                Log.d("U_TEST", "refresh success only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
                 _uiState.value = _uiState.value.copy(
                     notificationList = it,
                     refreshing = false,

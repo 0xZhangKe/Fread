@@ -3,6 +3,8 @@ package com.zhangke.framework.composable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonColors
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
@@ -18,6 +20,7 @@ fun SimpleIconButton(
     enabled: Boolean = true,
     imageVector: ImageVector,
     contentDescription: String?,
+    colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
     tint: Color = LocalContentColor.current,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
@@ -25,6 +28,7 @@ fun SimpleIconButton(
         onClick = onClick,
         modifier = modifier,
         enabled = enabled,
+        colors = colors,
         interactionSource = interactionSource,
     ) {
         Icon(

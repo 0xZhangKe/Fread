@@ -26,6 +26,7 @@ fun BlogUi(
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
+    showDivider: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         StatusInfoLine(
@@ -59,6 +60,8 @@ fun BlogUi(
                 .fillMaxWidth()
                 .height(style.containerPaddings.calculateBottomPadding())
         )
-        BlogDivider()
+        if (showDivider) {
+            BlogDivider()
+        }
     }
 }

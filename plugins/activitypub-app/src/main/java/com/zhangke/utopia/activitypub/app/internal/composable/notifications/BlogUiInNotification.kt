@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.composable.notifications
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
@@ -13,27 +14,23 @@ import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.BlogUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
-import com.zhangke.utopia.status.ui.style.BlogStyle
-import com.zhangke.utopia.status.ui.style.StatusStyle
-import com.zhangke.utopia.status.ui.style.defaultBlogStyle
-import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
 @Composable
 fun OnlyBlogContentUi(
     modifier: Modifier,
     statusUiState: StatusUiState,
     indexInList: Int,
-    style: BlogStyle = defaultBlogStyle(),
+    style: NotificationStyle,
 ) {
     val navigator = LocalGlobalNavigator.current
     val transparentNavigator = LocalTransparentNavigator.current
     val blog = statusUiState.status.intrinsicBlog
     Box(modifier = modifier) {
         BlogContent(
-            modifier = Modifier,
+            modifier = Modifier.fillMaxWidth(),
             blog = blog,
             indexOfFeeds = indexInList,
-            style = style,
+            style = style.statusStyle.blogStyle,
             onMediaClick = { event ->
                 when (event) {
                     is BlogMediaClickEvent.BlogImageClickEvent -> {
@@ -57,12 +54,13 @@ fun OnlyBlogContentUi(
 }
 
 @Composable
-fun BlogUi(
+fun WholeBlogUi(
     modifier: Modifier,
     statusUiState: StatusUiState,
     indexInList: Int,
-    style: StatusStyle = defaultStatusStyle(),
+    style: NotificationStyle,
     onInteractive: (StatusUiInteraction) -> Unit,
+    showDivider: Boolean = true,
 ) {
     val navigator = LocalGlobalNavigator.current
     val transparentNavigator = LocalTransparentNavigator.current
@@ -75,7 +73,7 @@ fun BlogUi(
             displayTime = statusUiState.displayTime,
             bottomPanelInteractions = statusUiState.bottomInteractions,
             moreInteractions = statusUiState.moreInteractions,
-            style = style,
+            style = style.statusStyle,
             onInteractive = onInteractive,
             onMediaClick = { event ->
                 when (event) {
@@ -95,6 +93,7 @@ fun BlogUi(
                     }
                 }
             },
+            showDivider = showDivider,
         )
     }
 }

@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -19,6 +20,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.LocalSnackbarHostState
@@ -68,26 +70,30 @@ class NotificationsHomeScreen : Screen {
                     val pagerState = rememberPagerState {
                         accountToTabList.size
                     }
-                    UtopiaTabRow(
-                        modifier = Modifier.fillMaxWidth(),
-                        selectedTabIndex = pagerState.currentPage,
-                        tabCount = accountToTabList.size,
-                        tabContent = {
-                            var title = accountToTabList[it].second.options?.title
-                            if (title.isNullOrEmpty()) {
-                                title = accountToTabList[it].first.userName
+                    if (uiState.accountToTabList.size > 1) {
+                        UtopiaTabRow(
+                            modifier = Modifier.fillMaxWidth(),
+                            selectedTabIndex = pagerState.currentPage,
+                            tabCount = accountToTabList.size,
+                            tabContent = {
+                                var title = accountToTabList[it].second.options?.title
+                                if (title.isNullOrEmpty()) {
+                                    title = accountToTabList[it].first.userName
+                                }
+                                Text(
+                                    text = title,
+                                    maxLines = 1,
+                                )
+                            },
+                            onTabClick = {
+                                coroutineScope.launch {
+                                    pagerState.scrollToPage(it)
+                                }
                             }
-                            Text(
-                                text = title,
-                                maxLines = 1,
-                            )
-                        },
-                        onTabClick = {
-                            coroutineScope.launch {
-                                pagerState.scrollToPage(it)
-                            }
-                        }
-                    )
+                        )
+                    } else {
+                        Box(modifier = Modifier.height(8.dp))
+                    }
                     CompositionLocalProvider(
                         LocalSnackbarHostState provides snackbarHost,
                     ) {

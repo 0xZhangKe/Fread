@@ -53,7 +53,9 @@ class NotificationsRepo @Inject constructor(
         ).map { list ->
             list.map { activityPubNotificationEntityAdapter.toNotification(it, platform) }
         }.onSuccess { list ->
-            replaceLocalNotifications(list, account.uri)
+            if (!onlyMentions) {
+                replaceLocalNotifications(list, account.uri)
+            }
         }
     }
 

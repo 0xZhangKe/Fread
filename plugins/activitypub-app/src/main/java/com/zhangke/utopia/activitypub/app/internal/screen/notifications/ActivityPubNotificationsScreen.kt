@@ -22,6 +22,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
@@ -77,7 +78,10 @@ class ActivityPubNotificationsScreen(
         onLoadMore: () -> Unit,
         onInteractive: (NotificationUiState, StatusUiInteraction) -> Unit,
     ) {
-        Column(modifier = Modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             NotificationTabTitle(
                 uiState = uiState,
                 onTabCheckedChange = onTabCheckedChange,
@@ -117,7 +121,7 @@ class ActivityPubNotificationsScreen(
         onTabCheckedChange: (inMentionsTab: Boolean) -> Unit,
     ) {
         MultiChoiceSegmentedButtonRow(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth(0.7F),
         ) {
             SegmentedButton(
                 checked = !uiState.inMentionsTab,

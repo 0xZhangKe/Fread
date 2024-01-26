@@ -46,6 +46,7 @@ class ActivityPubNotificationEntityAdapter @Inject constructor(
         ActivityPubNotificationsEntity.Type.favourite -> StatusNotificationType.FAVOURITE
         ActivityPubNotificationsEntity.Type.poll -> StatusNotificationType.POLL
         ActivityPubNotificationsEntity.Type.status -> StatusNotificationType.STATUS
+        ActivityPubNotificationsEntity.Type.update -> StatusNotificationType.UPDATE
         ActivityPubNotificationsEntity.Type.severedRelationships -> StatusNotificationType.SEVERED_RELATIONSHIPS
         else -> StatusNotificationType.UNKNOWN
     }

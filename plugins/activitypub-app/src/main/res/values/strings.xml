@@ -51,4 +51,10 @@
     <string name="activity_pub_notification_unknown_desc">未知通知</string>
     <string name="activity_pub_notification_poll_desc">查看投票结果</string>
     <string name="activity_pub_notification_poll_count">%s 票 · 已结束</string>
+    <string name="activity_pub_notification_follow_desc">关注了你</string>
+    <string name="activity_pub_notification_update_desc">编辑了一条博客</string>
+    <string name="activity_pub_notification_follow_request">你收到一条关注请求</string>
+    <string name="activity_pub_notification_new_status_desc">发布了新博客</string>
+    <string name="activity_pub_notification_severed_desc">和你中断了关系</string>
+
 </resources>

@@ -51,5 +51,10 @@
     <string name="activity_pub_notification_unknown_desc">Unknown Notification</string>
     <string name="activity_pub_notification_poll_desc">View previous voting results</string>
     <string name="activity_pub_notification_poll_count">%s votes · Closed</string>
+    <string name="activity_pub_notification_follow_desc">followed you</string>
+    <string name="activity_pub_notification_update_desc">edited a post</string>
+    <string name="activity_pub_notification_follow_request">You have received a follow request</string>
+    <string name="activity_pub_notification_new_status_desc">post a new blog</string>
+    <string name="activity_pub_notification_severed_desc">has severed ties with you</string>
 
 </resources>

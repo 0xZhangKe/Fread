@@ -1,8 +1,6 @@
 package com.zhangke.utopia.status.ui
 
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -11,9 +9,8 @@ import androidx.compose.ui.unit.dp
 fun BlogDivider(
     modifier: Modifier = Modifier,
 ) {
-    Divider(
-        modifier = modifier
-            .fillMaxWidth()
-            .height(0.5.dp)
+    HorizontalDivider(
+        modifier = modifier,
+        thickness = 0.5.dp
     )
 }

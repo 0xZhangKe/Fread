@@ -176,6 +176,14 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
+    fun onRejectClick(){
+
+    }
+
+    fun onAcceptClick(){
+
+    }
+
     private fun updateRefreshState(
         showRefreshing: Boolean,
         refreshing: Boolean,

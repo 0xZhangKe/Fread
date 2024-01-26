@@ -19,15 +19,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -38,7 +32,6 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.notifications.StatusNotificationUi
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
@@ -64,6 +57,8 @@ class ActivityPubNotificationsScreen(
             onTabCheckedChange = viewModel::onTabCheckedChange,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
+            onRejectClick = viewModel::onRejectClick,
+            onAcceptClick = viewModel::onAcceptClick,
             onInteractive = viewModel::onInteractive,
         )
         ConsumeSnackbarFlow(snackbarHostState, messageTextFlow = viewModel.snackMessage)
@@ -76,6 +71,8 @@ class ActivityPubNotificationsScreen(
         onTabCheckedChange: (inMentionsTab: Boolean) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
+        onRejectClick: () -> Unit,
+        onAcceptClick: () -> Unit,
         onInteractive: (NotificationUiState, StatusUiInteraction) -> Unit,
     ) {
         Column(
@@ -108,6 +105,8 @@ class ActivityPubNotificationsScreen(
                         notification = notification,
                         onInteractive = { onInteractive(notification, it) },
                         indexInList = index,
+                        onAcceptClick = onAcceptClick,
+                        onRejectClick = onRejectClick,
                     )
                 }
             }

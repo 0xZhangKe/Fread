@@ -103,9 +103,12 @@ class NotificationsRepo @Inject constructor(
         }
     }
 
-    suspend fun updateNotifications(notification: StatusNotification) {
+    suspend fun updateNotifications(
+        notification: StatusNotification,
+        accountOwnershipUri: FormalUri,
+    ) {
         notificationDao.insert(
-            notificationsEntityAdapter.toEntity(notification, notification.account.uri)
+            notificationsEntityAdapter.toEntity(notification, accountOwnershipUri)
         )
     }
 

@@ -45,7 +45,7 @@ fun FollowNotification(
 
         Text(
             modifier = Modifier.padding(start = 6.dp),
-            text = notification.account.name.take(style.nameMaxLength),
+            text = notification.account.displayName.take(style.nameMaxLength),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

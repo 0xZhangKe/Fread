@@ -31,7 +31,7 @@ fun UnknownNotification(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = "${notification.type.name} from ${notification.account.name}",
+            text = "${notification.type.name} from ${notification.account.displayName}",
         )
     }
 }

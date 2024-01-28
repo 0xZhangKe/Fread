@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEvent
@@ -24,7 +25,7 @@ data class NotificationUiState(
     /**
      * The account that performed the action that generated the notification.
      */
-    val account: BlogAuthor,
+    val account: ActivityPubAccountEntity,
     val status: StatusUiState?,
     val relationshipSeveranceEvent: RelationshipSeveranceEvent?,
 )

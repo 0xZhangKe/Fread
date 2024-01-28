@@ -27,8 +27,8 @@ import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 fun FollowRequestNotification(
     notification: NotificationUiState,
     style: NotificationStyle,
-    onRejectClick: () -> Unit,
-    onAcceptClick: () -> Unit,
+    onRejectClick: (NotificationUiState) -> Unit,
+    onAcceptClick: (NotificationUiState) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         NotificationHeadLine(
@@ -63,7 +63,7 @@ fun FollowRequestNotification(
                         width = Dimension.fillToConstraints
                     },
                 textAlign = TextAlign.Left,
-                text = notification.account.name,
+                text = notification.account.displayName.take(style.nameMaxLength),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -77,7 +77,7 @@ fun FollowRequestNotification(
                         width = Dimension.fillToConstraints
                     },
                 textAlign = TextAlign.Left,
-                text = notification.account.webFinger.toString(),
+                text = notification.account.acct,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -93,7 +93,9 @@ fun FollowRequestNotification(
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
-                onClick = onRejectClick,
+                onClick = {
+                    onRejectClick(notification)
+                },
                 imageVector = Icons.Default.Clear,
                 contentDescription = "Reject",
             )
@@ -109,7 +111,9 @@ fun FollowRequestNotification(
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
-                onClick = onAcceptClick,
+                onClick = {
+                    onAcceptClick(notification)
+                },
                 imageVector = Icons.Default.Check,
                 contentDescription = "Accept",
             )

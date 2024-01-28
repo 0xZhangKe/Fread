@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
-import android.util.Log
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -34,6 +33,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.notifications.StatusNotificationUi
+import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 
@@ -50,8 +50,6 @@ class ActivityPubNotificationsScreen(
         val viewModel = getViewModel<ActivityPubNotificationsViewModel>()
             .getSubViewModel(userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
-        val sss = uiState.notificationList.joinToString(",") { it.type.name }
-        Log.d("U_TEST", "${uiState.inMentionsTab} -> $sss")
         ActivityPubNotificationsContent(
             uiState = uiState,
             onTabCheckedChange = viewModel::onTabCheckedChange,
@@ -71,8 +69,8 @@ class ActivityPubNotificationsScreen(
         onTabCheckedChange: (inMentionsTab: Boolean) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onRejectClick: () -> Unit,
-        onAcceptClick: () -> Unit,
+        onRejectClick: (NotificationUiState) -> Unit,
+        onAcceptClick: (NotificationUiState) -> Unit,
         onInteractive: (NotificationUiState, StatusUiInteraction) -> Unit,
     ) {
         Column(
@@ -103,7 +101,9 @@ class ActivityPubNotificationsScreen(
                     StatusNotificationUi(
                         modifier = Modifier.fillMaxWidth(),
                         notification = notification,
-                        onInteractive = { onInteractive(notification, it) },
+                        onInteractive = { _, interaction ->
+                            onInteractive(notification, interaction)
+                        },
                         indexInList = index,
                         onAcceptClick = onAcceptClick,
                         onRejectClick = onRejectClick,

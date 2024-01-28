@@ -11,7 +11,6 @@ import javax.inject.Inject
 
 class ActivityPubNotificationEntityAdapter @Inject constructor(
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-    private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val statusAdapter: ActivityPubStatusAdapter,
 ) {
 
@@ -22,7 +21,7 @@ class ActivityPubNotificationEntityAdapter @Inject constructor(
         id = entity.id,
         type = entity.type.convertToNotificationType(),
         createdAt = formatDatetimeToDate(entity.createdAt),
-        account = accountAdapter.toAuthor(entity.account),
+        account = entity.account,
         status = entity.status?.let { statusAdapter.toStatus(it, platform) },
         relationshipSeveranceEvent = entity.relationshipSeveranceEvent?.toRelationshipSeveranceEvent(),
     )

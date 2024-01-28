@@ -11,6 +11,8 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
+import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubAccountEntityConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.BlogAuthorConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalUriConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.RelationshipSeveranceEventConverter
@@ -33,7 +35,7 @@ data class NotificationsEntity(
     val type: StatusNotificationType,
     val accountOwnershipUri: FormalUri,
     val createTimestamp: Long,
-    val account: BlogAuthor,
+    val account: ActivityPubAccountEntity,
     val status: Status?,
     val relationshipSeveranceEvent: RelationshipSeveranceEvent?,
 )
@@ -63,7 +65,7 @@ interface NotificationsDao {
 @TypeConverters(
     RelationshipSeveranceEventConverter::class,
     StatusNotificationTypeConverter::class,
-    BlogAuthorConverter::class,
+    ActivityPubAccountEntityConverter::class,
     FormalUriConverter::class,
     StatusConverter::class,
 )

@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.author.BlogAuthor
 
@@ -20,7 +21,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 @Composable
 fun BlogInteractionNotification(
     statusUiState: StatusUiState,
-    author: BlogAuthor,
+    author: ActivityPubAccountEntity,
     icon: ImageVector,
     interactionDesc: String,
     indexInList: Int,
@@ -33,7 +34,7 @@ fun BlogInteractionNotification(
         NotificationHeadLine(
             icon = icon,
             avatar = author.avatar,
-            accountName = author.name,
+            accountName = author.displayName,
             interactionDesc = interactionDesc,
             style = style,
         )

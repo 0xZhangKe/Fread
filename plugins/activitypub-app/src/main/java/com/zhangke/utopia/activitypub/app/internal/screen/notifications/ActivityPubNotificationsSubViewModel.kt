@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
-import android.util.Log
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
@@ -8,6 +7,7 @@ import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
@@ -16,6 +16,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteract
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -31,6 +32,7 @@ class ActivityPubNotificationsSubViewModel(
     private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val notificationsRepo: NotificationsRepo,
+    private val clientManager: ActivityPubClientManager,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -49,6 +51,10 @@ class ActivityPubNotificationsSubViewModel(
 
     private var loggedAccount: ActivityPubLoggedAccount? = null
 
+    private var initLoadJob: Job? = null
+    private var refreshJob: Job? = null
+    private var loadMoreJob: Job? = null
+
     init {
         loadNotifications()
     }
@@ -61,17 +67,18 @@ class ActivityPubNotificationsSubViewModel(
     }
 
     fun onRefresh() {
-        launchInViewModel {
+        refreshJob?.cancel()
+        refreshJob = launchInViewModel {
             refresh(true)
         }
     }
 
     private fun loadNotifications() {
+        initLoadJob?.cancel()
         _uiState.value = _uiState.value.copy(
             notificationList = emptyList(),
         )
-        Log.d("U_TEST", "loadNotifications start  only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
-        launchInViewModel {
+        initLoadJob = launchInViewModel {
             val account = loggedAccount ?: accountManager.getAllLoggedAccount()
                 .firstOrNull { it.uri == userUriInsights.uri }
             loggedAccount = account
@@ -89,7 +96,6 @@ class ActivityPubNotificationsSubViewModel(
                 ?.map { it.toUiState() }
                 ?.let {
                     _uiState.value = _uiState.value.copy(notificationList = it)
-                    Log.d("U_TEST", "loadNotifications success only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
                 }
             refresh(false)
         }
@@ -98,14 +104,12 @@ class ActivityPubNotificationsSubViewModel(
     private suspend fun refresh(showRefreshing: Boolean) {
         if (_uiState.value.refreshing || _uiState.value.loadMoreState == LoadState.Loading) return
         val account = loggedAccount ?: return
-        Log.d("U_TEST", "refresh before only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
         updateRefreshState(showRefreshing, true, null)
         notificationsRepo.getRemoteNotifications(
             account = account,
             onlyMentions = _uiState.value.inMentionsTab,
         ).map { it.map { notification -> notification.toUiState() } }
             .onSuccess {
-                Log.d("U_TEST", "refresh success only mentions:${_uiState.value.inMentionsTab}, notificationList: ${_uiState.value.notificationList.joinToString(",") { it.type.name }}")
                 _uiState.value = _uiState.value.copy(
                     notificationList = it,
                     refreshing = false,
@@ -119,10 +123,11 @@ class ActivityPubNotificationsSubViewModel(
     }
 
     fun onLoadMore() {
+        loadMoreJob?.cancel()
         val account = loggedAccount ?: return
         if (_uiState.value.refreshing || _uiState.value.loadMoreState == LoadState.Loading) return
         val latestNotification = _uiState.value.notificationList.lastOrNull() ?: return
-        launchInViewModel {
+        loadMoreJob = launchInViewModel {
             _uiState.value = _uiState.value.copy(
                 loadMoreState = LoadState.Loading,
             )
@@ -169,19 +174,37 @@ class ActivityPubNotificationsSubViewModel(
                     }
                     statusNotification.toNotification()
                         .copy(status = newStatus.status)
-                        .let { notificationsRepo.updateNotifications(it) }
+                        .let { notificationsRepo.updateNotifications(it, userUriInsights.uri) }
                 }.onFailure {
                     _snackMessage.emit(textOf(it.message.orEmpty()))
                 }
         }
     }
 
-    fun onRejectClick(){
-
+    fun onRejectClick(notification: NotificationUiState) {
+        val accountId = notification.account.id
+        val accountRepo = clientManager.getClient(userUriInsights.baseUrl).accountRepo
+        launchInViewModel {
+            accountRepo.rejectFollowRequest(accountId)
+                .onFailure {
+                    _snackMessage.emit(textOf(it.message.orEmpty()))
+                }.onSuccess {
+                    refresh(false)
+                }
+        }
     }
 
-    fun onAcceptClick(){
-
+    fun onAcceptClick(notification: NotificationUiState) {
+        val accountId = notification.account.id
+        val accountRepo = clientManager.getClient(userUriInsights.baseUrl).accountRepo
+        launchInViewModel {
+            accountRepo.authorizeFollowRequest(accountId)
+                .onFailure {
+                    _snackMessage.emit(textOf(it.message.orEmpty()))
+                }.onSuccess {
+                    refresh(false)
+                }
+        }
     }
 
     private fun updateRefreshState(

@@ -7,6 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.utopia.activitypub.app.internal.composable.StatusInteractive
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
@@ -59,7 +60,7 @@ fun WholeBlogUi(
     statusUiState: StatusUiState,
     indexInList: Int,
     style: NotificationStyle,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
     showDivider: Boolean = true,
 ) {
     val navigator = LocalGlobalNavigator.current
@@ -74,7 +75,7 @@ fun WholeBlogUi(
             bottomPanelInteractions = statusUiState.bottomInteractions,
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,
-            onInteractive = onInteractive,
+            onInteractive = StatusInteractive(statusUiState, onInteractive),
             onMediaClick = { event ->
                 when (event) {
                     is BlogMediaClickEvent.BlogImageClickEvent -> {

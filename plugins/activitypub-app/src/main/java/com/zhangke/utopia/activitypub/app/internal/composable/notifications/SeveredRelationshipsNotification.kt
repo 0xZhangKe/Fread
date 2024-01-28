@@ -24,7 +24,7 @@ fun SeveredRelationshipsNotification(
         NotificationHeadLine(
             icon = Icons.Default.WarningAmber,
             avatar = notification.account.avatar,
-            accountName = notification.account.name,
+            accountName = notification.account.displayName,
             interactionDesc = stringResource(R.string.activity_pub_notification_severed_desc),
             style = style,
         )

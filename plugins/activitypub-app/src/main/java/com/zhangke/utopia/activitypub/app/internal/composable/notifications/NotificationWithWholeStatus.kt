@@ -9,6 +9,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 
 @Composable
 fun NotificationWithWholeStatus(
@@ -17,7 +18,7 @@ fun NotificationWithWholeStatus(
     icon: ImageVector,
     interactionDesc: String,
     style: NotificationStyle,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
 ) {
     val status = notification.status
     if (status == null) {
@@ -34,7 +35,7 @@ fun NotificationWithWholeStatus(
         NotificationHeadLine(
             icon = icon,
             avatar = notification.account.avatar,
-            accountName = notification.account.name,
+            accountName = notification.account.displayName,
             interactionDesc = interactionDesc,
             style = style,
         )

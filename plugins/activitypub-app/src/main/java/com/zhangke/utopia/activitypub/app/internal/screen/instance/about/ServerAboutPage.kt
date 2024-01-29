@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server.about
+package com.zhangke.utopia.activitypub.app.internal.screen.instance.about
 
 import android.widget.TextView
 import androidx.compose.foundation.layout.Box
@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -156,8 +157,7 @@ private fun ServerAboutRule(
             )
         }
         if (showDivider) {
-            Divider(
-                modifier = Modifier.fillMaxWidth(),
+            HorizontalDivider(
                 thickness = 1.dp,
             )
         }

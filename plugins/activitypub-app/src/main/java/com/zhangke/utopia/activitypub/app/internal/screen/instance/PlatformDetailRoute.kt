@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server
+package com.zhangke.utopia.activitypub.app.internal.screen.instance
 
 import android.net.Uri
 import com.zhangke.framework.network.FormalBaseUrl

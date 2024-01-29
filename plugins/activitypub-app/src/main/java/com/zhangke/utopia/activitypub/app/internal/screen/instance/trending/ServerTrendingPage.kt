@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server.trending
+package com.zhangke.utopia.activitypub.app.internal.screen.instance.trending
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize

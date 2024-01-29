@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server
+package com.zhangke.utopia.activitypub.app.internal.screen.instance
 
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,9 +18,9 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
-import com.zhangke.utopia.activitypub.app.internal.screen.server.about.ServerAboutPage
-import com.zhangke.utopia.activitypub.app.internal.screen.server.trending.ServerTrendingPage
-import com.zhangke.utopia.activitypub.app.internal.screen.server.trending.tags.ServerTrendsTagsPage
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.about.ServerAboutPage
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.trending.ServerTrendingPage
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.trending.tags.ServerTrendsTagsPage
 
 internal enum class ServerDetailTab(
     val title: TextString,

@@ -9,6 +9,9 @@
 
     <string name="activity_pub_search_timeline_name">%s的%s</string>
 
+    <string name="activity_pub_instance_detail_language_label">语言: %s</string>
+    <string name="activity_pub_instance_detail_active_month_label">月活: %s</string>
+
     <string name="activity_pub_about">关于</string>
     <string name="activity_pub_about_rule_title">站点规则</string>
     <string name="activity_pub_trends_tag">话题</string>

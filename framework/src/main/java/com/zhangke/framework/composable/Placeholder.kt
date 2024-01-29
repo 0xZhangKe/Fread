@@ -13,6 +13,7 @@ import com.google.accompanist.placeholder.PlaceholderHighlight
 import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 
+@Composable
 fun Modifier.utopiaPlaceholder(
     visible: Boolean,
     color: Color = Color.Unspecified,
@@ -20,8 +21,8 @@ fun Modifier.utopiaPlaceholder(
     highlight: PlaceholderHighlight? = null,
     placeholderFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
     contentFadeTransitionSpec: @Composable Transition.Segment<Boolean>.() -> FiniteAnimationSpec<Float> = { spring() },
-): Modifier = composed {
-    placeholder(
+): Modifier = then(
+    Modifier.placeholder(
         visible = visible,
         color = color,
         shape = shape,
@@ -29,4 +30,4 @@ fun Modifier.utopiaPlaceholder(
         placeholderFadeTransitionSpec = placeholderFadeTransitionSpec,
         contentFadeTransitionSpec = contentFadeTransitionSpec,
     )
-}
+)

@@ -9,6 +9,9 @@
 
     <string name="activity_pub_search_timeline_name">%s`s %s</string>
 
+    <string name="activity_pub_instance_detail_language_label">Language: %s</string>
+    <string name="activity_pub_instance_detail_active_month_label">Active month: %s</string>
+
     <string name="activity_pub_about">About</string>
     <string name="activity_pub_about_rule_title">Rules</string>
     <string name="activity_pub_trends_tag">Trends Tags</string>

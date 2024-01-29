@@ -1,38 +1,38 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.instance
 
-import android.widget.TextView
+import android.util.Log
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -45,31 +45,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
-import androidx.core.text.HtmlCompat
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
-import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
-import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.ToolbarTokens
+import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
+import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
+import kotlinx.coroutines.launch
 
 @Destination(PlatformDetailRoute.ROUTE)
 class InstanceDetailScreen(
@@ -78,29 +76,36 @@ class InstanceDetailScreen(
 
     @Composable
     override fun Content() {
+        Log.d("U_TEST", "InstanceDetailScreen key is $key")
         val navigator = LocalNavigator.currentOrThrow
         val bottomSheetDialogNavigator = LocalBottomSheetNavigator.current
         val navigationResult = navigator.navigationResult
         val viewModel: InstanceDetailViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         LaunchedEffect(route) {
-            viewModel.serverBaseUrl = PlatformDetailRoute.parseBaseUrl(route)
+            val (baseUrl, addable) = PlatformDetailRoute.parseParams(route)
+            viewModel.serverBaseUrl = baseUrl
+            viewModel.addable = addable
             viewModel.onPrepared()
         }
         InstanceDetailContent(
             uiState = uiState,
-            onBackClick = navigator::pop,
+            onBackClick = {
+                if (!navigator.pop()) {
+                    navigationResult.popWithResult(false)
+                }
+            },
             onAddClick = viewModel::onAddClick,
         )
         ConsumeFlow(viewModel.contentConfigFlow) {
-            navigationResult.popWithResult(it)
+            navigationResult.popWithResult(true)
         }
         ConsumeFlow(viewModel.openLoginFlow) {
             bottomSheetDialogNavigator.show(LoginBottomSheetScreen(it))
         }
     }
 
-    @OptIn(ExperimentalMotionApi::class)
+    @OptIn(ExperimentalMotionApi::class, ExperimentalFoundationApi::class)
     @Composable
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,
@@ -255,19 +260,26 @@ class InstanceDetailScreen(
                                     maxLines = 4,
                                     overflow = TextOverflow.Ellipsis,
                                 )
-                                val languageString = instance?.languages?.joinToString(", ").orEmpty()
+                                val languageString =
+                                    instance?.languages?.joinToString(", ").orEmpty()
                                 Text(
                                     modifier = Modifier
                                         .padding(top = 4.dp)
                                         .utopiaPlaceholder(visible = loading),
-                                    text = stringResource(R.string.activity_pub_instance_detail_language_label, languageString),
+                                    text = stringResource(
+                                        R.string.activity_pub_instance_detail_language_label,
+                                        languageString
+                                    ),
                                     maxLines = 3,
                                 )
                                 Text(
                                     modifier = Modifier
                                         .padding(top = 4.dp)
                                         .utopiaPlaceholder(visible = loading),
-                                    text = stringResource(R.string.activity_pub_instance_detail_active_month_label, instance?.usage?.users?.activeMonth.toString()),
+                                    text = stringResource(
+                                        R.string.activity_pub_instance_detail_active_month_label,
+                                        instance?.usage?.users?.activeMonth.toString()
+                                    ),
                                 )
 
                                 if (instance?.contact != null) {
@@ -375,123 +387,57 @@ class InstanceDetailScreen(
                     }
                 }
             ) {
-                ServerAboutPageContent(
-                    uiState = uiState,
-                    contentCanScrollBackward = contentCanScrollBackward,
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun ServerAboutPageContent(
-        uiState: InstanceDetailUiState,
-        contentCanScrollBackward: MutableState<Boolean>,
-    ) {
-        val scrollState = rememberScrollState()
-        contentCanScrollBackward.value = scrollState.value > 0
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(scrollState),
-        ) {
-            if (uiState.announcement.isNotEmpty()) {
-                ServerAboutAnnouncementSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, top = 15.dp, end = 10.dp, bottom = 10.dp),
-                    announcementList = uiState.announcement,
-                )
-            }
-            if (!uiState.instance?.rules.isNullOrEmpty()) {
-                ServerAboutRulesSection(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 10.dp, top = 5.dp, end = 10.dp, bottom = 10.dp),
-                    ruleList = uiState.instance!!.rules,
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun ServerAboutAnnouncementSection(
-        modifier: Modifier = Modifier,
-        announcementList: List<ActivityPubAnnouncementEntity>,
-    ) {
-        Column(modifier = modifier) {
-            announcementList.forEach {
-                ServerAboutAnnouncement(
-                    modifier = Modifier.fillMaxWidth(),
-                    entity = it,
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun ServerAboutAnnouncement(
-        modifier: Modifier = Modifier,
-        entity: ActivityPubAnnouncementEntity,
-    ) {
-        AndroidView(
-            modifier = modifier,
-            factory = { TextView(it) },
-            update = {
-                it.text = HtmlCompat.fromHtml(entity.content, HtmlCompat.FROM_HTML_MODE_COMPACT)
-            }
-        )
-    }
-
-    @Composable
-    private fun ServerAboutRulesSection(
-        modifier: Modifier = Modifier,
-        ruleList: List<ActivityPubInstanceEntity.Rule>,
-    ) {
-        Text(
-            modifier = modifier,
-            text = stringResource(R.string.activity_pub_about_rule_title),
-            fontWeight = FontWeight.Bold,
-            fontSize = 18.sp,
-            color = Color.Black,
-        )
-        ruleList.forEachIndexed { index, rule ->
-            ServerAboutRule(
-                modifier = Modifier.padding(start = 15.dp, end = 15.dp),
-                rule = rule,
-                showDivider = index != ruleList.lastIndex,
-            )
-        }
-    }
-
-    @Composable
-    private fun ServerAboutRule(
-        modifier: Modifier = Modifier,
-        rule: ActivityPubInstanceEntity.Rule,
-        showDivider: Boolean = true,
-    ) {
-        Box(
-            modifier = modifier
-                .padding(top = 5.dp)
-        ) {
-            Row(modifier = Modifier.padding(end = 2.dp, bottom = 10.dp)) {
-                Text(
-                    text = "${rule.id}.",
-                    fontSize = 18.sp,
-                    fontWeight = FontWeight.Bold,
-                    color = Color.Black,
-                )
-
-                Text(
-                    modifier = Modifier.padding(start = 6.dp),
-                    text = rule.text,
-                    fontSize = 14.sp,
-                )
-            }
-            if (showDivider) {
-                HorizontalDivider(
-                    thickness = 1.dp,
-                )
+                if (instance != null) {
+                    val coroutineScope = rememberCoroutineScope()
+                    val tabs = remember {
+                        InstanceDetailTab.entries.toTypedArray()
+                    }
+                    Column {
+                        val pagerState = rememberPagerState(
+                            initialPage = 0,
+                            pageCount = tabs::size,
+                        )
+                        UtopiaTabRow(
+                            modifier = Modifier
+                                .fillMaxWidth(),
+                            selectedTabIndex = pagerState.currentPage,
+                        ) {
+                            tabs.forEachIndexed { index, item ->
+                                Tab(
+                                    selected = pagerState.currentPage == index,
+                                    onClick = {
+                                        coroutineScope.launch {
+                                            pagerState.scrollToPage(index)
+                                        }
+                                    },
+                                ) {
+                                    Box(
+                                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
+                                    ) {
+                                        Text(
+                                            text = textString(item.title),
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        HorizontalPager(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .weight(1F),
+                            state = pagerState,
+                        ) { currentPage ->
+                            if (uiState.baseUrl != null) {
+                                tabs[currentPage].content(
+                                    this@InstanceDetailScreen,
+                                    uiState.baseUrl,
+                                    instance.rules,
+                                    contentCanScrollBackward,
+                                )
+                            }
+                        }
+                    }
+                }
             }
         }
     }

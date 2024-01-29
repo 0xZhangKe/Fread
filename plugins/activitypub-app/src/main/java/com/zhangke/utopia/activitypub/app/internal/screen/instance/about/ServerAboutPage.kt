@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Divider
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -28,20 +27,20 @@ import androidx.core.text.HtmlCompat
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
+import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 
 @Composable
 internal fun Screen.ServerAboutPage(
     baseUrl: FormalBaseUrl,
-    rules: List<ActivityPubInstanceRule> = emptyList(),
+    rules: List<ActivityPubInstanceEntity.Rule> = emptyList(),
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
     val viewModel: ServerAboutViewModel = getViewModel()
-    viewModel.rules = rules
-    viewModel.baseUrl = baseUrl
     LaunchedEffect(viewModel) {
+        viewModel.rules = rules
+        viewModel.baseUrl = baseUrl
         viewModel.onPageResume()
     }
     val uiState by viewModel.uiState.collectAsState()
@@ -114,7 +113,7 @@ private fun ServerAboutAnnouncement(
 @Composable
 private fun ServerAboutRulesSection(
     modifier: Modifier = Modifier,
-    ruleList: List<ActivityPubInstanceRule>,
+    ruleList: List<ActivityPubInstanceEntity.Rule>,
 ) {
     Text(
         modifier = modifier,
@@ -135,7 +134,7 @@ private fun ServerAboutRulesSection(
 @Composable
 private fun ServerAboutRule(
     modifier: Modifier = Modifier,
-    rule: ActivityPubInstanceRule,
+    rule: ActivityPubInstanceEntity.Rule,
     showDivider: Boolean = true,
 ) {
     Box(

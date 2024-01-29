@@ -8,8 +8,10 @@ import com.zhangke.utopia.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.ContentConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,6 +22,9 @@ class ContentHomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ContentHomeUiState(0, emptyList()))
     val uiState: StateFlow<ContentHomeUiState> = _uiState
+
+    private val _openScreenFlow = MutableSharedFlow<String>()
+    val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     init {
         launchInViewModel {
@@ -51,5 +56,12 @@ class ContentHomeViewModel @Inject constructor(
         val pageList = _uiState.value.contentConfigList
         if (pageIndex !in pageList.indices) return
         onCurrentPageChange(pageIndex)
+    }
+
+    fun onConfigTitleClick(config: ContentConfig) {
+        statusProvider.screenProvider
+            .getPlatformDetailScreenRoute(config)?.let { route ->
+                launchInViewModel { _openScreenFlow.emit(route) }
+            }
     }
 }

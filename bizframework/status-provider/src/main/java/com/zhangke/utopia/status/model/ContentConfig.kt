@@ -28,4 +28,3 @@ sealed interface ContentConfig {
             is ActivityPubContent -> name
         }
 }
-

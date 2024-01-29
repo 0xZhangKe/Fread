@@ -23,7 +23,7 @@ androidx-nav = "2.5.3"
 androidx-hilt-nav-compose = "1.0.0"
 androidx-compose-bom = "2024.01.00"
 #TODO 后面升级 ComposeBOM之后移除 material3 的版本
-androidx-compose-material3 = "1.2.0-beta02"
+androidx-compose-material3 = "1.2.0-rc01"
 androidx-constraintlayout-compose = "1.1.0-alpha04"
 androidx-lifecycle = "2.4.1"
 androidx-paging = "3.2.1"
@@ -55,7 +55,7 @@ voyager = "1.1.0-alpha02"
 
 krouter = "0.1.6"
 
-androidGradlePlugin = "8.2.1"
+androidGradlePlugin = "8.2.2"
 hiltAndroidGradlePlugin = "2.46.1"
 
 compose-wheel-picker = "1.0.0-alpha19"

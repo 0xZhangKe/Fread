@@ -3,10 +3,9 @@ package com.zhangke.utopia.activitypub.app
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
-import com.zhangke.utopia.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.instance.PlatformDetailRoute
+import com.zhangke.utopia.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
-import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
@@ -14,17 +13,15 @@ import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
-import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubScreenProvider @Inject constructor(
-    private val platformUriTransformer: PlatformUriTransformer,
     private val userUriTransformer: UserUriTransformer,
 ) : IStatusScreenProvider {
 
-    override fun getServerDetailScreenRoute(platformUri: FormalUri): String? {
-        val platformUriData = platformUriTransformer.parse(platformUri) ?: return null
-        return PlatformDetailRoute.buildRoute(platformUriData.serverBaseUrl)
+    override fun getServerDetailScreenRoute(config: ContentConfig): String? {
+        val activityPubContent = config as? ContentConfig.ActivityPubContent ?: return null
+        return PlatformDetailRoute.buildRoute(activityPubContent.baseUrl)
     }
 
     override fun getPostStatusScreen(platform: BlogPlatform): String? {

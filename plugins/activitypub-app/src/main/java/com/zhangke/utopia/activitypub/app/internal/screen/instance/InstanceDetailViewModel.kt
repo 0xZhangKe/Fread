@@ -6,7 +6,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.GetInstanceAnnouncementUseCase
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,17 +20,16 @@ class InstanceDetailViewModel @Inject constructor(
     private val accountManager: ActivityPubAccountManager,
     private val platformRepo: ActivityPubPlatformRepo,
     private val instanceAdapter: ActivityPubInstanceAdapter,
-    private val getInstanceAnnouncementUseCase: GetInstanceAnnouncementUseCase,
 ) : ViewModel() {
 
     lateinit var serverBaseUrl: FormalBaseUrl
+    var addable: Boolean = false
 
     private val _uiState = MutableStateFlow(
         InstanceDetailUiState(
             loading = false,
             baseUrl = null,
             instance = null,
-            announcement = emptyList(),
             addable = false,
         )
     )
@@ -46,6 +44,7 @@ class InstanceDetailViewModel @Inject constructor(
     fun onPrepared() {
         _uiState.value = _uiState.value.copy(
             loading = true,
+            addable = addable,
             baseUrl = serverBaseUrl
         )
         launchInViewModel {
@@ -53,11 +52,6 @@ class InstanceDetailViewModel @Inject constructor(
             _uiState.value = _uiState.value.copy(
                 loading = false,
                 instance = platform,
-            )
-
-            val announcement = getInstanceAnnouncementUseCase(serverBaseUrl).getOrNull()
-            _uiState.value = _uiState.value.copy(
-                announcement = announcement ?: emptyList(),
             )
         }
     }

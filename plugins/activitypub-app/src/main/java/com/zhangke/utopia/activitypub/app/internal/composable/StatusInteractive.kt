@@ -9,7 +9,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 
 @Composable
-fun StatusInteractive(
+fun statusInteractive(
     statusUiState: StatusUiState,
     onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
 ): (StatusUiInteraction) -> Unit {

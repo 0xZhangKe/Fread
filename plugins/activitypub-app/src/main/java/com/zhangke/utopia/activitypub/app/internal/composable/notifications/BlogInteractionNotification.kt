@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.composable.notifications
 
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -10,8 +11,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.author.BlogAuthor
 
 /**
@@ -27,9 +31,13 @@ fun BlogInteractionNotification(
     indexInList: Int,
     style: NotificationStyle,
 ) {
+    val navigator = LocalNavigator.currentOrThrow
     Column(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                navigator.push(StatusContextScreen(statusUiState.status))
+            }
     ) {
         NotificationHeadLine(
             icon = icon,

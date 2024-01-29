@@ -12,7 +12,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
@@ -30,7 +29,9 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.CurrentScreen
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
@@ -42,9 +43,8 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.krouter.Destination
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstance
-import com.zhangke.utopia.activitypub.app.internal.screen.instance.InstanceDetailScaffold
-import com.zhangke.utopia.activitypub.app.internal.screen.instance.about.ServerAboutPage
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.InstanceDetailScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 
 @Destination(AddInstanceScreenRoute.ROOT)
@@ -116,11 +116,22 @@ class AddInstanceScreen : Screen {
                     onErrorMessageDismiss = onErrorMessageDismiss,
                 )
             } else {
-                AddInstanceDetailContent(
-                    instance = uiState.instance!!,
-                    onBackClick = onBackClick,
-                    onConfirmClick = onConfirmClick,
-                )
+                val route = PlatformDetailRoute.buildRoute(uiState.instance!!.baseUrl, true)
+                Navigator(
+                    screen = InstanceDetailScreen(route),
+                ) {
+                    CurrentScreen()
+                    val added by it.navigationResult.getResult<Boolean>(it.lastItem.key)
+                    if (added != null) {
+                        LaunchedEffect(added) {
+                            if (added!!) {
+                                onConfirmClick()
+                            } else {
+                                onBackClick()
+                            }
+                        }
+                    }
+                }
             }
         }
     }
@@ -197,32 +208,6 @@ class AddInstanceScreen : Screen {
                     )
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun AddInstanceDetailContent(
-        instance: ActivityPubInstance,
-        onBackClick: () -> Unit,
-        onConfirmClick: () -> Unit,
-    ) {
-        InstanceDetailScaffold(
-            instance = instance,
-            loading = false,
-            onBackClick = onBackClick,
-            action = { color ->
-                SimpleIconButton(
-                    onClick = onConfirmClick,
-                    imageVector = Icons.Default.Check,
-                    contentDescription = "Confirm add",
-                    tint = color,
-                )
-            }
-        ) { canScrollBackward ->
-            ServerAboutPage(
-                baseUrl = instance.baseUrl,
-                contentCanScrollBackward = canScrollBackward,
-            )
         }
     }
 }

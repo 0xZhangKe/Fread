@@ -44,9 +44,6 @@ class VoyagerResultExtension(
 
     @Composable
     public fun <T> getResult(screenKey: String): State<T?> {
-        val log = results.keys.joinToString(", ") { key ->
-            "$key:${results[key]}"
-        }
         val result = results[screenKey] as? T
         val resultState = remember(screenKey, result) {
             derivedStateOf {

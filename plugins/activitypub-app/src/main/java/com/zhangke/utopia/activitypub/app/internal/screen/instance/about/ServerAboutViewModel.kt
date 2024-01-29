@@ -1,9 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.instance.about
 
 import androidx.lifecycle.ViewModel
+import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetInstanceAnnouncementUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,7 +20,7 @@ internal class ServerAboutViewModel @Inject constructor(
 
     lateinit var baseUrl: FormalBaseUrl
 
-    var rules: List<ActivityPubInstanceRule> = emptyList()
+    var rules: List<ActivityPubInstanceEntity.Rule> = emptyList()
 
     private val _uiState = MutableStateFlow(ServerAboutUiState(emptyList(), emptyList()))
     val uiState: StateFlow<ServerAboutUiState> = _uiState
@@ -34,7 +34,7 @@ internal class ServerAboutViewModel @Inject constructor(
 
     private fun requestAnnouncement() {
         launchInViewModel {
-            if (accountRepo.queryAll().isNotEmpty()) return@launchInViewModel
+            if (accountRepo.queryAll().isEmpty()) return@launchInViewModel
             getInstanceAnnouncementUseCase(baseUrl)
                 .onSuccess { announcements ->
                     _uiState.update {

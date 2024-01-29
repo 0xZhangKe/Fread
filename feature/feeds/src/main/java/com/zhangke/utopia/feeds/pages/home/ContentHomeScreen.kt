@@ -1,6 +1,7 @@
 package com.zhangke.utopia.feeds.pages.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,10 +38,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalGlobalNavigator
+import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
 import kotlinx.coroutines.launch
@@ -55,6 +58,10 @@ class ContentHomeScreen : Screen {
         val uiState by viewModel.uiState.collectAsState()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
         val coroutineScope = rememberCoroutineScope()
+
+        ConsumeFlow(viewModel.openScreenFlow) { route ->
+            navigator.pushDestination(route)
+        }
 
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -100,6 +107,9 @@ class ContentHomeScreen : Screen {
                         scrollBehavior = scrollBehavior,
                         title = {
                             Text(
+                                modifier = Modifier.clickable {
+                                    uiState.currentConfig?.let(viewModel::onConfigTitleClick)
+                                },
                                 text = uiState.currentConfig?.configName.orEmpty(),
                                 fontSize = 18.sp,
                             )

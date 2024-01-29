@@ -1,30 +1,22 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
-import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubListEntity
+import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
 import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
 import com.zhangke.utopia.activitypub.app.internal.screen.trending.TrendingStatusTab
-import kotlinx.coroutines.launch
 
 class ActivityPubContentScreen(
     private val configId: Long,
@@ -49,45 +41,17 @@ class ActivityPubContentScreen(
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun Screen.ActivityPubContentUi(
         uiState: ActivityPubContentUiState,
         lists: List<ActivityPubListEntity>,
     ) {
-        val coroutineScope = rememberCoroutineScope()
-        Column(modifier = Modifier.fillMaxSize()) {
-            val tabList = remember(uiState, lists) {
-                createScreens(uiState, lists)
-            }
-            val pagerState = rememberPagerState {
-                tabList.size
-            }
-            UtopiaTabRow(
-                modifier = Modifier.fillMaxWidth(),
-                selectedTabIndex = pagerState.currentPage,
-                tabCount = tabList.size,
-                tabContent = {
-                    Text(
-                        text = tabList[it].options?.title.orEmpty(),
-                        maxLines = 1,
-                    )
-                },
-                onTabClick = {
-                    coroutineScope.launch {
-                        pagerState.scrollToPage(it)
-                    }
-                }
-            )
-            HorizontalPager(
-                modifier = Modifier.fillMaxSize(),
-                state = pagerState,
-            ) { pageIndex ->
-                with(tabList[pageIndex]) {
-                    TabContent()
-                }
-            }
+        val tabList = remember(uiState, lists) {
+            createScreens(uiState, lists)
         }
+        HorizontalPagerWithTab(
+            tabList = tabList,
+        )
     }
 
     private fun createScreens(

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server.about
+package com.zhangke.utopia.activitypub.app.internal.screen.instance.about
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel

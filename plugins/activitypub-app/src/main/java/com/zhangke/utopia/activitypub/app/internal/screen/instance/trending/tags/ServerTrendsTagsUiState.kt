@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server.trending.tags
+package com.zhangke.utopia.activitypub.app.internal.screen.instance.trending.tags
 
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTag
 

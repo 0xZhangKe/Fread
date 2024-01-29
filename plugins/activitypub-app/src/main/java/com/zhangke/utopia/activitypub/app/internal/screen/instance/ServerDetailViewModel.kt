@@ -1,11 +1,11 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server
+package com.zhangke.utopia.activitypub.app.internal.screen.instance
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstance
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.screen.server.adapter.ServiceDetailUiStateAdapter
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.adapter.ServiceDetailUiStateAdapter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow

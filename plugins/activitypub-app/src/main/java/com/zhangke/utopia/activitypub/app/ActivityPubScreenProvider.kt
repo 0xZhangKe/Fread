@@ -4,7 +4,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
-import com.zhangke.utopia.activitypub.app.internal.screen.server.PlatformDetailRoute
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer

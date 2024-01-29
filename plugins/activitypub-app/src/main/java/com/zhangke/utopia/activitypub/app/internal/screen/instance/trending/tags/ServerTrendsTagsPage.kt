@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server.trending.tags
+package com.zhangke.utopia.activitypub.app.internal.screen.instance.trending.tags
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row

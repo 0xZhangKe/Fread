@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server
+package com.zhangke.utopia.activitypub.app.internal.screen.instance
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -26,7 +26,7 @@ import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import kotlinx.coroutines.launch
 
-@Destination(PlatformDetailRoute.ROUTE)
+//@Destination(PlatformDetailRoute.ROUTE)
 class PlatformDetailScreen(
     @Router private val route: String = "",
 ) : Screen {

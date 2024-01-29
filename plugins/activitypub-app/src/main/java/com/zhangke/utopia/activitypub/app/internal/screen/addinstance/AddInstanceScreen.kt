@@ -43,8 +43,8 @@ import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.krouter.Destination
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstance
-import com.zhangke.utopia.activitypub.app.internal.screen.server.InstanceDetailScaffold
-import com.zhangke.utopia.activitypub.app.internal.screen.server.about.ServerAboutPage
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.InstanceDetailScaffold
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.about.ServerAboutPage
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 
 @Destination(AddInstanceScreenRoute.ROOT)

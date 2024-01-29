@@ -1,10 +1,10 @@
-package com.zhangke.utopia.activitypub.app.internal.screen.server.adapter
+package com.zhangke.utopia.activitypub.app.internal.screen.instance.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
-import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailTab
-import com.zhangke.utopia.activitypub.app.internal.screen.server.ServerDetailUiState
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.ServerDetailTab
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.ServerDetailUiState
 import javax.inject.Inject
 
 internal class ServiceDetailUiStateAdapter @Inject constructor(

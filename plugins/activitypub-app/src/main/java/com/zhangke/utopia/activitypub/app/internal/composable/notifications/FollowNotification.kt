@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.composable.notifications
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -14,6 +15,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
@@ -23,9 +26,13 @@ fun FollowNotification(
     notification: NotificationUiState,
     style: NotificationStyle,
 ) {
+    val navigator = LocalNavigator.currentOrThrow
     Row(
         modifier = Modifier
             .fillMaxWidth()
+            .clickable {
+                // nav to user profile
+            }
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {

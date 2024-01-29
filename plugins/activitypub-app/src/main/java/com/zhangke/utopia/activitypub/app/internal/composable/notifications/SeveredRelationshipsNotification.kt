@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.composable.notifications
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -11,6 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
@@ -20,7 +23,14 @@ fun SeveredRelationshipsNotification(
     notification: NotificationUiState,
     style: NotificationStyle,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    val navigator = LocalNavigator.currentOrThrow
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                // nav to user profile
+            },
+    ) {
         NotificationHeadLine(
             icon = Icons.Default.WarningAmber,
             avatar = notification.account.avatar,

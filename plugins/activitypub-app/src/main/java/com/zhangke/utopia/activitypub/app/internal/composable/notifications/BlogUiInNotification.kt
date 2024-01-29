@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.utopia.activitypub.app.internal.composable.StatusInteractive
+import com.zhangke.utopia.activitypub.app.internal.composable.statusInteractive
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
@@ -75,7 +75,7 @@ fun WholeBlogUi(
             bottomPanelInteractions = statusUiState.bottomInteractions,
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,
-            onInteractive = StatusInteractive(statusUiState, onInteractive),
+            onInteractive = statusInteractive(statusUiState, onInteractive),
             onMediaClick = { event ->
                 when (event) {
                     is BlogMediaClickEvent.BlogImageClickEvent -> {

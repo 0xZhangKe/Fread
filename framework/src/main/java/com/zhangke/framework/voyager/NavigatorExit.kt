@@ -11,6 +11,9 @@ fun Navigator.pushDestination(routerDestination: String): Boolean {
 }
 
 fun Navigator.tryPush(screen: Any): Boolean {
+    if (screen is String) {
+        return pushDestination(screen)
+    }
     val realScreen = screen as? Screen ?: return false
     push(realScreen)
     return true

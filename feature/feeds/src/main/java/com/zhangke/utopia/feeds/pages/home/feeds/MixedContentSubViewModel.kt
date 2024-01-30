@@ -10,6 +10,7 @@ import com.zhangke.utopia.common.status.model.updateById
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.delay
@@ -179,6 +180,15 @@ class MixedContentSubViewModel(
                         }
                 }
         }
+
+    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        statusProvider.screenProvider.getUserDetailRoute(blogAuthor.uri)
+            ?.let {
+                launchInViewModel {
+                    _openScreenFlow.emit(it)
+                }
+            }
+    }
 
     private suspend fun clearFeedsWhenAccountChanged() {
         statusProvider.accountManager

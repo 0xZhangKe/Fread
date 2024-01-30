@@ -12,6 +12,13 @@
     <string name="activity_pub_instance_detail_language_label">Language: %s</string>
     <string name="activity_pub_instance_detail_active_month_label">Active month: %s</string>
 
+    <string name="activity_pub_user_detail_relationship_blocking">Blocked</string>
+    <string name="activity_pub_user_detail_relationship_following">Following</string>
+    <string name="activity_pub_user_detail_relationship_not_follow">Follow</string>
+    <string name="activity_pub_user_detail_relationship_requested">Pending</string>
+    <string name="activity_pub_user_detail_request_by_tip">They are requesting to follow you</string>
+    <string name="activity_pub_user_detail_follow_info">%s Followers · %s Following</string>
+
     <string name="activity_pub_about">About</string>
     <string name="activity_pub_about_rule_title">Rules</string>
     <string name="activity_pub_trends_tag">Trends Tags</string>

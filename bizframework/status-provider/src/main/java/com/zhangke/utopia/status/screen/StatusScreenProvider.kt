@@ -7,6 +7,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.uri.FormalUri
 
 class StatusScreenProvider(
     private val providerList: List<IStatusScreenProvider>
@@ -49,6 +50,10 @@ class StatusScreenProvider(
             it.getNotificationScreen(account)
         }
     }
+
+    fun getUserDetailRoute(uri: FormalUri): String? {
+        return providerList.mapFirstOrNull { it.getUserDetailRoute(uri) }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -64,4 +69,6 @@ interface IStatusScreenProvider {
     fun getContentScreen(contentConfig: ContentConfig): PagerTab?
 
     fun getNotificationScreen(account: LoggedAccount): PagerTab?
+
+    fun getUserDetailRoute(uri: FormalUri): String?
 }

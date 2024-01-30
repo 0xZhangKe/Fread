@@ -7,7 +7,9 @@ import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.activitypub.app.internal.composable.statusInteractive
+import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
@@ -76,6 +78,9 @@ fun WholeBlogUi(
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,
             onInteractive = statusInteractive(statusUiState, onInteractive),
+            onUserInfoClick = {
+                navigator.pushDestination(UserDetailRoute.buildRoute(it.uri))
+            },
             onMediaClick = { event ->
                 when (event) {
                     is BlogMediaClickEvent.BlogImageClickEvent -> {

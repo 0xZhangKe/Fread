@@ -26,6 +26,7 @@ fun BlogUi(
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
+    onUserInfoClick: (BlogAuthor) -> Unit,
     showDivider: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -36,6 +37,7 @@ fun BlogUi(
             displayTime = displayTime,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,
+            onUserInfoClick = onUserInfoClick,
             style = style,
             reblogAuthor = reblogAuthor,
         )

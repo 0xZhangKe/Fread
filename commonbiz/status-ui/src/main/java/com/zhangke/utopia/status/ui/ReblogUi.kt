@@ -2,12 +2,10 @@ package com.zhangke.utopia.status.ui
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material.Icon
-import androidx.compose.material.Text
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.SwapHoriz
 import androidx.compose.material3.MaterialTheme
@@ -18,6 +16,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
@@ -33,6 +32,7 @@ fun ReblogUi(
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
+    onUserInfoClick: (BlogAuthor) -> Unit,
     onMediaClick: OnBlogMediaClick,
 ) {
     Column(modifier = modifier) {
@@ -64,6 +64,7 @@ fun ReblogUi(
             onInteractive = onInteractive,
             indexInList = indexInList,
             onMediaClick = onMediaClick,
+            onUserInfoClick = onUserInfoClick,
             style = style,
             reblogAuthor = reblog.author,
         )

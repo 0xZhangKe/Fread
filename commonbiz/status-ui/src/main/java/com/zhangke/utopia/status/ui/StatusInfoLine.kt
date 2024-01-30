@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.ui
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -44,6 +45,7 @@ fun StatusInfoLine(
     showDownThread: Boolean = false,
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
+    onUserInfoClick: (BlogAuthor) -> Unit,
     reblogAuthor: BlogAuthor? = null,
 ) {
     val infoStyle = style.statusInfoStyle
@@ -79,6 +81,9 @@ fun StatusInfoLine(
         BlogAuthorAvatar(
             modifier = Modifier
                 .size(infoStyle.avatarSize)
+                .clickable {
+                    onUserInfoClick(blogAuthor)
+                }
                 .constrainAs(avatar) {
                     top.linkTo(upThread.bottom, 2.dp)
                     start.linkTo(parent.start)
@@ -114,10 +119,14 @@ fun StatusInfoLine(
         )
 
         Text(
-            modifier = Modifier.constrainAs(name) {
-                start.linkTo(avatar.end, margin = infoStyle.avatarToNamePadding)
-                bottom.linkTo(guideline.top)
-            },
+            modifier = Modifier
+                .clickable {
+                    onUserInfoClick(blogAuthor)
+                }
+                .constrainAs(name) {
+                    start.linkTo(avatar.end, margin = infoStyle.avatarToNamePadding)
+                    bottom.linkTo(guideline.top)
+                },
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             text = blogAuthor.name,
@@ -135,10 +144,14 @@ fun StatusInfoLine(
         )
 
         Text(
-            modifier = Modifier.constrainAs(userId) {
-                baseline.linkTo(dateTime.baseline)
-                start.linkTo(dateTime.end, infoStyle.timeToIdPadding)
-            },
+            modifier = Modifier
+                .clickable {
+                    onUserInfoClick(blogAuthor)
+                }
+                .constrainAs(userId) {
+                    baseline.linkTo(dateTime.baseline)
+                    start.linkTo(dateTime.end, infoStyle.timeToIdPadding)
+                },
             text = blogAuthor.webFinger.toString(),
             style = infoStyle.descStyle,
             maxLines = 1,

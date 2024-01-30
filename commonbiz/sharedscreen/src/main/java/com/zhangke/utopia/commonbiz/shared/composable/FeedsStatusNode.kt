@@ -11,6 +11,7 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
@@ -20,6 +21,7 @@ fun FeedsStatusNode(
     modifier: Modifier = Modifier,
     status: StatusUiState,
     indexInList: Int,
+    onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
 ) {
     val navigator = LocalGlobalNavigator.current
@@ -33,6 +35,7 @@ fun FeedsStatusNode(
         onInteractive = {
             onInteractive(status.status, it)
         },
+        onUserInfoClick = onUserInfoClick,
         onMediaClick = { event ->
             when (event) {
                 is BlogMediaClickEvent.BlogImageClickEvent -> {

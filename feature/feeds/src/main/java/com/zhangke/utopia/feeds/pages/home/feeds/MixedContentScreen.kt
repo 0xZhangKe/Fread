@@ -31,6 +31,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 
 class MixedContentScreen(private val configId: Long) : PagerTab {
@@ -50,6 +51,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             onInteractive = viewModel::onInteractive,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
+            onUserInfoClick = viewModel::onUserInfoClick,
             onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
@@ -61,6 +63,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
     @Composable
     private fun MixedContentUi(
         uiState: MixedContentUiState,
+        onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
@@ -113,6 +116,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
                         status = item,
+                        onUserInfoClick = onUserInfoClick,
                         onInteractive = onInteractive,
                         indexInList = index,
                     )

@@ -12,6 +12,13 @@
     <string name="activity_pub_instance_detail_language_label">语言: %s</string>
     <string name="activity_pub_instance_detail_active_month_label">月活: %s</string>
 
+    <string name="activity_pub_user_detail_relationship_blocking">已屏蔽</string>
+    <string name="activity_pub_user_detail_relationship_following">已关注</string>
+    <string name="activity_pub_user_detail_relationship_not_follow">关注</string>
+    <string name="activity_pub_user_detail_relationship_requested">请求中</string>
+    <string name="activity_pub_user_detail_request_by_tip">对方正在请求关注你</string>
+    <string name="activity_pub_user_detail_follow_info">%s 关注者 · %s 正在关注</string>
+
     <string name="activity_pub_about">关于</string>
     <string name="activity_pub_about_rule_title">站点规则</string>
     <string name="activity_pub_trends_tag">话题</string>

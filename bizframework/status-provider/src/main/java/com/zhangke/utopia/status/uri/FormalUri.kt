@@ -33,6 +33,19 @@ class FormalUri private constructor(
         )
     }
 
+    /**
+     * Not encode string
+     */
+    fun toRawString(): String {
+        return uriString(
+            scheme = scheme,
+            host = host,
+            path = path,
+            queries = queries,
+            encode = false,
+        )
+    }
+
     private fun fixPath(path: String): String {
         var newPath = path
         if (!newPath.startsWith('/')) {

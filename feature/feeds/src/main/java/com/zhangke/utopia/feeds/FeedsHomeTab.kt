@@ -24,7 +24,6 @@ class FeedsHomeTab(private val tabIndex: UShort) : Tab {
 
     @Composable
     override fun Content() {
-//        Navigator(FeedsHomeScreen())
         Navigator(ContentHomeScreen())
     }
 }

@@ -24,7 +24,7 @@ class FormalUriParser(
 
     private fun findScheme(uri: String): String? {
         return uri.split("://")
-            .takeIf { it.size == 2 }
+            .takeIf { it.size >= 2 }
             ?.getOrNull(0)
     }
 

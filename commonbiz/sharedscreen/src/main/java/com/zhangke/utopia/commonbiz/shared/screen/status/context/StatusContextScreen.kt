@@ -33,6 +33,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.R
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
@@ -76,6 +77,7 @@ class StatusContextScreen(private val status: Status) : Screen {
             onStatusClick = {
                 navigator.push(StatusContextScreen(it.status.status))
             },
+            onUserInfoClick = viewModel::onUserInfoClick,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.pushDestination(it)
@@ -90,6 +92,7 @@ class StatusContextScreen(private val status: Status) : Screen {
         onMediaClick: OnBlogMediaClick,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onStatusClick: (StatusInContext) -> Unit,
+        onUserInfoClick: (BlogAuthor) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = snackbarMessageFlow)
@@ -136,6 +139,7 @@ class StatusContextScreen(private val status: Status) : Screen {
                                 indexInList = index,
                                 onMediaClick = onMediaClick,
                                 onInteractive = onInteractive,
+                                onUserInfoClick = onUserInfoClick,
                             )
                         }
                     }
@@ -150,6 +154,7 @@ class StatusContextScreen(private val status: Status) : Screen {
         statusInContext: StatusInContext,
         indexInList: Int,
         onMediaClick: OnBlogMediaClick,
+        onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
     ) {
         val blog = statusInContext.status.status.intrinsicBlog
@@ -180,6 +185,7 @@ class StatusContextScreen(private val status: Status) : Screen {
                 onInteractive = {
                     onInteractive(statusInContext.status.status, it)
                 },
+                onUserInfoClick = onUserInfoClick,
             )
 
             StatusInContextType.DESCENDANT -> DescendantStatusUi(
@@ -193,6 +199,7 @@ class StatusContextScreen(private val status: Status) : Screen {
                 onInteractive = {
                     onInteractive(statusInContext.status.status, it)
                 },
+                onUserInfoClick = onUserInfoClick,
             )
         }
     }

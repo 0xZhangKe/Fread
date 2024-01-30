@@ -33,6 +33,7 @@ fun DescendantStatusUi(
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
+    onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -46,6 +47,7 @@ fun DescendantStatusUi(
                 moreInteractions = moreInteractions,
                 onInteractive = onInteractive,
                 reblogAuthor = reblogAuthor,
+                onUserInfoClick = onUserInfoClick,
             )
             BlogContent(
                 modifier = Modifier

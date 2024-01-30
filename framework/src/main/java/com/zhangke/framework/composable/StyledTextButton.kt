@@ -42,7 +42,7 @@ fun StyledTextButton(
     TextButton(
         modifier = modifier,
         colors = ButtonDefaults.textButtonColors(
-            contentColor = containerColor,
+            containerColor = containerColor,
         ),
         enabled = style != TextButtonStyle.DISABLE,
         onClick = onClick,

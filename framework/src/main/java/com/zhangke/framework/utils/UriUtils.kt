@@ -120,6 +120,7 @@ fun uriString(
     host: String,
     path: String,
     queries: Map<String, String>,
+    encode: Boolean = true,
 ): String {
     val builder = StringBuilder()
     if (scheme.isNotEmpty()) {
@@ -138,7 +139,12 @@ fun uriString(
     if (queries.isNotEmpty()) {
         val query = queries.entries
             .joinToString(prefix = "?", separator = "&") {
-                "${it.key}=${URLEncoder.encode(it.value, "UTF-8")}"
+                val value = if (encode) {
+                    URLEncoder.encode(it.value, "UTF-8")
+                } else {
+                    it.value
+                }
+                "${it.key}=$value"
             }
         builder.append(query)
     }

@@ -1,5 +1,6 @@
 package com.zhangke.framework.composable.text
 
+import android.view.Gravity
 import android.widget.TextView
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -28,6 +29,7 @@ fun RichText(
             }
             textView.maxLines = maxLines
             textView.minLines = minLines
+            textView.gravity = Gravity.START
             textView.text = HtmlCompat.fromHtml(
                 text,
                 HtmlCompat.FROM_HTML_MODE_COMPACT,

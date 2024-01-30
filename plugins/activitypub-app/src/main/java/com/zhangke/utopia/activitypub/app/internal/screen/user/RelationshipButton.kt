@@ -1,0 +1,181 @@
+package com.zhangke.utopia.activitypub.app.internal.screen.user
+
+import androidx.compose.foundation.border
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Clear
+import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
+import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
+import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.StyledTextButton
+import com.zhangke.framework.composable.TextButtonStyle
+import com.zhangke.utopia.activitypub.app.R
+
+@Composable
+fun RelationshipStateButton(
+    modifier: Modifier,
+    uiState: UserDetailUiState,
+    onFollowClick: () -> Unit,
+    onUnfollowClick: () -> Unit,
+    onAcceptClick: () -> Unit,
+    onRejectClick: () -> Unit,
+) {
+    when (uiState.relationship.toUiState()) {
+        RelationshipUiState.BLOCKING -> {
+            SimpleTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.ALERT,
+                text = stringResource(R.string.activity_pub_user_detail_relationship_blocking),
+                onClick = onUnfollowClick,
+            )
+        }
+
+        RelationshipUiState.BLOCKED_BY -> {
+            SimpleTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.DISABLE,
+                text = stringResource(R.string.activity_pub_user_detail_relationship_not_follow),
+                onClick = onUnfollowClick,
+            )
+        }
+
+        RelationshipUiState.FOLLOWING -> {
+            SimpleTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.STANDARD,
+                text = stringResource(R.string.activity_pub_user_detail_relationship_following),
+                onClick = onUnfollowClick,
+            )
+        }
+
+        RelationshipUiState.FOLLOWED_BY, RelationshipUiState.CAN_FOLLOW -> {
+            SimpleTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.ACTIVE,
+                text = stringResource(R.string.activity_pub_user_detail_relationship_not_follow),
+                onClick = onFollowClick,
+            )
+        }
+
+        RelationshipUiState.REQUESTED -> {
+            SimpleTextButton(
+                modifier = modifier,
+                style = TextButtonStyle.STANDARD,
+                text = stringResource(R.string.activity_pub_user_detail_relationship_requested),
+                onClick = onFollowClick,
+            )
+        }
+
+        RelationshipUiState.REQUEST_BY -> {
+            FollowRequestBy(
+                modifier = modifier,
+                onAcceptClick = onAcceptClick,
+                onRejectClick = onRejectClick,
+            )
+        }
+
+        RelationshipUiState.UNKNOWN -> {
+            Box(modifier = modifier)
+        }
+    }
+}
+
+@Composable
+private fun SimpleTextButton(
+    modifier: Modifier,
+    text: String,
+    style: TextButtonStyle,
+    onClick: () -> Unit,
+) {
+    StyledTextButton(
+        modifier = modifier,
+        text = text,
+        style = style,
+        onClick = onClick,
+    )
+}
+
+@Composable
+private fun FollowRequestBy(
+    modifier: Modifier,
+    onAcceptClick: () -> Unit,
+    onRejectClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .border(
+                width = 1.dp,
+                color = Color.Red,
+                shape = RoundedCornerShape(6.dp),
+            )
+            .padding(horizontal = 6.dp, vertical = 6.dp),
+    ) {
+        Text(
+            text = stringResource(R.string.activity_pub_user_detail_request_by_tip),
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
+        )
+        Row(
+            modifier = Modifier.padding(top = 4.dp),
+        ) {
+            SimpleIconButton(
+                modifier = Modifier
+                    .size(32.dp),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
+                onClick = onRejectClick,
+                imageVector = Icons.Default.Clear,
+                contentDescription = "Reject",
+            )
+
+            SimpleIconButton(
+                modifier = Modifier
+                    .size(32.dp),
+                colors = IconButtonDefaults.iconButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
+                onClick = onAcceptClick,
+                imageVector = Icons.Default.Check,
+                contentDescription = "Accept",
+            )
+        }
+    }
+}
+
+private fun ActivityPubRelationshipEntity?.toUiState(): RelationshipUiState {
+    return when {
+        this == null -> RelationshipUiState.UNKNOWN
+        this.blockedBy -> RelationshipUiState.BLOCKED_BY
+        this.blocking -> RelationshipUiState.BLOCKING
+        this.requested -> RelationshipUiState.REQUESTED
+        this.requestedBy -> RelationshipUiState.REQUEST_BY
+        this.following -> RelationshipUiState.FOLLOWING
+        this.followedBy -> RelationshipUiState.FOLLOWED_BY
+        else -> RelationshipUiState.CAN_FOLLOW
+    }
+}
+
+enum class RelationshipUiState {
+    BLOCKING,
+    BLOCKED_BY,
+    FOLLOWING,
+    FOLLOWED_BY,
+    REQUESTED,
+    REQUEST_BY,
+    CAN_FOLLOW,
+    UNKNOWN,
+}

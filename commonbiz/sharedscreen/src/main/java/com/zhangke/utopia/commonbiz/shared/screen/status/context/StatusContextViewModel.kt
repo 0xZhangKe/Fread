@@ -14,6 +14,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -114,5 +115,11 @@ class StatusContextViewModel @Inject constructor(
                         }
                 }
         }
+    }
+
+    fun onUserInfoClick(author: BlogAuthor) {
+        statusProvider.screenProvider
+            .getUserDetailRoute(author.uri)
+            ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
     }
 }

@@ -43,6 +43,7 @@ import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
@@ -55,6 +56,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
+import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.ToolbarTokens
@@ -113,95 +115,6 @@ class InstanceDetailScreen(
         onAddClick: () -> Unit,
     ) {
         val toolbarHeight = ToolbarTokens.ContainerHeight
-        val motionScene = MotionScene {
-            val backIcon = createRefFor("backIcon")
-            val actionRef = createRefFor("action")
-            val toolbarPlaceholder = createRefFor("toolbarPlaceholder")
-            val banner = createRefFor("banner")
-            val contentRef = createRefFor("content")
-            val avatar = createRefFor("avatar")
-            val toolbarTitle = createRefFor("toolbarTitle")
-            val bannerHeight = 120.dp
-            val start1 = constraintSet {
-                constrain(backIcon) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    customColor("color", Color(0xffffffff))
-                }
-                constrain(actionRef) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    customColor("color", Color(0xffffffff))
-                }
-                constrain(toolbarPlaceholder) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    alpha = 0F
-                }
-                constrain(banner) {
-                    width = Dimension.fillToConstraints
-                    height = Dimension.value(bannerHeight)
-                    top.linkTo(parent.top)
-                }
-                constrain(contentRef) {
-                    width = Dimension.fillToConstraints
-                    top.linkTo(parent.top, bannerHeight)
-                }
-                constrain(avatar) {
-                    start.linkTo(parent.start, 10.dp)
-                    top.linkTo(contentRef.top)
-                    bottom.linkTo(contentRef.top)
-                    width = Dimension.value(64.dp)
-                    height = Dimension.value(64.dp)
-                }
-                constrain(toolbarTitle) {
-                    start.linkTo(backIcon.end, 16.dp)
-                    top.linkTo(toolbarPlaceholder.top)
-                    bottom.linkTo(toolbarPlaceholder.bottom)
-                    customFloat("visible", 0F)
-                }
-            }
-            val end1 = constraintSet {
-                constrain(backIcon) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    customColor("color", Color(0xFF000000))
-                }
-                constrain(actionRef) {
-                    end.linkTo(parent.end)
-                    top.linkTo(parent.top)
-                    customColor("color", Color(0xFF000000))
-                }
-                constrain(toolbarPlaceholder) {
-                    start.linkTo(parent.start)
-                    top.linkTo(parent.top)
-                    alpha = 1F
-                }
-                constrain(banner) {
-                    width = Dimension.matchParent
-                    height = Dimension.value(bannerHeight)
-                    top.linkTo(parent.top, toolbarHeight - bannerHeight)
-                }
-                constrain(contentRef) {
-                    width = Dimension.fillToConstraints
-                    bottom.linkTo(toolbarPlaceholder.bottom)
-                }
-                constrain(avatar) {
-                    start.linkTo(parent.start, 42.dp)
-                    top.linkTo(contentRef.top)
-                    bottom.linkTo(contentRef.top)
-                    width = Dimension.value(0.dp)
-                    height = Dimension.value(0.dp)
-                }
-                constrain(toolbarTitle) {
-                    start.linkTo(backIcon.end, 16.dp)
-                    top.linkTo(toolbarPlaceholder.top)
-                    bottom.linkTo(toolbarPlaceholder.bottom)
-                    customFloat("visible", 1F)
-                }
-            }
-            transition("default", start1, end1) {}
-        }
 
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -218,7 +131,7 @@ class InstanceDetailScreen(
                 topBar = { collapsableProgress ->
                     MotionLayout(
                         modifier = Modifier.fillMaxWidth(),
-                        motionScene = motionScene,
+                        motionScene = buildMotionScene(toolbarHeight),
                         progress = collapsableProgress,
                     ) {
                         AsyncImage(
@@ -230,97 +143,7 @@ class InstanceDetailScreen(
                             contentDescription = "Thumbnail",
                         )
                         Surface(modifier = Modifier.layoutId("content")) {
-                            Column(
-                                modifier = Modifier.padding(
-                                    start = 10.dp,
-                                    top = 10.dp,
-                                    end = 10.dp,
-                                    bottom = 10.dp,
-                                )
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .padding(top = 40.dp)
-                                        .utopiaPlaceholder(visible = loading),
-                                    text = instance?.title.orEmpty(),
-                                    style = MaterialTheme.typography.titleLarge,
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(top = 4.dp)
-                                        .utopiaPlaceholder(visible = loading),
-                                    text = uiState.baseUrl.toString(),
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(top = 4.dp)
-                                        .utopiaPlaceholder(visible = loading),
-                                    text = instance?.description.orEmpty(),
-                                    maxLines = 4,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                                val languageString =
-                                    instance?.languages?.joinToString(", ").orEmpty()
-                                Text(
-                                    modifier = Modifier
-                                        .padding(top = 4.dp)
-                                        .utopiaPlaceholder(visible = loading),
-                                    text = stringResource(
-                                        R.string.activity_pub_instance_detail_language_label,
-                                        languageString
-                                    ),
-                                    maxLines = 3,
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(top = 4.dp)
-                                        .utopiaPlaceholder(visible = loading),
-                                    text = stringResource(
-                                        R.string.activity_pub_instance_detail_active_month_label,
-                                        instance?.usage?.users?.activeMonth.toString()
-                                    ),
-                                )
-
-                                if (instance?.contact != null) {
-                                    Row(
-                                        modifier = Modifier
-                                            .fillMaxWidth()
-                                            .utopiaPlaceholder(visible = loading),
-                                        verticalAlignment = Alignment.CenterVertically,
-                                    ) {
-                                        Text(
-                                            modifier = Modifier
-                                                .background(
-                                                    Color(0x6644429F),
-                                                    RoundedCornerShape(3.dp),
-                                                )
-                                                .padding(vertical = 2.dp, horizontal = 4.dp),
-                                            text = "MOD",
-                                            fontWeight = FontWeight.Bold,
-                                        )
-
-                                        AsyncImage(
-                                            modifier = Modifier
-                                                .padding(start = 6.dp)
-                                                .size(18.dp)
-                                                .clip(CircleShape),
-                                            model = instance.contact.account.avatar,
-                                            contentDescription = "Mod avatar",
-                                        )
-                                        Text(
-                                            modifier = Modifier
-                                                .padding(start = 4.dp),
-                                            text = instance.contact.account.displayName,
-                                        )
-                                        Text(
-                                            modifier = Modifier
-                                                .padding(start = 4.dp),
-                                            text = instance.contact.email,
-                                        )
-                                    }
-                                }
-                            }
+                            AppBarContent(uiState)
                         }
                         Surface(
                             modifier = Modifier
@@ -437,6 +260,198 @@ class InstanceDetailScreen(
                             }
                         }
                     }
+                }
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMotionApi::class)
+    @Composable
+    private fun buildMotionScene(toolbarHeight: Dp) = MotionScene {
+        val backIcon = createRefFor("backIcon")
+        val actionRef = createRefFor("action")
+        val toolbarPlaceholder = createRefFor("toolbarPlaceholder")
+
+        val banner = createRefFor("banner")
+        val contentRef = createRefFor("content")
+        val avatar = createRefFor("avatar")
+        val toolbarTitle = createRefFor("toolbarTitle")
+        val bannerHeight = 120.dp
+        val start1 = constraintSet {
+            constrain(backIcon) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                customColor("color", Color(0xffffffff))
+            }
+            constrain(actionRef) {
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+                customColor("color", Color(0xffffffff))
+            }
+            constrain(toolbarPlaceholder) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                alpha = 0F
+            }
+            constrain(banner) {
+                width = Dimension.fillToConstraints
+                height = Dimension.value(bannerHeight)
+                top.linkTo(parent.top)
+            }
+            constrain(contentRef) {
+                width = Dimension.fillToConstraints
+                top.linkTo(parent.top, bannerHeight)
+            }
+            constrain(avatar) {
+                start.linkTo(parent.start, 10.dp)
+                top.linkTo(contentRef.top)
+                bottom.linkTo(contentRef.top)
+                width = Dimension.value(64.dp)
+                height = Dimension.value(64.dp)
+            }
+            constrain(toolbarTitle) {
+                start.linkTo(backIcon.end, 16.dp)
+                top.linkTo(toolbarPlaceholder.top)
+                bottom.linkTo(toolbarPlaceholder.bottom)
+                customFloat("visible", 0F)
+            }
+        }
+        val end1 = constraintSet {
+            constrain(backIcon) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                customColor("color", Color(0xFF000000))
+            }
+            constrain(actionRef) {
+                end.linkTo(parent.end)
+                top.linkTo(parent.top)
+                customColor("color", Color(0xFF000000))
+            }
+            constrain(toolbarPlaceholder) {
+                start.linkTo(parent.start)
+                top.linkTo(parent.top)
+                alpha = 1F
+            }
+            constrain(banner) {
+                width = Dimension.matchParent
+                height = Dimension.value(bannerHeight)
+                top.linkTo(parent.top, toolbarHeight - bannerHeight)
+            }
+            constrain(contentRef) {
+                width = Dimension.fillToConstraints
+                bottom.linkTo(toolbarPlaceholder.bottom)
+            }
+            constrain(avatar) {
+                start.linkTo(parent.start, 42.dp)
+                top.linkTo(contentRef.top)
+                bottom.linkTo(contentRef.top)
+                width = Dimension.value(0.dp)
+                height = Dimension.value(0.dp)
+            }
+            constrain(toolbarTitle) {
+                start.linkTo(backIcon.end, 16.dp)
+                top.linkTo(toolbarPlaceholder.top)
+                bottom.linkTo(toolbarPlaceholder.bottom)
+                customFloat("visible", 1F)
+            }
+        }
+        transition("default", start1, end1) {}
+    }
+
+    @Composable
+    private fun AppBarContent(
+        uiState: InstanceDetailUiState,
+    ) {
+        val loading = uiState.loading
+        val instance = uiState.instance
+        Column(
+            modifier = Modifier.padding(
+                start = 10.dp,
+                top = 10.dp,
+                end = 10.dp,
+                bottom = 10.dp,
+            )
+        ) {
+            Text(
+                modifier = Modifier
+                    .padding(top = 40.dp)
+                    .utopiaPlaceholder(visible = loading),
+                text = instance?.title.orEmpty(),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .utopiaPlaceholder(visible = loading),
+                text = uiState.baseUrl.toString(),
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .utopiaPlaceholder(visible = loading),
+                text = instance?.description.orEmpty(),
+                maxLines = 4,
+                overflow = TextOverflow.Ellipsis,
+            )
+            val languageString =
+                instance?.languages?.joinToString(", ").orEmpty()
+            Text(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .utopiaPlaceholder(visible = loading),
+                text = stringResource(
+                    R.string.activity_pub_instance_detail_language_label,
+                    languageString
+                ),
+                maxLines = 3,
+            )
+            Text(
+                modifier = Modifier
+                    .padding(top = 4.dp)
+                    .utopiaPlaceholder(visible = loading),
+                text = stringResource(
+                    R.string.activity_pub_instance_detail_active_month_label,
+                    instance?.usage?.users?.activeMonth.toString()
+                ),
+            )
+
+            if (instance?.contact != null) {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .utopiaPlaceholder(visible = loading),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier
+                            .background(
+                                Color(0x6644429F),
+                                RoundedCornerShape(3.dp),
+                            )
+                            .padding(vertical = 2.dp, horizontal = 4.dp),
+                        text = "MOD",
+                        fontWeight = FontWeight.Bold,
+                    )
+
+                    AsyncImage(
+                        modifier = Modifier
+                            .padding(start = 6.dp)
+                            .size(18.dp)
+                            .clip(CircleShape),
+                        model = instance.contact.account.avatar,
+                        contentDescription = "Mod avatar",
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 4.dp),
+                        text = instance.contact.account.displayName,
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(start = 4.dp),
+                        text = instance.contact.email,
+                    )
                 }
             }
         }

@@ -22,7 +22,7 @@ data class SimpleUri(
             val host = formalUri.host
             val path = formalUri.path
             val queries = mutableMapOf<String, String>()
-            formalUri.query?.let { query ->
+            formalUri.rawQuery?.let { query ->
                 query.split("&").forEach { pair ->
                     val (key, value) = pair.split("=")
                     queries[key] = value

@@ -34,6 +34,7 @@ fun AnchorBlogUi(
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
+    onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
     Surface(modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -47,6 +48,7 @@ fun AnchorBlogUi(
                 moreInteractions = moreInteractions,
                 onInteractive = onInteractive,
                 reblogAuthor = reblogAuthor,
+                onUserInfoClick = onUserInfoClick,
             )
             BlogContent(
                 modifier = Modifier

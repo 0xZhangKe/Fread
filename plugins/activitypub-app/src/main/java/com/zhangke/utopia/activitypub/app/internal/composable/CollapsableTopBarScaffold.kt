@@ -1,16 +1,18 @@
 package com.zhangke.utopia.activitypub.app.internal.composable
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
@@ -29,6 +31,7 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
+import androidx.constraintlayout.compose.MotionLayoutScope
 import androidx.constraintlayout.compose.MotionScene
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ToolbarTokens
@@ -51,7 +54,7 @@ fun CollapsableTopBarScaffold(
     avatar: String?,
     contentCanScrollBackward: State<Boolean>,
     onBackClick: () -> Unit,
-    toolbarAction: @Composable RowScope.() -> Unit,
+    toolbarAction: @Composable RowScope.(Color) -> Unit,
     headerAction: @Composable () -> Unit,
     headerContent: @Composable () -> Unit,
     content: @Composable () -> Unit,
@@ -86,25 +89,17 @@ fun CollapsableTopBarScaffold(
     )
 }
 
+@OptIn(ExperimentalMotionApi::class)
 @Composable
-private fun MotionAppBar(
+private fun MotionLayoutScope.MotionAppBar(
     title: String?,
     banner: String?,
     avatar: String?,
     onBackClick: () -> Unit,
-    toolbarAction: @Composable RowScope.() -> Unit,
+    toolbarAction: @Composable RowScope.(Color) -> Unit,
     headerAction: @Composable () -> Unit,
     headerContent: @Composable () -> Unit,
 ) {
-    // back icon
-    IconButton(
-        modifier = Modifier.layoutId("backIcon"),
-        onClick = { onBackClick() }) {
-        Icon(
-            painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.ArrowBack),
-            "back"
-        )
-    }
     // banner
     AsyncImage(
         modifier = Modifier
@@ -118,13 +113,37 @@ private fun MotionAppBar(
     AsyncImage(
         modifier = Modifier
             .clip(CircleShape)
-            .border(4.dp, Color.White, CircleShape)
+            .border(2.dp, Color.White, CircleShape)
             .layoutId("avatar")
             .utopiaPlaceholder(avatar.isNullOrEmpty()),
         model = avatar,
         contentScale = ContentScale.Crop,
         contentDescription = "avatar",
     )
+    // header action
+    Box(modifier = Modifier.layoutId("headerAction")) {
+        headerAction()
+    }
+    // header content
+    Box(modifier = Modifier.layoutId("headerContent")) {
+        headerContent()
+    }
+    // toolbar background
+    Surface(
+        modifier = Modifier
+            .background(MaterialTheme.colorScheme.surface)
+            .layoutId("toolbarBackground")
+    ) {
+    }
+    val backIconProperties = motionProperties(id = "backIcon")
+    val toolbarFontColor = backIconProperties.value.color("color")
+    // toolbar action
+    Row(
+        modifier = Modifier.layoutId("toolbarAction"),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        toolbarAction(toolbarFontColor)
+    }
     // title
     Text(
         modifier = Modifier
@@ -136,20 +155,15 @@ private fun MotionAppBar(
         overflow = TextOverflow.Ellipsis,
         fontSize = 18.sp,
     )
-    // toolbar action
-    Row(
-        modifier = Modifier.layoutId("toolbarAction"),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        toolbarAction()
-    }
-    // header action
-    Box(modifier = Modifier.layoutId("headerAction")) {
-        headerAction()
-    }
-    // header content
-    Box(modifier = Modifier.layoutId("headerContent")) {
-        headerContent()
+    // back icon
+    IconButton(
+        modifier = Modifier.layoutId("backIcon"),
+        onClick = { onBackClick() }) {
+        Icon(
+            painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.ArrowBack),
+            tint = toolbarFontColor,
+            contentDescription = "back",
+        )
     }
 }
 
@@ -160,6 +174,7 @@ private fun buildMotionScene(
     avatarSize: Dp,
 ) = MotionScene {
     val backIcon = createRefFor("backIcon")
+    val toolbarBackground = createRefFor("toolbarBackground")
     val avatar = createRefFor("avatar")
     val banner = createRefFor("banner")
     val title = createRefFor("title")
@@ -168,12 +183,23 @@ private fun buildMotionScene(
     val headerContent = createRefFor("headerContent")
     val start1 = constraintSet {
         constrain(backIcon) {
-            start.linkTo(parent.start, 16.dp)
-            top.linkTo(parent.top, 16.dp)
+            start.linkTo(toolbarBackground.start, 16.dp)
+            top.linkTo(toolbarBackground.top)
+            bottom.linkTo(toolbarBackground.bottom)
+            customColor("color", Color(0xFFFFFFFF))
+        }
+        constrain(toolbarBackground) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(parent.top)
+            width = Dimension.fillToConstraints
+            height = Dimension.value(ToolbarTokens.ContainerHeight)
+            alpha = 0F
         }
         constrain(toolbarAction) {
             end.linkTo(parent.end, 16.dp)
-            top.linkTo(parent.top, 16.dp)
+            top.linkTo(toolbarBackground.top)
+            bottom.linkTo(toolbarBackground.bottom)
         }
         constrain(banner) {
             top.linkTo(parent.top)
@@ -197,28 +223,41 @@ private fun buildMotionScene(
         constrain(headerAction) {
             top.linkTo(banner.bottom, 8.dp)
             end.linkTo(parent.end, 16.dp)
+            alpha = 1F
         }
         constrain(headerContent) {
             top.linkTo(title.bottom, 4.dp)
             start.linkTo(parent.start, 16.dp)
             end.linkTo(parent.end, 16.dp)
             width = Dimension.fillToConstraints
+            alpha = 1F
         }
     }
 
     val end1 = constraintSet {
         constrain(backIcon) {
-            start.linkTo(parent.start, 16.dp)
-            top.linkTo(parent.top, 16.dp)
+            start.linkTo(toolbarBackground.start, 16.dp)
+            top.linkTo(toolbarBackground.top)
+            bottom.linkTo(toolbarBackground.bottom)
+            customColor("color", Color(0xFF000000))
+        }
+        constrain(toolbarBackground) {
+            start.linkTo(parent.start)
+            end.linkTo(parent.end)
+            top.linkTo(parent.top)
+            width = Dimension.fillToConstraints
+            height = Dimension.value(ToolbarTokens.ContainerHeight)
+            alpha = 1F
         }
         constrain(toolbarAction) {
             end.linkTo(parent.end, 16.dp)
-            top.linkTo(parent.top, 16.dp)
+            top.linkTo(toolbarBackground.top)
+            bottom.linkTo(toolbarBackground.bottom)
         }
         constrain(banner) {
             start.linkTo(parent.start)
             end.linkTo(parent.end)
-            bottom.linkTo(backIcon.bottom)
+            bottom.linkTo(toolbarBackground.bottom, 8.dp)
             width = Dimension.fillToConstraints
             height = Dimension.value(bannerHeight)
         }
@@ -229,21 +268,23 @@ private fun buildMotionScene(
             height = Dimension.value(10.dp)
         }
         constrain(title) {
-            top.linkTo(backIcon.top)
-            bottom.linkTo(backIcon.bottom)
-            start.linkTo(backIcon.end, 16.dp)
+            top.linkTo(toolbarBackground.top)
+            bottom.linkTo(toolbarBackground.bottom)
+            start.linkTo(backIcon.end, 8.dp)
             end.linkTo(toolbarAction.start, 16.dp)
             width = Dimension.fillToConstraints
         }
         constrain(headerAction) {
-            top.linkTo(banner.bottom, 8.dp)
+            bottom.linkTo(toolbarBackground.bottom, 8.dp)
             end.linkTo(parent.end, 16.dp)
+            alpha = 0F
         }
         constrain(headerContent) {
             bottom.linkTo(backIcon.bottom)
             start.linkTo(parent.start, 16.dp)
             end.linkTo(parent.end, 16.dp)
             width = Dimension.fillToConstraints
+            alpha = 0F
         }
     }
     transition("default", start1, end1) {}

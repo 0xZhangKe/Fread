@@ -14,6 +14,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
@@ -22,29 +26,44 @@ import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
+import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.utopia.activitypub.app.R
 
 @Composable
 fun RelationshipStateButton(
     modifier: Modifier,
     uiState: UserDetailUiState,
+    onUnblockClick: () -> Unit,
     onFollowClick: () -> Unit,
     onUnfollowClick: () -> Unit,
+    onCancelFollowRequestClick: () -> Unit,
     onAcceptClick: () -> Unit,
     onRejectClick: () -> Unit,
 ) {
     when (uiState.relationship.toUiState()) {
         RelationshipUiState.BLOCKING -> {
-            SimpleTextButton(
+            var showDialog by remember {
+                mutableStateOf(false)
+            }
+            RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.ALERT,
                 text = stringResource(R.string.activity_pub_user_detail_relationship_blocking),
-                onClick = onUnfollowClick,
+                onClick = {
+                    showDialog = true
+                },
             )
+            if (showDialog) {
+                AlertConfirmDialog(
+                    content = R.string.activity_pub_relationship_btn_dialog_content_cancel_blocking,
+                    onConfirm = onUnblockClick,
+                    onDismissRequest = { showDialog = false }
+                )
+            }
         }
 
         RelationshipUiState.BLOCKED_BY -> {
-            SimpleTextButton(
+            RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.DISABLE,
                 text = stringResource(R.string.activity_pub_user_detail_relationship_not_follow),
@@ -53,16 +72,28 @@ fun RelationshipStateButton(
         }
 
         RelationshipUiState.FOLLOWING -> {
-            SimpleTextButton(
+            var showDialog by remember {
+                mutableStateOf(false)
+            }
+            RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.STANDARD,
                 text = stringResource(R.string.activity_pub_user_detail_relationship_following),
-                onClick = onUnfollowClick,
+                onClick = {
+                    showDialog = true
+                },
             )
+            if (showDialog) {
+                AlertConfirmDialog(
+                    content = R.string.activity_pub_relationship_btn_dialog_content_cancel_follow,
+                    onConfirm = onUnfollowClick,
+                    onDismissRequest = { showDialog = false }
+                )
+            }
         }
 
         RelationshipUiState.FOLLOWED_BY, RelationshipUiState.CAN_FOLLOW -> {
-            SimpleTextButton(
+            RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.ACTIVE,
                 text = stringResource(R.string.activity_pub_user_detail_relationship_not_follow),
@@ -71,12 +102,22 @@ fun RelationshipStateButton(
         }
 
         RelationshipUiState.REQUESTED -> {
-            SimpleTextButton(
+            var showDialog by remember {
+                mutableStateOf(false)
+            }
+            RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.STANDARD,
                 text = stringResource(R.string.activity_pub_user_detail_relationship_requested),
-                onClick = onFollowClick,
+                onClick = { showDialog = true },
             )
+            if (showDialog) {
+                AlertConfirmDialog(
+                    content = R.string.activity_pub_relationship_btn_dialog_content_cancel_follow_request,
+                    onConfirm = onCancelFollowRequestClick,
+                    onDismissRequest = { showDialog = false }
+                )
+            }
         }
 
         RelationshipUiState.REQUEST_BY -> {
@@ -94,7 +135,7 @@ fun RelationshipStateButton(
 }
 
 @Composable
-private fun SimpleTextButton(
+private fun RelationshipTextButton(
     modifier: Modifier,
     text: String,
     style: TextButtonStyle,
@@ -105,6 +146,26 @@ private fun SimpleTextButton(
         text = text,
         style = style,
         onClick = onClick,
+    )
+}
+
+@Composable
+private fun AlertConfirmDialog(
+    content: Int,
+    onConfirm: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    UtopiaDialog(
+        onDismissRequest = onDismissRequest,
+        title = stringResource(com.zhangke.utopia.commonbiz.R.string.alert),
+        contentText = stringResource(content),
+        positiveButtonText = stringResource(com.zhangke.utopia.framework.R.string.ok),
+        onPositiveClick = {
+            onDismissRequest()
+            onConfirm()
+        },
+        negativeButtonText = stringResource(com.zhangke.utopia.framework.R.string.cancel),
+        onNegativeClick = onDismissRequest,
     )
 }
 

@@ -7,6 +7,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEv
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.uri.FormalUri
 import java.util.Date
 
 data class ActivityPubNotificationsUiState(
@@ -26,6 +27,7 @@ data class NotificationUiState(
      * The account that performed the action that generated the notification.
      */
     val account: ActivityPubAccountEntity,
+    val accountUri: FormalUri,
     val status: StatusUiState?,
     val relationshipSeveranceEvent: RelationshipSeveranceEvent?,
 )

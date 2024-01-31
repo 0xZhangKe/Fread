@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
@@ -21,6 +22,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val notificationsRepo: NotificationsRepo,
     private val clientManager: ActivityPubClientManager,
+    private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
 ) : ContainerViewModel<ActivityPubNotificationsSubViewModel, ActivityPubNotificationsViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubNotificationsSubViewModel {
@@ -33,6 +35,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
             buildStatusUiState = buildStatusUiState,
             notificationsRepo = notificationsRepo,
             clientManager = clientManager,
+            accountEntityAdapter = accountEntityAdapter,
         )
     }
 

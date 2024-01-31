@@ -17,8 +17,12 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailRoute
+import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
 @Composable
@@ -31,7 +35,9 @@ fun FollowNotification(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                // nav to user profile
+                navigator.pushDestination(
+                    UserDetailRoute.buildRoute(notification.accountUri)
+                )
             }
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,

@@ -6,6 +6,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
@@ -29,6 +30,7 @@ class ActivityPubNotificationsSubViewModel(
     private val accountManager: ActivityPubAccountManager,
     private val statusInteractive: StatusInteractiveUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
+    private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val notificationsRepo: NotificationsRepo,
@@ -224,6 +226,7 @@ class ActivityPubNotificationsSubViewModel(
             type = type,
             createdAt = createdAt,
             account = account,
+            accountUri = accountEntityAdapter.toUri(account),
             displayTime = formatStatusDisplayTime(createdAt.time),
             status = status?.let { buildStatusUiState(it) },
             relationshipSeveranceEvent = relationshipSeveranceEvent,

@@ -21,6 +21,7 @@ import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.api.plugins.JavaPluginExtension
+import org.gradle.jvm.tasks.Jar
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
@@ -103,6 +104,9 @@ private fun Project.configureKotlin() {
         }
     }
     tasks.withType<ProcessResources>{
-        duplicatesStrategy = DuplicatesStrategy.INCLUDE
+        duplicatesStrategy = DuplicatesStrategy.WARN
+    }
+    tasks.withType<Jar>{
+        duplicatesStrategy = DuplicatesStrategy.WARN
     }
 }

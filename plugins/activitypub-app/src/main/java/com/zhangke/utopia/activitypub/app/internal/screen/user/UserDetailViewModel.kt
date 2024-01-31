@@ -77,6 +77,7 @@ class UserDetailViewModel @AssistedInject constructor(
     }
 
     fun onFollowClick() {
+
     }
 
     fun onUnfollowClick() {

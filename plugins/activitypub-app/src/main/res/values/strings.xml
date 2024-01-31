@@ -67,4 +67,7 @@
     <string name="activity_pub_notification_new_status_desc">发布了新博客</string>
     <string name="activity_pub_notification_severed_desc">和你中断了关系</string>
 
+    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow">您确认要取消关注对方吗？</string>
+    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">您确定要撤回关注请求吗？</string>
+    <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">您确定要取消屏蔽对方吗？</string>
 </resources>

@@ -11,7 +11,7 @@
 
     <string name="cancel">Cancel</string>
 
-    <string name="ok">OK</string>
+    <string name="ok">Yes</string>
 
     <string name="duration_selector_title">Set duration</string>
 </resources>

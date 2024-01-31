@@ -5,6 +5,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubAccountEntityAdapter @Inject constructor(
@@ -16,12 +17,17 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
     ): BlogAuthor {
         val webFinger = toWebFinger(entity)
         return BlogAuthor(
-            uri = userUriTransformer.build(webFinger, FormalBaseUrl.parse(entity.url)!!),
+            uri = toUri(entity),
             webFinger = webFinger,
             name = entity.displayName,
             description = entity.note,
             avatar = entity.avatarStatic,
         )
+    }
+
+    fun toUri(entity: ActivityPubAccountEntity): FormalUri {
+        val webFinger = toWebFinger(entity)
+        return userUriTransformer.build(webFinger, FormalBaseUrl.parse(entity.url)!!)
     }
 
     fun toWebFinger(account: ActivityPubAccountEntity): WebFinger {

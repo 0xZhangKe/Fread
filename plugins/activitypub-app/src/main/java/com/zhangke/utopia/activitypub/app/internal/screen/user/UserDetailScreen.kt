@@ -24,7 +24,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ExperimentalMotionApi
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -63,6 +62,8 @@ class UserDetailScreen(
             onUnfollowClick = viewModel::onUnfollowClick,
             onAcceptClick = viewModel::onAcceptClick,
             onRejectClick = viewModel::onRejectClick,
+            onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
+            onUnblockClick = viewModel::onUnblockClick,
         )
     }
 
@@ -71,8 +72,10 @@ class UserDetailScreen(
         uiState: UserDetailUiState,
         messageFlow: SharedFlow<TextString>,
         onBackClick: () -> Unit,
+        onUnblockClick: () -> Unit,
         onFollowClick: () -> Unit,
         onUnfollowClick: () -> Unit,
+        onCancelFollowRequestClick: () -> Unit,
         onAcceptClick: () -> Unit,
         onRejectClick: () -> Unit,
     ) {
@@ -105,6 +108,8 @@ class UserDetailScreen(
                         onUnfollowClick = onUnfollowClick,
                         onAcceptClick = onAcceptClick,
                         onRejectClick = onRejectClick,
+                        onCancelFollowRequestClick = onCancelFollowRequestClick,
+                        onUnblockClick = onUnblockClick,
                     )
                 },
                 headerContent = {

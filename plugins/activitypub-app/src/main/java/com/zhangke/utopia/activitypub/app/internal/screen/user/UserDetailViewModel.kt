@@ -2,6 +2,8 @@ package com.zhangke.utopia.activitypub.app.internal.screen.user
 
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.ScreenModelFactory
+import com.zhangke.activitypub.api.AccountsRepo
+import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
@@ -17,6 +19,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel(assistedFactory = UserDetailViewModel.Factory::class)
 class UserDetailViewModel @AssistedInject constructor(
@@ -33,6 +36,7 @@ class UserDetailViewModel @AssistedInject constructor(
 
     private val _uiState = MutableStateFlow(
         UserDetailUiState(
+            userInsight = null,
             account = null,
             relationship = null,
         )
@@ -49,8 +53,12 @@ class UserDetailViewModel @AssistedInject constructor(
                 _messageFlow.emit(textOf("Invalid user uri: $userUri"))
                 return@launchInViewModel
             }
-            val accountRepo = clientManager.getClient(baseUrlManager.decideBaseUrl(userInsight.baseUrl))
-                .accountRepo
+            _uiState.value = _uiState.value.copy(
+                userInsight = userInsight
+            )
+            val accountRepo =
+                clientManager.getClient(baseUrlManager.decideBaseUrl(userInsight.baseUrl))
+                    .accountRepo
             val accountResult = accountRepo.lookup(userInsight.webFinger.toString())
             if (accountResult.isFailure) {
                 _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))
@@ -77,15 +85,65 @@ class UserDetailViewModel @AssistedInject constructor(
     }
 
     fun onFollowClick() {
-
+        performRelationshipAction { accountsRepo, accountId ->
+            accountsRepo.follow(accountId)
+        }
     }
 
     fun onUnfollowClick() {
+        performRelationshipAction { accountsRepo, accountId ->
+            accountsRepo.unfollow(accountId)
+        }
     }
 
     fun onAcceptClick() {
+        performRelationshipAction { accountsRepo, accountId ->
+            accountsRepo.authorizeFollowRequest(accountId)
+        }
     }
 
     fun onRejectClick() {
+        performRelationshipAction { accountsRepo, accountId ->
+            accountsRepo.rejectFollowRequest(accountId)
+        }
+    }
+
+    fun onCancelFollowRequestClick() {
+        performRelationshipAction { accountsRepo, accountId ->
+            accountsRepo.unfollow(accountId)
+        }
+    }
+
+    fun onBlockClick() {
+        performRelationshipAction { accountsRepo, accountId ->
+            accountsRepo.block(accountId)
+        }
+    }
+
+    fun onUnblockClick() {
+        performRelationshipAction { accountsRepo, accountId ->
+            accountsRepo.unblock(accountId)
+        }
+    }
+
+    private fun performRelationshipAction(
+        action: suspend (accountsRepo: AccountsRepo, accountId: String) -> Result<ActivityPubRelationshipEntity>,
+    ) {
+        val accountId = _uiState.value.account?.id ?: return
+        val userUriInsights = _uiState.value.userInsight ?: return
+        launchInViewModel {
+            val baseUrl = baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
+            val accountRepo = clientManager.getClient(baseUrl).accountRepo
+            action(accountRepo, accountId)
+                .onFailure { e ->
+                    e.message?.let {
+                        _messageFlow.emit(textOf(it))
+                    }
+                }.onSuccess { relationship ->
+                    _uiState.update {
+                        it.copy(relationship = relationship)
+                    }
+                }
+        }
     }
 }

@@ -1,19 +1,16 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -30,6 +27,9 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.HorizontalPagerWithTab
+import com.zhangke.framework.composable.LocalSnackbarHostState
+import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.text.RichText
@@ -39,6 +39,8 @@ import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
+import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
+import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(UserDetailRoute.ROUTE)
@@ -164,33 +166,17 @@ class UserDetailScreen(
                     }
                 },
             ) {
-                val list = remember {
-                    with(mutableListOf<String>()) {
-                        repeat(100) {
-                            add("item $it")
-                        }
-                        this
+                if (uiState.userInsight != null) {
+                    val tabs: List<PagerTab> = remember {
+                        listOf(
+                            UserTimelineTab(contentCanScrollBackward, uiState.userInsight),
+                            UserAboutTab(contentCanScrollBackward, uiState.userInsight),
+                        )
                     }
-                }
-                val listState = rememberLazyListState()
-                val canScrollBackward by remember {
-                    derivedStateOf {
-                        listState.firstVisibleItemIndex != 0 || listState.firstVisibleItemScrollOffset != 0
-                    }
-                }
-                contentCanScrollBackward.value = canScrollBackward
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
-                    state = listState,
-                ) {
-                    items(list) { item ->
-                        Card(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp, horizontal = 16.dp)
-                        ) {
-                            Text(text = item)
-                        }
+                    CompositionLocalProvider(
+                        LocalSnackbarHostState provides snackbarHost
+                    ) {
+                        HorizontalPagerWithTab(tabList = tabs)
                     }
                 }
             }

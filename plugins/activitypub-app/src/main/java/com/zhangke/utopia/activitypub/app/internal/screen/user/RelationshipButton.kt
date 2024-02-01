@@ -23,6 +23,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
+import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
@@ -55,7 +56,7 @@ fun RelationshipStateButton(
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = R.string.activity_pub_relationship_btn_dialog_content_cancel_blocking,
+                    content = stringResource(R.string.activity_pub_relationship_btn_dialog_content_cancel_blocking),
                     onConfirm = onUnblockClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -85,7 +86,7 @@ fun RelationshipStateButton(
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = R.string.activity_pub_relationship_btn_dialog_content_cancel_follow,
+                    content = stringResource(R.string.activity_pub_relationship_btn_dialog_content_cancel_follow),
                     onConfirm = onUnfollowClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -113,7 +114,7 @@ fun RelationshipStateButton(
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = R.string.activity_pub_relationship_btn_dialog_content_cancel_follow_request,
+                    content = stringResource(R.string.activity_pub_relationship_btn_dialog_content_cancel_follow_request),
                     onConfirm = onCancelFollowRequestClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -146,26 +147,6 @@ private fun RelationshipTextButton(
         text = text,
         style = style,
         onClick = onClick,
-    )
-}
-
-@Composable
-private fun AlertConfirmDialog(
-    content: Int,
-    onConfirm: () -> Unit,
-    onDismissRequest: () -> Unit,
-) {
-    UtopiaDialog(
-        onDismissRequest = onDismissRequest,
-        title = stringResource(com.zhangke.utopia.commonbiz.R.string.alert),
-        contentText = stringResource(content),
-        positiveButtonText = stringResource(com.zhangke.utopia.framework.R.string.ok),
-        onPositiveClick = {
-            onDismissRequest()
-            onConfirm()
-        },
-        negativeButtonText = stringResource(com.zhangke.utopia.framework.R.string.cancel),
-        onNegativeClick = onDismissRequest,
     )
 }
 

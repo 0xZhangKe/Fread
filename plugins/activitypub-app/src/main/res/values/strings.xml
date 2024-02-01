@@ -20,6 +20,12 @@
     <string name="activity_pub_user_detail_follow_info">%s 关注者 · %s 正在关注</string>
     <string name="activity_pub_user_detail_tab_timeline">时间线</string>
     <string name="activity_pub_user_detail_tab_about">关于</string>
+    <string name="activity_pub_user_detail_tab_about_joined">%s 加入</string>
+    <string name="activity_pub_user_detail_menu_block">屏蔽 %s</string>
+    <string name="activity_pub_user_detail_menu_block_domain">屏蔽 %s</string>
+    <string name="activity_pub_user_detail_menu_open_in_browser">在浏览器中打开</string>
+    <string name="activity_pub_user_detail_dialog_content_block">您确认要屏蔽对方吗？</string>
+    <string name="activity_pub_user_detail_dialog_content_block_domain">您确认要屏蔽对方实例吗？</string>
 
     <string name="activity_pub_about">关于</string>
     <string name="activity_pub_about_rule_title">站点规则</string>
@@ -72,4 +78,5 @@
     <string name="activity_pub_relationship_btn_dialog_content_cancel_follow">您确认要取消关注对方吗？</string>
     <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">您确定要撤回关注请求吗？</string>
     <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">您确定要取消屏蔽对方吗？</string>
+
 </resources>

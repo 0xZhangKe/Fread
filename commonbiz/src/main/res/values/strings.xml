@@ -7,8 +7,6 @@
 
     <string name="search">搜索</string>
 
-    <string name="alert">提示</string>
-
     <string name="auth_success">登录成功</string>
 
     <string name="auth_failed">登录失败</string>

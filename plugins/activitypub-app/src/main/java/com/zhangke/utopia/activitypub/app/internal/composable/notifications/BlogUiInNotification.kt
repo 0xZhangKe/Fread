@@ -5,7 +5,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
-import com.zhangke.framework.voyager.LocalGlobalNavigator
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.activitypub.app.internal.composable.statusInteractive
@@ -25,7 +26,7 @@ fun OnlyBlogContentUi(
     indexInList: Int,
     style: NotificationStyle,
 ) {
-    val navigator = LocalGlobalNavigator.current
+    val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     val blog = statusUiState.status.intrinsicBlog
     Box(modifier = modifier) {
@@ -65,7 +66,7 @@ fun WholeBlogUi(
     onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
     showDivider: Boolean = true,
 ) {
-    val navigator = LocalGlobalNavigator.current
+    val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     val blog = statusUiState.status.intrinsicBlog
     Box(modifier = modifier) {

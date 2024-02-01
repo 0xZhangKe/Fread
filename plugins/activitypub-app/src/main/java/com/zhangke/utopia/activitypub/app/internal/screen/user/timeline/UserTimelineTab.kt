@@ -1,21 +1,20 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
+import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
 
 class UserTimelineTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
@@ -34,17 +33,14 @@ class UserTimelineTab(
             it.create(userUriInsights)
         }
         val uiState by viewModel.uiState.collectAsState()
-        UserTimelineContent(
+        ActivityPubListStatusContent(
             uiState = uiState,
+            onLoadMore = viewModel::loadMore,
+            onRefresh = viewModel::refresh,
+            onInteractive = viewModel::onInteractive,
+            canScrollBackward = contentCanScrollBackward,
         )
-    }
-
-    @Composable
-    private fun UserTimelineContent(
-        uiState: UserTimelineUiState,
-    ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(text = "UserTimeline")
-        }
+        val snackbarHostState = LocalSnackbarHostState.current
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.messageFlow)
     }
 }

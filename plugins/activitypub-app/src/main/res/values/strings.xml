@@ -23,6 +23,7 @@
     <string name="activity_pub_user_detail_tab_about_joined">%s 加入</string>
     <string name="activity_pub_user_detail_menu_block">屏蔽 %s</string>
     <string name="activity_pub_user_detail_menu_block_domain">屏蔽 %s</string>
+    <string name="activity_pub_user_detail_menu_unblock_domain">取消屏蔽 %s</string>
     <string name="activity_pub_user_detail_menu_open_in_browser">在浏览器中打开</string>
     <string name="activity_pub_user_detail_dialog_content_block">您确认要屏蔽对方吗？</string>
     <string name="activity_pub_user_detail_dialog_content_block_domain">您确认要屏蔽对方实例吗？</string>

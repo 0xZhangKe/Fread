@@ -16,6 +16,7 @@ import com.zhangke.utopia.common.status.model.updateById
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -24,6 +25,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+/**
+ * 一个用来加载 Status 列表的 BaseViewModel。
+ * 具体的加载细节会交给子类实现。
+ * 该类主要包含 UiState 管理，刷新和加载更多的逻辑。
+ */
 abstract class StatusViewModel(
     private val platformRepo: ActivityPubPlatformRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
@@ -40,7 +46,7 @@ abstract class StatusViewModel(
 
     abstract suspend fun updateLocalStatus(status: ActivityPubStatusEntity)
 
-    protected val _uiState = MutableStateFlow(
+    protected val mutableUiState = MutableStateFlow(
         FeedsStatusUiState(
             status = emptyList(),
             refreshing = false,
@@ -48,25 +54,28 @@ abstract class StatusViewModel(
             errorMessage = null,
         )
     )
-    val uiState: StateFlow<FeedsStatusUiState> = _uiState.asStateFlow()
+    val uiState: StateFlow<FeedsStatusUiState> = mutableUiState.asStateFlow()
 
     private val _snackMessage = MutableSharedFlow<TextString>()
     val snackMessage: SharedFlow<TextString> = _snackMessage.asSharedFlow()
 
     private var blogPlatform: BlogPlatform? = null
 
+    private var refreshJob: Job? = null
+    private var loadMoreJob: Job? = null
+
     protected fun prepare() {
         launchInViewModel {
             val statusFromLocal = getLocalStatus()
             val platformResult = getBlogPlatform()
             if (platformResult.isFailure) {
-                _uiState.value = _uiState.value.copy(
+                mutableUiState.value = mutableUiState.value.copy(
                     errorMessage = textOf(platformResult.exceptionOrNull()!!.message.orEmpty()),
                 )
                 return@launchInViewModel
             }
             val platform = platformResult.getOrThrow()
-            _uiState.value = _uiState.value.copy(
+            mutableUiState.value = mutableUiState.value.copy(
                 status = statusFromLocal.toUiStates(platform),
             )
             refreshStatus(statusFromLocal.isEmpty())
@@ -74,13 +83,14 @@ abstract class StatusViewModel(
     }
 
     fun onRefresh() {
-        launchInViewModel {
+        refreshJob?.cancel()
+        refreshJob = launchInViewModel {
             refreshStatus(true)
         }
     }
 
     private suspend fun refreshStatus(showRefreshing: Boolean) {
-        if (_uiState.value.refreshing || _uiState.value.loadMoreState == LoadState.Loading) return
+        if (mutableUiState.value.refreshing || mutableUiState.value.loadMoreState == LoadState.Loading) return
         updateRefreshState(showRefreshing, true, null)
         val platformResult = getBlogPlatform()
         if (platformResult.isFailure) {
@@ -91,7 +101,7 @@ abstract class StatusViewModel(
         }
         val platform = platformResult.getOrThrow()
         getRemoteStatus().onSuccess {
-            _uiState.value = _uiState.value.copy(
+            mutableUiState.value = mutableUiState.value.copy(
                 status = it.toUiStates(platform),
                 refreshing = false,
                 errorMessage = null,
@@ -106,24 +116,25 @@ abstract class StatusViewModel(
     private fun updateRefreshState(
         showRefreshing: Boolean,
         refreshing: Boolean,
-        errorMessage: TextString? = _uiState.value.errorMessage,
+        errorMessage: TextString? = mutableUiState.value.errorMessage,
     ) {
-        _uiState.value = _uiState.value.copy(
+        mutableUiState.value = mutableUiState.value.copy(
             refreshing = showRefreshing && refreshing,
             errorMessage = errorMessage,
         )
     }
 
     fun onLoadMore() {
-        if (_uiState.value.refreshing || _uiState.value.loadMoreState == LoadState.Loading) return
-        val latestStatus = _uiState.value.status.lastOrNull() ?: return
-        launchInViewModel {
-            _uiState.value = _uiState.value.copy(
+        if (mutableUiState.value.refreshing || mutableUiState.value.loadMoreState == LoadState.Loading) return
+        val latestStatus = mutableUiState.value.status.lastOrNull() ?: return
+        loadMoreJob?.cancel()
+        loadMoreJob = launchInViewModel {
+            mutableUiState.value = mutableUiState.value.copy(
                 loadMoreState = LoadState.Loading,
             )
             val platformResult = getBlogPlatform()
             if (platformResult.isFailure) {
-                _uiState.value = _uiState.value.copy(
+                mutableUiState.value = mutableUiState.value.copy(
                     loadMoreState = LoadState.Failed(platformResult.exceptionOrNull()!!),
                 )
                 return@launchInViewModel
@@ -131,13 +142,13 @@ abstract class StatusViewModel(
             val platform = platformResult.getOrThrow()
             loadMore(maxId = latestStatus.status.id)
                 .onSuccess {
-                    val currentState = _uiState.value
-                    _uiState.value = currentState.copy(
+                    val currentState = mutableUiState.value
+                    mutableUiState.value = currentState.copy(
                         status = currentState.status + it.toUiStates(platform),
                         loadMoreState = LoadState.Idle,
                     )
                 }.onFailure {
-                    _uiState.value = _uiState.value.copy(
+                    mutableUiState.value = mutableUiState.value.copy(
                         loadMoreState = LoadState.Failed(it),
                     )
                 }
@@ -149,7 +160,7 @@ abstract class StatusViewModel(
         launchInViewModel {
             statusInteractive(status, interaction)
                 .onSuccess { newStatus ->
-                    _uiState.update { current ->
+                    mutableUiState.update { current ->
                         current.copy(
                             status = current.status.updateById(newStatus.id) {
                                 newStatus.toUiState(status.platform)

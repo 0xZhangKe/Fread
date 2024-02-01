@@ -8,15 +8,21 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.activitypub.app.internal.screen.content.FeedsStatusUiState
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.common.status.model.updateById
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.status.model.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -36,6 +42,7 @@ class UserTimelineViewModel @AssistedInject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
     private val baseUrlManager: BaseUrlManager,
+    private val statusInteractive: StatusInteractiveUseCase,
     @Assisted val userUriInsights: UserUriInsights,
 ) : ViewModel() {
 
@@ -45,10 +52,11 @@ class UserTimelineViewModel @AssistedInject constructor(
     }
 
     private val _uiState = MutableStateFlow(
-        UserTimelineUiState(
+        FeedsStatusUiState(
             status = emptyList(),
             refreshing = false,
-            loading = false,
+            loadMoreState = LoadState.Idle,
+            errorMessage = null,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -63,7 +71,7 @@ class UserTimelineViewModel @AssistedInject constructor(
         refresh()
     }
 
-    private fun refresh() {
+    fun refresh() {
         if (_uiState.value.refreshing) {
             return
         }
@@ -72,7 +80,8 @@ class UserTimelineViewModel @AssistedInject constructor(
         refreshJob = launchInViewModel {
             getPlatformAndAccountId()
                 .mapCatching { (platform, accountId) ->
-                    getClient().accountRepo.getStatuses(id = accountId).getOrThrow().toUiState(platform)
+                    getClient().accountRepo.getStatuses(id = accountId).getOrThrow()
+                        .toUiState(platform)
                 }
                 .onFailure { e ->
                     e.message?.let { _messageFlow.emit(textOf(it)) }
@@ -89,7 +98,7 @@ class UserTimelineViewModel @AssistedInject constructor(
     }
 
     fun loadMore() {
-        if (_uiState.value.loading) {
+        if (_uiState.value.loadMoreState == LoadState.Loading) {
             return
         }
         if (_uiState.value.status.isEmpty()) return
@@ -107,14 +116,32 @@ class UserTimelineViewModel @AssistedInject constructor(
                 }
                 .onFailure { e ->
                     e.message?.let { _messageFlow.emit(textOf(it)) }
-                    _uiState.update { it.copy(loading = false) }
+                    _uiState.update { it.copy(loadMoreState = LoadState.Failed(e)) }
                 }.onSuccess { status ->
                     _uiState.update {
                         it.copy(
                             status = it.status.plus(status),
-                            loading = false,
+                            loadMoreState = LoadState.Idle,
                         )
                     }
+                }
+        }
+    }
+
+    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+        val interaction = uiInteraction.statusInteraction ?: return
+        launchInViewModel {
+            statusInteractive(status, interaction)
+                .onSuccess { newStatus ->
+                    _uiState.update { current ->
+                        current.copy(
+                            status = current.status.updateById(newStatus.id) {
+                                newStatus.toUiState(status.platform)
+                            }
+                        )
+                    }
+                }.onFailure {
+                    _messageFlow.emit(textOf(it.message.orEmpty()))
                 }
         }
     }
@@ -139,6 +166,10 @@ class UserTimelineViewModel @AssistedInject constructor(
     }
 
     private suspend fun List<ActivityPubStatusEntity>.toUiState(platform: BlogPlatform): List<StatusUiState> {
-        return this.map { buildStatusUiState(statusAdapter.toStatus(it, platform)) }
+        return this.map { it.toUiState(platform) }
+    }
+
+    private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): StatusUiState {
+        return buildStatusUiState(statusAdapter.toStatus(this, platform))
     }
 }

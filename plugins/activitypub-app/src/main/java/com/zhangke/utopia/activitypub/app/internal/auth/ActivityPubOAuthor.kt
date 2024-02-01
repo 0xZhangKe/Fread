@@ -1,11 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.auth
 
 import android.content.Context
-import android.content.Intent
-import android.net.Uri
-import androidx.browser.customtabs.CustomTabsIntent
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.architect.coroutines.ApplicationScope
+import com.zhangke.framework.browser.BrowserLauncher
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
@@ -79,9 +77,6 @@ class ActivityPubOAuthor @Inject constructor(
     }
 
     private fun openOauthPage(oauthUrl: String) {
-        val customTabsIntent = CustomTabsIntent.Builder()
-            .build()
-        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        customTabsIntent.launchUrl(context, Uri.parse(oauthUrl))
+        BrowserLauncher().launch(context, oauthUrl)
     }
 }

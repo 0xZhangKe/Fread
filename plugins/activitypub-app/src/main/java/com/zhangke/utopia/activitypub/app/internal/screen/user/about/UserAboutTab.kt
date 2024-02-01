@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.user.about
 
 import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
@@ -19,6 +20,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubField
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.text.RichText
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 
@@ -52,13 +54,16 @@ class UserAboutTab(
         contentCanScrollBackward.value = scrollState.value > 0
         Column(
             modifier = Modifier
-                .fillMaxWidth()
+                .fillMaxSize()
                 .horizontalScroll(scrollState)
                 .padding(16.dp)
         ) {
             if (!uiState.joinedDatetime.isNullOrEmpty()) {
                 Text(
-                    text = stringResource(R.string.activity_pub_user_detail_tab_about_joined, uiState.joinedDatetime),
+                    text = stringResource(
+                        R.string.activity_pub_user_detail_tab_about_joined,
+                        uiState.joinedDatetime
+                    ),
                 )
             }
 
@@ -75,11 +80,15 @@ class UserAboutTab(
         field: ActivityPubField,
     ) {
         Text(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier
+                .padding(top = 16.dp)
+                .fillMaxWidth(),
             text = field.name,
         )
-        Text(
-            modifier = Modifier.padding(top = 4.dp),
+        RichText(
+            modifier = Modifier
+                .padding(top = 4.dp)
+                .fillMaxWidth(),
             text = field.value,
         )
     }

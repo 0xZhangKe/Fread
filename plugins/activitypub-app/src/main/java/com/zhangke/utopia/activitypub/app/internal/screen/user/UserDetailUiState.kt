@@ -8,4 +8,5 @@ data class UserDetailUiState (
     val userInsight: UserUriInsights?,
     val account: ActivityPubAccountEntity?,
     val relationship: ActivityPubRelationshipEntity?,
+    val domainBlocked: Boolean?,
 )

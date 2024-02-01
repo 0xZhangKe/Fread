@@ -21,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,6 +31,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.browser.BrowserLauncher
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.HorizontalPagerWithTab
@@ -57,6 +59,7 @@ class UserDetailScreen(
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<UserDetailViewModel, UserDetailViewModel.Factory> {
             it.create(UserDetailRoute.parseRoute(route))
@@ -72,9 +75,14 @@ class UserDetailScreen(
             onRejectClick = viewModel::onRejectClick,
             onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
             onUnblockClick = viewModel::onUnblockClick,
-            onBlockClick = {},
-            onBlockDomainClick = {},
-            onOpenInBrowserClick = {},
+            onBlockClick = viewModel::onBlockClick,
+            onBlockDomainClick = viewModel::onBlockDomainClick,
+            onUnblockDomainClick = viewModel::onUnblockDomainClick,
+            onOpenInBrowserClick = {
+                uiState.account?.url?.let {
+                    BrowserLauncher().launch(context, it)
+                }
+            },
         )
     }
 
@@ -91,6 +99,7 @@ class UserDetailScreen(
         onRejectClick: () -> Unit,
         onBlockClick: () -> Unit,
         onBlockDomainClick: () -> Unit,
+        onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
@@ -119,6 +128,7 @@ class UserDetailScreen(
                         color = it,
                         onBlockClick = onBlockClick,
                         onBlockDomainClick = onBlockDomainClick,
+                        onUnblockDomainClick = onUnblockDomainClick,
                         onOpenInBrowserClick = onOpenInBrowserClick,
                     )
                 },
@@ -137,7 +147,7 @@ class UserDetailScreen(
                 headerContent = {
                     Column(modifier = Modifier.fillMaxWidth()) {
                         // acct
-                        val acct = remember {
+                        val acct = remember(account?.acct) {
                             val acct = account?.acct.orEmpty()
                             if (acct.isNotEmpty() && !acct.contains('@')) {
                                 "@$acct"
@@ -147,6 +157,7 @@ class UserDetailScreen(
                         }
                         Text(
                             modifier = Modifier
+                                .fillMaxWidth()
                                 .utopiaPlaceholder(account?.acct.isNullOrEmpty()),
                             text = acct,
                             maxLines = 1,
@@ -209,6 +220,7 @@ class UserDetailScreen(
         color: Color,
         onBlockClick: () -> Unit,
         onBlockDomainClick: () -> Unit,
+        onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
     ) {
         val account = uiState.account ?: return
@@ -232,20 +244,38 @@ class UserDetailScreen(
             expanded = showMorePopup,
             onDismissRequest = { showMorePopup = false },
         ) {
-            SimpleDropdownMenuItem(
-                text = stringResource(R.string.activity_pub_user_detail_menu_block, account.displayName.take(10)),
-                onClick = {
-                    showMorePopup = false
-                    showBlockUserConfirmDialog = true
+            if (uiState.relationship?.blocking == false) {
+                SimpleDropdownMenuItem(
+                    text = stringResource(
+                        R.string.activity_pub_user_detail_menu_block,
+                        account.displayName.take(10)
+                    ),
+                    onClick = {
+                        showMorePopup = false
+                        showBlockUserConfirmDialog = true
+                    }
+                )
+            }
+            val domainBlocked = uiState.domainBlocked
+            val host = userInsights.baseUrl.host
+            if (domainBlocked != null) {
+                val blockDomainLabel = if (domainBlocked) {
+                    stringResource(R.string.activity_pub_user_detail_menu_unblock_domain, host)
+                } else {
+                    stringResource(R.string.activity_pub_user_detail_menu_block_domain, host)
                 }
-            )
-            SimpleDropdownMenuItem(
-                text = stringResource(R.string.activity_pub_user_detail_menu_block_domain, userInsights.baseUrl.host),
-                onClick = {
-                    showMorePopup = false
-                    showBlockDomainConfirmDialog = true
-                }
-            )
+                SimpleDropdownMenuItem(
+                    text = blockDomainLabel,
+                    onClick = {
+                        showMorePopup = false
+                        if (domainBlocked) {
+                            onUnblockDomainClick()
+                        } else {
+                            showBlockDomainConfirmDialog = true
+                        }
+                    }
+                )
+            }
             SimpleDropdownMenuItem(
                 text = stringResource(R.string.activity_pub_user_detail_menu_open_in_browser),
                 onClick = {
@@ -268,10 +298,10 @@ class UserDetailScreen(
             AlertConfirmDialog(
                 content = stringResource(R.string.activity_pub_user_detail_dialog_content_block_domain),
                 onConfirm = {
-                    showBlockUserConfirmDialog = false
+                    showBlockDomainConfirmDialog = false
                     onBlockDomainClick()
                 },
-                onDismissRequest = { showBlockUserConfirmDialog = false },
+                onDismissRequest = { showBlockDomainConfirmDialog = false },
             )
         }
     }

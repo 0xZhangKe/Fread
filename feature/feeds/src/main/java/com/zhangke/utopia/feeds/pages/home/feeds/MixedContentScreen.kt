@@ -45,7 +45,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
-        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.errorMessageFlow)
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         MixedContentUi(
             uiState = uiState,
             onInteractive = viewModel::onInteractive,

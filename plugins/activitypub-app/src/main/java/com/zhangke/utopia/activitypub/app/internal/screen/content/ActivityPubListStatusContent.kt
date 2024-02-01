@@ -9,6 +9,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -35,12 +36,14 @@ internal fun ActivityPubListStatusContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
+    canScrollBackward: MutableState<Boolean>? = null
 ) {
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
         onRefresh = onRefresh,
         onLoadMore = onLoadMore,
     )
+    canScrollBackward?.value = state.lazyListState.canScrollBackward
     val errorMessage = uiState.errorMessage?.let { textString(it) }
     var containerHeight: Dp? by remember {
         mutableStateOf(null)

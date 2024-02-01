@@ -6,7 +6,6 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdap
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.screen.content.StatusViewModel
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 
@@ -40,7 +39,7 @@ class TrendingStatusSubViewModel(
     override suspend fun loadMore(maxId: String): Result<List<ActivityPubStatusEntity>> {
         return getServerTrending(
             baseUrl = baseUrl,
-            offset = _uiState.value.status.size,
+            offset = mutableUiState.value.status.size,
         )
     }
 

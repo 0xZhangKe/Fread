@@ -2,17 +2,20 @@ package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.activitypub.entities.ActivityPubListEntity
 import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
 import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
@@ -30,14 +33,19 @@ class ActivityPubContentScreen(
         val viewModel = getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
         val loadableState by viewModel.uiState.collectAsState()
         val lists by viewModel.lists.collectAsState()
-        LoadableLayout(
-            modifier = Modifier.fillMaxSize(),
-            state = loadableState,
-        ) { uiState ->
-            ActivityPubContentUi(
-                uiState = uiState,
-                lists = lists,
-            )
+        val globalNavigator = LocalGlobalNavigator.current
+        CompositionLocalProvider(
+            LocalNavigator provides globalNavigator
+        ) {
+            LoadableLayout(
+                modifier = Modifier.fillMaxSize(),
+                state = loadableState,
+            ) { uiState ->
+                ActivityPubContentUi(
+                    uiState = uiState,
+                    lists = lists,
+                )
+            }
         }
     }
 

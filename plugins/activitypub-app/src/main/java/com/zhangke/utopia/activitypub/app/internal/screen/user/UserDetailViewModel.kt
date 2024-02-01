@@ -7,8 +7,10 @@ import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
+import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.assisted.Assisted
@@ -39,6 +41,7 @@ class UserDetailViewModel @AssistedInject constructor(
             userInsight = null,
             account = null,
             relationship = null,
+            domainBlocked = false,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -68,20 +71,41 @@ class UserDetailViewModel @AssistedInject constructor(
             _uiState.value = _uiState.value.copy(
                 account = account
             )
-            val relationshipEntityResult = accountRepo.getRelationships(listOf(account.id))
-            if (relationshipEntityResult.isFailure) {
-                _messageFlow.emit(textOf(accountResult.exceptionOrNull()!!.message.orEmpty()))
-                return@launchInViewModel
-            }
-            val relationshipEntity = relationshipEntityResult.getOrThrow().firstOrNull()
-            if (relationshipEntity == null) {
-                _messageFlow.emit(textOf("Failed to get relationship entity"))
-                return@launchInViewModel
-            }
-            _uiState.value = _uiState.value.copy(
-                relationship = relationshipEntity
-            )
+            loadRelationship(accountRepo, account.id)
+            loadDomainBlockState(accountRepo, userInsight)
         }
+    }
+
+    private suspend fun loadRelationship(
+        accountRepo: AccountsRepo,
+        accountId: String,
+    ){
+        val relationshipEntityResult = accountRepo.getRelationships(listOf(accountId))
+        if (relationshipEntityResult.isFailure) {
+            relationshipEntityResult.exceptionOrNull()?.message?.let {
+                _messageFlow.emit(textOf(it))
+            }
+            return
+        }
+        val relationshipEntity = relationshipEntityResult.getOrThrow().firstOrNull()
+        if (relationshipEntity == null) {
+            _messageFlow.emit(textOf("Failed to get relationship entity"))
+            return
+        }
+        _uiState.value = _uiState.value.copy(
+            relationship = relationshipEntity
+        )
+    }
+
+    private suspend fun loadDomainBlockState(
+        accountRepo: AccountsRepo,
+        userUriInsights: UserUriInsights,
+    ){
+        val blockedDomainList = accountRepo.getDomainBlocks().getOrNull() ?: return
+        val domainBlocked = blockedDomainList.firstOrNull { it == userUriInsights.baseUrl.host }
+        _uiState.value = _uiState.value.copy(
+            domainBlocked = domainBlocked != null
+        )
     }
 
     fun onFollowClick() {
@@ -123,6 +147,42 @@ class UserDetailViewModel @AssistedInject constructor(
     fun onUnblockClick() {
         performRelationshipAction { accountsRepo, accountId ->
             accountsRepo.unblock(accountId)
+        }
+    }
+
+    fun onBlockDomainClick() {
+        val userUriInsights = _uiState.value.userInsight ?: return
+        launchInViewModel {
+            val baseUrl = baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
+            val accountRepo = clientManager.getClient(baseUrl).accountRepo
+            accountRepo.blockDomain(userUriInsights.baseUrl.host)
+                .onFailure { e ->
+                    e.message?.let {
+                        _messageFlow.emit(textOf(it))
+                    }
+                }.onSuccess {
+                    _uiState.update {
+                        it.copy(domainBlocked = true)
+                    }
+                }
+        }
+    }
+
+    fun onUnblockDomainClick() {
+        val userUriInsights = _uiState.value.userInsight ?: return
+        launchInViewModel {
+            val baseUrl = baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
+            val accountRepo = clientManager.getClient(baseUrl).accountRepo
+            accountRepo.unblockDomain(userUriInsights.baseUrl.host)
+                .onFailure { e ->
+                    e.message?.let {
+                        _messageFlow.emit(textOf(it))
+                    }
+                }.onSuccess {
+                    _uiState.update {
+                        it.copy(domainBlocked = false)
+                    }
+                }
         }
     }
 

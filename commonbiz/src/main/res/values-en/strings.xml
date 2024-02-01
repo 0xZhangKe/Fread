@@ -15,8 +15,6 @@
 
     <string name="search">Search</string>
 
-    <string name="alert">Alert</string>
-
     <string name="auth_success">Login successful</string>
 
     <string name="auth_failed">Login failed</string>

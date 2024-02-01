@@ -46,6 +46,12 @@
     <string name="post_status_scope_follower_only">Followers only</string>
     <string name="post_status_scope_mentioned_only">Only people mentioned</string>
     <string name="post_status_failed">Post failed</string>
+    <string name="activity_pub_user_detail_tab_about_joined">Joined on %s</string>
+    <string name="activity_pub_user_detail_menu_block">Block %s</string>
+    <string name="activity_pub_user_detail_menu_block_domain">Block %s</string>
+    <string name="activity_pub_user_detail_menu_open_in_browser">Open in browser</string>
+    <string name="activity_pub_user_detail_dialog_content_block">Do you want to block this user?</string>
+    <string name="activity_pub_user_detail_dialog_content_block_domain">Do you want to block this domain?</string>
 
     <string name="add_instance_screen_title">Add Instance</string>
     <string name="add_instance_input_service_hint">Please enter server address</string>

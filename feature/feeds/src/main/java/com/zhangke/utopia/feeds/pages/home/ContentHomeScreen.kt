@@ -186,9 +186,11 @@ class ContentHomeScreen : Screen {
                 }
             }
         }
-
         ConsumeFlow(viewModel.openSelectAccountForPostFlow) {
-            bottomSheetNavigator.show(SelectAccountForPostStatusScreen(it))
+            val screen = SelectAccountForPostStatusScreen(it) { account ->
+                viewModel.onPostStatusAccountClick(account)
+            }
+            bottomSheetNavigator.show(screen)
         }
     }
 }

@@ -212,6 +212,6 @@ fun BlogAuthorAvatar(
         imageLoader = LocalContext.current.imageLoader,
         error = rememberVectorPainter(Icons.Default.AccountCircle),
         placeholder = rememberVectorPainter(Icons.Default.AccountCircle),
-        contentDescription = null,
+        contentDescription = "Avatar",
     )
 }

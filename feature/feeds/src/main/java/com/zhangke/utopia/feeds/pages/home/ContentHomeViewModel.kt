@@ -6,12 +6,15 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
@@ -20,21 +23,34 @@ class ContentHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ContentHomeUiState(0, emptyList()))
+    private val _uiState = MutableStateFlow(ContentHomeUiState(0, emptyList(), emptyList()))
     val uiState: StateFlow<ContentHomeUiState> = _uiState
 
     private val _openScreenFlow = MutableSharedFlow<String>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
+    private val _openSelectAccountForPostFlow = MutableSharedFlow<List<LoggedAccount>>()
+    val openSelectAccountForPostFlow = _openSelectAccountForPostFlow.asSharedFlow()
+
     init {
         launchInViewModel {
             contentConfigRepo.getAllConfigFlow()
                 .collect {
-                    val currentState = _uiState.value
-                    _uiState.value = currentState.copy(
-                        currentPageIndex = currentState.currentPageIndex.coerceAtMost(it.size - 1),
-                        contentConfigList = it,
-                    )
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            currentPageIndex = currentState.currentPageIndex.coerceAtMost(it.size - 1),
+                            contentConfigList = it,
+                        )
+                    }
+                }
+        }
+        launchInViewModel {
+            statusProvider.accountManager
+                .getAllAccountFlow()
+                .collect { accountList ->
+                    _uiState.update {
+                        it.copy(accountList = accountList)
+                    }
                 }
         }
     }
@@ -63,5 +79,27 @@ class ContentHomeViewModel @Inject constructor(
             .getPlatformDetailScreenRoute(config)?.let { route ->
                 launchInViewModel { _openScreenFlow.emit(route) }
             }
+    }
+
+    fun onPostStatusClick() {
+        val accountList = _uiState.value.accountList
+        if (accountList.isEmpty()) return
+        if (accountList.size == 1) {
+            openPostStatusScreen(accountList.first().platform)
+        } else {
+            launchInViewModel {
+                _openSelectAccountForPostFlow.emit(accountList)
+            }
+        }
+    }
+
+    fun onPostStatusAccountClick(account: LoggedAccount) {
+        openPostStatusScreen(account.platform)
+    }
+
+    private fun openPostStatusScreen(platform: BlogPlatform) {
+        statusProvider.screenProvider.getPostStatusScreen(platform)?.let { route ->
+            launchInViewModel { _openScreenFlow.emit(route) }
+        }
     }
 }

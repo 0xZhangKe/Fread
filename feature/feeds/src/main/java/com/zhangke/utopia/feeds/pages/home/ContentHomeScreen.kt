@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
 import androidx.compose.material3.Scaffold
@@ -39,6 +42,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
@@ -55,6 +59,7 @@ class ContentHomeScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel: ContentHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -63,7 +68,6 @@ class ContentHomeScreen : Screen {
         ConsumeFlow(viewModel.openScreenFlow) { route ->
             navigator.pushDestination(route)
         }
-
         ModalNavigationDrawer(
             drawerState = drawerState,
             drawerContent = {
@@ -126,6 +130,16 @@ class ContentHomeScreen : Screen {
                         },
                     )
                 },
+                floatingActionButton = {
+                    FloatingActionButton(
+                        onClick = viewModel::onPostStatusClick,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add",
+                        )
+                    }
+                }
             ) { paddingValues ->
                 if (uiState.contentConfigList.isEmpty()) {
                     Column(
@@ -171,6 +185,10 @@ class ContentHomeScreen : Screen {
                     }
                 }
             }
+        }
+
+        ConsumeFlow(viewModel.openSelectAccountForPostFlow) {
+            bottomSheetNavigator.show(SelectAccountForPostStatusScreen(it))
         }
     }
 }

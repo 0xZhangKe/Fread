@@ -22,4 +22,6 @@
 
     <string name="search_feeds_title_hint">请输入感兴趣的内容</string>
 
+    <string name="feeds_select_account_for_post_status">请选择一个账号</string>
+
 </resources>

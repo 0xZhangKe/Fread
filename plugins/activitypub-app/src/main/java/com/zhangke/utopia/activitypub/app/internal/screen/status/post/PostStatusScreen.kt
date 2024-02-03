@@ -85,8 +85,10 @@ class PostStatusScreen(
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PostStatusViewModel>()
         LaunchedEffect(route) {
-            viewModel.replyToId = PostStatusScreenRoute.parseReplyToBlogId(route)
-            viewModel.replyToName = PostStatusScreenRoute.parseReplyToAuthorName(route)
+            val (accountUri, replyToId, replyToName) = PostStatusScreenRoute.parse(route)
+            viewModel.accountUri = accountUri
+            viewModel.replyToId = replyToId
+            viewModel.replyToName = replyToName
             viewModel.onPrepared()
         }
         val loadableUiState by viewModel.uiState.collectAsState()
@@ -331,7 +333,10 @@ class PostStatusScreen(
                                             text = "${it.userName}@${it.platform.name}",
                                         )
                                     },
-                                    onClick = { onSwitchAccount(it) },
+                                    onClick = {
+                                        showAccountSwitchPopup = false
+                                        onSwitchAccount(it)
+                                    },
                                 )
                             }
                         }

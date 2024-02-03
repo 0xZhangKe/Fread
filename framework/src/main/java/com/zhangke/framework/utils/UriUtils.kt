@@ -11,7 +11,7 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import java.io.FileNotFoundException
-import java.net.URI
+import java.net.URLDecoder
 import java.net.URLEncoder
 
 fun Uri.toContentProviderFile(): ContentProviderFile? {
@@ -149,4 +149,8 @@ fun uriString(
         builder.append(query)
     }
     return builder.toString()
+}
+
+fun String.decodeAsUri(): String {
+    return URLDecoder.decode(this, Charsets.UTF_8.name())
 }

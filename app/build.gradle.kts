@@ -96,7 +96,6 @@ dependencies {
     implementation(project(path = ":commonbiz:sharedscreen"))
     implementation(project(path = ":feature:feeds"))
     implementation(project(path = ":feature:explore"))
-    implementation(project(path = ":feature:publish"))
     implementation(project(path = ":feature:profile"))
     implementation(project(path = ":feature:notifications"))
 

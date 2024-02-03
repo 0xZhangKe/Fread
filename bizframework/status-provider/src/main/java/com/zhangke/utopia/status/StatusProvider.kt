@@ -6,7 +6,7 @@ import com.zhangke.utopia.status.platform.IPlatformResolver
 import com.zhangke.utopia.status.platform.PlatformResolver
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.screen.StatusScreenProvider
-import com.zhangke.utopia.status.search.IUtopiaSearchEngine
+import com.zhangke.utopia.status.search.ISearchEngine
 import com.zhangke.utopia.status.search.SearchEngine
 import com.zhangke.utopia.status.source.IStatusSourceResolver
 import com.zhangke.utopia.status.source.StatusSourceResolver
@@ -40,7 +40,7 @@ interface IStatusProvider {
 
     val platformResolver: IPlatformResolver
 
-    val searchEngine: IUtopiaSearchEngine
+    val searchEngine: ISearchEngine
 
     val statusResolver: IStatusResolver
 

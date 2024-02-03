@@ -12,6 +12,7 @@ import androidx.core.view.WindowCompat
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
+import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -31,7 +32,10 @@ class UtopiaActivity : AppCompatActivity() {
                         modifier = Modifier.navigationBarsPadding(),
                         sheetShape = RoundedCornerShape(12.dp),
                     ) {
-                        Navigator(UtopiaScreen())
+                        Navigator(
+                            screen = UtopiaScreen(),
+                            key = ROOT_NAVIGATOR_KEY,
+                        )
                     }
                 }
             }

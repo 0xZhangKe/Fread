@@ -22,7 +22,6 @@ import com.zhangke.utopia.explore.ExploreTab
 import com.zhangke.utopia.feature.message.NotificationsTab
 import com.zhangke.utopia.feeds.FeedsHomeTab
 import com.zhangke.utopia.profile.ProfileTab
-import com.zhangke.utopia.publish.PublishTab
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
@@ -56,9 +55,8 @@ private fun createMainTabs(): List<Tab> {
     return listOf(
         FeedsHomeTab(0u),
         ExploreTab(1u),
-        PublishTab(2u),
-        NotificationsTab(3u),
-        ProfileTab(4u),
+        NotificationsTab(2u),
+        ProfileTab(3u),
     )
 }
 

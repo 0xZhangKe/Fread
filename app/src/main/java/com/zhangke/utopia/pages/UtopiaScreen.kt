@@ -4,13 +4,9 @@ import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.pager.HorizontalPager
-import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.lifecycle.ViewModel
@@ -18,10 +14,6 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.getViewModel
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.voyager.LocalGlobalNavigator
 import com.zhangke.utopia.pages.main.MainPage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -33,12 +25,8 @@ class UtopiaScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        CompositionLocalProvider(
-            LocalGlobalNavigator provides LocalNavigator.currentOrThrow
-        ) {
-            MainPage()
+        MainPage()
 //            Navigator(TabTestScreen())
-        }
 
 //        val tabs: List<PagerTab> = remember {
 //            listOf(
@@ -185,6 +173,7 @@ class ThirdTab(private val pageIndex: Int) : PagerTab {
         }
     }
 }
+
 @HiltViewModel(assistedFactory = ThirdViewModel.Factory::class)
 class ThirdViewModel @AssistedInject constructor(
     @Assisted val pageIndex: Int,

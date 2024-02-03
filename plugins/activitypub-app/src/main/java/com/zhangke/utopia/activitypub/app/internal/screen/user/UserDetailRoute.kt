@@ -1,10 +1,10 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
 import com.zhangke.framework.network.SimpleUri
+import com.zhangke.framework.utils.decodeAsUri
 import com.zhangke.utopia.activitypub.app.internal.route.ActivityPubRoutes
 import com.zhangke.utopia.status.uri.FormalUri
-import java.net.URLDecoder
-import java.net.URLEncoder
+import com.zhangke.utopia.status.uri.encode
 
 object UserDetailRoute {
 
@@ -13,12 +13,12 @@ object UserDetailRoute {
     private const val PARAMS_USER_URI = "userUri"
 
     fun buildRoute(userUri: FormalUri): String {
-        return "$ROUTE?$PARAMS_USER_URI=${URLEncoder.encode(userUri.toRawString(), "UTF-8")}"
+        return "$ROUTE?$PARAMS_USER_URI=${userUri.encode()}"
     }
 
     fun parseRoute(route: String): FormalUri {
         return SimpleUri.parse(route)!!.queries[PARAMS_USER_URI]!!
-            .let { URLDecoder.decode(it, "UTF-8") }
+            .decodeAsUri()
             .let { FormalUri.from(it) }!!
     }
 }

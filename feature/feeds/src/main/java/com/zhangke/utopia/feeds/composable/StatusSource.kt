@@ -24,17 +24,6 @@ internal data class StatusSourceUiState(
 )
 
 @Composable
-internal fun StatusSourceSection(
-    modifier: Modifier = Modifier,
-    source: StatusSourceUiState,
-) {
-    StatusSourceNode(
-        modifier = modifier,
-        source = source,
-    )
-}
-
-@Composable
 internal fun RemovableStatusSource(
     modifier: Modifier = Modifier,
     source: StatusSourceUiState,
@@ -44,19 +33,6 @@ internal fun RemovableStatusSource(
         modifier = modifier,
         source = source,
         onRemoveClick = onRemoveClick,
-    )
-}
-
-@Composable
-internal fun AddableStatusSource(
-    modifier: Modifier = Modifier,
-    source: StatusSourceUiState,
-    onAddClick: () -> Unit,
-) {
-    StatusSourceNode(
-        modifier = modifier,
-        source = source,
-        onAddClick = onAddClick,
     )
 }
 

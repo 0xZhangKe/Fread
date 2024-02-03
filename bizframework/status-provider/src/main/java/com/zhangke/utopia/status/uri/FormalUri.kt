@@ -5,6 +5,7 @@ import com.zhangke.framework.utils.uriString
 import kotlinx.parcelize.IgnoredOnParcel
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import java.net.URLEncoder
 
 @Parcelize
 @Serializable
@@ -85,3 +86,8 @@ class FormalUri private constructor(
         }
     }
 }
+
+fun FormalUri.encode(): String {
+    return URLEncoder.encode(this.toRawString(), Charsets.UTF_8.name())
+}
+

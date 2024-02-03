@@ -17,9 +17,12 @@ sealed class Status {
 
     abstract val supportInteraction: List<StatusInteraction>
 
+    /**
+     * 该 Platform 表示获取到该 Status 时使用的 Platform，而不是 Status 本身所属的 Platform。
+     */
     abstract val platform: BlogPlatform
 
-    val intrinsicBlog: Blog get() =  when (this) {
+    val intrinsicBlog: Blog get() = when (this) {
         is NewBlog -> blog
         is Reblog -> reblog
     }

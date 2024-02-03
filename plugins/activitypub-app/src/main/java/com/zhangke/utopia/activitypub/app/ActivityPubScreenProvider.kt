@@ -26,9 +26,16 @@ class ActivityPubScreenProvider @Inject constructor(
         return PlatformDetailRoute.buildRoute(activityPubContent.baseUrl)
     }
 
-    override fun getPostStatusScreen(platform: BlogPlatform): String? {
+    override fun getPostStatusScreen(
+        platform: BlogPlatform,
+        accountUri: FormalUri?,
+    ): String? {
         if (platform.protocol != ACTIVITY_PUB_PROTOCOL) return null
-        return PostStatusScreenRoute.ROUTE
+        return if (accountUri == null) {
+            PostStatusScreenRoute.ROUTE
+        } else {
+            PostStatusScreenRoute.buildRoute(accountUri)
+        }
     }
 
     override fun getReplyBlogScreen(blog: Blog): String? {

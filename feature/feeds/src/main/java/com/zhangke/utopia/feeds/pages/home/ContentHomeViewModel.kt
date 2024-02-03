@@ -8,7 +8,6 @@ import com.zhangke.utopia.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.model.ContentConfig
-import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -85,7 +84,7 @@ class ContentHomeViewModel @Inject constructor(
         val accountList = _uiState.value.accountList
         if (accountList.isEmpty()) return
         if (accountList.size == 1) {
-            openPostStatusScreen(accountList.first().platform)
+            openPostStatusScreen(accountList.first())
         } else {
             launchInViewModel {
                 _openSelectAccountForPostFlow.emit(accountList)
@@ -94,11 +93,14 @@ class ContentHomeViewModel @Inject constructor(
     }
 
     fun onPostStatusAccountClick(account: LoggedAccount) {
-        openPostStatusScreen(account.platform)
+        openPostStatusScreen(account)
     }
 
-    private fun openPostStatusScreen(platform: BlogPlatform) {
-        statusProvider.screenProvider.getPostStatusScreen(platform)?.let { route ->
+    private fun openPostStatusScreen(account: LoggedAccount) {
+        statusProvider.screenProvider.getPostStatusScreen(
+            platform = account.platform,
+            accountUri = account.uri,
+        )?.let { route ->
             launchInViewModel { _openScreenFlow.emit(route) }
         }
     }

@@ -24,7 +24,6 @@ import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.PostStatusUseCase
-import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -57,6 +56,7 @@ class PostStatusViewModel @Inject constructor(
         const val MAX_CONTENT = 1000
     }
 
+    var accountUri: FormalUri? = null
     var replyToId: String? = null
     var replyToName: String? = null
 
@@ -68,14 +68,19 @@ class PostStatusViewModel @Inject constructor(
 
     fun onPrepared() {
         launchInViewModel {
-            val loggedAccount = accountManager.getAllLoggedAccount().firstOrNull()
             val allLoggedAccount = accountManager.getAllLoggedAccount()
-            if (loggedAccount == null) {
+            val defaultAccount = if (accountUri != null) {
+                allLoggedAccount.firstOrNull { it.uri == accountUri }
+                    ?: allLoggedAccount.firstOrNull()
+            } else {
+                allLoggedAccount.firstOrNull()
+            }
+            if (defaultAccount == null) {
                 _uiState.updateToFailed(IllegalStateException("Not login!"))
             } else {
                 _uiState.value = LoadableState.success(
                     PostStatusUiState(
-                        account = loggedAccount,
+                        account = defaultAccount,
                         availableAccountList = allLoggedAccount,
                         content = "",
                         attachment = null,

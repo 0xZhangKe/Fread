@@ -49,6 +49,7 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.pushDestination
+import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
 import kotlinx.coroutines.launch
@@ -58,7 +59,7 @@ class ContentHomeScreen : Screen {
     @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow
+        val navigator = LocalNavigator.currentOrThrow.rootNavigator
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel: ContentHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()

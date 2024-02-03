@@ -21,9 +21,10 @@ class StatusScreenProvider(
 
     fun getPostStatusScreen(
         platform: BlogPlatform,
+        accountUri: FormalUri? = null,
     ): String? {
         return providerList.mapFirstOrNull {
-            it.getPostStatusScreen(platform)
+            it.getPostStatusScreen(platform, accountUri)
         }
     }
 
@@ -60,7 +61,10 @@ interface IStatusScreenProvider {
 
     fun getServerDetailScreenRoute(config: ContentConfig): String?
 
-    fun getPostStatusScreen(platform: BlogPlatform): String?
+    fun getPostStatusScreen(
+        platform: BlogPlatform,
+        accountUri: FormalUri? = null,
+    ): String?
 
     fun getReplyBlogScreen(blog: Blog): String?
 

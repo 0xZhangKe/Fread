@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -124,10 +125,13 @@ fun StatusInfoLine(
                     onUserInfoClick(blogAuthor)
                 }
                 .constrainAs(name) {
-                    start.linkTo(avatar.end, margin = infoStyle.avatarToNamePadding)
+                    start.linkTo(avatar.end, infoStyle.avatarToNamePadding)
+                    end.linkTo(moreOptions.start, 2.dp)
                     bottom.linkTo(guideline.top)
+                    width = Dimension.fillToConstraints
                 },
             maxLines = 1,
+            textAlign = TextAlign.Left,
             overflow = TextOverflow.Ellipsis,
             text = blogAuthor.name,
             style = infoStyle.nameStyle,

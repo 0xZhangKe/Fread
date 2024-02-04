@@ -61,6 +61,6 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     private fun Status.notThisPlatform(): Boolean {
-        return this.platform.protocol != ACTIVITY_PUB_PROTOCOL
+        return this.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID
     }
 }

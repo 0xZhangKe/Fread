@@ -7,6 +7,8 @@
 
     <string name="activity_pub_public_timeline">跨站时间轴</string>
 
+    <string name="activity_pub_protocol_name">长毛象</string>
+
     <string name="activity_pub_search_timeline_name">%s的%s</string>
 
     <string name="activity_pub_instance_detail_language_label">语言: %s</string>

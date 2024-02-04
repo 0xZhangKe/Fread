@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="explorer_search_no_results">No results found</string>
+    <string name="explorer_search_bar_hint">Search</string>
+    <string name="explorer_search_tab_title_author">Accounts</string>
+    <string name="explorer_search_tab_title_status">Status</string>
+    <string name="explorer_search_tab_title_hashtag">Hashtags</string>
+    <string name="explorer_search_tab_title_server">Server</string>
+</resources>

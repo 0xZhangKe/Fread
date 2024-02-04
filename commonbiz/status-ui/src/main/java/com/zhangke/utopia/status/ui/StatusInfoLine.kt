@@ -9,14 +9,15 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -24,8 +25,10 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
+import coil.compose.AsyncImagePainter
 import coil.imageLoader
 import com.zhangke.framework.composable.startPadding
+import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.action.StatusMoreInteractionIcon
@@ -210,12 +213,18 @@ fun BlogAuthorAvatar(
     modifier: Modifier,
     imageUrl: String?,
 ) {
+    var loadSuccess by remember {
+        mutableStateOf(false)
+    }
     AsyncImage(
-        modifier = modifier.clip(CircleShape),
+        modifier = modifier
+            .clip(CircleShape)
+            .utopiaPlaceholder(!loadSuccess),
         model = imageUrl,
         imageLoader = LocalContext.current.imageLoader,
-        error = rememberVectorPainter(Icons.Default.AccountCircle),
-        placeholder = rememberVectorPainter(Icons.Default.AccountCircle),
+        onState = {
+            loadSuccess = it is AsyncImagePainter.State.Success
+        },
         contentDescription = "Avatar",
     )
 }

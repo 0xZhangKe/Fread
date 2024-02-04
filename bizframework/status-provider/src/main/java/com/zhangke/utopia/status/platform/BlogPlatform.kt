@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.platform
 
 import android.os.Parcelable
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.status.model.StatusProviderProtocol
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 
@@ -12,6 +13,6 @@ data class BlogPlatform(
     val name: String,
     val description: String,
     val baseUrl: FormalBaseUrl,
-    val protocol: String,
+    val protocol: StatusProviderProtocol,
     val thumbnail: String?,
 ) : Parcelable

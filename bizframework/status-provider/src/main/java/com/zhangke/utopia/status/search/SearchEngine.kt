@@ -1,14 +1,34 @@
 package com.zhangke.utopia.status.search
 
+import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.utils.collect
 
 class SearchEngine(
     private val engineList: List<ISearchEngine>,
 ) {
 
-    suspend fun query(query: String): Result<List<SearchResult>> {
-        return engineList.map { it.query(query.trim()) }.collect()
+    suspend fun search(query: String): Result<List<SearchResult>> {
+        return engineList.map { it.search(query.trim()) }.collect()
+    }
+
+    suspend fun searchStatus(query: String, maxId: String?): Result<List<Status>> {
+        return engineList.map { it.searchStatus(query, maxId) }.collect()
+    }
+
+    suspend fun searchHashtag(query: String, maxId: String?): Result<List<Hashtag>> {
+        return engineList.map { it.searchHashtag(query, maxId) }.collect()
+    }
+
+    suspend fun searchAuthor(query: String, maxId: String?): Result<List<BlogAuthor>> {
+        return engineList.map { it.searchAuthor(query, maxId) }.collect()
+    }
+
+    suspend fun searchPlatform(query: String, maxId: String?): Result<List<BlogPlatform>> {
+        return engineList.map { it.searchPlatform(query, maxId) }.collect()
     }
 
     suspend fun searchSource(query: String): Result<List<StatusSource>> {
@@ -18,7 +38,15 @@ class SearchEngine(
 
 interface ISearchEngine {
 
-    suspend fun query(query: String): Result<List<SearchResult>>
+    suspend fun search(query: String): Result<List<SearchResult>>
+
+    suspend fun searchStatus(query: String, maxId: String?): Result<List<Status>>
+
+    suspend fun searchHashtag(query: String, maxId: String?): Result<List<Hashtag>>
+
+    suspend fun searchAuthor(query: String, maxId: String?): Result<List<BlogAuthor>>
+
+    suspend fun searchPlatform(query: String, maxId: String?): Result<List<BlogPlatform>>
 
     suspend fun searchSource(query: String): Result<List<StatusSource>>
 }

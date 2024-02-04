@@ -53,12 +53,12 @@ class ActivityPubSearchEngine @Inject constructor(
 
     override suspend fun searchHashtag(
         query: String,
-        maxId: String?,
+        offset: Int?,
     ): Result<List<Hashtag>> {
         return doSearch { searchRepo, _ ->
             searchRepo.queryHashtags(
                 query = query,
-                maxId = maxId,
+                offset = offset,
             ).map { list ->
                 list.map { hashtagAdapter.adapt(it) }
             }
@@ -67,12 +67,12 @@ class ActivityPubSearchEngine @Inject constructor(
 
     override suspend fun searchAuthor(
         query: String,
-        maxId: String?,
+        offset: Int?,
     ): Result<List<BlogAuthor>> {
         return doSearch { searchRepo, _ ->
             searchRepo.queryAccount(
                 query = query,
-                maxId = maxId,
+                offset = offset,
             ).map { list ->
                 list.map { accountAdapter.toAuthor(it) }
             }
@@ -81,7 +81,7 @@ class ActivityPubSearchEngine @Inject constructor(
 
     override suspend fun searchPlatform(
         query: String,
-        maxId: String?,
+        offset: Int?,
     ): Result<List<BlogPlatform>> {
         // todo implement this function
         return Result.success(emptyList())

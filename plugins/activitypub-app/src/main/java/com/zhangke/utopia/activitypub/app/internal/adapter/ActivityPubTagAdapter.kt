@@ -1,12 +1,17 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
+import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.textOf
 import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
 import com.zhangke.utopia.status.model.Hashtag
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
-class ActivityPubTagAdapter @Inject constructor() {
+class ActivityPubTagAdapter @Inject constructor(
+    @ApplicationContext private val context: Context,
+) {
 
     fun adapt(entity: ActivityPubTagEntity): Hashtag {
         val pass2DayUses = entity.history
@@ -21,6 +26,7 @@ class ActivityPubTagAdapter @Inject constructor() {
             description = textOf(R.string.activity_pub_trends_tag_description, pass2DayUses),
             following = entity.following,
             history = convertHistoryList(entity.history),
+            protocol = getActivityPubProtocol(context),
         )
     }
 

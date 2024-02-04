@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
@@ -12,6 +13,7 @@ import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.uri.FormalUri
@@ -62,5 +64,10 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getUserDetailRoute(uri: FormalUri): String? {
         userUriTransformer.parse(uri) ?: return null
         return UserDetailRoute.buildRoute(uri)
+    }
+
+    override fun getTagTimelineScreenRoute(tag: Hashtag): String? {
+        if (tag.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
+        return HashtagTimelineRoute.buildRoute(tag.name)
     }
 }

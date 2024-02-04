@@ -6,6 +6,7 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
@@ -22,6 +23,7 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
 ) : ViewModel() {
 
@@ -43,7 +45,10 @@ class SearchBarViewModel @Inject constructor(
 
     fun onSearchQueryChanged(query: String) {
         if (query == _uiState.value.query) return
-        if (query.isEmpty()) return
+        if (query.isEmpty()) {
+            _uiState.update { it.copy(query = "", resultList = emptyList()) }
+            return
+        }
         _uiState.update {
             it.copy(query = query)
         }
@@ -74,12 +79,13 @@ class SearchBarViewModel @Inject constructor(
             val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
             statusProvider.statusResolver
                 .interactive(status, interaction)
+                .map { buildStatusUiState(it) }
                 .onSuccess { newStatus ->
                     val currentValue = _uiState.value
                     val newResult = currentValue.resultList.map {
                         if (it !is SearchResultUiState.SearchedStatus) return@map it
                         if (it.status.status.id != status.id) return@map it
-                        return@map it.copy(status = it.status.copy(status = newStatus))
+                        return@map it.copy(status = newStatus)
                     }
                     _uiState.value = currentValue.copy(
                         resultList = newResult

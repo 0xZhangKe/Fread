@@ -16,6 +16,7 @@ import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -55,6 +56,11 @@ fun Screen.ExplorerSearchBar() {
     }
     val viewModel = getViewModel<SearchBarViewModel>()
     val uiState by viewModel.uiState.collectAsState()
+    if (!active) {
+        LaunchedEffect(Unit) {
+            viewModel.onSearchQueryChanged("")
+        }
+    }
     SearchBar(
         modifier = Modifier
             .searchPadding(active)
@@ -101,9 +107,7 @@ fun Screen.ExplorerSearchBar() {
         },
         active = active,
         onActiveChange = {
-            if (!it) {
-                viewModel.onSearchQueryChanged("")
-            }
+            active = it
         },
     ) {
         if (active) {

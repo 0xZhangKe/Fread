@@ -1,19 +1,23 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
+import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.platform.BlogPlatform
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val userUriTransformer: UserUriTransformer,
+    @ApplicationContext private val context: Context,
 ) {
 
     fun adapt(
@@ -77,7 +81,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             description = description,
             baseUrl = baseUrl,
             thumbnail = thumbnail,
-            protocol = protocol,
+            protocol = getActivityPubProtocol(context),
         )
 
     private fun BlogPlatform.toEntity() = ActivityPubLoggedAccountEntity.BlogPlatformEntity(
@@ -86,7 +90,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         description = description,
         baseUrl = baseUrl,
         thumbnail = thumbnail,
-        protocol = protocol,
     )
 
     fun accountToWebFinger(account: ActivityPubAccountEntity): WebFinger {

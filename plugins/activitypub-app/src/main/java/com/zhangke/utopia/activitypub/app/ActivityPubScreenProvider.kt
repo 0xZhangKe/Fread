@@ -30,7 +30,7 @@ class ActivityPubScreenProvider @Inject constructor(
         platform: BlogPlatform,
         accountUri: FormalUri?,
     ): String? {
-        if (platform.protocol != ACTIVITY_PUB_PROTOCOL) return null
+        if (platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
         return if (accountUri == null) {
             PostStatusScreenRoute.ROUTE
         } else {
@@ -39,7 +39,7 @@ class ActivityPubScreenProvider @Inject constructor(
     }
 
     override fun getReplyBlogScreen(blog: Blog): String? {
-        if (blog.platform.protocol != ACTIVITY_PUB_PROTOCOL) return null
+        if (blog.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
         return PostStatusScreenRoute.buildRoute(blog.id, blog.author.name)
     }
 
@@ -54,7 +54,7 @@ class ActivityPubScreenProvider @Inject constructor(
     }
 
     override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
-        if (account.platform.protocol != ACTIVITY_PUB_PROTOCOL) return null
+        if (account.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
         val userInsights = userUriTransformer.parse(account.uri) ?: return null
         return ActivityPubNotificationsScreen(userInsights)
     }

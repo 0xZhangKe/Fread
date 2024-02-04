@@ -1,18 +1,22 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
+import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.ACTIVITY_PUB_PROTOCOL
+import com.zhangke.utopia.activitypub.app.ACTIVITY_PUB_PROTOCOL_ID
+import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstance
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubInstanceRule
 import com.zhangke.utopia.activitypub.app.internal.model.ServerDetailContract
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.status.platform.BlogPlatform
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ActivityPubInstanceAdapter @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
+    @ApplicationContext private val context: Context,
 ) {
 
     fun toPlatform(
@@ -25,7 +29,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
             baseUrl = baseUrl,
             name = instance.title,
             description = instance.description,
-            protocol = ACTIVITY_PUB_PROTOCOL,
+            protocol = getActivityPubProtocol(context),
             thumbnail = instance.thumbnail.url,
         )
     }
@@ -39,7 +43,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
             baseUrl = instance.baseUrl,
             name = instance.title,
             description = instance.description,
-            protocol = ACTIVITY_PUB_PROTOCOL,
+            protocol = getActivityPubProtocol(context),
             thumbnail = instance.thumbnail,
         )
     }

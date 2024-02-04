@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="explorer_search_no_results">未搜索到结果</string>
+    <string name="explorer_search_bar_hint">搜索</string>
+    <string name="explorer_search_tab_title_author">用户</string>
+    <string name="explorer_search_tab_title_status">帖子</string>
+    <string name="explorer_search_tab_title_hashtag">标签</string>
+    <string name="explorer_search_tab_title_server">服务器</string>
+</resources>

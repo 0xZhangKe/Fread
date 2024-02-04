@@ -38,7 +38,6 @@ data class ActivityPubLoggedAccountEntity(
         val name: String,
         val description: String,
         val baseUrl: FormalBaseUrl,
-        val protocol: String,
         val thumbnail: String?,
     )
 }

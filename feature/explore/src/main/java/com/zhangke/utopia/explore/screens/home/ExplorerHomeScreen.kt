@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.utopia.explore.screens.search.ExplorerSearchBar
+import com.zhangke.utopia.explore.screens.search.bar.ExplorerSearchBar
 
 class ExplorerHomeScreen : Screen {
 

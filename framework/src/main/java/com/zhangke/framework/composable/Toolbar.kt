@@ -2,6 +2,7 @@ package com.zhangke.framework.composable
 
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
@@ -37,7 +38,7 @@ fun Toolbar(
         {
             IconButton(onClick = { onBackClick() }) {
                 Icon(
-                    painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
+                    painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.ArrowBack),
                     "back"
                 )
             }

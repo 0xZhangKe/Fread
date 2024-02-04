@@ -8,6 +8,7 @@ data class Hashtag(
     val description: TextString,
     val history: History,
     val following: Boolean,
+    val protocol: StatusProviderProtocol,
 ) {
 
     data class History(

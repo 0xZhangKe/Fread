@@ -6,6 +6,7 @@ import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -55,6 +56,10 @@ class StatusScreenProvider(
     fun getUserDetailRoute(uri: FormalUri): String? {
         return providerList.mapFirstOrNull { it.getUserDetailRoute(uri) }
     }
+
+    fun getTagTimelineScreenRoute(tag: Hashtag): String?{
+        return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(tag) }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -75,4 +80,6 @@ interface IStatusScreenProvider {
     fun getNotificationScreen(account: LoggedAccount): PagerTab?
 
     fun getUserDetailRoute(uri: FormalUri): String?
+
+    fun getTagTimelineScreenRoute(tag: Hashtag): String?
 }

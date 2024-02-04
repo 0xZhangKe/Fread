@@ -19,16 +19,16 @@ class SearchEngine(
         return engineList.map { it.searchStatus(query, maxId) }.collect()
     }
 
-    suspend fun searchHashtag(query: String, maxId: String?): Result<List<Hashtag>> {
-        return engineList.map { it.searchHashtag(query, maxId) }.collect()
+    suspend fun searchHashtag(query: String, offset: Int?): Result<List<Hashtag>> {
+        return engineList.map { it.searchHashtag(query, offset) }.collect()
     }
 
-    suspend fun searchAuthor(query: String, maxId: String?): Result<List<BlogAuthor>> {
-        return engineList.map { it.searchAuthor(query, maxId) }.collect()
+    suspend fun searchAuthor(query: String, offset: Int?): Result<List<BlogAuthor>> {
+        return engineList.map { it.searchAuthor(query, offset) }.collect()
     }
 
-    suspend fun searchPlatform(query: String, maxId: String?): Result<List<BlogPlatform>> {
-        return engineList.map { it.searchPlatform(query, maxId) }.collect()
+    suspend fun searchPlatform(query: String, offset: Int?): Result<List<BlogPlatform>> {
+        return engineList.map { it.searchPlatform(query, offset) }.collect()
     }
 
     suspend fun searchSource(query: String): Result<List<StatusSource>> {
@@ -42,11 +42,11 @@ interface ISearchEngine {
 
     suspend fun searchStatus(query: String, maxId: String?): Result<List<Status>>
 
-    suspend fun searchHashtag(query: String, maxId: String?): Result<List<Hashtag>>
+    suspend fun searchHashtag(query: String, offset: Int?): Result<List<Hashtag>>
 
-    suspend fun searchAuthor(query: String, maxId: String?): Result<List<BlogAuthor>>
+    suspend fun searchAuthor(query: String, offset: Int?): Result<List<BlogAuthor>>
 
-    suspend fun searchPlatform(query: String, maxId: String?): Result<List<BlogPlatform>>
+    suspend fun searchPlatform(query: String, offset: Int?): Result<List<BlogPlatform>>
 
     suspend fun searchSource(query: String): Result<List<StatusSource>>
 }

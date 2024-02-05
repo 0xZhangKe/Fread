@@ -38,7 +38,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.utopia.explore.R
@@ -123,7 +122,7 @@ fun Screen.ExplorerSearchBar() {
         }
     }
     ConsumeFlow(viewModel.openScreenFlow) {
-        navigator.tryPush(it)
+        navigator.push(it)
     }
 }
 

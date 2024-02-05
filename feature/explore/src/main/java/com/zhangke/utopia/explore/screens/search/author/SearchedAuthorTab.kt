@@ -20,9 +20,9 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.explore.R
-import com.zhangke.utopia.explore.screens.search.SearchedResultUiState
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.BlogAuthorUi
 
@@ -61,23 +61,23 @@ class SearchedAuthorTab(private val query: String) : PagerTab {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun SearchedAuthorContent(
-        uiState: SearchedResultUiState<BlogAuthor>,
+        uiState: LoadableUiState<BlogAuthor>,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onUserInfoClick: (BlogAuthor) -> Unit,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
-            refreshing = uiState.searching,
+            refreshing = uiState.refreshing,
             onRefresh = onRefresh,
             onLoadMore = onLoadMore,
         )
         LoadableInlineVideoLazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            refreshing = uiState.searching,
+            refreshing = uiState.refreshing,
             loading = uiState.loadMoreState == LoadState.Loading,
         ) {
-            itemsIndexed(uiState.resultList) { _, item ->
+            itemsIndexed(uiState.dataList) { _, item ->
                 BlogAuthorUi(
                     modifier = Modifier.fillMaxWidth(),
                     author = item,

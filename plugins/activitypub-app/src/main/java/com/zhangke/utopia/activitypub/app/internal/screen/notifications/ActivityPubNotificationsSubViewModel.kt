@@ -5,6 +5,7 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.controller.LoadableController
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -36,6 +37,8 @@ class ActivityPubNotificationsSubViewModel(
     private val notificationsRepo: NotificationsRepo,
     private val clientManager: ActivityPubClientManager,
 ) : SubViewModel() {
+
+    private val loadableController = LoadableController<NotificationUiState>(viewModelScope)
 
     private val _uiState = MutableStateFlow(
         ActivityPubNotificationsUiState(

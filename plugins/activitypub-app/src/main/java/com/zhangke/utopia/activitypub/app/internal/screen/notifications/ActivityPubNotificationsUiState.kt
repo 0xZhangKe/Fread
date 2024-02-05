@@ -1,21 +1,16 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
-import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.uri.FormalUri
 import java.util.Date
 
 data class ActivityPubNotificationsUiState(
-    val notificationList: List<NotificationUiState>,
     val inMentionsTab: Boolean,
-    val refreshing: Boolean,
-    val loadMoreState: LoadState,
-    val errorMessage: TextString?,
+    val loadableUiState: LoadableUiState<NotificationUiState>,
 )
 
 data class NotificationUiState(

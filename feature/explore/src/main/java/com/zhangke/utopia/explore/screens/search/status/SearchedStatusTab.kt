@@ -22,13 +22,13 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.explore.R
-import com.zhangke.utopia.explore.screens.search.SearchedResultUiState
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 
@@ -70,24 +70,24 @@ class SearchedStatusTab(private val query: String) : PagerTab {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun SearchStatusTabContent(
-        uiState: SearchedResultUiState<StatusUiState>,
+        uiState: LoadableUiState<StatusUiState>,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
-            refreshing = uiState.searching,
+            refreshing = uiState.refreshing,
             onRefresh = onRefresh,
             onLoadMore = onLoadMore,
         )
         LoadableInlineVideoLazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            refreshing = uiState.searching,
+            refreshing = uiState.refreshing,
             loading = uiState.loadMoreState == LoadState.Loading,
         ) {
-            itemsIndexed(uiState.resultList) { index, item ->
+            itemsIndexed(uiState.dataList) { index, item ->
                 FeedsStatusNode(
                     modifier = Modifier.fillMaxWidth(),
                     status = item,

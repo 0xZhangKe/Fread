@@ -32,6 +32,6 @@ class TrendingStatusTab(private val baseUrl: FormalBaseUrl) : PagerTab {
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
         )
-        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.snackMessage)
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
 }

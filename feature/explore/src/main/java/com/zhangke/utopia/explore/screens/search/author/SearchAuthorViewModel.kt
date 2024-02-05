@@ -2,9 +2,9 @@ package com.zhangke.utopia.explore.screens.search.author
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.controller.CommonLoadableController
+import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.controller.LoadableController
-import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -18,14 +18,14 @@ open class SearchAuthorViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    private val loadableController = LoadableController<BlogAuthor>(viewModelScope)
-    val uiState: StateFlow<LoadableUiState<BlogAuthor>> get() = loadableController.uiState
+    private val loadableController = CommonLoadableController<BlogAuthor>(viewModelScope)
+    val uiState: StateFlow<CommonLoadableUiState<BlogAuthor>> get() = loadableController.uiState
 
     private val _openScreenFlow = MutableSharedFlow<Any>()
     val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
 
     fun onRefresh(query: String) {
-        loadableController.refresh {
+        loadableController.onRefresh {
             statusProvider.searchEngine.searchAuthor(query, null)
         }
     }
@@ -33,7 +33,7 @@ open class SearchAuthorViewModel @Inject constructor(
     fun onLoadMore(query: String) {
         val offset = uiState.value.dataList.size
         if (offset == 0) return
-        loadableController.loadMore {
+        loadableController.onLoadMore {
             statusProvider.searchEngine.searchAuthor(query, offset)
         }
     }

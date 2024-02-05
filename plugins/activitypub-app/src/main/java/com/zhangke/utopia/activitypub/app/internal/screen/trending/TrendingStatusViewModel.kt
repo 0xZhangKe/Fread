@@ -3,30 +3,30 @@ package com.zhangke.utopia.activitypub.app.internal.screen.trending
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class TrendingStatusViewModel @Inject constructor(
-    private val getServerTrending: GetServerTrendingUseCase,
+    private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
-    private val statusInteractive: StatusInteractiveUseCase,
+    private val interactiveHandler: InteractiveHandler,
 ) : ContainerViewModel<TrendingStatusSubViewModel, TrendingStatusViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): TrendingStatusSubViewModel {
         return TrendingStatusSubViewModel(
-            getServerTrending = getServerTrending,
+            clientManager = clientManager,
             statusAdapter = statusAdapter,
             buildStatusUiState = buildStatusUiState,
             platformRepo = platformRepo,
-            statusInteractive = statusInteractive,
             baseUrl = params.baseUrl,
+            interactiveHandler = interactiveHandler,
         )
     }
 

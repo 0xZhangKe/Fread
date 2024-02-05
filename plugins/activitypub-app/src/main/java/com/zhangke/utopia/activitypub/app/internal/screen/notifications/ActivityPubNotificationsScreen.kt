@@ -96,7 +96,7 @@ class ActivityPubNotificationsScreen(
                 )
             ) {
                 itemsIndexed(
-                    items = uiState.notificationList,
+                    items = uiState.dataList,
                 ) { index, notification ->
                     StatusNotificationUi(
                         modifier = Modifier.fillMaxWidth(),

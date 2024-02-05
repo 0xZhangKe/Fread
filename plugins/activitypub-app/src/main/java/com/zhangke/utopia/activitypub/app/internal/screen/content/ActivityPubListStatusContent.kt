@@ -21,18 +21,20 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.textString
+import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubStatusUi
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.status.model.Status
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ActivityPubListStatusContent(
-    uiState: FeedsStatusUiState,
+    uiState: CommonLoadableUiState<StatusUiState>,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
@@ -64,7 +66,7 @@ internal fun ActivityPubListStatusContent(
             )
         ) {
             itemsIndexed(
-                items = uiState.status,
+                items = uiState.dataList,
                 key = { _, item ->
                     item.status.id
                 },
@@ -76,7 +78,7 @@ internal fun ActivityPubListStatusContent(
                     indexInList = index,
                 )
             }
-            if (!errorMessage.isNullOrEmpty() && uiState.status.isEmpty()) {
+            if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {
                 item {
                     Box(
                         modifier = Modifier

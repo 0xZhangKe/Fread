@@ -3,7 +3,7 @@ package com.zhangke.utopia.explore.screens.search.status
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.controller.LoadableUiState
+import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -30,21 +30,21 @@ open class SearchStatusViewModel @Inject constructor(
         buildStatusUiState = buildStatusUiState,
     )
 
-    val uiState: StateFlow<LoadableUiState<StatusUiState>> get() = loadStatusController.uiState
+    val uiState: StateFlow<CommonLoadableUiState<StatusUiState>> get() = loadStatusController.uiState
 
     val errorMessageFlow: SharedFlow<TextString> = loadStatusController.errorMessageFlow
 
     val openScreenFlow: SharedFlow<Any> get() = loadStatusController.openScreenFlow
 
     fun onRefresh(query: String) {
-        loadStatusController.refresh {
+        loadStatusController.onRefresh {
             statusProvider.searchEngine
                 .searchStatus(query, null)
         }
     }
 
     fun onLoadMore(query: String) {
-        loadStatusController.loadMore {
+        loadStatusController.onLoadMore {
             statusProvider.searchEngine.searchStatus(query, it)
         }
     }

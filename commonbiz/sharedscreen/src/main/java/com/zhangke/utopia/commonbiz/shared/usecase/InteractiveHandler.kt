@@ -3,6 +3,7 @@ package com.zhangke.utopia.commonbiz.shared.usecase
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -91,14 +92,14 @@ suspend fun InteractiveHandleResult.handle(
 }
 
 suspend fun InteractiveHandleResult.handle(
-    mutableUiState: MutableStateFlow<LoadableUiState<StatusUiState>>,
+    mutableUiState: MutableStateFlow<CommonLoadableUiState<StatusUiState>>,
     messageFlow: MutableSharedFlow<TextString>,
     openScreenFlow: MutableSharedFlow<Screen>,
 ) {
     handle(
         uiStatusUpdater = { newStatus ->
             mutableUiState.update {
-                it.copy(
+                it.copyObject(
                     dataList = it.dataList.updateStatus(newStatus)
                 )
             }

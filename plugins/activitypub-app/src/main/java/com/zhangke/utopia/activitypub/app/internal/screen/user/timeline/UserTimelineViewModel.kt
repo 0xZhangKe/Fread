@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
@@ -17,6 +18,8 @@ import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserId
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.screen.content.FeedsStatusUiState
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.model.updateById
@@ -43,6 +46,7 @@ class UserTimelineViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     private val baseUrlManager: BaseUrlManager,
     private val statusInteractive: StatusInteractiveUseCase,
+    private val interactiveHandler: ActivityPubInteractiveHandler,
     @Assisted val userUriInsights: UserUriInsights,
 ) : ViewModel() {
 
@@ -51,15 +55,17 @@ class UserTimelineViewModel @AssistedInject constructor(
         fun create(userUriInsights: UserUriInsights): UserTimelineViewModel
     }
 
-    private val _uiState = MutableStateFlow(
-        FeedsStatusUiState(
-            status = emptyList(),
-            refreshing = false,
-            loadMoreState = LoadState.Idle,
-            errorMessage = null,
-        )
+    private val loadableController = ActivityPubStatusLoadController(
+        statusAdapter = statusAdapter,
+        platformRepo = platformRepo,
+        coroutineScope = viewModelScope,
+        interactiveHandler = interactiveHandler,
+        buildStatusUiState = buildStatusUiState,
     )
-    val uiState = _uiState.asStateFlow()
+
+    val uiState = loadableController.uiState
+    val errorMessageFlow = loadableController.errorMessageFlow
+
 
     private val _messageFlow = MutableSharedFlow<TextString>()
     val messageFlow = _messageFlow.asSharedFlow()

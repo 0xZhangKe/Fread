@@ -1,12 +1,14 @@
 package com.zhangke.utopia.explore.screens.search.bar
 
 import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
@@ -23,8 +25,8 @@ import javax.inject.Inject
 @HiltViewModel
 class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
+    private val interactiveHandler: InteractiveHandler,
 ) : ViewModel() {
 
     private var searchJob: Job? = null
@@ -40,8 +42,8 @@ class SearchBarViewModel @Inject constructor(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
-    private val _openScreenFlow = MutableSharedFlow<Any>()
-    val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
+    private val _openScreenFlow = MutableSharedFlow<Screen>()
+    val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
 
     fun onSearchQueryChanged(query: String) {
         if (query == _uiState.value.query) return
@@ -68,39 +70,31 @@ class SearchBarViewModel @Inject constructor(
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
         launchInViewModel {
-            if (uiInteraction is StatusUiInteraction.Comment) {
-                statusProvider.screenProvider
-                    .getReplyBlogScreen(status.intrinsicBlog)
-                    ?.let {
-                        _openScreenFlow.emit(it)
-                    }
-                return@launchInViewModel
-            }
-            val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
-            statusProvider.statusResolver
-                .interactive(status, interaction)
-                .map { buildStatusUiState(it) }
-                .onSuccess { newStatus ->
-                    val currentValue = _uiState.value
-                    val newResult = currentValue.resultList.map {
-                        if (it !is SearchResultUiState.SearchedStatus) return@map it
-                        if (it.status.status.id != status.id) return@map it
-                        return@map it.copy(status = newStatus)
-                    }
-                    _uiState.value = currentValue.copy(
-                        resultList = newResult
-                    )
-                }.onFailure { e ->
-                    e.message?.let { message ->
-                        _errorMessageFlow.emit(textOf(message))
-                    }
-                }
+            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
         }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        val route = statusProvider.screenProvider.getUserDetailRoute(blogAuthor.uri) ?: return
         launchInViewModel {
-            _openScreenFlow.emit(route)
+            interactiveHandler.onUserInfoClick(blogAuthor)
+                .handleResult()
         }
+    }
+
+    private suspend fun InteractiveHandleResult.handleResult() {
+        handle(
+            messageFlow = _errorMessageFlow,
+            openScreenFlow = _openScreenFlow,
+            uiStatusUpdater = { newUiState ->
+                _uiState.update { currentUiState ->
+                    currentUiState.copy(
+                        resultList = currentUiState.resultList.map {
+                            if (it !is SearchResultUiState.SearchedStatus) return@map it
+                            if (it.status.status.id != newUiState.status.id) return@map it
+                            return@map it.copy(status = newUiState)
+                        }
+                    )
+                }
+            }
+        )
     }
 }

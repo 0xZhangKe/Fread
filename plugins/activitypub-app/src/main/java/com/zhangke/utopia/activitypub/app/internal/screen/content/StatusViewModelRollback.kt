@@ -12,8 +12,11 @@ import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlat
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.common.status.model.updateStatus
+import com.zhangke.utopia.common.status.model.updateById
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.Job
@@ -30,12 +33,13 @@ import kotlinx.coroutines.flow.update
  * 具体的加载细节会交给子类实现。
  * 该类主要包含 UiState 管理，刷新和加载更多的逻辑。
  */
-abstract class StatusViewModel(
+abstract class StatusViewModelRollback(
     private val platformRepo: ActivityPubPlatformRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusInteractive: StatusInteractiveUseCase,
     protected val serverBaseUrl: FormalBaseUrl,
+    private val statusInteractiveHandler: InteractiveHandler,
 ) : SubViewModel() {
 
     abstract suspend fun getLocalStatus(): List<ActivityPubStatusEntity>
@@ -162,7 +166,9 @@ abstract class StatusViewModel(
                 .onSuccess { newStatus ->
                     mutableUiState.update { current ->
                         current.copy(
-                            status = current.status.updateStatus(newStatus.toUiState(status.platform))
+                            status = current.status.updateById(newStatus.id) {
+                                newStatus.toUiState(status.platform)
+                            }
                         )
                     }
                     updateLocalStatus(newStatus)

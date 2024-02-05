@@ -1,14 +1,18 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.status.model.updateById
+import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.ContentConfig
@@ -26,6 +30,7 @@ class MixedContentSubViewModel(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
     private val configId: Long,
+    private val interactiveHandler: InteractiveHandler,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(MixedContentUiState.initialUiState)
@@ -34,8 +39,8 @@ class MixedContentSubViewModel(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
 
-    private val _openScreenFlow = MutableSharedFlow<Any>()
-    val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
+    private val _openScreenFlow = MutableSharedFlow<Screen>()
+    val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
 
     private var mixedContent: ContentConfig.MixedContent? = null
 
@@ -154,40 +159,13 @@ class MixedContentSubViewModel(
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
         launchInViewModel {
-            if (uiInteraction is StatusUiInteraction.Comment) {
-                statusProvider.screenProvider
-                    .getReplyBlogScreen(status.intrinsicBlog)
-                    ?.let {
-                        _openScreenFlow.emit(it)
-                    }
-                return@launchInViewModel
-            }
-            val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
-            statusProvider.statusResolver
-                .interactive(status, interaction)
-                .onSuccess { newStatus ->
-                    feedsRepo.updateStatus(newStatus)
-                    val currentValue = _uiState.value
-                    _uiState.value = currentValue.copy(
-                        feeds = currentValue.feeds.updateById(newStatus.id) { state ->
-                            buildStatusUiState(newStatus)
-                        }
-                    )
-                }.onFailure {
-                    it.message?.takeIf { it.isNotEmpty() }
-                        ?.let { message ->
-                            _errorMessageFlow.emit(textOf(message))
-                        }
-                }
+            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
         }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        statusProvider.screenProvider.getUserDetailRoute(blogAuthor.uri)
-            ?.let {
-                launchInViewModel {
-                    _openScreenFlow.emit(it)
-                }
-            }
+        launchInViewModel {
+            interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
+        }
     }
 
     private suspend fun clearFeedsWhenAccountChanged() {
@@ -202,5 +180,20 @@ class MixedContentSubViewModel(
                 delay(200)
                 loadPreviousStatus()
             }
+    }
+
+    private suspend fun InteractiveHandleResult.handleResult() {
+        this.handle(
+            messageFlow = _errorMessageFlow,
+            openScreenFlow = _openScreenFlow,
+            uiStatusUpdater = { newUiState ->
+                feedsRepo.updateStatus(newUiState.status)
+                _uiState.update { currentUiState ->
+                    currentUiState.copy(
+                        feeds = currentUiState.feeds.updateStatus(newUiState)
+                    )
+                }
+            }
+        )
     }
 }

@@ -28,10 +28,13 @@ class WebFinger private constructor(
     }
 
     override fun hashCode(): Int {
-        return name.hashCode() + host.hashCode()
+        var result = name.hashCode()
+        result = 31 * result + host.hashCode()
+        return result
     }
 
     override fun equals(other: Any?): Boolean {
+        if (other === this) return true
         if (other == null) return false
         if (other !is WebFinger) return false
         return (other.name == name) && (other.host == host)

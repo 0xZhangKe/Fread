@@ -59,10 +59,14 @@ class FormalUri private constructor(
     }
 
     override fun hashCode(): Int {
-        return host.hashCode() + path.hashCode() + queries.hashCode()
+        var result = host.hashCode()
+        result = 31 * result + path.hashCode()
+        result = 31 * result + queries.hashCode()
+        return result
     }
 
     override fun equals(other: Any?): Boolean {
+        if (other === this) return true
         if (other == null) return false
         if (other !is FormalUri) return false
         return (host == other.host) && (path == other.path) && (queries == other.queries)

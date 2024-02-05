@@ -9,6 +9,18 @@ data class StatusUiState(
     val moreInteractions: List<StatusUiInteraction>,
 )
 
+fun List<StatusUiState>.updateStatus(
+    status: StatusUiState,
+): List<StatusUiState> {
+    return map {
+        if (it.status.id == status.status.id) {
+            status
+        } else {
+            it
+        }
+    }
+}
+
 inline fun List<StatusUiState>.updateById(
     statusId: String,
     block: (StatusUiState) -> StatusUiState,

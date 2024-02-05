@@ -17,8 +17,8 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.utopia.explore.R
-import com.zhangke.utopia.explore.screens.search.SearchedResultUiState
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 
@@ -52,22 +52,22 @@ class SearchedHashtagTab(private val query: String) : PagerTab {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun SearchedHashtagContent(
-        uiState: SearchedResultUiState<Hashtag>,
+        uiState: LoadableUiState<Hashtag>,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
-            refreshing = uiState.searching,
+            refreshing = uiState.refreshing,
             onRefresh = onRefresh,
             onLoadMore = onLoadMore,
         )
         LoadableInlineVideoLazyColumn(
             modifier = Modifier.fillMaxSize(),
             state = state,
-            refreshing = uiState.searching,
+            refreshing = uiState.refreshing,
             loading = uiState.loadMoreState == LoadState.Loading,
         ) {
-            itemsIndexed(uiState.resultList) { _, item ->
+            itemsIndexed(uiState.dataList) { _, item ->
                 HashtagUi(
                     modifier = Modifier.fillMaxWidth(),
                     tag = item,

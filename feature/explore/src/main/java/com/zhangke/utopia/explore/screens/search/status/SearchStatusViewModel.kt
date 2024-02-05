@@ -1,88 +1,59 @@
 package com.zhangke.utopia.explore.screens.search.status
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.textOf
-import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.utopia.common.status.model.SearchResultUiState
+import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.explore.screens.search.BaseSearchViewMode
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
 open class SearchStatusViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-) : BaseSearchViewMode<StatusUiState>() {
+    interactiveHandler: InteractiveHandler,
+    buildStatusUiState: BuildStatusUiStateUseCase,
+) : ViewModel() {
 
-    private val _errorMessageFlow = MutableSharedFlow<TextString>()
-    val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
+    private val loadStatusController = LoadableStatusController(
+        coroutineScope = viewModelScope,
+        interactiveHandler = interactiveHandler,
+        buildStatusUiState = buildStatusUiState,
+    )
 
-    private val _openScreenFlow = MutableSharedFlow<Any>()
-    val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
+    val uiState: StateFlow<LoadableUiState<StatusUiState>> get() = loadStatusController.uiState
+
+    val errorMessageFlow: SharedFlow<TextString> = loadStatusController.errorMessageFlow
+
+    val openScreenFlow: SharedFlow<Any> get() = loadStatusController.openScreenFlow
 
     fun onRefresh(query: String) {
-        refresh {
+        loadStatusController.refresh {
             statusProvider.searchEngine
                 .searchStatus(query, null)
-                .map { list ->
-                    list.map { buildStatusUiState(it) }
-                }
         }
     }
 
     fun onLoadMore(query: String) {
-        val latestId = uiState.value.resultList.lastOrNull()?.status?.id ?: return
-        loadMore {
-            statusProvider.searchEngine
-                .searchStatus(query, latestId)
-                .map { list ->
-                    list.map { buildStatusUiState(it) }
-                }
+        loadStatusController.loadMore {
+            statusProvider.searchEngine.searchStatus(query, it)
         }
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
-        launchInViewModel {
-            if (uiInteraction is StatusUiInteraction.Comment) {
-                statusProvider.screenProvider
-                    .getReplyBlogScreen(status.intrinsicBlog)
-                    ?.let {
-                        _openScreenFlow.emit(it)
-                    }
-                return@launchInViewModel
-            }
-            val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
-            statusProvider.statusResolver
-                .interactive(status, interaction)
-                .map { buildStatusUiState(it) }
-                .onSuccess { newStatus ->
-                    val currentValue = uiState.value
-                    val newResult = currentValue.resultList.map {
-                        if (it.status.id != status.id) return@map it
-                        return@map newStatus
-                    }
-                    mutableUiState.value = currentValue.copy(
-                        resultList = newResult
-                    )
-                }.onFailure { e ->
-                    e.message?.let { message ->
-                        _errorMessageFlow.emit(textOf(message))
-                    }
-                }
-        }
+    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+        loadStatusController.onInteractive(status, uiInteraction)
+    }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        val route = statusProvider.screenProvider.getUserDetailRoute(blogAuthor.uri) ?: return
-        launchInViewModel {
-            _openScreenFlow.emit(route)
-        }
+        loadStatusController.onUserInfoClick(blogAuthor)
     }
 }

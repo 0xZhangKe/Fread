@@ -10,17 +10,20 @@ import java.net.URL
 class FormalBaseUrl private constructor(
     val scheme: String,
     val host: String,
-): Parcelable {
+) : Parcelable {
 
     override fun toString(): String {
         return "$scheme$SCHEME_SEPARATOR$host"
     }
 
     override fun hashCode(): Int {
-        return scheme.hashCode() + host.hashCode()
+        var result = scheme.hashCode()
+        result = 31 * result + host.hashCode()
+        return result
     }
 
     override fun equals(other: Any?): Boolean {
+        if (other === this) return true
         if (other == null) return false
         if (other !is FormalBaseUrl) return false
         return (other.scheme == scheme) && (other.host == host)

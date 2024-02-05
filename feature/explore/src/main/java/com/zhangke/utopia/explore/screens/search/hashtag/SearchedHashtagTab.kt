@@ -14,10 +14,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
@@ -52,7 +52,7 @@ class SearchedHashtagTab(private val query: String) : PagerTab {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun SearchedHashtagContent(
-        uiState: LoadableUiState<Hashtag>,
+        uiState: CommonLoadableUiState<Hashtag>,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
     ) {

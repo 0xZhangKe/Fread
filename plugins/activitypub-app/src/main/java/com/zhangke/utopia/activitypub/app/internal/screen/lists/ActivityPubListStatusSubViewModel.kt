@@ -1,57 +1,86 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.lists
 
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
-import com.zhangke.utopia.activitypub.app.internal.screen.content.StatusViewModel
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.status.model.Status
 
 class ActivityPubListStatusSubViewModel(
     platformRepo: ActivityPubPlatformRepo,
     private val listStatusRepo: ListStatusRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
     statusAdapter: ActivityPubStatusAdapter,
-    statusInteractive: StatusInteractiveUseCase,
-    serverBaseUrl: FormalBaseUrl,
+    interactiveHandler: ActivityPubInteractiveHandler,
+    private val serverBaseUrl: FormalBaseUrl,
     private val listId: String,
-) : StatusViewModel(
-    platformRepo = platformRepo,
-    buildStatusUiState = buildStatusUiState,
-    statusAdapter = statusAdapter,
-    statusInteractive = statusInteractive,
-    serverBaseUrl = serverBaseUrl,
-) {
+) : ViewModel() {
+
+    private val loadableController = ActivityPubStatusLoadController(
+        statusAdapter = statusAdapter,
+        platformRepo = platformRepo,
+        coroutineScope = viewModelScope,
+        interactiveHandler = interactiveHandler,
+        buildStatusUiState = buildStatusUiState,
+        updateStatus = ::updateLocalStatus,
+    )
+
+    val uiState = loadableController.uiState
+    val errorMessageFlow = loadableController.errorMessageFlow
 
     init {
-        prepare()
+        loadableController.initStatusData(
+            baseUrl = serverBaseUrl,
+            getStatusFromServer = ::getRemoteStatus,
+            getStatusFromLocal = ::getLocalStatus,
+        )
     }
 
-    override suspend fun getLocalStatus(): List<ActivityPubStatusEntity> {
+    fun onRefresh() {
+        loadableController.onRefresh(serverBaseUrl) {
+            getRemoteStatus()
+        }
+    }
+
+    fun onLoadMore() {
+        loadableController.onLoadMore(serverBaseUrl) { maxId ->
+            listStatusRepo.loadMore(
+                serverBaseUrl = serverBaseUrl,
+                listId = listId,
+                maxId = maxId,
+            )
+        }
+    }
+
+    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
+        loadableController.onInteractive(status, interaction)
+    }
+
+    private suspend fun getLocalStatus(): List<ActivityPubStatusEntity> {
         return listStatusRepo.getLocalStatus(
             serverBaseUrl = serverBaseUrl,
             listId = listId,
         )
     }
 
-    override suspend fun getRemoteStatus(): Result<List<ActivityPubStatusEntity>> {
+    private suspend fun getRemoteStatus(): Result<List<ActivityPubStatusEntity>> {
         return listStatusRepo.getRemoteStatus(
             serverBaseUrl = serverBaseUrl,
             listId = listId,
         )
     }
 
-    override suspend fun loadMore(maxId: String): Result<List<ActivityPubStatusEntity>> {
-        return listStatusRepo.loadMore(
-            serverBaseUrl = serverBaseUrl,
-            listId = listId,
-            maxId = maxId,
-        )
-    }
-
-    override suspend fun updateLocalStatus(status: ActivityPubStatusEntity) {
-        listStatusRepo.updateEntity(status)
+    private fun updateLocalStatus(status: ActivityPubStatusEntity) {
+        launchInViewModel {
+            listStatusRepo.updateEntity(status)
+        }
     }
 }

@@ -3,8 +3,6 @@ package com.zhangke.utopia.commonbiz.shared.utils
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
-import com.zhangke.framework.controller.LoadableController
-import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -16,60 +14,84 @@ import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-class LoadableStatusController(
-    private val coroutineScope: CoroutineScope,
-    private val interactiveHandler: InteractiveHandler,
+open class LoadableStatusController(
+    protected val coroutineScope: CoroutineScope,
+    private val interactiveHandler: InteractiveHandler?,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
 ) {
 
     private val loadableController = CommonLoadableController<StatusUiState>(coroutineScope)
-    val uiState: StateFlow<LoadableUiState<StatusUiState>> get() = loadableController.uiState
 
-    private val _errorMessageFlow = MutableSharedFlow<TextString>()
-    val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
+    val mutableUiState = loadableController.mutableUiState
+    val uiState = loadableController.uiState
+
+    protected val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
+    val errorMessageFlow: SharedFlow<TextString> = mutableErrorMessageFlow
 
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
 
-    fun refresh(
+    open fun initData(
+        getDataFromServer: suspend () -> Result<List<Status>>,
+        getDataFromLocal: (suspend () -> List<Status>)? = null,
+    ) {
+        loadableController.initData(
+            getDataFromServer = {
+                getDataFromServer().map { list ->
+                    list.map { buildStatusUiState(it) }
+                }
+            },
+            getDataFromLocal = getDataFromLocal?.let {
+                {
+                    it().map { buildStatusUiState(it) }
+                }
+            },
+        )
+    }
+
+    open fun onRefresh(
         refreshFunction: suspend () -> Result<List<Status>>,
     ) {
-        loadableController.refresh {
+        loadableController.onRefresh {
             refreshFunction().map { list ->
                 list.map { buildStatusUiState(it) }
             }
         }
     }
 
-    fun loadMore(
+    open fun onLoadMore(
         loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>,
     ) {
         val latestId = loadableController.uiState.value.dataList.lastOrNull()?.status?.id ?: return
-        loadableController.loadMore {
+        loadableController.onLoadMore {
             loadMoreFunction(latestId).map { list ->
                 list.map { buildStatusUiState(it) }
             }
         }
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+    open fun onInteractive(
+        status: Status,
+        uiInteraction: StatusUiInteraction,
+    ) {
+        interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
-            interactiveHandler.onStatusInteractive(status, uiInteraction).handle()
+            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
         }
     }
 
-    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+    open fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
-            interactiveHandler.onUserInfoClick(blogAuthor).handle()
+            interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
         }
     }
 
-    private suspend fun InteractiveHandleResult.handle() {
+    private suspend fun InteractiveHandleResult.handleResult() {
         handle(
-            messageFlow = _errorMessageFlow,
+            messageFlow = mutableErrorMessageFlow,
             openScreenFlow = _openScreenFlow,
             mutableUiState = loadableController.mutableUiState,
         )

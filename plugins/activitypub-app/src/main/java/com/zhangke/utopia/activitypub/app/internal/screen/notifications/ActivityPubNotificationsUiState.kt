@@ -1,7 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
+import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.LoadableUiState
+import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -10,8 +12,26 @@ import java.util.Date
 
 data class ActivityPubNotificationsUiState(
     val inMentionsTab: Boolean,
-    val loadableUiState: LoadableUiState<NotificationUiState>,
-)
+    override val dataList: List<NotificationUiState>,
+    override val refreshing: Boolean,
+    override val loadMoreState: LoadState,
+    override val errorMessage: TextString?,
+) : LoadableUiState<NotificationUiState, ActivityPubNotificationsUiState> {
+
+    override fun copyObject(
+        dataList: List<NotificationUiState>,
+        refreshing: Boolean,
+        loadMoreState: LoadState,
+        errorMessage: TextString?
+    ): ActivityPubNotificationsUiState {
+        return copy(
+            dataList = dataList,
+            refreshing = refreshing,
+            loadMoreState = loadMoreState,
+            errorMessage = errorMessage,
+        )
+    }
+}
 
 data class NotificationUiState(
     val id: String,

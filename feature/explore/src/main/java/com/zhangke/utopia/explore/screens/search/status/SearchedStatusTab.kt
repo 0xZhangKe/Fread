@@ -19,10 +19,10 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -70,7 +70,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun SearchStatusTabContent(
-        uiState: LoadableUiState<StatusUiState>,
+        uiState: CommonLoadableUiState<StatusUiState>,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onRefresh: () -> Unit,

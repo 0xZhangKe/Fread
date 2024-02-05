@@ -1,47 +1,67 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.trending
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.screen.content.StatusViewModel
-import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendingUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
+import com.zhangke.utopia.common.status.StatusConfigurationDefault
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
+import com.zhangke.utopia.status.status.model.Status
+import kotlinx.coroutines.flow.StateFlow
 
 class TrendingStatusSubViewModel(
-    private val getServerTrending: GetServerTrendingUseCase,
-    private val statusAdapter: ActivityPubStatusAdapter,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val platformRepo: ActivityPubPlatformRepo,
-    private val statusInteractive: StatusInteractiveUseCase,
+    private val clientManager: ActivityPubClientManager,
+    statusAdapter: ActivityPubStatusAdapter,
+    buildStatusUiState: BuildStatusUiStateUseCase,
+    platformRepo: ActivityPubPlatformRepo,
+    interactiveHandler: ActivityPubInteractiveHandler,
     private val baseUrl: FormalBaseUrl,
-) : StatusViewModel(
-    platformRepo = platformRepo,
-    buildStatusUiState = buildStatusUiState,
-    statusAdapter = statusAdapter,
-    statusInteractive = statusInteractive,
-    serverBaseUrl = baseUrl,
-) {
+) : SubViewModel() {
 
-    init {
-        prepare()
+    private val loadableController = ActivityPubStatusLoadController(
+        statusAdapter = statusAdapter,
+        platformRepo = platformRepo,
+        coroutineScope = viewModelScope,
+        interactiveHandler = interactiveHandler,
+        buildStatusUiState = buildStatusUiState,
+    )
+
+    val uiState: StateFlow<CommonLoadableUiState<StatusUiState>> = loadableController.uiState
+
+    val errorMessageFlow = loadableController.errorMessageFlow
+
+    fun onRefresh() {
+        loadableController.onRefresh(baseUrl) {
+            getServerTrending(0)
+        }
     }
 
-    override suspend fun getLocalStatus(): List<ActivityPubStatusEntity> {
-        return emptyList()
+    fun onLoadMore() {
+        val offset = uiState.value.dataList.size
+        if (offset == 0) return
+        loadableController.onLoadMore(baseUrl) {
+            getServerTrending(offset)
+        }
     }
 
-    override suspend fun getRemoteStatus(): Result<List<ActivityPubStatusEntity>> {
-        return getServerTrending(baseUrl)
+    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
+        loadableController.onInteractive(status, interaction)
     }
 
-    override suspend fun loadMore(maxId: String): Result<List<ActivityPubStatusEntity>> {
-        return getServerTrending(
-            baseUrl = baseUrl,
-            offset = mutableUiState.value.status.size,
-        )
+    private suspend fun getServerTrending(offset: Int): Result<List<ActivityPubStatusEntity>> {
+        return clientManager.getClient(baseUrl)
+            .instanceRepo
+            .getTrendsStatuses(
+                limit = StatusConfigurationDefault.config.loadFromServerLimit,
+                offset = offset,
+            )
     }
-
-    override suspend fun updateLocalStatus(status: ActivityPubStatusEntity) {}
 }

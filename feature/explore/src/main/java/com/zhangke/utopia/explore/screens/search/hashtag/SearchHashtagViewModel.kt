@@ -2,8 +2,8 @@ package com.zhangke.utopia.explore.screens.search.hashtag
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.zhangke.framework.controller.LoadableController
-import com.zhangke.framework.controller.LoadableUiState
+import com.zhangke.framework.controller.CommonLoadableController
+import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.Hashtag
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -15,12 +15,12 @@ open class SearchHashtagViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    private val loadableController = LoadableController<Hashtag>(viewModelScope)
+    private val loadableController = CommonLoadableController<Hashtag>(viewModelScope)
 
-    val uiState: StateFlow<LoadableUiState<Hashtag>> get() = loadableController.uiState
+    val uiState: StateFlow<CommonLoadableUiState<Hashtag>> get() = loadableController.uiState
 
     fun onRefresh(query: String) {
-        loadableController.refresh {
+        loadableController.onRefresh {
             statusProvider.searchEngine.searchHashtag(query, null)
         }
     }
@@ -28,7 +28,7 @@ open class SearchHashtagViewModel @Inject constructor(
     fun onLoadMore(query: String) {
         val offset = uiState.value.dataList.size
         if (offset == 0) return
-        loadableController.loadMore {
+        loadableController.onLoadMore {
             statusProvider.searchEngine.searchHashtag(query, offset)
         }
     }

@@ -9,21 +9,20 @@ data class CommonLoadableUiState<T>(
     override val refreshing: Boolean,
     override val loadMoreState: LoadState,
     override val errorMessage: TextString?,
-) : LoadableUiState<T> {
+) : LoadableUiState<T, CommonLoadableUiState<T>> {
 
-    override fun <S : LoadableUiState<T>> copyObject(
+    override fun copyObject(
         dataList: List<T>,
         refreshing: Boolean,
         loadMoreState: LoadState,
-        errorMessage: TextString?,
-    ): S {
-        val coped = copy(
+        errorMessage: TextString?
+    ): CommonLoadableUiState<T> {
+        return copy(
             dataList = dataList,
             refreshing = refreshing,
             loadMoreState = loadMoreState,
             errorMessage = errorMessage,
         )
-        return coped as S
     }
 }
 

@@ -5,7 +5,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,7 +14,7 @@ import javax.inject.Inject
 class ActivityPubListStatusViewModel @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val listStatusRepo: ListStatusRepo,
-    private val statusInteractive: StatusInteractiveUseCase,
+    private val interactiveHandler: ActivityPubInteractiveHandler,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusAdapter: ActivityPubStatusAdapter,
 ) : ContainerViewModel<ActivityPubListStatusSubViewModel, ActivityPubListStatusViewModel.Params>() {
@@ -24,7 +24,7 @@ class ActivityPubListStatusViewModel @Inject constructor(
         platformRepo = platformRepo,
         buildStatusUiState = buildStatusUiState,
         statusAdapter = statusAdapter,
-        statusInteractive = statusInteractive,
+        interactiveHandler = interactiveHandler,
         serverBaseUrl = params.baseUrl,
         listId = params.listId,
     )

@@ -5,8 +5,8 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -16,7 +16,7 @@ class TrendingStatusViewModel @Inject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
-    private val interactiveHandler: InteractiveHandler,
+    private val interactiveHandler: ActivityPubInteractiveHandler,
 ) : ContainerViewModel<TrendingStatusSubViewModel, TrendingStatusViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): TrendingStatusSubViewModel {

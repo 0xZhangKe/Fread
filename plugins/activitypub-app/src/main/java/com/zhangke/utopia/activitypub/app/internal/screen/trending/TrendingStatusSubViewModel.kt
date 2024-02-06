@@ -13,7 +13,6 @@ import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.StateFlow
 
@@ -38,17 +37,24 @@ class TrendingStatusSubViewModel(
 
     val errorMessageFlow = loadableController.errorMessageFlow
 
+    init {
+        loadableController.initStatusData(
+            baseUrl = baseUrl,
+            getStatusFromServer = { getServerTrending(0, it) },
+        )
+    }
+
     fun onRefresh() {
         loadableController.onRefresh(baseUrl) {
-            getServerTrending(0)
+            getServerTrending(0, it)
         }
     }
 
     fun onLoadMore() {
         val offset = uiState.value.dataList.size
         if (offset == 0) return
-        loadableController.onLoadMore(baseUrl) {
-            getServerTrending(offset)
+        loadableController.onLoadMore(baseUrl) { maxId, baseUrl ->
+            getServerTrending(offset, baseUrl)
         }
     }
 
@@ -56,7 +62,7 @@ class TrendingStatusSubViewModel(
         loadableController.onInteractive(status, interaction)
     }
 
-    private suspend fun getServerTrending(offset: Int): Result<List<ActivityPubStatusEntity>> {
+    private suspend fun getServerTrending(offset: Int, baseUrl: FormalBaseUrl): Result<List<ActivityPubStatusEntity>> {
         return clientManager.getClient(baseUrl)
             .instanceRepo
             .getTrendsStatuses(

@@ -7,6 +7,7 @@ import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
 import com.zhangke.utopia.status.model.Hashtag
 import dagger.hilt.android.qualifiers.ApplicationContext
+import java.util.Calendar
 import javax.inject.Inject
 
 class ActivityPubTagAdapter @Inject constructor(
@@ -14,8 +15,9 @@ class ActivityPubTagAdapter @Inject constructor(
 ) {
 
     fun adapt(entity: ActivityPubTagEntity): Hashtag {
+        val yesterdayTimeInMillis = getYesterdayTimeInMillis()
         val pass2DayUses = entity.history
-            .take(2)
+            .filter { it.day * 1000 >= yesterdayTimeInMillis }
             .map { it.accounts }
             .reduce { acc, i -> acc + i }
             .toString()
@@ -28,6 +30,16 @@ class ActivityPubTagAdapter @Inject constructor(
             history = convertHistoryList(entity.history),
             protocol = getActivityPubProtocol(context),
         )
+    }
+
+    private fun getYesterdayTimeInMillis(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.add(Calendar.DAY_OF_MONTH, -1) // 获取昨天的日期
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
     }
 
     private fun convertHistoryList(

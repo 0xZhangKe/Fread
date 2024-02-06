@@ -14,7 +14,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.voyager.tryPush
+import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 
 @Composable
@@ -22,6 +27,7 @@ internal fun Screen.ServerTrendsTagsPage(
     baseUrl: FormalBaseUrl,
     contentCanScrollBackward: MutableState<Boolean>,
 ) {
+    val navigator = LocalNavigator.currentOrThrow
     val viewModel = getViewModel<ServerTrendsTagsViewModel>()
     viewModel.baseUrl = baseUrl
     val uiState by viewModel.uiState.collectAsState()
@@ -31,6 +37,11 @@ internal fun Screen.ServerTrendsTagsPage(
     ServerTrendsTagsContent(
         uiState = uiState,
         contentCanScrollBackward = contentCanScrollBackward,
+        onHashtagClick = { tag ->
+            HashtagTimelineRoute.buildRoute(tag.name).let {
+                navigator.tryPush(it)
+            }
+        },
     )
 }
 
@@ -38,6 +49,7 @@ internal fun Screen.ServerTrendsTagsPage(
 private fun ServerTrendsTagsContent(
     uiState: ServerTrendsTagsUiState,
     contentCanScrollBackward: MutableState<Boolean>,
+    onHashtagClick: (Hashtag) -> Unit,
 ) {
     val listState = rememberLazyListState()
     val canScrollBackward by remember {
@@ -51,7 +63,10 @@ private fun ServerTrendsTagsContent(
         state = listState,
     ) {
         items(uiState.list) { item ->
-            HashtagUi(item)
+            HashtagUi(
+                tag = item,
+                onClick = onHashtagClick,
+            )
         }
     }
 }

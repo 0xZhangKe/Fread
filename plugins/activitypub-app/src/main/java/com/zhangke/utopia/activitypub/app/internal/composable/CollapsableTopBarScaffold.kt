@@ -7,10 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -20,7 +16,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
 import androidx.compose.ui.text.style.TextAlign
@@ -34,6 +29,7 @@ import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionLayoutScope
 import androidx.constraintlayout.compose.MotionScene
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.utopiaPlaceholder
@@ -156,15 +152,10 @@ private fun MotionLayoutScope.MotionAppBar(
         fontSize = 18.sp,
     )
     // back icon
-    IconButton(
+    Toolbar.BackButton(
         modifier = Modifier.layoutId("backIcon"),
-        onClick = { onBackClick() }) {
-        Icon(
-            painter = rememberVectorPainter(image = Icons.AutoMirrored.Filled.ArrowBack),
-            tint = toolbarFontColor,
-            contentDescription = "back",
-        )
-    }
+        onBackClick = onBackClick,
+    )
 }
 
 @OptIn(ExperimentalMotionApi::class)

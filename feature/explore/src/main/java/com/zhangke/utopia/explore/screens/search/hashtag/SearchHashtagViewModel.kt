@@ -2,12 +2,17 @@ package com.zhangke.utopia.explore.screens.search.hashtag
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.Hashtag
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -18,6 +23,9 @@ open class SearchHashtagViewModel @Inject constructor(
     private val loadableController = CommonLoadableController<Hashtag>(viewModelScope)
 
     val uiState: StateFlow<CommonLoadableUiState<Hashtag>> get() = loadableController.uiState
+
+    private val _openScreenFlow = MutableSharedFlow<Screen>()
+    val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     fun onRefresh(query: String) {
         loadableController.onRefresh {
@@ -31,5 +39,16 @@ open class SearchHashtagViewModel @Inject constructor(
         loadableController.onLoadMore {
             statusProvider.searchEngine.searchHashtag(query, offset)
         }
+    }
+
+    fun onHashtagClick(hashtag: Hashtag) {
+        launchInViewModel {
+            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(hashtag)
+                ?: return@launchInViewModel
+            KRouter.route<Screen>(route)?.let {
+                _openScreenFlow.emit(it)
+            }
+        }
+
     }
 }

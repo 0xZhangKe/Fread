@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -35,6 +34,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
@@ -43,6 +43,7 @@ import com.zhangke.utopia.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.explore.screens.search.SearchScreen
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 
@@ -71,11 +72,7 @@ fun Screen.ExplorerSearchBar() {
             },
         leadingIcon = {
             if (active) {
-                SimpleIconButton(
-                    onClick = { active = false },
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                    contentDescription = "Back",
-                )
+                Toolbar.BackButton(onBackClick = { active = false })
             } else {
                 SimpleIconButton(
                     onClick = { active = true },
@@ -118,6 +115,7 @@ fun Screen.ExplorerSearchBar() {
                 snackbarMessageFlow = viewModel.errorMessageFlow,
                 onUserInfoClick = viewModel::onUserInfoClick,
                 onInteractive = viewModel::onInteractive,
+                onHashtagClick = viewModel::onHashtagClick,
             )
         }
     }
@@ -132,6 +130,7 @@ private fun SearchContent(
     snackbarMessageFlow: Flow<TextString>,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
+    onHashtagClick: (Hashtag) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val state = rememberLazyListState()
@@ -146,6 +145,7 @@ private fun SearchContent(
                     indexInList = index,
                     onUserInfoClick = onUserInfoClick,
                     onInteractive = onInteractive,
+                    onHashtagClick = onHashtagClick,
                 )
             }
         }

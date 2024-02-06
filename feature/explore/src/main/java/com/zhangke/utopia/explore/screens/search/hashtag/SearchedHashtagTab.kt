@@ -12,6 +12,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.controller.CommonLoadableUiState
@@ -31,6 +34,7 @@ class SearchedHashtagTab(private val query: String) : PagerTab {
 
     @Composable
     override fun Screen.TabContent() {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<SearchHashtagViewModel>()
         val uiState by viewModel.uiState.collectAsState()
 
@@ -46,7 +50,11 @@ class SearchedHashtagTab(private val query: String) : PagerTab {
             onLoadMore = {
                 viewModel.onLoadMore(query)
             },
+            onHashtagClick = viewModel::onHashtagClick,
         )
+        ConsumeFlow(viewModel.openScreenFlow) {
+            navigator.push(it)
+        }
     }
 
     @OptIn(ExperimentalMaterialApi::class)
@@ -55,6 +63,7 @@ class SearchedHashtagTab(private val query: String) : PagerTab {
         uiState: CommonLoadableUiState<Hashtag>,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
+        onHashtagClick: (Hashtag) -> Unit,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
@@ -71,6 +80,7 @@ class SearchedHashtagTab(private val query: String) : PagerTab {
                 HashtagUi(
                     modifier = Modifier.fillMaxWidth(),
                     tag = item,
+                    onClick = onHashtagClick,
                 )
             }
         }

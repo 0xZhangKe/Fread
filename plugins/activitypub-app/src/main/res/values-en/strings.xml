@@ -82,4 +82,5 @@
     <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">Do you want to withdraw your follow request?</string>
     <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">Are you sure you want to unblock this user?</string>
 
+    <string name="activity_pub_hashtag_timeline_description">%s posts · %s participants · %s post today</string>
 </resources>

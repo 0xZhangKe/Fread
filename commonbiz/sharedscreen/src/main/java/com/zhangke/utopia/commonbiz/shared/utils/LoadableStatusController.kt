@@ -27,7 +27,7 @@ open class LoadableStatusController(
     val mutableUiState = loadableController.mutableUiState
     val uiState = loadableController.uiState
 
-    protected val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
+    val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = mutableErrorMessageFlow
 
     private val _openScreenFlow = MutableSharedFlow<Screen>()

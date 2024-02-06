@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
@@ -12,6 +13,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -77,6 +79,14 @@ class SearchBarViewModel @Inject constructor(
         launchInViewModel {
             interactiveHandler.onUserInfoClick(blogAuthor)
                 .handleResult()
+        }
+    }
+
+    fun onHashtagClick(hashtag: Hashtag) {
+        launchInViewModel {
+            statusProvider.screenProvider.getTagTimelineScreenRoute(hashtag)
+                ?.let { KRouter.route<Screen>(it) }
+                ?.let { _openScreenFlow.emit(it) }
         }
     }
 

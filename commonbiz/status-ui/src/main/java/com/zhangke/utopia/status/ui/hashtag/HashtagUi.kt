@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.ui.hashtag
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -24,12 +25,16 @@ import com.zhangke.utopia.status.model.Hashtag
 @Composable
 fun HashtagUi(
     tag: Hashtag,
+    onClick: (Hashtag) -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .heightIn(min = 80.dp),
+            .heightIn(min = 80.dp)
+            .clickable {
+                onClick(tag)
+            },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Column(

@@ -1,29 +1,51 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.hashtag
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.MediumTopAppBar
-import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
+import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.StyledTextButton
+import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
+import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -38,13 +60,25 @@ class HashtagTimelineScreen(
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<HashtagTimelineViewModel, HashtagTimelineViewModel.Factory> {
             it.create(HashtagTimelineRoute.parseRoute(route))
         }
 
-        val uiState by viewModel.statusUiState.collectAsState()
+        val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
+        val statusUiState by viewModel.statusUiState.collectAsState()
+        HashtagTimelineContent(
+            hashtagTimelineUiState = hashtagTimelineUiState,
+            statusUiState = statusUiState,
+            messageFlow = viewModel.errorMessageFlow,
+            onBackClick = navigator::pop,
+            onRefresh = viewModel::onRefresh,
+            onLoadMore = viewModel::onLoadMore,
+            onInteractive = viewModel::onInteractive,
+        )
     }
 
+    @OptIn(ExperimentalMotionApi::class)
     @Composable
     private fun HashtagTimelineContent(
         hashtagTimelineUiState: HashtagTimelineUiState,
@@ -56,29 +90,41 @@ class HashtagTimelineScreen(
         onInteractive: (Status, StatusUiInteraction) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
-        CollapsableTopBarLayout(minTopBarHeight =, contentCanScrollBackward =, topBar =) {
-
+        val contentCanScrollBackward = remember {
+            mutableStateOf(false)
         }
-        Scaffold(
-            topBar = {
-                Toolbar(
-                    onBackClick = onBackClick,
-                    title = hashtagTimelineUiState.hashTag,
-                )
+        CollapsableTopBarLayout(
+            minTopBarHeight = ToolbarTokens.ContainerHeight,
+            contentCanScrollBackward = contentCanScrollBackward,
+            topBar = { collapsableProgress ->
+                MotionLayout(
+                    modifier = Modifier.fillMaxWidth(),
+                    motionScene = buildMotionScene(),
+                    progress = collapsableProgress,
+                ) {
+                    HashtagAppBar(
+                        uiState = hashtagTimelineUiState,
+                        onBackClick = onBackClick,
+                    )
+                }
             },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
-        ) { paddingValues ->
-            Box(modifier = Modifier.padding(paddingValues)) {
-                ActivityPubListStatusContent(
-                    uiState = statusUiState,
-                    onRefresh = onRefresh,
-                    onLoadMore = onLoadMore,
-                    onInteractive = onInteractive,
-                )
+            scrollableContent = {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    ActivityPubListStatusContent(
+                        uiState = statusUiState,
+                        onRefresh = onRefresh,
+                        onLoadMore = onLoadMore,
+                        onInteractive = onInteractive,
+                    )
+                    SnackbarHost(
+                        hostState = snackbarHostState,
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .padding(bottom = 30.dp)
+                    )
+                }
             }
-        }
+        )
         ConsumeSnackbarFlow(snackbarHostState, messageFlow)
     }
 
@@ -116,5 +162,72 @@ class HashtagTimelineScreen(
             }
         }
         transition("default", start1, end1) {}
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun HashtagAppBar(
+        uiState: HashtagTimelineUiState,
+        onBackClick: () -> Unit,
+    ) {
+        Surface(
+            Modifier
+                .layoutId("topBarBottomContent")
+                .fillMaxWidth()
+        ) {
+            Column(
+                modifier = Modifier.padding(16.dp)
+            ) {
+                Row(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        modifier = Modifier
+                            .align(Alignment.CenterVertically)
+                            .weight(1F),
+                        style = MaterialTheme.typography.titleMedium,
+                        text = uiState.hashTag,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        textAlign = TextAlign.Start,
+                    )
+
+                    StyledTextButton(
+                        modifier = Modifier.padding(start = 8.dp),
+                        onClick = {},
+                        style = if (uiState.following) {
+                            TextButtonStyle.STANDARD
+                        } else {
+                            TextButtonStyle.ACTIVE
+                        },
+                        text = if (uiState.following) {
+                            stringResource(R.string.activity_pub_user_detail_relationship_following)
+                        } else {
+                            stringResource(R.string.activity_pub_user_detail_relationship_not_follow)
+                        },
+                    )
+                }
+
+                Text(
+                    modifier = Modifier.padding(top = 4.dp),
+                    text = uiState.description,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    textAlign = TextAlign.Start,
+                )
+            }
+        }
+        TopAppBar(
+            modifier = Modifier.layoutId("topBar"),
+            navigationIcon = {
+                Toolbar.BackButton(
+                    onBackClick = onBackClick,
+                )
+            },
+            title = {
+                Text(
+                    fontSize = 18.sp,
+                    text = uiState.hashTag,
+                )
+            },
+        )
     }
 }

@@ -1,11 +1,16 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.hashtag
 
+import android.annotation.SuppressLint
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.activitypub.entities.ActivityPubTagEntity
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
@@ -20,12 +25,17 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import java.util.Calendar
 
+@SuppressLint("StaticFieldLeak")
 @HiltViewModel(assistedFactory = HashtagTimelineViewModel.Factory::class)
 class HashtagTimelineViewModel @AssistedInject constructor(
     private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
+    @ApplicationContext private val context: Context,
     buildStatusUiState: BuildStatusUiStateUseCase,
     statusAdapter: ActivityPubStatusAdapter,
     platformRepo: ActivityPubPlatformRepo,
@@ -51,12 +61,14 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     val statusUiState = loadableController.uiState
 
-    val hashtagTimelineUiState = MutableStateFlow(
+    private val _hashtagTimelineUiState = MutableStateFlow(
         HashtagTimelineUiState(
             hashTag = hashtag,
-            postsCount = 0,
+            following = false,
+            description = "",
         )
     )
+    val hashtagTimelineUiState = _hashtagTimelineUiState.asStateFlow()
 
     private var baseUrl: FormalBaseUrl? = null
 
@@ -72,6 +84,54 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                 },
             )
         }
+
+        launchInViewModel {
+            val baseUrl = getBaseUrl()
+            clientManager.getClient(baseUrl)
+                .accountRepo
+                .getTagInformation(hashtag)
+                .onSuccess {
+                    _hashtagTimelineUiState.value = _hashtagTimelineUiState.value.copy(
+                        following = it.following,
+                        description = buildDescription(it),
+                    )
+                }.onFailure { e ->
+                    e.message
+                        ?.let { textOf(it) }
+                        ?.let {
+                            loadableController.mutableErrorMessageFlow.emit(it)
+                        }
+                }
+        }
+    }
+
+    private fun buildDescription(hashTag: ActivityPubTagEntity): String {
+        val todayTimeInMillis = getTodayTimeInMillis()
+        var posts = 0
+        var participants = 0
+        var todayPosts = 0
+        hashTag.history.forEach {
+            posts += it.uses
+            participants += it.accounts
+            if ((it.day * 1000) >= todayTimeInMillis) {
+                todayPosts += it.uses
+            }
+        }
+        return context.getString(
+            R.string.activity_pub_hashtag_timeline_description,
+            posts.toString(),
+            participants.toString(),
+            todayPosts.toString(),
+        )
+    }
+
+    private fun getTodayTimeInMillis(): Long {
+        val calendar = Calendar.getInstance()
+        calendar.set(Calendar.HOUR_OF_DAY, 0)
+        calendar.set(Calendar.MINUTE, 0)
+        calendar.set(Calendar.SECOND, 0)
+        calendar.set(Calendar.MILLISECOND, 0)
+        return calendar.timeInMillis
     }
 
     fun onRefresh() {

@@ -46,12 +46,12 @@ class ActivityPubTimelineSubViewModel(
 
     fun onRefresh() {
         loadableController.onRefresh(baseUrl) {
-            getRemoteStatus()
+            getRemoteStatus(it)
         }
     }
 
     fun onLoadMore() {
-        loadableController.onLoadMore(baseUrl) { maxId ->
+        loadableController.onLoadMore(baseUrl) { maxId, baseUrl ->
             timelineStatusRepo.loadMore(
                 serverBaseUrl = baseUrl,
                 type = type,
@@ -71,7 +71,7 @@ class ActivityPubTimelineSubViewModel(
         )
     }
 
-    private suspend fun getRemoteStatus(): Result<List<ActivityPubStatusEntity>> {
+    private suspend fun getRemoteStatus(baseUrl: FormalBaseUrl): Result<List<ActivityPubStatusEntity>> {
         return timelineStatusRepo.getRemoteStatus(
             serverBaseUrl = baseUrl,
             type = type,

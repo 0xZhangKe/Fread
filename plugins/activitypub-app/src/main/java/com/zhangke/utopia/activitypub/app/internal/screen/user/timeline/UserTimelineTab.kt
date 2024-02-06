@@ -41,6 +41,6 @@ class UserTimelineTab(
             canScrollBackward = contentCanScrollBackward,
         )
         val snackbarHostState = LocalSnackbarHostState.current
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.messageFlow)
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
 }

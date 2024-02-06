@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
@@ -22,7 +23,7 @@ class ActivityPubListStatusSubViewModel(
     interactiveHandler: ActivityPubInteractiveHandler,
     private val serverBaseUrl: FormalBaseUrl,
     private val listId: String,
-) : ViewModel() {
+) : SubViewModel() {
 
     private val loadableController = ActivityPubStatusLoadController(
         statusAdapter = statusAdapter,
@@ -46,14 +47,14 @@ class ActivityPubListStatusSubViewModel(
 
     fun onRefresh() {
         loadableController.onRefresh(serverBaseUrl) {
-            getRemoteStatus()
+            getRemoteStatus(it)
         }
     }
 
     fun onLoadMore() {
-        loadableController.onLoadMore(serverBaseUrl) { maxId ->
+        loadableController.onLoadMore(serverBaseUrl) { maxId, baseUrl ->
             listStatusRepo.loadMore(
-                serverBaseUrl = serverBaseUrl,
+                serverBaseUrl = baseUrl,
                 listId = listId,
                 maxId = maxId,
             )
@@ -71,9 +72,9 @@ class ActivityPubListStatusSubViewModel(
         )
     }
 
-    private suspend fun getRemoteStatus(): Result<List<ActivityPubStatusEntity>> {
+    private suspend fun getRemoteStatus(baseUrl: FormalBaseUrl): Result<List<ActivityPubStatusEntity>> {
         return listStatusRepo.getRemoteStatus(
-            serverBaseUrl = serverBaseUrl,
+            serverBaseUrl = baseUrl,
             listId = listId,
         )
     }

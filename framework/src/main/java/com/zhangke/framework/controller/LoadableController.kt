@@ -68,8 +68,8 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
                         it.copyObject(dataList = localData)
                     }
                 }
-                getDataFromServer().handleAsRefresh()
             }
+            getDataFromServer().handleAsRefresh()
         }
     }
 

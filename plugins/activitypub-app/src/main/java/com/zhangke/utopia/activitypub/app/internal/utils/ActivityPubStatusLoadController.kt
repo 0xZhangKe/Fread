@@ -28,30 +28,30 @@ class ActivityPubStatusLoadController(
 
     fun initStatusData(
         baseUrl: FormalBaseUrl,
-        getStatusFromServer: suspend () -> Result<List<ActivityPubStatusEntity>>,
+        getStatusFromServer: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
         getStatusFromLocal: (suspend () -> List<ActivityPubStatusEntity>)? = null,
     ) {
         initData(
-            getDataFromServer = transform(baseUrl, getStatusFromServer),
+            getDataFromServer = transformRefresh(baseUrl, getStatusFromServer),
             getDataFromLocal = transform(baseUrl, getStatusFromLocal),
         )
     }
 
     fun onRefresh(
         baseUrl: FormalBaseUrl,
-        getStatusFromServer: suspend () -> Result<List<ActivityPubStatusEntity>>,
+        getStatusFromServer: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
     ) {
         onRefresh(
-            refreshFunction = transform(baseUrl, getStatusFromServer),
+            refreshFunction = transformRefresh(baseUrl, getStatusFromServer),
         )
     }
 
     fun onLoadMore(
         baseUrl: FormalBaseUrl,
-        loadMoreFunction: suspend (maxId: String) -> Result<List<ActivityPubStatusEntity>>,
+        loadMoreFunction: suspend (maxId: String, FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
     ) {
         onLoadMore(
-            loadMoreFunction = transform(baseUrl, loadMoreFunction),
+            loadMoreFunction = transformLoadMore(baseUrl, loadMoreFunction),
         )
     }
 
@@ -76,9 +76,9 @@ class ActivityPubStatusLoadController(
         }
     }
 
-    private fun transform(
+    private fun transformRefresh(
         baseUrl: FormalBaseUrl,
-        block: suspend () -> Result<List<ActivityPubStatusEntity>>,
+        block: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
     ): suspend () -> Result<List<Status>> {
         return {
             val result = platformRepo.getPlatform(baseUrl)
@@ -86,16 +86,16 @@ class ActivityPubStatusLoadController(
                 Result.failure(result.exceptionOrNull()!!)
             } else {
                 val platform = result.getOrNull()!!
-                block().map { list ->
+                block(baseUrl).map { list ->
                     list.map { statusAdapter.toStatus(it, platform) }
                 }
             }
         }
     }
 
-    private fun transform(
+    private fun transformLoadMore(
         baseUrl: FormalBaseUrl,
-        block: suspend (String) -> Result<List<ActivityPubStatusEntity>>,
+        block: suspend (String, FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
     ): suspend (String) -> Result<List<Status>> {
         return { maxId ->
             val result = platformRepo.getPlatform(baseUrl)
@@ -103,7 +103,7 @@ class ActivityPubStatusLoadController(
                 Result.failure(result.exceptionOrNull()!!)
             } else {
                 val platform = result.getOrNull()!!
-                block(maxId).map { list ->
+                block(maxId, baseUrl).map { list ->
                     list.map { statusAdapter.toStatus(it, platform) }
                 }
             }

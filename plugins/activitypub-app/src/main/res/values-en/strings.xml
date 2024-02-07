@@ -83,4 +83,5 @@
     <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">Are you sure you want to unblock this user?</string>
 
     <string name="activity_pub_hashtag_timeline_description">%s posts · %s participants · %s post today</string>
+    <string name="activity_pub_hashtag_unfollow_dialog_message">Are you sure you want to unfollow this hashtag?</string>
 </resources>

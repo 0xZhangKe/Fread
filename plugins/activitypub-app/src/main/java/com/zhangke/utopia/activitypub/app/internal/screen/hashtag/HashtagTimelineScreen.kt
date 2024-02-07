@@ -17,6 +17,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
@@ -34,6 +35,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
@@ -75,6 +77,8 @@ class HashtagTimelineScreen(
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
+            onFollowClick = viewModel::onFollowClick,
+            onUnfollowClick = viewModel::onUnfollowClick,
         )
     }
 
@@ -88,6 +92,8 @@ class HashtagTimelineScreen(
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
+        onFollowClick: () -> Unit,
+        onUnfollowClick: () -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         val contentCanScrollBackward = remember {
@@ -105,6 +111,8 @@ class HashtagTimelineScreen(
                     HashtagAppBar(
                         uiState = hashtagTimelineUiState,
                         onBackClick = onBackClick,
+                        onFollowClick = onFollowClick,
+                        onUnfollowClick = onUnfollowClick,
                     )
                 }
             },
@@ -169,6 +177,8 @@ class HashtagTimelineScreen(
     private fun HashtagAppBar(
         uiState: HashtagTimelineUiState,
         onBackClick: () -> Unit,
+        onFollowClick: () -> Unit,
+        onUnfollowClick: () -> Unit,
     ) {
         Surface(
             Modifier
@@ -190,19 +200,11 @@ class HashtagTimelineScreen(
                         textAlign = TextAlign.Start,
                     )
 
-                    StyledTextButton(
+                    FollowHashtagButton(
                         modifier = Modifier.padding(start = 8.dp),
-                        onClick = {},
-                        style = if (uiState.following) {
-                            TextButtonStyle.STANDARD
-                        } else {
-                            TextButtonStyle.ACTIVE
-                        },
-                        text = if (uiState.following) {
-                            stringResource(R.string.activity_pub_user_detail_relationship_following)
-                        } else {
-                            stringResource(R.string.activity_pub_user_detail_relationship_not_follow)
-                        },
+                        uiState = uiState,
+                        onFollowClick = onFollowClick,
+                        onUnfollowClick = onUnfollowClick,
                     )
                 }
 
@@ -229,5 +231,42 @@ class HashtagTimelineScreen(
                 )
             },
         )
+    }
+
+    @Composable
+    private fun FollowHashtagButton(
+        modifier: Modifier,
+        uiState: HashtagTimelineUiState,
+        onFollowClick: () -> Unit,
+        onUnfollowClick: () -> Unit,
+    ) {
+        var showUnfollowDialog by remember { mutableStateOf(false) }
+        StyledTextButton(
+            modifier = modifier,
+            onClick = {
+                if (uiState.following) {
+                    showUnfollowDialog = true
+                } else {
+                    onFollowClick()
+                }
+            },
+            style = if (uiState.following) {
+                TextButtonStyle.STANDARD
+            } else {
+                TextButtonStyle.ACTIVE
+            },
+            text = if (uiState.following) {
+                stringResource(R.string.activity_pub_user_detail_relationship_following)
+            } else {
+                stringResource(R.string.activity_pub_user_detail_relationship_not_follow)
+            },
+        )
+        if (showUnfollowDialog) {
+            AlertConfirmDialog(
+                content = stringResource(R.string.activity_pub_hashtag_unfollow_dialog_message),
+                onConfirm = onUnfollowClick,
+                onDismissRequest = { showUnfollowDialog = false },
+            )
+        }
     }
 }

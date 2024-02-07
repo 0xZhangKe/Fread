@@ -83,4 +83,5 @@
     <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">您确定要取消屏蔽对方吗？</string>
 
     <string name="activity_pub_hashtag_timeline_description">%s 条帖子 · %s 参与 · %s 条今日帖子</string>
+    <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
 </resources>

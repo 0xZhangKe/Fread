@@ -28,6 +28,7 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import java.util.Calendar
 
 @SuppressLint("StaticFieldLeak")
@@ -164,6 +165,39 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
         loadableController.onInteractive(status, uiInteraction)
+    }
+
+    fun onFollowClick() {
+        launchInViewModel {
+            clientManager.getClient(getBaseUrl())
+                .accountRepo
+                .followTag(hashtag)
+                .handle()
+        }
+    }
+
+    fun onUnfollowClick() {
+        launchInViewModel {
+            clientManager.getClient(getBaseUrl())
+                .accountRepo
+                .unfollowTag(hashtag)
+                .handle()
+        }
+    }
+
+    private suspend fun Result<ActivityPubTagEntity>.handle() {
+        this.onSuccess { newEntity ->
+            _hashtagTimelineUiState.update { state ->
+                state.copy(
+                    following = newEntity.following,
+                    description = buildDescription(newEntity),
+                )
+            }
+        }.onFailure { e ->
+            e.message?.let { m -> textOf(m) }?.let {
+                loadableController.mutableErrorMessageFlow.emit(it)
+            }
+        }
     }
 
     private suspend fun loadHashtagTimeline(

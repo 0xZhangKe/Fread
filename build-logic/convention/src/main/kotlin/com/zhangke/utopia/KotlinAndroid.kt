@@ -104,9 +104,9 @@ private fun Project.configureKotlin() {
         }
     }
     tasks.withType<ProcessResources>{
-        duplicatesStrategy = DuplicatesStrategy.WARN
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
     tasks.withType<Jar>{
-        duplicatesStrategy = DuplicatesStrategy.WARN
+        duplicatesStrategy = DuplicatesStrategy.INCLUDE
     }
 }

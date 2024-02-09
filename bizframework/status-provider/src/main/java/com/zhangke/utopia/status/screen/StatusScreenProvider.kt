@@ -60,6 +60,10 @@ class StatusScreenProvider(
     fun getTagTimelineScreenRoute(tag: Hashtag): String?{
         return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(tag) }
     }
+
+    fun getEditAccountScreenRoute(account: LoggedAccount): String? {
+        return providerList.mapFirstOrNull { it.getEditAccountScreenRoute(account) }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -82,4 +86,6 @@ interface IStatusScreenProvider {
     fun getUserDetailRoute(uri: FormalUri): String?
 
     fun getTagTimelineScreenRoute(tag: Hashtag): String?
+
+    fun getEditAccountScreenRoute(account: LoggedAccount): String?
 }

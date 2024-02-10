@@ -84,4 +84,6 @@
 
     <string name="activity_pub_hashtag_timeline_description">%s 条帖子 · %s 参与 · %s 条今日帖子</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
+
+    <string name="activity_pub_edit_account_info_name_empty">请输入用户名</string>
 </resources>

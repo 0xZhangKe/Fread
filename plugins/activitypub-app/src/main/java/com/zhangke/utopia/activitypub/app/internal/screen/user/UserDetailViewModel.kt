@@ -8,6 +8,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
@@ -25,6 +26,7 @@ import kotlinx.coroutines.flow.update
 
 @HiltViewModel(assistedFactory = UserDetailViewModel.Factory::class)
 class UserDetailViewModel @AssistedInject constructor(
+    private val accountManager: ActivityPubAccountManager,
     private val userUriTransformer: UserUriTransformer,
     private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
@@ -42,6 +44,7 @@ class UserDetailViewModel @AssistedInject constructor(
             account = null,
             relationship = null,
             domainBlocked = false,
+            editable = false,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -56,8 +59,13 @@ class UserDetailViewModel @AssistedInject constructor(
                 _messageFlow.emit(textOf("Invalid user uri: $userUri"))
                 return@launchInViewModel
             }
+            val editable = accountManager.getAllLoggedAccount()
+                .any { loggedAccount ->
+                    loggedAccount.uri == userInsight.uri
+                }
             _uiState.value = _uiState.value.copy(
-                userInsight = userInsight
+                userInsight = userInsight,
+                editable = editable,
             )
             val accountRepo =
                 clientManager.getClient(baseUrlManager.decideBaseUrl(userInsight.baseUrl))
@@ -79,7 +87,7 @@ class UserDetailViewModel @AssistedInject constructor(
     private suspend fun loadRelationship(
         accountRepo: AccountsRepo,
         accountId: String,
-    ){
+    ) {
         val relationshipEntityResult = accountRepo.getRelationships(listOf(accountId))
         if (relationshipEntityResult.isFailure) {
             relationshipEntityResult.exceptionOrNull()?.message?.let {
@@ -100,7 +108,7 @@ class UserDetailViewModel @AssistedInject constructor(
     private suspend fun loadDomainBlockState(
         accountRepo: AccountsRepo,
         userUriInsights: UserUriInsights,
-    ){
+    ) {
         val blockedDomainList = accountRepo.getDomainBlocks().getOrNull() ?: return
         val domainBlocked = blockedDomainList.firstOrNull { it == userUriInsights.baseUrl.host }
         _uiState.value = _uiState.value.copy(

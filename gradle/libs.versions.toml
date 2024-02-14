@@ -35,7 +35,7 @@ accompanist-placeholder-material = "0.31.5-beta"
 
 hilt = "2.49"
 
-okhttp3 = "4.11.0"
+okhttp3 = "4.12.0"
 
 retrofit2 = "2.9.0"
 

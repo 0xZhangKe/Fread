@@ -1,8 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
 import android.net.Uri
-import androidx.activity.result.PickVisualMediaRequest
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -38,10 +36,11 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.utils.buildPickVisualMediaRequest
 import com.zhangke.framework.utils.rememberPickVisualMediaLauncher
-import com.zhangke.utopia.commonbiz.shared.screen.SelectLanguageScreen
-import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusUiState
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusUiState
+import com.zhangke.utopia.commonbiz.shared.screen.SelectLanguageScreen
 import java.util.Locale
 
 @Composable
@@ -177,11 +176,7 @@ private fun SelectedMediaIconButton(
     SimpleIconButton(
         modifier = modifier,
         onClick = {
-            launcher?.launch(
-                PickVisualMediaRequest.Builder()
-                    .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
-                    .build()
-            )
+            launcher?.launch(buildPickVisualMediaRequest())
         },
         imageVector = Icons.Default.Image,
         contentDescription = "Add Image",

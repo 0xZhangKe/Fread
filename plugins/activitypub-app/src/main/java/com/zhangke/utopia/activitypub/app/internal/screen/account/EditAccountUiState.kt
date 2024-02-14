@@ -2,10 +2,12 @@ package com.zhangke.utopia.activitypub.app.internal.screen.account
 
 data class EditAccountUiState(
     val name: String,
-    val banner: String,
+    val header: String,
     val avatar: String,
     val description: String,
     val fieldList: List<EditAccountFieldUiState>,
+    val fieldAddable: Boolean,
+    val requesting: Boolean,
 )
 
 data class EditAccountFieldUiState(

@@ -66,6 +66,7 @@ androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
 material = "1.11.0"
 
+daliy-tags = "1.0.0"
 
 [bundles]
 androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]
@@ -199,6 +200,8 @@ junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
+
+daliy-tags = { group = "com.github.DmytroShuba", name = "DailyTags", version.ref = "daliy-tags" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -1,5 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.account
 
+import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
@@ -8,6 +10,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
@@ -24,13 +27,18 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-@HiltViewModel
+@HiltViewModel(assistedFactory = EditAccountInfoViewModel.Factory::class)
 class EditAccountInfoViewModel @AssistedInject constructor(
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val clientManager: ActivityPubClientManager,
     private val userUriTransformer: UserUriTransformer,
     @Assisted private val accountUri: FormalUri,
 ) : ViewModel() {
+
+    companion object {
+
+        const val FIELD_MAX_COUNT = 4
+    }
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
@@ -40,10 +48,12 @@ class EditAccountInfoViewModel @AssistedInject constructor(
     private val _uiState = MutableStateFlow(
         EditAccountUiState(
             name = "",
-            banner = "",
+            header = "",
             avatar = "",
             description = "",
             fieldList = emptyList(),
+            fieldAddable = false,
+            requesting = false,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -51,7 +61,10 @@ class EditAccountInfoViewModel @AssistedInject constructor(
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
     val snackBarMessageFlow: SharedFlow<TextString> = _snackBarMessageFlow.asSharedFlow()
 
-    private var originalAccountInfo: EditAccountUiState? = null
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow = _finishPageFlow.asSharedFlow()
+
+    private var originalAccountInfo: ActivityPubAccountEntity? = null
 
     private val baseUrl: FormalBaseUrl get() = userUriTransformer.parse(accountUri)!!.baseUrl
 
@@ -60,28 +73,12 @@ class EditAccountInfoViewModel @AssistedInject constructor(
             clientManager.getClient(baseUrl).accountRepo
                 .getCredentialAccount()
                 .onSuccess {
-                    _uiState.value = it.toUiState()
-                    originalAccountInfo = it.toUiState()
+                    updateUiStateByEntity(it)
+                    originalAccountInfo = it
                 }.onFailure { e ->
                     e.message?.let { textOf(it) }?.let { _snackBarMessageFlow.emit(it) }
                 }
         }
-    }
-
-    private fun ActivityPubAccountEntity.toUiState(): EditAccountUiState {
-        return EditAccountUiState(
-            name = displayName,
-            banner = header,
-            avatar = avatar,
-            description = source.note,
-            fieldList = source.fields.mapIndexed { index, field ->
-                EditAccountFieldUiState(
-                    idForUi = index,
-                    name = field.name,
-                    value = field.value
-                )
-            }
-        )
     }
 
     fun onUserNameInput(name: String) {
@@ -107,13 +104,40 @@ class EditAccountInfoViewModel @AssistedInject constructor(
         }
     }
 
-    fun onFiledDelete(idForUi: Int) {
+    fun onFieldDelete(idForUi: Int) {
         _uiState.update { currentState ->
-            val fieldList = currentState.fieldList
+            val newFieldList = currentState.fieldList
+                .filter { it.idForUi != idForUi }
             currentState.copy(
-                fieldList = fieldList.filter { it.idForUi != idForUi }
+                fieldList = newFieldList,
+                fieldAddable = newFieldList.size < FIELD_MAX_COUNT,
             )
         }
+    }
+
+    fun onFieldAddClick() {
+        _uiState.update { currentState ->
+            val newFieldList = currentState.fieldList.toMutableList()
+            newFieldList.add(
+                EditAccountFieldUiState(
+                    idForUi = newFieldList.size,
+                    name = "",
+                    value = "",
+                )
+            )
+            currentState.copy(
+                fieldList = newFieldList,
+                fieldAddable = newFieldList.size < FIELD_MAX_COUNT,
+            )
+        }
+    }
+
+    fun onAvatarSelected(uri: Uri) {
+        _uiState.update { it.copy(avatar = uri.toString()) }
+    }
+
+    fun onHeaderSelected(uri: Uri) {
+        _uiState.update { it.copy(header = uri.toString()) }
     }
 
     fun onEditClick() = launchInViewModel {
@@ -123,18 +147,76 @@ class EditAccountInfoViewModel @AssistedInject constructor(
             _snackBarMessageFlow.emit(textOf(R.string.activity_pub_edit_account_info_name_empty))
             return@launchInViewModel
         }
-        val newName = currentUiState.name.takeIf { it != originalAccountInfo.name }
-        val newNote = currentUiState.description.takeIf { it != originalAccountInfo.description }
-        val newAvatar = currentUiState.avatar.takeIf { it != originalAccountInfo.avatar }
-        val newBanner = currentUiState.banner.takeIf { it != originalAccountInfo.banner }
-        val newFieldList = currentUiState.fieldList.takeIf { !it.compare(originalAccountInfo.fieldList) }
+        val newName = currentUiState.name.takeIf { it != originalAccountInfo.nameOfUiState }
+        val newNote = currentUiState.description.takeIf { it != originalAccountInfo.noteOfUiState }
+        val newAvatar = currentUiState.avatar
+            .takeIf { it != originalAccountInfo.avatar }
+            ?.toUri()
+            ?.toContentProviderFile()
+        val newHeader = currentUiState.header
+            .takeIf { it != originalAccountInfo.header }
+            ?.toUri()
+            ?.toContentProviderFile()
+        val newFieldList = currentUiState.fieldList.takeIf { !it.compare(originalAccountInfo.fieldOfUiState) }
+        if (newName == null &&
+            newNote == null &&
+            newAvatar == null &&
+            newHeader == null &&
+            newFieldList == null
+        ) {
+            return@launchInViewModel
+        }
+        _uiState.update { it.copy(requesting = true) }
         clientManager.getClient(baseUrl).accountRepo
             .updateCredentials(
                 name = newName,
                 note = newNote,
+                avatarFileName = newAvatar?.fileName,
+                avatarByteArray = newAvatar?.openInputStream()?.use { it.readBytes() },
+                headerFileName = newHeader?.fileName,
+                headerByteArray = newHeader?.openInputStream()?.use { it.readBytes() },
                 fieldList = newFieldList?.map { it.toUpdateFieldRequestEntity() },
-            )
+            ).onSuccess {
+                updateUiStateByEntity(it)
+                _finishPageFlow.emit(Unit)
+            }.onFailure { e ->
+                e.message?.let { textOf(it) }?.let { _snackBarMessageFlow.emit(it) }
+                _uiState.update { it.copy(requesting = false) }
+            }
     }
+
+    private fun updateUiStateByEntity(entity: ActivityPubAccountEntity) {
+        originalAccountInfo = entity
+        _uiState.update { currentState ->
+            val fieldList = entity.fieldOfUiState
+            currentState.copy(
+                name = entity.nameOfUiState,
+                header = entity.headerOfUiState,
+                avatar = entity.avatarOfUiState,
+                description = entity.noteOfUiState,
+                fieldList = fieldList,
+                fieldAddable = fieldList.size < FIELD_MAX_COUNT,
+                requesting = false,
+            )
+        }
+    }
+
+    private val ActivityPubAccountEntity.nameOfUiState: String get() = displayName
+
+    private val ActivityPubAccountEntity.headerOfUiState: String get() = header
+
+    private val ActivityPubAccountEntity.avatarOfUiState: String get() = avatar
+
+    private val ActivityPubAccountEntity.noteOfUiState: String get() = source.note
+
+    private val ActivityPubAccountEntity.fieldOfUiState: List<EditAccountFieldUiState>
+        get() = source.fields.mapIndexed { index, field ->
+            EditAccountFieldUiState(
+                idForUi = index,
+                name = field.name,
+                value = field.value
+            )
+        }
 
     /**
      * Compare theos two list is same or not

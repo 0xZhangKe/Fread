@@ -1,10 +1,13 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -47,6 +50,7 @@ import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
+import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import kotlinx.coroutines.flow.SharedFlow
@@ -83,6 +87,13 @@ class UserDetailScreen(
                     BrowserLauncher().launch(context, it)
                 }
             },
+            onEditClick = {
+                uiState.userInsight
+                    ?.uri
+                    ?.let {
+                        navigator.push(EditAccountInfoScreen(it))
+                    }
+            },
         )
     }
 
@@ -101,6 +112,7 @@ class UserDetailScreen(
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
+        onEditClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -130,6 +142,7 @@ class UserDetailScreen(
                         onBlockDomainClick = onBlockDomainClick,
                         onUnblockDomainClick = onUnblockDomainClick,
                         onOpenInBrowserClick = onOpenInBrowserClick,
+                        onEditClick = onEditClick,
                     )
                 },
                 headerAction = {
@@ -222,9 +235,19 @@ class UserDetailScreen(
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
+        onEditClick: () -> Unit,
     ) {
         val account = uiState.account ?: return
         val userInsights = uiState.userInsight ?: return
+        if (uiState.editable) {
+            SimpleIconButton(
+                onClick = onEditClick,
+                tint = color,
+                imageVector = Icons.Default.Edit,
+                contentDescription = "Edit Profile",
+            )
+            Box(modifier = Modifier.width(16.dp))
+        }
         var showMorePopup by remember {
             mutableStateOf(false)
         }

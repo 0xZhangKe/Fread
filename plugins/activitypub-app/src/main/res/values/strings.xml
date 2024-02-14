@@ -86,4 +86,7 @@
     <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
 
     <string name="activity_pub_edit_account_info_name_empty">请输入用户名</string>
+    <string name="activity_pub_edit_account_info_label_name">名字</string>
+    <string name="activity_pub_edit_account_info_label_note">简介</string>
+    <string name="activity_pub_edit_account_info_label_about">关于</string>
 </resources>

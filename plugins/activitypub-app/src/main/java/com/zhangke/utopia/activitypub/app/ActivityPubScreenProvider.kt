@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.framework.composable.PagerTab
-import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInfoRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
@@ -70,10 +69,5 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getTagTimelineScreenRoute(tag: Hashtag): String? {
         if (tag.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
         return HashtagTimelineRoute.buildRoute(tag.name)
-    }
-
-    override fun getEditAccountScreenRoute(account: LoggedAccount): String? {
-        if (account.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
-        return EditAccountInfoRoute.buildRoute(account.uri)
     }
 }

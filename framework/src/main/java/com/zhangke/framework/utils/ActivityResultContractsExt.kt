@@ -25,3 +25,25 @@ fun rememberPickVisualMediaLauncher(
         )
     }
 }
+
+@Composable
+fun rememberSinglePickVisualMediaLauncher(
+    onResult: (Uri) -> Unit,
+): ManagedActivityResultLauncher<PickVisualMediaRequest, *> {
+    return rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickVisualMedia(),
+        onResult = { uri -> uri?.let { onResult(it) } },
+    )
+}
+
+fun buildPickVisualMediaRequest(): PickVisualMediaRequest {
+    return PickVisualMediaRequest.Builder()
+        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageAndVideo)
+        .build()
+}
+
+fun buildPickVisualImageRequest(): PickVisualMediaRequest {
+    return PickVisualMediaRequest.Builder()
+        .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly)
+        .build()
+}

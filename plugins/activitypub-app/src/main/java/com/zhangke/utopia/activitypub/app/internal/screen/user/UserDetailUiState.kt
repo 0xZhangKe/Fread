@@ -9,4 +9,5 @@ data class UserDetailUiState (
     val account: ActivityPubAccountEntity?,
     val relationship: ActivityPubRelationshipEntity?,
     val domainBlocked: Boolean?,
+    val editable: Boolean,
 )

@@ -17,6 +17,12 @@ Mastodon android client
          app < - - - /
 ```
 
+# Build
+
+temporal release key: app-key
+password: 123456
+alias: key0
+
 # StatusProviderUri
 
 The Uri associated with status-provider is denoted by `StatusProviderUri`.

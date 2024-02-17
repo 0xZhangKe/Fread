@@ -8,6 +8,7 @@ import javax.inject.Inject
 class RssPlatformResolver @Inject constructor() : IPlatformResolver {
 
     override suspend fun resolveBySourceUri(sourceUri: FormalUri): Result<BlogPlatform?> {
+
         TODO("Not yet implemented")
     }
 

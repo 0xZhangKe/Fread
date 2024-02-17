@@ -15,7 +15,6 @@ import kotlinx.serialization.Serializable
  * - m.cmx.im/@jw@jakewharton.com
  * - jakewharton.com/@jw
  */
-
 @Parcelize
 @Serializable
 class WebFinger private constructor(

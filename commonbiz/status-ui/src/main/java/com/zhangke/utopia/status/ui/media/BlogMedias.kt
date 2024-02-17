@@ -1,10 +1,11 @@
 package com.zhangke.utopia.status.ui.media
 
+import android.util.Log
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
@@ -30,6 +31,8 @@ import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.video.BlogVideos
 import com.zhangke.utopia.statusui.R
 
+private var cachedContainerWidth: Dp? = null
+
 @Composable
 fun BlogMedias(
     modifier: Modifier,
@@ -40,15 +43,26 @@ fun BlogMedias(
 ) {
     val density = LocalDensity.current
     var containerWidth: Dp? by remember {
-        mutableStateOf(null)
+        mutableStateOf(cachedContainerWidth)
     }
     var hideContent by rememberSaveable {
         mutableStateOf(sensitive)
     }
+    var mediaHeight: Int? = remember {
+        null
+    }
     Box(
         modifier = modifier
             .onGloballyPositioned {
+                if (mediaHeight != null && mediaHeight != it.size.height) {
+                    Log.d("U_TEST", "$mediaHeight -> ${it.size.height}")
+                }
+                mediaHeight = it.size.height
                 containerWidth = it.size.width.pxToDp(density)
+                if (cachedContainerWidth != null && cachedContainerWidth != containerWidth) {
+                    Log.d("U_TEST", "$cachedContainerWidth -> $containerWidth")
+                }
+                cachedContainerWidth = containerWidth
             }
     ) {
         if (containerWidth != null) {

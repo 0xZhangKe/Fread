@@ -7,6 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import java.util.Date
 
 private const val TABLE_NAME = "channels"
 
@@ -15,7 +16,11 @@ data class RssChannelEntity(
     @PrimaryKey val url: String,
     val title: String,
     val description: String,
-    val thumbnail: String?,
+    val lastBuildDate: Date?,
+    val updatePeriod: String?,
+    val imageTitle: String?,
+    val imageDescription: String?,
+    val imageUrl: String?,
 )
 
 @Dao

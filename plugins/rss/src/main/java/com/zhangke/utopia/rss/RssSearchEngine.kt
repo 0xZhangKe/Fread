@@ -1,7 +1,6 @@
 package com.zhangke.utopia.rss
 
-import com.prof18.rssparser.RssParser
-import com.prof18.rssparser.model.RssChannel
+import com.zhangke.utopia.rss.internal.repo.RssChannelRepo
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -11,9 +10,12 @@ import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
-class RssSearchEngine @Inject constructor(): ISearchEngine {
+class RssSearchEngine @Inject constructor(
+    private val rssChannelRepo: RssChannelRepo,
+): ISearchEngine {
 
     override suspend fun search(query: String): Result<List<SearchResult>> {
+
         TODO("Not yet implemented")
     }
 
@@ -22,7 +24,7 @@ class RssSearchEngine @Inject constructor(): ISearchEngine {
     }
 
     override suspend fun searchHashtag(query: String, offset: Int?): Result<List<Hashtag>> {
-        TODO("Not yet implemented")
+        return Result.success(emptyList())
     }
 
     override suspend fun searchAuthor(query: String, offset: Int?): Result<List<BlogAuthor>> {

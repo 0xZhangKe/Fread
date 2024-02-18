@@ -1,5 +1,8 @@
 package com.zhangke.utopia.rss
 
+import com.zhangke.utopia.rss.internal.repo.RssStatusRepo
+import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
+import com.zhangke.utopia.rss.internal.uri.isRssUri
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -7,21 +10,48 @@ import com.zhangke.utopia.status.status.model.StatusInteraction
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
-class RssStatusResolver @Inject constructor(): IStatusResolver {
+class RssStatusResolver @Inject constructor(
+    private val uriTransformer: RssUriTransformer,
+    private val rssStatusRepo: RssStatusRepo,
+) : IStatusResolver {
 
-    override suspend fun getStatusList(uri: FormalUri, limit: Int, sinceId: String?, maxId: String?): Result<List<Status>>? {
-        TODO("Not yet implemented")
+    override suspend fun getStatusList(
+        uri: FormalUri,
+        limit: Int,
+        sinceId: String?,
+        maxId: String?,
+    ): Result<List<Status>>? {
+        if (!uri.isRssUri) return null
+        val uriInsight = uriTransformer.parse(uri)
+            ?: return Result.failure(IllegalArgumentException("Unknown uri: $uri"))
+        return rssStatusRepo.getStatus(
+            uriInsight = uriInsight,
+            limit = limit,
+            maxId = maxId,
+            sinceId = sinceId,
+        )
     }
 
     override suspend fun checkIsFirstStatus(status: Status): Result<Boolean>? {
-        TODO("Not yet implemented")
+        val uri = FormalUri.from(status.platform.uri) ?: return null
+        val uriInsight = uriTransformer.parse(uri) ?: return null
+        return rssStatusRepo.checkIsFirstStatus(uriInsight, status)
     }
 
-    override suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status>? {
-        TODO("Not yet implemented")
+    override suspend fun interactive(
+        status: Status,
+        interaction: StatusInteraction
+    ): Result<Status> {
+        return Result.success(status)
     }
 
     override suspend fun getStatusContext(status: Status): Result<StatusContext>? {
-        TODO("Not yet implemented")
+        if (!status.platform.protocol.isRssProtocol) return null
+        return Result.success(
+            StatusContext(
+                ancestors = emptyList(),
+                descendants = emptyList(),
+            )
+        )
     }
 }

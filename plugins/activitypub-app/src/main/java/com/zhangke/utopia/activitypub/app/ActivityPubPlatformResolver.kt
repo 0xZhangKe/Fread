@@ -20,7 +20,7 @@ class ActivityPubPlatformResolver @Inject constructor(
         return getActivityPubServer(baseUrl)
     }
 
-    override suspend fun getAllRecordedPlatform(): List<BlogPlatform> {
+    override suspend fun getAllRecordedPlatformForLogin(): List<BlogPlatform> {
         return platformRepo.getAllLocalPlatform()
     }
 }

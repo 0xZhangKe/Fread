@@ -1,6 +1,14 @@
 package com.zhangke.utopia.rss
 
+import com.zhangke.framework.network.SimpleUri
+import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.utopia.rss.internal.adapter.BlogAuthorAdapter
+import com.zhangke.utopia.rss.internal.platform.RssPlatformTransformer
 import com.zhangke.utopia.rss.internal.repo.RssChannelRepo
+import com.zhangke.utopia.rss.internal.rss.RssChannel
+import com.zhangke.utopia.rss.internal.source.RssSourceTransformer
+import com.zhangke.utopia.rss.internal.uri.RssUriInsight
+import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -11,16 +19,27 @@ import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
 class RssSearchEngine @Inject constructor(
+    private val rssPlatformTransformer: RssPlatformTransformer,
+    private val rssSourceTransformer: RssSourceTransformer,
     private val rssChannelRepo: RssChannelRepo,
-): ISearchEngine {
+    private val bogAuthorAdapter: BlogAuthorAdapter,
+    private val rssUriTransformer: RssUriTransformer,
+) : ISearchEngine {
 
     override suspend fun search(query: String): Result<List<SearchResult>> {
-
-        TODO("Not yet implemented")
+        val authorResult = searchAuthorByUrl(query)
+        if (authorResult.isFailure) {
+            return Result.failure(authorResult.exceptionOrThrow())
+        }
+        val searchResultList = mutableListOf<SearchResult>()
+        authorResult.getOrNull()?.let {
+            searchResultList += SearchResult.Author(it)
+        }
+        return Result.success(searchResultList)
     }
 
     override suspend fun searchStatus(query: String, maxId: String?): Result<List<Status>> {
-        TODO("Not yet implemented")
+        return Result.success(emptyList())
     }
 
     override suspend fun searchHashtag(query: String, offset: Int?): Result<List<Hashtag>> {
@@ -28,14 +47,67 @@ class RssSearchEngine @Inject constructor(
     }
 
     override suspend fun searchAuthor(query: String, offset: Int?): Result<List<BlogAuthor>> {
-        TODO("Not yet implemented")
+        if (offset != null && offset > 0) {
+            return Result.success(emptyList())
+        }
+        return searchAuthorByUrl(query).map {
+            it?.let { listOf(it) } ?: emptyList()
+        }
     }
 
     override suspend fun searchPlatform(query: String, offset: Int?): Result<List<BlogPlatform>> {
-        TODO("Not yet implemented")
+        return queryWithChannelByUrl(
+            query = query,
+            defaultResult = emptyList(),
+            block = { channel, uriInsight ->
+                listOf(rssPlatformTransformer.create(uriInsight, channel))
+            }
+        )
     }
 
     override suspend fun searchSource(query: String): Result<List<StatusSource>> {
-        TODO("Not yet implemented")
+        return queryWithChannelByUrl(
+            query = query,
+            defaultResult = emptyList(),
+            block = { channel, uriInsight ->
+                listOf(rssSourceTransformer.createSource(uriInsight, channel))
+            }
+        )
+    }
+
+    private suspend fun searchAuthorByUrl(query: String): Result<BlogAuthor?> {
+        return queryWithChannelByUrl(
+            query = query,
+            defaultResult = null,
+            block = { channel, uriInsight ->
+                bogAuthorAdapter.createAuthor(uriInsight, channel)
+            }
+        )
+    }
+
+    private suspend fun <T> queryWithChannelByUrl(
+        query: String,
+        defaultResult: T,
+        block: suspend (RssChannel, RssUriInsight) -> T,
+    ): Result<T> {
+        if (query.isUrl().not()) return Result.success(defaultResult)
+        val url = fixUrl(query)
+        val channelResult = rssChannelRepo.getChannelByUrl(url)
+        if (channelResult.isFailure) {
+            return Result.failure(channelResult.exceptionOrThrow())
+        }
+        val channel = channelResult.getOrThrow()
+        val uri = rssUriTransformer.build(url)
+        val uriInsight = RssUriInsight(uri, url)
+        val result = block(channel, uriInsight)
+        return Result.success(result)
+    }
+
+    private fun String.isUrl(): Boolean {
+        return SimpleUri.parse(this) != null
+    }
+
+    private fun fixUrl(url: String): String {
+        return url.trim().removePrefix("/")
     }
 }

@@ -18,9 +18,10 @@ class RssChannelRepo @Inject constructor(
 
     /**
      * Get channel from local database or remote.
+     * This function don't care the rss items has already loaded or not.
      * @param forceRemote If true, force to get channel from remote.
      */
-    suspend fun getChannel(
+    suspend fun getChannelByUrl(
         url: String,
         forceRemote: Boolean = false,
     ): Result<RssChannel> {
@@ -28,10 +29,10 @@ class RssChannelRepo @Inject constructor(
             getChannelFromRemote(url)
         } else {
             val localChannel = queryChannelByUrl(url)
-            if (localChannel == null) {
-                getChannelFromRemote(url)
-            } else {
+            if (localChannel != null) {
                 Result.success(localChannel)
+            } else {
+                getChannelFromRemote(url)
             }
         }
     }
@@ -41,7 +42,7 @@ class RssChannelRepo @Inject constructor(
             RssParser.getRssChannel(url)
         } catch (e: Throwable) {
             return Result.failure(e)
-        } ?: return Result.failure(IllegalArgumentException("Can't load rss document!"))
+        }
         itemRepo.insertItems(url, channel.items)
         channelDao.insert(channel.toEntity(url))
         return Result.success(channel)

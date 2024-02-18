@@ -12,10 +12,11 @@ class RssItemRepo @Inject constructor(
 
     private val itemDao: RssItemDao = rssDatabases.getRssItemDao()
 
-    suspend fun queryItemsBySourceUrl(rssSourceUrl: String): List<RssItem> {
-        return itemDao.queryBySourceUrl(rssSourceUrl).map {
-            it.toItem()
-        }
+    suspend fun queryItemsBySourceUrl(
+        rssSourceUrl: String,
+    ): List<RssItem> {
+        return itemDao.queryBySourceUrl(rssSourceUrl)
+            .map { it.toItem() }
     }
 
     suspend fun insertItems(rssSourceUrl: String, items: List<RssItem>) {

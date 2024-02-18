@@ -31,7 +31,7 @@ data class RssItemEntity(
 @Dao
 interface RssItemDao {
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE rssSourceUrl = :rssSourceUrl")
+    @Query("SELECT * FROM $TABLE_NAME WHERE rssSourceUrl = :rssSourceUrl ORDER BY pubDate DESC")
     suspend fun queryBySourceUrl(rssSourceUrl: String): List<RssItemEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

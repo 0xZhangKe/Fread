@@ -3,22 +3,18 @@ package com.zhangke.utopia.rss.internal.webfinger
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.rss.internal.rss.RssChannel
-import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
-import com.zhangke.utopia.status.uri.FormalUri
+import com.zhangke.utopia.rss.internal.uri.RssUriInsight
 import java.net.URL
 import javax.inject.Inject
 
-class RssSourceWebFingerTransformer @Inject constructor(
-    private val uriTransformer: RssUriTransformer,
-) {
+class RssSourceWebFingerTransformer @Inject constructor() {
 
-    fun create(uri: FormalUri, channel: RssChannel): WebFinger {
+    fun create(uriInsight: RssUriInsight, channel: RssChannel): WebFinger {
         val name = channel.title.ifNullOrEmpty { "Unknown" }
-        val url = uriTransformer.parse(uri)!!.url
         val host = try {
-            URL(url).host
+            URL(uriInsight.url).host
         } catch (e: Throwable) {
-            url
+            uriInsight.url
         }
         return WebFinger.build(
             name = name,

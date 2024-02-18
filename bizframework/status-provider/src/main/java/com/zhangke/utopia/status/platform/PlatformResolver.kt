@@ -22,8 +22,8 @@ class PlatformResolver constructor(
         return Result.success(emptyList())
     }
 
-    suspend fun getAllRecordedPlatform(): List<BlogPlatform> {
-        return resolverList.flatMap { it.getAllRecordedPlatform() }
+    suspend fun getAllRecordedPlatformForLogin(): List<BlogPlatform> {
+        return resolverList.flatMap { it.getAllRecordedPlatformForLogin() }
     }
 }
 
@@ -31,5 +31,5 @@ interface IPlatformResolver {
 
     suspend fun resolveBySourceUri(sourceUri: FormalUri): Result<BlogPlatform?>
 
-    suspend fun getAllRecordedPlatform(): List<BlogPlatform>
+    suspend fun getAllRecordedPlatformForLogin(): List<BlogPlatform>
 }

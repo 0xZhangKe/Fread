@@ -11,6 +11,6 @@ fun RssChannel.convert(): com.zhangke.utopia.rss.internal.rss.RssChannel {
         lastBuildDate = this.lastBuildDate?.let(::formatRssDate),
         updatePeriod = this.updatePeriod,
         image = this.image?.convert(),
-        items = this.items.map { it.convert() },
+        items = this.items.map { it.convert() }.sortedByDescending { it.pubDate.time },
     )
 }

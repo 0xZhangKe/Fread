@@ -10,11 +10,11 @@ object RssParser {
         callFactory = GlobalOkHttpClient.client,
     ).build()
 
-    suspend fun getRssChannel(url: String): RssChannel? {
+    suspend fun getRssChannel(url: String): RssChannel {
         return rssParser.getRssChannel(url).convert()
     }
 
-    suspend fun parse(rssText: String): RssChannel? {
+    suspend fun parse(rssText: String): RssChannel {
         return rssParser.parse(rssText).convert()
     }
 }

@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.zhangke.utopia.common.utils.DateTypeConverter
 import com.zhangke.utopia.rss.internal.db.converter.FormalUriConverter
 
 private const val DB_NAME = "rss.db"
@@ -12,15 +13,18 @@ private const val DB_VERSION = 1
 
 @TypeConverters(
     FormalUriConverter::class,
+    DateTypeConverter::class,
 )
 @Database(
-    entities = [RssChannelEntity::class],
+    entities = [RssChannelEntity::class, RssItemEntity::class],
     version = DB_VERSION,
     exportSchema = false,
 )
 abstract class RssDatabases : RoomDatabase() {
 
     abstract fun getRssChannelDao(): RssChannelDao
+
+    abstract fun getRssItemDao(): RssItemDao
 
     companion object{
 

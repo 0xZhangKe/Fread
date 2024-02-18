@@ -1,0 +1,25 @@
+package com.zhangke.utopia.rss.internal.adapter
+
+import com.zhangke.utopia.rss.internal.rss.RssChannel
+import com.zhangke.utopia.rss.internal.webfinger.RssSourceWebFingerTransformer
+import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.uri.FormalUri
+import javax.inject.Inject
+
+class BlogAuthorAdapter @Inject constructor(
+    private val rssSourceWebFingerTransformer: RssSourceWebFingerTransformer,
+) {
+
+    fun createAuthor(
+        uri: FormalUri,
+        channel: RssChannel,
+    ): BlogAuthor {
+        return BlogAuthor(
+            uri = uri,
+            webFinger = rssSourceWebFingerTransformer.create(uri, channel),
+            name = channel.title,
+            description = channel.description.orEmpty(),
+            avatar = channel.image?.url,
+        )
+    }
+}

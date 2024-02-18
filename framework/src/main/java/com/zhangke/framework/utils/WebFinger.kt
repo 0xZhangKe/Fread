@@ -46,6 +46,10 @@ class WebFinger private constructor(
             return createAsAcct(content) ?: createAsUrl(content)
         }
 
+        fun build(name: String, host: String): WebFinger {
+            return WebFinger(name, host)
+        }
+
         private fun createAsAcct(content: String): WebFinger? {
             val maybeAcct = content
                 .removePrefix("acct:")

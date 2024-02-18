@@ -1,11 +1,13 @@
 package com.zhangke.utopia.rss.internal.rss
 
+import java.util.Date
+
 data class RssItem(
-    val guid: String?,
-    val title: String?,
+    val id: String,
+    val title: String,
     val author: String?,
     val link: String?,
-    val pubDate: String?,
+    val pubDate: Date,
     val description: String?,
     val content: String?,
     val image: String?,

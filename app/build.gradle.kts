@@ -91,6 +91,7 @@ dependencies {
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":framework"))
     implementation(project(path = ":plugins:activitypub-app"))
+    implementation(project(path = ":plugins:rss"))
     implementation(project(path = ":bizframework:status-provider"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":commonbiz:sharedscreen"))

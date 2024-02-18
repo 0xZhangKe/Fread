@@ -6,12 +6,12 @@ import java.util.Date
 class DateTypeConverter {
 
     @TypeConverter
-    fun fromString(time: Long): Date {
+    fun fromLong(time: Long): Date {
         return Date(time)
     }
 
     @TypeConverter
-    fun toString(date: Date): Long {
+    fun toLong(date: Date): Long {
         return date.time
     }
 }

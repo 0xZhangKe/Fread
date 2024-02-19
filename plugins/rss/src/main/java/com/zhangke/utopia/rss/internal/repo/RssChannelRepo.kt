@@ -53,41 +53,4 @@ class RssChannelRepo @Inject constructor(
         val items = itemRepo.queryItemsBySourceUrl(url)
         return convertToRssChannel(channelEntity, items)
     }
-
-    private fun convertToRssChannel(
-        channelEntity: RssChannelEntity,
-        items: List<RssItem>,
-    ): RssChannel {
-        val image = if (channelEntity.imageUrl.isNullOrBlank()) {
-            null
-        } else {
-            RssImage(
-                url = channelEntity.imageUrl,
-                title = channelEntity.imageTitle,
-                description = channelEntity.imageDescription,
-            )
-        }
-        return RssChannel(
-            title = channelEntity.title,
-            description = channelEntity.description,
-            link = channelEntity.url,
-            image = image,
-            items = items,
-            lastBuildDate = channelEntity.lastBuildDate,
-            updatePeriod = channelEntity.updatePeriod,
-        )
-    }
-
-    private fun RssChannel.toEntity(url: String): RssChannelEntity {
-        return RssChannelEntity(
-            url = url,
-            title = this.title,
-            description = this.description.orEmpty(),
-            lastBuildDate = this.lastBuildDate,
-            updatePeriod = this.updatePeriod,
-            imageTitle = this.image?.title,
-            imageDescription = this.image?.description,
-            imageUrl = this.image?.url,
-        )
-    }
 }

@@ -1,7 +1,6 @@
-package com.zhangke.utopia.rss.internal.rss.parser
+package com.zhangke.utopia.rss.internal.rss
 
 import com.zhangke.framework.architect.http.GlobalOkHttpClient
-import com.zhangke.utopia.rss.internal.rss.RssChannel
 import com.zhangke.utopia.rss.internal.rss.adapter.convert
 
 object RssParser {

@@ -16,8 +16,7 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.getViewModel
-import com.zhangke.utopia.pages.main.MainPage
-import com.zhangke.utopia.rss.internal.rss.parser.RssParser
+import com.zhangke.utopia.rss.internal.rss.RssParser
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject

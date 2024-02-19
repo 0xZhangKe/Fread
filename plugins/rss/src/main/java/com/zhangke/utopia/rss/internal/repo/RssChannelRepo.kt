@@ -6,7 +6,7 @@ import com.zhangke.utopia.rss.internal.db.RssDatabases
 import com.zhangke.utopia.rss.internal.rss.RssChannel
 import com.zhangke.utopia.rss.internal.rss.RssImage
 import com.zhangke.utopia.rss.internal.rss.RssItem
-import com.zhangke.utopia.rss.internal.rss.parser.RssParser
+import com.zhangke.utopia.rss.internal.rss.RssParser
 import javax.inject.Inject
 
 class RssChannelRepo @Inject constructor(

@@ -15,12 +15,13 @@ private const val TABLE_NAME = "channels"
 data class RssChannelEntity(
     @PrimaryKey val url: String,
     val title: String,
-    val description: String,
+    val description: String?,
+    val displayName: String,
+    val addDate: Date,
+    val lastUpdateDate: Date,
     val lastBuildDate: Date?,
     val updatePeriod: String?,
-    val imageTitle: String?,
-    val imageDescription: String?,
-    val imageUrl: String?,
+    val thumbnail: String?,
 )
 
 @Dao

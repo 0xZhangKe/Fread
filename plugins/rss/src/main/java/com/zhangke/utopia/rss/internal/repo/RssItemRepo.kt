@@ -1,5 +1,6 @@
 package com.zhangke.utopia.rss.internal.repo
 
+import android.graphics.Rect
 import com.zhangke.utopia.rss.internal.db.RssDatabases
 import com.zhangke.utopia.rss.internal.db.RssItemDao
 import com.zhangke.utopia.rss.internal.db.RssItemEntity

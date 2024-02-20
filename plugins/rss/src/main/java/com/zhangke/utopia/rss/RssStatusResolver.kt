@@ -1,5 +1,6 @@
 package com.zhangke.utopia.rss
 
+import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.repo.RssStatusRepo
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
@@ -24,12 +25,21 @@ class RssStatusResolver @Inject constructor(
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri)
             ?: return Result.failure(IllegalArgumentException("Unknown uri: $uri"))
-        return rssStatusRepo.getStatus(
-            uriInsight = uriInsight,
-            limit = limit,
-            maxId = maxId,
-            sinceId = sinceId,
-        )
+        if (!maxId.isNullOrEmpty()) {
+            return Result.success(emptyList())
+        }
+        val fetchResult = rssStatusRepo.getStatus(uriInsight)
+        if (fetchResult.isFailure) {
+            return Result.failure(fetchResult.exceptionOrThrow())
+        }
+        var finalReturnItems = fetchResult.getOrThrow()
+        if (!sinceId.isNullOrEmpty()) {
+            val sinceIndex = finalReturnItems.indexOfFirst { it.id == sinceId }
+            if (sinceIndex >= 0) {
+                finalReturnItems = finalReturnItems.subList(0, sinceIndex)
+            }
+        }
+        return Result.success(finalReturnItems.takeLast(limit))
     }
 
     override suspend fun checkIsFirstStatus(status: Status): Result<Boolean>? {

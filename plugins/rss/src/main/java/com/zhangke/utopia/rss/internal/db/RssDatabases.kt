@@ -16,15 +16,13 @@ private const val DB_VERSION = 1
     DateTypeConverter::class,
 )
 @Database(
-    entities = [RssChannelEntity::class, RssItemEntity::class],
+    entities = [RssChannelEntity::class],
     version = DB_VERSION,
     exportSchema = false,
 )
 abstract class RssDatabases : RoomDatabase() {
 
     abstract fun getRssChannelDao(): RssChannelDao
-
-    abstract fun getRssItemDao(): RssItemDao
 
     companion object{
 

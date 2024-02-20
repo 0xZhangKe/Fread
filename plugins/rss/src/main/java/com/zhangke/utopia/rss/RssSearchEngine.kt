@@ -3,8 +3,9 @@ package com.zhangke.utopia.rss
 import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.adapter.BlogAuthorAdapter
+import com.zhangke.utopia.rss.internal.model.RssSource
 import com.zhangke.utopia.rss.internal.platform.RssPlatformTransformer
-import com.zhangke.utopia.rss.internal.repo.RssChannelRepo
+import com.zhangke.utopia.rss.internal.repo.RssRepo
 import com.zhangke.utopia.rss.internal.rss.RssChannel
 import com.zhangke.utopia.rss.internal.source.RssSourceTransformer
 import com.zhangke.utopia.rss.internal.uri.RssUriInsight
@@ -21,7 +22,7 @@ import javax.inject.Inject
 class RssSearchEngine @Inject constructor(
     private val rssPlatformTransformer: RssPlatformTransformer,
     private val rssSourceTransformer: RssSourceTransformer,
-    private val rssChannelRepo: RssChannelRepo,
+    private val rssRepo: RssRepo,
     private val bogAuthorAdapter: BlogAuthorAdapter,
     private val rssUriTransformer: RssUriTransformer,
 ) : ISearchEngine {
@@ -69,8 +70,8 @@ class RssSearchEngine @Inject constructor(
         return queryWithChannelByUrl(
             query = query,
             defaultResult = emptyList(),
-            block = { channel, uriInsight ->
-                listOf(rssSourceTransformer.createSource(uriInsight, channel))
+            block = { source, uriInsight ->
+                listOf(rssSourceTransformer.createSource(uriInsight, source))
             }
         )
     }
@@ -88,18 +89,18 @@ class RssSearchEngine @Inject constructor(
     private suspend fun <T> queryWithChannelByUrl(
         query: String,
         defaultResult: T,
-        block: suspend (RssChannel, RssUriInsight) -> T,
+        block: suspend (RssSource, RssUriInsight) -> T,
     ): Result<T> {
         if (query.isUrl().not()) return Result.success(defaultResult)
         val url = fixUrl(query)
-        val channelResult = rssChannelRepo.getChannelByUrl(url)
-        if (channelResult.isFailure) {
-            return Result.failure(channelResult.exceptionOrThrow())
+        val sourceResult = rssRepo.getRssSource(url)
+        if (sourceResult.isFailure) {
+            return Result.failure(sourceResult.exceptionOrThrow())
         }
-        val channel = channelResult.getOrThrow()
+        val source = sourceResult.getOrThrow() ?: return Result.success(defaultResult)
         val uri = rssUriTransformer.build(url)
         val uriInsight = RssUriInsight(uri, url)
-        val result = block(channel, uriInsight)
+        val result = block(source, uriInsight)
         return Result.success(result)
     }
 

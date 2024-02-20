@@ -1,5 +1,6 @@
 package com.zhangke.utopia.rss.internal.source
 
+import com.zhangke.utopia.rss.internal.model.RssSource
 import com.zhangke.utopia.rss.internal.rss.RssChannel
 import com.zhangke.utopia.rss.internal.uri.RssUriInsight
 import com.zhangke.utopia.status.source.StatusSource
@@ -9,13 +10,13 @@ class RssSourceTransformer @Inject constructor() {
 
     fun createSource(
         uriInsight: RssUriInsight,
-        channel: RssChannel,
+        source: RssSource,
     ): StatusSource {
         return StatusSource(
             uri = uriInsight.rawUri,
-            name = channel.title,
-            description = channel.description.orEmpty(),
-            thumbnail = channel.image?.url,
+            name = source.title,
+            description = source.description.orEmpty(),
+            thumbnail = source.thumbnail,
         )
     }
 }

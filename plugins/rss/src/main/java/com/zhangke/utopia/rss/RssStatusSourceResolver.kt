@@ -1,7 +1,7 @@
 package com.zhangke.utopia.rss
 
 import com.zhangke.framework.utils.exceptionOrThrow
-import com.zhangke.utopia.rss.internal.repo.RssChannelRepo
+import com.zhangke.utopia.rss.internal.repo.RssRepo
 import com.zhangke.utopia.rss.internal.source.RssSourceTransformer
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
@@ -13,7 +13,7 @@ import javax.inject.Inject
 class RssStatusSourceResolver @Inject constructor(
     private val rssUriTransformer: RssUriTransformer,
     private val rssSourceTransformer: RssSourceTransformer,
-    private val channelRepo: RssChannelRepo,
+    private val rssRepo: RssRepo,
 ) : IStatusSourceResolver {
 
     override suspend fun resolveSourceByUri(uri: FormalUri): Result<StatusSource?> {
@@ -21,11 +21,12 @@ class RssStatusSourceResolver @Inject constructor(
         val uriInsight = rssUriTransformer.parse(uri) ?: return Result.failure(
             IllegalArgumentException("Unknown uri: $uri")
         )
-        val channelResult = channelRepo.getChannelByUrl(uriInsight.url)
-        if (channelResult.isFailure) {
-            return Result.failure(channelResult.exceptionOrThrow())
+        val sourceResult = rssRepo.getRssSource(uriInsight.url)
+        if (sourceResult.isFailure) {
+            return Result.failure(sourceResult.exceptionOrThrow())
         }
-        return rssSourceTransformer.createSource(uriInsight, channelResult.getOrThrow())
+        val source = sourceResult.getOrThrow() ?: return Result.success(null)
+        return rssSourceTransformer.createSource(uriInsight, source)
             .let { Result.success(it) }
     }
 }

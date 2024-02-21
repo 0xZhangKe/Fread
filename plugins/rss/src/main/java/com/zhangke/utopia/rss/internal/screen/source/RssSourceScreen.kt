@@ -11,6 +11,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -31,13 +32,15 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.UtopiaDialog
+import com.zhangke.framework.composable.text.RichText
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.rss.R
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
-@Destination(RssSourceRoute.ROUTE)
+@Destination(RssSourceScreenRoute.ROUTE)
 class RssSourceScreen(
     @Router private val route: String = "",
 ) : Screen {
@@ -47,15 +50,13 @@ class RssSourceScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<RssSourceViewModel, RssSourceViewModel.Factory> {
-            it.create(RssSourceRoute.parseRoute(route))
+            it.create(RssSourceScreenRoute.parseRoute(route))
         }
         val uiState by viewModel.uiState.collectAsState()
         RssSourceContent(
             uiState = uiState,
             onBackClick = navigator::pop,
-            onDisplayNameChanged = {
-
-            },
+            onDisplayNameChanged = viewModel::onDisplayNameChanged,
         )
     }
 
@@ -94,11 +95,30 @@ class RssSourceScreen(
                     text = uiState.source?.title.orEmpty(),
                 )
 
+                RichText(
+                    modifier = Modifier
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                        .utopiaPlaceholder(uiState.source?.description.isNullOrEmpty()),
+                    text = uiState.source?.description.orEmpty(),
+                )
+
                 val rssSource = uiState.source
                 if (rssSource != null) {
                     CustomTitleItem(
                         displayName = rssSource.displayName,
                         onDisplayNameChanged = onDisplayNameChanged,
+                    )
+                    RssInfoItem(
+                        title = stringResource(R.string.rss_source_detail_screen_url),
+                        content = rssSource.url,
+                    )
+                    RssInfoItem(
+                        title = stringResource(R.string.rss_source_detail_screen_add_date),
+                        content = uiState.formattedAddDate.orEmpty(),
+                    )
+                    RssInfoItem(
+                        title = stringResource(R.string.rss_source_detail_screen_last_update_date),
+                        content = uiState.formattedLastUpdateDate.orEmpty(),
                     )
                 }
             }
@@ -115,7 +135,7 @@ class RssSourceScreen(
         }
         RssInfoItem(
             title = stringResource(R.string.rss_source_detail_screen_custom_title),
-            content = displayName.orEmpty(),
+            content = displayName,
             option = {
                 SimpleIconButton(
                     onClick = { showEditDisplayNameDialog = true },
@@ -125,6 +145,42 @@ class RssSourceScreen(
             },
         )
 
+        if (showEditDisplayNameDialog) {
+            var newDisplayName by remember {
+                mutableStateOf(displayName)
+            }
+            UtopiaDialog(
+                title = stringResource(com.zhangke.utopia.framework.R.string.alert),
+                onDismissRequest = {
+                    showEditDisplayNameDialog = false
+                },
+                positiveButtonText = stringResource(com.zhangke.utopia.framework.R.string.ok),
+                onPositiveClick = {
+                    showEditDisplayNameDialog = false
+                    if (newDisplayName != displayName) {
+                        onDisplayNameChanged(newDisplayName)
+                    }
+                },
+                negativeButtonText = stringResource(com.zhangke.utopia.framework.R.string.cancel),
+                onNegativeClick = {
+                    showEditDisplayNameDialog = false
+                },
+                content = {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth(),
+                        value = newDisplayName,
+                        onValueChange = {
+                            newDisplayName = it
+                        },
+                        label = {
+                            Text(text = stringResource(R.string.rss_source_detail_screen_custom_title))
+                        }
+                    )
+                }
+            )
+        }
     }
 
     @Composable

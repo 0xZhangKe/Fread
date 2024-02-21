@@ -1,13 +1,69 @@
 package com.zhangke.utopia.rss.internal.screen.source
 
 import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.hilt.ScreenModelFactory
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.utopia.rss.internal.repo.RssRepo
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 
-@HiltViewModel
-class RssSourceViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = RssSourceViewModel.Factory::class)
+class RssSourceViewModel @AssistedInject constructor(
+    private val rssRepo: RssRepo,
+    @Assisted private val url: String,
+) : ViewModel() {
 
-): ViewModel() {
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(url: String): RssSourceViewModel
+    }
 
+    private val _uiState = MutableStateFlow(
+        RssSourceUiState(
+            source = null
+        )
+    )
+    val uiState = _uiState.asStateFlow()
+
+    private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
+    val snackBarMessageFlow = _snackBarMessageFlow.asSharedFlow()
+
+    init {
+        launchInViewModel {
+            rssRepo.getRssSource(url)
+                .onFailure {
+                    it.message
+                        ?.let { textOf(it) }
+                        ?.let { _snackBarMessageFlow.emit(it) }
+                }.onSuccess {
+                    if (it == null) {
+                        _snackBarMessageFlow.emit(textOf("Unknown $url"))
+                    } else {
+                        _uiState.value = _uiState.value.copy(
+                            source = it
+                        )
+                    }
+                }
+        }
+    }
+
+    fun onDisplayNameChanged(displayName: String) {
+        _uiState.value = _uiState.value.copy(
+            source = _uiState.value.source?.copy(
+                displayName = displayName
+            )
+        )
+        launchInViewModel {
+            rssRepo.updateSourceName(url, displayName)
+        }
+    }
 
 }

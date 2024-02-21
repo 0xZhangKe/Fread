@@ -3,4 +3,7 @@
 
     <string name="rss_protocol_name">RSS</string>
 
+    <string name="rss_source_detail_screen_title">信息源属性</string>
+    <string name="rss_source_detail_screen_custom_title">自定义标题</string>
+
 </resources>

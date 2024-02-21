@@ -23,6 +23,13 @@ class RssRepo @Inject constructor(
         return fetchRssChannelByUrl(url)
     }
 
+    suspend fun updateSourceName(url: String, name: String){
+        val source = channelDao.queryByUrl(url)
+        if (source != null) {
+            channelDao.insert(source.copy(displayName = name))
+        }
+    }
+
     suspend fun getRssItems(
         url: String,
     ): Result<Pair<RssSource, List<RssChannelItem>>> {

@@ -5,7 +5,7 @@ import com.zhangke.utopia.rss.internal.screen.RssRoutes
 import java.net.URLDecoder
 import java.net.URLEncoder
 
-object RssSourceRoute {
+object RssSourceScreenRoute {
 
     const val ROUTE = "${RssRoutes.ROOT}/source"
 

@@ -14,6 +14,8 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import java.text.DateFormat
+import java.util.Locale
 
 @HiltViewModel(assistedFactory = RssSourceViewModel.Factory::class)
 class RssSourceViewModel @AssistedInject constructor(
@@ -26,9 +28,13 @@ class RssSourceViewModel @AssistedInject constructor(
         fun create(url: String): RssSourceViewModel
     }
 
+    private val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
+
     private val _uiState = MutableStateFlow(
         RssSourceUiState(
-            source = null
+            source = null,
+            formattedAddDate = null,
+            formattedLastUpdateDate = null,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -48,7 +54,9 @@ class RssSourceViewModel @AssistedInject constructor(
                         _snackBarMessageFlow.emit(textOf("Unknown $url"))
                     } else {
                         _uiState.value = _uiState.value.copy(
-                            source = it
+                            source = it,
+                            formattedAddDate = dateFormat.format(it.addDate),
+                            formattedLastUpdateDate = dateFormat.format(it.lastUpdateDate),
                         )
                     }
                 }

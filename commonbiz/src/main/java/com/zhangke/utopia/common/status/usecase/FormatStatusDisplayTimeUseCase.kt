@@ -28,7 +28,7 @@ class FormatStatusDisplayTimeUseCase @Inject constructor(
         val duration = (System.currentTimeMillis() - datetime).milliseconds
         val inWholeDays = duration.inWholeDays
         if (inWholeDays > 3) {
-            return dateFormat.format(Date(duration.inWholeMilliseconds))
+            return dateFormat.format(Date(datetime))
         }
         return "${formatDuration(config, duration)} ${config.ago}"
     }

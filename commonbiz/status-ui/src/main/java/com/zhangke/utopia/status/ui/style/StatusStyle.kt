@@ -29,15 +29,21 @@ object StatusStyleDefaults {
 }
 
 @Composable
-fun defaultStatusStyle() = StatusStyle(
-    containerPaddings = PaddingValues(
+fun defaultStatusStyle(
+    containerPaddings: PaddingValues = PaddingValues(
         start = StatusStyleDefaults.startPadding,
         top = StatusStyleDefaults.topPadding,
         end = StatusStyleDefaults.endPadding,
         bottom = StatusStyleDefaults.bottomPadding,
     ),
-    iconStartPadding = StatusStyleDefaults.iconStartPadding,
-    iconEndPadding = StatusStyleDefaults.iconEndPadding,
-    statusInfoStyle = defaultStatusInfoStyle(),
-    blogStyle = defaultBlogStyle(),
+    iconStartPadding: Dp = StatusStyleDefaults.iconStartPadding,
+    iconEndPadding: Dp = StatusStyleDefaults.iconEndPadding,
+    statusInfoStyle: StatusInfoStyle = defaultStatusInfoStyle(),
+    blogStyle: BlogStyle = defaultBlogStyle(),
+) = StatusStyle(
+    containerPaddings = containerPaddings,
+    iconStartPadding = iconStartPadding,
+    iconEndPadding = iconEndPadding,
+    statusInfoStyle = statusInfoStyle,
+    blogStyle = blogStyle,
 )

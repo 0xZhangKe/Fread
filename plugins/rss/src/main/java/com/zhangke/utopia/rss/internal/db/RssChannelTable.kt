@@ -14,6 +14,7 @@ private const val TABLE_NAME = "channels"
 @Entity(tableName = TABLE_NAME)
 data class RssChannelEntity(
     @PrimaryKey val url: String,
+    val homePage: String?,
     val title: String,
     val description: String?,
     val displayName: String,

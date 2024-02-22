@@ -21,6 +21,7 @@ object RssFetcher {
         return RssSource(
             url = url,
             title = this.title,
+            homePage = this.link,
             displayName = this.title,
             addDate = Date(),
             lastUpdateDate = Date(),

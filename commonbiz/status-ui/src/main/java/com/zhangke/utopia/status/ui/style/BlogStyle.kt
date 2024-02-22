@@ -3,11 +3,14 @@ package com.zhangke.utopia.status.ui.style
 import androidx.compose.runtime.Composable
 
 data class BlogStyle(
+    val contentMaxLine: Int,
     val contentFontSizeSp: Float,
     val spoilerFontSizeSp: Float,
 )
 
 object BlogStyleDefaults {
+
+    const val contentMaxLine: Int = 6
 
     const val contentFontSizeSp: Float = 14F
 
@@ -15,7 +18,12 @@ object BlogStyleDefaults {
 }
 
 @Composable
-fun defaultBlogStyle() = BlogStyle(
-    contentFontSizeSp = BlogStyleDefaults.contentFontSizeSp,
-    spoilerFontSizeSp = BlogStyleDefaults.spoilerFontSizeSp,
+fun defaultBlogStyle(
+    contentMaxLine: Int = BlogStyleDefaults.contentMaxLine,
+    contentFontSizeSp: Float = BlogStyleDefaults.contentFontSizeSp,
+    spoilerFontSizeSp: Float = BlogStyleDefaults.spoilerFontSizeSp,
+) = BlogStyle(
+    contentMaxLine = contentMaxLine,
+    contentFontSizeSp = contentFontSizeSp,
+    spoilerFontSizeSp = spoilerFontSizeSp,
 )

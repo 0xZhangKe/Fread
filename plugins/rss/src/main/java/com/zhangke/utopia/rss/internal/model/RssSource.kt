@@ -4,6 +4,7 @@ import java.util.Date
 
 data class RssSource(
     val url: String,
+    val homePage: String?,
     val title: String,
     val displayName: String,
     val addDate: Date,

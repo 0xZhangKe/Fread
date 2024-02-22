@@ -36,6 +36,9 @@ interface ContentConfigDao {
     @Query("UPDATE $TABLE_NAME SET lastReadStatusId=null")
     suspend fun clearAllLastReadStatusId()
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE name=:name")
+    suspend fun queryByName(name: String): ContentConfigEntity?
+
     @Query("UPDATE $TABLE_NAME SET sourceUriList=:sourceUriList WHERE id=:id")
     suspend fun updateSourceList(id: Long, sourceUriList: List<FormalUri>)
 

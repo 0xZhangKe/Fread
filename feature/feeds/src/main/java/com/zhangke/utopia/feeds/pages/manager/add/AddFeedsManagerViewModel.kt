@@ -8,6 +8,7 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
 import com.zhangke.utopia.common.config.UtopiaConfigManager
+import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
@@ -31,6 +32,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val configManager: UtopiaConfigManager,
+    private val contentConfigRepo: ContentConfigRepo,
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
@@ -98,6 +100,10 @@ internal class AddFeedsManagerViewModel @Inject constructor(
                 _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_name_tips))
                 return@launchInViewModel
             }
+            if (contentConfigRepo.checkNameExist(currentState.sourceName)) {
+                _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_name_exist))
+                return@launchInViewModel
+            }
             val sourceList = currentState.sourceList
             if (sourceList.isEmpty()) {
                 _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
@@ -153,7 +159,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
         return AddFeedsManagerUiState(
             sourceList = sourceList.map { it.toUiState() },
             sourceName = sourceName,
-            maxNameLength = configManager.contentNameMaxLength,
+            maxNameLength = configManager.contentTitleMaxLength,
         )
     }
 

@@ -49,6 +49,10 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.clearAllLastReadStatusId()
     }
 
+    suspend fun checkNameExist(name: String): Boolean {
+        return contentConfigDao.queryByName(name) != null
+    }
+
     suspend fun deleteById(id: Long) {
         contentConfigDao.deleteById(id)
     }

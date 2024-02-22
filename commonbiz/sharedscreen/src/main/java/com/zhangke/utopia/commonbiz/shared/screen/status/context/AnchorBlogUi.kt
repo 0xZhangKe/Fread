@@ -4,11 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
@@ -19,6 +17,7 @@ import com.zhangke.utopia.status.ui.StatusInfoLine
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
+import com.zhangke.utopia.status.ui.style.defaultBlogStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
 @Composable
@@ -28,7 +27,11 @@ fun AnchorBlogUi(
     displayTime: String,
     indexInList: Int,
     showUpThread: Boolean,
-    style: StatusStyle = defaultStatusStyle(),
+    style: StatusStyle = defaultStatusStyle(
+        blogStyle = defaultBlogStyle(
+            contentMaxLine = Int.MAX_VALUE,
+        ),
+    ),
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
     reblogAuthor: BlogAuthor? = null,

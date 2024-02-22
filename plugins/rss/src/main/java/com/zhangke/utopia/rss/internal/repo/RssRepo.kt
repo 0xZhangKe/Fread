@@ -23,7 +23,7 @@ class RssRepo @Inject constructor(
         return fetchRssChannelByUrl(url)
     }
 
-    suspend fun updateSourceName(url: String, name: String){
+    suspend fun updateSourceName(url: String, name: String) {
         val source = channelDao.queryByUrl(url)
         if (source != null) {
             channelDao.insert(source.copy(displayName = name))
@@ -64,6 +64,7 @@ class RssRepo @Inject constructor(
     private fun RssSource.toEntity(): RssChannelEntity {
         return RssChannelEntity(
             url = this.url,
+            homePage = this.homePage,
             title = this.title,
             description = this.description,
             lastBuildDate = this.lastUpdateDate,
@@ -78,8 +79,9 @@ class RssRepo @Inject constructor(
     private fun RssChannelEntity.toRssSource(): RssSource {
         return RssSource(
             url = this.url,
+            homePage = this.homePage,
             title = this.title,
-            displayName = this.title,
+            displayName = this.displayName,
             addDate = this.addDate,
             lastUpdateDate = this.lastUpdateDate,
             description = this.description,

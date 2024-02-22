@@ -6,7 +6,6 @@ import com.zhangke.utopia.rss.internal.adapter.BlogAuthorAdapter
 import com.zhangke.utopia.rss.internal.model.RssSource
 import com.zhangke.utopia.rss.internal.platform.RssPlatformTransformer
 import com.zhangke.utopia.rss.internal.repo.RssRepo
-import com.zhangke.utopia.rss.internal.rss.RssChannel
 import com.zhangke.utopia.rss.internal.source.RssSourceTransformer
 import com.zhangke.utopia.rss.internal.uri.RssUriInsight
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
@@ -109,6 +108,6 @@ class RssSearchEngine @Inject constructor(
     }
 
     private fun fixUrl(url: String): String {
-        return url.trim().removePrefix("/")
+        return url.trim().removeSuffix("/")
     }
 }

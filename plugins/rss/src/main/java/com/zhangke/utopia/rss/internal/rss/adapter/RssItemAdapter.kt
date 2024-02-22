@@ -2,8 +2,9 @@ package com.zhangke.utopia.rss.internal.rss.adapter
 
 import com.prof18.rssparser.model.RssItem
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import org.joda.time.format.ISODateTimeFormat
+import java.text.SimpleDateFormat
 import java.util.Date
+import java.util.Locale
 
 fun RssItem.convert(): com.zhangke.utopia.rss.internal.rss.RssItem {
     return com.zhangke.utopia.rss.internal.rss.RssItem(
@@ -26,7 +27,8 @@ fun RssItem.convert(): com.zhangke.utopia.rss.internal.rss.RssItem {
 
 internal fun formatRssDate(datetime: String?): Date {
     if (datetime.isNullOrEmpty()) return Date()
-    return ISODateTimeFormat.dateTime().parseDateTime(datetime).toDate()
+    val format = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
+    return format.parse(datetime) ?: Date()
 }
 
 private fun getRssItemId(rssItem: RssItem): String {

@@ -8,7 +8,10 @@
     <string name="search_page_title">搜索</string>
     <string name="search_result_not_found">未搜索到任何结果</string>
 
-    <string name="add_feeds_page_title">添加</string>
+    <string name="add_feeds_page_title">添加内容</string>
+    <string name="add_feeds_page_feeds_name_label">内容名</string>
+    <string name="add_feeds_page_feeds_name_hint">请输入内容名</string>
+    <string name="add_feeds_page_feeds_empty">请添加订阅源</string>
 
     <string name="select_feeds_type_screen_title">请选择内容类型</string>
 

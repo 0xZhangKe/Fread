@@ -16,6 +16,7 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.utopia.pages.main.MainPage
 import com.zhangke.utopia.rss.internal.rss.RssParser
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -212,21 +213,7 @@ class UtopiaScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-//        MainPage()
-
-        val coroutineScope = rememberCoroutineScope()
-        Box(modifier = Modifier.fillMaxSize()) {
-            Button(
-                modifier = Modifier.align(Alignment.Center),
-                onClick = {
-                    coroutineScope.launch {
-                        RssParser.parse(rssText)
-                    }
-                }
-            ) {
-                Text(text = "Parse rss")
-            }
-        }
+        MainPage()
 
 //            Navigator(TabTestScreen())
 

@@ -8,7 +8,10 @@
     <string name="search_page_title">Search</string>
     <string name="search_result_not_found">No search results found</string>
 
-    <string name="add_feeds_page_title">ADD</string>
+    <string name="add_feeds_page_title">Add Content</string>
+    <string name="add_feeds_page_feeds_name_label">Content Name</string>
+    <string name="add_feeds_page_feeds_name_hint">Please enter the content name</string>
+    <string name="add_feeds_page_feeds_empty">Please add a subscription source</string>
 
     <string name="select_feeds_type_screen_title">Select Content Type</string>
 

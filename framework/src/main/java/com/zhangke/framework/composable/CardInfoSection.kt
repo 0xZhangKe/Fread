@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.text.RichText
 import com.zhangke.utopia.framework.R
 
 @Composable
@@ -72,12 +73,12 @@ fun CardInfoSection(
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (description.isNullOrEmpty().not()) {
-                    Text(
+                    RichText(
                         modifier = Modifier.padding(top = 2.dp),
-                        maxLines = 3,
                         text = description!!,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
+//                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        fontSp = 12F,
+                        maxLines = 3,
                     )
                 }
             }

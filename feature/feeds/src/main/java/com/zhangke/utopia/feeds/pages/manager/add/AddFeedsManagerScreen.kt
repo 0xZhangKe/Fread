@@ -1,25 +1,27 @@
 package com.zhangke.utopia.feeds.pages.manager.add
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.PostAdd
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
+import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.TextField
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -29,6 +31,9 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.IconButtonStyle
+import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.StyledIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -55,6 +60,7 @@ internal class AddFeedsManagerScreen : Screen {
         FeedsManager(
             uiState = viewModel.uiState.collectAsState().value,
             errorMessageFlow = viewModel.errorMessageFlow,
+            onBackClick = navigator::pop,
             onAddSourceClick = {
                 navigator.push(
                     SearchSourceForAddScreen(
@@ -78,6 +84,7 @@ internal class AddFeedsManagerScreen : Screen {
     private fun FeedsManager(
         uiState: AddFeedsManagerUiState,
         errorMessageFlow: Flow<TextString>,
+        onBackClick: () -> Unit,
         onAddSourceClick: () -> Unit,
         onConfirmClick: () -> Unit,
         onNameInputValueChanged: (String) -> Unit,
@@ -89,57 +96,78 @@ internal class AddFeedsManagerScreen : Screen {
             topBar = {
                 Toolbar(
                     title = stringResource(id = R.string.add_feeds_page_title),
+                    onBackClick = onBackClick,
                     actions = {
-                        IconButton(
-                            modifier = Modifier.size(24.dp),
+                        SimpleIconButton(
                             onClick = onConfirmClick,
-                        ) {
-                            Icon(
-                                painter = rememberVectorPainter(image = Icons.Default.PostAdd),
-                                contentDescription = "Add",
-                            )
-                        }
+                            imageVector = Icons.Default.Check,
+                            contentDescription = "Add",
+                        )
                     }
                 )
             },
             snackbarHost = snackbarHost(snackbarHostState),
-            floatingActionButton = {
-                FloatingActionButton(onClick = onAddSourceClick) {
-                    Icon(
-                        painter = rememberVectorPainter(image = Icons.Default.Add),
-                        contentDescription = "Add Source",
-                    )
-                }
-            }
         ) { paddings ->
             Column(
                 modifier = Modifier
                     .fillMaxSize()
                     .padding(paddings)
             ) {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 20.dp)
+                Box(modifier = Modifier.height(32.dp))
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    TextField(
-                        modifier = Modifier.fillMaxWidth(),
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .padding(start = 16.dp, end = 16.dp)
+                            .weight(1F),
                         value = uiState.sourceName,
-                        onValueChange = onNameInputValueChanged,
+                        maxLines = 1,
+                        label = {
+                            Text(text = stringResource(id = R.string.add_feeds_page_feeds_name_label))
+                        },
+                        placeholder = {
+                            Text(text = stringResource(id = R.string.add_feeds_page_feeds_name_hint))
+                        },
+                        onValueChange = {
+                            onNameInputValueChanged(it.take(uiState.maxNameLength))
+                        },
+                    )
+
+                    StyledIconButton(
+                        modifier = Modifier.padding(end = 8.dp),
+                        imageVector = Icons.Default.Add,
+                        style = IconButtonStyle.STANDARD,
+                        onClick = onAddSourceClick,
                     )
                 }
 
-                LazyColumn(
-                    modifier = Modifier.padding(top = 15.dp)
-                ) {
-                    items(uiState.sourceList) { item ->
-                        RemovableStatusSource(
-                            modifier = Modifier.fillMaxWidth(),
-                            source = item,
-                            onRemoveClick = {
-                                onRemoveSourceClick(item)
+                if (uiState.sourceList.isEmpty()) {
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 32.dp)
+                            .align(Alignment.CenterHorizontally)
+                            .clickable {
+                                onAddSourceClick()
                             },
-                        )
+                        text = stringResource(id = R.string.add_feeds_page_feeds_empty),
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                } else {
+                    LazyColumn(
+                        modifier = Modifier.padding(top = 32.dp),
+                        contentPadding = PaddingValues(bottom = 32.dp),
+                    ) {
+                        items(uiState.sourceList) { item ->
+                            RemovableStatusSource(
+                                modifier = Modifier.fillMaxWidth(),
+                                source = item,
+                                onRemoveClick = {
+                                    onRemoveSourceClick(item)
+                                },
+                            )
+                        }
                     }
                 }
             }

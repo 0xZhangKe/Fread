@@ -15,7 +15,7 @@ class AccountManager(
     }
 
     fun getAllAccountFlow(): Flow<List<LoggedAccount>> {
-        val flowList = accountManagerList.map {
+        val flowList = accountManagerList.mapNotNull {
             it.getAllAccountFlow()
         }
         return combine(*flowList.toTypedArray()) {
@@ -26,7 +26,7 @@ class AccountManager(
     suspend fun validateAuthOfSourceList(
         sourceList: List<StatusSource>,
     ): Result<SourcesAuthValidateResult> {
-        val resultList = accountManagerList.map {
+        val resultList = accountManagerList.mapNotNull {
             it.validateAuthOfSourceList(sourceList)
         }
         resultList.firstOrNull { it.isFailure }?.let { return it }
@@ -48,8 +48,11 @@ class AccountManager(
     suspend fun launchAuthBySource(baseUrl: FormalBaseUrl): Result<Boolean> {
         var result: Result<Boolean> = Result.failure(RuntimeException("Can't auth!"))
         for (manager in accountManagerList) {
-            result = manager.launchAuth(baseUrl)
-            if (result.getOrNull() == true) break
+            val launchResult = manager.launchAuth(baseUrl)
+            if (launchResult != null) {
+                result = launchResult
+                if (result.getOrNull() == true) break
+            }
         }
         return result
     }
@@ -65,13 +68,13 @@ interface IAccountManager {
 
     suspend fun getAllLoggedAccount(): List<LoggedAccount>
 
-    fun getAllAccountFlow(): Flow<List<LoggedAccount>>
+    fun getAllAccountFlow(): Flow<List<LoggedAccount>>?
 
     suspend fun validateAuthOfSourceList(
         sourceList: List<StatusSource>
-    ): Result<SourcesAuthValidateResult>
+    ): Result<SourcesAuthValidateResult>?
 
-    suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>
+    suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>?
 
     suspend fun logout(uri: FormalUri): Boolean
 }

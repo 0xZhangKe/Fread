@@ -8,10 +8,10 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.FloatingActionButton
-import androidx.compose.material.Icon
-import androidx.compose.material.Surface
-import androidx.compose.material.TextButton
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
+import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -192,7 +192,6 @@ private fun EditFeedsScreenTopBar(
             onDismissRequest = { showEditNameDialog = false },
         ) {
             Surface(
-                elevation = 6.dp,
                 shape = RoundedCornerShape(4.dp),
             ) {
                 Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 15.dp)) {
@@ -232,7 +231,6 @@ private fun EditFeedsScreenTopBar(
     if (showDeleteConfirmDialog) {
         Dialog(onDismissRequest = { showDeleteConfirmDialog = false }) {
             Surface(
-                elevation = 6.dp,
                 shape = RoundedCornerShape(4.dp),
             ) {
                 Column(modifier = Modifier.fillMaxWidth()) {

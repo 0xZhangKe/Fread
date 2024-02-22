@@ -7,6 +7,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
+import com.zhangke.utopia.common.config.UtopiaConfigManager
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
@@ -29,6 +30,7 @@ import javax.inject.Inject
 internal class AddFeedsManagerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
+    private val configManager: UtopiaConfigManager,
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
@@ -151,6 +153,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
         return AddFeedsManagerUiState(
             sourceList = sourceList.map { it.toUiState() },
             sourceName = sourceName,
+            maxNameLength = configManager.contentNameMaxLength,
         )
     }
 

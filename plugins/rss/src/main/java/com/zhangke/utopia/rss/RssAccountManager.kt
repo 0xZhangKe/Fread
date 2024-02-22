@@ -7,7 +7,6 @@ import com.zhangke.utopia.status.account.SourcesAuthValidateResult
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import javax.inject.Inject
 
 class RssAccountManager @Inject constructor() : IAccountManager {
@@ -16,16 +15,16 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         return emptyList()
     }
 
-    override fun getAllAccountFlow(): Flow<List<LoggedAccount>> {
-        return emptyFlow()
+    override fun getAllAccountFlow(): Flow<List<LoggedAccount>>? {
+        return null
     }
 
-    override suspend fun validateAuthOfSourceList(sourceList: List<StatusSource>): Result<SourcesAuthValidateResult> {
-        return Result.failure(IllegalArgumentException("Not implemented"))
+    override suspend fun validateAuthOfSourceList(sourceList: List<StatusSource>): Result<SourcesAuthValidateResult>? {
+        return null
     }
 
-    override suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean> {
-        return Result.failure(Exception("Not implemented"))
+    override suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>? {
+        return null
     }
 
     override suspend fun logout(uri: FormalUri): Boolean {

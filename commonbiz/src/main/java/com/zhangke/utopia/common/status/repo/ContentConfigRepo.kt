@@ -41,7 +41,7 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.updateName(id, name)
     }
 
-    suspend fun updateLatestStatusId(id: Long, latestStatusId: String) {
+    suspend fun updateLatestStatusId(id: Long, latestStatusId: String?) {
         contentConfigDao.updateLatestStatusId(id, latestStatusId)
     }
 

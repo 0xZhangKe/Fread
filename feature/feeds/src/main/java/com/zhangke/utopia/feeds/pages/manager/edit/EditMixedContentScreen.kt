@@ -8,19 +8,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Surface
-import androidx.compose.material3.TextButton
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -35,6 +35,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -50,15 +51,14 @@ import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 
-class EditFeedsScreen(private val feedsId: Long) : Screen {
+class EditMixedContentScreen(private val configId: Long) : Screen {
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel: EditFeedsViewModel = getViewModel()
-        viewModel.feedsId = feedsId
-        LaunchedEffect(feedsId) {
-            viewModel.onPageResume()
+        val viewModel = getViewModel<EditMixedContentViewModel, EditMixedContentViewModel.Factory> {
+            it.create(configId)
         }
         val uiState by viewModel.uiState.collectAsState()
         EditFeedsScreenContent(
@@ -82,7 +82,7 @@ class EditFeedsScreen(private val feedsId: Long) : Screen {
 
     @Composable
     private fun EditFeedsScreenContent(
-        uiState: LoadableState<EditFeedsUiState>,
+        uiState: LoadableState<EditMixedContentUiState>,
         onRemoveSourceClick: (StatusSourceUiState) -> Unit,
         onEditNameClick: (String) -> Unit,
         onBackClick: () -> Unit,
@@ -141,7 +141,7 @@ class EditFeedsScreen(private val feedsId: Long) : Screen {
 
 @Composable
 private fun EditFeedsScreenTopBar(
-    uiState: LoadableState<EditFeedsUiState>,
+    uiState: LoadableState<EditMixedContentUiState>,
     onEditNameClick: (String) -> Unit,
     onBackClick: () -> Unit,
     onDeleteClick: () -> Unit,

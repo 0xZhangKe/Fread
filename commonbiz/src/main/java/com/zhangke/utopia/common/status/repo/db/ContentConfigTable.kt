@@ -43,7 +43,7 @@ interface ContentConfigDao {
     suspend fun updateSourceList(id: Long, sourceUriList: List<FormalUri>)
 
     @Query("UPDATE $TABLE_NAME SET lastReadStatusId=:latestStatusId WHERE id=:id")
-    suspend fun updateLatestStatusId(id: Long, latestStatusId: String)
+    suspend fun updateLatestStatusId(id: Long, latestStatusId: String?)
 
     @Query("UPDATE $TABLE_NAME SET name=:name WHERE id=:id")
     suspend fun updateName(id: Long, name: String)

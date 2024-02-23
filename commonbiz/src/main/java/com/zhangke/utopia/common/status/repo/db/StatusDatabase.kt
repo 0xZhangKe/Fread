@@ -35,19 +35,13 @@ private const val DB_VERSION = 1
 )
 @Database(
     entities = [
-        StatusSourceEntity::class,
         StatusContentEntity::class,
         ContentConfigEntity::class,
-        FeedsConfigEntity::class,
     ],
     version = DB_VERSION,
     exportSchema = false,
 )
 abstract class StatusDatabase : RoomDatabase() {
-
-    abstract fun getSourceDao(): StatusSourceDao
-
-    abstract fun getFeedsConfigDao(): FeedsConfigDao
 
     abstract fun getStatusContentDao(): StatusContentDao
 

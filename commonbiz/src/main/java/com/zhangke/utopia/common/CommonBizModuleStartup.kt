@@ -3,14 +3,14 @@ package com.zhangke.utopia.common
 import android.app.Application
 import com.zhangke.filt.annotaions.Filt
 import com.zhangke.framework.module.ModuleStartup
-import com.zhangke.utopia.common.status.repo.FeedsConfigRepo
+import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.status.StatusProvider
 import kotlinx.coroutines.flow.drop
 import javax.inject.Inject
 
 @Filt
 class CommonBizModuleStartup @Inject constructor(
-    private val feedsConfigRepo: FeedsConfigRepo,
+    private val configRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
 ) : ModuleStartup {
 
@@ -19,7 +19,7 @@ class CommonBizModuleStartup @Inject constructor(
             .getAllAccountFlow()
             .drop(1)
             .collect {
-                feedsConfigRepo.clearAllLastReadStatusId()
+                configRepo.clearAllLastReadStatusId()
             }
     }
 }

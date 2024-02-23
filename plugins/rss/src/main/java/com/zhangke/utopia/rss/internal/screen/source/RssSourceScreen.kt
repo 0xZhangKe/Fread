@@ -99,8 +99,7 @@ class RssSourceScreen(
                 BlogAuthorAvatar(
                     modifier = Modifier
                         .padding(start = 16.dp, top = 20.dp)
-                        .size(80.dp)
-                        .utopiaPlaceholder(uiState.source?.thumbnail.isNullOrEmpty()),
+                        .size(80.dp),
                     imageUrl = uiState.source?.thumbnail,
                 )
 

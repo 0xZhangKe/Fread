@@ -1,12 +1,12 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase
 
-import org.joda.time.format.ISODateTimeFormat
+import com.zhangke.framework.date.DateParser
 import java.util.Date
 import javax.inject.Inject
 
 class FormatActivityPubDatetimeToDateUseCase @Inject constructor() {
 
     operator fun invoke(datetime: String): Date {
-        return ISODateTimeFormat.dateTime().parseDateTime(datetime).toDate()
+        return DateParser.parseISODate(datetime) ?: Date()
     }
 }

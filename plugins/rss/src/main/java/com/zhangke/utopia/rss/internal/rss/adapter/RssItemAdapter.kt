@@ -1,10 +1,9 @@
 package com.zhangke.utopia.rss.internal.rss.adapter
 
 import com.prof18.rssparser.model.RssItem
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import java.text.SimpleDateFormat
 import java.util.Date
-import java.util.Locale
 
 fun RssItem.convert(): com.zhangke.utopia.rss.internal.rss.RssItem {
     return com.zhangke.utopia.rss.internal.rss.RssItem(
@@ -25,12 +24,6 @@ fun RssItem.convert(): com.zhangke.utopia.rss.internal.rss.RssItem {
     )
 }
 
-internal fun formatRssDate(datetime: String?): Date {
-    if (datetime.isNullOrEmpty()) return Date()
-    val format = SimpleDateFormat("EEE, dd MMM yyyy HH:mm:ss Z", Locale.ENGLISH)
-    return format.parse(datetime) ?: Date()
-}
-
 private fun getRssItemId(rssItem: RssItem): String {
     if (rssItem.guid.isNullOrEmpty().not()) {
         return rssItem.guid!!
@@ -38,4 +31,9 @@ private fun getRssItemId(rssItem: RssItem): String {
     return rssItem.link.ifNullOrEmpty {
         rssItem.title.ifNullOrEmpty { System.currentTimeMillis().toString() }
     }
+}
+
+internal fun formatRssDate(datetime: String?): Date {
+    if (datetime.isNullOrEmpty()) return Date()
+    return DateParser.parseRfc822Date(datetime) ?: DateParser.parseRfc3339Date(datetime) ?: Date()
 }

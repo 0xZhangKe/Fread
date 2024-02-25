@@ -1,13 +1,18 @@
 package com.zhangke.utopia.common.feeds.repo
 
+import android.util.Log
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class FeedsRepo @Inject internal constructor(
     private val getPreviousStatusUseCase: GetPreviousStatusUseCase,
     private val getNewerStatusUseCase: GetNewerStatusUseCase,
@@ -20,11 +25,19 @@ class FeedsRepo @Inject internal constructor(
         private const val DEFAULT_PAGE_SIZE = 40
     }
 
+    /**
+     * 目前，知识 BlogAuthor 发生变化会通知
+     */
+    private val _feedsInfoChangedFlow = MutableSharedFlow<Unit>()
+    val feedsInfoChangedFlow = _feedsInfoChangedFlow.asSharedFlow()
+
     suspend fun onAppCreate() {
         statusProvider.statusSourceResolver
             .getAuthorUpdateFlow()
             .collect {
+                Log.d("U_TEST", "FeedsRepo update local data, new name is ${it.name}")
                 statusContentRepo.updateAuthor(it)
+                _feedsInfoChangedFlow.emit(Unit)
             }
     }
 

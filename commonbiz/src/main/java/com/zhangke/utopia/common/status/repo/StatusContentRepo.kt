@@ -3,6 +3,8 @@ package com.zhangke.utopia.common.status.repo
 import com.zhangke.utopia.common.status.repo.db.StatusContentDao
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.common.status.repo.db.StatusDatabase
+import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
@@ -147,6 +149,45 @@ internal class StatusContentRepo @Inject constructor(
 
     suspend fun insert(statusList: List<StatusContentEntity>) {
         statusContentDao.insert(statusList)
+    }
+
+    suspend fun updateAuthor(author: BlogAuthor) {
+        statusContentDao.queryAll()
+            .filter {
+                when (it.status) {
+                    is Status.NewBlog -> {
+                        it.status.blog.author.uri == author.uri
+                    }
+
+                    is Status.Reblog -> {
+                        it.status.author.uri == author.uri || it.status.reblog.author.uri == author.uri
+                    }
+                }
+            }.map {
+                it.copy(status = it.status.updateAuthor(author))
+            }.let {
+                statusContentDao.insert(it)
+            }
+    }
+
+    private fun Status.updateAuthor(author: BlogAuthor): Status {
+        return when (this) {
+            is Status.NewBlog -> {
+                this.copy(
+                    blog = this.blog.copy(author = author)
+                )
+            }
+
+            is Status.Reblog -> {
+                if (this.author.uri == author.uri) {
+                    this.copy(author = author)
+                } else if (this.reblog.author.uri == author.uri) {
+                    this.copy(reblog = this.reblog.copy(author = author))
+                } else {
+                    this
+                }
+            }
+        }
     }
 
     suspend fun deleteById(id: Long) {

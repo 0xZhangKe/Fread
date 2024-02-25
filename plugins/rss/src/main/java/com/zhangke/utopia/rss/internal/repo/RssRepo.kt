@@ -1,17 +1,32 @@
 package com.zhangke.utopia.rss.internal.repo
 
+import android.util.Log
+import com.zhangke.utopia.rss.internal.adapter.BlogAuthorAdapter
 import com.zhangke.utopia.rss.internal.db.RssChannelEntity
 import com.zhangke.utopia.rss.internal.db.RssDatabases
 import com.zhangke.utopia.rss.internal.model.RssChannelItem
 import com.zhangke.utopia.rss.internal.model.RssSource
 import com.zhangke.utopia.rss.internal.rss.RssFetcher
+import com.zhangke.utopia.rss.internal.uri.RssUriInsight
+import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
+import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class RssRepo @Inject constructor(
-    rssDatabases: RssDatabases
+    rssDatabases: RssDatabases,
+    private val blogAuthorAdapter: BlogAuthorAdapter,
+    private val rssUriTransformer: RssUriTransformer,
 ) {
 
     private val channelDao = rssDatabases.getRssChannelDao()
+
+    private val _sourceChangedFlow = MutableSharedFlow<BlogAuthor>()
+    val sourceChangedFlow = _sourceChangedFlow.asSharedFlow()
 
     suspend fun getRssSource(
         url: String,
@@ -26,8 +41,18 @@ class RssRepo @Inject constructor(
     suspend fun updateSourceName(url: String, name: String) {
         val source = channelDao.queryByUrl(url)
         if (source != null) {
-            channelDao.insert(source.copy(displayName = name))
+            val newSource = source.copy(displayName = name)
+            channelDao.insert(newSource)
+            updateAuthorFlow(url, newSource)
         }
+    }
+
+    private suspend fun updateAuthorFlow(url: String, source: RssChannelEntity) {
+        val uri = rssUriTransformer.build(url)
+        val uriInsight = RssUriInsight(uri, url)
+        val author = blogAuthorAdapter.createAuthor(uriInsight, source.toRssSource())
+        Log.d("U_TEST", "updateAuthorFlow: ${author.name}")
+        _sourceChangedFlow.emit(author)
     }
 
     suspend fun getRssItems(

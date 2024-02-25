@@ -1,7 +1,7 @@
 package com.zhangke.utopia.common.status.repo
 
 import com.zhangke.utopia.common.status.adapter.ContentConfigAdapter
-import com.zhangke.utopia.common.status.repo.db.StatusDatabase
+import com.zhangke.utopia.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -9,7 +9,7 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ContentConfigRepo @Inject constructor(
-    private val statusDatabase: StatusDatabase,
+    private val statusDatabase: ContentConfigDatabases,
     private val contentConfigAdapter: ContentConfigAdapter,
 ) {
 

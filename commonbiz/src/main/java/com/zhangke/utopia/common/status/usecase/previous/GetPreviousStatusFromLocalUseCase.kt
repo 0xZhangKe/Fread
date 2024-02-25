@@ -10,6 +10,10 @@ internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
     private val statusContentRepo: StatusContentRepo,
 ) {
 
+    /**
+     * 获取本地的Status。
+     * 根据传入的 maxCreateTime 参数，获取在该时间之前的帖子。
+     */
     suspend operator fun invoke(
         sourceUri: FormalUri,
         limit: Int,

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.rss.internal.adapter
 
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.rss.internal.model.RssSource
 import com.zhangke.utopia.rss.internal.uri.RssUriInsight
 import com.zhangke.utopia.rss.internal.webfinger.RssSourceWebFingerTransformer
@@ -17,7 +18,7 @@ class BlogAuthorAdapter @Inject constructor(
         return BlogAuthor(
             uri = uriInsight.rawUri,
             webFinger = rssSourceWebFingerTransformer.create(uriInsight.url, source),
-            name = source.title,
+            name = source.displayName.ifNullOrEmpty { source.title },
             description = source.description.orEmpty(),
             avatar = source.thumbnail,
         )

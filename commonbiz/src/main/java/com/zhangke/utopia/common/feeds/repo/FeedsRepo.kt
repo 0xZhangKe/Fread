@@ -3,6 +3,7 @@ package com.zhangke.utopia.common.feeds.repo
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
@@ -11,11 +12,20 @@ class FeedsRepo @Inject internal constructor(
     private val getPreviousStatusUseCase: GetPreviousStatusUseCase,
     private val getNewerStatusUseCase: GetNewerStatusUseCase,
     private val statusContentRepo: StatusContentRepo,
+    private val statusProvider: StatusProvider,
 ) {
 
     companion object {
 
         private const val DEFAULT_PAGE_SIZE = 40
+    }
+
+    suspend fun onAppCreate() {
+        statusProvider.statusSourceResolver
+            .getAuthorUpdateFlow()
+            .collect {
+                statusContentRepo.updateAuthor(it)
+            }
     }
 
     suspend fun getPreviousStatus(

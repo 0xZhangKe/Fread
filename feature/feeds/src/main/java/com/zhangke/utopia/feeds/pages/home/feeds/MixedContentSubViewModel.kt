@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import android.util.Log
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
@@ -47,6 +48,14 @@ class MixedContentSubViewModel(
     init {
         launchInViewModel {
             clearFeedsWhenAccountChanged()
+        }
+        launchInViewModel {
+            statusProvider.statusSourceResolver
+                .getAuthorUpdateFlow()
+                .collect {
+                    Log.d("U_TEST", "MixedContentSubViewModel observed author changed: ${it.name}")
+                    onRefresh()
+                }
         }
         launchInViewModel {
             mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent

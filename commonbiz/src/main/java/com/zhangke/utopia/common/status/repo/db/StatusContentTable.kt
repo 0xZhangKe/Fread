@@ -27,6 +27,9 @@ data class StatusContentEntity(
 @Dao
 interface StatusContentDao {
 
+    @Query("SELECT * FROM $TABLE_NAME")
+    suspend fun queryAll(): List<StatusContentEntity>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri")
     suspend fun queryBySource(sourceUri: FormalUri): List<StatusContentEntity>
 

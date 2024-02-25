@@ -2,7 +2,6 @@ package com.zhangke.framework.collections
 
 inline fun <T, R> Iterable<T>.mapFirst(transform: (T) -> R?): R {
     return mapFirstOrNull(transform) ?: throw NoSuchElementException()
-//    return mapTo(ArrayList<R>(collectionSizeOrDefault(10)), transform)
 }
 
 inline fun <T, R> Iterable<T>.mapFirstOrNull(transform: (T) -> R?): R? {

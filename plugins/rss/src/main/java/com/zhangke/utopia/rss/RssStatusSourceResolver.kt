@@ -5,9 +5,11 @@ import com.zhangke.utopia.rss.internal.repo.RssRepo
 import com.zhangke.utopia.rss.internal.source.RssSourceTransformer
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.source.IStatusSourceResolver
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class RssStatusSourceResolver @Inject constructor(
@@ -28,5 +30,9 @@ class RssStatusSourceResolver @Inject constructor(
         val source = sourceResult.getOrThrow() ?: return Result.success(null)
         return rssSourceTransformer.createSource(uriInsight, source)
             .let { Result.success(it) }
+    }
+
+    override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
+        return rssRepo.sourceChangedFlow
     }
 }

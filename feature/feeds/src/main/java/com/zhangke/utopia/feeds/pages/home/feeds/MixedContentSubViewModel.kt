@@ -50,10 +50,9 @@ class MixedContentSubViewModel(
             clearFeedsWhenAccountChanged()
         }
         launchInViewModel {
-            statusProvider.statusSourceResolver
-                .getAuthorUpdateFlow()
+            feedsRepo.feedsInfoChangedFlow
                 .collect {
-                    Log.d("U_TEST", "MixedContentSubViewModel observed author changed: ${it.name}")
+                    Log.d("U_TEST", "MixedContentSubViewModel observed author changed.")
                     onRefresh()
                 }
         }

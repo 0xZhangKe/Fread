@@ -51,7 +51,7 @@ class RssRepo @Inject constructor(
         val uri = rssUriTransformer.build(url)
         val uriInsight = RssUriInsight(uri, url)
         val author = blogAuthorAdapter.createAuthor(uriInsight, source.toRssSource())
-        Log.d("U_TEST", "updateAuthorFlow: ${author.name}")
+        Log.d("U_TEST", "RssRepo updateAuthorFlow: ${author.name}")
         _sourceChangedFlow.emit(author)
     }
 

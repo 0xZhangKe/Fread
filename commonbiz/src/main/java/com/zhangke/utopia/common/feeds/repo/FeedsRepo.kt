@@ -1,6 +1,5 @@
 package com.zhangke.utopia.common.feeds.repo
 
-import android.util.Log
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
@@ -35,7 +34,6 @@ class FeedsRepo @Inject internal constructor(
         statusProvider.statusSourceResolver
             .getAuthorUpdateFlow()
             .collect {
-                Log.d("U_TEST", "FeedsRepo update local data, new name is ${it.name}")
                 statusContentRepo.updateAuthor(it)
                 _feedsInfoChangedFlow.emit(Unit)
             }

@@ -52,40 +52,46 @@ class MixedContentSubViewModel(
         launchInViewModel {
             feedsRepo.feedsInfoChangedFlow
                 .collect {
-                    Log.d("U_TEST", "MixedContentSubViewModel observed author changed.")
-                    onRefresh()
+                    Log.d("U_TEST", "MixedContentSubViewModel feedsInfoChangedFlow collected")
+                    loadPreviousStatus()
                 }
         }
         launchInViewModel {
             mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
+            _uiState.update {
+                it.copy(initAnchorStatusId = mixedContent?.lastReadStatusId)
+            }
             loadPreviousStatus()
+        }
+    }
+
+    fun onInitAnchorStatusIdUsed() {
+        _uiState.update {
+            it.copy(initAnchorStatusId = null)
         }
     }
 
     private suspend fun loadPreviousStatus() {
         val sourceList = mixedContent?.sourceUriList ?: return
-        val lastReadStatusId = mixedContent?.lastReadStatusId
         _uiState.update {
             it.copy(loading = true)
         }
-        feedsRepo.getPreviousStatus(
-            sourceList,
-            maxId = lastReadStatusId,
-        ).onSuccess { list ->
-            _uiState.update {
-                it.copy(
-                    loading = false,
-                    feeds = list.map(buildStatusUiState::invoke),
-                )
+        feedsRepo.getPreviousStatus(sourceList)
+            .onSuccess { list ->
+                _uiState.update {
+                    it.copy(
+                        loading = false,
+                        feeds = list.map(buildStatusUiState::invoke),
+                    )
+                }
+            }.onFailure { e ->
+                e.message?.let(::textOf)?.let {
+                    _errorMessageFlow.emit(it)
+                }
+                _uiState.update {
+                    it.copy(loading = false)
+                }
             }
-        }.onFailure { e ->
-            e.message?.let(::textOf)?.let {
-                _errorMessageFlow.emit(it)
-            }
-            _uiState.update {
-                it.copy(loading = false)
-            }
-        }
     }
 
     fun onRefresh() {

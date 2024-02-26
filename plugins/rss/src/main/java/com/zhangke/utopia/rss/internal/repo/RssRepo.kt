@@ -9,10 +9,11 @@ import com.zhangke.utopia.rss.internal.model.RssSource
 import com.zhangke.utopia.rss.internal.rss.RssFetcher
 import com.zhangke.utopia.rss.internal.uri.RssUriInsight
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
+import com.zhangke.utopia.rss.internal.utils.AvatarUtils
 import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import java.io.File
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -51,7 +52,6 @@ class RssRepo @Inject constructor(
         val uri = rssUriTransformer.build(url)
         val uriInsight = RssUriInsight(uri, url)
         val author = blogAuthorAdapter.createAuthor(uriInsight, source.toRssSource())
-        Log.d("U_TEST", "RssRepo updateAuthorFlow: ${author.name}")
         _sourceChangedFlow.emit(author)
     }
 
@@ -63,6 +63,7 @@ class RssRepo @Inject constructor(
 
     private suspend fun fetchRssChannelByUrl(url: String): Result<RssSource> {
         return RssFetcher.fetchRss(url)
+            .map { mapRemoteSource(url, it.first) to it.second }
             .onSuccess { insertSource(it.first) }
             .map { it.first }
     }
@@ -71,19 +72,37 @@ class RssRepo @Inject constructor(
         url: String
     ): Result<Pair<RssSource, List<RssChannelItem>>> {
         return RssFetcher.fetchRss(url)
+            .map { mapRemoteSource(url, it.first) to it.second }
             .onSuccess { insertSource(it.first) }
     }
 
-    private suspend fun insertSource(source: RssSource) {
-        var insertSource = source
-        val oldSource = channelDao.queryByUrl(source.url)
-        if (oldSource != null) {
-            insertSource = source.copy(
-                displayName = oldSource.displayName,
-                addDate = oldSource.addDate,
-            )
+    private suspend fun mapRemoteSource(url: String, source: RssSource): RssSource {
+        val localSource = channelDao.queryByUrl(url) ?: return source.copy(thumbnail = processThumbnail(source))
+        return source.copy(
+            displayName = localSource.displayName,
+            addDate = localSource.addDate,
+            thumbnail = processThumbnail(localSource.toRssSource()),
+        )
+    }
+
+    private fun processThumbnail(source: RssSource): String? {
+        val thumbnail = source.thumbnail
+        Log.d("U_TEST", "RssSource.fixThumbnail: $thumbnail")
+        if (AvatarUtils.isRemoteAvatar(thumbnail)) {
+            Log.d("U_TEST", "isRemoteAvatar")
+            return thumbnail
         }
-        channelDao.insert(insertSource.toEntity())
+        if (thumbnail.isNullOrEmpty().not() && File(thumbnail!!).exists()) {
+            Log.d("U_TEST", "avatar exists")
+            return thumbnail
+        }
+        return AvatarUtils.makeSourceAvatar(source).also {
+            Log.d("U_TEST", "make avatar -> $thumbnail")
+        }
+    }
+
+    private suspend fun insertSource(source: RssSource) {
+        channelDao.insert(source.toEntity())
     }
 
     private fun RssSource.toEntity(): RssChannelEntity {

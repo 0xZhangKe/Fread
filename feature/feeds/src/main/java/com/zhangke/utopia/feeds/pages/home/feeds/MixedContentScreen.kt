@@ -10,6 +10,7 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -53,6 +54,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             onLoadMore = viewModel::onLoadMore,
             onUserInfoClick = viewModel::onUserInfoClick,
             onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
+            onInitAnchorStatusIdUsed = viewModel::onInitAnchorStatusIdUsed,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.tryPush(it)
@@ -68,6 +70,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onCatchMinFirstVisibleIndex: (Int) -> Unit,
+        onInitAnchorStatusIdUsed: () -> Unit,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
@@ -82,6 +85,15 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         DisposableEffect(Unit) {
             onDispose {
                 onCatchMinFirstVisibleIndex(minFirstVisibleIndex)
+            }
+        }
+        if (!uiState.initAnchorStatusId.isNullOrEmpty() && uiState.feeds.isNotEmpty()) {
+            LaunchedEffect(uiState.initAnchorStatusId, uiState.feeds) {
+                onInitAnchorStatusIdUsed()
+                val index = uiState.feeds.indexOfFirst { it.status.id == uiState.initAnchorStatusId }
+                if (index != -1) {
+                    state.lazyListState.scrollToItem(index)
+                }
             }
         }
         LoadableInlineVideoLazyColumn(

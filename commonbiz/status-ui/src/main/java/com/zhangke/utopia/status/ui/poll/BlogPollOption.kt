@@ -64,9 +64,10 @@ internal fun BlogPollOption(
                 }
             }
             .heightIn(min = 42.dp)
+            .clip(RoundedCornerShape(cornerRadius))
             .border(
                 width = borderWidth,
-                color = Color.Black,
+                color = MaterialTheme.colorScheme.onSurface,
                 shape = RoundedCornerShape(cornerRadius),
             )
             .clickable(votable) { onClick() },

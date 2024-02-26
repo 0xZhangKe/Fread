@@ -15,6 +15,7 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -121,5 +122,11 @@ class StatusContextViewModel @Inject constructor(
         statusProvider.screenProvider
             .getUserDetailRoute(author.uri)
             ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
+    }
+
+    fun onVote(status: Status, votedOption: List<BlogPoll.Option>) {
+        launchInViewModel {
+            interactiveHandler.onVote(status, votedOption).handleResult()
+        }
     }
 }

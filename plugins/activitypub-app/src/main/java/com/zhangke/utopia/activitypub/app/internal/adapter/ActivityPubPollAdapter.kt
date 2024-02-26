@@ -15,13 +15,16 @@ class ActivityPubPollAdapter @Inject constructor() {
             votesCount = entity.votesCount,
             votersCount = entity.votersCount,
             voted = entity.voted,
-            options = entity.options.map { it.convertToPoll() },
+            options = entity.options.mapIndexed { index, item ->
+                item.convertToPoll(index)
+            },
             ownVotes = entity.ownVotes ?: emptyList(),
         )
     }
 
-    private fun ActivityPubPollEntity.Option.convertToPoll(): BlogPoll.Option {
+    private fun ActivityPubPollEntity.Option.convertToPoll(index: Int): BlogPoll.Option {
         return BlogPoll.Option(
+            index = index,
             title = title,
             votesCount = votesCount,
         )

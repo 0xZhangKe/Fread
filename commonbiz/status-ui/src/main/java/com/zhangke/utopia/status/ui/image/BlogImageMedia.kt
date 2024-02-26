@@ -11,7 +11,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
@@ -31,7 +30,6 @@ typealias OnBlogMediaClick = (BlogMediaClickEvent) -> Unit
 sealed interface BlogMediaClickEvent {
 
     data class BlogImageClickEvent(
-
         val index: Int,
         val mediaList: List<BlogMedia>,
         val coordinatesList: List<LayoutCoordinates?>,

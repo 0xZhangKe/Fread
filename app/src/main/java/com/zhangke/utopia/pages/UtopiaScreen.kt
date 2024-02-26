@@ -1,31 +1,76 @@
 package com.zhangke.utopia.pages
 
+import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.getViewModel
+import coil.compose.AsyncImage
+import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.framework.network.HttpScheme
+import com.zhangke.framework.security.Md5
+import com.zhangke.framework.utils.BitmapUtils
+import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.pages.main.MainPage
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.File
 
 class UtopiaScreen : Screen {
+
+    @Composable
+    private fun TextBitmap(text: String){
+        val bitmap = remember(text) {
+            BitmapUtils.buildBitmapWithText(
+                width = 100,
+                height = 100,
+                text = text,
+                backgroundColor = 0xFFFF00FF.toInt(),
+            )
+        }
+        AsyncImage(
+            model = bitmap,
+            contentDescription = "",
+        )
+    }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         MainPage()
+
+//        Column(
+//            modifier = Modifier.fillMaxSize(),
+//            verticalArrangement = Arrangement.Center,
+//        ) {
+//            TextBitmap("张")
+//            Spacer(modifier = Modifier.height(16.dp))
+//            TextBitmap("张可")
+//            Spacer(modifier = Modifier.height(16.dp))
+//            TextBitmap("es")
+//            Spacer(modifier = Modifier.height(16.dp))
+//            TextBitmap("ES")
+//            Spacer(modifier = Modifier.height(16.dp))
+//            TextBitmap("E")
+//        }
 
 //            Navigator(TabTestScreen())
 

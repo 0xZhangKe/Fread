@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Surface
+import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -21,6 +21,7 @@ import com.zhangke.framework.composable.startPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
@@ -43,6 +44,7 @@ fun AncestorBlogUi(
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
+    votedOption: (List<BlogPoll.Option>) -> Unit,
 ) {
     Surface(modifier = modifier.background(Color.Blue)) {
         ConstraintLayout(
@@ -153,6 +155,7 @@ fun AncestorBlogUi(
                     style = style.blogStyle,
                     indexOfFeeds = indexInList,
                     onMediaClick = onMediaClick,
+                    votedOption = votedOption,
                 )
                 StatusBottomInteractionPanel(
                     modifier = Modifier

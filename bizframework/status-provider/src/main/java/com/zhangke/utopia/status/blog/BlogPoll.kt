@@ -29,6 +29,7 @@ data class BlogPoll(
 
     @Serializable
     data class Option(
+        val index: Int,
         val title: String,
         val votesCount: Int?,
     )

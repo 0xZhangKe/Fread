@@ -11,6 +11,7 @@ import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.screen.StatusScreenProvider
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -54,6 +55,24 @@ class InteractiveHandler @Inject constructor(
         return screenProvider.getUserDetailRoute(blogAuthor.uri)?.let { route ->
             KRouter.route<Screen>(route)?.let(InteractiveHandleResult::OpenScreen)
         } ?: InteractiveHandleResult.NoOp
+    }
+
+    suspend fun onVote(
+        status: Status,
+        votedOption: List<BlogPoll.Option>,
+    ): InteractiveHandleResult {
+        val result = statusProvider.statusResolver.votePoll(status, votedOption)
+            .map { buildStatusUiState(it) }
+        return if (result.isFailure) {
+            val errorMessage = result.exceptionOrNull()?.message?.let { textOf(it) }
+            if (errorMessage == null) {
+                InteractiveHandleResult.NoOp
+            } else {
+                InteractiveHandleResult.ShowErrorMessage(errorMessage)
+            }
+        } else {
+            InteractiveHandleResult.UpdateStatus(result.getOrThrow())
+        }
     }
 }
 

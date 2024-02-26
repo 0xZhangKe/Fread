@@ -4,6 +4,7 @@ import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.repo.RssStatusRepo
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -51,8 +52,15 @@ class RssStatusResolver @Inject constructor(
     override suspend fun interactive(
         status: Status,
         interaction: StatusInteraction
-    ): Result<Status> {
-        return Result.success(status)
+    ): Result<Status>? {
+        return null
+    }
+
+    override suspend fun votePoll(
+        status: Status,
+        votedOption: List<BlogPoll.Option>
+    ): Result<Status>? {
+        return null
     }
 
     override suspend fun getStatusContext(status: Status): Result<StatusContext>? {

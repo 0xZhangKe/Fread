@@ -21,13 +21,15 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SlickRoundCornerShape
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.statusui.R
 
 @Composable
 internal fun MultipleChoicePoll(
     modifier: Modifier,
     poll: BlogPoll,
-    onVote: (options: List<BlogPoll.Option>) -> Unit,
+    votedOption: (List<BlogPoll.Option>) -> Unit,
 ) {
     val indexToSelected = remember(poll) {
         val map = mutableMapOf<Int, Boolean>()
@@ -76,7 +78,7 @@ internal fun MultipleChoicePoll(
                             .filter { it.value }
                             .map { it.key }
                             .map { poll.options[it] }
-                        onVote(votedOptions)
+                        votedOption(votedOptions)
                     },
             ) {
                 Text(

@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.collections.mapFirst
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
 import com.zhangke.utopia.status.status.model.StatusInteraction
@@ -41,6 +42,10 @@ class StatusResolver(
         return resolverList.mapFirst { it.interactive(status, interaction) }
     }
 
+    suspend fun votePoll(status: Status, votedOption: List<BlogPoll.Option>): Result<Status> {
+        return resolverList.mapFirst { it.votePoll(status, votedOption) }
+    }
+
     suspend fun getStatusContext(status: Status): Result<StatusContext> {
         return resolverList.mapFirst { it.getStatusContext(status) }
     }
@@ -61,6 +66,8 @@ interface IStatusResolver {
     suspend fun checkIsFirstStatus(status: Status): Result<Boolean>?
 
     suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status>?
+
+    suspend fun votePoll(status: Status, votedOption: List<BlogPoll.Option>): Result<Status>?
 
     suspend fun getStatusContext(status: Status): Result<StatusContext>?
 }

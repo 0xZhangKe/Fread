@@ -18,7 +18,7 @@ object AvatarUtils {
     fun makeSourceAvatar(
         source: RssSource,
     ): String? {
-        val text = source.displayName.ifNullOrEmpty { source.title }.take(2)
+        val text = source.displayName.ifNullOrEmpty { source.title }.take(2).uppercase()
         val bitmap = BitmapUtils.buildBitmapWithText(
             width = AVATAR_WIDTH,
             height = AVATAR_HEIGHT,
@@ -47,8 +47,8 @@ object AvatarUtils {
         avatar ?: return false
         val fixedAvatar = avatar.lowercase()
         return fixedAvatar.isNotEmpty() &&
-            !fixedAvatar.startsWith(HttpScheme.HTTP) &&
-            !fixedAvatar.startsWith(HttpScheme.HTTPS)
+                !fixedAvatar.startsWith(HttpScheme.HTTP) &&
+                !fixedAvatar.startsWith(HttpScheme.HTTPS)
     }
 
     fun isRemoteAvatar(avatar: String?): Boolean {

@@ -10,6 +10,7 @@ import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
@@ -27,6 +28,7 @@ fun BlogUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
     onUserInfoClick: (BlogAuthor) -> Unit,
+    votedOption: (List<BlogPoll.Option>) -> Unit,
     showDivider: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -49,6 +51,7 @@ fun BlogUi(
             indexOfFeeds = indexInList,
             style = style.blogStyle,
             onMediaClick = onMediaClick,
+            votedOption = votedOption,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier

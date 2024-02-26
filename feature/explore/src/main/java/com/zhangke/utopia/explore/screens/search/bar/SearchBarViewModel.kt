@@ -13,6 +13,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -87,6 +88,12 @@ class SearchBarViewModel @Inject constructor(
             statusProvider.screenProvider.getTagTimelineScreenRoute(hashtag)
                 ?.let { KRouter.route<Screen>(it) }
                 ?.let { _openScreenFlow.emit(it) }
+        }
+    }
+
+    fun onVote(status: Status, votedOption: List<BlogPoll.Option>) {
+        launchInViewModel {
+            interactiveHandler.onVote(status, votedOption).handleResult()
         }
     }
 

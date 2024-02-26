@@ -18,6 +18,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.text.RichText
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.media.BlogMedias
 import com.zhangke.utopia.status.ui.poll.BlogPoll
@@ -34,6 +35,7 @@ fun BlogContent(
     style: BlogStyle,
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
+    votedOption: (List<BlogPoll.Option>) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -106,7 +108,7 @@ fun BlogContent(
             BlogPoll(
                 modifier = Modifier.fillMaxWidth(),
                 poll = blog.poll!!,
-                onVote = {},
+                votedOption = votedOption,
             )
         }
     }

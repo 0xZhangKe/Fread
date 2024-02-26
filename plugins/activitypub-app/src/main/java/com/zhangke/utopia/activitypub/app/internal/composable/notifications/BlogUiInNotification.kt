@@ -15,6 +15,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.BlogUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
@@ -25,6 +26,7 @@ fun OnlyBlogContentUi(
     statusUiState: StatusUiState,
     indexInList: Int,
     style: NotificationStyle,
+    votedOption: (List<BlogPoll.Option>) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -53,6 +55,7 @@ fun OnlyBlogContentUi(
                     }
                 }
             },
+            votedOption = votedOption,
         )
     }
 }
@@ -64,6 +67,7 @@ fun WholeBlogUi(
     indexInList: Int,
     style: NotificationStyle,
     onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
+    votedOption: (List<BlogPoll.Option>) -> Unit,
     showDivider: Boolean = true,
 ) {
     val navigator = LocalNavigator.currentOrThrow
@@ -101,6 +105,7 @@ fun WholeBlogUi(
                 }
             },
             showDivider = showDivider,
+            votedOption = votedOption,
         )
     }
 }

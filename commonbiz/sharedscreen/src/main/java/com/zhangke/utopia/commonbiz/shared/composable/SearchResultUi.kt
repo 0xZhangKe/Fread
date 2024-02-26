@@ -5,6 +5,7 @@ import androidx.compose.ui.Modifier
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.BlogAuthorUi
@@ -19,6 +20,7 @@ fun SearchResultUi(
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
     onHashtagClick: (Hashtag) -> Unit,
+    onVote: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     when (searchResult) {
         is SearchResultUiState.Platform -> {
@@ -35,6 +37,7 @@ fun SearchResultUi(
                 indexInList = indexInList,
                 onUserInfoClick = onUserInfoClick,
                 onInteractive = onInteractive,
+                onVote = onVote,
             )
         }
 

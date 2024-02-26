@@ -34,6 +34,7 @@ import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
@@ -78,6 +79,7 @@ class StatusContextScreen(private val status: Status) : Screen {
                 navigator.push(StatusContextScreen(it.status.status))
             },
             onUserInfoClick = viewModel::onUserInfoClick,
+            onVotedOption = viewModel::onVote,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.pushDestination(it)
@@ -93,6 +95,7 @@ class StatusContextScreen(private val status: Status) : Screen {
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onStatusClick: (StatusInContext) -> Unit,
         onUserInfoClick: (BlogAuthor) -> Unit,
+        onVotedOption: (Status, List<BlogPoll.Option>) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = snackbarMessageFlow)
@@ -140,6 +143,9 @@ class StatusContextScreen(private val status: Status) : Screen {
                                 onMediaClick = onMediaClick,
                                 onInteractive = onInteractive,
                                 onUserInfoClick = onUserInfoClick,
+                                votedOption = {
+                                    onVotedOption(statusInContext.status.status, it)
+                                },
                             )
                         }
                     }
@@ -156,6 +162,7 @@ class StatusContextScreen(private val status: Status) : Screen {
         onMediaClick: OnBlogMediaClick,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
+        votedOption: (List<BlogPoll.Option>) -> Unit,
     ) {
         val blog = statusInContext.status.status.intrinsicBlog
         when (statusInContext.type) {
@@ -171,6 +178,7 @@ class StatusContextScreen(private val status: Status) : Screen {
                 onInteractive = {
                     onInteractive(statusInContext.status.status, it)
                 },
+                votedOption = votedOption,
             )
 
             StatusInContextType.ANCHOR -> AnchorBlogUi(
@@ -186,6 +194,7 @@ class StatusContextScreen(private val status: Status) : Screen {
                     onInteractive(statusInContext.status.status, it)
                 },
                 onUserInfoClick = onUserInfoClick,
+                votedOption = votedOption,
             )
 
             StatusInContextType.DESCENDANT -> DescendantStatusUi(
@@ -200,6 +209,7 @@ class StatusContextScreen(private val status: Status) : Screen {
                     onInteractive(statusInContext.status.status, it)
                 },
                 onUserInfoClick = onUserInfoClick,
+                votedOption = votedOption,
             )
         }
     }

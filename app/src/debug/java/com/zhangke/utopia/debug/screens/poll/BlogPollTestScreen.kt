@@ -152,6 +152,7 @@ class BlogPollTestScreen : Screen {
 
     private fun mockPollOption(content: String, votesCount: Int = 0): BlogPoll.Option {
         return BlogPoll.Option(
+            index = 0,
             title = content,
             votesCount = votesCount,
         )

@@ -13,6 +13,7 @@ import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
@@ -24,6 +25,7 @@ fun FeedsStatusNode(
     indexInList: Int,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
+    onVote: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -52,6 +54,10 @@ fun FeedsStatusNode(
 
                 is BlogMediaClickEvent.BlogVideoClickEvent -> {
                     navigator.push(FullVideoScreen(event.media.url.toUri()))
+                }
+
+                is BlogMediaClickEvent.BlogPollClickEvent -> {
+                    onVote(event.status, event.votedOption)
                 }
             }
         })

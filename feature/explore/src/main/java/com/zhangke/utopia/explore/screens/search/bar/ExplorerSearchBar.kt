@@ -43,6 +43,7 @@ import com.zhangke.utopia.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.explore.screens.search.SearchScreen
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
@@ -116,6 +117,7 @@ fun Screen.ExplorerSearchBar() {
                 onUserInfoClick = viewModel::onUserInfoClick,
                 onInteractive = viewModel::onInteractive,
                 onHashtagClick = viewModel::onHashtagClick,
+                onVote = viewModel::onVote,
             )
         }
     }
@@ -131,6 +133,7 @@ private fun SearchContent(
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
     onHashtagClick: (Hashtag) -> Unit,
+    onVote: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val state = rememberLazyListState()
@@ -146,6 +149,7 @@ private fun SearchContent(
                     onUserInfoClick = onUserInfoClick,
                     onInteractive = onInteractive,
                     onHashtagClick = onHashtagClick,
+                    onVote = onVote,
                 )
             }
         }

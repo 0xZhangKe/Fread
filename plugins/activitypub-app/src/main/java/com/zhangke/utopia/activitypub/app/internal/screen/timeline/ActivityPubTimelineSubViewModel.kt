@@ -4,7 +4,9 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
@@ -16,11 +18,13 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 
 class ActivityPubTimelineSubViewModel(
+    clientManager: ActivityPubClientManager,
     private val timelineStatusRepo: TimelineStatusRepo,
     platformRepo: ActivityPubPlatformRepo,
     statusAdapter: ActivityPubStatusAdapter,
     buildStatusUiState: BuildStatusUiStateUseCase,
     interactiveHandler: ActivityPubInteractiveHandler,
+    pollAdapter: ActivityPubPollAdapter,
     private val baseUrl: FormalBaseUrl,
     private val type: ActivityPubStatusSourceType,
 ) : SubViewModel() {
@@ -28,10 +32,17 @@ class ActivityPubTimelineSubViewModel(
     private val loadableController = ActivityPubStatusLoadController(
         statusAdapter = statusAdapter,
         platformRepo = platformRepo,
+        clientManager = clientManager,
         coroutineScope = viewModelScope,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
+        pollAdapter = pollAdapter,
         updateStatus = ::updateLocalStatus,
+        updatePoll = { status, poll ->
+            launchInViewModel {
+                timelineStatusRepo.updatePoll(status.id, poll)
+            }
+        }
     )
 
     val uiState = loadableController.uiState

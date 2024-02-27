@@ -13,4 +13,6 @@
     <string name="status_ui_image_content_show_hidden_label">Show more</string>
     <string name="status_ui_image_content_hide_hidden_label">Hide content</string>
     <string name="status_ui_poll_vote">Vote</string>
+    <string name="status_ui_poll_vote_finished_tip">%s vote · Closed</string>
+    <string name="status_ui_poll_votes_finished_tip">%s votes · Closed</string>
 </resources>

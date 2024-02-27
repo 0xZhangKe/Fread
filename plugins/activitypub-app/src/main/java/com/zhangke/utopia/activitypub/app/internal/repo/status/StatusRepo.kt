@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.status
 
+import com.zhangke.activitypub.entities.ActivityPubPollEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
@@ -154,6 +155,14 @@ abstract class StatusRepo(
         val newEntity = originEntity.copy(
             status = entity,
             createTimestamp = formatDatetimeToDate(entity.createdAt).time,
+        )
+        statusDao.insert(newEntity)
+    }
+
+    suspend fun updatePoll(id: String, poll: ActivityPubPollEntity){
+        val originEntity = statusDao.query(id) ?: return
+        val newEntity = originEntity.copy(
+            status = originEntity.status.copy(poll = poll),
         )
         statusDao.insert(newEntity)
     }

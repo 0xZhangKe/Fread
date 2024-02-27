@@ -11,6 +11,7 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
@@ -42,6 +43,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     statusAdapter: ActivityPubStatusAdapter,
     platformRepo: ActivityPubPlatformRepo,
     interactiveHandler: ActivityPubInteractiveHandler,
+    pollAdapter: ActivityPubPollAdapter,
     @Assisted private val hashtag: String,
 ) : ViewModel() {
 
@@ -52,12 +54,13 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     private val loadableController = ActivityPubStatusLoadController(
         coroutineScope = viewModelScope,
+        clientManager = clientManager,
         statusAdapter = statusAdapter,
         platformRepo = platformRepo,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
-
-        )
+        pollAdapter = pollAdapter,
+    )
 
     val errorMessageFlow = loadableController.errorMessageFlow
 

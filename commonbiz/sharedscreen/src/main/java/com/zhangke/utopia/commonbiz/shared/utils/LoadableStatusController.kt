@@ -90,7 +90,7 @@ open class LoadableStatusController(
         }
     }
 
-    fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
+    open fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
         interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
             interactiveHandler.onVoted(status, votedOption).handleResult()

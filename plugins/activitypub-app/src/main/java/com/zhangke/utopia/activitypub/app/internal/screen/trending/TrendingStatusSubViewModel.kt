@@ -4,6 +4,7 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
@@ -23,13 +24,16 @@ class TrendingStatusSubViewModel(
     buildStatusUiState: BuildStatusUiStateUseCase,
     platformRepo: ActivityPubPlatformRepo,
     interactiveHandler: ActivityPubInteractiveHandler,
+    pollAdapter: ActivityPubPollAdapter,
     private val baseUrl: FormalBaseUrl,
 ) : SubViewModel() {
 
     private val loadableController = ActivityPubStatusLoadController(
         statusAdapter = statusAdapter,
+        clientManager = clientManager,
         platformRepo = platformRepo,
         coroutineScope = viewModelScope,
+        pollAdapter = pollAdapter,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
     )

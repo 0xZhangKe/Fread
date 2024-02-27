@@ -14,6 +14,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.notifications.Notifica
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
+import com.zhangke.utopia.status.blog.BlogPoll
 
 @Composable
 fun NotificationWithWholeStatus(
@@ -23,6 +24,7 @@ fun NotificationWithWholeStatus(
     interactionDesc: String,
     style: NotificationStyle,
     onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val status = notification.status
     if (status == null) {
@@ -58,6 +60,7 @@ fun NotificationWithWholeStatus(
             style = style,
             onInteractive = onInteractive,
             showDivider = false,
+            onVoted = onVoted,
         )
     }
 }

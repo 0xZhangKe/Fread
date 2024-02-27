@@ -76,7 +76,7 @@ class BlogPollTestScreen : Screen {
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                     poll = mockPoll(poll1),
-                    onVote = {
+                    onVoted = {
                         Log.d("U_TEST", "onVote:$it")
                     }
                 )
@@ -94,7 +94,7 @@ class BlogPollTestScreen : Screen {
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                     poll = mockPoll(poll2),
-                    onVote = {
+                    onVoted = {
                         Log.d("U_TEST", "onVote:$it")
                     }
                 )
@@ -123,7 +123,7 @@ class BlogPollTestScreen : Screen {
                             ),
                         )
                     ),
-                    onVote = {
+                    onVoted = {
                         Log.d("U_TEST", "onVote:$it")
                     }
                 )

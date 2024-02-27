@@ -16,6 +16,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.delay
@@ -180,6 +181,10 @@ class MixedContentSubViewModel(
         launchInViewModel {
             interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
         }
+    }
+
+    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
+        launchInViewModel { interactiveHandler.onVoted(status, options).handleResult() }
     }
 
     private suspend fun clearFeedsWhenAccountChanged() {

@@ -91,9 +91,9 @@ class SearchBarViewModel @Inject constructor(
         }
     }
 
-    fun onVote(status: Status, votedOption: List<BlogPoll.Option>) {
+    fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
         launchInViewModel {
-            interactiveHandler.onVote(status, votedOption).handleResult()
+            interactiveHandler.onVoted(status, votedOption).handleResult()
         }
     }
 

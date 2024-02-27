@@ -12,6 +12,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.BlogDivider
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
@@ -25,6 +26,7 @@ fun StatusNotificationUi(
     onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
     onRejectClick: (NotificationUiState) -> Unit,
     onAcceptClick: (NotificationUiState) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     if (notification.type == StatusNotificationType.MENTION) {
         MentionNotification(
@@ -32,6 +34,7 @@ fun StatusNotificationUi(
             indexInList = indexInList,
             onInteractive = onInteractive,
             style = style,
+            onVoted = onVoted,
         )
         return
     }
@@ -43,6 +46,7 @@ fun StatusNotificationUi(
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
+                        onVoted = onVoted,
                     )
                 }
 
@@ -51,6 +55,7 @@ fun StatusNotificationUi(
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
+                        onVoted = onVoted,
                     )
                 }
 
@@ -59,6 +64,7 @@ fun StatusNotificationUi(
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
+                        onVoted = onVoted,
                     )
                 }
 
@@ -75,6 +81,7 @@ fun StatusNotificationUi(
                         indexInList = indexInList,
                         style = style,
                         onInteractive = onInteractive,
+                        onVoted = onVoted,
                     )
                 }
 
@@ -93,6 +100,7 @@ fun StatusNotificationUi(
                         indexInList = indexInList,
                         style = style,
                         onInteractive = onInteractive,
+                        onVoted = onVoted,
                     )
                 }
 

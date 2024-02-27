@@ -96,19 +96,7 @@ class StatusContextViewModel @Inject constructor(
             statusProvider.statusResolver
                 .interactive(status, interaction)
                 .onSuccess { newStatus ->
-                    feedsRepo.updateStatus(newStatus)
-                    _uiState.updateOnSuccess { state ->
-                        val contextStatus = state.contextStatus.map { item ->
-                            item.copy(
-                                status = if (item.status.status.id == newStatus.id) {
-                                    buildStatusUiState(newStatus)
-                                } else {
-                                    item.status
-                                }
-                            )
-                        }
-                        state.copy(contextStatus = contextStatus)
-                    }
+                    updateStatus(newStatus)
                 }.onFailure { e ->
                     e.message?.takeIf { it.isNotEmpty() }
                         ?.let { message ->
@@ -126,7 +114,31 @@ class StatusContextViewModel @Inject constructor(
 
     fun onVote(status: Status, votedOption: List<BlogPoll.Option>) {
         launchInViewModel {
-            interactiveHandler.onVote(status, votedOption).handleResult()
+            statusProvider.statusResolver.votePoll(status, votedOption)
+                .onSuccess {
+                    updateStatus(it)
+                }.onFailure { e ->
+                    e.message?.takeIf { it.isNotEmpty() }
+                        ?.let { message ->
+                            _errorMessageFlow.emit(textOf(message))
+                        }
+                }
+        }
+    }
+
+    private suspend fun updateStatus(newStatus: Status) {
+        feedsRepo.updateStatus(newStatus)
+        _uiState.updateOnSuccess { state ->
+            val contextStatus = state.contextStatus.map { item ->
+                item.copy(
+                    status = if (item.status.status.id == newStatus.id) {
+                        buildStatusUiState(newStatus)
+                    } else {
+                        item.status
+                    }
+                )
+            }
+            state.copy(contextStatus = contextStatus)
         }
     }
 }

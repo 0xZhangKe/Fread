@@ -10,6 +10,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 
 @Composable
@@ -18,6 +19,7 @@ fun ActivityPubStatusUi(
     status: StatusUiState,
     indexInList: Int,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
+    onVoted: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     FeedsStatusNode(
@@ -39,5 +41,6 @@ fun ActivityPubStatusUi(
                 onInteractive(status.status, interaction)
             }
         },
+        onVoted = onVoted,
     )
 }

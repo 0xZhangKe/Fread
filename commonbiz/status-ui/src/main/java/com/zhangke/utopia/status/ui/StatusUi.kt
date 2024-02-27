@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
@@ -20,6 +21,7 @@ fun StatusUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onMediaClick: OnBlogMediaClick,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -37,6 +39,7 @@ fun StatusUi(
                     onUserInfoClick = onUserInfoClick,
                     style = style,
                     onMediaClick = onMediaClick,
+                    onVoted = onVoted,
                 )
             }
 
@@ -52,6 +55,7 @@ fun StatusUi(
                     style = style,
                     onInteractive = onInteractive,
                     onMediaClick = onMediaClick,
+                    onVoted = onVoted,
                 )
             }
         }

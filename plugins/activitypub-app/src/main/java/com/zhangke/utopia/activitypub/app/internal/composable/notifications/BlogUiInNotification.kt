@@ -26,7 +26,7 @@ fun OnlyBlogContentUi(
     statusUiState: StatusUiState,
     indexInList: Int,
     style: NotificationStyle,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -55,7 +55,7 @@ fun OnlyBlogContentUi(
                     }
                 }
             },
-            votedOption = votedOption,
+            onVoted = onVoted,
         )
     }
 }
@@ -67,7 +67,7 @@ fun WholeBlogUi(
     indexInList: Int,
     style: NotificationStyle,
     onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
     showDivider: Boolean = true,
 ) {
     val navigator = LocalNavigator.currentOrThrow
@@ -105,7 +105,7 @@ fun WholeBlogUi(
                 }
             },
             showDivider = showDivider,
-            votedOption = votedOption,
+            onVoted = onVoted,
         )
     }
 }

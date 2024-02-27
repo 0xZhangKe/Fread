@@ -20,7 +20,7 @@ fun SearchResultUi(
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
     onHashtagClick: (Hashtag) -> Unit,
-    onVote: (Status, List<BlogPoll.Option>) -> Unit,
+    onVoted: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     when (searchResult) {
         is SearchResultUiState.Platform -> {
@@ -37,7 +37,7 @@ fun SearchResultUi(
                 indexInList = indexInList,
                 onUserInfoClick = onUserInfoClick,
                 onInteractive = onInteractive,
-                onVote = onVote,
+                onVoted = onVoted,
             )
         }
 

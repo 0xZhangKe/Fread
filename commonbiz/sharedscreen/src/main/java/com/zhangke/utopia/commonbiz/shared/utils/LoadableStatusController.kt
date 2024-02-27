@@ -10,6 +10,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -86,6 +87,13 @@ open class LoadableStatusController(
         interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
             interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
+        }
+    }
+
+    fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
+        interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
+        coroutineScope.launch {
+            interactiveHandler.onVoted(status, votedOption).handleResult()
         }
     }
 

@@ -57,7 +57,7 @@ class InteractiveHandler @Inject constructor(
         } ?: InteractiveHandleResult.NoOp
     }
 
-    suspend fun onVote(
+    suspend fun onVoted(
         status: Status,
         votedOption: List<BlogPoll.Option>,
     ): InteractiveHandleResult {

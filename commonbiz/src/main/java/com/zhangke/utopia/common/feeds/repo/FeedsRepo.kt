@@ -64,7 +64,7 @@ class FeedsRepo @Inject internal constructor(
     }
 
     suspend fun updateStatus(status: Status) {
-        val existStatus = statusContentRepo.queryByPlatformId(status.id) ?: return
+        val existStatus = statusContentRepo.query(status.id) ?: return
         val newStatus = existStatus.copy(status = status)
         statusContentRepo.insert(newStatus)
     }

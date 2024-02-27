@@ -36,6 +36,8 @@ import com.zhangke.utopia.activitypub.app.internal.composable.notifications.Stat
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.status.model.Status
 
 class ActivityPubNotificationsScreen(
     private val userUriInsights: UserUriInsights,
@@ -58,6 +60,7 @@ class ActivityPubNotificationsScreen(
             onRejectClick = viewModel::onRejectClick,
             onAcceptClick = viewModel::onAcceptClick,
             onInteractive = viewModel::onInteractive,
+            onVoted = viewModel::onVoted,
         )
         ConsumeSnackbarFlow(snackbarHostState, messageTextFlow = viewModel.snackMessage)
     }
@@ -72,6 +75,7 @@ class ActivityPubNotificationsScreen(
         onRejectClick: (NotificationUiState) -> Unit,
         onAcceptClick: (NotificationUiState) -> Unit,
         onInteractive: (NotificationUiState, StatusUiInteraction) -> Unit,
+        onVoted: (NotificationUiState, List<BlogPoll.Option>) -> Unit,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -107,6 +111,9 @@ class ActivityPubNotificationsScreen(
                         indexInList = index,
                         onAcceptClick = onAcceptClick,
                         onRejectClick = onRejectClick,
+                        onVoted = {
+                            onVoted(notification, it)
+                        },
                     )
                 }
             }

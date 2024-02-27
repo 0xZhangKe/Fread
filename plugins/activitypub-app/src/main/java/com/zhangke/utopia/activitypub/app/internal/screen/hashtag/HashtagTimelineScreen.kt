@@ -51,6 +51,7 @@ import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -79,6 +80,7 @@ class HashtagTimelineScreen(
             onInteractive = viewModel::onInteractive,
             onFollowClick = viewModel::onFollowClick,
             onUnfollowClick = viewModel::onUnfollowClick,
+            onVoted = viewModel::onVoted,
         )
     }
 
@@ -94,6 +96,7 @@ class HashtagTimelineScreen(
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onFollowClick: () -> Unit,
         onUnfollowClick: () -> Unit,
+        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         val contentCanScrollBackward = remember {
@@ -123,6 +126,7 @@ class HashtagTimelineScreen(
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
                         onInteractive = onInteractive,
+                        onVoted = onVoted,
                     )
                     SnackbarHost(
                         hostState = snackbarHostState,

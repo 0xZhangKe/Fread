@@ -4,6 +4,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -24,8 +25,7 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.statusui.R
 
 @Composable
-internal fun MultipleChoicePoll(
-    modifier: Modifier,
+internal fun ColumnScope.MultipleChoicePoll(
     poll: BlogPoll,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
@@ -37,53 +37,51 @@ internal fun MultipleChoicePoll(
         mutableStateMapOf(*map.map { it.key to it.value }.toTypedArray())
     }
     val pollIsInVotable = !poll.expired && poll.voted == false
-    Column(modifier = modifier) {
-        val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
-        poll.options.forEachIndexed { index, option ->
-            val votesCount = option.votesCount?.toFloat() ?: 0F
-            val progress = if (votesCount > 0) votesCount / sum else 0F
-            BlogPollOption(
-                modifier = Modifier.fillMaxWidth(),
-                optionContent = option.title,
-                selected = indexToSelected[index] ?: false,
-                votable = pollIsInVotable,
-                showProgress = poll.voted == true || poll.expired,
-                progress = progress,
-                onClick = {
-                    indexToSelected[index] = indexToSelected[index]?.not() ?: false
-                },
-            )
-            if (index < poll.options.lastIndex) {
-                Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
-            }
+    val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
+    poll.options.forEachIndexed { index, option ->
+        val votesCount = option.votesCount?.toFloat() ?: 0F
+        val progress = if (votesCount > 0) votesCount / sum else 0F
+        BlogPollOption(
+            modifier = Modifier.fillMaxWidth(),
+            optionContent = option.title,
+            selected = indexToSelected[index] ?: false,
+            votable = pollIsInVotable,
+            showProgress = poll.voted == true || poll.expired,
+            progress = progress,
+            onClick = {
+                indexToSelected[index] = indexToSelected[index]?.not() ?: false
+            },
+        )
+        if (index < poll.options.lastIndex) {
+            Spacer(modifier = Modifier.size(width = 1.dp, height = 10.dp))
         }
-        if (pollIsInVotable) {
-            val votable = indexToSelected.map { it.value }.contains(true)
-            val backgroundColor = if (votable) {
-                Color.Blue.copy(alpha = 0.6F)
-            } else {
-                Color.Gray.copy(alpha = 0.6F)
-            }
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 15.dp)
-                    .height(42.dp)
-                    .clip(SlickRoundCornerShape(21.dp))
-                    .background(backgroundColor)
-                    .clickable(votable) {
-                        val votedOptions = indexToSelected
-                            .filter { it.value }
-                            .map { it.key }
-                            .map { poll.options[it] }
-                        onVoted(votedOptions)
-                    },
-            ) {
-                Text(
-                    modifier = Modifier.align(Alignment.Center),
-                    text = stringResource(R.string.status_ui_poll_vote),
-                )
-            }
+    }
+    if (pollIsInVotable) {
+        val votable = indexToSelected.map { it.value }.contains(true)
+        val backgroundColor = if (votable) {
+            Color.Blue.copy(alpha = 0.6F)
+        } else {
+            Color.Gray.copy(alpha = 0.6F)
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(top = 15.dp)
+                .height(42.dp)
+                .clip(SlickRoundCornerShape(21.dp))
+                .background(backgroundColor)
+                .clickable(votable) {
+                    val votedOptions = indexToSelected
+                        .filter { it.value }
+                        .map { it.key }
+                        .map { poll.options[it] }
+                    onVoted(votedOptions)
+                },
+        ) {
+            Text(
+                modifier = Modifier.align(Alignment.Center),
+                text = stringResource(R.string.status_ui_poll_vote),
+            )
         }
     }
 }

@@ -1,12 +1,12 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.lists
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
@@ -18,10 +18,12 @@ import com.zhangke.utopia.status.status.model.Status
 
 class ActivityPubListStatusSubViewModel(
     platformRepo: ActivityPubPlatformRepo,
+    clientManager: ActivityPubClientManager,
     private val listStatusRepo: ListStatusRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
     statusAdapter: ActivityPubStatusAdapter,
     interactiveHandler: ActivityPubInteractiveHandler,
+    pollAdapter: ActivityPubPollAdapter,
     private val serverBaseUrl: FormalBaseUrl,
     private val listId: String,
 ) : SubViewModel() {
@@ -29,10 +31,17 @@ class ActivityPubListStatusSubViewModel(
     private val loadableController = ActivityPubStatusLoadController(
         statusAdapter = statusAdapter,
         platformRepo = platformRepo,
+        clientManager = clientManager,
         coroutineScope = viewModelScope,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
+        pollAdapter = pollAdapter,
         updateStatus = ::updateLocalStatus,
+        updatePoll = { status, poll ->
+            launchInViewModel {
+                listStatusRepo.updatePoll(status.id, poll)
+            }
+        }
     )
 
     val uiState = loadableController.uiState

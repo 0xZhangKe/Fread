@@ -7,6 +7,7 @@ import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
@@ -33,6 +34,7 @@ class UserTimelineViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     private val baseUrlManager: BaseUrlManager,
     interactiveHandler: ActivityPubInteractiveHandler,
+    pollAdapter: ActivityPubPollAdapter,
     @Assisted val userUriInsights: UserUriInsights,
 ) : ViewModel() {
 
@@ -43,8 +45,10 @@ class UserTimelineViewModel @AssistedInject constructor(
 
     private val loadableController = ActivityPubStatusLoadController(
         statusAdapter = statusAdapter,
+        clientManager = clientManager,
         platformRepo = platformRepo,
         coroutineScope = viewModelScope,
+        pollAdapter = pollAdapter,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
     )
@@ -84,7 +88,8 @@ class UserTimelineViewModel @AssistedInject constructor(
         baseUrl: FormalBaseUrl,
         maxId: String? = null,
     ): Result<List<ActivityPubStatusEntity>> {
-        val accountIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, baseUrl)
+        val accountIdResult =
+            webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, baseUrl)
         if (accountIdResult.isFailure) {
             return Result.failure(accountIdResult.exceptionOrNull()!!)
         }

@@ -11,6 +11,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharedFlow
@@ -55,5 +56,9 @@ open class SearchStatusViewModel @Inject constructor(
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
         loadStatusController.onUserInfoClick(blogAuthor)
+    }
+
+    fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
+        loadStatusController.onVoted(status, votedOption)
     }
 }

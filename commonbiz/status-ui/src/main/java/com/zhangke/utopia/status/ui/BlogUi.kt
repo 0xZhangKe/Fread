@@ -28,7 +28,7 @@ fun BlogUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
     onUserInfoClick: (BlogAuthor) -> Unit,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
     showDivider: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -51,7 +51,7 @@ fun BlogUi(
             indexOfFeeds = indexInList,
             style = style.blogStyle,
             onMediaClick = onMediaClick,
-            votedOption = votedOption,
+            onVoted = onVoted,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier

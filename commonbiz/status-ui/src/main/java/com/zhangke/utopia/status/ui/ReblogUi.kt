@@ -17,6 +17,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
@@ -34,6 +35,7 @@ fun ReblogUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onMediaClick: OnBlogMediaClick,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Column(modifier = modifier) {
         Row(
@@ -67,6 +69,7 @@ fun ReblogUi(
             onUserInfoClick = onUserInfoClick,
             style = style,
             reblogAuthor = reblog.author,
+            onVoted = onVoted,
         )
     }
 }

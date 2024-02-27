@@ -1,6 +1,5 @@
 package com.zhangke.utopia.rss.internal.repo
 
-import android.util.Log
 import com.zhangke.utopia.rss.internal.adapter.BlogAuthorAdapter
 import com.zhangke.utopia.rss.internal.db.RssChannelEntity
 import com.zhangke.utopia.rss.internal.db.RssDatabases
@@ -87,18 +86,9 @@ class RssRepo @Inject constructor(
 
     private fun processThumbnail(source: RssSource): String? {
         val thumbnail = source.thumbnail
-        Log.d("U_TEST", "RssSource.fixThumbnail: $thumbnail")
-        if (AvatarUtils.isRemoteAvatar(thumbnail)) {
-            Log.d("U_TEST", "isRemoteAvatar")
-            return thumbnail
-        }
-        if (thumbnail.isNullOrEmpty().not() && File(thumbnail!!).exists()) {
-            Log.d("U_TEST", "avatar exists")
-            return thumbnail
-        }
-        return AvatarUtils.makeSourceAvatar(source).also {
-            Log.d("U_TEST", "make avatar -> $thumbnail")
-        }
+        if (AvatarUtils.isRemoteAvatar(thumbnail)) return thumbnail
+        if (thumbnail.isNullOrEmpty().not() && File(thumbnail!!).exists()) return thumbnail
+        return AvatarUtils.makeSourceAvatar(source)
     }
 
     private suspend fun insertSource(source: RssSource) {

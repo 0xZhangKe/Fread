@@ -30,6 +30,7 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 
 class SearchedStatusTab(private val query: String) : PagerTab {
@@ -59,6 +60,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
             onLoadMore = {
                 viewModel.onLoadMore(query)
             },
+            onVoted = viewModel::onVoted,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.tryPush(it)
@@ -75,6 +77,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
+        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
@@ -94,6 +97,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
                     indexInList = index,
                     onUserInfoClick = onUserInfoClick,
                     onInteractive = onInteractive,
+                    onVoted = onVoted,
                 )
             }
         }

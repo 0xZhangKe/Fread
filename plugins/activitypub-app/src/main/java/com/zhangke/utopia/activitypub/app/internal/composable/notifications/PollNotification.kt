@@ -12,12 +12,14 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.utopia.status.blog.BlogPoll
 
 @Composable
 fun PollNotification(
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val status = notification.status
     if (status == null) {
@@ -45,6 +47,7 @@ fun PollNotification(
                 statusUiState = status,
                 indexInList = indexInList,
                 style = style,
+                onVoted = onVoted,
             )
             val poll = status.status.intrinsicBlog.poll
             if (poll != null) {

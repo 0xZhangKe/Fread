@@ -39,7 +39,7 @@ fun AnchorBlogUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
     onUserInfoClick: (BlogAuthor) -> Unit,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Surface(modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
@@ -63,7 +63,7 @@ fun AnchorBlogUi(
                 style = style.blogStyle,
                 indexOfFeeds = indexInList,
                 onMediaClick = onMediaClick,
-                votedOption = votedOption,
+                onVoted = onVoted,
             )
             StatusBottomInteractionPanel(
                 modifier = Modifier

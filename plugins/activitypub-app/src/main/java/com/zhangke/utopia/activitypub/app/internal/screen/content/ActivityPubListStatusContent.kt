@@ -29,6 +29,7 @@ import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubStatusUi
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -38,7 +39,8 @@ internal fun ActivityPubListStatusContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
-    canScrollBackward: MutableState<Boolean>? = null
+    canScrollBackward: MutableState<Boolean>? = null,
+    onVoted: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
@@ -76,6 +78,7 @@ internal fun ActivityPubListStatusContent(
                     status = status,
                     onInteractive = onInteractive,
                     indexInList = index,
+                    onVoted = onVoted,
                 )
             }
             if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {

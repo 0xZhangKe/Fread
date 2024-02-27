@@ -6,12 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.utopia.status.blog.BlogPoll
 
 @Composable
 fun ReblogNotification(
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val status = notification.status
     if (status == null) {
@@ -27,5 +29,6 @@ fun ReblogNotification(
         interactionDesc = stringResource(R.string.activity_pub_notification_reblog_desc),
         indexInList = indexInList,
         style = style,
+        onVoted = onVoted,
     )
 }

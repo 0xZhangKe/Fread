@@ -117,7 +117,7 @@ fun Screen.ExplorerSearchBar() {
                 onUserInfoClick = viewModel::onUserInfoClick,
                 onInteractive = viewModel::onInteractive,
                 onHashtagClick = viewModel::onHashtagClick,
-                onVote = viewModel::onVote,
+                onVoted = viewModel::onVoted,
             )
         }
     }
@@ -133,7 +133,7 @@ private fun SearchContent(
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
     onHashtagClick: (Hashtag) -> Unit,
-    onVote: (Status, List<BlogPoll.Option>) -> Unit,
+    onVoted: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val state = rememberLazyListState()
@@ -149,7 +149,7 @@ private fun SearchContent(
                     onUserInfoClick = onUserInfoClick,
                     onInteractive = onInteractive,
                     onHashtagClick = onHashtagClick,
-                    onVote = onVote,
+                    onVoted = onVoted,
                 )
             }
         }

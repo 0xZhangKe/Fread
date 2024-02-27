@@ -39,6 +39,7 @@ class UserTimelineTab(
             onRefresh = viewModel::refresh,
             onInteractive = viewModel::onInteractive,
             canScrollBackward = contentCanScrollBackward,
+            onVoted = viewModel::onVoted,
         )
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

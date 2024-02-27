@@ -44,7 +44,7 @@ fun AncestorBlogUi(
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Surface(modifier = modifier.background(Color.Blue)) {
         ConstraintLayout(
@@ -155,7 +155,7 @@ fun AncestorBlogUi(
                     style = style.blogStyle,
                     indexOfFeeds = indexInList,
                     onMediaClick = onMediaClick,
-                    votedOption = votedOption,
+                    onVoted = onVoted,
                 )
                 StatusBottomInteractionPanel(
                     modifier = Modifier

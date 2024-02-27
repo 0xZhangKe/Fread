@@ -33,6 +33,7 @@ import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 
 class MixedContentScreen(private val configId: Long) : PagerTab {
@@ -55,6 +56,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             onUserInfoClick = viewModel::onUserInfoClick,
             onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
             onInitAnchorStatusIdUsed = viewModel::onInitAnchorStatusIdUsed,
+            onVoted = viewModel::onVoted,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.tryPush(it)
@@ -71,6 +73,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         onLoadMore: () -> Unit,
         onCatchMinFirstVisibleIndex: (Int) -> Unit,
         onInitAnchorStatusIdUsed: () -> Unit,
+        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
@@ -131,6 +134,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                         onUserInfoClick = onUserInfoClick,
                         onInteractive = onInteractive,
                         indexInList = index,
+                        onVoted = onVoted,
                     )
                 }
             }

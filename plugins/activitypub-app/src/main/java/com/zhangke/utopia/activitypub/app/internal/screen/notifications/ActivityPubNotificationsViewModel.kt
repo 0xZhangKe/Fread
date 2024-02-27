@@ -8,6 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.NotificationsRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val clientManager: ActivityPubClientManager,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
+    private val votePoll: VotePollUseCase,
 ) : ContainerViewModel<ActivityPubNotificationsSubViewModel, ActivityPubNotificationsViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubNotificationsSubViewModel {
@@ -36,6 +38,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
             notificationsRepo = notificationsRepo,
             clientManager = clientManager,
             accountEntityAdapter = accountEntityAdapter,
+            votePoll = votePoll,
         )
     }
 

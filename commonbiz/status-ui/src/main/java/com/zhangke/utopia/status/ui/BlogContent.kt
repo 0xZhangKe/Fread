@@ -35,7 +35,7 @@ fun BlogContent(
     style: BlogStyle,
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -108,7 +108,7 @@ fun BlogContent(
             BlogPoll(
                 modifier = Modifier.fillMaxWidth(),
                 poll = blog.poll!!,
-                votedOption = votedOption,
+                onVoted = onVoted,
             )
         }
     }

@@ -4,11 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
@@ -35,7 +33,7 @@ fun DescendantStatusUi(
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
     onUserInfoClick: (BlogAuthor) -> Unit,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Surface(
         modifier = modifier,
@@ -59,7 +57,7 @@ fun DescendantStatusUi(
                 style = style.blogStyle,
                 indexOfFeeds = indexInList,
                 onMediaClick = onMediaClick,
-                votedOption = votedOption,
+                onVoted = onVoted,
             )
             StatusBottomInteractionPanel(
                 modifier = Modifier

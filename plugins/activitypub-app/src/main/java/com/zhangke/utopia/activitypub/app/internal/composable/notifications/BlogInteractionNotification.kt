@@ -17,6 +17,7 @@ import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
 
 /**
  * 关于博客的通知UI。
@@ -30,6 +31,7 @@ fun BlogInteractionNotification(
     interactionDesc: String,
     indexInList: Int,
     style: NotificationStyle,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     Column(
@@ -54,6 +56,7 @@ fun BlogInteractionNotification(
             statusUiState = statusUiState,
             indexInList = indexInList,
             style = style,
+            onVoted = onVoted,
         )
     }
 }

@@ -13,6 +13,7 @@ import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveH
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 
 class ActivityPubListStatusSubViewModel(
@@ -84,4 +85,9 @@ class ActivityPubListStatusSubViewModel(
             listStatusRepo.updateEntity(status)
         }
     }
+
+    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
+        loadableController.onVoted(status, options)
+    }
+
 }

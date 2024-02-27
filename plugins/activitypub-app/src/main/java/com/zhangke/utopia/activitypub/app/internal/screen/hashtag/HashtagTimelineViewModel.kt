@@ -20,6 +20,7 @@ import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadCo
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -183,6 +184,10 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                 .unfollowTag(hashtag)
                 .handle()
         }
+    }
+
+    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
+        loadableController.onVoted(status, options)
     }
 
     private suspend fun Result<ActivityPubTagEntity>.handle() {

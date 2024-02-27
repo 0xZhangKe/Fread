@@ -15,10 +15,12 @@ import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.NotificationsRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
-import kotlinx.coroutines.Job
+import com.zhangke.utopia.status.blog.BlogPoll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -34,6 +36,7 @@ class ActivityPubNotificationsSubViewModel(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val notificationsRepo: NotificationsRepo,
     private val clientManager: ActivityPubClientManager,
+    private val votePoll: VotePollUseCase,
 ) : SubViewModel() {
 
     private val loadableController = LoadableController(
@@ -148,24 +151,28 @@ class ActivityPubNotificationsSubViewModel(
                 .map { activityPubStatusAdapter.toStatus(it, status.status.platform) }
                 .map { buildStatusUiState(it) }
                 .onSuccess { newStatus ->
-                    _uiState.update { current ->
-                        current.copy(
-                            dataList = current.dataList.map {
-                                if (it.status?.status?.id == newStatus.status.id) {
-                                    it.copy(status = newStatus)
-                                } else {
-                                    it
-                                }
-                            }
-                        )
-                    }
-                    statusNotification.toNotification()
-                        .copy(status = newStatus.status)
-                        .let { notificationsRepo.updateNotifications(it, userUriInsights.uri) }
+                    updateStatus(statusNotification, newStatus)
                 }.onFailure {
                     _snackMessage.emit(textOf(it.message.orEmpty()))
                 }
         }
+    }
+
+    private suspend fun updateStatus(statusNotification: NotificationUiState, newStatus: StatusUiState) {
+        _uiState.update { current ->
+            current.copy(
+                dataList = current.dataList.map {
+                    if (it.status?.status?.id == newStatus.status.id) {
+                        it.copy(status = newStatus)
+                    } else {
+                        it
+                    }
+                }
+            )
+        }
+        statusNotification.toNotification()
+            .copy(status = newStatus.status)
+            .let { notificationsRepo.updateNotifications(it, userUriInsights.uri) }
     }
 
     fun onRejectClick(notification: NotificationUiState) {
@@ -190,6 +197,19 @@ class ActivityPubNotificationsSubViewModel(
                     _snackMessage.emit(textOf(it.message.orEmpty()))
                 }.onSuccess {
                     onRefresh(true)
+                }
+        }
+    }
+
+    fun onVoted(statusNotification: NotificationUiState, options: List<BlogPoll.Option>) {
+        val status = statusNotification.status?.status ?: return
+        launchInViewModel {
+            votePoll(status, options, userUriInsights.baseUrl)
+                .map { buildStatusUiState(it) }
+                .onSuccess {
+                    updateStatus(statusNotification, it)
+                }.onFailure {
+                    _snackMessage.emit(textOf(it.message.orEmpty()))
                 }
         }
     }

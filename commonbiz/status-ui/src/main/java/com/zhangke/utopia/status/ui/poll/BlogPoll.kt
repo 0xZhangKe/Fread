@@ -8,15 +8,15 @@ import com.zhangke.utopia.status.blog.BlogPoll
 fun BlogPoll(
     modifier: Modifier,
     poll: BlogPoll,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     if (poll.multiple) {
-        MultipleChoicePoll(modifier = modifier, poll = poll, votedOption = votedOption)
+        MultipleChoicePoll(modifier = modifier, poll = poll, onVoted = onVoted)
     } else {
         SingleChoicePoll(
             modifier = modifier,
             poll = poll,
-            votedOption = votedOption,
+            onVoted = onVoted,
         )
     }
 }

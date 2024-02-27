@@ -8,14 +8,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
-import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 @Composable
 internal fun SingleChoicePoll(
     modifier: Modifier,
     poll: BlogPoll,
-    votedOption: (List<BlogPoll.Option>) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Column(modifier = modifier) {
         val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
@@ -31,7 +29,7 @@ internal fun SingleChoicePoll(
                 showProgress = selected,
                 progress = progress,
                 onClick = {
-                    votedOption(listOf(option))
+                    onVoted(listOf(option))
                 },
             )
             if (index < poll.options.lastIndex) {

@@ -25,7 +25,7 @@ fun FeedsStatusNode(
     indexInList: Int,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
-    onVote: (Status, List<BlogPoll.Option>) -> Unit,
+    onVoted: (Status, List<BlogPoll.Option>) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -55,10 +55,10 @@ fun FeedsStatusNode(
                 is BlogMediaClickEvent.BlogVideoClickEvent -> {
                     navigator.push(FullVideoScreen(event.media.url.toUri()))
                 }
-
-                is BlogMediaClickEvent.BlogPollClickEvent -> {
-                    onVote(event.status, event.votedOption)
-                }
             }
-        })
+        },
+        onVoted = {
+            onVoted(status.status, it)
+        },
+    )
 }

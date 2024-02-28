@@ -11,6 +11,7 @@ class ContentConfigAdapter @Inject constructor() {
         return when (entity.type) {
             ContentType.MIXED -> ContentConfig.MixedContent(
                 id = entity.id,
+                order = entity.order,
                 name = entity.name,
                 sourceUriList = entity.sourceUriList!!,
                 lastReadStatusId = entity.lastReadStatusId,
@@ -18,6 +19,7 @@ class ContentConfigAdapter @Inject constructor() {
 
             ContentType.ACTIVITY_PUB -> ContentConfig.ActivityPubContent(
                 id = entity.id,
+                order = entity.order,
                 name = entity.name,
                 baseUrl = entity.baseUrl!!,
             )
@@ -28,6 +30,7 @@ class ContentConfigAdapter @Inject constructor() {
         return when (config) {
             is ContentConfig.MixedContent -> ContentConfigEntity(
                 id = config.id,
+                order = config.order,
                 name = config.name,
                 type = ContentType.MIXED,
                 sourceUriList = config.sourceUriList,
@@ -38,6 +41,7 @@ class ContentConfigAdapter @Inject constructor() {
             is ContentConfig.ActivityPubContent -> ContentConfigEntity(
                 id = config.id,
                 name = config.name,
+                order = config.order,
                 type = ContentType.ACTIVITY_PUB,
                 sourceUriList = null,
                 lastReadStatusId = null,

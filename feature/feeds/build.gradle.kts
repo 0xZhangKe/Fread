@@ -75,4 +75,5 @@ dependencies {
     implementation(libs.bundles.voyager)
     implementation(libs.krouter.core)
     ksp(libs.krouter.compiler)
+    implementation(libs.composeReorderable)
 }

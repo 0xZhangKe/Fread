@@ -33,6 +33,7 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val configManager: UtopiaConfigManager,
     private val contentConfigRepo: ContentConfigRepo,
+    private val configRepo: ContentConfigRepo,
 ) : ViewModel() {
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
@@ -138,8 +139,10 @@ internal class AddFeedsManagerViewModel @Inject constructor(
         val sourceUriList = currentState.sourceList.map { it.uri }
         val sourceName = currentState.sourceName
         launchInViewModel {
+            val order = configRepo.getNextOrder()
             val contentConfig = ContentConfig.MixedContent(
                 id = 0,
+                order = order,
                 name = sourceName,
                 sourceUriList = sourceUriList,
                 lastReadStatusId = null,

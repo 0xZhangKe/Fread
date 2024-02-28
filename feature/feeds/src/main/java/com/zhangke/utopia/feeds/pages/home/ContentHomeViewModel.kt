@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
@@ -80,6 +81,12 @@ class ContentHomeViewModel @Inject constructor(
             }
     }
 
+    fun onRemoveContentClick(config: ContentConfig) {
+        launchInViewModel {
+            contentConfigRepo.delete(config)
+        }
+    }
+
     fun onPostStatusClick() {
         val accountList = _uiState.value.accountList
         if (accountList.isEmpty()) return
@@ -94,6 +101,15 @@ class ContentHomeViewModel @Inject constructor(
 
     fun onPostStatusAccountClick(account: LoggedAccount) {
         openPostStatusScreen(account)
+    }
+
+    fun onMove(from: Int, to: Int) {
+        Log.d("U_TEST", "ViewModel onMove: ${uiState.value.contentConfigList.joinToString { it.configName }}")
+        launchInViewModel {
+            val configList = _uiState.value.contentConfigList
+            if (configList.isEmpty()) return@launchInViewModel
+            contentConfigRepo.reorderConfig(configList[from], configList[to])
+        }
     }
 
     private fun openPostStatusScreen(account: LoggedAccount) {

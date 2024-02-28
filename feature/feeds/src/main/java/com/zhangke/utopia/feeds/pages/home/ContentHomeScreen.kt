@@ -52,6 +52,7 @@ import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
+import com.zhangke.utopia.status.model.ContentConfig
 import kotlinx.coroutines.launch
 
 class ContentHomeScreen : Screen {
@@ -84,6 +85,8 @@ class ContentHomeScreen : Screen {
                         onAddContentClick = {
                             navigator.push(SelectContentTypeScreen())
                         },
+                        onMove = viewModel::onMove,
+                        onRemoveClick = viewModel::onRemoveContentClick,
                     )
                 }
             },

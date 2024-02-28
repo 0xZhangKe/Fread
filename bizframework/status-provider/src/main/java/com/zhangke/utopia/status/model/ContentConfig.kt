@@ -7,9 +7,19 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface ContentConfig {
 
+    val id: Long
+    val order: Int
+
+    val configName: String
+        get() = when (this) {
+            is MixedContent -> name
+            is ActivityPubContent -> name
+        }
+
     @Serializable
     data class MixedContent(
-        val id: Long,
+        override val id: Long,
+        override val order: Int,
         val name: String,
         val sourceUriList: List<FormalUri>,
         val lastReadStatusId: String?,
@@ -17,14 +27,9 @@ sealed interface ContentConfig {
 
     @Serializable
     data class ActivityPubContent(
-        val id: Long,
+        override val  id: Long,
+        override val order: Int,
         val name: String,
         val baseUrl: FormalBaseUrl,
     ) : ContentConfig
-
-    val configName: String
-        get() = when (this) {
-            is MixedContent -> name
-            is ActivityPubContent -> name
-        }
 }

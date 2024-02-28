@@ -8,6 +8,7 @@ import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -23,6 +24,7 @@ class AddInstanceViewModel @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     private val accountManager: ActivityPubAccountManager,
+    private val contentConfigRepo: ContentConfigRepo,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -120,8 +122,10 @@ class AddInstanceViewModel @Inject constructor(
 
     private suspend fun emitCurrentContentConfigFlow() {
         val instance = _uiState.value.instance ?: return
+        val order = contentConfigRepo.getNextOrder()
         val config = ContentConfig.ActivityPubContent(
             id = 0,
+            order = order,
             name = instance.title,
             baseUrl = instance.baseUrl,
         )

@@ -45,6 +45,18 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.updateLatestStatusId(id, latestStatusId)
     }
 
+    suspend fun getNextOrder(): Int {
+        val maxOrder = contentConfigDao.queryMaxOrder() ?: 0
+        return maxOrder + 1
+    }
+
+    suspend fun reorderConfig(from: ContentConfig, to: ContentConfig) {
+        val toOrder = to.order
+        val toEntity = contentConfigAdapter.toEntity(to).copy(order = from.order)
+        val fromEntity = contentConfigAdapter.toEntity(from).copy(order = toOrder)
+        contentConfigDao.insertList(listOf(fromEntity, toEntity))
+    }
+
     suspend fun clearAllLastReadStatusId() {
         contentConfigDao.clearAllLastReadStatusId()
     }
@@ -58,6 +70,6 @@ class ContentConfigRepo @Inject constructor(
     }
 
     suspend fun delete(config: ContentConfig) {
-        contentConfigDao.delete(contentConfigAdapter.toEntity(config))
+        contentConfigDao.deleteById(config.id)
     }
 }

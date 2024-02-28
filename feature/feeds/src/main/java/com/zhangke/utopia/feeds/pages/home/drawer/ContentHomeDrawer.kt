@@ -1,8 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.drawer
 
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,10 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -44,14 +41,14 @@ fun ContentHomeDrawer(
     onContentConfigClick: (ContentConfig) -> Unit,
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
-    onRemoveClick: (ContentConfig) -> Unit,
+    onEditClick: (ContentConfig) -> Unit,
 ) {
     ContentHomeDrawerContent(
         contentConfigList = contentConfigList,
         onContentConfigClick = onContentConfigClick,
         onAddContentClick = onAddContentClick,
         onMove = onMove,
-        onRemoveClick = onRemoveClick,
+        onEditClick = onEditClick,
     )
 }
 
@@ -61,7 +58,7 @@ private fun ContentHomeDrawerContent(
     onContentConfigClick: (ContentConfig) -> Unit,
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
-    onRemoveClick: (ContentConfig) -> Unit,
+    onEditClick: (ContentConfig) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
         Column(
@@ -70,19 +67,15 @@ private fun ContentHomeDrawerContent(
             var configListInUi by remember(contentConfigList) {
                 mutableStateOf(contentConfigList)
             }
-            Log.d("U_TEST", "contentConfigList: ${contentConfigList.joinToString { it.configName }}")
-            Log.d("U_TEST", "configListInUi: ${configListInUi.joinToString { it.configName }}")
             key(contentConfigList) {
                 val state = rememberReorderableLazyListState(
                     onMove = { from, to ->
-                        Log.d("U_TEST", "onMove: from=$from, to=$to")
                         if (contentConfigList.isEmpty()) return@rememberReorderableLazyListState
                         configListInUi = configListInUi.toMutableList().apply {
                             add(to.index, removeAt(from.index))
                         }
                     },
                     onDragEnd = { startIndex, endIndex ->
-                        Log.d("U_TEST", "onDragEnd: startIndex=$startIndex, endIndex=$endIndex")
                         onMove(startIndex, endIndex)
                     }
                 )
@@ -96,17 +89,18 @@ private fun ContentHomeDrawerContent(
                 ) {
                     itemsIndexed(
                         items = configListInUi,
-                        key = { index, item -> item.hashCode() }
-                    ) { index, contentConfig ->
+                        key = { _, item -> item.hashCode() }
+                    ) { _, contentConfig ->
                         ReorderableItem(state, contentConfig.hashCode()) { dragging ->
-                            val elevation = animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
+                            val elevation =
+                                animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
                             ContentConfigItem(
                                 modifier = Modifier
                                     .fillMaxWidth()
                                     .shadow(elevation.value),
                                 contentConfig = contentConfig,
                                 onClick = { onContentConfigClick(contentConfig) },
-                                onRemoveClick = onRemoveClick,
+                                onEditClick = onEditClick,
                             )
                         }
                     }
@@ -131,7 +125,7 @@ private fun ContentConfigItem(
     modifier: Modifier,
     contentConfig: ContentConfig,
     onClick: () -> Unit,
-    onRemoveClick: (ContentConfig) -> Unit,
+    onEditClick: (ContentConfig) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -149,9 +143,9 @@ private fun ContentConfigItem(
         Spacer(modifier = Modifier.weight(1F))
         SimpleIconButton(
             modifier = Modifier.align(Alignment.CenterVertically),
-            onClick = { onRemoveClick(contentConfig) },
-            imageVector = Icons.Default.Delete,
-            contentDescription = "Delete Content",
+            onClick = { onEditClick(contentConfig) },
+            imageVector = Icons.Default.Edit,
+            contentDescription = "Edit Content Config",
         )
     }
 }

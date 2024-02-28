@@ -39,7 +39,7 @@ fun UtopiaDialog(
         title = title,
         content = {
             Box(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
                 contentAlignment = Alignment.Center,
             ) {
                 val textStyle = MaterialTheme.typography.bodyLarge

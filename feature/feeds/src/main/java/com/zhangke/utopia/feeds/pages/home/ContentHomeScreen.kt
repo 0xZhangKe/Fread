@@ -51,6 +51,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
+import com.zhangke.utopia.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
 import com.zhangke.utopia.status.model.ContentConfig
 import kotlinx.coroutines.launch
@@ -86,7 +87,11 @@ class ContentHomeScreen : Screen {
                             navigator.push(SelectContentTypeScreen())
                         },
                         onMove = viewModel::onMove,
-                        onRemoveClick = viewModel::onRemoveContentClick,
+                        onEditClick = {
+                            if (it is ContentConfig.MixedContent) {
+                                navigator.push(EditMixedContentScreen(it.id))
+                            }
+                        },
                     )
                 }
             },

@@ -1,13 +1,10 @@
 package com.zhangke.utopia.feeds.pages.manager.edit
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Delete
@@ -15,13 +12,10 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -29,24 +23,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.successDataOrNull
+import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
@@ -179,87 +173,40 @@ private fun EditFeedsScreenTopBar(
             }
         },
     )
-    var inputtedText by remember {
-        mutableStateOf("")
-    }
-    LaunchedEffect(uiState) {
-        if (inputtedText.isEmpty() && uiState.isSuccess) {
-            inputtedText = uiState.requireSuccessData().name
+    val loadedUiState = uiState.successDataOrNull()
+    if (loadedUiState != null && showEditNameDialog) {
+        var inputtedText by remember() {
+            mutableStateOf("")
         }
-    }
-    if (showEditNameDialog) {
-        Dialog(
+        UtopiaDialog(
+            title = stringResource(R.string.feeds_mixed_config_edit_new_name_dialog_title),
             onDismissRequest = { showEditNameDialog = false },
-        ) {
-            Surface(
-                shape = RoundedCornerShape(4.dp),
-            ) {
-                Column(modifier = Modifier.padding(horizontal = 15.dp, vertical = 15.dp)) {
-                    Text(
-                        text = "Input Feeds Name",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-                    TextField(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(top = 6.dp),
-                        value = inputtedText,
-                        onValueChange = { inputtedText = it },
-                    )
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(top = 6.dp)
-                    ) {
-                        TextButton(onClick = { showEditNameDialog = false }) {
-                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.cancel))
-                        }
-                        TextButton(
-                            modifier = Modifier.padding(start = 6.dp),
-                            onClick = {
-                                showEditNameDialog = false
-                                onEditNameClick(inputtedText)
-                            }
-                        ) {
-                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.ok))
-                        }
+            onNegativeClick = { showEditNameDialog = false },
+            onPositiveClick = {
+                showEditNameDialog = false
+                onEditNameClick(inputtedText)
+            },
+            content = {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .padding(16.dp)
+                        .fillMaxWidth(),
+                    value = inputtedText,
+                    onValueChange = {
+                        inputtedText = it
+                    },
+                    label = {
+                        Text(text = stringResource(R.string.feeds_mixed_config_edit_new_name_dialog_label))
                     }
-                }
-            }
-        }
+                )
+            },
+        )
     }
     if (showDeleteConfirmDialog) {
-        Dialog(onDismissRequest = { showDeleteConfirmDialog = false }) {
-            Surface(
-                shape = RoundedCornerShape(4.dp),
-            ) {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterHorizontally),
-                        text = "Input Feeds Name",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
-
-                    Row(
-                        modifier = Modifier
-                            .align(Alignment.End)
-                            .padding(top = 6.dp)
-                    ) {
-                        TextButton(onClick = { showDeleteConfirmDialog = false }) {
-                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.cancel))
-                        }
-                        TextButton(
-                            modifier = Modifier.padding(start = 6.dp),
-                            onClick = {
-                                showDeleteConfirmDialog = false
-                                onDeleteClick()
-                            }
-                        ) {
-                            Text(text = stringResource(com.zhangke.utopia.framework.R.string.ok))
-                        }
-                    }
-                }
-            }
-        }
+        AlertConfirmDialog(
+            content = stringResource(R.string.feeds_mixed_config_edit_delete_content_dialog_message),
+            onDismissRequest = { showDeleteConfirmDialog = false },
+            onConfirm = onDeleteClick,
+        )
     }
 }

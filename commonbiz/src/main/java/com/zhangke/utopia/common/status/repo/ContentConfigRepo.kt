@@ -2,6 +2,7 @@ package com.zhangke.utopia.common.status.repo
 
 import com.zhangke.utopia.common.status.adapter.ContentConfigAdapter
 import com.zhangke.utopia.common.status.repo.db.ContentConfigDatabases
+import com.zhangke.utopia.common.status.repo.db.ContentConfigEntity
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -51,10 +52,33 @@ class ContentConfigRepo @Inject constructor(
     }
 
     suspend fun reorderConfig(from: ContentConfig, to: ContentConfig) {
-        val toOrder = to.order
-        val toEntity = contentConfigAdapter.toEntity(to).copy(order = from.order)
-        val fromEntity = contentConfigAdapter.toEntity(from).copy(order = toOrder)
-        contentConfigDao.insertList(listOf(fromEntity, toEntity))
+        val pendingInsertList = mutableListOf<ContentConfigEntity>()
+        pendingInsertList += from.toEntityWithNewOrder(to.order)
+        val allConfig = contentConfigDao.queryAllContentConfig()
+        if (from.order > to.order) {
+            // move up
+            allConfig.filter {
+                it.order in to.order until from.order
+            }.map {
+                it.copy(order = it.order + 1)
+            }.let {
+                pendingInsertList += it
+            }
+        } else {
+            // move down
+            allConfig.filter {
+                it.order > from.order && it.order <= to.order
+            }.map {
+                it.copy(order = it.order - 1)
+            }.let {
+                pendingInsertList += it
+            }
+        }
+        contentConfigDao.insertList(pendingInsertList)
+    }
+
+    private fun ContentConfig.toEntityWithNewOrder(order: Int): ContentConfigEntity {
+        return contentConfigAdapter.toEntity(this).copy(order = order)
     }
 
     suspend fun clearAllLastReadStatusId() {

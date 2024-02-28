@@ -2,6 +2,7 @@ package com.zhangke.utopia.feeds.pages.home.drawer
 
 import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
@@ -70,15 +72,19 @@ private fun ContentHomeDrawerContent(
             }
             Log.d("U_TEST", "contentConfigList: ${contentConfigList.joinToString { it.configName }}")
             Log.d("U_TEST", "configListInUi: ${configListInUi.joinToString { it.configName }}")
-            key(configListInUi) {
+            key(contentConfigList) {
                 val state = rememberReorderableLazyListState(
                     onMove = { from, to ->
+                        Log.d("U_TEST", "onMove: from=$from, to=$to")
                         if (contentConfigList.isEmpty()) return@rememberReorderableLazyListState
                         configListInUi = configListInUi.toMutableList().apply {
                             add(to.index, removeAt(from.index))
                         }
-                        onMove(from.index, to.index)
                     },
+                    onDragEnd = { startIndex, endIndex ->
+                        Log.d("U_TEST", "onDragEnd: startIndex=$startIndex, endIndex=$endIndex")
+                        onMove(startIndex, endIndex)
+                    }
                 )
                 LazyColumn(
                     state = state.listState,
@@ -106,6 +112,8 @@ private fun ContentHomeDrawerContent(
                     }
                 }
             }
+
+
             Button(
                 modifier = Modifier
                     .padding(vertical = 16.dp)

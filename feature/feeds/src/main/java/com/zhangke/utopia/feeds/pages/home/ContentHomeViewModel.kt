@@ -104,7 +104,6 @@ class ContentHomeViewModel @Inject constructor(
     }
 
     fun onMove(from: Int, to: Int) {
-        Log.d("U_TEST", "ViewModel onMove: ${uiState.value.contentConfigList.joinToString { it.configName }}")
         launchInViewModel {
             val configList = _uiState.value.contentConfigList
             if (configList.isEmpty()) return@launchInViewModel

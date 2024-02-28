@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.home
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
@@ -79,12 +78,6 @@ class ContentHomeViewModel @Inject constructor(
             .getPlatformDetailScreenRoute(config)?.let { route ->
                 launchInViewModel { _openScreenFlow.emit(route) }
             }
-    }
-
-    fun onRemoveContentClick(config: ContentConfig) {
-        launchInViewModel {
-            contentConfigRepo.delete(config)
-        }
     }
 
     fun onPostStatusClick() {

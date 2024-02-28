@@ -28,4 +28,8 @@
 
     <string name="feeds_select_account_for_post_status">请选择一个账号</string>
 
+    <string name="feeds_mixed_config_edit_new_name_dialog_title">请输入内容名称</string>
+    <string name="feeds_mixed_config_edit_new_name_dialog_label">名称</string>
+    <string name="feeds_mixed_config_edit_delete_content_dialog_message">您确定要删除这个内容吗？</string>
+
 </resources>

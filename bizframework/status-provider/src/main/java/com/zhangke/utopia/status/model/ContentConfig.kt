@@ -31,8 +31,8 @@ sealed interface ContentConfig {
         override val order: Int,
         val name: String,
         val baseUrl: FormalBaseUrl,
-        val showingTabList: List<ContentTab>,
-        val hideTabList: List<ContentTab>,
+        val showingTabList: List<TabConfig>,
+        val hideTabList: List<TabConfig>,
     ) : ContentConfig {
 
         @Serializable
@@ -52,7 +52,8 @@ sealed interface ContentConfig {
 
             @Serializable
             data class ListTimeline(
-                val listId: Long,
+                val listId: String,
+                val name: String,
             ) : ContentTab()
         }
 

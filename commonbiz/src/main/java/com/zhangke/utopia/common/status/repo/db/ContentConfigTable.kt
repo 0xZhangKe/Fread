@@ -24,8 +24,8 @@ data class ContentConfigEntity(
     val sourceUriList: List<FormalUri>?,
     val baseUrl: FormalBaseUrl?,
     val lastReadStatusId: String?,
-    val showingTabList: List<ContentConfig.ActivityPubContent.ContentTab>,
-    val hideTabList: List<ContentConfig.ActivityPubContent.ContentTab>,
+    val showingTabList: List<ContentConfig.ActivityPubContent.TabConfig>,
+    val hideTabList: List<ContentConfig.ActivityPubContent.TabConfig>,
 )
 
 @Dao

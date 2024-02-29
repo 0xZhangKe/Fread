@@ -81,6 +81,13 @@ class ContentConfigRepo @Inject constructor(
         return contentConfigAdapter.toEntity(this).copy(order = order)
     }
 
+    suspend fun updateActivityPubUserList(
+        id: Long,
+        allUserCreatedList: List<ContentConfig.ActivityPubContent.ContentTab.ListTimeline>,
+    ) {
+
+    }
+
     suspend fun clearAllLastReadStatusId() {
         contentConfigDao.clearAllLastReadStatusId()
     }

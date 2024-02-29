@@ -1,10 +1,13 @@
 package com.zhangke.utopia.feeds.pages.home
 
 import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.pages.home.feeds.MixedContentScreen
+import com.zhangke.utopia.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.model.ContentConfig
@@ -25,7 +28,7 @@ class ContentHomeViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ContentHomeUiState(0, emptyList(), emptyList()))
     val uiState: StateFlow<ContentHomeUiState> = _uiState
 
-    private val _openScreenFlow = MutableSharedFlow<String>()
+    private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     private val _openSelectAccountForPostFlow = MutableSharedFlow<List<LoggedAccount>>()
@@ -75,7 +78,9 @@ class ContentHomeViewModel @Inject constructor(
 
     fun onConfigTitleClick(config: ContentConfig) {
         statusProvider.screenProvider
-            .getPlatformDetailScreenRoute(config)?.let { route ->
+            .getPlatformDetailScreenRoute(config)
+            ?.let { KRouter.route<Screen>(it) }
+            ?.let { route ->
                 launchInViewModel { _openScreenFlow.emit(route) }
             }
     }
@@ -96,7 +101,7 @@ class ContentHomeViewModel @Inject constructor(
         openPostStatusScreen(account)
     }
 
-    fun onMove(from: Int, to: Int) {
+    fun onContentConfigMove(from: Int, to: Int) {
         launchInViewModel {
             val configList = _uiState.value.contentConfigList
             if (configList.isEmpty()) return@launchInViewModel
@@ -104,12 +109,27 @@ class ContentHomeViewModel @Inject constructor(
         }
     }
 
+    fun onContentConfigEditClick(contentConfig: ContentConfig) {
+        launchInViewModel {
+            when (contentConfig) {
+                is ContentConfig.MixedContent -> {
+                    _openScreenFlow.emit(EditMixedContentScreen(contentConfig.id))
+                }
+
+                is ContentConfig.ActivityPubContent -> {
+                    statusProvider.screenProvider.getEditContentConfigScreenRoute(contentConfig)
+                        ?.let { KRouter.route<Screen>(it) }
+                        ?.let { _openScreenFlow.emit(it) }
+                }
+            }
+        }
+    }
+
     private fun openPostStatusScreen(account: LoggedAccount) {
         statusProvider.screenProvider.getPostStatusScreen(
             platform = account.platform,
             accountUri = account.uri,
-        )?.let { route ->
-            launchInViewModel { _openScreenFlow.emit(route) }
-        }
+        )?.let { KRouter.route<Screen>(it) }
+            ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
     }
 }

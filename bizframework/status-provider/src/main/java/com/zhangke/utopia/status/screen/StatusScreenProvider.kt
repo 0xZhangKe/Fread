@@ -47,6 +47,12 @@ class StatusScreenProvider(
         }
     }
 
+    fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
+        return providerList.mapFirstOrNull {
+            it.getEditContentConfigScreenRoute(contentConfig)
+        }
+    }
+
     fun getNotificationScreen(account: LoggedAccount): PagerTab? {
         return providerList.mapFirstOrNull {
             it.getNotificationScreen(account)
@@ -57,7 +63,7 @@ class StatusScreenProvider(
         return providerList.mapFirstOrNull { it.getUserDetailRoute(uri) }
     }
 
-    fun getTagTimelineScreenRoute(tag: Hashtag): String?{
+    fun getTagTimelineScreenRoute(tag: Hashtag): String? {
         return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(tag) }
     }
 }
@@ -76,6 +82,8 @@ interface IStatusScreenProvider {
     fun getAddContentScreenRoute(contentType: ContentType): String?
 
     fun getContentScreen(contentConfig: ContentConfig): PagerTab?
+
+    fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String?
 
     fun getNotificationScreen(account: LoggedAccount): PagerTab?
 

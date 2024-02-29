@@ -89,4 +89,6 @@
     <string name="activity_pub_edit_account_info_label_name">名字</string>
     <string name="activity_pub_edit_account_info_label_note">简介</string>
     <string name="activity_pub_edit_account_info_label_about">关于</string>
+
+    <string name="activity_pub_edit_content_screen_config_not_found">配置未找到</string>
 </resources>

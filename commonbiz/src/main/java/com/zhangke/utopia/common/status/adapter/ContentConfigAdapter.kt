@@ -22,6 +22,8 @@ class ContentConfigAdapter @Inject constructor() {
                 order = entity.order,
                 name = entity.name,
                 baseUrl = entity.baseUrl!!,
+                showingTabList = entity.showingTabList,
+                hideTabList = entity.hideTabList,
             )
         }
     }
@@ -36,6 +38,8 @@ class ContentConfigAdapter @Inject constructor() {
                 sourceUriList = config.sourceUriList,
                 lastReadStatusId = config.lastReadStatusId,
                 baseUrl = null,
+                showingTabList = emptyList(),
+                hideTabList = emptyList()
             )
 
             is ContentConfig.ActivityPubContent -> ContentConfigEntity(
@@ -46,6 +50,8 @@ class ContentConfigAdapter @Inject constructor() {
                 sourceUriList = null,
                 lastReadStatusId = null,
                 baseUrl = config.baseUrl,
+                showingTabList = config.showingTabList,
+                hideTabList = config.hideTabList,
             )
         }
     }

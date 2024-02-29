@@ -5,6 +5,7 @@ import androidx.room.Database
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import com.zhangke.utopia.common.status.repo.db.converts.ContentTabConverter
 import com.zhangke.utopia.common.status.repo.db.converts.ContentTypeConverter
 import com.zhangke.utopia.common.status.repo.db.converts.FormalBaseUrlConverter
 import com.zhangke.utopia.common.status.repo.db.converts.StatusProviderUriConverter
@@ -18,6 +19,7 @@ private const val DB_VERSION = 1
     StatusProviderUriConverter::class,
     StatusProviderUriListConverter::class,
     FormalBaseUrlConverter::class,
+    ContentTabConverter::class,
 )
 @Database(
     entities = [ContentConfigEntity::class],

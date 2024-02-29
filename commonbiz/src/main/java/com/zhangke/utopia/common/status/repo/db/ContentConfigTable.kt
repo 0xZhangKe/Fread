@@ -8,6 +8,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -23,6 +24,8 @@ data class ContentConfigEntity(
     val sourceUriList: List<FormalUri>?,
     val baseUrl: FormalBaseUrl?,
     val lastReadStatusId: String?,
+    val showingTabList: List<ContentConfig.ActivityPubContent.ContentTab>,
+    val hideTabList: List<ContentConfig.ActivityPubContent.ContentTab>,
 )
 
 @Dao

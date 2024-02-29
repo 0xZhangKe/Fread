@@ -27,9 +27,39 @@ sealed interface ContentConfig {
 
     @Serializable
     data class ActivityPubContent(
-        override val  id: Long,
+        override val id: Long,
         override val order: Int,
         val name: String,
         val baseUrl: FormalBaseUrl,
-    ) : ContentConfig
+        val showingTabList: List<ContentTab>,
+        val hideTabList: List<ContentTab>,
+    ) : ContentConfig {
+
+        @Serializable
+        sealed class ContentTab {
+
+            @Serializable
+            data object HomeTimeline : ContentTab()
+
+            @Serializable
+            data object LocalTimeline : ContentTab()
+
+            @Serializable
+            data object PublicTimeline : ContentTab()
+
+            @Serializable
+            data object Trending : ContentTab()
+
+            @Serializable
+            data class ListTimeline(
+                val listId: Long,
+            ) : ContentTab()
+        }
+
+        @Serializable
+        data class TabConfig(
+            val tab: ContentTab,
+            val order: Int,
+        )
+    }
 }

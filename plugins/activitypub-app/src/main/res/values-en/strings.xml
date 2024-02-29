@@ -90,4 +90,6 @@
     <string name="activity_pub_edit_account_info_label_name">Name</string>
     <string name="activity_pub_edit_account_info_label_note">Bio</string>
     <string name="activity_pub_edit_account_info_label_about">About</string>
+
+    <string name="activity_pub_edit_content_screen_config_not_found">Config Not Found</string>
 </resources>

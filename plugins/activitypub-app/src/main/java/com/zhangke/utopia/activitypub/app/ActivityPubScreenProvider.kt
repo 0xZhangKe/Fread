@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
@@ -53,6 +54,11 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
         if (contentConfig !is ContentConfig.ActivityPubContent) return null
         return ActivityPubContentScreen(contentConfig.id)
+    }
+
+    override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
+        if (contentConfig !is ContentConfig.ActivityPubContent) return null
+        return EditContentConfigRoute.buildRoute(contentConfig.id)
     }
 
     override fun getNotificationScreen(account: LoggedAccount): PagerTab? {

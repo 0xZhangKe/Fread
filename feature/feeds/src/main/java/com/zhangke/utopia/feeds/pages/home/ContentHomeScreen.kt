@@ -48,12 +48,9 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
-import com.zhangke.utopia.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
-import com.zhangke.utopia.status.model.ContentConfig
 import kotlinx.coroutines.launch
 
 class ContentHomeScreen : Screen {
@@ -69,7 +66,7 @@ class ContentHomeScreen : Screen {
         val coroutineScope = rememberCoroutineScope()
 
         ConsumeFlow(viewModel.openScreenFlow) { route ->
-            navigator.pushDestination(route)
+            navigator.push(route)
         }
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -86,12 +83,8 @@ class ContentHomeScreen : Screen {
                         onAddContentClick = {
                             navigator.push(SelectContentTypeScreen())
                         },
-                        onMove = viewModel::onMove,
-                        onEditClick = {
-                            if (it is ContentConfig.MixedContent) {
-                                navigator.push(EditMixedContentScreen(it.id))
-                            }
-                        },
+                        onMove = viewModel::onContentConfigMove,
+                        onEditClick = viewModel::onContentConfigEditClick,
                     )
                 }
             },

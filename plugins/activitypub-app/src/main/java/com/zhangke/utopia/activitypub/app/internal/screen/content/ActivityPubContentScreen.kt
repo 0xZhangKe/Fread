@@ -47,14 +47,14 @@ class ActivityPubContentScreen(
         lists: List<ActivityPubListEntity>,
     ) {
         val tabList = remember(uiState, lists) {
-            createScreens(uiState, lists)
+            createTabs(uiState, lists)
         }
         HorizontalPagerWithTab(
             tabList = tabList,
         )
     }
 
-    private fun createScreens(
+    private fun createTabs(
         uiState: ActivityPubContentUiState,
         lists: List<ActivityPubListEntity>,
     ): List<PagerTab> {

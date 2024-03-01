@@ -30,9 +30,6 @@ class ActivityPubContentSubViewModel(
         MutableStateFlow<LoadableState<ActivityPubContentUiState>>(LoadableState.idle())
     val uiState = _uiState.asStateFlow()
 
-    private val _lists = MutableStateFlow<List<ActivityPubListEntity>>(emptyList())
-    val lists: StateFlow<List<ActivityPubListEntity>> = _lists
-
     private var updateUserListJob: Job? = null
 
     init {
@@ -60,9 +57,11 @@ class ActivityPubContentSubViewModel(
             getUserCreatedList(baseUrl)
                 .map { list ->
                     list.map {
+                        // 此处的 order 并不会使用，repo 内部会重新计算，因此次数放一个较大的值填充即可。
                         ContentConfig.ActivityPubContent.ContentTab.ListTimeline(
                             listId = it.id,
                             name = it.title,
+                            order = 1000,
                         )
                     }
                 }

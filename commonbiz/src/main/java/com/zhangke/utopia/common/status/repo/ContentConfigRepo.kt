@@ -71,7 +71,7 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.insertList(pendingInsertList)
     }
 
-    // 当用户的列表发生变化时调用
+    // 当用户的列表发生变化时调用，用于更新用户创建的列表，多的会新增到 hidden list 中，移除的列表也会从 app 中移除。
     suspend fun updateActivityPubUserList(
         id: Long,
         allUserCreatedList: List<ContentTab.ListTimeline>,
@@ -104,6 +104,10 @@ class ContentConfigRepo @Inject constructor(
         allUserCreatedList.filter { it.listId !in allAddedIdSet }
             .map { ContentTab.ListTimeline(it.listId, it.name, maxOrder++) }
             .let { newHiddenList += it }
+        if (config.showingTabList.sortedBy { it.order } == newShowingList.sortedBy { it.order } &&
+            config.hiddenTabList.sortedBy { it.order } == newHiddenList.sortedBy { it.order }) {
+            return
+        }
         config.copy(
             showingTabList = newShowingList,
             hiddenTabList = newHiddenList,
@@ -114,7 +118,7 @@ class ContentConfigRepo @Inject constructor(
         configId: Long,
         fromTab: ContentTab,
         toTab: ContentConfig,
-    ){
+    ) {
 
     }
 

@@ -31,36 +31,42 @@ sealed interface ContentConfig {
         override val order: Int,
         val name: String,
         val baseUrl: FormalBaseUrl,
-        val showingTabList: List<TabConfig>,
-        val hideTabList: List<TabConfig>,
+        val showingTabList: List<ContentTab>,
+        val hiddenTabList: List<ContentTab>,
     ) : ContentConfig {
 
+        // hidden 列表中的 order 字段可能没有意义，因为并不会按照它在首页排序
         @Serializable
         sealed class ContentTab {
 
-            @Serializable
-            data object HomeTimeline : ContentTab()
+            abstract val order: Int
 
             @Serializable
-            data object LocalTimeline : ContentTab()
+            data class HomeTimeline(
+                override val order: Int,
+            ) : ContentTab()
 
             @Serializable
-            data object PublicTimeline : ContentTab()
+            data class LocalTimeline(
+                override val order: Int,
+            ) : ContentTab()
 
             @Serializable
-            data object Trending : ContentTab()
+            data class PublicTimeline(
+                override val order: Int,
+            ) : ContentTab()
+
+            @Serializable
+            data class Trending(
+                override val order: Int,
+            ) : ContentTab()
 
             @Serializable
             data class ListTimeline(
                 val listId: String,
                 val name: String,
+                override val order: Int,
             ) : ContentTab()
         }
-
-        @Serializable
-        data class TabConfig(
-            val tab: ContentTab,
-            val order: Int,
-        )
     }
 }

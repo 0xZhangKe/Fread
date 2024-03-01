@@ -23,7 +23,7 @@ class ContentConfigAdapter @Inject constructor() {
                 name = entity.name,
                 baseUrl = entity.baseUrl!!,
                 showingTabList = entity.showingTabList,
-                hideTabList = entity.hideTabList,
+                hiddenTabList = entity.hiddenTabList,
             )
         }
     }
@@ -39,7 +39,7 @@ class ContentConfigAdapter @Inject constructor() {
                 lastReadStatusId = config.lastReadStatusId,
                 baseUrl = null,
                 showingTabList = emptyList(),
-                hideTabList = emptyList()
+                hiddenTabList = emptyList()
             )
 
             is ContentConfig.ActivityPubContent -> ContentConfigEntity(
@@ -51,7 +51,7 @@ class ContentConfigAdapter @Inject constructor() {
                 lastReadStatusId = null,
                 baseUrl = config.baseUrl,
                 showingTabList = config.showingTabList,
-                hideTabList = config.hideTabList,
+                hiddenTabList = config.hiddenTabList,
             )
         }
     }

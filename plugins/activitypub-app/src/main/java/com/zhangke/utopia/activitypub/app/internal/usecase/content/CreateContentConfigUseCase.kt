@@ -5,7 +5,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent.ContentTab
-import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent.TabConfig
 import javax.inject.Inject
 
 class CreateContentConfigUseCase @Inject constructor(
@@ -24,28 +23,26 @@ class CreateContentConfigUseCase @Inject constructor(
             name = title,
             baseUrl = baseUrl,
             showingTabList = buildInitialTabConfigList(userList),
-            hideTabList = emptyList(),
+            hiddenTabList = emptyList(),
         )
     }
 
-    private fun buildInitialTabConfigList(userList: List<ActivityPubListEntity>): List<TabConfig> {
-        val tabList = mutableListOf<TabConfig>()
-        tabList += TabConfig(ContentTab.HomeTimeline, 0)
+    private fun buildInitialTabConfigList(userList: List<ActivityPubListEntity>): List<ContentTab> {
+        val tabList = mutableListOf<ContentTab>()
+        tabList += ContentTab.HomeTimeline(0)
         userList.forEachIndexed { index, entity ->
             tabList += createUserListTab(entity, index + 1)
         }
-        tabList += TabConfig(ContentTab.LocalTimeline, tabList.size)
-        tabList += TabConfig(ContentTab.PublicTimeline, tabList.size)
-        tabList += TabConfig(ContentTab.Trending, tabList.size)
+        tabList += ContentTab.LocalTimeline(tabList.size)
+        tabList += ContentTab.PublicTimeline(tabList.size)
+        tabList += ContentTab.Trending(tabList.size)
         return tabList
     }
 
-    private fun createUserListTab(entity: ActivityPubListEntity, order: Int): TabConfig {
-        return TabConfig(
-            tab = ContentTab.ListTimeline(
-                listId = entity.id,
-                name = entity.title,
-            ),
+    private fun createUserListTab(entity: ActivityPubListEntity, order: Int): ContentTab {
+        return ContentTab.ListTimeline(
+            listId = entity.id,
+            name = entity.title,
             order = order,
         )
     }

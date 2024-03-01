@@ -4,6 +4,8 @@ import com.zhangke.utopia.common.status.adapter.ContentConfigAdapter
 import com.zhangke.utopia.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.utopia.common.status.repo.db.ContentConfigEntity
 import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent
+import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent.ContentTab
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -17,17 +19,17 @@ class ContentConfigRepo @Inject constructor(
     private val contentConfigDao get() = statusDatabase.getContentConfigDao()
 
     suspend fun getAllConfig(): List<ContentConfig> {
-        return contentConfigDao.queryAllContentConfig().map(contentConfigAdapter::toContentConfig)
+        return contentConfigDao.queryAllContentConfig().map { it.toContentConfig() }
     }
 
     fun getAllConfigFlow(): Flow<List<ContentConfig>> {
         return contentConfigDao.queryAllContentConfigFlow().map {
-            it.map(contentConfigAdapter::toContentConfig)
+            it.map { it.toContentConfig() }
         }
     }
 
     suspend fun getConfigById(id: Long): ContentConfig? {
-        return contentConfigDao.queryById(id)?.let(contentConfigAdapter::toContentConfig)
+        return contentConfigDao.queryById(id)?.toContentConfig()
     }
 
     suspend fun insert(config: ContentConfig) {
@@ -53,38 +55,66 @@ class ContentConfigRepo @Inject constructor(
 
     suspend fun reorderConfig(from: ContentConfig, to: ContentConfig) {
         val pendingInsertList = mutableListOf<ContentConfigEntity>()
-        pendingInsertList += from.toEntityWithNewOrder(to.order)
+        pendingInsertList += from.toEntity(to.order)
         val allConfig = contentConfigDao.queryAllContentConfig()
         if (from.order > to.order) {
             // move up
-            allConfig.filter {
-                it.order in to.order until from.order
-            }.map {
-                it.copy(order = it.order + 1)
-            }.let {
-                pendingInsertList += it
-            }
+            allConfig.filter { it.order in to.order until from.order }
+                .map { it.copy(order = it.order + 1) }
+                .let { pendingInsertList += it }
         } else {
             // move down
-            allConfig.filter {
-                it.order > from.order && it.order <= to.order
-            }.map {
-                it.copy(order = it.order - 1)
-            }.let {
-                pendingInsertList += it
-            }
+            allConfig.filter { it.order > from.order && it.order <= to.order }
+                .map { it.copy(order = it.order - 1) }
+                .let { pendingInsertList += it }
         }
         contentConfigDao.insertList(pendingInsertList)
     }
 
-    private fun ContentConfig.toEntityWithNewOrder(order: Int): ContentConfigEntity {
-        return contentConfigAdapter.toEntity(this).copy(order = order)
-    }
-
+    // 当用户的列表发生变化时调用
     suspend fun updateActivityPubUserList(
         id: Long,
-        allUserCreatedList: List<ContentConfig.ActivityPubContent.ContentTab.ListTimeline>,
+        allUserCreatedList: List<ContentTab.ListTimeline>,
     ) {
+        val config = contentConfigDao.queryById(id)?.toContentConfig() ?: return
+        if (config !is ActivityPubContent) {
+            throw IllegalArgumentException("$id of config is not ActivityPubContent")
+        }
+        val allListIdSet = allUserCreatedList.map { it.listId }.toSet()
+        val newShowingList = config.showingTabList.filter {
+            if (it !is ContentTab.ListTimeline) {
+                true
+            } else {
+                it.listId in allListIdSet
+            }
+        }
+        val newHiddenList = mutableListOf<ContentTab>()
+        config.hiddenTabList.forEach {
+            if (it !is ContentTab.ListTimeline) {
+                newHiddenList.add(it)
+            } else if (it.listId in allListIdSet) {
+                newHiddenList.add(it)
+            }
+        }
+        val allAddedIdSet = mutableSetOf<String>().apply {
+            this += newShowingList.filterIsInstance<ContentTab.ListTimeline>().map { it.listId }
+            this += newHiddenList.filterIsInstance<ContentTab.ListTimeline>().map { it.listId }
+        }
+        var maxOrder = newHiddenList.maxBy { it.order }.order
+        allUserCreatedList.filter { it.listId !in allAddedIdSet }
+            .map { ContentTab.ListTimeline(it.listId, it.name, maxOrder++) }
+            .let { newHiddenList += it }
+        config.copy(
+            showingTabList = newShowingList,
+            hiddenTabList = newHiddenList,
+        ).let { contentConfigDao.insert(it.toEntity()) }
+    }
+
+    suspend fun updateActivityPubTab(
+        configId: Long,
+        fromTab: ContentTab,
+        toTab: ContentConfig,
+    ){
 
     }
 
@@ -102,5 +132,13 @@ class ContentConfigRepo @Inject constructor(
 
     suspend fun delete(config: ContentConfig) {
         contentConfigDao.deleteById(config.id)
+    }
+
+    private fun ContentConfig.toEntity(order: Int = this.order): ContentConfigEntity {
+        return contentConfigAdapter.toEntity(this)
+    }
+
+    private fun ContentConfigEntity.toContentConfig(): ContentConfig {
+        return contentConfigAdapter.toContentConfig(this)
     }
 }

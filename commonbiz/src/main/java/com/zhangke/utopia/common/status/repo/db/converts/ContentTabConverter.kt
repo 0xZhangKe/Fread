@@ -8,19 +8,19 @@ import kotlinx.serialization.json.Json
 class ContentTabConverter {
 
     @TypeConverter
-    fun toJsonString(tabList: List<ContentConfig.ActivityPubContent.TabConfig>): String {
+    fun toJsonString(tabList: List<ContentConfig.ActivityPubContent.ContentTab>): String {
         val stringList = tabList.map {
-            Json.encodeToString(ContentConfig.ActivityPubContent.TabConfig.serializer(), it)
+            Json.encodeToString(ContentConfig.ActivityPubContent.ContentTab.serializer(), it)
         }
         return globalGson.toJson(stringList)
     }
 
     @TypeConverter
-    fun toTabList(jsonText: String): List<ContentConfig.ActivityPubContent.TabConfig> {
+    fun toTabList(jsonText: String): List<ContentConfig.ActivityPubContent.ContentTab> {
         return globalGson.fromJson(jsonText, Array<String>::class.java)
             .map {
-                Json.decodeFromString<ContentConfig.ActivityPubContent.TabConfig>(
-                    deserializer = ContentConfig.ActivityPubContent.TabConfig.serializer(),
+                Json.decodeFromString(
+                    deserializer = ContentConfig.ActivityPubContent.ContentTab.serializer(),
                     string = it,
                 )
             }

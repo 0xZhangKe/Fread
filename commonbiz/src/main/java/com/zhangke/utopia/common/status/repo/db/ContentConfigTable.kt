@@ -55,6 +55,9 @@ interface ContentConfigDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
     suspend fun queryById(id: Long): ContentConfigEntity?
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
+    fun queryFlowById(id: Long): Flow<ContentConfigEntity>
+
     @Query("SELECT MAX(`order`) FROM $TABLE_NAME")
     suspend fun queryMaxOrder(): Int?
 

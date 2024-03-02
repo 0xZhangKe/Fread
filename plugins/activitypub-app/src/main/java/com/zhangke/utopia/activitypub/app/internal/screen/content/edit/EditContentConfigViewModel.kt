@@ -7,6 +7,7 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
+import com.zhangke.utopia.status.model.ContentConfig
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -34,12 +35,35 @@ class EditContentConfigViewModel @AssistedInject constructor(
 
     init {
         launchInViewModel {
-            val config = contentConfigRepo.getConfigById(configId)
-            if (config == null) {
-                _snackbarMessageFlow.emit(textOf(R.string.activity_pub_edit_content_screen_config_not_found))
-                return@launchInViewModel
-            }
-            _uiState.value = EditContentConfigUiState(config)
+            contentConfigRepo.getConfigFlowById(configId)
+                .collect { config ->
+                    if (config !is ContentConfig.ActivityPubContent) {
+                        _snackbarMessageFlow.emit(textOf(R.string.activity_pub_edit_content_screen_config_not_found))
+                        return@collect
+                    }
+                    _uiState.value = EditContentConfigUiState(config)
+                }
         }
+    }
+
+    fun onShowingTabMove(from: Int, to: Int) {
+        val uiState = _uiState.value ?: return
+        val config = uiState.config
+        val showingTabList = config.showingTabList
+        launchInViewModel {
+            contentConfigRepo.recorderActivityPubShowingTab(
+                configId = config.id,
+                fromTab = showingTabList[from],
+                toTab = showingTabList[to],
+            )
+        }
+    }
+
+    fun onShowingTabMoveDown(tab: ContentConfig.ActivityPubContent.ContentTab) {
+
+    }
+
+    fun onHiddenTabMoveUp(tab: ContentConfig.ActivityPubContent.ContentTab) {
+
     }
 }

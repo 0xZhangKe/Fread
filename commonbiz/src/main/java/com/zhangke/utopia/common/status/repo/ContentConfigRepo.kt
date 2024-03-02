@@ -32,6 +32,10 @@ class ContentConfigRepo @Inject constructor(
         return contentConfigDao.queryById(id)?.toContentConfig()
     }
 
+    suspend fun getConfigFlowById(id: Long): Flow<ContentConfig> {
+        return contentConfigDao.queryFlowById(id).map { it.toContentConfig() }
+    }
+
     suspend fun insert(config: ContentConfig) {
         contentConfigDao.insert(contentConfigAdapter.toEntity(config))
     }
@@ -54,6 +58,7 @@ class ContentConfigRepo @Inject constructor(
     }
 
     suspend fun reorderConfig(from: ContentConfig, to: ContentConfig) {
+        if (from == to) return
         val pendingInsertList = mutableListOf<ContentConfigEntity>()
         pendingInsertList += from.toEntity(to.order)
         val allConfig = contentConfigDao.queryAllContentConfig()
@@ -114,11 +119,33 @@ class ContentConfigRepo @Inject constructor(
         ).let { contentConfigDao.insert(it.toEntity()) }
     }
 
-    suspend fun updateActivityPubTab(
+    suspend fun recorderActivityPubShowingTab(
         configId: Long,
         fromTab: ContentTab,
-        toTab: ContentConfig,
+        toTab: ContentTab,
     ) {
+        if (fromTab == toTab) return
+        val config = contentConfigDao.queryById(configId)?.toContentConfig() ?: return
+        if (config !is ActivityPubContent) {
+            throw IllegalArgumentException("$configId of config is not ActivityPubContent")
+        }
+
+        val updatedList = reorderList(
+            list = config.showingTabList,
+            from = fromTab,
+            to = toTab,
+            order = { it.order },
+            updateOrder = { tab, order ->
+                when (tab) {
+                    is ContentTab.HomeTimeline -> tab.copy(order = order)
+                    is ContentTab.LocalTimeline -> tab.copy(order = order)
+                    is ContentTab.PublicTimeline -> tab.copy(order = order)
+                    is ContentTab.Trending -> tab.copy(order = order)
+                    is ContentTab.ListTimeline -> tab.copy(order = order)
+                }
+            }
+        )
+        val allTabList = config.showingTabList
 
     }
 
@@ -138,8 +165,33 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.deleteById(config.id)
     }
 
+    private fun <T> reorderList(
+        list: List<T>,
+        from: T,
+        to: T,
+        order: (T) -> Int,
+        updateOrder: (T, Int) -> T,
+    ): List<T> {
+        val updatedList = mutableListOf<T>()
+        updatedList += updateOrder(from, order(to))
+        val fromOrder = order(from)
+        val toOrder = order(to)
+        if (fromOrder > toOrder) {
+            // move up
+            list.filter { order(it) in toOrder until fromOrder }
+                .map { updateOrder(it, order(it) + 1) }
+                .let { updatedList += it }
+        } else {
+            // move down
+            list.filter { order(it) > order(from) && order(it) <= order(to) }
+                .map { updateOrder(it, order(it) - 1) }
+                .let { updatedList += it }
+        }
+        return updatedList
+    }
+
     private fun ContentConfig.toEntity(order: Int = this.order): ContentConfigEntity {
-        return contentConfigAdapter.toEntity(this)
+        return contentConfigAdapter.toEntity(this).copy(order = order)
     }
 
     private fun ContentConfigEntity.toContentConfig(): ContentConfig {

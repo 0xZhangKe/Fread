@@ -15,11 +15,11 @@ private const val DB_NAME = "ContentConfig.db"
 private const val DB_VERSION = 1
 
 @TypeConverters(
+    ContentTabConverter::class,
     ContentTypeConverter::class,
     StatusProviderUriConverter::class,
     StatusProviderUriListConverter::class,
     FormalBaseUrlConverter::class,
-    ContentTabConverter::class,
 )
 @Database(
     entities = [ContentConfigEntity::class],

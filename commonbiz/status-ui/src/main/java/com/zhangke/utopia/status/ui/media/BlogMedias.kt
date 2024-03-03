@@ -1,6 +1,5 @@
 package com.zhangke.utopia.status.ui.media
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -48,20 +47,10 @@ fun BlogMedias(
     var hideContent by rememberSaveable {
         mutableStateOf(sensitive)
     }
-    var mediaHeight: Int? = remember {
-        null
-    }
     Box(
         modifier = modifier
             .onGloballyPositioned {
-                if (mediaHeight != null && mediaHeight != it.size.height) {
-                    Log.d("U_TEST", "$mediaHeight -> ${it.size.height}")
-                }
-                mediaHeight = it.size.height
                 containerWidth = it.size.width.pxToDp(density)
-                if (cachedContainerWidth != null && cachedContainerWidth != containerWidth) {
-                    Log.d("U_TEST", "$cachedContainerWidth -> $containerWidth")
-                }
                 cachedContainerWidth = containerWidth
             }
     ) {

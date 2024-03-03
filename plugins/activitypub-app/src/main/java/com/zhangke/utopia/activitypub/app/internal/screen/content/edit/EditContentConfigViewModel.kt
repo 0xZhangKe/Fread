@@ -60,10 +60,14 @@ class EditContentConfigViewModel @AssistedInject constructor(
     }
 
     fun onShowingTabMoveDown(tab: ContentConfig.ActivityPubContent.ContentTab) {
-
+        launchInViewModel {
+            contentConfigRepo.moveActivityPubTabToHide(configId, tab)
+        }
     }
 
     fun onHiddenTabMoveUp(tab: ContentConfig.ActivityPubContent.ContentTab) {
-
+        launchInViewModel {
+            contentConfigRepo.moveActivityPubTabToShowing(configId, tab)
+        }
     }
 }

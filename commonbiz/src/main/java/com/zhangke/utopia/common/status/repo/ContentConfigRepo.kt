@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.repo
 
+import com.zhangke.framework.collections.removeIndex
 import com.zhangke.utopia.common.status.adapter.ContentConfigAdapter
 import com.zhangke.utopia.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.utopia.common.status.repo.db.ContentConfigEntity
@@ -105,7 +106,7 @@ class ContentConfigRepo @Inject constructor(
             this += newShowingList.filterIsInstance<ContentTab.ListTimeline>().map { it.listId }
             this += newHiddenList.filterIsInstance<ContentTab.ListTimeline>().map { it.listId }
         }
-        var maxOrder = newHiddenList.maxBy { it.order }.order
+        var maxOrder = newHiddenList.maxByOrNull { it.order }?.order ?: 0
         allUserCreatedList.filter { it.listId !in allAddedIdSet }
             .map { ContentTab.ListTimeline(it.listId, it.name, maxOrder++) }
             .let { newHiddenList += it }
@@ -129,24 +130,69 @@ class ContentConfigRepo @Inject constructor(
         if (config !is ActivityPubContent) {
             throw IllegalArgumentException("$configId of config is not ActivityPubContent")
         }
-
-        val updatedList = reorderList(
-            list = config.showingTabList,
-            from = fromTab,
-            to = toTab,
-            order = { it.order },
-            updateOrder = { tab, order ->
-                when (tab) {
-                    is ContentTab.HomeTimeline -> tab.copy(order = order)
-                    is ContentTab.LocalTimeline -> tab.copy(order = order)
-                    is ContentTab.PublicTimeline -> tab.copy(order = order)
-                    is ContentTab.Trending -> tab.copy(order = order)
-                    is ContentTab.ListTimeline -> tab.copy(order = order)
+        val newShowingList = if (fromTab.order > toTab.order) {
+            // move up
+            config.showingTabList.map { item ->
+                if (item.order in toTab.order until fromTab.order) {
+                    item.newOrder(item.order + 1)
+                } else if (item == fromTab) {
+                    fromTab.newOrder(order = toTab.order)
+                } else {
+                    item
                 }
-            }
-        )
-        val allTabList = config.showingTabList
+            }.sortedBy { it.order }
+        } else {
+            // move down
+            config.showingTabList.map { item ->
+                if (item.order > fromTab.order && item.order <= toTab.order) {
+                    item.newOrder(order = item.order - 1)
+                } else if (item == fromTab) {
+                    fromTab.newOrder(order = toTab.order)
+                } else {
+                    item
+                }
+            }.sortedBy { it.order }
+        }
+        contentConfigDao.insert(config.copy(showingTabList = newShowingList).toEntity())
+    }
 
+    suspend fun moveActivityPubTabToHide(
+        configId: Long,
+        tab: ContentTab,
+    ) {
+        val config = contentConfigDao.queryById(configId)?.toContentConfig() ?: return
+        if (config !is ActivityPubContent) {
+            throw IllegalArgumentException("$configId of config is not ActivityPubContent")
+        }
+        val tabIndex = config.showingTabList.indexOf(tab)
+        if (tabIndex < 0) return
+        val newShowingList = config.showingTabList.removeIndex(tabIndex)
+        val newHiddenList = config.hiddenTabList + tab.newOrder(config.hiddenTabList.size)
+        val newConfig = config.copy(
+            showingTabList = newShowingList,
+            hiddenTabList = newHiddenList,
+        )
+        contentConfigDao.insert(newConfig.toEntity())
+    }
+
+    suspend fun moveActivityPubTabToShowing(
+        configId: Long,
+        tab: ContentTab,
+    ) {
+        val config = contentConfigDao.queryById(configId)?.toContentConfig() ?: return
+        if (config !is ActivityPubContent) {
+            throw IllegalArgumentException("$configId of config is not ActivityPubContent")
+        }
+        val tabIndex = config.hiddenTabList.indexOf(tab)
+        if (tabIndex < 0) return
+        val maxShowingOrder = config.showingTabList.maxByOrNull { it.order }?.order ?: 0
+        val newShowingList = config.showingTabList + tab.newOrder(maxShowingOrder + 1)
+        val newHiddenList = config.hiddenTabList.removeIndex(tabIndex)
+        val newConfig = config.copy(
+            showingTabList = newShowingList,
+            hiddenTabList = newHiddenList,
+        )
+        contentConfigDao.insert(newConfig.toEntity())
     }
 
     suspend fun clearAllLastReadStatusId() {
@@ -163,31 +209,6 @@ class ContentConfigRepo @Inject constructor(
 
     suspend fun delete(config: ContentConfig) {
         contentConfigDao.deleteById(config.id)
-    }
-
-    private fun <T> reorderList(
-        list: List<T>,
-        from: T,
-        to: T,
-        order: (T) -> Int,
-        updateOrder: (T, Int) -> T,
-    ): List<T> {
-        val updatedList = mutableListOf<T>()
-        updatedList += updateOrder(from, order(to))
-        val fromOrder = order(from)
-        val toOrder = order(to)
-        if (fromOrder > toOrder) {
-            // move up
-            list.filter { order(it) in toOrder until fromOrder }
-                .map { updateOrder(it, order(it) + 1) }
-                .let { updatedList += it }
-        } else {
-            // move down
-            list.filter { order(it) > order(from) && order(it) <= order(to) }
-                .map { updateOrder(it, order(it) - 1) }
-                .let { updatedList += it }
-        }
-        return updatedList
     }
 
     private fun ContentConfig.toEntity(order: Int = this.order): ContentConfigEntity {

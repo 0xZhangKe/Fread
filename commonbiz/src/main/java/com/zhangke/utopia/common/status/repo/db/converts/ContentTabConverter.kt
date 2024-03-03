@@ -9,7 +9,7 @@ class ContentTabConverter {
 
     @TypeConverter
     fun toJsonString(tabList: List<ContentConfig.ActivityPubContent.ContentTab>): String {
-        val stringList = tabList.map {
+        val stringList = tabList?.map {
             Json.encodeToString(ContentConfig.ActivityPubContent.ContentTab.serializer(), it)
         }
         return globalGson.toJson(stringList)

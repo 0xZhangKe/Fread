@@ -7,7 +7,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
+import androidx.room.TypeConverters
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.common.status.repo.db.converts.ContentTabConverter
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.uri.FormalUri
@@ -15,6 +17,9 @@ import kotlinx.coroutines.flow.Flow
 
 private const val TABLE_NAME = "content_configs"
 
+@TypeConverters(
+    ContentTabConverter::class,
+)
 @Entity(tableName = TABLE_NAME)
 data class ContentConfigEntity(
     @PrimaryKey(autoGenerate = true) val id: Long,

@@ -41,32 +41,58 @@ sealed interface ContentConfig {
 
             abstract val order: Int
 
+            abstract fun newOrder(order: Int): ContentTab
+
             @Serializable
             data class HomeTimeline(
                 override val order: Int,
-            ) : ContentTab()
+            ) : ContentTab() {
+                override fun newOrder(order: Int): ContentTab {
+                    return copy(order = order)
+                }
+            }
 
             @Serializable
             data class LocalTimeline(
                 override val order: Int,
-            ) : ContentTab()
+            ) : ContentTab() {
+
+                override fun newOrder(order: Int): ContentTab {
+                    return copy(order = order)
+                }
+            }
 
             @Serializable
             data class PublicTimeline(
                 override val order: Int,
-            ) : ContentTab()
+            ) : ContentTab() {
+
+                override fun newOrder(order: Int): ContentTab {
+                    return copy(order = order)
+                }
+            }
 
             @Serializable
             data class Trending(
                 override val order: Int,
-            ) : ContentTab()
+            ) : ContentTab() {
+
+                override fun newOrder(order: Int): ContentTab {
+                    return copy(order = order)
+                }
+            }
 
             @Serializable
             data class ListTimeline(
                 val listId: String,
                 val name: String,
                 override val order: Int,
-            ) : ContentTab()
+            ) : ContentTab() {
+
+                override fun newOrder(order: Int): ContentTab {
+                    return copy(order = order)
+                }
+            }
         }
     }
 }

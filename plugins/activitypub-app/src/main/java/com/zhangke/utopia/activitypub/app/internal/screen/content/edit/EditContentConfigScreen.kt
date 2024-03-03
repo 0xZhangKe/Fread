@@ -2,7 +2,6 @@ package com.zhangke.utopia.activitypub.app.internal.screen.content.edit
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ColumnScope
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -15,9 +14,9 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ArrowDownward
-import androidx.compose.material.icons.filled.ArrowUpward
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Visibility
+import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -112,7 +111,7 @@ class EditContentConfigScreen(
                 modifier = Modifier
                     .padding(innerPaddings)
                     .fillMaxSize()
-                    .utopiaPlaceholder(uiState != null)
+                    .utopiaPlaceholder(uiState == null)
                     .verticalScroll(rememberScrollState())
             ) {
                 if (uiState != null) {
@@ -132,7 +131,7 @@ class EditContentConfigScreen(
     }
 
     @Composable
-    private fun ColumnScope.ShowingUserList(
+    private fun ShowingUserList(
         uiState: EditContentConfigUiState,
         onShowingTabMove: (from: Int, to: Int) -> Unit,
         onMoveDown: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
@@ -145,7 +144,7 @@ class EditContentConfigScreen(
         var tabsInUi by remember(uiState.config.showingTabList) {
             mutableStateOf(uiState.config.showingTabList)
         }
-        key(tabsInUi) {
+        key(uiState.config.showingTabList) {
             val state = rememberReorderableLazyListState(
                 onMove = { from, to ->
                     if (tabsInUi.isEmpty()) return@rememberReorderableLazyListState
@@ -161,7 +160,7 @@ class EditContentConfigScreen(
                 state = state.listState,
                 modifier = Modifier
                     .fillMaxWidth()
-                    .weight(1F)
+                    .height(TAB_ITEM_HEIGHT * tabsInUi.size + 4.dp)
                     .reorderable(state)
                     .detectReorderAfterLongPress(state)
             ) {
@@ -170,8 +169,7 @@ class EditContentConfigScreen(
                     key = { _, item -> item.hashCode() }
                 ) { _, tabItem ->
                     ReorderableItem(state, tabItem.hashCode()) { dragging ->
-                        val elevation by
-                        animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
+                        val elevation by animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
                         Surface(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -191,7 +189,7 @@ class EditContentConfigScreen(
                                 Spacer(modifier = Modifier.weight(1F))
                                 SimpleIconButton(
                                     onClick = { onMoveDown(tabItem) },
-                                    imageVector = Icons.Default.ArrowDownward,
+                                    imageVector = Icons.Default.VisibilityOff,
                                     contentDescription = "Move Down",
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
@@ -237,7 +235,7 @@ class EditContentConfigScreen(
                     Spacer(modifier = Modifier.weight(1F))
                     SimpleIconButton(
                         onClick = { onMoveUp(tabItem) },
-                        imageVector = Icons.Default.ArrowUpward,
+                        imageVector = Icons.Default.Visibility,
                         contentDescription = "Move Up",
                     )
                     Spacer(modifier = Modifier.width(16.dp))

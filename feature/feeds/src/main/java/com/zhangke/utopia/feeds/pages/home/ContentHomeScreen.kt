@@ -50,7 +50,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
-import com.zhangke.utopia.feeds.pages.manager.selecttype.SelectContentTypeScreen
+import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import kotlinx.coroutines.launch
 
 class ContentHomeScreen : Screen {
@@ -81,7 +81,7 @@ class ContentHomeScreen : Screen {
                             }
                         },
                         onAddContentClick = {
-                            navigator.push(SelectContentTypeScreen())
+                            navigator.push(PreAddFeedsScreen())
                         },
                         onMove = viewModel::onContentConfigMove,
                         onEditClick = {
@@ -157,7 +157,7 @@ class ContentHomeScreen : Screen {
                         Text(text = "Please add content first")
                         Box(modifier = Modifier.height(8.dp))
                         Button(onClick = {
-                            navigator.push(SelectContentTypeScreen())
+                            navigator.push(PreAddFeedsScreen())
                         }) {
                             Text(text = "Add Content")
                         }

@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.utils
 
 fun <T> List<Result<List<T>>>.collect(): Result<List<T>> {
+    if (this.isEmpty()) return Result.success(emptyList())
     if (isNotEmpty() && firstOrNull { it.isSuccess } == null) {
         return first()
     }

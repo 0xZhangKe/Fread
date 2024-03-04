@@ -8,11 +8,13 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.activitypub.app.internal.usecase.search.SearchPlatformUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.source.user.SearchUserSourceUseCase
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.search.ISearchEngine
+import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.search.SearchResult
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.status.model.Status
@@ -27,6 +29,7 @@ class ActivityPubSearchEngine @Inject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
+    private val searchPlatform: SearchPlatformUseCase,
 ) : ISearchEngine {
 
     override suspend fun search(query: String): Result<List<SearchResult>> {
@@ -83,8 +86,10 @@ class ActivityPubSearchEngine @Inject constructor(
         query: String,
         offset: Int?,
     ): Result<List<BlogPlatform>> {
-        // todo implement this function
-        return Result.success(emptyList())
+        if (offset != null && offset > 0) {
+            return Result.success(emptyList())
+        }
+        return searchPlatform(query)
     }
 
     private suspend fun <T> doSearch(
@@ -108,5 +113,17 @@ class ActivityPubSearchEngine @Inject constructor(
                 listOf(it)
             }
         }
+    }
+
+    override suspend fun searchContent(query: String): Result<List<SearchContentResult>>? {
+        val searchedPlatform = searchPlatform(query).getOrNull()
+        if (searchedPlatform.isNullOrEmpty().not()){
+            return Result.success(searchedPlatform!!.map { SearchContentResult.ActivityPubPlatform(it) })
+        }
+        val searchedSource = searchUserSource(query).getOrNull()
+        if (searchedSource != null) {
+            return Result.success(listOf(SearchContentResult.Source(searchedSource)))
+        }
+        return null
     }
 }

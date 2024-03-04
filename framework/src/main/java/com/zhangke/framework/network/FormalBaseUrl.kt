@@ -3,7 +3,6 @@ package com.zhangke.framework.network
 import android.os.Parcelable
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
-import java.net.URL
 
 @Parcelize
 @Serializable
@@ -38,12 +37,12 @@ class FormalBaseUrl private constructor(
         }
 
         fun parse(string: String): FormalBaseUrl? {
-            val url = try {
-                URL(string.addProtocolIfNecessary())
-            } catch (e: Throwable) {
-                return null
-            }
-            return FormalBaseUrl(url.protocol, url.host.removeHostSuffix())
+            val url = SimpleUri.parse(string.addProtocolIfNecessary()) ?: return null
+            val scheme = url.scheme?.lowercase() ?: return null
+            if (scheme !in arrayOf("http", "https")) return null
+            val host = url.host ?: return null
+            if (host.isEmpty()) return null
+            return FormalBaseUrl(scheme, host.removeHostSuffix())
         }
 
         private fun String.removeHostSuffix(): String {

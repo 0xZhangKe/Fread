@@ -34,6 +34,11 @@ class SearchEngine(
     suspend fun searchSource(query: String): Result<List<StatusSource>> {
         return engineList.map { it.searchSource(query.trim()) }.collect()
     }
+
+    suspend fun searchContent(query: String): Result<List<SearchContentResult>> {
+        return engineList.mapNotNull { it.searchContent(query) }
+            .collect()
+    }
 }
 
 interface ISearchEngine {
@@ -49,4 +54,6 @@ interface ISearchEngine {
     suspend fun searchPlatform(query: String, offset: Int?): Result<List<BlogPlatform>>
 
     suspend fun searchSource(query: String): Result<List<StatusSource>>
+
+    suspend fun searchContent(query: String): Result<List<SearchContentResult>>?
 }

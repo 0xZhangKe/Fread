@@ -13,6 +13,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.search.ISearchEngine
+import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.search.SearchResult
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.status.model.Status
@@ -73,6 +74,21 @@ class RssSearchEngine @Inject constructor(
                 listOf(rssSourceTransformer.createSource(uriInsight, source))
             }
         )
+    }
+
+    override suspend fun searchContent(query: String): Result<List<SearchContentResult>>? {
+        val result = queryWithChannelByUrl(
+            query = query,
+            defaultResult = null,
+            block = { source, uriInsight ->
+                rssSourceTransformer.createSource(uriInsight, source)
+            }
+        )
+        if (result.isFailure) {
+            return Result.failure(result.exceptionOrThrow())
+        }
+        val contentResult = result.getOrNull() ?: return null
+        return Result.success(listOf(SearchContentResult.Source(contentResult)))
     }
 
     private suspend fun searchAuthorByUrl(query: String): Result<BlogAuthor?> {

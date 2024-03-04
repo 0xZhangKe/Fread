@@ -17,13 +17,16 @@ import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -34,32 +37,33 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.IconButtonStyle
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledIconButton
-import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
-import com.zhangke.framework.voyager.navigationResult
-import com.zhangke.krouter.Destination
-import com.zhangke.utopia.commonbiz.shared.router.SharedRouter
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
-import kotlinx.coroutines.flow.Flow
+import com.zhangke.utopia.status.source.StatusSource
 
-@Destination(SharedRouter.Feeds.add)
-internal class AddFeedsManagerScreen : Screen {
+internal class AddFeedsManagerScreen(
+    private val statusSource: StatusSource? = null
+) : Screen {
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
-        val navigationResult = navigator.navigationResult
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
-        val viewModel: AddFeedsManagerViewModel = getViewModel()
+        val viewModel = getViewModel<AddFeedsManagerViewModel, AddFeedsManagerViewModel.Factory> {
+            it.create(statusSource)
+        }
+        val snackbarHostState = rememberSnackbarHostState()
         FeedsManager(
             uiState = viewModel.uiState.collectAsState().value,
-            errorMessageFlow = viewModel.errorMessageFlow,
+            snackbarHostState = snackbarHostState,
             onBackClick = navigator::pop,
             onAddSourceClick = {
                 navigator.push(
@@ -72,26 +76,26 @@ internal class AddFeedsManagerScreen : Screen {
             onNameInputValueChanged = viewModel::onSourceNameInput,
             onRemoveSourceClick = viewModel::onRemoveSource,
         )
-        ConsumeFlow(viewModel.contentConfigFlow) {
-            navigationResult.popWithResult(it)
-        }
         ConsumeFlow(viewModel.loginRecommendPlatform) {
             bottomSheetNavigator.show(LoginBottomSheetScreen(it))
+        }
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
+        ConsumeFlow(viewModel.addContentSuccessFlow) {
+            snackbarHostState.showSnackbar(context.getString(R.string.add_content_success_snackbar))
+            navigator.pop()
         }
     }
 
     @Composable
     private fun FeedsManager(
         uiState: AddFeedsManagerUiState,
-        errorMessageFlow: Flow<TextString>,
+        snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onAddSourceClick: () -> Unit,
         onConfirmClick: () -> Unit,
         onNameInputValueChanged: (String) -> Unit,
         onRemoveSourceClick: (item: StatusSourceUiState) -> Unit,
     ) {
-        val snackbarHostState = rememberSnackbarHostState()
-        ConsumeSnackbarFlow(snackbarHostState, errorMessageFlow)
         Scaffold(
             topBar = {
                 Toolbar(

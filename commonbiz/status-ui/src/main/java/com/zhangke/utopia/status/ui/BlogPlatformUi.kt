@@ -1,7 +1,9 @@
 package com.zhangke.utopia.status.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
@@ -13,6 +15,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -29,32 +32,34 @@ fun BlogPlatformUi(
     platform: BlogPlatform,
 ) {
     Column(modifier = modifier) {
-        ConstraintLayout(modifier = Modifier.padding(bottom = 8.dp)) {
+        ConstraintLayout(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)) {
             val (avatarRef, protocolRef, domainRef, nameRef, descRef) = createRefs()
             var loadSuccess by remember {
                 mutableStateOf(false)
             }
             AsyncImage(
                 modifier = Modifier
-                    .clip(RoundedCornerShape(8.dp))
-                    .utopiaPlaceholder(!loadSuccess)
                     .constrainAs(avatarRef) {
                         start.linkTo(parent.start, 16.dp)
                         top.linkTo(parent.top, 8.dp)
                         width = Dimension.value(48.dp)
                         height = Dimension.value(48.dp)
-                    },
+                    }
+                    .clip(CircleShape)
+                    .utopiaPlaceholder(!loadSuccess),
                 onState = {
                     loadSuccess = it is AsyncImagePainter.State.Success
                 },
                 model = platform.thumbnail,
+                contentScale = ContentScale.Crop,
                 contentDescription = null,
             )
             Text(
                 modifier = Modifier.constrainAs(nameRef) {
                     start.linkTo(avatarRef.end, 8.dp)
                     top.linkTo(parent.top, 6.dp)
-                    end.linkTo(protocolRef.start)
                 },
                 text = platform.name,
                 maxLines = 1,
@@ -64,9 +69,8 @@ fun BlogPlatformUi(
             )
             Text(
                 modifier = Modifier.constrainAs(protocolRef) {
-                    start.linkTo(nameRef.end, 2.dp)
+                    start.linkTo(nameRef.end, 6.dp)
                     baseline.linkTo(nameRef.baseline)
-                    end.linkTo(parent.end, 16.dp)
                 },
                 text = platform.protocol.name,
                 maxLines = 1,
@@ -85,13 +89,13 @@ fun BlogPlatformUi(
                 maxLines = 1,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelMedium,
+                style = MaterialTheme.typography.bodyMedium,
             )
             Text(
                 modifier = Modifier.constrainAs(descRef) {
                     start.linkTo(nameRef.start)
                     top.linkTo(domainRef.bottom, 2.dp)
-                    end.linkTo(nameRef.end)
+                    end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
                 text = platform.description,

@@ -2,6 +2,7 @@ package com.zhangke.utopia.feeds.pages.manager.add
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
@@ -17,6 +18,9 @@ import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -25,16 +29,22 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
 
-@HiltViewModel
-internal class AddFeedsManagerViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = AddFeedsManagerViewModel.Factory::class)
+internal class AddFeedsManagerViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val configManager: UtopiaConfigManager,
     private val contentConfigRepo: ContentConfigRepo,
     private val configRepo: ContentConfigRepo,
+    @Assisted private val statusSource: StatusSource? = null
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+
+        fun create(statusSource: StatusSource?): AddFeedsManagerViewModel
+    }
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
 
@@ -44,8 +54,8 @@ internal class AddFeedsManagerViewModel @Inject constructor(
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: Flow<TextString> = _errorMessageFlow.asSharedFlow()
 
-    private val _contentConfigFlow = MutableSharedFlow<ContentConfig>()
-    val contentConfigFlow: SharedFlow<ContentConfig> get() = _contentConfigFlow
+    private val _addContentSuccessFlow = MutableSharedFlow<Unit>()
+    val addContentSuccessFlow: SharedFlow<Unit> get() = _addContentSuccessFlow
 
     private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
     val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
@@ -147,14 +157,15 @@ internal class AddFeedsManagerViewModel @Inject constructor(
                 sourceUriList = sourceUriList,
                 lastReadStatusId = null,
             )
-            _contentConfigFlow.emit(contentConfig)
+            contentConfigRepo.insert(contentConfig)
+            _addContentSuccessFlow.emit(Unit)
         }
     }
 
     private fun initialViewModelState(): AddSourceViewModelState {
         return AddSourceViewModelState(
-            sourceList = emptyList(),
-            sourceName = "",
+            sourceList = if (statusSource == null) emptyList() else listOf(statusSource),
+            sourceName = statusSource?.name.orEmpty(),
         )
     }
 

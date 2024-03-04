@@ -1,5 +1,6 @@
 package com.zhangke.utopia.rss
 
+import android.util.Log
 import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.adapter.BlogAuthorAdapter
@@ -106,8 +107,10 @@ class RssSearchEngine @Inject constructor(
         defaultResult: T,
         block: suspend (RssSource, RssUriInsight) -> T,
     ): Result<T> {
-        if (query.isUrl().not()) return Result.success(defaultResult)
-        val url = fixUrl(query)
+        val url = SimpleUri.parse(query)
+            ?.toString()
+            ?.let(::fixUrl) ?: return Result.success(defaultResult)
+        Log.d("U_TEST", "query: $query, url: $url")
         val sourceResult = rssRepo.getRssSource(url)
         if (sourceResult.isFailure) {
             return Result.failure(sourceResult.exceptionOrThrow())
@@ -117,10 +120,6 @@ class RssSearchEngine @Inject constructor(
         val uriInsight = RssUriInsight(uri, url)
         val result = block(source, uriInsight)
         return Result.success(result)
-    }
-
-    private fun String.isUrl(): Boolean {
-        return SimpleUri.parse(this) != null
     }
 
     private fun fixUrl(url: String): String {

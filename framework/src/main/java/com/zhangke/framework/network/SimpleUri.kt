@@ -1,5 +1,6 @@
 package com.zhangke.framework.network
 
+import com.zhangke.framework.utils.uriString
 import java.net.URI
 
 data class SimpleUri(
@@ -8,6 +9,15 @@ data class SimpleUri(
     val path: String?,
     val queries: Map<String, String>,
 ) {
+
+    override fun toString(): String {
+        return uriString(
+            scheme = scheme.orEmpty(),
+            host = host.orEmpty(),
+            path = path.orEmpty(),
+            queries = queries,
+        )
+    }
 
     companion object {
 
@@ -20,6 +30,7 @@ data class SimpleUri(
             }
             val scheme = formalUri.scheme
             val host = formalUri.host
+            if (scheme.isNullOrEmpty() || host.isNullOrEmpty()) return null
             val path = formalUri.path
             val queries = mutableMapOf<String, String>()
             formalUri.rawQuery?.let { query ->

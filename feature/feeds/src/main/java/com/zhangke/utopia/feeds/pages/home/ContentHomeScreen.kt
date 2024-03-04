@@ -81,7 +81,10 @@ class ContentHomeScreen : Screen {
                             }
                         },
                         onAddContentClick = {
-                            navigator.push(PreAddFeedsScreen())
+                            coroutineScope.launch {
+                                drawerState.close()
+                                navigator.push(PreAddFeedsScreen())
+                            }
                         },
                         onMove = viewModel::onContentConfigMove,
                         onEditClick = {

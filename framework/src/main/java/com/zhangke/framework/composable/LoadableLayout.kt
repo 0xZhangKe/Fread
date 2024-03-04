@@ -26,7 +26,7 @@ sealed class LoadableState<T> {
 
     class Failed<T>(val exception: Throwable) : LoadableState<T>()
 
-    class Loading<T>() : LoadableState<T>()
+    class Loading<T> : LoadableState<T>()
 
     class Success<T>(val data: T) : LoadableState<T>()
 

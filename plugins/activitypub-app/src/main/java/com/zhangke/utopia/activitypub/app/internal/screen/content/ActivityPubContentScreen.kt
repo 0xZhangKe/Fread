@@ -1,17 +1,26 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.HorizontalPagerWithTab
-import com.zhangke.framework.composable.LoadableLayout
+import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
@@ -29,27 +38,53 @@ class ActivityPubContentScreen(
     @Composable
     override fun Screen.TabContent() {
         val viewModel = getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
-        val loadableState by viewModel.uiState.collectAsState()
-        LoadableLayout(
-            modifier = Modifier.fillMaxSize(),
-            state = loadableState,
-        ) { uiState ->
-            ActivityPubContentUi(
-                uiState = uiState,
-            )
-        }
+        val uiState by viewModel.uiState.collectAsState()
+        ActivityPubContentUi(
+            uiState = uiState,
+        )
     }
 
     @Composable
     private fun Screen.ActivityPubContentUi(
-        uiState: ActivityPubContentUiState,
+        uiState: LoadableState<ActivityPubContentUiState>,
     ) {
-        val tabList = remember(uiState) {
-            createTabs(uiState)
+        when (uiState) {
+            is LoadableState.Failed -> {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        modifier = Modifier.align(Alignment.Center),
+                        text = uiState.exception.message.orEmpty(),
+                    )
+                }
+            }
+
+            is LoadableState.Idle, is LoadableState.Loading -> {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Box(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(60.dp)
+                            .utopiaPlaceholder(true),
+                    )
+                    Box(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .fillMaxWidth()
+                            .weight(1F)
+                            .utopiaPlaceholder(true),
+                    )
+                }
+            }
+
+            is LoadableState.Success -> {
+                val tabList = remember(uiState) {
+                    createTabs(uiState.data)
+                }
+                HorizontalPagerWithTab(
+                    tabList = tabList,
+                )
+            }
         }
-        HorizontalPagerWithTab(
-            tabList = tabList,
-        )
     }
 
     private fun createTabs(

@@ -84,7 +84,12 @@ class ContentHomeScreen : Screen {
                             navigator.push(SelectContentTypeScreen())
                         },
                         onMove = viewModel::onContentConfigMove,
-                        onEditClick = viewModel::onContentConfigEditClick,
+                        onEditClick = {
+                            coroutineScope.launch {
+                                drawerState.close()
+                            }
+                            viewModel.onContentConfigEditClick(it)
+                        },
                     )
                 }
             },

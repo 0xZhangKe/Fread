@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
-import com.zhangke.activitypub.entities.ActivityPubListEntity
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.composable.updateToLoading
@@ -15,13 +14,12 @@ import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.status.model.ContentConfig
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.collect
+import kotlinx.coroutines.flow.map
 
 class ActivityPubContentSubViewModel(
     private val contentConfigRepo: ContentConfigRepo,
-    private val accountManager: ActivityPubAccountManager,
-    private val clientManager: ActivityPubClientManager,
     private val getUserCreatedList: GetUserCreatedListUseCase,
     val configId: Long,
 ) : SubViewModel() {
@@ -31,28 +29,30 @@ class ActivityPubContentSubViewModel(
     val uiState = _uiState.asStateFlow()
 
     private var updateUserListJob: Job? = null
+    private var userCreatedListUpdated = false
 
     init {
-        loadContentConfig()
-    }
-
-    private fun loadContentConfig() {
-        if (_uiState.value.isLoading) return
         launchInViewModel {
             _uiState.updateToLoading()
-            val contentConfig =
-                contentConfigRepo.getConfigById(configId) as? ContentConfig.ActivityPubContent
-            if (contentConfig != null) {
-                _uiState.updateToSuccess(ActivityPubContentUiState(contentConfig))
-                updateUserList(contentConfig.baseUrl)
-            } else {
-                _uiState.updateToFailed(IllegalArgumentException("Cant find validate config by id: $configId"))
-            }
+            contentConfigRepo.getConfigFlowById(configId)
+                .map { it as? ContentConfig.ActivityPubContent }
+                .collect { contentConfig ->
+                    if (contentConfig != null) {
+                        _uiState.updateToSuccess(ActivityPubContentUiState(contentConfig))
+                        updateUserCreateList(contentConfig.baseUrl)
+                    } else {
+                        _uiState.updateToFailed(IllegalArgumentException("Cant find validate config by id: $configId"))
+                    }
+                }
         }
     }
 
-    private fun updateUserList(baseUrl: FormalBaseUrl) {
-        if (updateUserListJob?.isActive == true) updateUserListJob?.cancel()
+    private fun updateUserCreateList(baseUrl: FormalBaseUrl) {
+        if (userCreatedListUpdated) return
+        userCreatedListUpdated = true
+        if (updateUserListJob?.isActive == true) {
+            updateUserListJob?.cancel()
+        }
         updateUserListJob = launchInViewModel {
             getUserCreatedList(baseUrl)
                 .map { list ->

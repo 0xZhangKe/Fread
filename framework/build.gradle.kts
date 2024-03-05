@@ -78,4 +78,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
+    implementation(libs.ktml)
+    implementation(libs.compose.richtext.ui)
+    implementation(libs.compose.richtext.ui.material3)
 }

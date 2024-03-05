@@ -70,6 +70,9 @@ rssparser = "6.0.6"
 
 composeReorderable = "0.9.0"
 
+ktml = "0.0.6"
+compose-richtext = "0.20.0"
+
 [bundles]
 androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]
 androidx-compose-foundation = ["androidx.compose.foundation", "androidx.compose.foundation.layout"]
@@ -206,6 +209,11 @@ material = { group = "com.google.android.material", name = "material", version.r
 rssparser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rssparser" }
 
 composeReorderable = { group = "org.burnoutcrew.composereorderable", name = "reorderable", version.ref = "composeReorderable" }
+
+ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
+compose-richtext-ui = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "compose-richtext" }
+compose-richtext-ui-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "compose-richtext" }
+
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

@@ -1,11 +1,14 @@
 package com.zhangke.utopia.common.status.utils
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.common.utils.createActivityPubUserUri
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.StatusProviderProtocol
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import java.util.Date
@@ -31,6 +34,7 @@ fun createStatus(
             content = content,
             title = title,
             date = date,
+            emojis = emptyList(),
             forwardCount = forwardCount,
             likeCount = likeCount,
             repliesCount = repliesCount,
@@ -38,7 +42,35 @@ fun createStatus(
             spoilerText = spoilerText,
             mediaList = mediaList,
             poll = poll,
-        )
+            platform = createBlogPlatform(),
+            mentions = emptyList(),
+        ),
+        supportInteraction = emptyList()
+    )
+}
+
+fun createBlogPlatform(
+    uri: String = "https://example.com",
+    name: String = "example",
+    description: String = "description",
+    baseUrl: FormalBaseUrl = FormalBaseUrl.build("https", "example.com"),
+    protocol: StatusProviderProtocol = mockStatusProviderProtocol(),
+    thumbnail: String? = null,
+): BlogPlatform {
+    return BlogPlatform(
+        uri = uri,
+        name = name,
+        description = description,
+        baseUrl = baseUrl,
+        protocol = protocol,
+        thumbnail = thumbnail
+    )
+}
+
+fun mockStatusProviderProtocol(): StatusProviderProtocol {
+    return StatusProviderProtocol(
+        id = "id",
+        name = "example",
     )
 }
 

@@ -47,6 +47,8 @@ class RssStatusAdapter @Inject constructor(
             platform = rssPlatformTransformer.create(uriInsight, source),
             mediaList = emptyList(),
             poll = null,
+            emojis = emptyList(),
+            mentions = emptyList(),
         )
     }
 }

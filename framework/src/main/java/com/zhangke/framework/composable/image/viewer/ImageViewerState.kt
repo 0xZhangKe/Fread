@@ -27,6 +27,7 @@ import com.zhangke.framework.utils.equalsExactly
 @Composable
 fun rememberImageViewerState(
     aspectRatio: Float,
+    needAnimateIn: Boolean,
     initialSize: Size = Size.Unspecified,
     initialOffset: Offset = Offset.Unspecified,
     minimumScale: Float = 1f,
@@ -39,6 +40,7 @@ fun rememberImageViewerState(
             initialOffset = initialOffset,
             minimumScale = minimumScale,
             maximumScale = maximumScale,
+            needAnimateIn = needAnimateIn,
         )
     }
 }
@@ -48,6 +50,7 @@ class ImageViewerState(
     private val aspectRatio: Float,
     private val initialSize: Size,
     private val initialOffset: Offset,
+    private val needAnimateIn: Boolean,
     private val minimumScale: Float = 1f,
     private val maximumScale: Float = 3f,
 ) {
@@ -73,6 +76,8 @@ class ImageViewerState(
     var onStartDismiss: (() -> Unit)? = null
 
     val exceed: Boolean get() = !_currentWidthPixel.floatValue.equalsExactly(layoutSize.width)
+
+    var alreadyAnimationIn = false
 
     private var flingAnimation: AnimationScope<Offset, AnimationVector2D>? = null
     private var scaleAnimation: AnimationScope<Float, AnimationVector1D>? = null
@@ -114,7 +119,15 @@ class ImageViewerState(
             _currentOffsetXPixel.floatValue = 0F
             _currentOffsetYPixel.floatValue = layoutSize.height / 2F - standardHeight / 2F
         } else {
-            animateToStandard()
+            if (needAnimateIn && !alreadyAnimationIn) {
+                alreadyAnimationIn = true
+                animateToStandard()
+            } else {
+                _currentWidthPixel.floatValue = standardWidth
+                _currentHeightPixel.floatValue = standardHeight
+                _currentOffsetXPixel.floatValue = 0F
+                _currentOffsetYPixel.floatValue = layoutSize.height / 2F - standardHeight / 2F
+            }
         }
     }
 
@@ -164,8 +177,13 @@ class ImageViewerState(
 
     private fun dragForExit(dragAmount: Offset) {
         val dragAmountY = dragAmount.y
-        if (dragAmountY <= 0F) return
-        _currentOffsetYPixel.floatValue = _currentOffsetYPixel.floatValue + dragAmountY
+        if (dragAmountY <= 0F) {
+            if (_currentOffsetYPixel.floatValue > 0F) {
+                _currentOffsetYPixel.floatValue = _currentOffsetYPixel.floatValue + dragAmountY
+            }
+        } else {
+            _currentOffsetYPixel.floatValue = _currentOffsetYPixel.floatValue + dragAmountY
+        }
     }
 
     suspend fun dragStop(initialVelocity: Velocity) {
@@ -345,7 +363,7 @@ class ImageViewerState(
 
         val Saver: Saver<ImageViewerState, *> = listSaver(
             save = {
-                listOf(
+                listOf<Any>(
                     it.aspectRatio,
                     it.initialSize.magicWidth,
                     it.initialSize.magicHeight,
@@ -353,18 +371,20 @@ class ImageViewerState(
                     it.initialOffset.magicY,
                     it.minimumScale,
                     it.maximumScale,
+                    it.needAnimateIn,
                 )
             },
             restore = {
                 ImageViewerState(
-                    aspectRatio = it[0],
-                    initialSize = magicSize(width = it[1], height = it[2]),
+                    aspectRatio = it[0] as Float,
+                    initialSize = magicSize(width = it[1] as Float, height = it[2] as Float),
                     initialOffset = magicOffset(
-                        x = it[3],
-                        y = it[4],
+                        x = it[3] as Float,
+                        y = it[4] as Float,
                     ),
-                    minimumScale = it[5],
-                    maximumScale = it[6],
+                    minimumScale = it[5] as Float,
+                    maximumScale = it[6] as Float,
+                    needAnimateIn = it[7] as Boolean,
                 )
             }
         )

@@ -146,16 +146,17 @@ class ImageViewerScreen(
             }
         }
         if (aspectRatio != null) {
-            val viewerState = if (coordinates != null && needAnimateIn) {
+            val viewerState = if (coordinates != null) {
                 rememberImageViewerState(
                     aspectRatio = aspectRatio!!,
+                    needAnimateIn = needAnimateIn,
                     initialSize = coordinates.size.toSize(),
                     initialOffset = coordinates.positionInRoot(),
                 ).also {
                     it.onAnimateInFinished = animateInFinished
                 }
             } else {
-                rememberImageViewerState(aspectRatio = aspectRatio!!)
+                rememberImageViewerState(aspectRatio = aspectRatio!!, needAnimateIn = false)
             }
             ImageViewer(
                 state = viewerState,

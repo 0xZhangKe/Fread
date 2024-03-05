@@ -53,7 +53,7 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.updateLatestStatusId(id, latestStatusId)
     }
 
-    suspend fun getNextOrder(): Int {
+    suspend fun generateNextOrder(): Int {
         val maxOrder = contentConfigDao.queryMaxOrder() ?: 0
         return maxOrder + 1
     }

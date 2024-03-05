@@ -4,21 +4,30 @@ import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.utopia.common.status.repo.ContentConfigRepo
+import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.search.SearchContentResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.filterIsInstance
+import kotlinx.coroutines.flow.firstOrNull
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
 @HiltViewModel
 class PreAddFeedsViewModel @Inject constructor(
+    private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
@@ -36,7 +45,28 @@ class PreAddFeedsViewModel @Inject constructor(
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
+    private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
+    val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
+
+    private val _addContentSuccessFlow = MutableSharedFlow<Unit>()
+    val addContentSuccessFlow: SharedFlow<Unit> get() = _addContentSuccessFlow
+
     private var searchJob: Job? = null
+    private var addContentJob: Job? = null
+    private var pendingLoginPlatform: BlogPlatform? = null
+
+    init {
+        launchInViewModel {
+            val initAccountList = statusProvider.accountManager.getAllLoggedAccount()
+            statusProvider.accountManager
+                .getAllAccountFlow()
+                .collect { currentAccountList ->
+                    if (initAccountList.isNotEmpty()) return@collect
+                    if (currentAccountList.isEmpty()) return@collect
+                    pendingLoginPlatform?.let { performAddActivityPubContent(it) }
+                }
+        }
+    }
 
     fun onQueryChanged(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
@@ -45,14 +75,6 @@ class PreAddFeedsViewModel @Inject constructor(
 
     fun onSearchClick() {
         doSearch(true)
-    }
-
-    fun onContentClick(result: SearchContentResult) {
-        launchInViewModel {
-            if (result is SearchContentResult.Source) {
-                _openScreenFlow.emit(AddFeedsManagerScreen(result.source))
-            }
-        }
     }
 
     private fun doSearch(showErrorMessage: Boolean = false) {
@@ -71,5 +93,61 @@ class PreAddFeedsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    fun onContentClick(result: SearchContentResult) {
+        pendingLoginPlatform = null
+        if (addContentJob?.isActive == true) return
+        launchInViewModel {
+            when (result) {
+                is SearchContentResult.Source -> {
+                    _openScreenFlow.emit(AddFeedsManagerScreen(result.source))
+                }
+
+                is SearchContentResult.ActivityPubPlatform -> {
+                    val existsConfig = contentConfigRepo.getAllConfigFlow()
+                        .filterIsInstance<ContentConfig.ActivityPubContent>()
+                        .firstOrNull { it.baseUrl == result.platform.baseUrl }
+                    if (existsConfig != null) {
+                        _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
+                        return@launchInViewModel
+                    }
+                    statusProvider.accountManager
+                        .checkPlatformLogged(result.platform)
+                        .onFailure {
+                            _snackBarMessageFlow.tryEmitException(it)
+                        }.onSuccess {
+                            if (it) {
+                                performAddActivityPubContent(result.platform)
+                            } else {
+                                pendingLoginPlatform = result.platform
+                                _loginRecommendPlatform.emit(listOf(result.platform))
+                            }
+                        }
+                }
+            }
+        }
+    }
+
+    private suspend fun performAddActivityPubContent(platform: BlogPlatform) {
+        val contentConfig = ContentConfig.ActivityPubContent(
+            id = 0,
+            order = contentConfigRepo.generateNextOrder(),
+            name = platform.name,
+            baseUrl = platform.baseUrl,
+            showingTabList = buildInitialTabConfigList(),
+            hiddenTabList = emptyList(),
+        )
+        contentConfigRepo.insert(contentConfig)
+        _addContentSuccessFlow.emit(Unit)
+    }
+
+    private fun buildInitialTabConfigList(): List<ContentConfig.ActivityPubContent.ContentTab> {
+        val tabList = mutableListOf<ContentConfig.ActivityPubContent.ContentTab>()
+        tabList += ContentConfig.ActivityPubContent.ContentTab.HomeTimeline(0)
+        tabList += ContentConfig.ActivityPubContent.ContentTab.LocalTimeline(1)
+        tabList += ContentConfig.ActivityPubContent.ContentTab.PublicTimeline(2)
+        tabList += ContentConfig.ActivityPubContent.ContentTab.Trending(3)
+        return tabList
     }
 }

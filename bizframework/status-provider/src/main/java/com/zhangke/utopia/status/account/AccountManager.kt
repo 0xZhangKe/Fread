@@ -1,7 +1,8 @@
 package com.zhangke.utopia.status.account
 
+import com.zhangke.framework.collections.mapFirst
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -23,26 +24,10 @@ class AccountManager(
         }
     }
 
-    suspend fun validateAuthOfSourceList(
-        sourceList: List<StatusSource>,
-    ): Result<SourcesAuthValidateResult> {
-        val resultList = accountManagerList.mapNotNull {
-            it.validateAuthOfSourceList(sourceList)
+    suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean> {
+        return accountManagerList.mapFirst {
+            it.checkPlatformLogged(platform)
         }
-        resultList.firstOrNull { it.isFailure }?.let { return it }
-        val validateList = mutableListOf<StatusSource>()
-        val invalidateList = mutableListOf<StatusSource>()
-        resultList.map { it.getOrThrow() }
-            .forEach {
-                validateList += it.validateList
-                invalidateList += it.invalidateList
-            }
-        return Result.success(
-            SourcesAuthValidateResult(
-                validateList = validateList,
-                invalidateList = invalidateList,
-            )
-        )
     }
 
     suspend fun launchAuthBySource(baseUrl: FormalBaseUrl): Result<Boolean> {
@@ -70,9 +55,7 @@ interface IAccountManager {
 
     fun getAllAccountFlow(): Flow<List<LoggedAccount>>?
 
-    suspend fun validateAuthOfSourceList(
-        sourceList: List<StatusSource>
-    ): Result<SourcesAuthValidateResult>?
+    suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>?
 
     suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>?
 

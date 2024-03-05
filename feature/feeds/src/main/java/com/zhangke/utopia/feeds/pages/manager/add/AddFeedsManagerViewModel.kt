@@ -120,36 +120,16 @@ internal class AddFeedsManagerViewModel @AssistedInject constructor(
                 _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
                 return@launchInViewModel
             }
-            statusProvider.accountManager
-                .validateAuthOfSourceList(sourceList)
-                .onFailure {
-                    _errorMessageFlow.emit(textOf(it.message.orEmpty()))
-                }.onSuccess {
-                    if (it.invalidateList.isEmpty()) {
-                        onReadyToAdd()
-                    } else {
-                        onValidateAuthFailed(it.invalidateList)
-                    }
-                }
+            performAddContent()
         }
     }
 
-    private suspend fun onValidateAuthFailed(sourceList: List<StatusSource>) {
-        statusProvider.platformResolver
-            .resolveBySourceUriList(sourceList.map { source -> source.uri })
-            .onSuccess {
-                _loginRecommendPlatform.emit(it)
-            }.onFailure {
-                _loginRecommendPlatform.emit(emptyList())
-            }
-    }
-
-    private fun onReadyToAdd() {
+    private fun performAddContent() {
         val currentState = viewModelState.value
         val sourceUriList = currentState.sourceList.map { it.uri }
         val sourceName = currentState.sourceName
         launchInViewModel {
-            val order = configRepo.getNextOrder()
+            val order = configRepo.generateNextOrder()
             val contentConfig = ContentConfig.MixedContent(
                 id = 0,
                 order = order,

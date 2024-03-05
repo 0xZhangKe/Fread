@@ -14,3 +14,6 @@ fun getRssProtocol(context: Context): StatusProviderProtocol {
 
 val StatusProviderProtocol.isRssProtocol: Boolean
     get() = this.id == RSS_PROTOCOL_ID
+
+val StatusProviderProtocol.notRssProtocol: Boolean
+    get() = this.id != RSS_PROTOCOL_ID

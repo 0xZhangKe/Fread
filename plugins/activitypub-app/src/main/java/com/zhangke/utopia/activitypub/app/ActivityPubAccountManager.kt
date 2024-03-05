@@ -8,8 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccoun
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.account.IAccountManager
-import com.zhangke.utopia.status.account.SourcesAuthValidateResult
-import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -41,29 +40,14 @@ class ActivityPubAccountManager @Inject constructor(
         return accountRepo.getAllAccountFlow()
     }
 
-    override suspend fun validateAuthOfSourceList(
-        sourceList: List<StatusSource>,
-    ): Result<SourcesAuthValidateResult> {
-        val activityPubSourceList = sourceList.filter {
-            userUriTransformer.parse(it.uri) != null
+    override suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>? {
+        if (!platform.protocol.isActivityPub) {
+            return null
         }
-        if (activityPubSourceList.isEmpty()) {
-            return Result.success(SourcesAuthValidateResult(emptyList(), emptyList()))
+        val account = getAllLoggedAccount().firstOrNull {
+            it.baseUrl == platform.baseUrl
         }
-        if (getAllLoggedAccount().isNotEmpty()) {
-            return Result.success(
-                SourcesAuthValidateResult(
-                    validateList = activityPubSourceList,
-                    invalidateList = emptyList(),
-                )
-            )
-        }
-        return Result.success(
-            SourcesAuthValidateResult(
-                validateList = emptyList(),
-                invalidateList = activityPubSourceList,
-            )
-        )
+        return Result.success(account != null)
     }
 
     override suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean> {

@@ -30,10 +30,6 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getAddContentScreenRoute(contentType: ContentType): String? {
-        return null
-    }
-
     override fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
         return null
     }

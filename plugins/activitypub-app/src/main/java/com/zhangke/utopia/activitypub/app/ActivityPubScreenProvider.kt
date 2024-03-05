@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.framework.composable.PagerTab
-import com.zhangke.utopia.activitypub.app.internal.screen.addinstance.AddInstanceScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
@@ -13,7 +12,6 @@ import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
-import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
@@ -44,11 +42,6 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getReplyBlogScreen(blog: Blog): String? {
         if (blog.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
         return PostStatusScreenRoute.buildRoute(blog.id, blog.author.name)
-    }
-
-    override fun getAddContentScreenRoute(contentType: ContentType): String? {
-        if (contentType != ContentType.ACTIVITY_PUB) return null
-        return AddInstanceScreenRoute.ROOT
     }
 
     override fun getContentScreen(contentConfig: ContentConfig): PagerTab? {

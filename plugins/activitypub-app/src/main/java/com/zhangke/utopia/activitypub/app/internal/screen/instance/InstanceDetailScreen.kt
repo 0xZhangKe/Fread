@@ -66,9 +66,8 @@ class InstanceDetailScreen(
         val viewModel: InstanceDetailViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         LaunchedEffect(route) {
-            val (baseUrl, addable) = PlatformDetailRoute.parseParams(route)
+            val baseUrl = PlatformDetailRoute.parseParams(route)
             viewModel.serverBaseUrl = baseUrl
-            viewModel.addable = addable
             viewModel.onPrepared()
         }
         InstanceDetailContent(

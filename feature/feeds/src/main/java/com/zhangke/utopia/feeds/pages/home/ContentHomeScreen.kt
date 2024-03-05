@@ -90,8 +90,8 @@ class ContentHomeScreen : Screen {
                         onEditClick = {
                             coroutineScope.launch {
                                 drawerState.close()
+                                viewModel.onContentConfigEditClick(it)
                             }
-                            viewModel.onContentConfigEditClick(it)
                         },
                     )
                 }

@@ -35,12 +35,6 @@ class StatusScreenProvider(
         }
     }
 
-    fun getAddContentScreenRoute(contentType: ContentType): String? {
-        return providerList.mapFirstOrNull {
-            it.getAddContentScreenRoute(contentType)
-        }
-    }
-
     fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
         return providerList.mapFirstOrNull {
             it.getContentScreen(contentConfig)
@@ -78,8 +72,6 @@ interface IStatusScreenProvider {
     ): String?
 
     fun getReplyBlogScreen(blog: Blog): String?
-
-    fun getAddContentScreenRoute(contentType: ContentType): String?
 
     fun getContentScreen(contentConfig: ContentConfig): PagerTab?
 

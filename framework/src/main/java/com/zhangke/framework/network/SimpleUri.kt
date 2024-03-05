@@ -30,7 +30,6 @@ data class SimpleUri(
             }
             val scheme = formalUri.scheme
             val host = formalUri.host
-            if (scheme.isNullOrEmpty() || host.isNullOrEmpty()) return null
             val path = formalUri.path
             val queries = mutableMapOf<String, String>()
             formalUri.rawQuery?.let { query ->

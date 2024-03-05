@@ -9,19 +9,13 @@ object PlatformDetailRoute {
     const val ROUTE = "${ActivityPubRoutes.ROOT}/platform/detail"
 
     private const val PARAM_BASE_URL = "baseUrl"
-    private const val PARAM_ADDABLE = "addable"
 
-    fun buildRoute(
-        baseUrl: FormalBaseUrl,
-        addable: Boolean = false,
-    ): String {
-        return "$ROUTE?$PARAM_BASE_URL=$baseUrl&$PARAM_ADDABLE=$addable"
+    fun buildRoute(baseUrl: FormalBaseUrl): String {
+        return "$ROUTE?$PARAM_BASE_URL=$baseUrl"
     }
 
-    fun parseParams(route: String): Pair<FormalBaseUrl, Boolean> {
+    fun parseParams(route: String): FormalBaseUrl {
         val queries = SimpleUri.parse(route)!!.queries
-        val baseUrl = queries[PARAM_BASE_URL]!!.let(FormalBaseUrl::parse)!!
-        val addable = queries[PARAM_ADDABLE]?.toBoolean() ?: false
-        return baseUrl to addable
+        return queries[PARAM_BASE_URL]!!.let(FormalBaseUrl::parse)!!
     }
 }

@@ -116,13 +116,13 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchContent(query: String): Result<List<SearchContentResult>>? {
-        val searchedPlatform = searchPlatform(query).getOrNull()
-        if (searchedPlatform.isNullOrEmpty().not()){
-            return Result.success(searchedPlatform!!.map { SearchContentResult.ActivityPubPlatform(it) })
-        }
         val searchedSource = searchUserSource(query).getOrNull()
         if (searchedSource != null) {
             return Result.success(listOf(SearchContentResult.Source(searchedSource)))
+        }
+        val searchedPlatform = searchPlatform(query).getOrNull()
+        if (searchedPlatform.isNullOrEmpty().not()){
+            return Result.success(searchedPlatform!!.map { SearchContentResult.ActivityPubPlatform(it) })
         }
         return null
     }

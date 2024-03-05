@@ -47,6 +47,9 @@ import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.utopia.status.source.StatusSource
 
+/**
+ * 添加混合 Feeds 页面
+ */
 internal class AddFeedsManagerScreen(
     private val statusSource: StatusSource? = null
 ) : Screen {

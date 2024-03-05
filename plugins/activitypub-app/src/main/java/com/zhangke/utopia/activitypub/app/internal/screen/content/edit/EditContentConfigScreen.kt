@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -39,6 +40,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
@@ -82,7 +84,11 @@ class EditContentConfigScreen(
             onShowingTabMove = viewModel::onShowingTabMove,
             onShowingTabMoveDown = viewModel::onShowingTabMoveDown,
             onHiddenTabMoveUp = viewModel::onHiddenTabMoveUp,
+            onDeleteClick = viewModel::onDeleteClick,
         )
+        ConsumeFlow(viewModel.finishScreenFlow) {
+            navigator.pop()
+        }
     }
 
     @Composable
@@ -93,6 +99,7 @@ class EditContentConfigScreen(
         onShowingTabMove: (from: Int, to: Int) -> Unit,
         onShowingTabMoveDown: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
         onHiddenTabMoveUp: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onDeleteClick: () -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         ConsumeSnackbarFlow(snackbarHostState, snackbarMessageFlow)
@@ -104,6 +111,13 @@ class EditContentConfigScreen(
                 Toolbar(
                     title = uiState?.config?.configName.orEmpty(),
                     onBackClick = onBackClick,
+                    actions = {
+                        SimpleIconButton(
+                            onClick = onDeleteClick,
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete content",
+                        )
+                    }
                 )
             }
         ) { innerPaddings ->
@@ -226,7 +240,6 @@ class EditContentConfigScreen(
                     modifier = Modifier.fillMaxSize(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-
                     Text(
                         modifier = Modifier.padding(start = 16.dp),
                         text = tabItem.tabName(),
@@ -238,7 +251,7 @@ class EditContentConfigScreen(
                         imageVector = Icons.Default.Visibility,
                         contentDescription = "Move Up",
                     )
-                    Spacer(modifier = Modifier.width(16.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
         }

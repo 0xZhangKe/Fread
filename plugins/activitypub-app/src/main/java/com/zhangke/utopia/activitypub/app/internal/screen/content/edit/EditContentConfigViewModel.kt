@@ -32,6 +32,8 @@ class EditContentConfigViewModel @AssistedInject constructor(
     val uiState = _uiState.asStateFlow()
     private val _snackbarMessageFlow = MutableSharedFlow<TextString>()
     val snackbarMessageFlow = _snackbarMessageFlow.asSharedFlow()
+    private val _finishScreenFlow = MutableSharedFlow<Unit>()
+    val finishScreenFlow = _finishScreenFlow.asSharedFlow()
 
     init {
         launchInViewModel {
@@ -68,6 +70,13 @@ class EditContentConfigViewModel @AssistedInject constructor(
     fun onHiddenTabMoveUp(tab: ContentConfig.ActivityPubContent.ContentTab) {
         launchInViewModel {
             contentConfigRepo.moveActivityPubTabToShowing(configId, tab)
+        }
+    }
+
+    fun onDeleteClick() {
+        launchInViewModel {
+            contentConfigRepo.deleteById(configId)
+            _finishScreenFlow.emit(Unit)
         }
     }
 }

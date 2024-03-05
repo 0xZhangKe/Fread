@@ -9,42 +9,49 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.CardInfoSection
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.ui.BlogPlatformUi
-import kotlinx.coroutines.flow.Flow
 
+/**
+ * 添加 Feeds 预先搜索页，用于输入内容，判断类型添加内容。
+ */
 class PreAddFeedsScreen : Screen {
 
     @Composable
     override fun Content() {
+        val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<PreAddFeedsViewModel>()
         val uiState by viewModel.uiState.collectAsState()
+        val snackbarHostState = rememberSnackbarHostState()
         PreAddFeedsContent(
             uiState = uiState,
-            snackBarMessageFlow = viewModel.snackBarMessageFlow,
+            snackbarHostState = snackbarHostState,
             onBackClick = navigator::pop,
             onQueryChanged = viewModel::onQueryChanged,
             onSearchClick = viewModel::onSearchClick,
@@ -54,19 +61,25 @@ class PreAddFeedsScreen : Screen {
             navigator.pop()
             navigator.push(it)
         }
+        ConsumeFlow(viewModel.loginRecommendPlatform) {
+            bottomSheetNavigator.show(LoginBottomSheetScreen(it))
+        }
+        ConsumeFlow(viewModel.addContentSuccessFlow) {
+            snackbarHostState.showSnackbar(context.getString(R.string.add_content_success_snackbar))
+            navigator.pop()
+        }
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
     }
 
     @Composable
     private fun PreAddFeedsContent(
         uiState: PreAddFeedsUiState,
-        snackBarMessageFlow: Flow<TextString>,
+        snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onQueryChanged: (String) -> Unit,
         onSearchClick: () -> Unit,
         onContentClick: (SearchContentResult) -> Unit,
     ) {
-        val snackbarHostState = rememberSnackbarHostState()
-        ConsumeSnackbarFlow(snackbarHostState, snackBarMessageFlow)
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {

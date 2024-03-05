@@ -3,7 +3,7 @@ package com.zhangke.framework.composable
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import kotlinx.coroutines.flow.Flow
-
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 @Composable
 fun <T> ConsumeFlow(
@@ -15,4 +15,13 @@ fun <T> ConsumeFlow(
             block(it)
         }
     }
+}
+
+suspend fun MutableSharedFlow<TextString>.tryEmitException(exception: Throwable) {
+    exception.message
+        ?.takeIf { it.isNotEmpty() }
+        ?.let { textOf(it) }
+        ?.let {
+            this.emit(it)
+        }
 }

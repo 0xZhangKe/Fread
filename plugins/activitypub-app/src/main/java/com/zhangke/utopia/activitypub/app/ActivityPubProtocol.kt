@@ -11,3 +11,6 @@ fun getActivityPubProtocol(context: Context): StatusProviderProtocol {
         name = context.getString(R.string.activity_pub_protocol_name),
     )
 }
+
+internal val StatusProviderProtocol.isActivityPub: Boolean
+    get() = id == ACTIVITY_PUB_PROTOCOL_ID

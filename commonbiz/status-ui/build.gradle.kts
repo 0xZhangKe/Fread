@@ -71,4 +71,7 @@ dependencies {
     kapt(libs.auto.service)
     implementation(libs.bundles.voyager)
     implementation(libs.bundles.androidx.media3)
+    implementation(libs.ktml)
+    implementation(libs.compose.richtext.ui)
+    implementation(libs.compose.richtext.ui.material3)
 }

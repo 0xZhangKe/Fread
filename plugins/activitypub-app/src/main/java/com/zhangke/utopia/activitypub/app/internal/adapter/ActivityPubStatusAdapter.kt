@@ -2,11 +2,13 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusInteraction
@@ -18,6 +20,7 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
+    private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) {
 
     suspend fun toStatus(
@@ -66,7 +69,9 @@ class ActivityPubStatusAdapter @Inject constructor(
             repliesCount = repliesCount,
             platform = platform,
             mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
-            poll = poll?.let(pollAdapter::adapt)
+            poll = poll?.let(pollAdapter::adapt),
+            emojis = this.emojis.map(emojiEntityAdapter::toEmoji),
+            mentions = this.mentions.mapNotNull { it.toMention() }
         )
     }
 
@@ -93,5 +98,15 @@ class ActivityPubStatusAdapter @Inject constructor(
             ActivityPubMediaAttachmentEntity.TYPE_UNKNOWN -> BlogMediaType.UNKNOWN
             else -> throw IllegalArgumentException("Unsupported media type(${type})!")
         }
+    }
+
+    private fun ActivityPubStatusEntity.Mention.toMention(): Mention? {
+        val webFinger = WebFinger.create(acct) ?: return null
+        return Mention(
+            id = id,
+            username = username,
+            url = url,
+            webFinger = webFinger,
+        )
     }
 }

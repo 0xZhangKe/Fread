@@ -140,7 +140,7 @@ private fun Modifier.draggableInfinity(
     onDragStopped: (velocity: Velocity) -> Unit,
 ): Modifier {
     val velocityTracker = VelocityTracker()
-    return pointerInput(enabled) {
+    return Modifier.pointerInput(enabled) {
         if (enabled) {
             detectDragGestures(
                 onDrag = { change, dragAmount ->
@@ -172,5 +172,5 @@ private fun Modifier.draggableInfinity(
                 },
             )
         }
-    }
+    } then this
 }

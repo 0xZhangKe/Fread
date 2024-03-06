@@ -1,7 +1,13 @@
 package com.zhangke.utopia.status.ui.richtext
 
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.EmojiSupportMatch
 import androidx.compose.ui.text.PlatformTextStyle
 import androidx.compose.ui.text.TextStyle
@@ -45,6 +51,35 @@ class IconFont() : Font {
         get() = FontWeight.Normal
 }
 
+@Composable
+fun RichText(
+    modifier: Modifier,
+    text: String,
+    host: String,
+    emojis: List<Emoji>,
+    mentions: List<Mention>,
+    fontSp: Float,
+) {
+    var element: Element? by remember(text, host, emojis, mentions) {
+        mutableStateOf(null)
+    }
+    LaunchedEffect(text, host, emojis, mentions) {
+        element = parseContent(
+            host = host,
+            text = text,
+            emojis = emojis,
+            mentions = mentions,
+        )
+
+    }
+    if (element != null) {
+        HtmlText2(
+            modifier = modifier,
+            element = element!!,
+        )
+    }
+}
+
 private fun parseContent(
     host: String,
     text: String,
@@ -75,13 +110,15 @@ private fun replaceMentionAndHashtag(
         val href = node.attributes["href"]
         val mention = mentions.firstOrNull { it.url == href }
         if (mention != null) {
-            val id = mention.id
-//            if (id != null) {
-//                node.attributes["href"] = AppDeepLink.Profile(userKey = MicroBlogKey(id, host))
-//            }
-        } else if (node.innerText.startsWith("#")) {
-//            node.attributes["href"] = AppDeepLink.Search(node.innerText)
+            node.attributes["href"] = buildMentionUrl(mention, host)
         }
         node.children.forEach { replaceMentionAndHashtag(mentions, it, host) }
     }
+}
+
+private fun buildMentionUrl(
+    mention: Mention,
+    host: String,
+): String {
+    return "utopia://${host}/user/${mention.id}"
 }

@@ -1,18 +1,17 @@
 package com.zhangke.utopia.pages
 
-import android.content.Context
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -21,41 +20,101 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.getViewModel
-import coil.compose.AsyncImage
-import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.framework.network.HttpScheme
-import com.zhangke.framework.security.Md5
-import com.zhangke.framework.utils.BitmapUtils
-import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.pages.main.MainPage
+import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.status.model.Emoji
+import com.zhangke.utopia.status.model.Mention
+import com.zhangke.utopia.status.ui.richtext.RichText
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.io.File
 
 class UtopiaScreen : Screen {
 
+    private val richText1 = """
+        <p><a href="https://m.cmx.im/tags/%E6%BC%82%E4%BA%AE%E7%9A%84%E5%B0%8F%E7%8E%A9%E6%84%8F" class="mention hashtag" rel="tag">#<span>漂亮的小玩意</span></a><br />前几天网上看到个很复古的老式面包机，完全长在我审美上了，搜了半天找到个专门卖复古面包机的网站，但貌似只能发货到美国 :awesome: ，但真的好喜欢这个小玩意。<br /><a href="https://www.toastercentral.com/index.htm" target="_blank" rel="nofollow noopener noreferrer" translate="no"><span class="invisible">https://www.</span><span class="">toastercentral.com/index.htm</span><span class="invisible"></span></a></p>
+    """.trimIndent()
+
+    //
+    private val richText2 = """
+        <p>RichText 测试 <span class="h-card" translate="no"><a href="https://androiddev.social/@webb" class="u-url mention">@<span>webb</span></a></span> :awesome_rotate: 🔖 ，<a href="https://m.cmx.im/tags/facebook" class="mention hashtag" rel="tag">#<span>facebook</span></a> <br /> 测试结束。</p>
+    """.trimIndent()
+
+    private val richText3 = """
+        <p>可爱小猫来吃鱼罐头啦 姿势透着戒备...</p>
+    """.trimIndent()
+
     @Composable
-    private fun TextBitmap(text: String){
-        val bitmap = remember(text) {
-            BitmapUtils.buildBitmapWithText(
-                width = 100,
-                height = 100,
-                text = text,
-                backgroundColor = 0xFFFF00FF.toInt(),
+    private fun RichTextPreview() {
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(horizontal = 16.dp)
+        ) {
+            Box(modifier = Modifier.height(80.dp))
+            RichText(
+                modifier = Modifier.fillMaxWidth(),
+                text = richText1,
+                host = "https://m.cmx.im",
+                emojis = listOf(
+                    Emoji(
+                        shortcode = "awesome",
+                        url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/original/72ae4469639d0a2e.png",
+                        staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/static/72ae4469639d0a2e.png",
+                    )
+                ),
+                mentions = emptyList(),
+                fontSp = 14F,
+            )
+
+            Box(modifier = Modifier.height(16.dp))
+            HorizontalDivider()
+            Box(modifier = Modifier.height(16.dp))
+
+            RichText(
+                modifier = Modifier.fillMaxWidth(),
+                text = richText2,
+                host = "https://m.cmx.im",
+                emojis = listOf(
+                    Emoji(
+                        shortcode = "awesome_rotate",
+                        url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/591/original/a5b37107a75ab054.png",
+                        staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/591/static/a5b37107a75ab054.png",
+                    )
+                ),
+                mentions = listOf(
+                    Mention(
+                        id = "111199778856627994",
+                        username = "webb",
+                        url = "https://androiddev.social/@webb",
+                        webFinger = WebFinger.create("webb@androiddev.social")!!
+                    )
+                ),
+                fontSp = 14F,
+            )
+
+            Box(modifier = Modifier.height(16.dp))
+            HorizontalDivider()
+            Box(modifier = Modifier.height(16.dp))
+
+
+            RichText(
+                modifier = Modifier.fillMaxWidth(),
+                text = richText3,
+                host = "https://m.cmx.im",
+                emojis = emptyList(),
+                mentions = emptyList(),
+                fontSp = 14F,
             )
         }
-        AsyncImage(
-            model = bitmap,
-            contentDescription = "",
-        )
     }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        MainPage()
+//        MainPage()
+
+        RichTextPreview()
 
 //        Column(
 //            modifier = Modifier.fillMaxSize(),

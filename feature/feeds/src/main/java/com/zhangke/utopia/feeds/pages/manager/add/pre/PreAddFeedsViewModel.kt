@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.manager.add.pre
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
@@ -97,17 +98,19 @@ class PreAddFeedsViewModel @Inject constructor(
 
     fun onContentClick(result: SearchContentResult) {
         pendingLoginPlatform = null
+        Log.d("U_TEST", "onContentClick: $result, job: $addContentJob")
         if (addContentJob?.isActive == true) return
-        launchInViewModel {
+        addContentJob = launchInViewModel {
             when (result) {
                 is SearchContentResult.Source -> {
                     _openScreenFlow.emit(AddFeedsManagerScreen(result.source))
                 }
 
                 is SearchContentResult.ActivityPubPlatform -> {
-                    val existsConfig = contentConfigRepo.getAllConfigFlow()
+                    val existsConfig = contentConfigRepo.getAllConfig()
                         .filterIsInstance<ContentConfig.ActivityPubContent>()
                         .firstOrNull { it.baseUrl == result.platform.baseUrl }
+                    Log.d("U_TEST", "onContentClick: existsConfig: $existsConfig")
                     if (existsConfig != null) {
                         _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
                         return@launchInViewModel
@@ -115,8 +118,10 @@ class PreAddFeedsViewModel @Inject constructor(
                     statusProvider.accountManager
                         .checkPlatformLogged(result.platform)
                         .onFailure {
+                            Log.d("U_TEST", "onContentClick: checkPlatformLogged onFailure: $it")
                             _snackBarMessageFlow.tryEmitException(it)
                         }.onSuccess {
+                            Log.d("U_TEST", "onContentClick: checkPlatformLogged onSuccess: $it")
                             if (it) {
                                 performAddActivityPubContent(result.platform)
                             } else {

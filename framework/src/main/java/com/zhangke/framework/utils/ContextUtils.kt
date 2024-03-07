@@ -1,7 +1,10 @@
 package com.zhangke.framework.utils
 
+import android.app.Activity
 import android.app.Application
 import android.content.Context
+import android.content.ContextWrapper
+import androidx.lifecycle.LifecycleOwner
 
 @Volatile
 lateinit var appContext: Context
@@ -9,4 +12,21 @@ lateinit var appContext: Context
 
 fun initApplication(application: Application) {
     appContext = application
+}
+
+inline fun <reified T> Context.extractTarget(): T? {
+    var context: Context? = this
+    while (context != null) {
+        if (context is T) return context
+        context = if (context is ContextWrapper) context.baseContext else null
+    }
+    return null
+}
+
+fun Context.extractActivity(): Activity? {
+    return extractTarget()
+}
+
+fun Context.extractLifecycleOwner(): LifecycleOwner? {
+    return extractTarget()
 }

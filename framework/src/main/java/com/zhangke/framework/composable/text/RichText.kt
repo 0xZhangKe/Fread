@@ -43,7 +43,7 @@ fun RichText(
             textView.text = HtmlCompat.fromHtml(
                 text,
                 HtmlCompat.FROM_HTML_MODE_COMPACT,
-            )
+            ).trim()
         }
     )
 }

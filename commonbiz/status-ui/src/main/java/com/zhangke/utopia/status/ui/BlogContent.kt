@@ -21,7 +21,7 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.media.BlogMedias
 import com.zhangke.utopia.status.ui.poll.BlogPoll
-import com.zhangke.utopia.status.ui.richtext.RichText
+import com.zhangke.utopia.status.ui.richtext.RichTextX
 import com.zhangke.utopia.status.ui.style.BlogStyle
 import com.zhangke.utopia.statusui.R
 
@@ -47,7 +47,7 @@ fun BlogContent(
             mutableStateOf(canHidden)
         }
         if (spoilerText.isNotEmpty()) {
-            RichText(
+            RichTextX(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
@@ -74,7 +74,7 @@ fun BlogContent(
                 }
             }
             if (!hideContent) {
-                RichText(
+                RichTextX(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),

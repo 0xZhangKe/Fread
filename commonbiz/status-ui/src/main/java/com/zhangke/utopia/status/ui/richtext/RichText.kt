@@ -1,124 +1,166 @@
 package com.zhangke.utopia.status.ui.richtext
 
-import androidx.compose.material3.Text
+import android.content.Context
+import android.graphics.Canvas
+import android.graphics.drawable.Drawable
+import android.text.Editable
+import android.text.Html
+import android.text.style.ImageSpan
+import android.util.Log
+import android.view.Gravity
+import android.view.View
+import android.widget.TextView
+import androidx.compose.material.LocalContentAlpha
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.EmojiSupportMatch
-import androidx.compose.ui.text.PlatformTextStyle
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.Font
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontLoadingStrategy
-import androidx.compose.ui.text.font.FontStyle
-import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.viewinterop.AndroidView
+import androidx.core.text.HtmlCompat
+import coil.Coil
+import coil.executeBlocking
+import coil.request.ImageRequest
+import com.zhangke.framework.utils.DrawableWrapper
 import com.zhangke.utopia.status.model.Emoji
-import com.zhangke.utopia.status.model.Mention
-import moe.tlaster.ktml.Ktml
-import moe.tlaster.ktml.dom.Element
-import moe.tlaster.ktml.dom.Node
-import java.io.File
-
-@Composable
-fun EmojiFont() {
-    val fontFamily = FontFamily(
-        Font(File("")),
-        IconFont()
-    )
-    Text(
-        text = "",
-        style = TextStyle(
-            platformStyle = PlatformTextStyle(
-                emojiSupportMatch = EmojiSupportMatch.Default,
-            )
-        )
-    )
-}
-
-class IconFont() : Font {
-
-    override val loadingStrategy: FontLoadingStrategy
-        get() = FontLoadingStrategy.Async
-
-    override val style: FontStyle
-        get() = FontStyle.Normal
-
-    override val weight: FontWeight
-        get() = FontWeight.Normal
-}
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.xml.sax.XMLReader
 
 @Composable
 fun RichText(
     modifier: Modifier,
     text: String,
-    host: String,
+    color: Color = Color.Unspecified,
     emojis: List<Emoji>,
-    mentions: List<Mention>,
-    fontSp: Float,
+    fontSp: Float = 14F,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
 ) {
-    var element: Element? by remember(text, host, emojis, mentions) {
-        mutableStateOf(null)
+    val localContentColor = LocalContentColor.current
+    val localContentAlpha = LocalContentAlpha.current
+    val finalColor = if (color.isSpecified) {
+        color
+    } else {
+        localContentColor.copy(localContentAlpha)
     }
-    LaunchedEffect(text, host, emojis, mentions) {
-        element = parseContent(
-            host = host,
-            text = text,
-            emojis = emojis,
-            mentions = mentions,
-        )
-
-    }
-    if (element != null) {
-        HtmlText2(
-            modifier = modifier,
-            element = element!!,
-        )
-    }
+    val coroutineScope = rememberCoroutineScope()
+    AndroidView(
+        modifier = modifier,
+        factory = {
+            TextView(it)
+        },
+        update = { textView ->
+            textView.textSize = fontSp
+            if (color != Color.Unspecified) {
+                textView.setTextColor(finalColor.value.toInt())
+            }
+            textView.maxLines = maxLines
+            textView.minLines = minLines
+            textView.gravity = Gravity.START
+            textView.text = parseHtml(
+                context = textView.context,
+                coroutineScope = coroutineScope,
+                html = text,
+                emojis = emojis,
+                view = textView,
+            )
+        }
+    )
 }
 
-private fun parseContent(
-    host: String,
-    text: String,
+private fun parseHtml(
+    context: Context,
+    coroutineScope: CoroutineScope,
+    view: View,
+    html: String,
     emojis: List<Emoji>,
-    mentions: List<Mention>,
-): Element {
-    var content = text
-    emojis.forEach {
-        content =
-            content.replace(
-                ":${it.shortcode}:",
-                "<img src=\"${it.url}\" alt=\"${it.shortcode}\" />",
+): CharSequence {
+    var fixedHtml = html
+    emojis.forEach { emoji ->
+        fixedHtml =
+            fixedHtml.replace(
+                ":${emoji.shortcode}:",
+                "<img src=\"${emoji.url}\" alt=\"${emoji.shortcode}\" />",
             )
     }
-    val body = Ktml.parse(content)
-    body.children.forEach {
-        replaceMentionAndHashtag(mentions, it, host)
+    return HtmlCompat.fromHtml(
+        fixedHtml,
+        HtmlCompat.FROM_HTML_MODE_COMPACT,
+        HtmlImageGetter(
+            view = view,
+            context = context,
+            coroutineScope = coroutineScope,
+        ),
+        object : Html.TagHandler {
+            override fun handleTag(
+                opening: Boolean,
+                tag: String,
+                output: Editable,
+                xmlReader: XMLReader,
+            ) {
+                Log.d("U_TEST", "handleTag: $opening, $tag}")
+            }
+        },
+    ).trim().also {
+        Log.d("U_TEST", "parseHtml: $it")
     }
-    return body
 }
 
-private fun replaceMentionAndHashtag(
-    mentions: List<Mention>,
-    node: Node,
-    host: String,
-) {
-    if (node is Element) {
-        val href = node.attributes["href"]
-        val mention = mentions.firstOrNull { it.url == href }
-        if (mention != null) {
-            node.attributes["href"] = buildMentionUrl(mention, host)
+//class AsyncImageSpan: ImageSpan(){
+//
+//}
+
+private class HtmlImageGetter(
+    private val view: View,
+    private val context: Context,
+    private val coroutineScope: CoroutineScope,
+) : Html.ImageGetter {
+
+    override fun getDrawable(source: String?): Drawable? {
+        source ?: return null
+
+        return AsyncImageDrawable(
+            view = view,
+            url = source,
+            context = context,
+            coroutineScope = coroutineScope,
+        )
+    }
+}
+
+class AsyncImageDrawable(
+    private val view: View,
+    private val url: String,
+    private val context: Context,
+    coroutineScope: CoroutineScope,
+) : DrawableWrapper() {
+
+    init {
+        coroutineScope.launch {
+            val drawable = withContext(Dispatchers.IO) {
+                val request = ImageRequest.Builder(context)
+                    .data(url)
+                    .build()
+                Coil.imageLoader(context).executeBlocking(request).drawable
+            }
+
+            Log.d(
+                "U_TEST",
+                "url: $url, callback: $callback, ${drawable?.intrinsicWidth}: ${drawable?.intrinsicHeight}"
+            )
+            setWrappedDrawable(drawable)
+            view.postDelayed({
+                invalidateSelf()
+            }, 1000)
         }
-        node.children.forEach { replaceMentionAndHashtag(mentions, it, host) }
     }
-}
 
-private fun buildMentionUrl(
-    mention: Mention,
-    host: String,
-): String {
-    return "utopia://${host}/user/${mention.id}"
+    override fun draw(canvas: Canvas) {
+        Log.d("U_TEST", "draw: ${getWrappedDrawable()}")
+        super.draw(canvas)
+    }
 }

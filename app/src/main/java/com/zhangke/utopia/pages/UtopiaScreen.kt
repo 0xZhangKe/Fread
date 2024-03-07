@@ -24,6 +24,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.ui.richtext.RichText
+import com.zhangke.utopia.status.ui.richtext.RichTextX
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -55,7 +56,7 @@ class UtopiaScreen : Screen {
             RichText(
                 modifier = Modifier.fillMaxWidth(),
                 text = richText1,
-                host = "https://m.cmx.im",
+//                host = "https://m.cmx.im",
                 emojis = listOf(
                     Emoji(
                         shortcode = "awesome",
@@ -63,49 +64,49 @@ class UtopiaScreen : Screen {
                         staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/static/72ae4469639d0a2e.png",
                     )
                 ),
-                mentions = emptyList(),
+//                mentions = emptyList(),
                 fontSp = 14F,
             )
 
-            Box(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Box(modifier = Modifier.height(16.dp))
-
-            RichText(
-                modifier = Modifier.fillMaxWidth(),
-                text = richText2,
-                host = "https://m.cmx.im",
-                emojis = listOf(
-                    Emoji(
-                        shortcode = "awesome_rotate",
-                        url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/591/original/a5b37107a75ab054.png",
-                        staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/591/static/a5b37107a75ab054.png",
-                    )
-                ),
-                mentions = listOf(
-                    Mention(
-                        id = "111199778856627994",
-                        username = "webb",
-                        url = "https://androiddev.social/@webb",
-                        webFinger = WebFinger.create("webb@androiddev.social")!!
-                    )
-                ),
-                fontSp = 14F,
-            )
-
-            Box(modifier = Modifier.height(16.dp))
-            HorizontalDivider()
-            Box(modifier = Modifier.height(16.dp))
-
-
-            RichText(
-                modifier = Modifier.fillMaxWidth(),
-                text = richText3,
-                host = "https://m.cmx.im",
-                emojis = emptyList(),
-                mentions = emptyList(),
-                fontSp = 14F,
-            )
+//            Box(modifier = Modifier.height(16.dp))
+//            HorizontalDivider()
+//            Box(modifier = Modifier.height(16.dp))
+//
+//            RichText(
+//                modifier = Modifier.fillMaxWidth(),
+//                text = richText2,
+////                host = "https://m.cmx.im",
+//                emojis = listOf(
+//                    Emoji(
+//                        shortcode = "awesome_rotate",
+//                        url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/591/original/a5b37107a75ab054.png",
+//                        staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/591/static/a5b37107a75ab054.png",
+//                    )
+//                ),
+////                mentions = listOf(
+////                    Mention(
+////                        id = "111199778856627994",
+////                        username = "webb",
+////                        url = "https://androiddev.social/@webb",
+////                        webFinger = WebFinger.create("webb@androiddev.social")!!
+////                    )
+////                ),
+//                fontSp = 14F,
+//            )
+//
+//            Box(modifier = Modifier.height(16.dp))
+//            HorizontalDivider()
+//            Box(modifier = Modifier.height(16.dp))
+//
+//
+//            RichText(
+//                modifier = Modifier.fillMaxWidth(),
+//                text = richText3,
+////                host = "https://m.cmx.im",
+//                emojis = emptyList(),
+////                mentions = emptyList(),
+//                fontSp = 14F,
+//            )
         }
     }
 

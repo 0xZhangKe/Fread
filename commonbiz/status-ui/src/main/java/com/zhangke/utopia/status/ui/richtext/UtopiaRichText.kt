@@ -1,63 +1,61 @@
 package com.zhangke.utopia.status.ui.richtext
 
-import android.util.Log
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
+import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.Mention
-import moe.tlaster.ktml.Ktml
 import moe.tlaster.ktml.dom.Element
 import moe.tlaster.ktml.dom.Node
 
 @Composable
-fun RichText(
+fun UtopiaRichText(
     modifier: Modifier,
     document: String,
+    host: String,
+    emojis: List<Emoji>,
+    mentions: List<Mention>,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     textStyle: TextStyle = LocalTextStyle.current,
 ) {
-    var element: Element? by remember(document) {
-        mutableStateOf(null)
-    }
-    LaunchedEffect(document) {
-        element = parseToElement(
-            document = document,
-        )
-    }
-    if (element != null) {
-        HtmlText2(
-            modifier = modifier,
-            element = element!!,
-            layoutDirection = layoutDirection,
-            overflow = overflow,
-            softWrap = softWrap,
-            maxLines = maxLines,
-            textStyle = textStyle,
-        )
-    }
+    RichText(
+        modifier = modifier,
+        document = document,
+        layoutDirection = layoutDirection,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        textStyle = textStyle,
+    )
 }
 
-// 下沉到 repo 层，或者 UseCase 层做掉
-private fun parseToElement(
-    document: String,
-): Element {
-    val start = System.currentTimeMillis()
-    return Ktml.parse(document).also {
-        Log.d("U_TEST", "parseToElement cost: ${System.currentTimeMillis() - start}ms")
-    }
-}
+//private fun parseContent(
+//    host: String,
+//    text: String,
+//    emojis: List<Emoji>,
+//    mentions: List<Mention>,
+//): Element {
+//    var content = text
+//    emojis.forEach {
+//        content =
+//            content.replace(
+//                ":${it.shortcode}:",
+//                "<img src=\"${it.url}\" alt=\"${it.shortcode}\" />",
+//            )
+//    }
+//    val body = Ktml.parse(content)
+//    body.children.forEach {
+//        replaceMentionAndHashtag(mentions, it, host)
+//    }
+//    return body
+//}
 
 private fun replaceMentionAndHashtag(
     mentions: List<Mention>,

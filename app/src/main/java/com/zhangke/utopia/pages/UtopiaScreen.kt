@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -20,11 +19,9 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import cafe.adriel.voyager.hilt.getViewModel
-import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.pages.main.MainPage
 import com.zhangke.utopia.status.model.Emoji
-import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.ui.richtext.RichText
-import com.zhangke.utopia.status.ui.richtext.RichTextX
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -47,26 +44,42 @@ class UtopiaScreen : Screen {
 
     @Composable
     private fun RichTextPreview() {
-        Column(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(horizontal = 16.dp)
-        ) {
-            Box(modifier = Modifier.height(80.dp))
-            RichText(
-                modifier = Modifier.fillMaxWidth(),
-                text = richText1,
+//        Column(
+//            modifier = Modifier
+//                .fillMaxSize()
+//                .padding(horizontal = 16.dp)
+//        ) {
+//            Box(modifier = Modifier.height(80.dp))
+//            RichText(
+//                modifier = Modifier.fillMaxWidth(),
+//                document = richText1,
 //                host = "https://m.cmx.im",
-                emojis = listOf(
-                    Emoji(
-                        shortcode = "awesome",
-                        url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/original/72ae4469639d0a2e.png",
-                        staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/static/72ae4469639d0a2e.png",
-                    )
-                ),
+//                emojis = listOf(
+//                    Emoji(
+//                        shortcode = "awesome",
+//                        url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/original/72ae4469639d0a2e.png",
+//                        staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/static/72ae4469639d0a2e.png",
+//                    )
+//                ),
 //                mentions = emptyList(),
-                fontSp = 14F,
-            )
+//                fontSp = 14F,
+//            )
+
+//            val coroutineScope = rememberCoroutineScope()
+//            AndroidView(
+//                factory = {
+//                    val view = View(it)
+//                    view.layoutParams = ViewGroup.LayoutParams(200, 200)
+//                    view.background = AsyncImageDrawable(
+//                        view = view,
+//                        url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/original/72ae4469639d0a2e.png",
+//                        context = it,
+//                        coroutineScope = coroutineScope,
+//                    )
+////                    view.background = TestDrawable()
+//                    view
+//                },
+//            )
 
 //            Box(modifier = Modifier.height(16.dp))
 //            HorizontalDivider()
@@ -107,15 +120,15 @@ class UtopiaScreen : Screen {
 ////                mentions = emptyList(),
 //                fontSp = 14F,
 //            )
-        }
+//        }
     }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-//        MainPage()
+        MainPage()
 
-        RichTextPreview()
+//        RichTextPreview()
 
 //        Column(
 //            modifier = Modifier.fillMaxSize(),

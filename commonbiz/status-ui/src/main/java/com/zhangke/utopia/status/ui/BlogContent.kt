@@ -21,7 +21,7 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.media.BlogMedias
 import com.zhangke.utopia.status.ui.poll.BlogPoll
-import com.zhangke.utopia.status.ui.richtext.RichTextX
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import com.zhangke.utopia.status.ui.style.BlogStyle
 import com.zhangke.utopia.statusui.R
 
@@ -47,16 +47,15 @@ fun BlogContent(
             mutableStateOf(canHidden)
         }
         if (spoilerText.isNotEmpty()) {
-            RichTextX(
+            UtopiaRichText(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(start = 15.dp, end = 15.dp, top = 8.dp),
-                text = spoilerText,
-                fontSp = style.spoilerFontSizeSp,
+                document = spoilerText,
+                host = blog.platform.baseUrl.host,
                 emojis = blog.emojis,
                 mentions = blog.mentions,
-                host = "",
             )
         }
         val hasContent = blog.content.isNotEmpty()
@@ -74,15 +73,14 @@ fun BlogContent(
                 }
             }
             if (!hideContent) {
-                RichTextX(
+                UtopiaRichText(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    text = blog.content,
-                    fontSp = style.contentFontSizeSp,
+                    document = blog.content,
+                    host = blog.platform.baseUrl.host,
                     emojis = blog.emojis,
                     mentions = blog.mentions,
-                    host = "",
                 )
                 if (canHidden) {
                     TextButton(

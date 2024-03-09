@@ -12,6 +12,7 @@ import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapAccountEntityEmojiUseCase
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -29,6 +30,7 @@ class UserAboutViewModel @AssistedInject constructor(
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val baseUrlManager: BaseUrlManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
+    private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
     @Assisted val userUriInsights: UserUriInsights,
 ) : ViewModel() {
 
@@ -52,7 +54,8 @@ class UserAboutViewModel @AssistedInject constructor(
 
     init {
         launchInViewModel {
-            val accountIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, getBaseUrl())
+            val accountIdResult =
+                webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, getBaseUrl())
             if (accountIdResult.isFailure) {
                 accountIdResult.exceptionOrNull()?.message?.let {
                     _messageFlow.emit(textOf(it))
@@ -63,7 +66,8 @@ class UserAboutViewModel @AssistedInject constructor(
                 .getAccount(accountIdResult.getOrThrow())
                 .onFailure { e ->
                     e.message?.let { _messageFlow.emit(textOf(it)) }
-                }.onSuccess { entity ->
+                }.map { mapAccountEntityEmoji(it) }
+                .onSuccess { entity ->
                     _uiState.value = _uiState.value.copy(
                         joinedDatetime = dateFormat.format(formatDatetimeToDate(entity.createdAt)),
                         fieldList = entity.fields,

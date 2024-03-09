@@ -15,8 +15,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.zhangke.framework.composable.text.RichText
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import com.zhangke.utopia.status.ui.style.StatusInfoStyleDefaults
 
 @Composable
@@ -68,14 +68,15 @@ fun BlogAuthorUi(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelMedium,
             )
-            RichText(
+            UtopiaRichText(
                 modifier = Modifier.constrainAs(descRef) {
                     start.linkTo(nameRef.start)
                     top.linkTo(webFingerRef.bottom, 2.dp)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-                text = author.description,
+                content = author.description,
+                mentions = emptyList(),
                 maxLines = 1,
             )
         }

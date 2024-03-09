@@ -41,12 +41,12 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.composable.text.RichText
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.rss.R
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import kotlinx.coroutines.flow.Flow
 
 @Destination(RssSourceScreenRoute.ROUTE)
@@ -111,11 +111,12 @@ class RssSourceScreen(
                     text = uiState.source?.title.orEmpty(),
                 )
 
-                RichText(
+                UtopiaRichText(
                     modifier = Modifier
                         .padding(start = 16.dp, top = 16.dp, end = 16.dp)
                         .utopiaPlaceholder(uiState.source?.description.isNullOrEmpty()),
-                    text = uiState.source?.description.orEmpty(),
+                    content = uiState.source?.description.orEmpty(),
+                    mentions = emptyList(),
                 )
 
                 Spacer(modifier = Modifier.height(22.dp))

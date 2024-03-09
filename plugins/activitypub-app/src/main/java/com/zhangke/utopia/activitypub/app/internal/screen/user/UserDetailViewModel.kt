@@ -13,6 +13,8 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapAccountEntityEmojiUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -30,6 +32,8 @@ class UserDetailViewModel @AssistedInject constructor(
     private val userUriTransformer: UserUriTransformer,
     private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
+    private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
+    private val mapCustomEmoji: MapCustomEmojiUseCase,
     @Assisted val userUri: FormalUri,
 ) : ViewModel() {
 
@@ -75,7 +79,7 @@ class UserDetailViewModel @AssistedInject constructor(
                 _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))
                 return@launchInViewModel
             }
-            val account = accountResult.getOrThrow()!!
+            val account = mapAccountEntityEmoji(accountResult.getOrThrow()!!)
             _uiState.value = _uiState.value.copy(
                 account = account
             )

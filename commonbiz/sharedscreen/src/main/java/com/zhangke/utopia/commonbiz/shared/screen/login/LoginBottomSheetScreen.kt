@@ -27,7 +27,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import com.zhangke.framework.composable.CardInfoSection
+import com.zhangke.utopia.status.ui.utils.CardInfoSection
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.commonbiz.shared.screen.R

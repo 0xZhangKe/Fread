@@ -1,5 +1,6 @@
-package com.zhangke.utopia.status.ui.richtext
+package com.zhangke.framework.composable.richtext
 
+import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -67,25 +68,26 @@ fun HtmlText2(
             RenderContext(
                 RichTextStyle(
                     stringStyle =
-                        RichTextStringStyle(
-                            linkStyle =
-                                SpanStyle(
-                                    color = primaryColor,
-                                ),
+                    RichTextStringStyle(
+                        linkStyle =
+                        SpanStyle(
+                            color = primaryColor,
                         ),
+                    ),
                     codeBlockStyle =
-                        CodeBlockStyle(
-                            modifier =
-                                Modifier
-                                    .background(Color.LightGray.copy(alpha = .5f))
-                                    .fillMaxWidth(),
-                        ),
+                    CodeBlockStyle(
+                        modifier =
+                        Modifier
+                            .background(Color.LightGray.copy(alpha = .5f))
+                            .fillMaxWidth(),
+                    ),
                 ),
                 overflow = overflow,
                 softWrap = softWrap,
                 maxLines = maxLines,
                 onLinkClick = {
-                    handler.openUri(it)
+                    Log.d("U_TEST", "HtmlText2: onLinkClick: $it")
+//                    handler.openUri(it)
                 },
             )
         }
@@ -166,11 +168,11 @@ private fun RenderElement(context: RenderContext) {
         "search" -> {
             OutlinedTextField2(
                 state =
-                    rememberSaveable(
-                        saver = TextFieldState.Saver,
-                    ) {
-                        TextFieldState(innerText)
-                    },
+                rememberSaveable(
+                    saver = TextFieldState.Saver,
+                ) {
+                    TextFieldState(innerText)
+                },
                 readOnly = true,
                 trailingIcon = {
                     IconButton(onClick = {
@@ -288,8 +290,8 @@ private fun RenderElement(context: RenderContext) {
                         EmojiImage(
                             uri = src,
                             modifier =
-                                Modifier
-                                    .height(LocalTextStyle.current.fontSize.value.dp),
+                            Modifier
+                                .height(LocalTextStyle.current.fontSize.value.dp),
                         )
                     },
                 )

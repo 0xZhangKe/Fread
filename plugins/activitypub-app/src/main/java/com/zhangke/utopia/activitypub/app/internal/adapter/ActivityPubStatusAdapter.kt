@@ -4,6 +4,7 @@ import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
@@ -21,6 +22,7 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
+    private val mapCustomEmoji: MapCustomEmojiUseCase,
 ) {
 
     suspend fun toStatus(
@@ -56,13 +58,14 @@ class ActivityPubStatusAdapter @Inject constructor(
     }
 
     private fun ActivityPubStatusEntity.toBlog(platform: BlogPlatform): Blog {
+        val emojis = this.emojis.map(emojiEntityAdapter::toEmoji)
         return Blog(
             id = id,
             author = activityPubAccountEntityAdapter.toAuthor(account),
             title = null,
-            content = content,
+            content = mapCustomEmoji(content, emojis),
             sensitive = sensitive,
-            spoilerText = spoilerText,
+            spoilerText = mapCustomEmoji(spoilerText, emojis),
             date = formatDatetimeToDate(createdAt),
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
@@ -70,7 +73,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             platform = platform,
             mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = poll?.let(pollAdapter::adapt),
-            emojis = this.emojis.map(emojiEntityAdapter::toEmoji),
+            emojis = emojis,
             mentions = this.mentions.mapNotNull { it.toMention() }
         )
     }

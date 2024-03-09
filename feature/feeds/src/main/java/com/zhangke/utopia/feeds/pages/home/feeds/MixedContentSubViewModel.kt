@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
-import android.util.Log
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
@@ -18,6 +17,7 @@ import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.richtext.preParseRichText
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -52,10 +52,7 @@ class MixedContentSubViewModel(
         }
         launchInViewModel {
             feedsRepo.feedsInfoChangedFlow
-                .collect {
-                    Log.d("U_TEST", "MixedContentSubViewModel feedsInfoChangedFlow collected")
-                    loadPreviousStatus()
-                }
+                .collect { loadPreviousStatus() }
         }
         launchInViewModel {
             mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
@@ -78,6 +75,10 @@ class MixedContentSubViewModel(
             it.copy(loading = true)
         }
         feedsRepo.getPreviousStatus(sourceList)
+            .map { statusList ->
+                statusList.preParseRichText()
+                statusList
+            }
             .onSuccess { list ->
                 _uiState.update {
                     it.copy(
@@ -109,7 +110,10 @@ class MixedContentSubViewModel(
             feedsRepo.getNewerStatus(
                 sourceUriList = sourceList,
                 minStatusId = feeds.first().status.id,
-            ).onSuccess { list ->
+            ).map { statusList ->
+                statusList.preParseRichText()
+                statusList
+            }.onSuccess { list ->
                 _uiState.update {
                     it.copy(
                         refreshing = false,
@@ -141,7 +145,10 @@ class MixedContentSubViewModel(
             feedsRepo.getPreviousStatus(
                 sourceList,
                 maxId = feeds.last().status.id,
-            ).onSuccess { list ->
+            ).map { statusList ->
+                statusList.preParseRichText()
+                statusList
+            }.onSuccess { list ->
                 _uiState.update {
                     it.copy(
                         loading = false,

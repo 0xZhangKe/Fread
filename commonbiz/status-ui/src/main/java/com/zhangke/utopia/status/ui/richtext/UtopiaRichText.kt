@@ -2,32 +2,31 @@ package com.zhangke.utopia.status.ui.richtext
 
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import com.zhangke.utopia.status.model.Emoji
+import com.zhangke.framework.composable.richtext.RichText
+import com.zhangke.framework.composable.richtext.RichTextUi
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.model.Mention
-import moe.tlaster.ktml.dom.Element
-import moe.tlaster.ktml.dom.Node
+import com.zhangke.utopia.status.richtext.buildRichText
 
 @Composable
 fun UtopiaRichText(
     modifier: Modifier,
-    document: String,
-    host: String,
-    emojis: List<Emoji>,
-    mentions: List<Mention>,
+    richText: RichText,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
     textStyle: TextStyle = LocalTextStyle.current,
 ) {
-    RichText(
+    RichTextUi(
         modifier = modifier,
-        document = document,
+        richText = richText,
         layoutDirection = layoutDirection,
         overflow = overflow,
         softWrap = softWrap,
@@ -36,45 +35,28 @@ fun UtopiaRichText(
     )
 }
 
-//private fun parseContent(
-//    host: String,
-//    text: String,
-//    emojis: List<Emoji>,
-//    mentions: List<Mention>,
-//): Element {
-//    var content = text
-//    emojis.forEach {
-//        content =
-//            content.replace(
-//                ":${it.shortcode}:",
-//                "<img src=\"${it.url}\" alt=\"${it.shortcode}\" />",
-//            )
-//    }
-//    val body = Ktml.parse(content)
-//    body.children.forEach {
-//        replaceMentionAndHashtag(mentions, it, host)
-//    }
-//    return body
-//}
-
-private fun replaceMentionAndHashtag(
+@Composable
+fun UtopiaRichText(
+    modifier: Modifier,
+    content: String,
     mentions: List<Mention>,
-    node: Node,
-    host: String,
+    baseUrl: FormalBaseUrl? = null,
+    layoutDirection: LayoutDirection = LocalLayoutDirection.current,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    softWrap: Boolean = true,
+    maxLines: Int = Int.MAX_VALUE,
+    textStyle: TextStyle = LocalTextStyle.current,
 ) {
-    if (node is Element) {
-        val href = node.attributes["href"]
-        val mention = mentions.firstOrNull { it.url == href }
-        if (mention != null) {
-            node.attributes["href"] = buildMentionUrl(mention, host)
-        }
-        node.children.forEach { replaceMentionAndHashtag(mentions, it, host) }
+    val richText = remember(content, mentions, baseUrl) {
+        buildRichText(content, mentions, baseUrl)
     }
-}
-
-private fun buildMentionUrl(
-    mention: Mention,
-    host: String,
-): String {
-    return "utopia://${host}/user/${mention.id}"
+    RichTextUi(
+        modifier = modifier,
+        richText = richText,
+        layoutDirection = layoutDirection,
+        overflow = overflow,
+        softWrap = softWrap,
+        maxLines = maxLines,
+        textStyle = textStyle,
+    )
 }

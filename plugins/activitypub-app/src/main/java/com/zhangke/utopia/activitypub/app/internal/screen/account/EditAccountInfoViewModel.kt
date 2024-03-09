@@ -157,7 +157,8 @@ class EditAccountInfoViewModel @AssistedInject constructor(
             .takeIf { it != originalAccountInfo.header }
             ?.toUri()
             ?.toContentProviderFile()
-        val newFieldList = currentUiState.fieldList.takeIf { !it.compare(originalAccountInfo.fieldOfUiState) }
+        val newFieldList =
+            currentUiState.fieldList.takeIf { !it.compare(originalAccountInfo.fieldOfUiState) }
         if (newName == null &&
             newNote == null &&
             newAvatar == null &&
@@ -207,16 +208,16 @@ class EditAccountInfoViewModel @AssistedInject constructor(
 
     private val ActivityPubAccountEntity.avatarOfUiState: String get() = avatar
 
-    private val ActivityPubAccountEntity.noteOfUiState: String get() = source.note
+    private val ActivityPubAccountEntity.noteOfUiState: String get() = source?.note.orEmpty()
 
     private val ActivityPubAccountEntity.fieldOfUiState: List<EditAccountFieldUiState>
-        get() = source.fields.mapIndexed { index, field ->
+        get() = source?.fields?.mapIndexed { index, field ->
             EditAccountFieldUiState(
                 idForUi = index,
                 name = field.name,
                 value = field.value
             )
-        }
+        } ?: emptyList()
 
     /**
      * Compare theos two list is same or not

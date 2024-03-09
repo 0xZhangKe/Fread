@@ -18,11 +18,13 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubField
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.composable.text.RichText
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 
 class UserAboutTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
@@ -44,6 +46,10 @@ class UserAboutTab(
         UserAboutContent(
             uiState = uiState,
         )
+        val snackBarState = LocalSnackbarHostState.current
+        if (snackBarState != null) {
+            ConsumeSnackbarFlow(snackBarState, viewModel.messageFlow)
+        }
     }
 
     @Composable
@@ -85,11 +91,13 @@ class UserAboutTab(
                 .fillMaxWidth(),
             text = field.name,
         )
-        RichText(
+        UtopiaRichText(
             modifier = Modifier
                 .padding(top = 4.dp)
                 .fillMaxWidth(),
-            text = field.value,
+            content = field.value,
+            mentions = emptyList(),
+            baseUrl = userUriInsights.baseUrl,
         )
     }
 }

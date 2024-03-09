@@ -11,6 +11,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.richtext.preParseRichText
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -41,12 +42,15 @@ open class LoadableStatusController(
         loadableController.initData(
             getDataFromServer = {
                 getDataFromServer().map { list ->
+                    list.preParseRichText()
                     list.map { buildStatusUiState(it) }
                 }
             },
             getDataFromLocal = getDataFromLocal?.let {
                 {
-                    it().map { buildStatusUiState(it) }
+                    val list = it()
+                    list.preParseRichText()
+                    list.map { buildStatusUiState(it) }
                 }
             },
         )
@@ -57,6 +61,7 @@ open class LoadableStatusController(
     ) {
         loadableController.onRefresh {
             refreshFunction().map { list ->
+                list.preParseRichText()
                 list.map { buildStatusUiState(it) }
             }
         }
@@ -68,6 +73,7 @@ open class LoadableStatusController(
         val latestId = loadableController.uiState.value.dataList.lastOrNull()?.status?.id ?: return
         loadableController.onLoadMore {
             loadMoreFunction(latestId).map { list ->
+                list.preParseRichText()
                 list.map { buildStatusUiState(it) }
             }
         }

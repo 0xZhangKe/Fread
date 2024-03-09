@@ -10,6 +10,7 @@ import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
 import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -17,6 +18,8 @@ import javax.inject.Inject
 class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val userUriTransformer: UserUriTransformer,
+    private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
+    private val mapCustomEmoji: MapCustomEmojiUseCase,
     @ApplicationContext private val context: Context,
 ) {
 
@@ -60,6 +63,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         token: ActivityPubTokenEntity,
     ): ActivityPubLoggedAccount {
         val webFinger = accountToWebFinger(account)
+        val emojis = account.emojis.map(emojiEntityAdapter::toEmoji)
         return ActivityPubLoggedAccount(
             userId = account.id,
             uri = userUriTransformer.build(webFinger, FormalBaseUrl.parse(account.url)!!),
@@ -67,7 +71,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             platform = instanceAdapter.toPlatform(instance),
             baseUrl = FormalBaseUrl.parse(instance.domain)!!,
             name = account.displayName,
-            description = account.note,
+            description = mapCustomEmoji(account.note, emojis),
             avatar = account.avatar,
             url = account.url,
             token = token,

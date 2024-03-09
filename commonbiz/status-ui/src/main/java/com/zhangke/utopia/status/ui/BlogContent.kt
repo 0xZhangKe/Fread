@@ -52,10 +52,8 @@ fun BlogContent(
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(start = 15.dp, end = 15.dp, top = 8.dp),
-                document = spoilerText,
-                host = blog.platform.baseUrl.host,
-                emojis = blog.emojis,
-                mentions = blog.mentions,
+                richText = blog.humanizedSpoilerText,
+//                style = style,
             )
         }
         val hasContent = blog.content.isNotEmpty()
@@ -77,10 +75,7 @@ fun BlogContent(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight(),
-                    document = blog.content,
-                    host = blog.platform.baseUrl.host,
-                    emojis = blog.emojis,
-                    mentions = blog.mentions,
+                    richText = blog.humanizedContent,
                 )
                 if (canHidden) {
                     TextButton(

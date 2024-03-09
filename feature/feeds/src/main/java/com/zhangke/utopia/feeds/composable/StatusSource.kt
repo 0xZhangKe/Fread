@@ -11,7 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.CardInfoSection
+import com.zhangke.utopia.status.ui.utils.CardInfoSection
 import com.zhangke.utopia.status.uri.FormalUri
 
 internal data class StatusSourceUiState(

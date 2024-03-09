@@ -1,4 +1,4 @@
-package com.zhangke.framework.composable
+package com.zhangke.utopia.status.ui.utils
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,8 +21,8 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
-import com.zhangke.framework.composable.text.RichText
 import com.zhangke.utopia.framework.R
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 
 @Composable
 fun CardInfoSection(
@@ -73,11 +73,11 @@ fun CardInfoSection(
                     style = MaterialTheme.typography.bodyLarge,
                 )
                 if (description.isNullOrEmpty().not()) {
-                    RichText(
+                    UtopiaRichText(
                         modifier = Modifier.padding(top = 2.dp),
-                        text = description!!,
-//                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        fontSp = 12F,
+                        content = description!!,
+                        mentions = emptyList(),
+                        baseUrl = null,
                         maxLines = 3,
                     )
                 }

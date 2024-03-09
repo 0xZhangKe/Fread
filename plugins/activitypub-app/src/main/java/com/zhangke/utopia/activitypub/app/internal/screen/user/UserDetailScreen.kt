@@ -43,7 +43,6 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.composable.text.RichText
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.framework.utils.formatAsCount
 import com.zhangke.krouter.Destination
@@ -53,6 +52,7 @@ import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarS
 import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTab
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(UserDetailRoute.ROUTE)
@@ -180,12 +180,14 @@ class UserDetailScreen(
                         )
 
                         // description
-                        RichText(
+                        UtopiaRichText(
                             modifier = Modifier
                                 .padding(top = 4.dp)
                                 .utopiaPlaceholder(account?.note.isNullOrEmpty())
                                 .fillMaxWidth(),
-                            text = account?.note.orEmpty(),
+                            content = account?.note.orEmpty(),
+                            mentions = emptyList(),
+                            baseUrl = uiState.userInsight?.baseUrl,
                         )
 
                         val followInfo = if (account == null) {

@@ -48,6 +48,7 @@ import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.profile.R
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 
 class ProfileHomePage : Screen {
 
@@ -195,12 +196,12 @@ class ProfileHomePage : Screen {
                     )
                 }
                 if (account.description.isNullOrEmpty().not()) {
-                    Text(
+                    UtopiaRichText(
                         modifier = Modifier.padding(top = 2.dp),
                         maxLines = 3,
-                        text = account.description!!,
-                        color = MaterialTheme.colorScheme.onSurfaceVariant,
-                        style = MaterialTheme.typography.bodySmall,
+                        content = account.description!!,
+                        mentions = emptyList(),
+                        textStyle = MaterialTheme.typography.bodySmall,
                     )
                 }
             }

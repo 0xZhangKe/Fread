@@ -1,9 +1,12 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
+import com.zhangke.framework.composable.TextString
 import com.zhangke.utopia.common.status.model.StatusUiState
 
 data class StatusContextUiState(
     val contextStatus: List<StatusInContext>,
+    val loading: Boolean,
+    val errorMessage: TextString?,
 ){
 
     val anchorIndex: Int get() = contextStatus.indexOfFirst { it.type == StatusInContextType.ANCHOR }

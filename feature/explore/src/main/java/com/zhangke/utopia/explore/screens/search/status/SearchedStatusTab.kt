@@ -9,6 +9,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -19,6 +20,7 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
@@ -41,7 +43,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
         )
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         val viewModel = getViewModel<SearchStatusViewModel>()
         val uiState by viewModel.uiState.collectAsState()
@@ -61,6 +63,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
                 viewModel.onLoadMore(query)
             },
             onVoted = viewModel::onVoted,
+            nestedScrollConnection = nestedScrollConnection,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.tryPush(it)
@@ -78,6 +81,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
@@ -85,7 +89,8 @@ class SearchedStatusTab(private val query: String) : PagerTab {
             onLoadMore = onLoadMore,
         )
         LoadableInlineVideoLazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier.fillMaxSize()
+                .applyNestedScrollConnection(nestedScrollConnection),
             state = state,
             refreshing = uiState.refreshing,
             loading = uiState.loadMoreState == LoadState.Loading,

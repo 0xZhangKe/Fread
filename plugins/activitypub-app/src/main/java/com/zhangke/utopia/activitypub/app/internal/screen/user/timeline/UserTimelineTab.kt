@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
@@ -28,7 +29,7 @@ class UserTimelineTab(
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel = getViewModel<UserTimelineViewModel, UserTimelineViewModel.Factory>() {
             it.create(userUriInsights)
         }
@@ -40,6 +41,7 @@ class UserTimelineTab(
             onInteractive = viewModel::onInteractive,
             canScrollBackward = contentCanScrollBackward,
             onVoted = viewModel::onVoted,
+            nestedScrollConnection = nestedScrollConnection,
         )
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

@@ -33,10 +33,10 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
@@ -101,7 +101,6 @@ class ContentHomeScreen : Screen {
                 TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
             val snackbarHostState = rememberSnackbarHostState()
             Scaffold(
-                modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
                 snackbarHost = {
                     SnackbarHost(hostState = snackbarHostState)
                 },
@@ -179,8 +178,9 @@ class ContentHomeScreen : Screen {
                         modifier = Modifier.padding(paddingValues),
                         state = pagerState,
                     ) { pageIndex ->
-                        val currentScreen =
+                        val currentScreen = remember(pageIndex) {
                             viewModel.getContentScreen(uiState.contentConfigList[pageIndex])
+                        }
                         CompositionLocalProvider(
                             LocalSnackbarHostState provides snackbarHostState,
                         ) {
@@ -188,7 +188,7 @@ class ContentHomeScreen : Screen {
                                 Text(text = "Error! can't find any tab fro this config!")
                             } else {
                                 with(currentScreen) {
-                                    TabContent()
+                                    TabContent(scrollBehavior.nestedScrollConnection)
                                 }
                             }
                         }

@@ -21,9 +21,7 @@ androidx-viewpager2 = "1.0.0"
 androidx-browser = "1.4.0"
 androidx-nav = "2.5.3"
 androidx-hilt-nav-compose = "1.0.0"
-androidx-compose-bom = "2024.01.00"
-#TODO 后面升级 ComposeBOM之后移除 material3 的版本
-androidx-compose-material3 = "1.2.0-rc01"
+androidx-compose-bom = "2024.02.02"
 androidx-constraintlayout-compose = "1.1.0-alpha04"
 androidx-lifecycle = "2.4.1"
 androidx-paging = "3.2.1"
@@ -117,7 +115,7 @@ androidx-browser = { group = "androidx.browser", name = "browser", version.ref =
 androidx-nav-ui-ktx = { group = "androidx.navigation", name = "navigation-ui-ktx", version.ref = "androidx.nav" }
 androidx-nav-compose = { group = "androidx.navigation", name = "navigation-compose", version.ref = "androidx.nav" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx.compose.bom" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version.ref = "androidx-compose-material3" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }

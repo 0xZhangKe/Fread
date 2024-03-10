@@ -16,6 +16,7 @@ import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -27,6 +28,7 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.voyager.tryPush
@@ -42,7 +44,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         @Composable get() = null
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val snackbarHostState = LocalSnackbarHostState.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<MixedContentViewModel>().getSubViewModel(configId)
@@ -57,6 +59,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
             onInitAnchorStatusIdUsed = viewModel::onInitAnchorStatusIdUsed,
             onVoted = viewModel::onVoted,
+            nestedScrollConnection = nestedScrollConnection,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.tryPush(it)
@@ -74,6 +77,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         onCatchMinFirstVisibleIndex: (Int) -> Unit,
         onInitAnchorStatusIdUsed: () -> Unit,
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
@@ -101,7 +105,8 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         }
         LoadableInlineVideoLazyColumn(
             modifier = Modifier
-                .fillMaxSize(),
+                .fillMaxSize()
+                .applyNestedScrollConnection(nestedScrollConnection),
             state = state,
             refreshing = uiState.refreshing,
             loading = uiState.loading,

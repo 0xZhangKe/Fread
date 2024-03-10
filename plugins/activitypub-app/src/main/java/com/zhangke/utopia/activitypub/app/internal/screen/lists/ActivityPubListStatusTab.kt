@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.lists
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -24,7 +25,7 @@ class ActivityPubListStatusTab(
         )
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel =
             getViewModel<ActivityPubListStatusViewModel>().getSubViewModel(baseUrl, listId)
@@ -35,6 +36,7 @@ class ActivityPubListStatusTab(
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
             onVoted = viewModel::onVoted,
+            nestedScrollConnection = nestedScrollConnection,
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }

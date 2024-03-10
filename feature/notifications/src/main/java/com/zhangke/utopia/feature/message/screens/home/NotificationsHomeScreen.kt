@@ -102,7 +102,7 @@ class NotificationsHomeScreen : Screen {
                             state = pagerState,
                         ) { pageIndex ->
                             with(accountToTabList[pageIndex].second) {
-                                TabContent()
+                                TabContent(null)
                             }
                         }
                     }

@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -36,17 +37,19 @@ class ActivityPubContentScreen(
         @Composable get() = null
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel = getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubContentUi(
             uiState = uiState,
+            nestedScrollConnection = nestedScrollConnection,
         )
     }
 
     @Composable
     private fun Screen.ActivityPubContentUi(
         uiState: LoadableState<ActivityPubContentUiState>,
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
         when (uiState) {
             is LoadableState.Failed -> {
@@ -82,6 +85,7 @@ class ActivityPubContentScreen(
                 }
                 HorizontalPagerWithTab(
                     tabList = tabList,
+                    nestedScrollConnection = nestedScrollConnection,
                 )
             }
         }

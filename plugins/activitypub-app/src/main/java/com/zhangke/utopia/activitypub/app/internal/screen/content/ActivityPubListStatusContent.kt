@@ -16,10 +16,12 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
@@ -41,6 +43,7 @@ internal fun ActivityPubListStatusContent(
     onInteractive: (Status, StatusUiInteraction) -> Unit,
     canScrollBackward: MutableState<Boolean>? = null,
     onVoted: (Status, List<BlogPoll.Option>) -> Unit,
+    nestedScrollConnection: NestedScrollConnection? = null,
 ) {
     val state = rememberLoadableInlineVideoLazyColumnState(
         refreshing = uiState.refreshing,
@@ -60,7 +63,8 @@ internal fun ActivityPubListStatusContent(
                 .fillMaxSize()
                 .onGloballyPositioned {
                     containerHeight = it.size.height.pxToDp(density)
-                },
+                }
+                .applyNestedScrollConnection(nestedScrollConnection),
             refreshing = uiState.refreshing,
             loading = uiState.loadMoreState == LoadState.Loading,
             contentPadding = PaddingValues(

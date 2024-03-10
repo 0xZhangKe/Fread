@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.trending
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -21,7 +22,7 @@ class TrendingStatusTab(private val baseUrl: FormalBaseUrl) : PagerTab {
         )
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = getViewModel<TrendingStatusViewModel>().getSubViewModel(baseUrl)
         val uiState by viewModel.uiState.collectAsState()
@@ -31,6 +32,7 @@ class TrendingStatusTab(private val baseUrl: FormalBaseUrl) : PagerTab {
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
             onVoted = viewModel::onVoted,
+            nestedScrollConnection = nestedScrollConnection,
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }

@@ -12,6 +12,7 @@ import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
@@ -22,6 +23,7 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
@@ -38,13 +40,14 @@ class UserAboutTab(
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel = getViewModel<UserAboutViewModel, UserAboutViewModel.Factory>() {
             it.create(userUriInsights)
         }
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(
             uiState = uiState,
+            nestedScrollConnection = nestedScrollConnection,
         )
         val snackBarState = LocalSnackbarHostState.current
         if (snackBarState != null) {
@@ -54,7 +57,8 @@ class UserAboutTab(
 
     @Composable
     private fun UserAboutContent(
-        uiState: UserAboutUiState
+        uiState: UserAboutUiState,
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
         val scrollState = rememberScrollState()
         contentCanScrollBackward.value = scrollState.value > 0
@@ -62,6 +66,7 @@ class UserAboutTab(
             modifier = Modifier
                 .fillMaxSize()
                 .horizontalScroll(scrollState)
+                .applyNestedScrollConnection(nestedScrollConnection)
                 .padding(16.dp)
         ) {
             if (!uiState.joinedDatetime.isNullOrEmpty()) {

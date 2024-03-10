@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.timeline
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -29,7 +30,7 @@ class ActivityPubTimelineTab(
         )
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = getViewModel<ActivityPubTimelineViewModel>().getSubViewModel(baseUrl, type)
         val uiState by viewModel.uiState.collectAsState()
@@ -39,6 +40,7 @@ class ActivityPubTimelineTab(
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
             onVoted = viewModel::onVoted,
+            nestedScrollConnection = nestedScrollConnection,
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }

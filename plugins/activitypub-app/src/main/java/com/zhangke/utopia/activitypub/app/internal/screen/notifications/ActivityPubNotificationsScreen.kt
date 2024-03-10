@@ -20,6 +20,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -28,6 +30,7 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.LoadState
@@ -47,7 +50,7 @@ class ActivityPubNotificationsScreen(
         @Composable get() = null
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = getViewModel<ActivityPubNotificationsViewModel>()
             .getSubViewModel(userUriInsights)
@@ -61,6 +64,7 @@ class ActivityPubNotificationsScreen(
             onAcceptClick = viewModel::onAcceptClick,
             onInteractive = viewModel::onInteractive,
             onVoted = viewModel::onVoted,
+            nestedScrollConnection = nestedScrollConnection,
         )
         ConsumeSnackbarFlow(snackbarHostState, messageTextFlow = viewModel.snackMessage)
     }
@@ -76,6 +80,7 @@ class ActivityPubNotificationsScreen(
         onAcceptClick: (NotificationUiState) -> Unit,
         onInteractive: (NotificationUiState, StatusUiInteraction) -> Unit,
         onVoted: (NotificationUiState, List<BlogPoll.Option>) -> Unit,
+        nestedScrollConnection: NestedScrollConnection?,
     ) {
         Column(
             modifier = Modifier.fillMaxSize(),
@@ -92,7 +97,8 @@ class ActivityPubNotificationsScreen(
             )
             LoadableInlineVideoLazyColumn(
                 state = state,
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxSize()
+                    .applyNestedScrollConnection(nestedScrollConnection),
                 refreshing = uiState.refreshing,
                 loading = uiState.loadMoreState == LoadState.Loading,
                 contentPadding = PaddingValues(

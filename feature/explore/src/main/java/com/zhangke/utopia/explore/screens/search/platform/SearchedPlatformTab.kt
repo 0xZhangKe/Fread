@@ -1,6 +1,7 @@
 package com.zhangke.utopia.explore.screens.search.platform
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -16,7 +17,7 @@ class SearchedPlatformTab(private val query: String): PagerTab {
         )
 
     @Composable
-    override fun Screen.TabContent() {
+    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel = getViewModel<SearchPlatformViewModel>()
     }
 }

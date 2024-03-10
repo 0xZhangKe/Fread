@@ -44,3 +44,12 @@ fun TextString.getString(context: Context): String {
 fun TextString?.isNullOrEmpty(): Boolean {
     return this == null || textString(text = this).isEmpty()
 }
+
+fun Throwable.toTextStringOrNull(): TextString? {
+    var errorMessage = this.localizedMessage
+    if (errorMessage.isNullOrEmpty()) {
+        errorMessage = this.message
+    }
+    if (errorMessage.isNullOrEmpty()) return null
+    return textOf(errorMessage)
+}

@@ -1,28 +1,12 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
-import androidx.lifecycle.ViewModel
-import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.textOf
-import com.zhangke.framework.composable.updateOnSuccess
-import com.zhangke.framework.composable.updateToFailed
-import com.zhangke.framework.composable.updateToLoading
-import com.zhangke.framework.composable.updateToSuccess
-import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.status.model.StatusContext
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
 @HiltViewModel
@@ -31,114 +15,24 @@ class StatusContextViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
-) : ViewModel() {
+) : ContainerViewModel<StatusContextSubViewModel, StatusContextViewModel.Params>() {
 
-    lateinit var anchorStatus: Status
-
-    private val _uiState = MutableStateFlow(LoadableState.idle<StatusContextUiState>())
-    val uiState: StateFlow<LoadableState<StatusContextUiState>> get() = _uiState
-
-    private val _errorMessageFlow = MutableSharedFlow<TextString>()
-    val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
-
-    private val _openScreenFlow = MutableSharedFlow<String>()
-    val openScreenFlow: SharedFlow<String> get() = _openScreenFlow
-
-    private lateinit var fixedAnchorStatus: Status
-
-    fun onPrepared() {
-        fixedAnchorStatus = refactorToNewBlog(anchorStatus)
-        loadStatusContext()
-    }
-
-    private fun loadStatusContext() {
-        if (_uiState.value.isLoading) return
-        launchInViewModel {
-            _uiState.updateToLoading()
-            statusProvider.statusResolver
-                .getStatusContext(fixedAnchorStatus)
-                .onSuccess {
-                    _uiState.updateToSuccess(it.toUiState())
-                }.onFailure {
-                    _uiState.updateToFailed(it)
-                }
-        }
-    }
-
-    private fun StatusContext.toUiState(): StatusContextUiState {
-        val contextStatus = mutableListOf<StatusInContext>()
-        contextStatus += this.ancestors.sortedBy { it.datetime }
-            .map { StatusInContext(buildStatusUiState(it), StatusInContextType.ANCESTOR) }
-        contextStatus += StatusInContext(
-            buildStatusUiState(fixedAnchorStatus),
-            StatusInContextType.ANCHOR,
-        )
-        contextStatus += this.descendants.sortedBy { it.datetime }
-            .map { StatusInContext(buildStatusUiState(it), StatusInContextType.DESCENDANT) }
-        return StatusContextUiState(
-            contextStatus = contextStatus.filter {
-                it.status.status is Status.NewBlog
-            },
+    override fun createSubViewModel(params: Params): StatusContextSubViewModel {
+        return StatusContextSubViewModel(
+            feedsRepo = feedsRepo,
+            statusProvider = statusProvider,
+            buildStatusUiState = buildStatusUiState,
+            refactorToNewBlog = refactorToNewBlog,
+            anchorStatus = params.anchorStatus
         )
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        launchInViewModel {
-            if (uiInteraction is StatusUiInteraction.Comment) {
-                statusProvider.screenProvider
-                    .getReplyBlogScreen(status.intrinsicBlog)
-                    ?.let {
-                        _openScreenFlow.emit(it)
-                    }
-                return@launchInViewModel
-            }
-            val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
-            statusProvider.statusResolver
-                .interactive(status, interaction)
-                .onSuccess { newStatus ->
-                    updateStatus(newStatus)
-                }.onFailure { e ->
-                    e.message?.takeIf { it.isNotEmpty() }
-                        ?.let { message ->
-                            _errorMessageFlow.emit(textOf(message))
-                        }
-                }
-        }
+    fun getSubViewModel(anchorStatus: Status): StatusContextSubViewModel {
+        return obtainSubViewModel(Params(anchorStatus))
     }
 
-    fun onUserInfoClick(author: BlogAuthor) {
-        statusProvider.screenProvider
-            .getUserDetailRoute(author.uri)
-            ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
-    }
+    class Params(val anchorStatus: Status) : SubViewModelParams() {
 
-    fun onVote(status: Status, votedOption: List<BlogPoll.Option>) {
-        launchInViewModel {
-            statusProvider.statusResolver.votePoll(status, votedOption)
-                .onSuccess {
-                    updateStatus(it)
-                }.onFailure { e ->
-                    e.message?.takeIf { it.isNotEmpty() }
-                        ?.let { message ->
-                            _errorMessageFlow.emit(textOf(message))
-                        }
-                }
-        }
-    }
-
-    private suspend fun updateStatus(newStatus: Status) {
-        feedsRepo.updateStatus(newStatus)
-        _uiState.updateOnSuccess { state ->
-            val contextStatus = state.contextStatus.map { item ->
-                item.copy(
-                    status = if (item.status.status.id == newStatus.id) {
-                        buildStatusUiState(newStatus)
-                    } else {
-                        item.status
-                    }
-                )
-            }
-            state.copy(contextStatus = contextStatus)
-        }
+        override val key: String = anchorStatus.id
     }
 }

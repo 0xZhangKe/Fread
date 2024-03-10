@@ -8,6 +8,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -21,9 +22,8 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
-import com.zhangke.framework.composable.LoadableLayout
-import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.LoadErrorLineItem
+import com.zhangke.framework.composable.LoadingLineItem
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -38,7 +38,6 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
-import kotlinx.coroutines.flow.SharedFlow
 
 class StatusContextScreen(private val status: Status) : Screen {
 
@@ -46,15 +45,12 @@ class StatusContextScreen(private val status: Status) : Screen {
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val viewModel: StatusContextViewModel = getViewModel()
-        viewModel.anchorStatus = status
-        LaunchedEffect(status) {
-            viewModel.onPrepared()
-        }
+        val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(status)
         val uiState by viewModel.uiState.collectAsState()
+        val snackbarHostState = rememberSnackbarHostState()
         StatusContextContent(
-            loadableState = uiState,
-            snackbarMessageFlow = viewModel.errorMessageFlow,
+            uiState = uiState,
+            snackbarHostState = snackbarHostState,
             onMediaClick = { event ->
                 when (event) {
                     is BlogMediaClickEvent.BlogImageClickEvent -> {
@@ -76,6 +72,7 @@ class StatusContextScreen(private val status: Status) : Screen {
             onBackClick = navigator::pop,
             onInteractive = viewModel::onInteractive,
             onStatusClick = {
+                if (it.status.status.id == status.id) return@StatusContextContent
                 navigator.push(StatusContextScreen(it.status.status))
             },
             onUserInfoClick = viewModel::onUserInfoClick,
@@ -84,12 +81,13 @@ class StatusContextScreen(private val status: Status) : Screen {
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.pushDestination(it)
         }
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
 
     @Composable
     private fun StatusContextContent(
-        loadableState: LoadableState<StatusContextUiState>,
-        snackbarMessageFlow: SharedFlow<TextString>,
+        uiState: StatusContextUiState,
+        snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit = {},
         onMediaClick: OnBlogMediaClick,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
@@ -97,8 +95,6 @@ class StatusContextScreen(private val status: Status) : Screen {
         onUserInfoClick: (BlogAuthor) -> Unit,
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
     ) {
-        val snackbarHostState = rememberSnackbarHostState()
-        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = snackbarMessageFlow)
         Scaffold(
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
@@ -110,42 +106,49 @@ class StatusContextScreen(private val status: Status) : Screen {
                 )
             },
             content = { contentPaddings ->
-                LoadableLayout(
+                val contextStatus = uiState.contextStatus
+                if (contextStatus.isEmpty()) return@Scaffold
+                val state = rememberLazyListState()
+                val anchorIndex = uiState.anchorIndex
+                if (anchorIndex in 0..contextStatus.lastIndex) {
+                    LaunchedEffect(anchorIndex) {
+                        state.animateScrollToItem(anchorIndex)
+                    }
+                }
+                InlineVideoLazyColumn(
                     modifier = Modifier
                         .fillMaxSize()
                         .padding(contentPaddings),
-                    state = loadableState,
-                ) { uiState ->
-                    val contextStatus = uiState.contextStatus
-                    if (contextStatus.isEmpty()) return@LoadableLayout
-                    val state = rememberLazyListState()
-                    val anchorIndex = uiState.anchorIndex
-                    if (anchorIndex in 0..contextStatus.lastIndex) {
-                        LaunchedEffect(anchorIndex) {
-                            state.animateScrollToItem(anchorIndex)
-                        }
-                    }
-                    InlineVideoLazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = state,
-                    ) {
-                        itemsIndexed(
-                            items = contextStatus,
-                        ) { index, statusInContext ->
-                            StatusInContextUi(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .clickable {
-                                        onStatusClick(statusInContext)
-                                    },
-                                statusInContext = statusInContext,
-                                indexInList = index,
-                                onMediaClick = onMediaClick,
-                                onInteractive = onInteractive,
-                                onUserInfoClick = onUserInfoClick,
-                                onVoted = {
-                                    onVoted(statusInContext.status.status, it)
+                    state = state,
+                ) {
+                    itemsIndexed(
+                        items = contextStatus,
+                    ) { index, statusInContext ->
+                        StatusInContextUi(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .clickable {
+                                    onStatusClick(statusInContext)
                                 },
+                            statusInContext = statusInContext,
+                            indexInList = index,
+                            onMediaClick = onMediaClick,
+                            onInteractive = onInteractive,
+                            onUserInfoClick = onUserInfoClick,
+                            onVoted = {
+                                onVoted(statusInContext.status.status, it)
+                            },
+                        )
+                    }
+                    if (uiState.loading) {
+                        item {
+                            LoadingLineItem(modifier = Modifier.fillMaxWidth())
+                        }
+                    } else if (uiState.errorMessage != null) {
+                        item {
+                            LoadErrorLineItem(
+                                modifier = Modifier.fillMaxWidth(),
+                                errorMessage = uiState.errorMessage,
                             )
                         }
                     }

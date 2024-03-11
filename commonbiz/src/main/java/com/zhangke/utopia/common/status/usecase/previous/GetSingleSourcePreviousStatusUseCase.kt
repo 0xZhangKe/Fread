@@ -16,7 +16,6 @@ internal class GetSingleSourcePreviousStatusUseCase @Inject constructor(
         maxCreateTime: Long?,
         limit: Int,
     ): Result<List<StatusContentEntity>> {
-        Log.d("U_TEST", "GetSingleSourcePreviousStatusUseCase($sourceUri, $maxCreateTime, $limit")
         val statusFromLocal = getPreviousStatusFromLocal(sourceUri, limit, maxCreateTime)
         Log.d(
             "U_TEST",

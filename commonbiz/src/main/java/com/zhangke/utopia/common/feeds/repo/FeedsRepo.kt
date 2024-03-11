@@ -50,8 +50,9 @@ class FeedsRepo @Inject internal constructor(
 
     suspend fun refresh(
         sourceUriList: List<FormalUri>
-    ){
+    ): Result<List<Status>> {
 
+        return Result.success(emptyList())
     }
 
     suspend fun getPreviousStatus(

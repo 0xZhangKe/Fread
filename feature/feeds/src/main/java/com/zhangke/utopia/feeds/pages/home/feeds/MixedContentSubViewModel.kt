@@ -56,16 +56,7 @@ class MixedContentSubViewModel(
         }
         launchInViewModel {
             mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
-            _uiState.update {
-                it.copy(initAnchorStatusId = mixedContent?.lastReadStatusId)
-            }
             loadPreviousStatus()
-        }
-    }
-
-    fun onInitAnchorStatusIdUsed() {
-        _uiState.update {
-            it.copy(initAnchorStatusId = null)
         }
     }
 
@@ -74,7 +65,7 @@ class MixedContentSubViewModel(
         _uiState.update {
             it.copy(loading = true)
         }
-        feedsRepo.getPreviousStatus(sourceList)
+        feedsRepo.getPreviousStatus(sourceList, limit = 10)
             .map { statusList ->
                 statusList.preParseRichText()
                 statusList
@@ -163,19 +154,6 @@ class MixedContentSubViewModel(
                     it.copy(loading = false)
                 }
             }
-        }
-    }
-
-    fun onCatchMinFirstVisibleIndex(index: Int) {
-        val uiState = _uiState.value
-        val feeds = uiState.feeds
-        if (feeds.isEmpty()) return
-        val fixedIndex = index.coerceAtLeast(0).coerceAtMost(feeds.lastIndex)
-        launchInViewModel {
-            contentConfigRepo.updateLatestStatusId(
-                id = configId,
-                latestStatusId = feeds[fixedIndex].status.id,
-            )
         }
     }
 

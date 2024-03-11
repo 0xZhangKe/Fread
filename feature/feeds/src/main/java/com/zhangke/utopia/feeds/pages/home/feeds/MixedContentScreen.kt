@@ -9,12 +9,8 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.style.TextAlign
@@ -56,8 +52,6 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onUserInfoClick = viewModel::onUserInfoClick,
-            onCatchMinFirstVisibleIndex = viewModel::onCatchMinFirstVisibleIndex,
-            onInitAnchorStatusIdUsed = viewModel::onInitAnchorStatusIdUsed,
             onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
         )
@@ -74,8 +68,6 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onCatchMinFirstVisibleIndex: (Int) -> Unit,
-        onInitAnchorStatusIdUsed: () -> Unit,
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
@@ -84,25 +76,6 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             onRefresh = onRefresh,
             onLoadMore = onLoadMore,
         )
-        val firstVisibleIndex by remember { derivedStateOf { state.lazyListState.firstVisibleItemIndex } }
-        var minFirstVisibleIndex = remember {
-            Int.MAX_VALUE
-        }
-        minFirstVisibleIndex = minOf(minFirstVisibleIndex, firstVisibleIndex)
-        DisposableEffect(Unit) {
-            onDispose {
-                onCatchMinFirstVisibleIndex(minFirstVisibleIndex)
-            }
-        }
-        if (!uiState.initAnchorStatusId.isNullOrEmpty() && uiState.feeds.isNotEmpty()) {
-            LaunchedEffect(uiState.initAnchorStatusId, uiState.feeds) {
-                onInitAnchorStatusIdUsed()
-                val index = uiState.feeds.indexOfFirst { it.status.id == uiState.initAnchorStatusId }
-                if (index != -1) {
-                    state.lazyListState.scrollToItem(index)
-                }
-            }
-        }
         LoadableInlineVideoLazyColumn(
             modifier = Modifier
                 .fillMaxSize()

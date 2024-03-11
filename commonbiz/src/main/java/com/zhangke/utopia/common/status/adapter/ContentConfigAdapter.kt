@@ -14,7 +14,6 @@ class ContentConfigAdapter @Inject constructor() {
                 order = entity.order,
                 name = entity.name,
                 sourceUriList = entity.sourceUriList!!,
-                lastReadStatusId = entity.lastReadStatusId,
             )
 
             ContentType.ACTIVITY_PUB -> ContentConfig.ActivityPubContent(
@@ -36,7 +35,6 @@ class ContentConfigAdapter @Inject constructor() {
                 name = config.name,
                 type = ContentType.MIXED,
                 sourceUriList = config.sourceUriList,
-                lastReadStatusId = config.lastReadStatusId,
                 baseUrl = null,
                 showingTabList = emptyList(),
                 hiddenTabList = emptyList()
@@ -48,7 +46,6 @@ class ContentConfigAdapter @Inject constructor() {
                 order = config.order,
                 type = ContentType.ACTIVITY_PUB,
                 sourceUriList = null,
-                lastReadStatusId = null,
                 baseUrl = config.baseUrl,
                 showingTabList = config.showingTabList,
                 hiddenTabList = config.hiddenTabList,

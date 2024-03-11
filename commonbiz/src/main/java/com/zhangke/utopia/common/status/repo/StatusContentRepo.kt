@@ -62,47 +62,6 @@ internal class StatusContentRepo @Inject constructor(
         )
     }
 
-    suspend fun queryPrevious(
-        sourceUriList: List<FormalUri>,
-        createTimestamp: Long,
-    ): List<StatusContentEntity> {
-        return statusContentDao.queryPrevious(
-            sourceUriList = sourceUriList,
-            createTimestamp = createTimestamp,
-        )
-    }
-
-    suspend fun queryPrevious(
-        sourceUriList: List<FormalUri>,
-        createTimestamp: Long,
-        limit: Int,
-    ): List<StatusContentEntity> {
-        return statusContentDao.queryPrevious(
-            sourceUriList = sourceUriList,
-            createTimestamp = createTimestamp,
-            limit = limit,
-        )
-    }
-
-    suspend fun queryNewer(
-        sourceUriList: List<FormalUri>,
-        createTimestamp: Long,
-        limit: Int? = null
-    ): List<StatusContentEntity> {
-        return if (limit != null) {
-            statusContentDao.queryNewer(
-                sourceUriList = sourceUriList,
-                createTimestamp = createTimestamp,
-                limit = limit,
-            )
-        } else {
-            statusContentDao.queryNewer(
-                sourceUriList = sourceUriList,
-                createTimestamp = createTimestamp,
-            )
-        }
-    }
-
     suspend fun queryNewer(
         sourceUri: FormalUri,
         createTimestamp: Long,
@@ -133,14 +92,6 @@ internal class StatusContentRepo @Inject constructor(
             sourceUri = sourceUri,
             createTimestamp = createTimestamp,
         ).minByOrNull { it.createTimestamp }
-    }
-
-    suspend fun queryFirst(sourceUri: FormalUri): StatusContentEntity? {
-        return statusContentDao.queryFirst(sourceUri)
-    }
-
-    suspend fun queryLatest(sourceUri: FormalUri): StatusContentEntity? {
-        return statusContentDao.queryLatest(sourceUri)
     }
 
     suspend fun insert(status: StatusContentEntity) {

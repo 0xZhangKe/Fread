@@ -85,7 +85,6 @@ internal class EditMixedContentViewModel @AssistedInject constructor(
                         }
                 }
             configRepo.updateSourceList(configId, sourceList.map { it.uri })
-            configRepo.updateLatestStatusId(configId, null)
             loadFeedsDetail()
         }
     }

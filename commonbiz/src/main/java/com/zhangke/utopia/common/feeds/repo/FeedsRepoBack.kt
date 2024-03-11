@@ -12,7 +12,7 @@ import javax.inject.Inject
 import javax.inject.Singleton
 
 @Singleton
-class FeedsRepo @Inject internal constructor(
+class FeedsRepoBack @Inject internal constructor(
     private val getPreviousStatusUseCase: GetPreviousStatusUseCase,
     private val getNewerStatusUseCase: GetNewerStatusUseCase,
     private val statusContentRepo: StatusContentRepo,
@@ -37,21 +37,6 @@ class FeedsRepo @Inject internal constructor(
                 statusContentRepo.updateAuthor(it)
                 _feedsInfoChangedFlow.emit(Unit)
             }
-    }
-
-    suspend fun getStatus(
-        sourceUriList: List<FormalUri>,
-        limit: Int,
-        maxId: String? = null
-    ): Result<List<Status>> {
-
-        return Result.success(emptyList())
-    }
-
-    suspend fun refresh(
-        sourceUriList: List<FormalUri>
-    ){
-
     }
 
     suspend fun getPreviousStatus(

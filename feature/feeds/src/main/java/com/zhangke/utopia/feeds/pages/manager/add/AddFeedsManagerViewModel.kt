@@ -135,7 +135,6 @@ internal class AddFeedsManagerViewModel @AssistedInject constructor(
                 order = order,
                 name = sourceName,
                 sourceUriList = sourceUriList,
-                lastReadStatusId = null,
             )
             contentConfigRepo.insert(contentConfig)
             _addContentSuccessFlow.emit(Unit)

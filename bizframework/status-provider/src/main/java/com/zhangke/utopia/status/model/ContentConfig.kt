@@ -22,7 +22,6 @@ sealed interface ContentConfig {
         override val order: Int,
         val name: String,
         val sourceUriList: List<FormalUri>,
-        val lastReadStatusId: String?,
     ) : ContentConfig
 
     @Serializable

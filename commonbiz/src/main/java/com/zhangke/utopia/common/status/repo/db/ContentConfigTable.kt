@@ -28,7 +28,6 @@ data class ContentConfigEntity(
     val type: ContentType,
     val sourceUriList: List<FormalUri>?,
     val baseUrl: FormalBaseUrl?,
-    val lastReadStatusId: String?,
     val showingTabList: List<ContentConfig.ActivityPubContent.ContentTab>,
     val hiddenTabList: List<ContentConfig.ActivityPubContent.ContentTab>,
 )
@@ -42,17 +41,11 @@ interface ContentConfigDao {
     @Query("SELECT * FROM $TABLE_NAME ORDER BY `order` ASC")
     fun queryAllContentConfigFlow(): Flow<List<ContentConfigEntity>>
 
-    @Query("UPDATE $TABLE_NAME SET lastReadStatusId=null")
-    suspend fun clearAllLastReadStatusId()
-
     @Query("SELECT * FROM $TABLE_NAME WHERE name=:name")
     suspend fun queryByName(name: String): ContentConfigEntity?
 
     @Query("UPDATE $TABLE_NAME SET sourceUriList=:sourceUriList WHERE id=:id")
     suspend fun updateSourceList(id: Long, sourceUriList: List<FormalUri>)
-
-    @Query("UPDATE $TABLE_NAME SET lastReadStatusId=:latestStatusId WHERE id=:id")
-    suspend fun updateLatestStatusId(id: Long, latestStatusId: String?)
 
     @Query("UPDATE $TABLE_NAME SET name=:name WHERE id=:id")
     suspend fun updateName(id: Long, name: String)

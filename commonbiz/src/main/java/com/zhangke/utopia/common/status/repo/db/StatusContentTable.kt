@@ -16,7 +16,6 @@ private const val TABLE_NAME = "status_content"
 @Entity(tableName = TABLE_NAME)
 data class StatusContentEntity(
     @PrimaryKey val id: String,
-    val nextStatusId: String?,
     val type: StatusType,
     val statusIdOfPlatform: String,
     val sourceUri: FormalUri,

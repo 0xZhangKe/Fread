@@ -53,6 +53,8 @@ fun BlogContent(
                     .wrapContentHeight()
                     .padding(start = 15.dp, end = 15.dp, top = 8.dp),
                 richText = blog.humanizedSpoilerText,
+                maxLines = style.contentMaxLine,
+                // todo font size
 //                style = style,
             )
         }
@@ -74,8 +76,11 @@ fun BlogContent(
                 UtopiaRichText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight(),
+                        .wrapContentHeight()
+                        .padding(start = 15.dp, end = 15.dp, top = 4.dp),
                     richText = blog.humanizedContent,
+                    maxLines = style.contentMaxLine,
+                    // todo font size
                 )
                 if (canHidden) {
                     TextButton(

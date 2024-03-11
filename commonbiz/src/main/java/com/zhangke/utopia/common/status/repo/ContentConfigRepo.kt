@@ -49,10 +49,6 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.updateName(id, name)
     }
 
-    suspend fun updateLatestStatusId(id: Long, latestStatusId: String?) {
-        contentConfigDao.updateLatestStatusId(id, latestStatusId)
-    }
-
     suspend fun generateNextOrder(): Int {
         val maxOrder = contentConfigDao.queryMaxOrder() ?: 0
         return maxOrder + 1
@@ -193,10 +189,6 @@ class ContentConfigRepo @Inject constructor(
             hiddenTabList = newHiddenList,
         )
         contentConfigDao.insert(newConfig.toEntity())
-    }
-
-    suspend fun clearAllLastReadStatusId() {
-        contentConfigDao.clearAllLastReadStatusId()
     }
 
     suspend fun checkNameExist(name: String): Boolean {

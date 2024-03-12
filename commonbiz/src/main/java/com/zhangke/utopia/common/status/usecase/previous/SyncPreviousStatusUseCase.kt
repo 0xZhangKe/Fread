@@ -3,16 +3,18 @@ package com.zhangke.utopia.common.status.usecase.previous
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
-import com.zhangke.utopia.common.status.usecase.SaveStatusListToLocalUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
+/**
+ * 通过服务端拉去一页数据，并存入本地数据库。
+ */
 internal class SyncPreviousStatusUseCase @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusContentRepo: StatusContentRepo,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
-    private val saveStatusListToLocal: SaveStatusListToLocalUseCase,
 ) {
 
     private val statusResolver get() = statusProvider.statusResolver
@@ -20,18 +22,17 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUri: FormalUri,
         limit: Int,
-        maxCreateTime: Long?,
+        maxCreateTime: Long,
     ): Result<Unit> {
         return syncStatusAndSaveToLocal(
             sourceUri = sourceUri,
-            targetSize = limit,
             pageLimit = limit,
-            maxStatus = maxCreateTime?.let { decideMaxStatus(sourceUri, maxCreateTime) })
+            maxStatus = decideMaxStatus(sourceUri, maxCreateTime)
+        )
     }
 
     private suspend fun syncStatusAndSaveToLocal(
         sourceUri: FormalUri,
-        targetSize: Int,
         pageLimit: Int,
         maxStatus: StatusContentEntity?,
     ): Result<Unit> {
@@ -39,25 +40,20 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
             uri = sourceUri,
             limit = pageLimit,
             maxId = maxStatus?.statusIdOfPlatform,
-        ).map { list ->
-            statusContentEntityAdapter.toEntityList(sourceUri, list, null)
-        }
+        )
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
         val statusList = result.getOrThrow()
-        saveStatusListToLocal(
-            statusList = statusList,
-            maxId = maxStatus?.id,
-            needCheckFirstStatus = statusList.size < pageLimit,
-        )
-        if (statusList.isEmpty()) return Result.success(Unit)
-        val leftCount = targetSize - statusList.size
-        if (leftCount > 0) {
-            return syncStatusAndSaveToLocal(
-                sourceUri,
-                leftCount,
-                pageLimit,
-                statusList.minBy { it.createTimestamp })
+        if (statusList.isEmpty()) {
+            if (maxStatus != null) {
+                // 表示已经到底了
+                statusContentRepo.markAsFirstStatus(maxStatus.id)
+            }
+            return Result.success(Unit)
         }
+        val entities = statusList.map {
+            statusContentEntityAdapter.toEntity(sourceUri, it, false)
+        }
+        statusContentRepo.insert(entities)
         return Result.success(Unit)
     }
 

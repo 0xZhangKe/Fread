@@ -12,11 +12,6 @@ internal class StatusContentRepo @Inject constructor(
     private val statusDatabase: StatusDatabase,
 ) {
 
-    companion object {
-
-        const val STATUS_END_MAGIC_NUMBER = "status_end_42"
-    }
-
     private val statusContentDao: StatusContentDao get() = statusDatabase.getStatusContentDao()
 
     suspend fun query(sourceUri: FormalUri): List<StatusContentEntity> {
@@ -100,6 +95,11 @@ internal class StatusContentRepo @Inject constructor(
 
     suspend fun insert(statusList: List<StatusContentEntity>) {
         statusContentDao.insert(statusList)
+    }
+
+    suspend fun markAsFirstStatus(statusId: String){
+        val entity = statusContentDao.query(statusId) ?: return
+        statusContentDao.insert(entity.copy(isFirstStatus = true))
     }
 
     suspend fun updateAuthor(author: BlogAuthor) {

@@ -21,6 +21,7 @@ data class StatusContentEntity(
     val sourceUri: FormalUri,
     val createTimestamp: Long,
     val status: Status,
+    val isFirstStatus: Boolean,
 )
 
 @Dao

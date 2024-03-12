@@ -18,26 +18,21 @@ class StatusContentEntityAdapter @Inject constructor(
     fun toEntityList(
         sourceUri: FormalUri,
         statusList: List<Status>,
-        nextIdOfLatest: String? = null,
+        isFirstStatus: Boolean,
     ): List<StatusContentEntity> {
-        return statusList.mapIndexed { index, status ->
-            val nextStatusId = if (index == statusList.lastIndex) {
-                nextIdOfLatest
-            } else {
-                statusList[index + 1].id
-            }
-            toEntity(sourceUri = sourceUri, status = status, nextStatusId = nextStatusId)
+        return statusList.map {
+            toEntity(sourceUri = sourceUri, status = it, isFirstStatus = isFirstStatus)
         }
     }
 
     fun toEntity(
         sourceUri: FormalUri,
         status: Status,
-        nextStatusId: String?,
+        isFirstStatus: Boolean,
     ): StatusContentEntity {
         return StatusContentEntity(
             id = statusIdGenerator.generate(sourceUri, status),
-            nextStatusId = nextStatusId,
+            isFirstStatus = isFirstStatus,
             sourceUri = sourceUri,
             type = StatusType.BLOG,
             statusIdOfPlatform = status.id,

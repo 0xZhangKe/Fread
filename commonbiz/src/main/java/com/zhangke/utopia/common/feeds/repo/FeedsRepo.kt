@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.feeds.repo
 
+import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
@@ -13,10 +14,11 @@ import javax.inject.Singleton
 
 @Singleton
 class FeedsRepo @Inject internal constructor(
-    private val getPreviousStatusUseCase: GetPreviousStatusUseCase,
+    private val getPreviousStatus: GetPreviousStatusUseCase,
     private val getNewerStatusUseCase: GetNewerStatusUseCase,
     private val statusContentRepo: StatusContentRepo,
     private val statusProvider: StatusProvider,
+    private val statusContentEntityAdapter: StatusContentEntityAdapter,
 ) {
 
     companion object {
@@ -39,13 +41,28 @@ class FeedsRepo @Inject internal constructor(
             }
     }
 
+    suspend fun getLocalFirstPageStatus(
+        sourceUriList: List<FormalUri>,
+        limit: Int
+    ): List<Status> {
+        return statusContentRepo.query(sourceUriList, limit)
+            .map { statusContentEntityAdapter.toStatus(it) }
+    }
+
     suspend fun getStatus(
         sourceUriList: List<FormalUri>,
         limit: Int,
-        maxId: String? = null
+        maxId: String,
     ): Result<List<Status>> {
-
-        return Result.success(emptyList())
+        val maxStatus = statusContentRepo.queryByPlatformId(maxId)
+        if (maxStatus == null || maxStatus.isFirstStatus) {
+            return Result.success(emptyList())
+        }
+        return getPreviousStatus(
+            sourceUriList = sourceUriList,
+            limit = limit,
+            maxId = maxId,
+        )
     }
 
     suspend fun refresh(
@@ -53,18 +70,6 @@ class FeedsRepo @Inject internal constructor(
     ): Result<List<Status>> {
 
         return Result.success(emptyList())
-    }
-
-    suspend fun getPreviousStatus(
-        sourceUriList: List<FormalUri>,
-        limit: Int = DEFAULT_PAGE_SIZE,
-        maxId: String? = null,
-    ): Result<List<Status>> {
-        return getPreviousStatusUseCase(
-            sourceUriList = sourceUriList,
-            limit = limit,
-            maxId = maxId,
-        )
     }
 
     suspend fun getNewerStatus(

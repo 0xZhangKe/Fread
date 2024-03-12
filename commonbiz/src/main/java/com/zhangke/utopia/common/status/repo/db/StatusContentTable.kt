@@ -127,4 +127,7 @@ interface StatusContentDao {
 
     @Query("DELETE FROM $TABLE_NAME WHERE id=:id")
     suspend fun deleteById(id: Long)
+
+    @Query("DELETE FROM $TABLE_NAME WHERE sourceUri=:uri")
+    suspend fun deleteBySourceUri(uri: FormalUri)
 }

@@ -2,6 +2,7 @@ package com.zhangke.utopia.common.feeds.repo
 
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
+import com.zhangke.utopia.common.status.usecase.RefreshStatusUseCase
 import com.zhangke.utopia.common.status.usecase.newer.GetNewerStatusUseCase
 import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -17,6 +18,7 @@ class FeedsRepo @Inject internal constructor(
     private val getPreviousStatus: GetPreviousStatusUseCase,
     private val getNewerStatusUseCase: GetNewerStatusUseCase,
     private val statusContentRepo: StatusContentRepo,
+    private val refreshStatus: RefreshStatusUseCase,
     private val statusProvider: StatusProvider,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
 ) {
@@ -66,10 +68,10 @@ class FeedsRepo @Inject internal constructor(
     }
 
     suspend fun refresh(
-        sourceUriList: List<FormalUri>
+        sourceUriList: List<FormalUri>,
+        limit: Int,
     ): Result<List<Status>> {
-
-        return Result.success(emptyList())
+        return refreshStatus(sourceUriList, limit)
     }
 
     suspend fun getNewerStatus(

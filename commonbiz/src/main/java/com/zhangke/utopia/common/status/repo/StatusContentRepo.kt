@@ -141,6 +141,10 @@ internal class StatusContentRepo @Inject constructor(
         }
     }
 
+    suspend fun deleteBySource(sourceUri: FormalUri){
+        statusContentDao.deleteBySourceUri(sourceUri)
+    }
+
     suspend fun deleteById(id: Long) {
         statusContentDao.deleteById(id)
     }

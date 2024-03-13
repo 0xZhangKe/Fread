@@ -15,8 +15,15 @@ private const val TABLE_NAME = "status_content"
 
 @Entity(tableName = TABLE_NAME)
 data class StatusContentEntity(
+    /**
+     * 这个 ID 是获取到数据之后按照规则生成的，不是帖子原本的 ID。
+     * 这个 ID 不会，也不应该暴露到repo之外，只用作内部。
+     */
     @PrimaryKey val id: String,
     val type: StatusType,
+    /**
+     * 这个 ID 是服务端返回的，帖子实际上的 ID。
+     */
     val statusIdOfPlatform: String,
     val sourceUri: FormalUri,
     val createTimestamp: Long,
@@ -77,6 +84,12 @@ interface StatusContentDao {
         createTimestamp: Long,
         limit: Int,
     ): List<StatusContentEntity>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri ORDER BY createTimestamp DESC LIMIT 1")
+    suspend fun queryRecentStatus(sourceUri: FormalUri): StatusContentEntity?
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE sourceUri=:sourceUri ORDER BY createTimestamp ASC LIMIT 1")
+    suspend fun queryEarliestStatus(sourceUri: FormalUri): StatusContentEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE createTimestamp<=:createTimestamp AND sourceUri=:sourceUri")
     suspend fun queryRecentPrevious(

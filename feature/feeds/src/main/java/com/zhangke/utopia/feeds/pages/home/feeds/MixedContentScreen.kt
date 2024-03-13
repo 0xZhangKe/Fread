@@ -1,9 +1,11 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
@@ -33,6 +35,8 @@ import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.BlogDivider
+import com.zhangke.utopia.status.ui.StatusPlaceHolder
 
 class MixedContentScreen(private val configId: Long) : PagerTab {
 
@@ -71,35 +75,25 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
-        val state = rememberLoadableInlineVideoLazyColumnState(
-            refreshing = uiState.refreshing,
-            onRefresh = onRefresh,
-            onLoadMore = onLoadMore,
-        )
-        LoadableInlineVideoLazyColumn(
-            modifier = Modifier
-                .fillMaxSize()
-                .applyNestedScrollConnection(nestedScrollConnection),
-            state = state,
-            refreshing = uiState.refreshing,
-            loading = uiState.loading,
-            contentPadding = PaddingValues(
-                bottom = 20.dp,
+        if (uiState.feeds.isEmpty() && uiState.initializing) {
+            InitializingContent()
+        } else {
+            val state = rememberLoadableInlineVideoLazyColumnState(
+                refreshing = uiState.refreshing,
+                onRefresh = onRefresh,
+                onLoadMore = onLoadMore,
             )
-        ) {
-            if (uiState.feeds.isEmpty()) {
-                item {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text(
-                            modifier = Modifier
-                                .padding(top = 48.dp)
-                                .fillMaxWidth(),
-                            text = "Empty Placeholder",
-                            textAlign = TextAlign.Center,
-                        )
-                    }
-                }
-            } else {
+            LoadableInlineVideoLazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .applyNestedScrollConnection(nestedScrollConnection),
+                state = state,
+                refreshing = uiState.refreshing,
+                loading = uiState.loadMoreState.loading,
+                contentPadding = PaddingValues(
+                    bottom = 20.dp,
+                )
+            ) {
                 itemsIndexed(
                     items = uiState.feeds,
                     key = { _, item ->
@@ -114,6 +108,21 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                         indexInList = index,
                         onVoted = onVoted,
                     )
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun InitializingContent() {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Column(
+                modifier = Modifier.fillMaxSize(),
+            ) {
+                Box(modifier = Modifier.height(16.dp))
+                repeat(5) {
+                    StatusPlaceHolder(modifier = Modifier.fillMaxWidth())
+                    BlogDivider()
                 }
             }
         }

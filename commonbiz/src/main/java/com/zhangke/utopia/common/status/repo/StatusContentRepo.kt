@@ -69,6 +69,10 @@ internal class StatusContentRepo @Inject constructor(
         )
     }
 
+    suspend fun queryRecentStatus(sourceUri: FormalUri): StatusContentEntity? {
+        return statusContentDao.queryRecentStatus(sourceUri)
+    }
+
     suspend fun queryRecentPrevious(
         sourceUri: FormalUri,
         createTimestamp: Long,
@@ -97,8 +101,8 @@ internal class StatusContentRepo @Inject constructor(
         statusContentDao.insert(statusList)
     }
 
-    suspend fun markAsFirstStatus(statusId: String){
-        val entity = statusContentDao.query(statusId) ?: return
+    suspend fun markFirstStatus(sourceUri: FormalUri) {
+        val entity = statusContentDao.queryEarliestStatus(sourceUri) ?: return
         statusContentDao.insert(entity.copy(isFirstStatus = true))
     }
 
@@ -141,7 +145,7 @@ internal class StatusContentRepo @Inject constructor(
         }
     }
 
-    suspend fun deleteBySource(sourceUri: FormalUri){
+    suspend fun deleteBySource(sourceUri: FormalUri) {
         statusContentDao.deleteBySourceUri(sourceUri)
     }
 

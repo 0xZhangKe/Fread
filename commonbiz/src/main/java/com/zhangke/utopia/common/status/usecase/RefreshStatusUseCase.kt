@@ -1,6 +1,6 @@
 package com.zhangke.utopia.common.status.usecase
 
-import com.zhangke.framework.utils.collect
+import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
@@ -24,24 +24,73 @@ internal class RefreshStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUriList: List<FormalUri>,
         limit: Int,
-    ): Result<List<Status>> {
+    ): Result<RefreshResult> {
         val resultList = sourceUriList.map {
             getStatus(it, limit)
         }
         if (resultList.all { it.isFailure }) {
             return Result.failure(resultList.first().exceptionOrNull()!!)
         }
-        val entities = resultList.collect().getOrThrow()
-        val statusList = entities.sortedByDescending { it.createTimestamp }
-            .map(statusContentEntityAdapter::toStatus)
-        return Result.success(statusList)
+        val newStatusList = mutableListOf<Status>()
+        val deletedStatusList = mutableListOf<Status>()
+        resultList.mapNotNull { it.getOrNull() }
+            .forEach {
+                newStatusList.addAll(it.newStatus)
+                deletedStatusList.addAll(it.deletedStatus)
+            }
+        val result = RefreshResult(
+            newStatus = newStatusList.sortedByDescending { it.datetime },
+            deletedStatus = deletedStatusList,
+        )
+        return Result.success(result)
     }
 
     private suspend fun getStatus(
         sourceUri: FormalUri,
         limit: Int,
+    ): Result<RefreshResult> {
+        val entitiesResult = fetchStatus(sourceUri, limit)
+        if (entitiesResult.isFailure) {
+            return Result.failure(entitiesResult.exceptionOrNull()!!)
+        }
+        val entities = entitiesResult.getOrThrow()
+        if (entities.isEmpty()) return Result.success(RefreshResult.EMPTY)
+        val newEntities = mutableListOf<StatusContentEntity>()
+        val deleteEntities = mutableListOf<StatusContentEntity>()
+        val localRecentStatus = statusContentRepo.queryRecentStatus(sourceUri)
+        if (localRecentStatus == null) {
+            // 本地无数据
+            newEntities.addAll(entities)
+        } else {
+            val localInNewIndex = newEntities.indexOfFirst {
+                it.id == localRecentStatus.id
+            }
+            if (localInNewIndex < 0) {
+                // 本地最新数据不在新数据中，表示本地数据已经过期
+                val allDeletedList = statusContentRepo.query(sourceUri)
+                statusContentRepo.deleteBySource(sourceUri)
+                deleteEntities.addAll(allDeletedList)
+            } else {
+                // 新数据与本地数据有重合，清除本地数据重复部分，然后插入全部新数据
+                val repeatedList = newEntities.subList(localInNewIndex, newEntities.size)
+                deleteEntities.addAll(repeatedList)
+            }
+            // 按照上面重合数据的替换逻辑，即使是在部分重合的情况下，新增数据仍然是全部。
+            newEntities.addAll(entities)
+        }
+        statusContentRepo.insert(entities)
+        val refreshResult = RefreshResult(
+            newStatus = newEntities.map { statusContentEntityAdapter.toStatus(it) },
+            deletedStatus = deleteEntities.map { statusContentEntityAdapter.toStatus(it) },
+        )
+        return Result.success(refreshResult)
+    }
+
+    private suspend fun fetchStatus(
+        sourceUri: FormalUri,
+        limit: Int,
     ): Result<List<StatusContentEntity>> {
-        val entitiesResult = statusProvider.statusResolver
+        return statusProvider.statusResolver
             .getStatusList(
                 uri = sourceUri,
                 limit = limit,
@@ -50,20 +99,5 @@ internal class RefreshStatusUseCase @Inject constructor(
                     statusContentEntityAdapter.toEntity(sourceUri, it, false)
                 }
             }
-        if (entitiesResult.isFailure) {
-            return Result.failure(entitiesResult.exceptionOrNull()!!)
-        }
-        val entities = entitiesResult.getOrThrow()
-        if (entities.isEmpty()) return Result.success(emptyList())
-        val newStatusMinDateTime = entities.minBy { it.createTimestamp }.createTimestamp
-        val localMaxDateTime = statusContentRepo.query(sourceUri)
-            .maxByOrNull { it.createTimestamp }
-            ?.createTimestamp
-        if (localMaxDateTime != null && newStatusMinDateTime > localMaxDateTime) {
-            // 数据不连续，则清空本地数据
-            statusContentRepo.deleteBySource(sourceUri)
-        }
-        statusContentRepo.insert(entities)
-        return Result.success(entities)
     }
 }

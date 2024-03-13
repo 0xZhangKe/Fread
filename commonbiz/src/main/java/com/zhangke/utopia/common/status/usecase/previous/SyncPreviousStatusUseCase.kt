@@ -4,7 +4,6 @@ import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
@@ -46,7 +45,7 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
         if (statusList.isEmpty()) {
             if (maxStatus != null) {
                 // 表示已经到底了
-                statusContentRepo.markAsFirstStatus(maxStatus.id)
+                statusContentRepo.markFirstStatus(sourceUri)
             }
             return Result.success(Unit)
         }

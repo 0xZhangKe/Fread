@@ -1,5 +1,7 @@
 package com.zhangke.framework.utils
 
+import com.zhangke.framework.composable.TextString
+
 
 sealed interface LoadState {
 
@@ -10,5 +12,5 @@ sealed interface LoadState {
 
     data object Loading : LoadState
 
-    data class Failed(val e: Throwable) : LoadState
+    data class Failed(val message: TextString?) : LoadState
 }

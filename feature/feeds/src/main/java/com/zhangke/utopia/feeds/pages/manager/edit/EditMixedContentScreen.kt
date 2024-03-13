@@ -40,10 +40,12 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
+import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
+import com.zhangke.utopia.status.uri.FormalUri
 
 class EditMixedContentScreen(private val configId: Long) : Screen {
 
@@ -61,16 +63,19 @@ class EditMixedContentScreen(private val configId: Long) : Screen {
             onEditNameClick = viewModel::onEditName,
             onBackClick = navigator::pop,
             onAddSourceClick = {
-                navigator.push(
-                    SearchSourceForAddScreen(
-                        onUrisAdded = viewModel::onAddSources
-                    )
-                )
+                navigator.push(SearchSourceForAddScreen())
             },
             onDeleteClick = viewModel::onDeleteFeeds,
         )
         ConsumeFlow(viewModel.finishScreenFlow) {
             navigator.pop()
+        }
+        val resultNavigator = navigator.navigationResult
+        val addedUri by resultNavigator.getResult<FormalUri>(SearchSourceForAddScreen.SCREEN_KEY)
+        if (addedUri != null) {
+            LaunchedEffect(addedUri) {
+                viewModel.onAddSource(addedUri!!)
+            }
         }
     }
 
@@ -146,8 +151,9 @@ private fun EditFeedsScreenTopBar(
     var showDeleteConfirmDialog by remember {
         mutableStateOf(false)
     }
+    val configName = uiState.successDataOrNull()?.name.orEmpty()
     Toolbar(
-        title = uiState.successDataOrNull()?.name.orEmpty(),
+        title = configName,
         onBackClick = onBackClick,
         actions = {
             IconButton(
@@ -175,8 +181,8 @@ private fun EditFeedsScreenTopBar(
     )
     val loadedUiState = uiState.successDataOrNull()
     if (loadedUiState != null && showEditNameDialog) {
-        var inputtedText by remember() {
-            mutableStateOf("")
+        var inputtedText by remember {
+            mutableStateOf(configName)
         }
         UtopiaDialog(
             title = stringResource(R.string.feeds_mixed_config_edit_new_name_dialog_title),

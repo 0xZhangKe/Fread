@@ -100,7 +100,7 @@ class ActivityPubNotificationsScreen(
                 modifier = Modifier.fillMaxSize()
                     .applyNestedScrollConnection(nestedScrollConnection),
                 refreshing = uiState.refreshing,
-                loading = uiState.loadMoreState == LoadState.Loading,
+                loadState = uiState.loadMoreState,
                 contentPadding = PaddingValues(
                     bottom = 20.dp,
                 )

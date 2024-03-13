@@ -43,12 +43,6 @@ class RssStatusResolver @Inject constructor(
         return Result.success(finalReturnItems.takeLast(limit))
     }
 
-    override suspend fun checkIsFirstStatus(status: Status): Result<Boolean>? {
-        val uri = FormalUri.from(status.platform.uri) ?: return null
-        val uriInsight = uriTransformer.parse(uri) ?: return null
-        return rssStatusRepo.checkIsFirstStatus(uriInsight, status)
-    }
-
     override suspend fun interactive(
         status: Status,
         interaction: StatusInteraction

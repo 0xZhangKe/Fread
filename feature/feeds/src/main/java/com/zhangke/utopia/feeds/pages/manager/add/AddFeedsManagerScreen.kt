@@ -20,7 +20,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -40,12 +42,14 @@ import com.zhangke.framework.composable.StyledIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
+import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.utopia.status.source.StatusSource
+import com.zhangke.utopia.status.uri.FormalUri
 
 /**
  * 添加混合 Feeds 页面
@@ -69,11 +73,7 @@ internal class AddFeedsManagerScreen(
             snackbarHostState = snackbarHostState,
             onBackClick = navigator::pop,
             onAddSourceClick = {
-                navigator.push(
-                    SearchSourceForAddScreen(
-                        onUrisAdded = viewModel::onAddSources
-                    )
-                )
+                navigator.push(SearchSourceForAddScreen())
             },
             onConfirmClick = viewModel::onConfirmClick,
             onNameInputValueChanged = viewModel::onSourceNameInput,
@@ -86,6 +86,13 @@ internal class AddFeedsManagerScreen(
         ConsumeFlow(viewModel.addContentSuccessFlow) {
             snackbarHostState.showSnackbar(context.getString(R.string.add_content_success_snackbar))
             navigator.pop()
+        }
+        val resultNavigator = navigator.navigationResult
+        val addedUri by resultNavigator.getResult<FormalUri>(SearchSourceForAddScreen.SCREEN_KEY)
+        if (addedUri != null) {
+            LaunchedEffect(addedUri) {
+                viewModel.onAddSource(addedUri!!)
+            }
         }
     }
 

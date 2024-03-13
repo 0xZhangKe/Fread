@@ -13,24 +13,33 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SearchToolbar
+import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.StatusSourceNode
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
-import com.zhangke.utopia.status.uri.FormalUri
 
-internal class SearchSourceForAddScreen(
-    private val onUrisAdded: (uris: List<FormalUri>) -> Unit,
-) : Screen {
+internal class SearchSourceForAddScreen : Screen {
+
+    companion object {
+
+        internal const val SCREEN_KEY =
+            "com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen"
+    }
+
+    override val key: ScreenKey
+        get() = SCREEN_KEY
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
+        val resultNavigator = navigator.navigationResult
         val viewModel: SearchSourceForAddViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         SearchSourceForAdd(
@@ -38,8 +47,7 @@ internal class SearchSourceForAddScreen(
             onBackClick = navigator::pop,
             onSearchClick = viewModel::onSearchClick,
             onAddClick = {
-                onUrisAdded(listOf(it.uri))
-                navigator.pop()
+                resultNavigator.popWithResult(it.uri)
             },
         )
     }

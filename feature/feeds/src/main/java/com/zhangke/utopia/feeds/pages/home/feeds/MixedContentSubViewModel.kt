@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import android.util.Log
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
@@ -29,6 +30,7 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 
 class MixedContentSubViewModel(
@@ -65,7 +67,15 @@ class MixedContentSubViewModel(
                 }
         }
         launchInViewModel {
-            mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
+            contentConfigRepo.getConfigFlow(configId)
+                .drop(1)
+                .collect { config ->
+                    Log.d("U_TEST", "onContent changed: $config")
+                    _uiState.update { it.resetState() }
+                    initFeeds()
+                }
+        }
+        launchInViewModel {
             initFeeds()
         }
     }
@@ -75,8 +85,10 @@ class MixedContentSubViewModel(
      * 先获取本地，然后获取服务端。
      */
     private fun initFeeds() {
-        val sourceList = mixedContent?.sourceUriList ?: return
+        if (_uiState.value.initializing) return
         launchInViewModel {
+            mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
+            val sourceList = mixedContent?.sourceUriList ?: return@launchInViewModel
             _uiState.value = _uiState.value.copy(
                 initializing = true,
                 initErrorMessage = null,
@@ -160,9 +172,7 @@ class MixedContentSubViewModel(
         if (feeds.isEmpty()) return
         val sourceList = mixedContent?.sourceUriList ?: return
         launchInViewModel {
-            _uiState.update {
-                it.copy(loadMoreState = LoadState.Loading)
-            }
+            _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
             feedsRepo.getStatus(
                 sourceList,
                 limit = config.loadFromServerLimit,
@@ -173,7 +183,7 @@ class MixedContentSubViewModel(
             }.onSuccess { list ->
                 _uiState.update {
                     it.copy(
-                        loadMoreState = LoadState.Loading,
+                        loadMoreState = LoadState.Idle,
                         feeds = it.feeds.toMutableList().apply {
                             addAllIgnoreDuplicate(list.map(buildStatusUiState::invoke))
                         },
@@ -182,7 +192,7 @@ class MixedContentSubViewModel(
             }.onFailure { e ->
                 _uiState.update {
                     it.copy(
-                        loadMoreState = LoadState.Failed(e),
+                        loadMoreState = LoadState.Failed(e.toTextStringOrNull()),
                     )
                 }
             }

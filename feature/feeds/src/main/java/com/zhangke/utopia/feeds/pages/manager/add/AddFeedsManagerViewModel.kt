@@ -73,17 +73,15 @@ internal class AddFeedsManagerViewModel @AssistedInject constructor(
         }
     }
 
-    fun onAddSources(uriList: List<FormalUri>) {
+    fun onAddSource(uri: FormalUri) {
         launchInViewModel {
             val sourceList = mutableListOf<StatusSource>()
             sourceList.addAll(viewModelState.value.sourceList)
-            uriList.forEach { uri ->
-                statusProvider.statusSourceResolver.resolveSourceByUri(uri)
-                    .onSuccess { source ->
-                        source?.takeIf { item -> !sourceList.container { it.uri == item.uri } }
-                            ?.let { sourceList += it }
-                    }
-            }
+            statusProvider.statusSourceResolver.resolveSourceByUri(uri)
+                .onSuccess { source ->
+                    source?.takeIf { item -> !sourceList.container { it.uri == item.uri } }
+                        ?.let { sourceList += it }
+                }
             viewModelState.update {
                 it.copy(sourceList = sourceList)
             }

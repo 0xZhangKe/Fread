@@ -64,12 +64,13 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccount {
         val webFinger = accountToWebFinger(account)
         val emojis = account.emojis.map(emojiEntityAdapter::toEmoji)
+        val baseUrl = FormalBaseUrl.parse(account.url)!!
         return ActivityPubLoggedAccount(
             userId = account.id,
-            uri = userUriTransformer.build(webFinger, FormalBaseUrl.parse(account.url)!!),
+            uri = userUriTransformer.build(webFinger, baseUrl),
             webFinger = webFinger,
-            platform = instanceAdapter.toPlatform(instance),
-            baseUrl = FormalBaseUrl.parse(instance.domain)!!,
+            platform = instanceAdapter.toPlatform(baseUrl, instance),
+            baseUrl = baseUrl,
             name = account.displayName,
             description = mapCustomEmoji(account.note, emojis),
             avatar = account.avatar,

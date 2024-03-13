@@ -18,12 +18,4 @@ class RssStatusRepo @Inject constructor(
                 items.map { rssStatusAdapter.toStatus(uriInsight, source, it) }
             }
     }
-
-    suspend fun checkIsFirstStatus(uriInsight: RssUriInsight, status: Status): Result<Boolean> {
-        return getStatus(uriInsight)
-            .map { statusList ->
-                val index = statusList.indexOfFirst { it.id == status.id }
-                index < 0 || index == statusList.lastIndex
-            }
-    }
 }

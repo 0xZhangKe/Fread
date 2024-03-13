@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -23,35 +24,38 @@ fun StatusPlaceHolder(
         val (avatarRef, nameRef, descRef, contentRef) = createRefs()
         Box(
             modifier = Modifier
+                .clip(CircleShape)
                 .constrainAs(avatarRef) {
                     top.linkTo(parent.top, margin = 8.dp)
                     start.linkTo(parent.start, 16.dp)
                     width = Dimension.value(StatusInfoStyleDefaults.avatarSize)
                     height = Dimension.value(StatusInfoStyleDefaults.avatarSize)
                 }
-                .clip(CircleShape)
                 .utopiaPlaceholder(true),
         )
         Box(
             modifier = Modifier
+                .height(16.dp)
                 .constrainAs(nameRef) {
-                    top.linkTo(avatarRef.top)
-                    start.linkTo(avatarRef.end, margin = StatusInfoStyleDefaults.avatarToNamePadding)
+                    top.linkTo(parent.top, 4.dp)
+                    start.linkTo(avatarRef.end, StatusInfoStyleDefaults.avatarToNamePadding)
                     width = Dimension.value(100.dp)
                 }
-                .utopiaPlaceholder(true)
+                .utopiaPlaceholder(true),
         )
         Box(
             modifier = Modifier
+                .height(12.dp)
                 .constrainAs(descRef) {
-                    top.linkTo(nameRef.bottom, margin = StatusInfoStyleDefaults.nameToTimePadding)
+                    top.linkTo(nameRef.bottom, StatusInfoStyleDefaults.nameToTimePadding)
                     start.linkTo(nameRef.start)
                     width = Dimension.value(200.dp)
                 }
-                .utopiaPlaceholder(true)
+                .utopiaPlaceholder(true),
         )
         Column(
             modifier = Modifier.constrainAs(contentRef) {
+                top.linkTo(descRef.bottom, 4.dp)
                 start.linkTo(nameRef.start)
                 end.linkTo(parent.end, 16.dp)
                 bottom.linkTo(parent.bottom, 8.dp)
@@ -64,7 +68,7 @@ fun StatusPlaceHolder(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 4.dp)
-                        .height(18.dp)
+                        .height(14.dp)
                         .utopiaPlaceholder(true),
                 )
             }

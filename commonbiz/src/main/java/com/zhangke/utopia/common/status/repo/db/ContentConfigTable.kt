@@ -41,6 +41,9 @@ interface ContentConfigDao {
     @Query("SELECT * FROM $TABLE_NAME ORDER BY `order` ASC")
     fun queryAllContentConfigFlow(): Flow<List<ContentConfigEntity>>
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE id=:id")
+    fun getContentConfigFlow(id: Long): Flow<ContentConfigEntity>
+
     @Query("SELECT * FROM $TABLE_NAME WHERE name=:name")
     suspend fun queryByName(name: String): ContentConfigEntity?
 

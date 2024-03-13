@@ -1,5 +1,6 @@
 package com.zhangke.utopia.common.status.usecase
 
+import android.util.Log
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
@@ -25,6 +26,7 @@ internal class RefreshStatusUseCase @Inject constructor(
         sourceUriList: List<FormalUri>,
         limit: Int,
     ): Result<RefreshResult> {
+        Log.d("U_TEST", "Status Refresh, sourceUriList: $sourceUriList, limit: $limit.")
         val resultList = sourceUriList.map {
             getStatus(it, limit)
         }
@@ -62,7 +64,7 @@ internal class RefreshStatusUseCase @Inject constructor(
             // 本地无数据
             newEntities.addAll(entities)
         } else {
-            val localInNewIndex = newEntities.indexOfFirst {
+            val localInNewIndex = entities.indexOfFirst {
                 it.id == localRecentStatus.id
             }
             if (localInNewIndex < 0) {
@@ -72,7 +74,7 @@ internal class RefreshStatusUseCase @Inject constructor(
                 deleteEntities.addAll(allDeletedList)
             } else {
                 // 新数据与本地数据有重合，清除本地数据重复部分，然后插入全部新数据
-                val repeatedList = newEntities.subList(localInNewIndex, newEntities.size)
+                val repeatedList = entities.subList(localInNewIndex, entities.size)
                 deleteEntities.addAll(repeatedList)
             }
             // 按照上面重合数据的替换逻辑，即使是在部分重合的情况下，新增数据仍然是全部。

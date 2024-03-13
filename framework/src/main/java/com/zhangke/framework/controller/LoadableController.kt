@@ -2,6 +2,7 @@ package com.zhangke.framework.controller
 
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.utils.LoadState
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
@@ -125,7 +126,7 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
                     }
                 }.onFailure { e ->
                     mutableUiState.update {
-                        it.copyObject(loadMoreState = LoadState.Failed(e))
+                        it.copyObject(loadMoreState = LoadState.Failed(e.toTextStringOrNull()))
                     }
                 }
         }

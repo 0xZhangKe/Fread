@@ -53,7 +53,6 @@ fun BlogContent(
                     .wrapContentHeight()
                     .padding(start = 15.dp, end = 15.dp, top = 8.dp),
                 richText = blog.humanizedSpoilerText,
-                maxLines = style.contentMaxLine,
                 // todo font size
 //                style = style,
             )

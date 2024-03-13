@@ -26,7 +26,9 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.applyNestedScrollConnection
+import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.voyager.tryPush
@@ -75,8 +77,12 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
-        if (uiState.feeds.isEmpty() && uiState.initializing) {
-            InitializingContent()
+        if (uiState.feeds.isEmpty()) {
+            if (uiState.initializing) {
+                InitializingContent()
+            } else if (uiState.initErrorMessage != null) {
+                InitErrorContent(uiState.initErrorMessage)
+            }
         } else {
             val state = rememberLoadableInlineVideoLazyColumnState(
                 refreshing = uiState.refreshing,
@@ -114,15 +120,27 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
     }
 
     @Composable
+    private fun InitErrorContent(errorMessage: TextString) {
+        Box(modifier = Modifier.fillMaxSize()) {
+            Text(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 56.dp, end = 16.dp),
+                text = textString(text = errorMessage),
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+
+    @Composable
     private fun InitializingContent() {
         Box(modifier = Modifier.fillMaxSize()) {
             Column(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 Box(modifier = Modifier.height(16.dp))
-                repeat(5) {
+                repeat(10) {
                     StatusPlaceHolder(modifier = Modifier.fillMaxWidth())
-                    BlogDivider()
                 }
             }
         }

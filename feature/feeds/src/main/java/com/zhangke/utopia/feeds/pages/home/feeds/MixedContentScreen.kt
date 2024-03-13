@@ -37,7 +37,6 @@ import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.BlogDivider
 import com.zhangke.utopia.status.ui.StatusPlaceHolder
 
 class MixedContentScreen(private val configId: Long) : PagerTab {
@@ -95,7 +94,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                     .applyNestedScrollConnection(nestedScrollConnection),
                 state = state,
                 refreshing = uiState.refreshing,
-                loading = uiState.loadMoreState.loading,
+                loadState = uiState.loadMoreState,
                 contentPadding = PaddingValues(
                     bottom = 20.dp,
                 )
@@ -138,9 +137,9 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             Column(
                 modifier = Modifier.fillMaxSize(),
             ) {
-                Box(modifier = Modifier.height(16.dp))
-                repeat(10) {
+                repeat(8) {
                     StatusPlaceHolder(modifier = Modifier.fillMaxWidth())
+                    Box(modifier = Modifier.height(6.dp))
                 }
             }
         }

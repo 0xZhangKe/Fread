@@ -24,9 +24,15 @@ class ContentConfigRepo @Inject constructor(
     }
 
     fun getAllConfigFlow(): Flow<List<ContentConfig>> {
-        return contentConfigDao.queryAllContentConfigFlow().map {
-            it.map { it.toContentConfig() }
-        }
+        return contentConfigDao.queryAllContentConfigFlow()
+            .map { list ->
+                list.map { it.toContentConfig() }
+            }
+    }
+
+    fun getConfigFlow(id: Long): Flow<ContentConfig> {
+        return contentConfigDao.getContentConfigFlow(id)
+            .map { it.toContentConfig() }
     }
 
     suspend fun getConfigById(id: Long): ContentConfig? {

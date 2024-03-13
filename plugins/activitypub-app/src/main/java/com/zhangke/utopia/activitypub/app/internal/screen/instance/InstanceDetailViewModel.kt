@@ -22,7 +22,6 @@ class InstanceDetailViewModel @Inject constructor(
 ) : ViewModel() {
 
     lateinit var serverBaseUrl: FormalBaseUrl
-    var addable: Boolean = false
 
     private val _uiState = MutableStateFlow(
         InstanceDetailUiState(
@@ -43,7 +42,7 @@ class InstanceDetailViewModel @Inject constructor(
     fun onPrepared() {
         _uiState.value = _uiState.value.copy(
             loading = true,
-            addable = addable,
+            addable = false,
             baseUrl = serverBaseUrl
         )
         launchInViewModel {
@@ -59,7 +58,7 @@ class InstanceDetailViewModel @Inject constructor(
         val instance = _uiState.value.instance ?: return
         launchInViewModel {
             if (accountManager.getAllLoggedAccount().isEmpty()) {
-                _openLoginFlow.emit(listOf(instanceAdapter.toPlatform(instance)))
+                _openLoginFlow.emit(listOf(instanceAdapter.toPlatform(serverBaseUrl, instance)))
             } else {
                 emitCurrentContentConfigFlow()
             }

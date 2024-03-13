@@ -29,15 +29,6 @@ class StatusResolver(
         return Result.failure(IllegalArgumentException("Unsupported uri:$uri!"))
     }
 
-    /**
-     * check this status is the first status of this source
-     */
-    suspend fun checkIsFirstStatus(status: Status): Result<Boolean> {
-        return resolverList.mapFirst {
-            it.checkIsFirstStatus(status)
-        }
-    }
-
     suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status> {
         return resolverList.mapFirst { it.interactive(status, interaction) }
     }
@@ -62,8 +53,6 @@ interface IStatusResolver {
         sinceId: String?,
         maxId: String?
     ): Result<List<Status>>?
-
-    suspend fun checkIsFirstStatus(status: Status): Result<Boolean>?
 
     suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status>?
 

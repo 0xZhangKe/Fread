@@ -16,4 +16,8 @@
     <string name="duration_week">周</string>
 
     <string name="duration_selector_title">设置时长</string>
+
+    <string name="retry">重试</string>
+
+    <string name="load_more_error">哦！加载失败</string>
 </resources>

@@ -4,7 +4,6 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdap
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusContextUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.IsUserFirstStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
@@ -18,7 +17,6 @@ import javax.inject.Inject
 class ActivityPubStatusResolver @Inject constructor(
     private val getUserStatus: GetUserStatusUseCase,
     private val userUriTransformer: UserUriTransformer,
-    private val isUserFirstStatus: IsUserFirstStatusUseCase,
     private val statusInteractive: StatusInteractiveUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val getStatusContextUseCase: GetStatusContextUseCase,
@@ -41,10 +39,6 @@ class ActivityPubStatusResolver @Inject constructor(
             )
         }
         return null
-    }
-
-    override suspend fun checkIsFirstStatus(status: Status): Result<Boolean>? {
-        return isUserFirstStatus(status)
     }
 
     override suspend fun interactive(

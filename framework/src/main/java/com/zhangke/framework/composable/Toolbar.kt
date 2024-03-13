@@ -13,6 +13,7 @@ import androidx.compose.material3.TopAppBarDefaults.topAppBarColors
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -49,6 +50,8 @@ fun Toolbar(
             Text(
                 text = title,
                 fontSize = 18.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         },
         colors = topAppBarColors(),

@@ -8,8 +8,10 @@ import com.zhangke.utopia.common.status.usecase.previous.GetPreviousStatusUseCas
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -28,13 +30,15 @@ class FeedsRepo @Inject internal constructor(
     private val _feedsInfoChangedFlow = MutableSharedFlow<Unit>()
     val feedsInfoChangedFlow = _feedsInfoChangedFlow.asSharedFlow()
 
-    suspend fun onAppCreate() {
-        statusProvider.statusSourceResolver
-            .getAuthorUpdateFlow()
-            .collect {
-                statusContentRepo.updateAuthor(it)
-                _feedsInfoChangedFlow.emit(Unit)
-            }
+    fun onAppCreate(coroutineScope: CoroutineScope) {
+        coroutineScope.launch {
+            statusProvider.statusSourceResolver
+                .getAuthorUpdateFlow()
+                .collect {
+                    statusContentRepo.updateAuthor(it)
+                    _feedsInfoChangedFlow.emit(Unit)
+                }
+        }
     }
 
     suspend fun getLocalFirstPageStatus(

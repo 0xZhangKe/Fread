@@ -93,7 +93,7 @@ class SearchedStatusTab(private val query: String) : PagerTab {
                 .applyNestedScrollConnection(nestedScrollConnection),
             state = state,
             refreshing = uiState.refreshing,
-            loading = uiState.loadMoreState == LoadState.Loading,
+            loadState = uiState.loadMoreState,
         ) {
             itemsIndexed(uiState.dataList) { index, item ->
                 FeedsStatusNode(

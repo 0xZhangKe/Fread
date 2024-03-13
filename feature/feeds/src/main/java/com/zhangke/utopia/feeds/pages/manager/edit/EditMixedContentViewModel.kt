@@ -67,22 +67,20 @@ internal class EditMixedContentViewModel @AssistedInject constructor(
         }
     }
 
-    fun onAddSources(uriList: List<FormalUri>) {
+    fun onAddSource(uri: FormalUri) {
         launchInViewModel {
             val sourceList = _uiState.value.requireSuccessData().sourceList.toMutableList()
-            val sourceUriList = sourceList.map { it.uri }
-            uriList.filter { sourceUriList.contains(it).not() }
-                .forEach { uri ->
-                    statusProvider.statusSourceResolver.resolveSourceByUri(uri)
-                        .onSuccess { source ->
-                            source?.let {
-                                statusSourceUiStateAdapter.adapt(
-                                    source = it,
-                                    addEnabled = true,
-                                    removeEnabled = false
-                                )
-                            }?.let { sourceList += it }
-                        }
+            sourceList.map { it.uri }
+            if (sourceList.any { it.uri == uri }) return@launchInViewModel
+            statusProvider.statusSourceResolver.resolveSourceByUri(uri)
+                .onSuccess { source ->
+                    source?.let {
+                        statusSourceUiStateAdapter.adapt(
+                            source = it,
+                            addEnabled = true,
+                            removeEnabled = false
+                        )
+                    }?.let { sourceList += it }
                 }
             configRepo.updateSourceList(configId, sourceList.map { it.uri })
             loadFeedsDetail()

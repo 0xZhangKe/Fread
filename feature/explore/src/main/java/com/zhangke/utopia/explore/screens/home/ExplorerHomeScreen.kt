@@ -1,15 +1,18 @@
 package com.zhangke.utopia.explore.screens.home
 
-import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.utopia.explore.screens.home.tab.ExplorerTab
 import com.zhangke.utopia.explore.screens.search.bar.ExplorerSearchBar
 
 class ExplorerHomeScreen : Screen {
@@ -31,12 +34,16 @@ class ExplorerHomeScreen : Screen {
                 SnackbarHost(snackbarHostState)
             }
         ) { paddingValues ->
-            Box(
+            Column(
                 modifier = Modifier
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
                 ExplorerSearchBar()
+                val tabs = remember {
+                    listOf(ExplorerTab())
+                }
+                HorizontalPagerWithTab(tabList = tabs)
             }
         }
     }

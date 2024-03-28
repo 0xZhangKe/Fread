@@ -1,4 +1,4 @@
 package com.zhangke.utopia.explore.screens.home
 
-class ExplorerUiState {
+class ExplorerHomeUiState {
 }

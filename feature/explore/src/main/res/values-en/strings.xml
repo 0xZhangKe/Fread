@@ -7,4 +7,8 @@
     <string name="explorer_search_tab_title_status">Status</string>
     <string name="explorer_search_tab_title_hashtag">Hashtags</string>
     <string name="explorer_search_tab_title_server">Server</string>
+
+    <string name="explorer_tab_status_title">Posts</string>
+    <string name="explorer_tab_users_title">Users</string>
+    <string name="explorer_tab_hashtag_title">Hashtags</string>
 </resources>

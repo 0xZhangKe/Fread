@@ -12,14 +12,14 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.utopia.explore.screens.home.tab.ExplorerTab
+import com.zhangke.utopia.explore.screens.home.tab.ExplorerFeedsTab
 import com.zhangke.utopia.explore.screens.search.bar.ExplorerSearchBar
 
 class ExplorerHomeScreen : Screen {
 
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<ExplorerViewModel>()
+        val viewModel = getViewModel<ExplorerHomeViewModel>()
 
         ExplorerHomeContent()
     }
@@ -41,7 +41,7 @@ class ExplorerHomeScreen : Screen {
             ) {
                 ExplorerSearchBar()
                 val tabs = remember {
-                    listOf(ExplorerTab())
+                    listOf(ExplorerFeedsTab())
                 }
                 HorizontalPagerWithTab(tabList = tabs)
             }

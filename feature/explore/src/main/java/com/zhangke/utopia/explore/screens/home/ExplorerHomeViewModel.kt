@@ -3,8 +3,8 @@ package com.zhangke.utopia.explore.screens.home
 import androidx.lifecycle.ViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 
-class ExplorerViewModel: ViewModel() {
+class ExplorerHomeViewModel: ViewModel() {
 
-    private val _uiState = MutableStateFlow(ExplorerUiState())
+    private val _uiState = MutableStateFlow(ExplorerHomeUiState())
 
 }

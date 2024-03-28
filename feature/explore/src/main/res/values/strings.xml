@@ -7,4 +7,8 @@
     <string name="explorer_search_tab_title_status">帖子</string>
     <string name="explorer_search_tab_title_hashtag">标签</string>
     <string name="explorer_search_tab_title_server">服务器</string>
+
+    <string name="explorer_tab_status_title">帖子</string>
+    <string name="explorer_tab_users_title">用户</string>
+    <string name="explorer_tab_hashtag_title">话题</string>
 </resources>

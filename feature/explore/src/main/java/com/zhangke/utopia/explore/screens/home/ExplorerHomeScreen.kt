@@ -40,10 +40,10 @@ class ExplorerHomeScreen : Screen {
                     .fillMaxSize()
             ) {
                 ExplorerSearchBar()
-                val tabs = remember {
-                    listOf(ExplorerFeedsTab())
-                }
-                HorizontalPagerWithTab(tabList = tabs)
+//                val tabs = remember {
+//                    listOf(ExplorerFeedsTab())
+//                }
+//                HorizontalPagerWithTab(tabList = tabs)
             }
         }
     }

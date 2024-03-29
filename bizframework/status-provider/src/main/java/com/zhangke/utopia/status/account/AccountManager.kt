@@ -2,6 +2,7 @@ package com.zhangke.utopia.status.account
 
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow

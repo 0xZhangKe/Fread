@@ -4,7 +4,9 @@ import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.repo.RssStatusRepo
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -65,5 +67,13 @@ class RssStatusResolver @Inject constructor(
                 descendants = emptyList(),
             )
         )
+    }
+
+    override suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>>? {
+        return null
+    }
+
+    override suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>? {
+        return null
     }
 }

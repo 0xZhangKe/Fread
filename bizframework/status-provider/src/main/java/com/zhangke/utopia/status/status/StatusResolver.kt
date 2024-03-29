@@ -1,7 +1,9 @@
 package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.collections.mapFirst
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
 import com.zhangke.utopia.status.status.model.StatusInteraction
@@ -40,6 +42,16 @@ class StatusResolver(
     suspend fun getStatusContext(status: Status): Result<StatusContext> {
         return resolverList.mapFirst { it.getStatusContext(status) }
     }
+
+    suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>> {
+        return resolverList.mapFirst {
+            it.getSuggestionAccounts(uri)
+        }
+    }
+
+    suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>> {
+        return resolverList.mapFirst { it.getHashtag(userUri, limit, offset) }
+    }
 }
 
 interface IStatusResolver {
@@ -59,4 +71,8 @@ interface IStatusResolver {
     suspend fun votePoll(status: Status, votedOption: List<BlogPoll.Option>): Result<Status>?
 
     suspend fun getStatusContext(status: Status): Result<StatusContext>?
+
+    suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>>?
+
+    suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>?
 }

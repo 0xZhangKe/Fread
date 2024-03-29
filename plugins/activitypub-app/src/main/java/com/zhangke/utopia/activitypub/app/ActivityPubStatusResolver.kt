@@ -1,12 +1,17 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
+import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusContextUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.VotePollUseCase
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -15,12 +20,15 @@ import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubStatusResolver @Inject constructor(
+    private val clientManager: ActivityPubClientManager,
     private val getUserStatus: GetUserStatusUseCase,
     private val userUriTransformer: UserUriTransformer,
     private val statusInteractive: StatusInteractiveUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val getStatusContextUseCase: GetStatusContextUseCase,
     private val votePoll: VotePollUseCase,
+    private val hashtagAdapter: ActivityPubTagAdapter,
+    private val accountAdapter: ActivityPubAccountEntityAdapter,
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
@@ -67,5 +75,21 @@ class ActivityPubStatusResolver @Inject constructor(
 
     private fun Status.notThisPlatform(): Boolean {
         return this.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID
+    }
+
+    override suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>>? {
+        val uriInsights = userUriTransformer.parse(uri) ?: return null
+        return clientManager.getClient(uriInsights.baseUrl)
+            .accountRepo
+            .getSuggestions()
+            .map { list -> list.map { accountAdapter.toAuthor(it.accountEntity) } }
+    }
+
+    override suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>? {
+        val uriInsights = userUriTransformer.parse(userUri) ?: return null
+        return clientManager.getClient(uriInsights.baseUrl)
+            .instanceRepo
+            .getTrendsTags(limit = limit, offset = offset)
+            .map { list -> list.map { hashtagAdapter.adapt(it) } }
     }
 }

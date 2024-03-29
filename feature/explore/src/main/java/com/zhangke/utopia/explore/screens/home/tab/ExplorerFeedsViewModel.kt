@@ -36,7 +36,7 @@ class ExplorerFeedsViewModel(
     init {
 //        loadController.initData(
 //            getDataFromServer = {
-////                statusProvider.searchEngine.searchStatus("", null)
+//
 //            }
 //        )
     }

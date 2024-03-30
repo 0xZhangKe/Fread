@@ -52,6 +52,16 @@ class StatusResolver(
     suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>> {
         return resolverList.mapFirst { it.getHashtag(userUri, limit, offset) }
     }
+
+    suspend fun getPublicTimeline(
+        userUri: FormalUri,
+        limit: Int,
+        sinceId: String?,
+    ): Result<List<Status>> {
+        return resolverList.mapFirst {
+            it.getPublicTimeline(userUri, limit, sinceId)
+        }
+    }
 }
 
 interface IStatusResolver {
@@ -75,4 +85,10 @@ interface IStatusResolver {
     suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>>?
 
     suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>?
+
+    suspend fun getPublicTimeline(
+        userUri: FormalUri,
+        limit: Int,
+        sinceId: String?,
+    ): Result<List<Status>>?
 }

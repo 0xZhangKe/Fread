@@ -76,4 +76,12 @@ class RssStatusResolver @Inject constructor(
     override suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>? {
         return null
     }
+
+    override suspend fun getPublicTimeline(
+        userUri: FormalUri,
+        limit: Int,
+        sinceId: String?
+    ): Result<List<Status>>? {
+        return null
+    }
 }

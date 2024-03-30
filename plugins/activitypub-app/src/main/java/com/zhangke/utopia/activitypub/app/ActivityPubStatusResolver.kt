@@ -4,6 +4,7 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEnt
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusContextUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
@@ -29,6 +30,7 @@ class ActivityPubStatusResolver @Inject constructor(
     private val votePoll: VotePollUseCase,
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
+    private val platformRepo: ActivityPubPlatformRepo,
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
@@ -85,11 +87,31 @@ class ActivityPubStatusResolver @Inject constructor(
             .map { list -> list.map { accountAdapter.toAuthor(it.accountEntity) } }
     }
 
-    override suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>? {
+    override suspend fun getHashtag(
+        userUri: FormalUri,
+        limit: Int,
+        offset: Int
+    ): Result<List<Hashtag>>? {
         val uriInsights = userUriTransformer.parse(userUri) ?: return null
         return clientManager.getClient(uriInsights.baseUrl)
             .instanceRepo
             .getTrendsTags(limit = limit, offset = offset)
             .map { list -> list.map { hashtagAdapter.adapt(it) } }
+    }
+
+    override suspend fun getPublicTimeline(
+        userUri: FormalUri,
+        limit: Int,
+        sinceId: String?
+    ): Result<List<Status>>? {
+        val uriInsights = userUriTransformer.parse(userUri) ?: return null
+        val baseUrl = uriInsights.baseUrl
+        val platformResult = platformRepo.getPlatform(baseUrl)
+        if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
+        val platform = platformResult.getOrThrow()
+        return clientManager.getClient(baseUrl)
+            .timelinesRepo
+            .publicTimelines(limit = limit, sinceId = sinceId)
+            .map { list -> list.map { activityPubStatusAdapter.toStatus(it, platform) } }
     }
 }

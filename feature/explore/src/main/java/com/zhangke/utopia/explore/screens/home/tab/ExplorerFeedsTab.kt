@@ -8,9 +8,11 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.utopia.explore.R
+import com.zhangke.utopia.status.uri.FormalUri
 
 class ExplorerFeedsTab(
     private val type: ExplorerFeedsTabType,
+    private val accountUri: FormalUri,
 ) : PagerTab {
 
     override val options: PagerTabOptions
@@ -24,7 +26,7 @@ class ExplorerFeedsTab(
 
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
-        val viewModel = getViewModel<ExplorerFeedsContainerViewModel>().getSubViewModel(type)
+        val viewModel = getViewModel<ExplorerFeedsContainerViewModel>().getSubViewModel(type, accountUri)
 
     }
 }

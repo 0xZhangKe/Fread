@@ -6,9 +6,10 @@ import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 
 @HiltViewModel
-class ExplorerFeedsContainerViewModel(
+class ExplorerFeedsContainerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val interactiveHandler: InteractiveHandler,
     private val getExplorerItem: GetExplorerItemUseCase,

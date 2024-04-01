@@ -2,17 +2,24 @@ package com.zhangke.utopia.explore.screens.home.tab
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.account.LoggedAccount
+import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -38,6 +45,8 @@ class ExplorerFeedsViewModel(
 
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow.asSharedFlow()
+
+    private var _account: LoggedAccount? = null
 
     init {
         loadController.initData(
@@ -67,17 +76,69 @@ class ExplorerFeedsViewModel(
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
         launchInViewModel {
-            interactiveHandler.onStatusInteractive(status, uiInteraction)
-                .handle(
-                    uiStatusUpdater = { newStatusUiState ->
-                        loadController.mutableUiState.update {
-                            it.copy(dataList = it.dataList.updateStatus(newStatusUiState))
-                        }
-                    },
-                    messageFlow = _errorMessageFlow,
-                    openScreenFlow = _openScreenFlow,
-                )
+            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
         }
+    }
+
+    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        launchInViewModel {
+            interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
+        }
+    }
+
+    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
+        launchInViewModel { interactiveHandler.onVoted(status, options).handleResult() }
+    }
+
+    fun onHashtagClick(hashtag: Hashtag) {
+        launchInViewModel {
+            statusProvider.screenProvider.getTagTimelineScreenRoute(hashtag)
+                ?.let { KRouter.route<Screen>(it) }
+                ?.let { _openScreenFlow.emit(it) }
+        }
+    }
+
+    fun onFollowClick(blogAuthor: BlogAuthor) {
+        updateFollowRelationship(blogAuthor, true)
+    }
+
+    fun onUnfollowClick(blogAuthor: BlogAuthor) {
+        updateFollowRelationship(blogAuthor, false)
+    }
+
+    private fun updateFollowRelationship(
+        blogAuthor: BlogAuthor,
+        follow: Boolean,
+    ) {
+        launchInViewModel {
+            val account = getAccount() ?: return@launchInViewModel
+            val result = if (follow) {
+                interactiveHandler.onFollowClick(account, blogAuthor)
+            } else {
+                interactiveHandler.onUnfollowClick(account, blogAuthor)
+            }
+            result.onSuccess {
+                loadController.mutableUiState.update { state ->
+                    val dataList = state.dataList.map {
+                        if (it is ExplorerItem.ExplorerUser && it.user.uri == blogAuthor.uri) {
+                            it.copy(following = follow)
+                        } else {
+                            it
+                        }
+                    }
+                    state.copy(dataList = dataList)
+                }
+            }.onFailure { e ->
+                e.toTextStringOrNull()?.let { _errorMessageFlow.emit(it) }
+            }
+        }
+    }
+
+    private suspend fun getAccount(): LoggedAccount? {
+        val account = _account ?: statusProvider.accountManager.getAllLoggedAccount()
+            .firstOrNull { it.uri == accountUri }
+        _account = account
+        return account
     }
 
     private fun List<ExplorerItem>.updateStatus(newStatus: StatusUiState): List<ExplorerItem> {
@@ -90,10 +151,15 @@ class ExplorerFeedsViewModel(
         }
     }
 
-    private val ExplorerItem.id: String
-        get() = when (this) {
-            is ExplorerItem.ExplorerUser -> user.uri.toString()
-            is ExplorerItem.ExplorerHashtag -> hashtag.name
-            is ExplorerItem.ExplorerStatus -> status.status.id
-        }
+    private suspend fun InteractiveHandleResult.handleResult() {
+        this.handle(
+            uiStatusUpdater = { newStatusUiState ->
+                loadController.mutableUiState.update {
+                    it.copy(dataList = it.dataList.updateStatus(newStatusUiState))
+                }
+            },
+            messageFlow = _errorMessageFlow,
+            openScreenFlow = _openScreenFlow,
+        )
+    }
 }

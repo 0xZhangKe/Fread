@@ -4,6 +4,7 @@ import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.repo.RssStatusRepo
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
@@ -82,6 +83,14 @@ class RssStatusResolver @Inject constructor(
         limit: Int,
         sinceId: String?
     ): Result<List<Status>>? {
+        return null
+    }
+
+    override suspend fun follow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
+        return null
+    }
+
+    override suspend fun unfollow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
         return null
     }
 }

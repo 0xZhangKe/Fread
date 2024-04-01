@@ -10,6 +10,7 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.screen.StatusScreenProvider
@@ -73,6 +74,20 @@ class InteractiveHandler @Inject constructor(
         } else {
             InteractiveHandleResult.UpdateStatus(result.getOrThrow())
         }
+    }
+
+    suspend fun onFollowClick(
+        account: LoggedAccount,
+        target: BlogAuthor,
+    ): Result<Unit> {
+        return statusProvider.statusResolver.follow(account, target)
+    }
+
+    suspend fun onUnfollowClick(
+        account: LoggedAccount,
+        target: BlogAuthor,
+    ): Result<Unit> {
+        return statusProvider.statusResolver.unfollow(account, target)
     }
 }
 

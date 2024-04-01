@@ -1,15 +1,18 @@
 package com.zhangke.utopia.activitypub.app
 
+import com.zhangke.activitypub.api.AccountsRepo
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusContextUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.VotePollUseCase
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
@@ -31,6 +34,7 @@ class ActivityPubStatusResolver @Inject constructor(
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
+    private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
@@ -113,5 +117,41 @@ class ActivityPubStatusResolver @Inject constructor(
             .timelinesRepo
             .publicTimelines(limit = limit, sinceId = sinceId)
             .map { list -> list.map { activityPubStatusAdapter.toStatus(it, platform) } }
+    }
+
+    override suspend fun follow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
+        return updateRelationship(
+            account = account,
+            target = target,
+            updater = {
+                this.follow(it)
+            }
+        )
+    }
+
+    override suspend fun unfollow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
+        return updateRelationship(
+            account = account,
+            target = target,
+            updater = {
+                this.unfollow(it)
+            }
+        )
+    }
+
+    private suspend fun updateRelationship(
+        account: LoggedAccount,
+        target: BlogAuthor,
+        updater: suspend AccountsRepo.(userId: String) -> Result<*>,
+    ): Result<Unit>? {
+        if (!account.platform.protocol.isActivityPub) return null
+        val baseUrl = account.platform.baseUrl
+        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, baseUrl)
+        if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
+        val userId = userIdResult.getOrThrow()
+        return clientManager.getClient(baseUrl)
+            .accountRepo
+            .updater(userId)
+            .map {}
     }
 }

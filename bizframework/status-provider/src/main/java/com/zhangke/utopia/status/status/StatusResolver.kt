@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.collections.mapFirst
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
@@ -33,6 +34,20 @@ class StatusResolver(
 
     suspend fun interactive(status: Status, interaction: StatusInteraction): Result<Status> {
         return resolverList.mapFirst { it.interactive(status, interaction) }
+    }
+
+    suspend fun follow(
+        account: LoggedAccount,
+        target: BlogAuthor,
+    ): Result<Unit> {
+        return resolverList.mapFirst { it.follow(account, target) }
+    }
+
+    suspend fun unfollow(
+        account: LoggedAccount,
+        target: BlogAuthor,
+    ): Result<Unit> {
+        return resolverList.mapFirst { it.unfollow(account, target) }
     }
 
     suspend fun votePoll(status: Status, votedOption: List<BlogPoll.Option>): Result<Status> {
@@ -91,4 +106,14 @@ interface IStatusResolver {
         limit: Int,
         sinceId: String?,
     ): Result<List<Status>>?
+
+    suspend fun follow(
+        account: LoggedAccount,
+        target: BlogAuthor,
+    ): Result<Unit>?
+
+    suspend fun unfollow(
+        account: LoggedAccount,
+        target: BlogAuthor,
+    ): Result<Unit>?
 }

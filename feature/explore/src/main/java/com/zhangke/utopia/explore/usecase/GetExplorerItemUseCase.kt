@@ -29,7 +29,7 @@ class GetExplorerItemUseCase @Inject constructor(
                 if (offset > 0 || sinceId.isNotEmpty()) return Result.success(emptyList())
                 statusResolver
                     .getSuggestionAccounts(accountUri)
-                    .map { list -> list.map { ExplorerItem.ExplorerUser(it) } }
+                    .map { list -> list.map { ExplorerItem.ExplorerUser(it, false) } }
             }
             ExplorerFeedsTabType.HASHTAG -> {
                 statusResolver.getHashtag(

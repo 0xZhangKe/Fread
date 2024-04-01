@@ -8,6 +8,8 @@
     <string name="status_ui_share">分享</string>
     <string name="status_ui_bookmark">收藏</string>
     <string name="status_ui_reply">回复</string>
+    <string name="status_ui_follow">关注</string>
+    <string name="status_ui_unfollow">取消关注</string>
 
     <string name="status_ui_image_sensitive_label">敏感内容</string>
     <string name="status_ui_image_content_show_hidden_label">显示更多</string>

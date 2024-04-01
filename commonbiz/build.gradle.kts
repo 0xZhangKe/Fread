@@ -23,6 +23,9 @@ dependencies {
     implementation(project(path = ":bizframework:status-provider"))
 
     implementation(libs.bundles.kotlin)
+    implementation(libs.bundles.androidx.preference)
+    implementation(libs.bundles.androidx.datastore)
+
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)

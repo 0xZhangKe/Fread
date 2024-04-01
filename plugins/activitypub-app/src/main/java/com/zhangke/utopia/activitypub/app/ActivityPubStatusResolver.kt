@@ -84,7 +84,7 @@ class ActivityPubStatusResolver @Inject constructor(
         return clientManager.getClient(uriInsights.baseUrl)
             .accountRepo
             .getSuggestions()
-            .map { list -> list.map { accountAdapter.toAuthor(it.accountEntity) } }
+            .map { list -> list.map { accountAdapter.toAuthor(it.account) } }
     }
 
     override suspend fun getHashtag(

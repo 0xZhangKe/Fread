@@ -4,6 +4,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.utopia.status.account.LoggedAccount
 
 data class NotificationsHomeUiState(
-    val currentIndex: Int,
+    val selectedAccount: LoggedAccount? = null,
+    val accountList: List<LoggedAccount>,
     val accountToTabList: List<Pair<LoggedAccount, PagerTab>>,
 )

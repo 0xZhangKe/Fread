@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
+    <string name="notification_tab_title">Notifications</string>
     <string name="notifications_account_empty_tip">No logged-in account currently</string>
 </resources>

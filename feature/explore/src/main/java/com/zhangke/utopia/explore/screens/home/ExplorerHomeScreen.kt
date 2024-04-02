@@ -61,6 +61,9 @@ class ExplorerHomeScreen : Screen {
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
+            topBar = {
+
+            },
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
             }
@@ -88,7 +91,7 @@ class ExplorerHomeScreen : Screen {
                     )
                     if (selectedAccount != null) {
                         Spacer(modifier = Modifier.width(8.dp))
-                        AccountTitle(
+                        SelectAccountTopBar(
                             account = selectedAccount,
                             accountList = uiState.loggedAccountsList,
                             onAccountSelected = onAccountSelected,
@@ -126,7 +129,12 @@ class ExplorerHomeScreen : Screen {
     }
 
     @Composable
-    private fun AccountTitle(
+    private fun SearchTopBar(){
+
+    }
+
+    @Composable
+    private fun SelectAccountTopBar(
         account: LoggedAccount,
         accountList: List<LoggedAccount>,
         onAccountSelected: (LoggedAccount) -> Unit,

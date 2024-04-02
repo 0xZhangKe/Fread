@@ -23,7 +23,7 @@ class ExplorerHomeViewModel @Inject constructor(
 
     companion object {
 
-        private const val LATEST_SELECTED_ACCOUNT = "last_selected_account"
+        private const val LATEST_SELECTED_ACCOUNT = "explorer_tab_last_selected_account"
     }
 
     private val _uiState = MutableStateFlow(ExplorerHomeUiState(null, emptyList()))

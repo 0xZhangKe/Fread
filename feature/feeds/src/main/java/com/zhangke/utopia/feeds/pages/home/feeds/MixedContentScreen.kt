@@ -1,11 +1,9 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
@@ -37,7 +35,7 @@ import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.StatusPlaceHolder
+import com.zhangke.utopia.status.ui.StatusListPlaceholder
 
 class MixedContentScreen(private val configId: Long) : PagerTab {
 
@@ -78,7 +76,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
     ) {
         if (uiState.feeds.isEmpty()) {
             if (uiState.initializing) {
-                InitializingContent()
+                StatusListPlaceholder()
             } else if (uiState.initErrorMessage != null) {
                 InitErrorContent(uiState.initErrorMessage)
             }
@@ -128,20 +126,6 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                 text = textString(text = errorMessage),
                 textAlign = TextAlign.Center,
             )
-        }
-    }
-
-    @Composable
-    private fun InitializingContent() {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Column(
-                modifier = Modifier.fillMaxSize(),
-            ) {
-                repeat(8) {
-                    StatusPlaceHolder(modifier = Modifier.fillMaxWidth())
-                    Box(modifier = Modifier.height(6.dp))
-                }
-            }
         }
     }
 }

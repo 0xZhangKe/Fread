@@ -44,6 +44,7 @@ class ActivityPubNotificationsSubViewModel(
         initialUiState = ActivityPubNotificationsUiState(
             inMentionsTab = false,
             dataList = emptyList(),
+            initializing = false,
             refreshing = false,
             loadMoreState = LoadState.Idle,
             errorMessage = null,

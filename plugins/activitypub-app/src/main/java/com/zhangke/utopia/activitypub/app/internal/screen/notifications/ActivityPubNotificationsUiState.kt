@@ -12,6 +12,7 @@ import java.util.Date
 
 data class ActivityPubNotificationsUiState(
     val inMentionsTab: Boolean,
+    override val initializing: Boolean,
     override val dataList: List<NotificationUiState>,
     override val refreshing: Boolean,
     override val loadMoreState: LoadState,
@@ -20,12 +21,14 @@ data class ActivityPubNotificationsUiState(
 
     override fun copyObject(
         dataList: List<NotificationUiState>,
+        initializing: Boolean,
         refreshing: Boolean,
         loadMoreState: LoadState,
         errorMessage: TextString?
     ): ActivityPubNotificationsUiState {
         return copy(
             dataList = dataList,
+            initializing = initializing,
             refreshing = refreshing,
             loadMoreState = loadMoreState,
             errorMessage = errorMessage,

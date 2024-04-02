@@ -1,16 +1,26 @@
 package com.zhangke.utopia.explore.screens.home.tab
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -21,9 +31,11 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.explore.R
@@ -33,6 +45,7 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.RecommendAuthorUi
+import com.zhangke.utopia.status.ui.StatusListPlaceholder
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -87,38 +100,68 @@ class ExplorerFeedsTab(
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
         onUnfollowClick: (BlogAuthor) -> Unit,
     ) {
-        val state = rememberLoadableInlineVideoLazyColumnState(
-            refreshing = uiState.refreshing,
-            onRefresh = onRefresh,
-            onLoadMore = onLoadMore,
-        )
-        LoadableInlineVideoLazyColumn(
-            modifier = Modifier
-                .fillMaxSize(),
-            state = state,
-            refreshing = uiState.refreshing,
-            loadState = uiState.loadMoreState,
-            contentPadding = PaddingValues(
-                bottom = 20.dp,
+        val errorMessage = uiState.errorMessage?.let { textString(it) }
+        var containerHeight: Dp? by remember {
+            mutableStateOf(null)
+        }
+        val density = LocalDensity.current
+        if (uiState.initializing) {
+            StatusListPlaceholder()
+        } else {
+            val state = rememberLoadableInlineVideoLazyColumnState(
+                refreshing = uiState.refreshing,
+                onRefresh = onRefresh,
+                onLoadMore = onLoadMore,
             )
-        ) {
-            itemsIndexed(
-                items = uiState.dataList,
-                key = { _, item ->
-                    item.id
-                },
-            ) { index, item ->
-                ExplorerItemUi(
-                    modifier = Modifier.fillMaxWidth(),
-                    item = item,
-                    onUserInfoClick = onUserInfoClick,
-                    onInteractive = onInteractive,
-                    indexInList = index,
-                    onVoted = onVoted,
-                    onFollowClick = onFollowClick,
-                    onHashtagClick = onHashtagClick,
-                    onUnfollowClick = onUnfollowClick,
+            LoadableInlineVideoLazyColumn(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .onGloballyPositioned {
+                        containerHeight = it.size.height.pxToDp(density)
+                    },
+                state = state,
+                refreshing = uiState.refreshing,
+                loadState = uiState.loadMoreState,
+                contentPadding = PaddingValues(
+                    bottom = 20.dp,
                 )
+            ) {
+                itemsIndexed(
+                    items = uiState.dataList,
+                    key = { _, item -> item.id },
+                ) { index, item ->
+                    ExplorerItemUi(
+                        modifier = Modifier.fillMaxWidth(),
+                        item = item,
+                        onUserInfoClick = onUserInfoClick,
+                        onInteractive = onInteractive,
+                        indexInList = index,
+                        onVoted = onVoted,
+                        onFollowClick = onFollowClick,
+                        onHashtagClick = onHashtagClick,
+                        onUnfollowClick = onUnfollowClick,
+                    )
+                }
+
+                if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .run {
+                                    if (containerHeight != null) {
+                                        fillMaxWidth().height(containerHeight!!)
+                                    } else {
+                                        fillMaxSize()
+                                    }
+                                },
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = errorMessage,
+                            )
+                        }
+                    }
+                }
             }
         }
     }

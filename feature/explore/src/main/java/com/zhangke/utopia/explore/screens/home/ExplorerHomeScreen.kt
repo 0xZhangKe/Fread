@@ -1,6 +1,7 @@
 package com.zhangke.utopia.explore.screens.home
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -19,6 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -31,6 +33,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.HorizontalPagerWithTab
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.explore.R
@@ -78,13 +81,11 @@ class ExplorerHomeScreen : Screen {
                         style = MaterialTheme.typography.titleLarge,
                     )
                     Spacer(modifier = Modifier.weight(1F))
-
                     SimpleIconButton(
                         onClick = {},
                         imageVector = Icons.Default.Search,
                         contentDescription = "Search",
                     )
-
                     if (selectedAccount != null) {
                         Spacer(modifier = Modifier.width(8.dp))
                         AccountTitle(
@@ -95,25 +96,29 @@ class ExplorerHomeScreen : Screen {
                     }
                 }
                 if (selectedAccount != null) {
-                    val tabs = remember(selectedAccount) {
-                        listOf(
-                            ExplorerFeedsTab(
-                                type = ExplorerFeedsTabType.STATUS,
-                                accountUri = selectedAccount.uri,
-                            ),
-                            ExplorerFeedsTab(
-                                type = ExplorerFeedsTabType.HASHTAG,
-                                accountUri = selectedAccount.uri,
-                            ),
-                            ExplorerFeedsTab(
-                                type = ExplorerFeedsTabType.USERS,
-                                accountUri = selectedAccount.uri,
-                            ),
+                    CompositionLocalProvider(
+                        LocalSnackbarHostState provides snackbarHostState
+                    ) {
+                        val tabs = remember(selectedAccount) {
+                            listOf(
+                                ExplorerFeedsTab(
+                                    type = ExplorerFeedsTabType.STATUS,
+                                    accountUri = selectedAccount.uri,
+                                ),
+                                ExplorerFeedsTab(
+                                    type = ExplorerFeedsTabType.HASHTAG,
+                                    accountUri = selectedAccount.uri,
+                                ),
+                                ExplorerFeedsTab(
+                                    type = ExplorerFeedsTabType.USERS,
+                                    accountUri = selectedAccount.uri,
+                                ),
+                            )
+                        }
+                        HorizontalPagerWithTab(
+                            tabList = tabs,
                         )
                     }
-                    HorizontalPagerWithTab(
-                        tabList = tabs,
-                    )
                 }
 //                ExplorerSearchBar()
             }
@@ -129,39 +134,59 @@ class ExplorerHomeScreen : Screen {
         var selectAccountPopupExpanded by remember {
             mutableStateOf(false)
         }
-        Row(
-            modifier = Modifier.clickable {
-                selectAccountPopupExpanded = !selectAccountPopupExpanded
-            },
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            BlogAuthorAvatar(
-                modifier = Modifier.size(32.dp),
-                imageUrl = account.avatar,
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            Text(
-                text = account.userName,
-                style = MaterialTheme.typography.bodyLarge,
-            )
-            Spacer(modifier = Modifier.width(4.dp))
-            SimpleIconButton(
-                onClick = {
+        Box {
+            Row(
+                modifier = Modifier.clickable {
                     selectAccountPopupExpanded = !selectAccountPopupExpanded
                 },
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = "Select Account",
-            )
-        }
-        DropdownMenu(
-            expanded = selectAccountPopupExpanded,
-            onDismissRequest = { selectAccountPopupExpanded = false },
-        ) {
-            accountList.forEach {
-                DropdownMenuItem(
-                    text = { Text(text = it.userName) },
-                    onClick = { onAccountSelected(it) },
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                BlogAuthorAvatar(
+                    modifier = Modifier.size(32.dp),
+                    imageUrl = account.avatar,
                 )
+                Spacer(modifier = Modifier.width(4.dp))
+                Text(
+                    text = account.userName,
+                    style = MaterialTheme.typography.bodyLarge,
+                )
+                Spacer(modifier = Modifier.width(4.dp))
+                SimpleIconButton(
+                    onClick = {
+                        selectAccountPopupExpanded = !selectAccountPopupExpanded
+                    },
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = "Select Account",
+                )
+            }
+            DropdownMenu(
+                modifier = Modifier.align(Alignment.BottomEnd),
+                expanded = selectAccountPopupExpanded,
+                onDismissRequest = { selectAccountPopupExpanded = false },
+            ) {
+                accountList.forEach {
+                    DropdownMenuItem(
+                        text = {
+                            Row {
+                                Text(
+                                    modifier = Modifier.alignByBaseline(),
+                                    text = it.userName,
+                                )
+                                Text(
+                                    modifier = Modifier
+                                        .padding(start = 2.dp)
+                                        .alignByBaseline(),
+                                    text = "@${it.webFinger.host}",
+                                    style = MaterialTheme.typography.labelSmall,
+                                )
+                            }
+                        },
+                        onClick = {
+                            selectAccountPopupExpanded = false
+                            onAccountSelected(it)
+                        },
+                    )
+                }
             }
         }
     }

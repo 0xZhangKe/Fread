@@ -21,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -33,14 +32,12 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.notifications.StatusNotificationUi
-import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.StatusListPlaceholder
 
 class ActivityPubNotificationsScreen(
     private val userUriInsights: UserUriInsights,
@@ -90,37 +87,42 @@ class ActivityPubNotificationsScreen(
                 uiState = uiState,
                 onTabCheckedChange = onTabCheckedChange,
             )
-            val state = rememberLoadableInlineVideoLazyColumnState(
-                refreshing = uiState.refreshing,
-                onRefresh = onRefresh,
-                onLoadMore = onLoadMore,
-            )
-            LoadableInlineVideoLazyColumn(
-                state = state,
-                modifier = Modifier.fillMaxSize()
-                    .applyNestedScrollConnection(nestedScrollConnection),
-                refreshing = uiState.refreshing,
-                loadState = uiState.loadMoreState,
-                contentPadding = PaddingValues(
-                    bottom = 20.dp,
+            if (uiState.initializing) {
+                StatusListPlaceholder()
+            } else {
+                val state = rememberLoadableInlineVideoLazyColumnState(
+                    refreshing = uiState.refreshing,
+                    onRefresh = onRefresh,
+                    onLoadMore = onLoadMore,
                 )
-            ) {
-                itemsIndexed(
-                    items = uiState.dataList,
-                ) { index, notification ->
-                    StatusNotificationUi(
-                        modifier = Modifier.fillMaxWidth(),
-                        notification = notification,
-                        onInteractive = { _, interaction ->
-                            onInteractive(notification, interaction)
-                        },
-                        indexInList = index,
-                        onAcceptClick = onAcceptClick,
-                        onRejectClick = onRejectClick,
-                        onVoted = {
-                            onVoted(notification, it)
-                        },
+                LoadableInlineVideoLazyColumn(
+                    state = state,
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .applyNestedScrollConnection(nestedScrollConnection),
+                    refreshing = uiState.refreshing,
+                    loadState = uiState.loadMoreState,
+                    contentPadding = PaddingValues(
+                        bottom = 20.dp,
                     )
+                ) {
+                    itemsIndexed(
+                        items = uiState.dataList,
+                    ) { index, notification ->
+                        StatusNotificationUi(
+                            modifier = Modifier.fillMaxWidth(),
+                            notification = notification,
+                            onInteractive = { _, interaction ->
+                                onInteractive(notification, interaction)
+                            },
+                            indexInList = index,
+                            onAcceptClick = onAcceptClick,
+                            onRejectClick = onRejectClick,
+                            onVoted = {
+                                onVoted(notification, it)
+                            },
+                        )
+                    }
                 }
             }
         }

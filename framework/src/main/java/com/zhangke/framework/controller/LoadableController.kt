@@ -19,6 +19,8 @@ interface LoadableUiState<DATA, IMPL : LoadableUiState<DATA, IMPL>> {
 
     val dataList: List<DATA>
 
+    val initializing: Boolean
+
     val refreshing: Boolean
 
     val loadMoreState: LoadState
@@ -27,6 +29,7 @@ interface LoadableUiState<DATA, IMPL : LoadableUiState<DATA, IMPL>> {
 
     fun copyObject(
         dataList: List<DATA> = this.dataList,
+        initializing: Boolean = this.initializing,
         refreshing: Boolean = this.refreshing,
         loadMoreState: LoadState = this.loadMoreState,
         errorMessage: TextString? = this.errorMessage,
@@ -62,11 +65,17 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
         }
         initJob?.cancel()
         initJob = coroutineScope.launch {
+            mutableUiState.update {
+                it.copyObject(initializing = true)
+            }
             if (getDataFromLocal != null) {
                 val localData = getDataFromLocal()
                 if (localData.isNotEmpty()) {
                     mutableUiState.update {
-                        it.copyObject(dataList = localData)
+                        it.copyObject(
+                            dataList = localData,
+                            initializing = false,
+                        )
                     }
                 }
             }
@@ -95,6 +104,7 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
                 it.copyObject(
                     dataList = list,
                     refreshing = false,
+                    initializing = false,
                 )
             }
         }.onFailure { e ->
@@ -103,6 +113,7 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
                 it.copyObject(
                     errorMessage = errorMessage,
                     refreshing = false,
+                    initializing = false,
                 )
             }
         }

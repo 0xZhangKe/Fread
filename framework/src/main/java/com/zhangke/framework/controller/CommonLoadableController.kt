@@ -6,6 +6,7 @@ import kotlinx.coroutines.CoroutineScope
 
 data class CommonLoadableUiState<T>(
     override val dataList: List<T>,
+    override val initializing: Boolean,
     override val refreshing: Boolean,
     override val loadMoreState: LoadState,
     override val errorMessage: TextString?,
@@ -13,12 +14,14 @@ data class CommonLoadableUiState<T>(
 
     override fun copyObject(
         dataList: List<T>,
+        initializing: Boolean,
         refreshing: Boolean,
         loadMoreState: LoadState,
         errorMessage: TextString?
     ): CommonLoadableUiState<T> {
         return copy(
             dataList = dataList,
+            initializing = initializing,
             refreshing = refreshing,
             loadMoreState = loadMoreState,
             errorMessage = errorMessage,
@@ -32,6 +35,7 @@ class CommonLoadableController<T>(
     coroutineScope = coroutineScope,
     initialUiState = CommonLoadableUiState(
         dataList = emptyList(),
+        initializing = false,
         refreshing = false,
         loadMoreState = LoadState.Idle,
         errorMessage = null,

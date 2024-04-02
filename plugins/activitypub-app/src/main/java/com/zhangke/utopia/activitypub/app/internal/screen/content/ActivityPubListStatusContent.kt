@@ -26,13 +26,13 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.utils.LoadState
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubStatusUi
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.StatusListPlaceholder
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -45,62 +45,66 @@ internal fun ActivityPubListStatusContent(
     onVoted: (Status, List<BlogPoll.Option>) -> Unit,
     nestedScrollConnection: NestedScrollConnection? = null,
 ) {
-    val state = rememberLoadableInlineVideoLazyColumnState(
-        refreshing = uiState.refreshing,
-        onRefresh = onRefresh,
-        onLoadMore = onLoadMore,
-    )
-    canScrollBackward?.value = state.lazyListState.canScrollBackward
-    val errorMessage = uiState.errorMessage?.let { textString(it) }
-    var containerHeight: Dp? by remember {
-        mutableStateOf(null)
-    }
-    val density = LocalDensity.current
-    Box(modifier = Modifier.fillMaxSize()) {
-        LoadableInlineVideoLazyColumn(
-            state = state,
-            modifier = Modifier
-                .fillMaxSize()
-                .onGloballyPositioned {
-                    containerHeight = it.size.height.pxToDp(density)
-                }
-                .applyNestedScrollConnection(nestedScrollConnection),
+    if (uiState.initializing) {
+        StatusListPlaceholder()
+    } else {
+        val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
-            loadState = uiState.loadMoreState,
-            contentPadding = PaddingValues(
-                bottom = 20.dp,
-            )
-        ) {
-            itemsIndexed(
-                items = uiState.dataList,
-                key = { _, item ->
-                    item.status.id
-                },
-            ) { index, status ->
-                ActivityPubStatusUi(
-                    modifier = Modifier.fillMaxWidth(),
-                    status = status,
-                    onInteractive = onInteractive,
-                    indexInList = index,
-                    onVoted = onVoted,
+            onRefresh = onRefresh,
+            onLoadMore = onLoadMore,
+        )
+        canScrollBackward?.value = state.lazyListState.canScrollBackward
+        val errorMessage = uiState.errorMessage?.let { textString(it) }
+        var containerHeight: Dp? by remember {
+            mutableStateOf(null)
+        }
+        val density = LocalDensity.current
+        Box(modifier = Modifier.fillMaxSize()) {
+            LoadableInlineVideoLazyColumn(
+                state = state,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .onGloballyPositioned {
+                        containerHeight = it.size.height.pxToDp(density)
+                    }
+                    .applyNestedScrollConnection(nestedScrollConnection),
+                refreshing = uiState.refreshing,
+                loadState = uiState.loadMoreState,
+                contentPadding = PaddingValues(
+                    bottom = 20.dp,
                 )
-            }
-            if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {
-                item {
-                    Box(
-                        modifier = Modifier
-                            .run {
-                                if (containerHeight != null) {
-                                    fillMaxWidth().height(containerHeight!!)
-                                } else {
-                                    fillMaxSize()
-                                }
-                            },
-                    ) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = errorMessage,
-                        )
+            ) {
+                itemsIndexed(
+                    items = uiState.dataList,
+                    key = { _, item ->
+                        item.status.id
+                    },
+                ) { index, status ->
+                    ActivityPubStatusUi(
+                        modifier = Modifier.fillMaxWidth(),
+                        status = status,
+                        onInteractive = onInteractive,
+                        indexInList = index,
+                        onVoted = onVoted,
+                    )
+                }
+                if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {
+                    item {
+                        Box(
+                            modifier = Modifier
+                                .run {
+                                    if (containerHeight != null) {
+                                        fillMaxWidth().height(containerHeight!!)
+                                    } else {
+                                        fillMaxSize()
+                                    }
+                                },
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.Center),
+                                text = errorMessage,
+                            )
+                        }
                     }
                 }
             }

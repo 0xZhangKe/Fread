@@ -52,6 +52,7 @@ class ExplorerHomeViewModel @Inject constructor(
     }
 
     fun onAccountSelected(account: LoggedAccount) {
+        if (account.uri == uiState.value.selectedAccount?.uri) return
         launchInViewModel {
             updateLatestSelectedAccount(account.uri)
             _uiState.value = _uiState.value.copy(selectedAccount = account)

@@ -2,10 +2,10 @@ package com.zhangke.utopia.status.ui
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -71,6 +71,22 @@ fun StatusPlaceHolder(
                         .height(14.dp)
                         .utopiaPlaceholder(true),
                 )
+            }
+        }
+    }
+}
+
+@Composable
+fun StatusListPlaceholder(
+    modifier: Modifier = Modifier,
+) {
+    Box(modifier = modifier.fillMaxSize()) {
+        Column(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            repeat(8) {
+                StatusPlaceHolder(modifier = Modifier.fillMaxWidth())
+                Box(modifier = Modifier.height(6.dp))
             }
         }
     }

@@ -39,6 +39,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.explore.screens.home.tab.ExplorerFeedsTab
 import com.zhangke.utopia.explore.screens.home.tab.ExplorerFeedsTabType
+import com.zhangke.utopia.explore.screens.search.bar.ExplorerSearchBar
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
@@ -61,9 +62,6 @@ class ExplorerHomeScreen : Screen {
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
-            topBar = {
-
-            },
             snackbarHost = {
                 SnackbarHost(snackbarHostState)
             }
@@ -74,29 +72,14 @@ class ExplorerHomeScreen : Screen {
                     .fillMaxSize()
             ) {
                 val selectedAccount = uiState.selectedAccount
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    Text(
-                        modifier = Modifier.padding(16.dp),
-                        text = stringResource(R.string.explorer_tab_title),
-                        style = MaterialTheme.typography.titleLarge,
+                if (uiState.loggedAccountsList.size < 2 || selectedAccount == null) {
+                    ExplorerSearchBar()
+                } else {
+                    SelectAccountTopBar(
+                        account = uiState.selectedAccount,
+                        accountList = uiState.loggedAccountsList,
+                        onAccountSelected = onAccountSelected,
                     )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        onClick = {},
-                        imageVector = Icons.Default.Search,
-                        contentDescription = "Search",
-                    )
-                    if (selectedAccount != null) {
-                        Spacer(modifier = Modifier.width(8.dp))
-                        SelectAccountTopBar(
-                            account = selectedAccount,
-                            accountList = uiState.loggedAccountsList,
-                            onAccountSelected = onAccountSelected,
-                        )
-                    }
                 }
                 if (selectedAccount != null) {
                     CompositionLocalProvider(
@@ -123,14 +106,8 @@ class ExplorerHomeScreen : Screen {
                         )
                     }
                 }
-//                ExplorerSearchBar()
             }
         }
-    }
-
-    @Composable
-    private fun SearchTopBar(){
-
     }
 
     @Composable
@@ -142,58 +119,75 @@ class ExplorerHomeScreen : Screen {
         var selectAccountPopupExpanded by remember {
             mutableStateOf(false)
         }
-        Box {
-            Row(
-                modifier = Modifier.clickable {
-                    selectAccountPopupExpanded = !selectAccountPopupExpanded
-                },
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                BlogAuthorAvatar(
-                    modifier = Modifier.size(32.dp),
-                    imageUrl = account.avatar,
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                Text(
-                    text = account.userName,
-                    style = MaterialTheme.typography.bodyLarge,
-                )
-                Spacer(modifier = Modifier.width(4.dp))
-                SimpleIconButton(
-                    onClick = {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = stringResource(R.string.explorer_tab_title),
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.weight(1F))
+            SimpleIconButton(
+                onClick = {},
+                imageVector = Icons.Default.Search,
+                contentDescription = "Search",
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            Box {
+                Row(
+                    modifier = Modifier.clickable {
                         selectAccountPopupExpanded = !selectAccountPopupExpanded
                     },
-                    imageVector = Icons.Default.ArrowDropDown,
-                    contentDescription = "Select Account",
-                )
-            }
-            DropdownMenu(
-                modifier = Modifier.align(Alignment.BottomEnd),
-                expanded = selectAccountPopupExpanded,
-                onDismissRequest = { selectAccountPopupExpanded = false },
-            ) {
-                accountList.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Row {
-                                Text(
-                                    modifier = Modifier.alignByBaseline(),
-                                    text = it.userName,
-                                )
-                                Text(
-                                    modifier = Modifier
-                                        .padding(start = 2.dp)
-                                        .alignByBaseline(),
-                                    text = "@${it.webFinger.host}",
-                                    style = MaterialTheme.typography.labelSmall,
-                                )
-                            }
-                        },
-                        onClick = {
-                            selectAccountPopupExpanded = false
-                            onAccountSelected(it)
-                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    BlogAuthorAvatar(
+                        modifier = Modifier.size(32.dp),
+                        imageUrl = account.avatar,
                     )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Text(
+                        text = account.userName,
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    SimpleIconButton(
+                        onClick = {
+                            selectAccountPopupExpanded = !selectAccountPopupExpanded
+                        },
+                        imageVector = Icons.Default.ArrowDropDown,
+                        contentDescription = "Select Account",
+                    )
+                }
+                DropdownMenu(
+                    modifier = Modifier.align(Alignment.BottomEnd),
+                    expanded = selectAccountPopupExpanded,
+                    onDismissRequest = { selectAccountPopupExpanded = false },
+                ) {
+                    accountList.forEach {
+                        DropdownMenuItem(
+                            text = {
+                                Row {
+                                    Text(
+                                        modifier = Modifier.alignByBaseline(),
+                                        text = it.userName,
+                                    )
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(start = 2.dp)
+                                            .alignByBaseline(),
+                                        text = "@${it.webFinger.host}",
+                                        style = MaterialTheme.typography.labelSmall,
+                                    )
+                                }
+                            },
+                            onClick = {
+                                selectAccountPopupExpanded = false
+                                onAccountSelected(it)
+                            },
+                        )
+                    }
                 }
             }
         }

@@ -2,19 +2,14 @@ package com.zhangke.utopia.feeds.pages.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ArrowRightAlt
 import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.Button
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -35,10 +30,8 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -136,7 +129,7 @@ class ContentHomeScreen : Screen {
                                 onClick = {
                                     viewModel.switchPageIndex(uiState.currentPageIndex + 1)
                                 },
-                                imageVector = Icons.Default.ArrowRightAlt,
+                                imageVector = Icons.AutoMirrored.Filled.ArrowRightAlt,
                                 contentDescription = "Next Content"
                             )
                         },
@@ -154,18 +147,8 @@ class ContentHomeScreen : Screen {
                 }
             ) { paddingValues ->
                 if (uiState.contentConfigList.isEmpty()) {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        verticalArrangement = Arrangement.Center,
-                    ) {
-                        Text(text = "Please add content first")
-                        Box(modifier = Modifier.height(8.dp))
-                        Button(onClick = {
-                            navigator.push(PreAddFeedsScreen())
-                        }) {
-                            Text(text = "Add Content")
-                        }
+                    EmptyContent(modifier = Modifier.fillMaxSize()) {
+                        navigator.push(PreAddFeedsScreen())
                     }
                 } else {
                     val pagerState =

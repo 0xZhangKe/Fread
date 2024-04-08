@@ -13,6 +13,11 @@
     <string name="add_feeds_page_feeds_name_hint">Please enter the content name</string>
     <string name="add_feeds_page_feeds_empty">Please add a subscription source</string>
 
+    <string name="empty_content_hint_title">Please add some content first</string>
+    <string name="empty_content_hint_desc">You\'ll need to add some subscription sources first. Utopia supports a variety of content types and content from different platforms, enabling you to build your own information feed.</string>
+
+    <string name="feeds_add_content">Add Content</string>
+
     <string name="select_feeds_type_screen_title">Select Content Type</string>
 
     <string name="add_feeds_page_empty_name_tips">Please enter a name</string>

@@ -125,24 +125,28 @@ class ContentHomeScreen : Screen {
                             )
                         },
                         actions = {
-                            SimpleIconButton(
-                                onClick = {
-                                    viewModel.switchPageIndex(uiState.currentPageIndex + 1)
-                                },
-                                imageVector = Icons.AutoMirrored.Filled.ArrowRightAlt,
-                                contentDescription = "Next Content"
-                            )
+                            if (uiState.contentConfigList.isNotEmpty()) {
+                                SimpleIconButton(
+                                    onClick = {
+                                        viewModel.switchPageIndex(uiState.currentPageIndex + 1)
+                                    },
+                                    imageVector = Icons.AutoMirrored.Filled.ArrowRightAlt,
+                                    contentDescription = "Next Content"
+                                )
+                            }
                         },
                     )
                 },
                 floatingActionButton = {
-                    FloatingActionButton(
-                        onClick = viewModel::onPostStatusClick,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add",
-                        )
+                    if (uiState.accountList.isNotEmpty()) {
+                        FloatingActionButton(
+                            onClick = viewModel::onPostStatusClick,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Add,
+                                contentDescription = "Add",
+                            )
+                        }
                     }
                 }
             ) { paddingValues ->

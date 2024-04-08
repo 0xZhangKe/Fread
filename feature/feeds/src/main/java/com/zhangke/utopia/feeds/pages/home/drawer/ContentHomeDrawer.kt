@@ -29,6 +29,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.utopia.feeds.pages.home.EmptyContent
 import com.zhangke.utopia.status.model.ContentConfig
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -61,60 +62,64 @@ private fun ContentHomeDrawerContent(
     onEditClick: (ContentConfig) -> Unit,
 ) {
     Surface(modifier = Modifier.fillMaxSize()) {
-        Column(
-            modifier = Modifier.fillMaxSize()
-        ) {
-            var configListInUi by remember(contentConfigList) {
-                mutableStateOf(contentConfigList)
-            }
-            key(contentConfigList) {
-                val state = rememberReorderableLazyListState(
-                    onMove = { from, to ->
-                        if (contentConfigList.isEmpty()) return@rememberReorderableLazyListState
-                        configListInUi = configListInUi.toMutableList().apply {
-                            add(to.index, removeAt(from.index))
+        if (contentConfigList.isEmpty()) {
+            EmptyContent(Modifier.fillMaxSize(), onAddContentClick)
+        } else {
+            Column(
+                modifier = Modifier.fillMaxSize()
+            ) {
+                var configListInUi by remember(contentConfigList) {
+                    mutableStateOf(contentConfigList)
+                }
+                key(contentConfigList) {
+                    val state = rememberReorderableLazyListState(
+                        onMove = { from, to ->
+                            if (contentConfigList.isEmpty()) return@rememberReorderableLazyListState
+                            configListInUi = configListInUi.toMutableList().apply {
+                                add(to.index, removeAt(from.index))
+                            }
+                        },
+                        onDragEnd = { startIndex, endIndex ->
+                            onMove(startIndex, endIndex)
                         }
-                    },
-                    onDragEnd = { startIndex, endIndex ->
-                        onMove(startIndex, endIndex)
-                    }
-                )
-                LazyColumn(
-                    state = state.listState,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1F)
-                        .reorderable(state)
-                        .detectReorderAfterLongPress(state)
-                ) {
-                    itemsIndexed(
-                        items = configListInUi,
-                        key = { _, item -> item.hashCode() }
-                    ) { _, contentConfig ->
-                        ReorderableItem(state, contentConfig.hashCode()) { dragging ->
-                            val elevation =
-                                animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
-                            ContentConfigItem(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .shadow(elevation.value),
-                                contentConfig = contentConfig,
-                                onClick = { onContentConfigClick(contentConfig) },
-                                onEditClick = onEditClick,
-                            )
+                    )
+                    LazyColumn(
+                        state = state.listState,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1F)
+                            .reorderable(state)
+                            .detectReorderAfterLongPress(state)
+                    ) {
+                        itemsIndexed(
+                            items = configListInUi,
+                            key = { _, item -> item.hashCode() }
+                        ) { _, contentConfig ->
+                            ReorderableItem(state, contentConfig.hashCode()) { dragging ->
+                                val elevation =
+                                    animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
+                                ContentConfigItem(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .shadow(elevation.value),
+                                    contentConfig = contentConfig,
+                                    onClick = { onContentConfigClick(contentConfig) },
+                                    onEditClick = onEditClick,
+                                )
+                            }
                         }
                     }
                 }
-            }
 
 
-            Button(
-                modifier = Modifier
-                    .padding(vertical = 16.dp)
-                    .align(Alignment.CenterHorizontally),
-                onClick = onAddContentClick
-            ) {
-                Text(text = "Add")
+                Button(
+                    modifier = Modifier
+                        .padding(vertical = 16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    onClick = onAddContentClick
+                ) {
+                    Text(text = "Add")
+                }
             }
         }
     }

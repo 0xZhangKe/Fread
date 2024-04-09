@@ -111,6 +111,15 @@ class ExplorerHomeScreen : Screen {
     }
 
     @Composable
+    private fun SelectableAccountTopBar(
+        account: LoggedAccount,
+        accountList: List<LoggedAccount>,
+        onAccountSelected: (LoggedAccount) -> Unit,
+    ) {
+
+    }
+
+    @Composable
     private fun SelectAccountTopBar(
         account: LoggedAccount,
         accountList: List<LoggedAccount>,

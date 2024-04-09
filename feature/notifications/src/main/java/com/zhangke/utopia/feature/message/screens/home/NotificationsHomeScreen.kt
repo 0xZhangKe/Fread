@@ -1,7 +1,9 @@
 package com.zhangke.utopia.feature.message.screens.home
 
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +34,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -81,14 +86,26 @@ class NotificationsHomeScreen : Screen {
             },
         ) { paddings ->
             if (accountToTabList.isEmpty()) {
-                Box(
+                Column(
                     modifier = Modifier
                         .padding(paddings)
-                        .fillMaxSize()
+                        .fillMaxSize(),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.Center,
                 ) {
+                    Image(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 16.dp),
+                        contentScale = ContentScale.Inside,
+                        painter = painterResource(com.zhangke.utopia.commonbiz.R.drawable.illustration_message),
+                        contentDescription = null,
+                    )
+
                     Text(
-                        modifier = Modifier.align(Alignment.Center),
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
                         text = stringResource(R.string.notifications_account_empty_tip),
+                        textAlign = TextAlign.Center,
                     )
                 }
             } else {

@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_page_title">Profile</string>
+    <string name="profile_description">Utopia supports adding multiple accounts. The added accounts can be used to post, like, forward, comment, etc. You can also view the list created by the added accounts.</string>
 </resources>

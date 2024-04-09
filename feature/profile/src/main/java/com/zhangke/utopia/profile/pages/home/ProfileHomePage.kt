@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
@@ -15,6 +16,8 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -22,6 +25,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -86,6 +90,13 @@ class ProfileHomePage : Screen {
                 color = MaterialTheme.colorScheme.onBackground,
             )
 
+            Text(
+                modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp),
+                text = stringResource(R.string.profile_description),
+                style = MaterialTheme.typography.bodyMedium,
+                color = MaterialTheme.colorScheme.onBackground,
+            )
+
             LazyColumn(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -100,13 +111,16 @@ class ProfileHomePage : Screen {
                     )
                 }
             }
-            IconButton(
+            Button(
                 modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 16.dp),
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                    .fillMaxWidth()
+                    .height(56.dp),
                 onClick = onAddAccountClick,
+                colors = ButtonDefaults.textButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                ),
             ) {
-
                 Icon(
                     imageVector = Icons.Default.Add,
                     contentDescription = "Add Account"

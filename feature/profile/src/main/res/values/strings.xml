@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="profile_page_title">Profile</string>
+    <string name="profile_description">Utopia 支持添加多个账号，添加进来的账号可以用来发帖、点赞、转发、评论等操作，还可以查看已添加账号创建的列表。</string>
 </resources>

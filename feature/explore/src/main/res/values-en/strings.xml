@@ -3,6 +3,7 @@
 
     <string name="explorer_search_no_results">No results found</string>
     <string name="explorer_search_bar_hint">Search</string>
+    <string name="explorer_search_bar_hint_specialize_platform">Search in %s</string>
     <string name="explorer_search_tab_title_author">Accounts</string>
     <string name="explorer_search_tab_title_status">Status</string>
     <string name="explorer_search_tab_title_hashtag">Hashtags</string>

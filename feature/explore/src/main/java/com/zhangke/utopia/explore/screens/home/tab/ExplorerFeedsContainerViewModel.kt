@@ -35,6 +35,6 @@ class ExplorerFeedsContainerViewModel @Inject constructor(
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = type.name
+            get() = type.name + accountUri.toString()
     }
 }

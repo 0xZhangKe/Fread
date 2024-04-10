@@ -3,6 +3,7 @@
 
     <string name="explorer_search_no_results">未搜索到结果</string>
     <string name="explorer_search_bar_hint">搜索</string>
+    <string name="explorer_search_bar_hint_specialize_platform">搜索 %s</string>
     <string name="explorer_search_tab_title_author">用户</string>
     <string name="explorer_search_tab_title_status">帖子</string>
     <string name="explorer_search_tab_title_hashtag">标签</string>

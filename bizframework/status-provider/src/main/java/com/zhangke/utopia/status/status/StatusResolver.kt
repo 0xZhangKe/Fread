@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.status
 
 import com.zhangke.framework.collections.mapFirst
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
@@ -54,27 +55,27 @@ class StatusResolver(
         return resolverList.mapFirst { it.votePoll(status, votedOption) }
     }
 
-    suspend fun getStatusContext(status: Status): Result<StatusContext> {
-        return resolverList.mapFirst { it.getStatusContext(status) }
+    suspend fun getStatusContext(baseUrl: FormalBaseUrl, status: Status): Result<StatusContext> {
+        return resolverList.mapFirst { it.getStatusContext(baseUrl, status) }
     }
 
-    suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>> {
+    suspend fun getSuggestionAccounts(baseUrl: FormalBaseUrl): Result<List<BlogAuthor>> {
         return resolverList.mapFirst {
-            it.getSuggestionAccounts(uri)
+            it.getSuggestionAccounts(baseUrl)
         }
     }
 
-    suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>> {
-        return resolverList.mapFirst { it.getHashtag(userUri, limit, offset) }
+    suspend fun getHashtag(baseUrl: FormalBaseUrl, limit: Int, offset: Int): Result<List<Hashtag>> {
+        return resolverList.mapFirst { it.getHashtag(baseUrl, limit, offset) }
     }
 
     suspend fun getPublicTimeline(
-        userUri: FormalUri,
+        baseUrl: FormalBaseUrl,
         limit: Int,
         sinceId: String?,
     ): Result<List<Status>> {
         return resolverList.mapFirst {
-            it.getPublicTimeline(userUri, limit, sinceId)
+            it.getPublicTimeline(baseUrl, limit, sinceId)
         }
     }
 }
@@ -95,14 +96,14 @@ interface IStatusResolver {
 
     suspend fun votePoll(status: Status, votedOption: List<BlogPoll.Option>): Result<Status>?
 
-    suspend fun getStatusContext(status: Status): Result<StatusContext>?
+    suspend fun getStatusContext(baseUrl: FormalBaseUrl, status: Status): Result<StatusContext>?
 
-    suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>>?
+    suspend fun getSuggestionAccounts(baseUrl: FormalBaseUrl): Result<List<BlogAuthor>>?
 
-    suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>?
+    suspend fun getHashtag(baseUrl: FormalBaseUrl, limit: Int, offset: Int): Result<List<Hashtag>>?
 
     suspend fun getPublicTimeline(
-        userUri: FormalUri,
+        baseUrl: FormalBaseUrl,
         limit: Int,
         sinceId: String?,
     ): Result<List<Status>>?

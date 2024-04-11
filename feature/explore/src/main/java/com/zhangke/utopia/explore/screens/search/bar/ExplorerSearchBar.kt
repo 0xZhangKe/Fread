@@ -76,6 +76,7 @@ fun Screen.ExplorerSearchBar(
         mutableStateOf(false)
     }
     val viewModel = getViewModel<SearchBarViewModel>()
+    viewModel.selectedAccount = selectedAccount
     val uiState by viewModel.uiState.collectAsState()
     if (!active) {
         LaunchedEffect(Unit) {

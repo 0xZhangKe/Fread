@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.activitypub.api.AccountsRepo
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
@@ -74,42 +75,38 @@ class ActivityPubStatusResolver @Inject constructor(
         return votePoll(status, votedOption, status.platform.baseUrl)
     }
 
-    override suspend fun getStatusContext(status: Status): Result<StatusContext>? {
+    override suspend fun getStatusContext(baseUrl: FormalBaseUrl, status: Status): Result<StatusContext>? {
         if (status.notThisPlatform()) return null
-        return getStatusContextUseCase(status)
+        return getStatusContextUseCase(baseUrl, status)
     }
 
     private fun Status.notThisPlatform(): Boolean {
         return this.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID
     }
 
-    override suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>>? {
-        val uriInsights = userUriTransformer.parse(uri) ?: return null
-        return clientManager.getClient(uriInsights.baseUrl)
+    override suspend fun getSuggestionAccounts(baseUrl: FormalBaseUrl): Result<List<BlogAuthor>>? {
+        return clientManager.getClient(baseUrl)
             .accountRepo
             .getSuggestions()
             .map { list -> list.map { accountAdapter.toAuthor(it.account) } }
     }
 
     override suspend fun getHashtag(
-        userUri: FormalUri,
+        baseUrl: FormalBaseUrl,
         limit: Int,
         offset: Int
     ): Result<List<Hashtag>>? {
-        val uriInsights = userUriTransformer.parse(userUri) ?: return null
-        return clientManager.getClient(uriInsights.baseUrl)
+        return clientManager.getClient(baseUrl)
             .instanceRepo
             .getTrendsTags(limit = limit, offset = offset)
             .map { list -> list.map { hashtagAdapter.adapt(it) } }
     }
 
     override suspend fun getPublicTimeline(
-        userUri: FormalUri,
+        baseUrl: FormalBaseUrl,
         limit: Int,
         sinceId: String?
     ): Result<List<Status>>? {
-        val uriInsights = userUriTransformer.parse(userUri) ?: return null
-        val baseUrl = uriInsights.baseUrl
         val platformResult = platformRepo.getPlatform(baseUrl)
         if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
         val platform = platformResult.getOrThrow()

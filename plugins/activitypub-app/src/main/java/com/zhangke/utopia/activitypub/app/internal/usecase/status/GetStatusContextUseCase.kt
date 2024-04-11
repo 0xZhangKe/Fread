@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -11,9 +12,10 @@ class GetStatusContextUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        baseUrl: FormalBaseUrl,
         status: Status,
     ): Result<StatusContext> {
-        return clientManager.getClient(status.platform.baseUrl)
+        return clientManager.getClient(baseUrl)
             .statusRepo
             .getStatusContext(status.id)
             .map { convertToStatusContext(it, status.platform) }

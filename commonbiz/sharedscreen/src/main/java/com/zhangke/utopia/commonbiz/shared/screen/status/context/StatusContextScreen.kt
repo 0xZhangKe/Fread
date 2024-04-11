@@ -27,6 +27,7 @@ import com.zhangke.framework.composable.LoadingLineItem
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -39,13 +40,16 @@ import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
-class StatusContextScreen(private val status: Status) : Screen {
+class StatusContextScreen(
+    private val baseUrl: FormalBaseUrl,
+    private val status: Status,
+) : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(status)
+        val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(baseUrl, status)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = rememberSnackbarHostState()
         StatusContextContent(
@@ -73,7 +77,7 @@ class StatusContextScreen(private val status: Status) : Screen {
             onInteractive = viewModel::onInteractive,
             onStatusClick = {
                 if (it.status.status.id == status.id) return@StatusContextContent
-                navigator.push(StatusContextScreen(it.status.status))
+                navigator.push(StatusContextScreen(baseUrl, it.status.status))
             },
             onUserInfoClick = viewModel::onUserInfoClick,
             onVoted = viewModel::onVote,

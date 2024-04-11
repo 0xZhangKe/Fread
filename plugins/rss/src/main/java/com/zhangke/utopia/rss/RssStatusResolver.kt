@@ -1,5 +1,6 @@
 package com.zhangke.utopia.rss
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.repo.RssStatusRepo
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
@@ -60,7 +61,10 @@ class RssStatusResolver @Inject constructor(
         return null
     }
 
-    override suspend fun getStatusContext(status: Status): Result<StatusContext>? {
+    override suspend fun getStatusContext(
+        baseUrl: FormalBaseUrl,
+        status: Status,
+    ): Result<StatusContext>? {
         if (!status.platform.protocol.isRssProtocol) return null
         return Result.success(
             StatusContext(
@@ -70,16 +74,20 @@ class RssStatusResolver @Inject constructor(
         )
     }
 
-    override suspend fun getSuggestionAccounts(uri: FormalUri): Result<List<BlogAuthor>>? {
+    override suspend fun getSuggestionAccounts(baseUrl: FormalBaseUrl): Result<List<BlogAuthor>>? {
         return null
     }
 
-    override suspend fun getHashtag(userUri: FormalUri, limit: Int, offset: Int): Result<List<Hashtag>>? {
+    override suspend fun getHashtag(
+        baseUrl: FormalBaseUrl,
+        limit: Int,
+        offset: Int
+    ): Result<List<Hashtag>>? {
         return null
     }
 
     override suspend fun getPublicTimeline(
-        userUri: FormalUri,
+        baseUrl: FormalBaseUrl,
         limit: Int,
         sinceId: String?
     ): Result<List<Status>>? {

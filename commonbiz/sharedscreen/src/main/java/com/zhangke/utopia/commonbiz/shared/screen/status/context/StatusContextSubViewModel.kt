@@ -1,11 +1,11 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
-import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -26,6 +26,7 @@ class StatusContextSubViewModel(
     private val statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val baseUrl: FormalBaseUrl,
     private val anchorStatus: Status,
 ) : SubViewModel() {
 
@@ -52,7 +53,7 @@ class StatusContextSubViewModel(
                 contextStatus = buildContextStatus(fixedAnchorStatus),
             )
             statusProvider.statusResolver
-                .getStatusContext(fixedAnchorStatus)
+                .getStatusContext(baseUrl, fixedAnchorStatus)
                 .onSuccess { statusContext ->
                     _uiState.update { state ->
                         state.copy(

@@ -4,14 +4,17 @@ import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.usecase.GetDefaultBaseUrlUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
@@ -30,9 +33,12 @@ class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
     private val interactiveHandler: InteractiveHandler,
+    private val getDefaultBaseUrl: GetDefaultBaseUrlUseCase,
 ) : ViewModel() {
 
     private var searchJob: Job? = null
+
+    var selectedAccount: LoggedAccount? = null
 
     private val _uiState = MutableStateFlow(
         SearchBarUiState(
@@ -60,7 +66,7 @@ class SearchBarViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = launchInViewModel {
             statusProvider.searchEngine
-                .search(query)
+                .search(getBaseUrl(), query)
                 .map { list ->
                     list.map { buildSearchResultUiState(it) }
                 }.onSuccess { searchResult ->
@@ -95,6 +101,10 @@ class SearchBarViewModel @Inject constructor(
         launchInViewModel {
             interactiveHandler.onVoted(status, votedOption).handleResult()
         }
+    }
+
+    private fun getBaseUrl(): FormalBaseUrl {
+        return selectedAccount?.platform?.baseUrl ?: getDefaultBaseUrl()
     }
 
     private suspend fun InteractiveHandleResult.handleResult() {

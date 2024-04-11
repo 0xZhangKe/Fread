@@ -1,6 +1,7 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -23,16 +24,17 @@ class StatusContextViewModel @Inject constructor(
             statusProvider = statusProvider,
             buildStatusUiState = buildStatusUiState,
             refactorToNewBlog = refactorToNewBlog,
+            baseUrl = params.baseUrl,
             anchorStatus = params.anchorStatus
         )
     }
 
-    fun getSubViewModel(anchorStatus: Status): StatusContextSubViewModel {
-        return obtainSubViewModel(Params(anchorStatus))
+    fun getSubViewModel(baseUrl: FormalBaseUrl, anchorStatus: Status): StatusContextSubViewModel {
+        return obtainSubViewModel(Params(baseUrl, anchorStatus))
     }
 
-    class Params(val anchorStatus: Status) : SubViewModelParams() {
+    class Params(val baseUrl: FormalBaseUrl, val anchorStatus: Status) : SubViewModelParams() {
 
-        override val key: String = anchorStatus.id
+        override val key: String = anchorStatus.id + baseUrl
     }
 }

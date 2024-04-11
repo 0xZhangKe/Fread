@@ -23,24 +23,31 @@ class GetExplorerItemUseCase @Inject constructor(
         offset: Int,
         sinceId: String,
     ): Result<List<ExplorerItem>> {
+        val baseUrl = statusProvider.accountManager
+            .getAllLoggedAccount()
+            .firstOrNull { it.uri == accountUri }
+            ?.platform
+            ?.baseUrl ?: return Result.failure(IllegalArgumentException("Unknown uri: $accountUri"))
         val statusResolver = statusProvider.statusResolver
         return when (type) {
             ExplorerFeedsTabType.USERS -> {
                 if (offset > 0 || sinceId.isNotEmpty()) return Result.success(emptyList())
                 statusResolver
-                    .getSuggestionAccounts(accountUri)
+                    .getSuggestionAccounts(baseUrl)
                     .map { list -> list.map { ExplorerItem.ExplorerUser(it, false) } }
             }
+
             ExplorerFeedsTabType.HASHTAG -> {
                 statusResolver.getHashtag(
-                    userUri = accountUri,
+                    baseUrl = baseUrl,
                     limit = DEFAULT_LIMIT,
                     offset = offset,
                 ).map { list -> list.map { ExplorerItem.ExplorerHashtag(it) } }
             }
+
             ExplorerFeedsTabType.STATUS -> {
                 statusResolver.getPublicTimeline(
-                    userUri = accountUri,
+                    baseUrl = baseUrl,
                     limit = DEFAULT_LIMIT,
                     sinceId = sinceId,
                 ).map { list -> list.map { ExplorerItem.ExplorerStatus(buildStatusUiState(it)) } }

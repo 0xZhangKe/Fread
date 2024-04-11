@@ -32,7 +32,7 @@ fun SensitiveLazyColumn(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
-    content: LazyListScope.() -> Unit
+    content: LazyListScope.() -> Unit,
 ) {
     if (sensitiveLazyColumnState != null) {
         val layoutInfo by remember { derivedStateOf { state.layoutInfo } }

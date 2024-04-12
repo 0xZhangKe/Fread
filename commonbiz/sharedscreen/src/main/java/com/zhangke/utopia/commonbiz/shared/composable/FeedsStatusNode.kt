@@ -6,6 +6,7 @@ import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -21,6 +22,7 @@ import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 @Composable
 fun FeedsStatusNode(
     modifier: Modifier = Modifier,
+    baseUrl: FormalBaseUrl,
     status: StatusUiState,
     indexInList: Int,
     onUserInfoClick: (BlogAuthor) -> Unit,
@@ -31,7 +33,7 @@ fun FeedsStatusNode(
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            navigator.push(StatusContextScreen(status.status))
+            navigator.push(StatusContextScreen(baseUrl, status.status))
         },
         status = status,
         indexInList = indexInList,

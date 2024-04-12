@@ -2,8 +2,10 @@ package com.zhangke.utopia.explore.screens.search.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -13,17 +15,25 @@ import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
 
-@HiltViewModel
-open class SearchStatusViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = SearchStatusViewModel.Factory::class)
+open class SearchStatusViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
     interactiveHandler: InteractiveHandler,
     buildStatusUiState: BuildStatusUiStateUseCase,
+    @Assisted val baseUrl: FormalBaseUrl,
 ) : ViewModel() {
+
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+        fun create(baseUrl: FormalBaseUrl): SearchStatusViewModel
+    }
 
     private val loadStatusController = LoadableStatusController(
         coroutineScope = viewModelScope,
@@ -40,13 +50,13 @@ open class SearchStatusViewModel @Inject constructor(
     fun onRefresh(query: String) {
         loadStatusController.onRefresh {
             statusProvider.searchEngine
-                .searchStatus(query, null)
+                .searchStatus(baseUrl, query, null)
         }
     }
 
     fun onLoadMore(query: String) {
         loadStatusController.onLoadMore {
-            statusProvider.searchEngine.searchStatus(query, it)
+            statusProvider.searchEngine.searchStatus(baseUrl, query, it)
         }
     }
 

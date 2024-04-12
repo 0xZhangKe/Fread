@@ -11,6 +11,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -22,23 +23,26 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.BlogAuthorUi
 
-class SearchedAuthorTab(private val query: String) : PagerTab {
+class SearchedAuthorTab(private val baseUrl: FormalBaseUrl, private val query: String) : PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
             title = stringResource(R.string.explorer_search_tab_title_author),
         )
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<SearchAuthorViewModel>()
+        val viewModel = getViewModel<SearchAuthorViewModel, SearchAuthorViewModel.Factory> {
+            it.create(baseUrl)
+        }
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(query) {

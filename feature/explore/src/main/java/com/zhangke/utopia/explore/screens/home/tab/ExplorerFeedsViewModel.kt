@@ -2,11 +2,13 @@ package com.zhangke.utopia.explore.screens.home.tab
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -36,6 +38,9 @@ class ExplorerFeedsViewModel(
     private val getExplorerItem: GetExplorerItemUseCase,
 ) : SubViewModel() {
 
+    var baseUrl: FormalBaseUrl? = null
+        private set
+
     private val loadController = CommonLoadableController<ExplorerItem>(viewModelScope)
 
     val uiState: StateFlow<CommonLoadableUiState<ExplorerItem>> get() = loadController.uiState
@@ -49,24 +54,41 @@ class ExplorerFeedsViewModel(
     private var _account: LoggedAccount? = null
 
     init {
-        loadController.initData(
-            getDataFromServer = { getExplorerItem(accountUri, type, 0, "") },
-            getDataFromLocal = null,
-        )
+        launchInViewModel {
+            baseUrl = statusProvider.accountManager
+                .getAllLoggedAccount()
+                .firstOrNull { it.uri == accountUri }
+                ?.platform
+                ?.baseUrl
+            if (baseUrl == null) {
+                loadController.mutableUiState.update {
+                    it.copy(
+                        errorMessage = textOf("No account found for $accountUri"),
+                    )
+                }
+                return@launchInViewModel
+            }
+            loadController.initData(
+                getDataFromServer = { getExplorerItem(baseUrl!!, type, 0, "") },
+                getDataFromLocal = null,
+            )
+        }
     }
 
     fun onRefresh() {
+        val baseUrl = baseUrl ?: return
         loadController.onRefresh(false) {
-            getExplorerItem(accountUri, type, 0, "")
+            getExplorerItem(baseUrl, type, 0, "")
         }
     }
 
     fun onLoadMore() {
+        val baseUrl = baseUrl ?: return
         val dataList = uiState.value.dataList
         if (dataList.isEmpty()) return
         loadController.onLoadMore {
             getExplorerItem(
-                accountUri = accountUri,
+                baseUrl = baseUrl,
                 type = type,
                 offset = loadController.uiState.value.dataList.size,
                 sinceId = dataList.last().id,

@@ -7,9 +7,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.explore.R
 
-class SearchedPlatformTab(private val query: String): PagerTab {
+class SearchedPlatformTab(private val baseUrl: FormalBaseUrl, private val query: String): PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(

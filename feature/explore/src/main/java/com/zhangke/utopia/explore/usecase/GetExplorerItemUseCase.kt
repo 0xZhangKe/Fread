@@ -1,10 +1,10 @@
 package com.zhangke.utopia.explore.usecase
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.explore.screens.home.tab.ExplorerFeedsTabType
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class GetExplorerItemUseCase @Inject constructor(
@@ -18,16 +18,11 @@ class GetExplorerItemUseCase @Inject constructor(
     }
 
     suspend operator fun invoke(
-        accountUri: FormalUri,
+        baseUrl: FormalBaseUrl,
         type: ExplorerFeedsTabType,
         offset: Int,
         sinceId: String,
     ): Result<List<ExplorerItem>> {
-        val baseUrl = statusProvider.accountManager
-            .getAllLoggedAccount()
-            .firstOrNull { it.uri == accountUri }
-            ?.platform
-            ?.baseUrl ?: return Result.failure(IllegalArgumentException("Unknown uri: $accountUri"))
         val statusResolver = statusProvider.statusResolver
         return when (type) {
             ExplorerFeedsTabType.USERS -> {

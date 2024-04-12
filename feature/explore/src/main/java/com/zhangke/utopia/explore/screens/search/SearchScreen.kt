@@ -17,12 +17,13 @@ import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.explore.screens.search.author.SearchedAuthorTab
 import com.zhangke.utopia.explore.screens.search.hashtag.SearchedHashtagTab
 import com.zhangke.utopia.explore.screens.search.platform.SearchedPlatformTab
 import com.zhangke.utopia.explore.screens.search.status.SearchedStatusTab
 
-class SearchScreen(private val query: String) : Screen {
+class SearchScreen(private val baseUrl: FormalBaseUrl, private val query: String) : Screen {
 
     @Composable
     override fun Content() {
@@ -51,10 +52,10 @@ class SearchScreen(private val query: String) : Screen {
         ) { paddingValues ->
             val tabs = remember {
                 listOf(
-                    SearchedAuthorTab(query),
-                    SearchedStatusTab(query),
-                    SearchedPlatformTab(query),
-                    SearchedHashtagTab(query),
+                    SearchedAuthorTab(baseUrl, query),
+                    SearchedStatusTab(baseUrl, query),
+                    SearchedPlatformTab(baseUrl, query),
+                    SearchedHashtagTab(baseUrl, query),
                 )
             }
             Column(

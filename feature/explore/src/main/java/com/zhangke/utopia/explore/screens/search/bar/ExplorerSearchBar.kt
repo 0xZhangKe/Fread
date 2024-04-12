@@ -131,7 +131,7 @@ fun Screen.ExplorerSearchBar(
         onQueryChange = viewModel::onSearchQueryChanged,
         onSearch = {
             active = false
-            navigator.push(SearchScreen(uiState.query))
+            navigator.push(SearchScreen(uiState.baseUrl, uiState.query))
         },
         active = active,
         onActiveChange = {
@@ -176,6 +176,7 @@ private fun SearchContent(
                 SearchResultUi(
                     modifier = Modifier.fillMaxWidth(),
                     searchResult = item,
+                    baseUrl = uiState.baseUrl,
                     indexInList = index,
                     onUserInfoClick = onUserInfoClick,
                     onInteractive = onInteractive,

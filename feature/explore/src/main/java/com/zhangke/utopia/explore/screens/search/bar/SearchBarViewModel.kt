@@ -39,9 +39,14 @@ class SearchBarViewModel @Inject constructor(
     private var searchJob: Job? = null
 
     var selectedAccount: LoggedAccount? = null
+        set(value) {
+            field = value
+            _uiState.update { it.copy(baseUrl = getBaseUrl()) }
+        }
 
     private val _uiState = MutableStateFlow(
         SearchBarUiState(
+            baseUrl = getBaseUrl(),
             query = "",
             resultList = emptyList(),
         )

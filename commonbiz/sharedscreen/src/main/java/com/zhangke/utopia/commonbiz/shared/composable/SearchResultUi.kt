@@ -2,6 +2,7 @@ package com.zhangke.utopia.commonbiz.shared.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
@@ -15,6 +16,7 @@ import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 @Composable
 fun SearchResultUi(
     searchResult: SearchResultUiState,
+    baseUrl: FormalBaseUrl,
     modifier: Modifier = Modifier,
     indexInList: Int,
     onUserInfoClick: (BlogAuthor) -> Unit,
@@ -33,6 +35,7 @@ fun SearchResultUi(
         is SearchResultUiState.SearchedStatus -> {
             FeedsStatusNode(
                 modifier = modifier,
+                baseUrl = baseUrl,
                 status = searchResult.status,
                 indexInList = indexInList,
                 onUserInfoClick = onUserInfoClick,

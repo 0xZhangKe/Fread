@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
@@ -35,6 +36,7 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
@@ -76,6 +78,7 @@ class ExplorerFeedsTab(
         }
         ExplorerFeedsTabContent(
             uiState = uiState,
+            baseUrl = viewModel.baseUrl,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
@@ -91,6 +94,7 @@ class ExplorerFeedsTab(
     @Composable
     private fun ExplorerFeedsTabContent(
         uiState: CommonLoadableUiState<ExplorerItem>,
+        baseUrl: FormalBaseUrl?,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onUserInfoClick: (BlogAuthor) -> Unit,
@@ -133,6 +137,7 @@ class ExplorerFeedsTab(
                     ExplorerItemUi(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
+                        baseUrl = baseUrl,
                         onUserInfoClick = onUserInfoClick,
                         onInteractive = onInteractive,
                         indexInList = index,
@@ -170,6 +175,7 @@ class ExplorerFeedsTab(
     private fun ExplorerItemUi(
         modifier: Modifier,
         item: ExplorerItem,
+        baseUrl: FormalBaseUrl?,
         indexInList: Int,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
@@ -178,11 +184,19 @@ class ExplorerFeedsTab(
         onFollowClick: (BlogAuthor) -> Unit,
         onUnfollowClick: (BlogAuthor) -> Unit,
     ) {
+        if (baseUrl == null) {
+            Text(
+                modifier = Modifier.padding(16.dp),
+                text = "illegal state: baseUrl is null",
+            )
+            return
+        }
         when (item) {
             is ExplorerItem.ExplorerStatus -> {
                 FeedsStatusNode(
                     modifier = modifier,
                     status = item.status,
+                    baseUrl = baseUrl,
                     indexInList = indexInList,
                     onInteractive = onInteractive,
                     onUserInfoClick = onUserInfoClick,

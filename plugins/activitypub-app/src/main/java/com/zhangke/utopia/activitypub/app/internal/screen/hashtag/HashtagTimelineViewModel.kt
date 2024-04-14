@@ -14,7 +14,6 @@ import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
@@ -22,6 +21,7 @@ import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -36,7 +36,6 @@ import java.util.Calendar
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel(assistedFactory = HashtagTimelineViewModel.Factory::class)
 class HashtagTimelineViewModel @AssistedInject constructor(
-    private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
     @ApplicationContext private val context: Context,
     buildStatusUiState: BuildStatusUiStateUseCase,
@@ -44,12 +43,13 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     platformRepo: ActivityPubPlatformRepo,
     interactiveHandler: ActivityPubInteractiveHandler,
     pollAdapter: ActivityPubPollAdapter,
+    @Assisted private val role: IdentityRole,
     @Assisted private val hashtag: String,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(hashtag: String): HashtagTimelineViewModel
+        fun create(role: IdentityRole, hashtag: String): HashtagTimelineViewModel
     }
 
     private val loadableController = ActivityPubStatusLoadController(
@@ -68,6 +68,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     private val _hashtagTimelineUiState = MutableStateFlow(
         HashtagTimelineUiState(
+            baseUrl = baseUrl,
             hashTag = hashtag,
             following = false,
             description = "",
@@ -75,12 +76,10 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     )
     val hashtagTimelineUiState = _hashtagTimelineUiState.asStateFlow()
 
-    private var baseUrl: FormalBaseUrl? = null
-
     init {
         launchInViewModel {
             loadableController.initStatusData(
-                baseUrl = getBaseUrl(),
+                baseUrl = baseUrl,
                 getStatusFromServer = {
                     loadHashtagTimeline(
                         baseUrl = it,
@@ -91,7 +90,6 @@ class HashtagTimelineViewModel @AssistedInject constructor(
         }
 
         launchInViewModel {
-            val baseUrl = getBaseUrl()
             clientManager.getClient(baseUrl)
                 .accountRepo
                 .getTagInformation(hashtag)
@@ -142,7 +140,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     fun onRefresh() {
         launchInViewModel {
             loadableController.onRefresh(
-                baseUrl = getBaseUrl(),
+                baseUrl = baseUrl,
                 getStatusFromServer = {
                     loadHashtagTimeline(
                         baseUrl = it,
@@ -156,7 +154,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     fun onLoadMore() {
         launchInViewModel {
             loadableController.onLoadMore(
-                baseUrl = getBaseUrl(),
+                baseUrl = baseUrl,
                 loadMoreFunction = { maxId, baseUrl ->
                     loadHashtagTimeline(
                         baseUrl = baseUrl,
@@ -173,7 +171,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     fun onFollowClick() {
         launchInViewModel {
-            clientManager.getClient(getBaseUrl())
+            clientManager.getClient(baseUrl)
                 .accountRepo
                 .followTag(hashtag)
                 .handle()
@@ -182,7 +180,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     fun onUnfollowClick() {
         launchInViewModel {
-            clientManager.getClient(getBaseUrl())
+            clientManager.getClient(baseUrl)
                 .accountRepo
                 .unfollowTag(hashtag)
                 .handle()
@@ -219,11 +217,5 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                 limit = StatusConfigurationDefault.config.loadFromServerLimit,
                 maxId = maxId,
             )
-    }
-
-    private suspend fun getBaseUrl(): FormalBaseUrl {
-        if (baseUrl != null) return baseUrl!!
-        baseUrl = baseUrlManager.decideBaseUrl()
-        return baseUrl!!
     }
 }

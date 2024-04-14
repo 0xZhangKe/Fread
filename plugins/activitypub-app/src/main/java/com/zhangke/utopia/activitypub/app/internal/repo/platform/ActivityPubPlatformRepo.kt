@@ -6,6 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAd
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import javax.inject.Inject
 
@@ -39,7 +40,8 @@ class ActivityPubPlatformRepo @Inject constructor(
         if (instanceFromLocal != null) {
             return Result.success(instanceFromLocal.instanceEntity)
         }
-        val instanceResult = clientManager.getClient(baseUrl).instanceRepo.getInstanceInformation()
+        val role = IdentityRole(accountUri = null, baseUrl = baseUrl)
+        val instanceResult = clientManager.getClient(role).instanceRepo.getInstanceInformation()
         if (instanceResult.isFailure) {
             return Result.failure(instanceResult.exceptionOrNull()!!)
         }

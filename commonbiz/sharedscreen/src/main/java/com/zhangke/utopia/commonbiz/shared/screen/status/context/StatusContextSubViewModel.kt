@@ -120,7 +120,7 @@ class StatusContextSubViewModel(
 
     fun onUserInfoClick(author: BlogAuthor) {
         statusProvider.screenProvider
-            .getUserDetailRoute(author.uri)
+            .getUserDetailRoute(baseUrl, author.uri)
             ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
     }
 

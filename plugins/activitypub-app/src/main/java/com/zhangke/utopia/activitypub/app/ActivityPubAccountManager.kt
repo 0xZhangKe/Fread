@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthor
-import com.zhangke.utopia.activitypub.app.internal.auth.TokenManager
+import com.zhangke.utopia.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
@@ -16,7 +16,7 @@ import javax.inject.Inject
 
 class ActivityPubAccountManager @Inject constructor(
     private val oAuthor: ActivityPubOAuthor,
-    private val tokenManager: TokenManager,
+    private val loggedAccountProvider: LoggedAccountProvider,
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val userUriTransformer: UserUriTransformer,
 ) : IAccountManager {
@@ -26,7 +26,7 @@ class ActivityPubAccountManager @Inject constructor(
             accountRepo.getAllAccountFlow()
                 .collect {
                     for (account in it) {
-                        tokenManager.setToken(account.baseUrl, account.token)
+                        loggedAccountProvider.addAccount(account)
                     }
                 }
         }
@@ -57,6 +57,7 @@ class ActivityPubAccountManager @Inject constructor(
     override suspend fun logout(uri: FormalUri): Boolean {
         userUriTransformer.parse(uri) ?: return false
         accountRepo.deleteByUri(uri)
+        loggedAccountProvider.removeAccount(uri)
         return true
     }
 }

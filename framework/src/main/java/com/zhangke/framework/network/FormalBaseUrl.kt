@@ -1,8 +1,10 @@
 package com.zhangke.framework.network
 
 import android.os.Parcelable
+import com.zhangke.framework.utils.uriString
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import java.net.URLEncoder
 
 @Parcelize
 @Serializable
@@ -28,6 +30,19 @@ class FormalBaseUrl private constructor(
         return (other.scheme == scheme) && (other.host == host)
     }
 
+    /**
+     * Not encode string
+     */
+    fun toRawString(): String {
+        return uriString(
+            scheme = scheme,
+            host = host,
+            path = "",
+            queries = emptyMap(),
+            encode = false,
+        )
+    }
+
     companion object {
 
         private const val SCHEME_SEPARATOR = "://"
@@ -49,4 +64,8 @@ class FormalBaseUrl private constructor(
             return this.removeSuffix("/")
         }
     }
+}
+
+fun FormalBaseUrl.encode(): String {
+    return URLEncoder.encode(this.toRawString(), Charsets.UTF_8.name())
 }

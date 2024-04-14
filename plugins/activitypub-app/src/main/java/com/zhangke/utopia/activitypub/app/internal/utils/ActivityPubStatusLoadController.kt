@@ -13,6 +13,7 @@ import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.update
@@ -35,13 +36,13 @@ class ActivityPubStatusLoadController(
 ) {
 
     fun initStatusData(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         getStatusFromServer: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
         getStatusFromLocal: (suspend () -> List<ActivityPubStatusEntity>)? = null,
     ) {
         initData(
-            getDataFromServer = transformRefresh(baseUrl, getStatusFromServer),
-            getDataFromLocal = transform(baseUrl, getStatusFromLocal),
+            getDataFromServer = transformRefresh(role, getStatusFromServer),
+            getDataFromLocal = transform(role, getStatusFromLocal),
         )
     }
 
@@ -121,7 +122,7 @@ class ActivityPubStatusLoadController(
     }
 
     private fun transformRefresh(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         block: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
     ): suspend () -> Result<List<Status>> {
         return {

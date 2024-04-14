@@ -12,6 +12,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.search.SearchPlatform
 import com.zhangke.utopia.activitypub.app.internal.usecase.source.user.SearchUserSourceUseCase
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.search.ISearchEngine
 import com.zhangke.utopia.status.search.SearchContentResult
@@ -32,7 +33,7 @@ class ActivityPubSearchEngine @Inject constructor(
     private val searchPlatform: SearchPlatformUseCase,
 ) : ISearchEngine {
 
-    override suspend fun search(query: String): Result<List<SearchResult>> {
+    override suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>> {
         return doSearch { searchRepo, platform ->
             searchRepo.query(query).map {
                 searchAdapter.toSearchResult(it, platform)
@@ -41,6 +42,7 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchStatus(
+        role: IdentityRole,
         query: String,
         maxId: String?,
     ): Result<List<Status>> {
@@ -55,6 +57,7 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchHashtag(
+        role: IdentityRole,
         query: String,
         offset: Int?,
     ): Result<List<Hashtag>> {
@@ -69,6 +72,7 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchAuthor(
+        role: IdentityRole,
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>> {
@@ -83,6 +87,7 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     override suspend fun searchPlatform(
+        role: IdentityRole,
         query: String,
         offset: Int?,
     ): Result<List<BlogPlatform>> {
@@ -105,7 +110,10 @@ class ActivityPubSearchEngine @Inject constructor(
         return onSearch(searchRepo, platform)
     }
 
-    override suspend fun searchSource(query: String): Result<List<StatusSource>> {
+    override suspend fun searchSource(
+        role: IdentityRole,
+        query: String,
+    ): Result<List<StatusSource>> {
         return searchUserSource(query).map {
             if (it == null) {
                 emptyList()
@@ -115,14 +123,21 @@ class ActivityPubSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchContent(query: String): Result<List<SearchContentResult>>? {
+    override suspend fun searchContent(
+        role: IdentityRole,
+        query: String,
+    ): Result<List<SearchContentResult>>? {
         val searchedSource = searchUserSource(query).getOrNull()
         if (searchedSource != null) {
             return Result.success(listOf(SearchContentResult.Source(searchedSource)))
         }
         val searchedPlatform = searchPlatform(query).getOrNull()
-        if (searchedPlatform.isNullOrEmpty().not()){
-            return Result.success(searchedPlatform!!.map { SearchContentResult.ActivityPubPlatform(it) })
+        if (searchedPlatform.isNullOrEmpty().not()) {
+            return Result.success(searchedPlatform!!.map {
+                SearchContentResult.ActivityPubPlatform(
+                    it
+                )
+            })
         }
         return null
     }

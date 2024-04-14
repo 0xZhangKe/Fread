@@ -66,7 +66,8 @@ class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<UserDetailViewModel, UserDetailViewModel.Factory> {
-            it.create(UserDetailRoute.parseRoute(route))
+            val (baseUrl, userUri) = UserDetailRoute.parseRoute(route)
+            it.create(baseUrl, userUri)
         }
         val uiState by viewModel.uiState.collectAsState()
         UserDetailContent(

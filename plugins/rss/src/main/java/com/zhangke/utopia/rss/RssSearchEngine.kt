@@ -1,6 +1,5 @@
 package com.zhangke.utopia.rss
 
-import android.util.Log
 import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.adapter.BlogAuthorAdapter
@@ -12,6 +11,7 @@ import com.zhangke.utopia.rss.internal.uri.RssUriInsight
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.search.ISearchEngine
 import com.zhangke.utopia.status.search.SearchContentResult
@@ -28,7 +28,7 @@ class RssSearchEngine @Inject constructor(
     private val rssUriTransformer: RssUriTransformer,
 ) : ISearchEngine {
 
-    override suspend fun search(query: String): Result<List<SearchResult>> {
+    override suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>> {
         val authorResult = searchAuthorByUrl(query)
         if (authorResult.isFailure) {
             return Result.failure(authorResult.exceptionOrThrow())
@@ -40,15 +40,26 @@ class RssSearchEngine @Inject constructor(
         return Result.success(searchResultList)
     }
 
-    override suspend fun searchStatus(query: String, maxId: String?): Result<List<Status>> {
+    override suspend fun searchStatus(
+        role: IdentityRole,
+        query: String,
+        maxId: String?,
+    ): Result<List<Status>> {
         return Result.success(emptyList())
     }
 
-    override suspend fun searchHashtag(query: String, offset: Int?): Result<List<Hashtag>> {
+    override suspend fun searchHashtag(
+        role: IdentityRole,
+        query: String, offset: Int?,
+    ): Result<List<Hashtag>> {
         return Result.success(emptyList())
     }
 
-    override suspend fun searchAuthor(query: String, offset: Int?): Result<List<BlogAuthor>> {
+    override suspend fun searchAuthor(
+        role: IdentityRole,
+        query: String,
+        offset: Int?,
+    ): Result<List<BlogAuthor>> {
         if (offset != null && offset > 0) {
             return Result.success(emptyList())
         }
@@ -57,7 +68,11 @@ class RssSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchPlatform(query: String, offset: Int?): Result<List<BlogPlatform>> {
+    override suspend fun searchPlatform(
+        role: IdentityRole,
+        query: String,
+        offset: Int?,
+    ): Result<List<BlogPlatform>> {
         return queryWithChannelByUrl(
             query = query,
             defaultResult = emptyList(),
@@ -67,7 +82,10 @@ class RssSearchEngine @Inject constructor(
         )
     }
 
-    override suspend fun searchSource(query: String): Result<List<StatusSource>> {
+    override suspend fun searchSource(
+        role: IdentityRole,
+        query: String
+    ): Result<List<StatusSource>> {
         return queryWithChannelByUrl(
             query = query,
             defaultResult = emptyList(),
@@ -77,7 +95,10 @@ class RssSearchEngine @Inject constructor(
         )
     }
 
-    override suspend fun searchContent(query: String): Result<List<SearchContentResult>>? {
+    override suspend fun searchContent(
+        role: IdentityRole,
+        query: String,
+    ): Result<List<SearchContentResult>>? {
         val result = queryWithChannelByUrl(
             query = query,
             defaultResult = null,
@@ -110,7 +131,6 @@ class RssSearchEngine @Inject constructor(
         val url = SimpleUri.parse(query)
             ?.toString()
             ?.let(::fixUrl) ?: return Result.success(defaultResult)
-        Log.d("U_TEST", "query: $query, url: $url")
         val sourceResult = rssRepo.getRssSource(url)
         if (sourceResult.isFailure) {
             return Result.failure(sourceResult.exceptionOrThrow())

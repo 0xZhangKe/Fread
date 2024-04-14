@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
@@ -13,6 +14,7 @@ import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.uri.FormalUri
@@ -39,7 +41,7 @@ class ActivityPubScreenProvider @Inject constructor(
         }
     }
 
-    override fun getReplyBlogScreen(blog: Blog): String? {
+    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         if (blog.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
         return PostStatusScreenRoute.buildRoute(blog.id, blog.author.name)
     }
@@ -60,13 +62,13 @@ class ActivityPubScreenProvider @Inject constructor(
         return ActivityPubNotificationsScreen(userInsights)
     }
 
-    override fun getUserDetailRoute(uri: FormalUri): String? {
+    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String? {
         userUriTransformer.parse(uri) ?: return null
-        return UserDetailRoute.buildRoute(uri)
+        return UserDetailRoute.buildRoute(role, uri)
     }
 
-    override fun getTagTimelineScreenRoute(tag: Hashtag): String? {
+    override fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String? {
         if (tag.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
-        return HashtagTimelineRoute.buildRoute(tag.name)
+        return HashtagTimelineRoute.buildRoute(role, tag.name)
     }
 }

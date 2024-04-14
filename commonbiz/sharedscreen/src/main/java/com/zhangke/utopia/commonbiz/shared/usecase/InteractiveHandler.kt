@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -28,11 +29,12 @@ class InteractiveHandler @Inject constructor(
     private val screenProvider: StatusScreenProvider get() = statusProvider.screenProvider
 
     suspend fun onStatusInteractive(
+        useAccount: LoggedAccount,
         status: Status,
         uiInteraction: StatusUiInteraction,
     ): InteractiveHandleResult {
         if (uiInteraction is StatusUiInteraction.Comment) {
-            return screenProvider.getReplyBlogScreen(status.intrinsicBlog)
+            return screenProvider.getReplyBlogScreen(useAccount, status.intrinsicBlog)
                 ?.let { KRouter.route<Screen>(it)?.let(InteractiveHandleResult::OpenScreen) }
                 ?: InteractiveHandleResult.NoOp
         }
@@ -52,13 +54,17 @@ class InteractiveHandler @Inject constructor(
         }
     }
 
-    fun onUserInfoClick(blogAuthor: BlogAuthor): InteractiveHandleResult {
+    fun onUserInfoClick(
+        account: LoggedAccount,
+        blogAuthor: BlogAuthor,
+    ): InteractiveHandleResult {
         return screenProvider.getUserDetailRoute(blogAuthor.uri)?.let { route ->
             KRouter.route<Screen>(route)?.let(InteractiveHandleResult::OpenScreen)
         } ?: InteractiveHandleResult.NoOp
     }
 
     suspend fun onVoted(
+        account: LoggedAccount,
         status: Status,
         votedOption: List<BlogPoll.Option>,
     ): InteractiveHandleResult {

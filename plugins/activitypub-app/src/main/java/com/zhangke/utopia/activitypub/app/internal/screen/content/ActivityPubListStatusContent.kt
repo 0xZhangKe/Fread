@@ -26,6 +26,7 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubStatusUi
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -38,6 +39,7 @@ import com.zhangke.utopia.status.ui.StatusListPlaceholder
 @Composable
 internal fun ActivityPubListStatusContent(
     uiState: CommonLoadableUiState<StatusUiState>,
+    baseUrl: FormalBaseUrl,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
@@ -82,6 +84,7 @@ internal fun ActivityPubListStatusContent(
                 ) { index, status ->
                     ActivityPubStatusUi(
                         modifier = Modifier.fillMaxWidth(),
+                        baseUrl = baseUrl,
                         status = status,
                         onInteractive = onInteractive,
                         indexInList = index,

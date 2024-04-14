@@ -9,6 +9,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.uri.FormalUri
@@ -26,7 +27,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getReplyBlogScreen(blog: Blog): String? {
+    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         return null
     }
 
@@ -42,14 +43,14 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getUserDetailRoute(uri: FormalUri): String? {
+    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val url = uriInsight.url
         return RssSourceScreenRoute.buildRoute(url)
     }
 
-    override fun getTagTimelineScreenRoute(tag: Hashtag): String? {
+    override fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String? {
         return null
     }
 }

@@ -2,11 +2,13 @@ package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -29,9 +31,9 @@ class StatusScreenProvider(
         }
     }
 
-    fun getReplyBlogScreen(blog: Blog): String? {
+    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         return providerList.mapFirstOrNull {
-            it.getReplyBlogScreen(blog)
+            it.getReplyBlogScreen(role, blog)
         }
     }
 
@@ -53,12 +55,12 @@ class StatusScreenProvider(
         }
     }
 
-    fun getUserDetailRoute(uri: FormalUri): String? {
-        return providerList.mapFirstOrNull { it.getUserDetailRoute(uri) }
+    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String? {
+        return providerList.mapFirstOrNull { it.getUserDetailRoute(role, uri) }
     }
 
-    fun getTagTimelineScreenRoute(tag: Hashtag): String? {
-        return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(tag) }
+    fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String? {
+        return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(role, tag) }
     }
 }
 
@@ -71,7 +73,7 @@ interface IStatusScreenProvider {
         accountUri: FormalUri? = null,
     ): String?
 
-    fun getReplyBlogScreen(blog: Blog): String?
+    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String?
 
     fun getContentScreen(contentConfig: ContentConfig): PagerTab?
 
@@ -79,7 +81,7 @@ interface IStatusScreenProvider {
 
     fun getNotificationScreen(account: LoggedAccount): PagerTab?
 
-    fun getUserDetailRoute(uri: FormalUri): String?
+    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String?
 
-    fun getTagTimelineScreenRoute(tag: Hashtag): String?
+    fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String?
 }

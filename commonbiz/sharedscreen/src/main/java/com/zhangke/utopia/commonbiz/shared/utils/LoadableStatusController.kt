@@ -9,6 +9,7 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.richtext.preParseRichText
@@ -80,12 +81,13 @@ open class LoadableStatusController(
     }
 
     open fun onInteractive(
+        useAccount: LoggedAccount,
         status: Status,
         uiInteraction: StatusUiInteraction,
     ) {
         interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
-            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
+            interactiveHandler.onStatusInteractive(useAccount, status, uiInteraction).handleResult()
         }
     }
 

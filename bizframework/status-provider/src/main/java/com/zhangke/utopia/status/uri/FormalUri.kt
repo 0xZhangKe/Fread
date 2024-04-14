@@ -94,4 +94,3 @@ class FormalUri private constructor(
 fun FormalUri.encode(): String {
     return URLEncoder.encode(this.toRawString(), Charsets.UTF_8.name())
 }
-

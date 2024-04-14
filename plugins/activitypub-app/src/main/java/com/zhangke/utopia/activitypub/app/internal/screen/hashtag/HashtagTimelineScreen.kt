@@ -65,9 +65,9 @@ class HashtagTimelineScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<HashtagTimelineViewModel, HashtagTimelineViewModel.Factory> {
-            it.create(HashtagTimelineRoute.parseRoute(route))
+            val (role, hashtag) = HashtagTimelineRoute.parseRoute(route)
+            it.create(role, hashtag)
         }
-
         val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
         val statusUiState by viewModel.statusUiState.collectAsState()
         HashtagTimelineContent(
@@ -123,6 +123,7 @@ class HashtagTimelineScreen(
                 Box(modifier = Modifier.fillMaxSize()) {
                     ActivityPubListStatusContent(
                         uiState = statusUiState,
+                        baseUrl = hashtagTimelineUiState.baseUrl,
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
                         onInteractive = onInteractive,

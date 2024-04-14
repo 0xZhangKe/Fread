@@ -33,13 +33,13 @@ class UserDetailViewModel @AssistedInject constructor(
     private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
     private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
-    private val mapCustomEmoji: MapCustomEmojiUseCase,
+    @Assisted val baseUrl: FormalBaseUrl,
     @Assisted val userUri: FormalUri,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(uri: FormalUri): UserDetailViewModel
+        fun create(baseUrl: FormalBaseUrl, uri: FormalUri): UserDetailViewModel
     }
 
     private val _uiState = MutableStateFlow(
@@ -72,8 +72,7 @@ class UserDetailViewModel @AssistedInject constructor(
                 editable = editable,
             )
             val accountRepo =
-                clientManager.getClient(baseUrlManager.decideBaseUrl(userInsight.baseUrl))
-                    .accountRepo
+                clientManager.getClient(baseUrlManager.decideBaseUrl(baseUrl)).accountRepo
             val accountResult = accountRepo.lookup(userInsight.webFinger.toString())
             if (accountResult.isFailure) {
                 _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))

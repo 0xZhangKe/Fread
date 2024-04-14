@@ -51,8 +51,6 @@ class ExplorerFeedsViewModel(
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow.asSharedFlow()
 
-    private var _account: LoggedAccount? = null
-
     init {
         launchInViewModel {
             baseUrl = statusProvider.accountManager
@@ -97,24 +95,28 @@ class ExplorerFeedsViewModel(
     }
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+        val baseUrl = baseUrl ?: return
         launchInViewModel {
-            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
+            interactiveHandler.onStatusInteractive(baseUrl, status, uiInteraction).handleResult()
         }
     }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        val baseUrl = baseUrl ?: return
         launchInViewModel {
-            interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
+            interactiveHandler.onUserInfoClick(baseUrl, blogAuthor).handleResult()
         }
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        launchInViewModel { interactiveHandler.onVoted(status, options).handleResult() }
+        val baseUrl = baseUrl ?: return
+        launchInViewModel { interactiveHandler.onVoted(baseUrl, status, options).handleResult() }
     }
 
     fun onHashtagClick(hashtag: Hashtag) {
+        val baseUrl = baseUrl ?: return
         launchInViewModel {
-            statusProvider.screenProvider.getTagTimelineScreenRoute(hashtag)
+            statusProvider.screenProvider.getTagTimelineScreenRoute(baseUrl, hashtag)
                 ?.let { KRouter.route<Screen>(it) }
                 ?.let { _openScreenFlow.emit(it) }
         }
@@ -133,11 +135,11 @@ class ExplorerFeedsViewModel(
         follow: Boolean,
     ) {
         launchInViewModel {
-            val account = getAccount() ?: return@launchInViewModel
+            val baseUrl = baseUrl ?: return@launchInViewModel
             val result = if (follow) {
-                interactiveHandler.onFollowClick(account, blogAuthor)
+                interactiveHandler.onFollowClick(baseUrl, blogAuthor)
             } else {
-                interactiveHandler.onUnfollowClick(account, blogAuthor)
+                interactiveHandler.onUnfollowClick(baseUrl, blogAuthor)
             }
             result.onSuccess {
                 loadController.mutableUiState.update { state ->
@@ -154,13 +156,6 @@ class ExplorerFeedsViewModel(
                 e.toTextStringOrNull()?.let { _errorMessageFlow.emit(it) }
             }
         }
-    }
-
-    private suspend fun getAccount(): LoggedAccount? {
-        val account = _account ?: statusProvider.accountManager.getAllLoggedAccount()
-            .firstOrNull { it.uri == accountUri }
-        _account = account
-        return account
     }
 
     private fun List<ExplorerItem>.updateStatus(newStatus: StatusUiState): List<ExplorerItem> {

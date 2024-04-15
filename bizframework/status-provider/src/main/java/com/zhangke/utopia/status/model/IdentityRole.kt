@@ -1,7 +1,9 @@
 package com.zhangke.utopia.status.model
 
+import android.os.Parcelable
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.uri.FormalUri
+import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 import java.net.URLDecoder
@@ -13,11 +15,12 @@ import java.net.URLEncoder
  * 没有 accountUri 但有 baseUrl 就用 baseUrl 身份操作。
  * 两者都没有则使用随机挑选的服务器身份。
  */
+@Parcelize
 @Serializable
 data class IdentityRole(
     val accountUri: FormalUri?,
     val baseUrl: FormalBaseUrl?,
-) {
+) : Parcelable {
 
     companion object {
 

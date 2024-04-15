@@ -13,8 +13,9 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
+import com.zhangke.utopia.status.model.IdentityRole
 
-class TrendingStatusTab(private val baseUrl: FormalBaseUrl) : PagerTab {
+class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -24,10 +25,11 @@ class TrendingStatusTab(private val baseUrl: FormalBaseUrl) : PagerTab {
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val snackbarHostState = LocalSnackbarHostState.current
-        val viewModel = getViewModel<TrendingStatusViewModel>().getSubViewModel(baseUrl)
+        val viewModel = getViewModel<TrendingStatusViewModel>().getSubViewModel(role)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubListStatusContent(
             uiState = uiState,
+            role = role,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,

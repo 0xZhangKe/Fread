@@ -68,7 +68,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     private val _hashtagTimelineUiState = MutableStateFlow(
         HashtagTimelineUiState(
-            baseUrl = baseUrl,
+            role = role,
             hashTag = hashtag,
             following = false,
             description = "",
@@ -79,10 +79,10 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     init {
         launchInViewModel {
             loadableController.initStatusData(
-                baseUrl = baseUrl,
+                role = role,
                 getStatusFromServer = {
                     loadHashtagTimeline(
-                        baseUrl = it,
+                        role = it,
                         maxId = null,
                     )
                 },
@@ -90,7 +90,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
         }
 
         launchInViewModel {
-            clientManager.getClient(baseUrl)
+            clientManager.getClient(role)
                 .accountRepo
                 .getTagInformation(hashtag)
                 .onSuccess {
@@ -140,10 +140,10 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     fun onRefresh() {
         launchInViewModel {
             loadableController.onRefresh(
-                baseUrl = baseUrl,
+                role = role,
                 getStatusFromServer = {
                     loadHashtagTimeline(
-                        baseUrl = it,
+                        role = it,
                         maxId = null,
                     )
                 },
@@ -154,10 +154,10 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     fun onLoadMore() {
         launchInViewModel {
             loadableController.onLoadMore(
-                baseUrl = baseUrl,
+                role = role,
                 loadMoreFunction = { maxId, baseUrl ->
                     loadHashtagTimeline(
-                        baseUrl = baseUrl,
+                        role = baseUrl,
                         maxId = maxId,
                     )
                 },
@@ -166,12 +166,12 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     }
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        loadableController.onInteractive(status, uiInteraction)
+        loadableController.onInteractive(role, status, uiInteraction)
     }
 
     fun onFollowClick() {
         launchInViewModel {
-            clientManager.getClient(baseUrl)
+            clientManager.getClient(role)
                 .accountRepo
                 .followTag(hashtag)
                 .handle()
@@ -180,7 +180,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
 
     fun onUnfollowClick() {
         launchInViewModel {
-            clientManager.getClient(baseUrl)
+            clientManager.getClient(role)
                 .accountRepo
                 .unfollowTag(hashtag)
                 .handle()
@@ -188,7 +188,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        loadableController.onVoted(status, options)
+        loadableController.onVoted(role, status, options)
     }
 
     private suspend fun Result<ActivityPubTagEntity>.handle() {
@@ -207,10 +207,10 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     }
 
     private suspend fun loadHashtagTimeline(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         maxId: String? = null,
     ): Result<List<ActivityPubStatusEntity>> {
-        return clientManager.getClient(baseUrl)
+        return clientManager.getClient(role)
             .timelinesRepo
             .getTagTimeline(
                 hashtag = hashtag,

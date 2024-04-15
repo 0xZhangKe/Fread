@@ -24,6 +24,7 @@ import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.PostStatusUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -221,8 +222,8 @@ class PostStatusViewModel @Inject constructor(
         val mediaId = (file.uploadJob.uploadState.value as? UploadMediaJob.UploadState.Success)?.id
         if (mediaId.isNullOrEmpty().not()) {
             launchInViewModel {
-                val baseUrl = _uiState.value.requireSuccessData().account.baseUrl
-                clientManager.getClient(baseUrl)
+                val role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null)
+                clientManager.getClient(role)
                     .mediaRepo
                     .updateMedia(
                         id = mediaId!!,

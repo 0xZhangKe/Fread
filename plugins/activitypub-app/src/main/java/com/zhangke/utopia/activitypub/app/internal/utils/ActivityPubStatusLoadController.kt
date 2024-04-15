@@ -37,7 +37,7 @@ class ActivityPubStatusLoadController(
 
     fun initStatusData(
         role: IdentityRole,
-        getStatusFromServer: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
+        getStatusFromServer: suspend (role: IdentityRole) -> Result<List<ActivityPubStatusEntity>>,
         getStatusFromLocal: (suspend () -> List<ActivityPubStatusEntity>)? = null,
     ) {
         initData(
@@ -47,24 +47,28 @@ class ActivityPubStatusLoadController(
     }
 
     fun onRefresh(
-        baseUrl: FormalBaseUrl,
-        getStatusFromServer: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
+        role: IdentityRole,
+        getStatusFromServer: suspend (role: IdentityRole) -> Result<List<ActivityPubStatusEntity>>,
     ) {
         onRefresh(
-            refreshFunction = transformRefresh(baseUrl, getStatusFromServer),
+            refreshFunction = transformRefresh(role, getStatusFromServer),
         )
     }
 
     fun onLoadMore(
-        baseUrl: FormalBaseUrl,
-        loadMoreFunction: suspend (maxId: String, FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
+        role: IdentityRole,
+        loadMoreFunction: suspend (maxId: String, IdentityRole) -> Result<List<ActivityPubStatusEntity>>,
     ) {
         onLoadMore(
-            loadMoreFunction = transformLoadMore(baseUrl, loadMoreFunction),
+            loadMoreFunction = transformLoadMore(role, loadMoreFunction),
         )
     }
 
-    override fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+    override fun onInteractive(
+        role: IdentityRole,
+        status: Status,
+        uiInteraction: StatusUiInteraction,
+    ) {
         coroutineScope.launch {
             when (val result = interactiveHandler.onStatusInteractive(status, uiInteraction)) {
                 is ActivityPubInteractiveHandleResult.ShowErrorMessage -> {
@@ -85,9 +89,9 @@ class ActivityPubStatusLoadController(
         }
     }
 
-    override fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
+    override fun onVoted(role: IdentityRole, status: Status, votedOption: List<BlogPoll.Option>) {
         coroutineScope.launch {
-            clientManager.getClient(status.platform.baseUrl)
+            clientManager.getClient(role)
                 .statusRepo
                 .votes(
                     id = status.intrinsicBlog.poll!!.id,
@@ -139,16 +143,16 @@ class ActivityPubStatusLoadController(
     }
 
     private fun transformLoadMore(
-        baseUrl: FormalBaseUrl,
-        block: suspend (String, FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
+        role: IdentityRole,
+        block: suspend (String, IdentityRole) -> Result<List<ActivityPubStatusEntity>>,
     ): suspend (String) -> Result<List<Status>> {
         return { maxId ->
-            val result = platformRepo.getPlatform(baseUrl)
+            val result = platformRepo.getPlatform(role)
             if (result.isFailure) {
                 Result.failure(result.exceptionOrNull()!!)
             } else {
                 val platform = result.getOrNull()!!
-                block(maxId, baseUrl).map { list ->
+                block(maxId, role).map { list ->
                     list.map { statusAdapter.toStatus(it, platform) }
                 }
             }

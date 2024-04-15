@@ -36,12 +36,13 @@ import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 class StatusContextScreen(
-    private val baseUrl: FormalBaseUrl,
+    private val role: IdentityRole,
     private val status: Status,
 ) : Screen {
 
@@ -49,7 +50,7 @@ class StatusContextScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(baseUrl, status)
+        val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(role, status)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = rememberSnackbarHostState()
         StatusContextContent(
@@ -77,7 +78,7 @@ class StatusContextScreen(
             onInteractive = viewModel::onInteractive,
             onStatusClick = {
                 if (it.status.status.id == status.id) return@StatusContextContent
-                navigator.push(StatusContextScreen(baseUrl, it.status.status))
+                navigator.push(StatusContextScreen(role, it.status.status))
             },
             onUserInfoClick = viewModel::onUserInfoClick,
             onVoted = viewModel::onVote,

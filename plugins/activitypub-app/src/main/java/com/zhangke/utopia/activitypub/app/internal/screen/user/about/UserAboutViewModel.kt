@@ -2,17 +2,15 @@ package com.zhangke.utopia.activitypub.app.internal.screen.user.about
 
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.ScreenModelFactory
-import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapAccountEntityEmojiUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -28,9 +26,9 @@ import java.util.Locale
 class UserAboutViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-    private val baseUrlManager: BaseUrlManager,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
+    @Assisted val role: IdentityRole,
     @Assisted val userUriInsights: UserUriInsights,
 ) : ViewModel() {
 
@@ -38,7 +36,7 @@ class UserAboutViewModel @AssistedInject constructor(
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(userUriInsights: UserUriInsights): UserAboutViewModel
+        fun create(role: IdentityRole, userUriInsights: UserUriInsights): UserAboutViewModel
     }
 
     private val _uiState = MutableStateFlow(
@@ -55,14 +53,15 @@ class UserAboutViewModel @AssistedInject constructor(
     init {
         launchInViewModel {
             val accountIdResult =
-                webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, getBaseUrl())
+                webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, role)
             if (accountIdResult.isFailure) {
                 accountIdResult.exceptionOrNull()?.message?.let {
                     _messageFlow.emit(textOf(it))
                 }
                 return@launchInViewModel
             }
-            getClient().accountRepo
+            clientManager.getClient(role)
+                .accountRepo
                 .getAccount(accountIdResult.getOrThrow())
                 .onFailure { e ->
                     e.message?.let { _messageFlow.emit(textOf(it)) }
@@ -74,13 +73,5 @@ class UserAboutViewModel @AssistedInject constructor(
                     )
                 }
         }
-    }
-
-    private suspend fun getClient(): ActivityPubClient {
-        return clientManager.getClient(getBaseUrl())
-    }
-
-    private suspend fun getBaseUrl(): FormalBaseUrl {
-        return baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
     }
 }

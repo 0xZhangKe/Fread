@@ -6,11 +6,9 @@ import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
@@ -19,6 +17,7 @@ import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadCo
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -32,15 +31,15 @@ class UserTimelineViewModel @AssistedInject constructor(
     platformRepo: ActivityPubPlatformRepo,
     statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
-    private val baseUrlManager: BaseUrlManager,
     interactiveHandler: ActivityPubInteractiveHandler,
     pollAdapter: ActivityPubPollAdapter,
+    @Assisted val role: IdentityRole,
     @Assisted val userUriInsights: UserUriInsights,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(userUriInsights: UserUriInsights): UserTimelineViewModel
+        fun create(role: IdentityRole, userUriInsights: UserUriInsights): UserTimelineViewModel
     }
 
     private val loadableController = ActivityPubStatusLoadController(
@@ -59,7 +58,7 @@ class UserTimelineViewModel @AssistedInject constructor(
     init {
         launchInViewModel {
             loadableController.initStatusData(
-                baseUrl = getBaseUrl(),
+                role = role,
                 getStatusFromServer = { loadStatus(it) },
             )
         }
@@ -67,10 +66,9 @@ class UserTimelineViewModel @AssistedInject constructor(
 
     fun refresh() {
         launchInViewModel {
-            val baseUrl = getBaseUrl()
             loadableController.onRefresh(
-                baseUrl = baseUrl,
-                getStatusFromServer = { loadStatus(baseUrl) },
+                role = role,
+                getStatusFromServer = { loadStatus(it) },
             )
         }
     }
@@ -78,18 +76,18 @@ class UserTimelineViewModel @AssistedInject constructor(
     fun loadMore() {
         launchInViewModel {
             loadableController.onLoadMore(
-                baseUrl = getBaseUrl(),
-                loadMoreFunction = { maxId, baseUrl -> loadStatus(baseUrl, maxId) },
+                role = role,
+                loadMoreFunction = { maxId, role -> loadStatus(role, maxId) },
             )
         }
     }
 
     private suspend fun loadStatus(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         maxId: String? = null,
     ): Result<List<ActivityPubStatusEntity>> {
         val accountIdResult =
-            webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, baseUrl)
+            webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, role)
         if (accountIdResult.isFailure) {
             return Result.failure(accountIdResult.exceptionOrNull()!!)
         }
@@ -100,18 +98,14 @@ class UserTimelineViewModel @AssistedInject constructor(
     }
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        loadableController.onInteractive(status, uiInteraction)
+        loadableController.onInteractive(role, status, uiInteraction)
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        loadableController.onVoted(status, options)
+        loadableController.onVoted(role, status, options)
     }
 
-    private suspend fun getClient(): ActivityPubClient {
-        return clientManager.getClient(getBaseUrl())
-    }
-
-    private suspend fun getBaseUrl(): FormalBaseUrl {
-        return baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
+    private fun getClient(): ActivityPubClient {
+        return clientManager.getClient(role)
     }
 }

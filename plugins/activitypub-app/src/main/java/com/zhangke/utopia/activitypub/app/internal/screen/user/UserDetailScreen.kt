@@ -66,8 +66,8 @@ class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<UserDetailViewModel, UserDetailViewModel.Factory> {
-            val (baseUrl, userUri) = UserDetailRoute.parseRoute(route)
-            it.create(baseUrl, userUri)
+            val (role, userUri) = UserDetailRoute.parseRoute(route)
+            it.create(role, userUri)
         }
         val uiState by viewModel.uiState.collectAsState()
         UserDetailContent(
@@ -216,8 +216,16 @@ class UserDetailScreen(
                 if (uiState.userInsight != null) {
                     val tabs: List<PagerTab> = remember {
                         listOf(
-                            UserTimelineTab(contentCanScrollBackward, uiState.userInsight),
-                            UserAboutTab(contentCanScrollBackward, uiState.userInsight),
+                            UserTimelineTab(
+                                contentCanScrollBackward = contentCanScrollBackward,
+                                role = uiState.role,
+                                userUriInsights = uiState.userInsight,
+                            ),
+                            UserAboutTab(
+                                contentCanScrollBackward = contentCanScrollBackward,
+                                role = uiState.role,
+                                userUriInsights = uiState.userInsight,
+                            ),
                         )
                     }
                     CompositionLocalProvider(

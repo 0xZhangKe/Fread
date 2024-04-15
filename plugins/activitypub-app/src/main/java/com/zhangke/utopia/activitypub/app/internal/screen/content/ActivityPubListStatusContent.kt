@@ -32,6 +32,7 @@ import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubStatusU
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
 
@@ -39,7 +40,7 @@ import com.zhangke.utopia.status.ui.StatusListPlaceholder
 @Composable
 internal fun ActivityPubListStatusContent(
     uiState: CommonLoadableUiState<StatusUiState>,
-    baseUrl: FormalBaseUrl,
+    role: IdentityRole,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
@@ -84,7 +85,7 @@ internal fun ActivityPubListStatusContent(
                 ) { index, status ->
                     ActivityPubStatusUi(
                         modifier = Modifier.fillMaxWidth(),
-                        baseUrl = baseUrl,
+                        role = role,
                         status = status,
                         onInteractive = onInteractive,
                         indexInList = index,

@@ -1,9 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
@@ -13,11 +13,11 @@ class VotePollUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        role: IdentityRole,
         status: Status,
         votedOption: List<BlogPoll.Option>,
-        baseUrl: FormalBaseUrl,
     ): Result<Status> {
-        return clientManager.getClient(baseUrl)
+        return clientManager.getClient(role)
             .statusRepo
             .votes(
                 id = status.intrinsicBlog.poll!!.id,

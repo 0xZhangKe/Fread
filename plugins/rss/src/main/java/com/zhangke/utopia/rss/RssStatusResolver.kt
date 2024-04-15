@@ -9,6 +9,7 @@ import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -22,6 +23,7 @@ class RssStatusResolver @Inject constructor(
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
+        role: IdentityRole,
         uri: FormalUri,
         limit: Int,
         sinceId: String?,
@@ -48,6 +50,7 @@ class RssStatusResolver @Inject constructor(
     }
 
     override suspend fun interactive(
+        role: IdentityRole,
         status: Status,
         interaction: StatusInteraction
     ): Result<Status>? {
@@ -55,6 +58,7 @@ class RssStatusResolver @Inject constructor(
     }
 
     override suspend fun votePoll(
+        role: IdentityRole,
         status: Status,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
@@ -62,7 +66,7 @@ class RssStatusResolver @Inject constructor(
     }
 
     override suspend fun getStatusContext(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         status: Status,
     ): Result<StatusContext>? {
         if (!status.platform.protocol.isRssProtocol) return null
@@ -74,12 +78,12 @@ class RssStatusResolver @Inject constructor(
         )
     }
 
-    override suspend fun getSuggestionAccounts(baseUrl: FormalBaseUrl): Result<List<BlogAuthor>>? {
+    override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {
         return null
     }
 
     override suspend fun getHashtag(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         limit: Int,
         offset: Int
     ): Result<List<Hashtag>>? {
@@ -87,18 +91,18 @@ class RssStatusResolver @Inject constructor(
     }
 
     override suspend fun getPublicTimeline(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         limit: Int,
         sinceId: String?
     ): Result<List<Status>>? {
         return null
     }
 
-    override suspend fun follow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
+    override suspend fun follow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {
         return null
     }
 
-    override suspend fun unfollow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
+    override suspend fun unfollow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {
         return null
     }
 }

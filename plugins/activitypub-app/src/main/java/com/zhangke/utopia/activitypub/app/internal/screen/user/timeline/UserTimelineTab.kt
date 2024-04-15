@@ -16,9 +16,11 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
+import com.zhangke.utopia.status.model.IdentityRole
 
 class UserTimelineTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
+    private val role: IdentityRole,
     private val userUriInsights: UserUriInsights,
 ) : PagerTab {
 
@@ -31,11 +33,12 @@ class UserTimelineTab(
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel = getViewModel<UserTimelineViewModel, UserTimelineViewModel.Factory>() {
-            it.create(userUriInsights)
+            it.create(role, userUriInsights)
         }
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubListStatusContent(
             uiState = uiState,
+            role = role,
             onLoadMore = viewModel::loadMore,
             onRefresh = viewModel::refresh,
             onInteractive = viewModel::onInteractive,

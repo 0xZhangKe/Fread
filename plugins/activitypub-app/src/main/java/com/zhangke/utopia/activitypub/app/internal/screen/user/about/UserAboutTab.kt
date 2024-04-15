@@ -26,10 +26,12 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 
 class UserAboutTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
+    private val role: IdentityRole,
     private val userUriInsights: UserUriInsights,
 ) : PagerTab {
 
@@ -42,7 +44,7 @@ class UserAboutTab(
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel = getViewModel<UserAboutViewModel, UserAboutViewModel.Factory>() {
-            it.create(userUriInsights)
+            it.create(role, userUriInsights)
         }
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(

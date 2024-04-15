@@ -20,9 +20,17 @@ object PostStatusScreenRoute {
         return "$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}"
     }
 
-    fun buildRoute(replyToBlogId: String, replyAuthorName: String): String {
+    fun buildRoute(
+        accountUri: FormalUri,
+        replyToBlogId: String,
+        replyAuthorName: String,
+    ): String {
         val encodedName = URLEncoder.encode(replyAuthorName, Charsets.UTF_8.name())
-        return "$ROUTE?$PARAM_REPLY_TO_BLOG_ID=$replyToBlogId&$PARAM_REPLY_TO_AUTHOR_NAME=$encodedName"
+        return buildString {
+            append("$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}")
+            append("&$PARAM_REPLY_TO_BLOG_ID=$replyToBlogId")
+            append("&$PARAM_REPLY_TO_AUTHOR_NAME=$encodedName")
+        }
     }
 
     /**

@@ -7,14 +7,12 @@ import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapAccountEntityEmojiUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -30,20 +28,20 @@ import kotlinx.coroutines.flow.update
 class UserDetailViewModel @AssistedInject constructor(
     private val accountManager: ActivityPubAccountManager,
     private val userUriTransformer: UserUriTransformer,
-    private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
     private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
-    @Assisted val baseUrl: FormalBaseUrl,
+    @Assisted val role: IdentityRole,
     @Assisted val userUri: FormalUri,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(baseUrl: FormalBaseUrl, uri: FormalUri): UserDetailViewModel
+        fun create(role: IdentityRole, uri: FormalUri): UserDetailViewModel
     }
 
     private val _uiState = MutableStateFlow(
         UserDetailUiState(
+            role = role,
             userInsight = null,
             account = null,
             relationship = null,
@@ -71,8 +69,7 @@ class UserDetailViewModel @AssistedInject constructor(
                 userInsight = userInsight,
                 editable = editable,
             )
-            val accountRepo =
-                clientManager.getClient(baseUrlManager.decideBaseUrl(baseUrl)).accountRepo
+            val accountRepo = clientManager.getClient(role).accountRepo
             val accountResult = accountRepo.lookup(userInsight.webFinger.toString())
             if (accountResult.isFailure) {
                 _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))
@@ -164,8 +161,7 @@ class UserDetailViewModel @AssistedInject constructor(
     fun onBlockDomainClick() {
         val userUriInsights = _uiState.value.userInsight ?: return
         launchInViewModel {
-            val baseUrl = baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
-            val accountRepo = clientManager.getClient(baseUrl).accountRepo
+            val accountRepo = clientManager.getClient(role).accountRepo
             accountRepo.blockDomain(userUriInsights.baseUrl.host)
                 .onFailure { e ->
                     e.message?.let {
@@ -182,8 +178,7 @@ class UserDetailViewModel @AssistedInject constructor(
     fun onUnblockDomainClick() {
         val userUriInsights = _uiState.value.userInsight ?: return
         launchInViewModel {
-            val baseUrl = baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
-            val accountRepo = clientManager.getClient(baseUrl).accountRepo
+            val accountRepo = clientManager.getClient(role).accountRepo
             accountRepo.unblockDomain(userUriInsights.baseUrl.host)
                 .onFailure { e ->
                     e.message?.let {
@@ -201,10 +196,8 @@ class UserDetailViewModel @AssistedInject constructor(
         action: suspend (accountsRepo: AccountsRepo, accountId: String) -> Result<ActivityPubRelationshipEntity>,
     ) {
         val accountId = _uiState.value.account?.id ?: return
-        val userUriInsights = _uiState.value.userInsight ?: return
         launchInViewModel {
-            val baseUrl = baseUrlManager.decideBaseUrl(userUriInsights.baseUrl)
-            val accountRepo = clientManager.getClient(baseUrl).accountRepo
+            val accountRepo = clientManager.getClient(role).accountRepo
             action(accountRepo, accountId)
                 .onFailure { e ->
                     e.message?.let {

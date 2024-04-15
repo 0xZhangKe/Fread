@@ -13,6 +13,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -26,7 +27,7 @@ class StatusContextSubViewModel(
     private val statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
-    private val baseUrl: FormalBaseUrl,
+    private val role: IdentityRole,
     private val anchorStatus: Status,
 ) : SubViewModel() {
 
@@ -53,7 +54,7 @@ class StatusContextSubViewModel(
                 contextStatus = buildContextStatus(fixedAnchorStatus),
             )
             statusProvider.statusResolver
-                .getStatusContext(baseUrl, fixedAnchorStatus)
+                .getStatusContext(role, fixedAnchorStatus)
                 .onSuccess { statusContext ->
                     _uiState.update { state ->
                         state.copy(
@@ -98,7 +99,7 @@ class StatusContextSubViewModel(
         launchInViewModel {
             if (uiInteraction is StatusUiInteraction.Comment) {
                 statusProvider.screenProvider
-                    .getReplyBlogScreen(status.intrinsicBlog)
+                    .getReplyBlogScreen(role, status.intrinsicBlog)
                     ?.let {
                         _openScreenFlow.emit(it)
                     }
@@ -106,7 +107,7 @@ class StatusContextSubViewModel(
             }
             val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
             statusProvider.statusResolver
-                .interactive(status, interaction)
+                .interactive(role, status, interaction)
                 .onSuccess { newStatus ->
                     updateStatus(newStatus)
                 }.onFailure { e ->
@@ -120,13 +121,13 @@ class StatusContextSubViewModel(
 
     fun onUserInfoClick(author: BlogAuthor) {
         statusProvider.screenProvider
-            .getUserDetailRoute(baseUrl, author.uri)
+            .getUserDetailRoute(role, author.uri)
             ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
     }
 
     fun onVote(status: Status, votedOption: List<BlogPoll.Option>) {
         launchInViewModel {
-            statusProvider.statusResolver.votePoll(status, votedOption)
+            statusProvider.statusResolver.votePoll(role, status, votedOption)
                 .onSuccess {
                     updateStatus(it)
                 }.onFailure { e ->

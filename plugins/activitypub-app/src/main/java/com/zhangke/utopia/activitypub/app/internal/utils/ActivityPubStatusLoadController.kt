@@ -123,15 +123,15 @@ class ActivityPubStatusLoadController(
 
     private fun transformRefresh(
         role: IdentityRole,
-        block: suspend (baseUrl: FormalBaseUrl) -> Result<List<ActivityPubStatusEntity>>,
+        block: suspend (role: IdentityRole) -> Result<List<ActivityPubStatusEntity>>,
     ): suspend () -> Result<List<Status>> {
         return {
-            val result = platformRepo.getPlatform(baseUrl)
+            val result = platformRepo.getPlatform(role)
             if (result.isFailure) {
                 Result.failure(result.exceptionOrNull()!!)
             } else {
                 val platform = result.getOrNull()!!
-                block(baseUrl).map { list ->
+                block(role).map { list ->
                     list.map { statusAdapter.toStatus(it, platform) }
                 }
             }
@@ -156,12 +156,12 @@ class ActivityPubStatusLoadController(
     }
 
     private fun transform(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         block: (suspend () -> List<ActivityPubStatusEntity>)?,
     ): (suspend () -> List<Status>)? {
         if (block == null) return null
         return {
-            val result = platformRepo.getPlatform(baseUrl)
+            val result = platformRepo.getPlatform(role)
             if (result.isFailure) {
                 emptyList()
             } else {

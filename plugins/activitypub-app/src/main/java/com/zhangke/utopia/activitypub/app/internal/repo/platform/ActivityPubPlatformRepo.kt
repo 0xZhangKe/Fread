@@ -6,6 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAd
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
+import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import javax.inject.Inject
@@ -15,9 +16,14 @@ class ActivityPubPlatformRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val activityPubPlatformEntityAdapter: ActivityPubPlatformEntityAdapter,
     private val activityPubInstanceAdapter: ActivityPubInstanceAdapter,
+    private val resolveBaseUrl: ResolveBaseUrlUseCase,
 ) {
 
     private val platformDao = databases.getPlatformDao()
+
+    suspend fun getPlatform(role: IdentityRole): Result<BlogPlatform> {
+        return getPlatform(resolveBaseUrl(role))
+    }
 
     suspend fun getPlatform(baseUrl: FormalBaseUrl): Result<BlogPlatform> {
         return getInstanceInfo(baseUrl).map {

@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.status
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusInteraction
 import javax.inject.Inject
@@ -11,12 +12,12 @@ class StatusInteractiveUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
+        role: IdentityRole,
         status: Status,
         interaction: StatusInteraction,
     ): Result<ActivityPubStatusEntity> {
         val statusId = status.id
-        val platform = status.platform
-        val statusRepo = clientManager.getClient(platform.baseUrl).statusRepo
+        val statusRepo = clientManager.getClient(role).statusRepo
         return when (interaction) {
             is StatusInteraction.Like -> {
                 if (interaction.liked) {

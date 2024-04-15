@@ -7,15 +7,13 @@ import com.zhangke.framework.composable.updateToSuccess
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
-import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.flow.map
 
 class ActivityPubContentSubViewModel(
@@ -38,7 +36,8 @@ class ActivityPubContentSubViewModel(
                 .map { it as? ContentConfig.ActivityPubContent }
                 .collect { contentConfig ->
                     if (contentConfig != null) {
-                        _uiState.updateToSuccess(ActivityPubContentUiState(contentConfig))
+                        val role = IdentityRole(accountUri = null, baseUrl = contentConfig.baseUrl)
+                        _uiState.updateToSuccess(ActivityPubContentUiState(role, contentConfig))
                         updateUserCreateList(contentConfig.baseUrl)
                     } else {
                         _uiState.updateToFailed(IllegalArgumentException("Cant find validate config by id: $configId"))

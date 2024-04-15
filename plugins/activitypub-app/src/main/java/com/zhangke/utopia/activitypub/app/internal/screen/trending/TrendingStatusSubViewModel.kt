@@ -3,7 +3,6 @@ package com.zhangke.utopia.activitypub.app.internal.screen.trending
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
@@ -15,6 +14,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.StateFlow
 
@@ -25,7 +25,7 @@ class TrendingStatusSubViewModel(
     platformRepo: ActivityPubPlatformRepo,
     interactiveHandler: ActivityPubInteractiveHandler,
     pollAdapter: ActivityPubPollAdapter,
-    private val baseUrl: FormalBaseUrl,
+    private val role: IdentityRole,
 ) : SubViewModel() {
 
     private val loadableController = ActivityPubStatusLoadController(
@@ -44,13 +44,13 @@ class TrendingStatusSubViewModel(
 
     init {
         loadableController.initStatusData(
-            baseUrl = baseUrl,
+            role = role,
             getStatusFromServer = { getServerTrending(0, it) },
         )
     }
 
     fun onRefresh() {
-        loadableController.onRefresh(baseUrl) {
+        loadableController.onRefresh(role) {
             getServerTrending(0, it)
         }
     }
@@ -58,21 +58,21 @@ class TrendingStatusSubViewModel(
     fun onLoadMore() {
         val offset = uiState.value.dataList.size
         if (offset == 0) return
-        loadableController.onLoadMore(baseUrl) { maxId, baseUrl ->
-            getServerTrending(offset, baseUrl)
+        loadableController.onLoadMore(role) { _, role ->
+            getServerTrending(offset, role)
         }
     }
 
     fun onInteractive(status: Status, interaction: StatusUiInteraction) {
-        loadableController.onInteractive(status, interaction)
+        loadableController.onInteractive(role, status, interaction)
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        loadableController.onVoted(status, options)
+        loadableController.onVoted(role, status, options)
     }
 
-    private suspend fun getServerTrending(offset: Int, baseUrl: FormalBaseUrl): Result<List<ActivityPubStatusEntity>> {
-        return clientManager.getClient(baseUrl)
+    private suspend fun getServerTrending(offset: Int, role: IdentityRole): Result<List<ActivityPubStatusEntity>> {
+        return clientManager.getClient(role)
             .instanceRepo
             .getTrendsStatuses(
                 limit = StatusConfigurationDefault.config.loadFromServerLimit,

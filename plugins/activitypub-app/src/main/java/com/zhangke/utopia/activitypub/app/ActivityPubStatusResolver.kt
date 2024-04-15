@@ -17,6 +17,7 @@ import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -31,7 +32,7 @@ class ActivityPubStatusResolver @Inject constructor(
     private val statusInteractive: StatusInteractiveUseCase,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val getStatusContextUseCase: GetStatusContextUseCase,
-    private val votePoll: VotePollUseCase,
+    private val votePollUseCase: VotePollUseCase,
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
@@ -39,6 +40,7 @@ class ActivityPubStatusResolver @Inject constructor(
 ) : IStatusResolver {
 
     override suspend fun getStatusList(
+        role: IdentityRole,
         uri: FormalUri,
         limit: Int,
         sinceId: String?,
@@ -47,6 +49,7 @@ class ActivityPubStatusResolver @Inject constructor(
         val userInsights = userUriTransformer.parse(uri)
         if (userInsights != null) {
             return getUserStatus(
+                role = role,
                 userInsights = userInsights,
                 limit = limit,
                 sinceId = sinceId,
@@ -57,68 +60,73 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     override suspend fun interactive(
+        role: IdentityRole,
         status: Status,
         interaction: StatusInteraction,
     ): Result<Status>? {
         if (status.notThisPlatform()) return null
-        return statusInteractive(status, interaction).map { entity ->
+        return statusInteractive(role, status, interaction).map { entity ->
             val platform = status.platform
             activityPubStatusAdapter.toStatus(entity, platform)
         }
     }
 
     override suspend fun votePoll(
+        role: IdentityRole,
         status: Status,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
         if (status.notThisPlatform()) return null
-        return votePoll(status, votedOption, status.platform.baseUrl)
+        return votePollUseCase(role, status, votedOption)
     }
 
-    override suspend fun getStatusContext(baseUrl: FormalBaseUrl, status: Status): Result<StatusContext>? {
+    override suspend fun getStatusContext(
+        role: IdentityRole,
+        status: Status
+    ): Result<StatusContext>? {
         if (status.notThisPlatform()) return null
-        return getStatusContextUseCase(baseUrl, status)
+        return getStatusContextUseCase(role, status)
     }
 
     private fun Status.notThisPlatform(): Boolean {
         return this.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID
     }
 
-    override suspend fun getSuggestionAccounts(baseUrl: FormalBaseUrl): Result<List<BlogAuthor>>? {
-        return clientManager.getClient(baseUrl)
+    override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {
+        return clientManager.getClient(role)
             .accountRepo
             .getSuggestions()
             .map { list -> list.map { accountAdapter.toAuthor(it.account) } }
     }
 
     override suspend fun getHashtag(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         limit: Int,
-        offset: Int
-    ): Result<List<Hashtag>>? {
-        return clientManager.getClient(baseUrl)
+        offset: Int,
+    ): Result<List<Hashtag>> {
+        return clientManager.getClient(role)
             .instanceRepo
             .getTrendsTags(limit = limit, offset = offset)
             .map { list -> list.map { hashtagAdapter.adapt(it) } }
     }
 
     override suspend fun getPublicTimeline(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         limit: Int,
-        sinceId: String?
-    ): Result<List<Status>>? {
-        val platformResult = platformRepo.getPlatform(baseUrl)
+        sinceId: String?,
+    ): Result<List<Status>> {
+        val platformResult = platformRepo.getPlatform(role)
         if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
         val platform = platformResult.getOrThrow()
-        return clientManager.getClient(baseUrl)
+        return clientManager.getClient(role)
             .timelinesRepo
             .publicTimelines(limit = limit, sinceId = sinceId)
             .map { list -> list.map { activityPubStatusAdapter.toStatus(it, platform) } }
     }
 
-    override suspend fun follow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
+    override suspend fun follow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {
         return updateRelationship(
-            account = account,
+            role = role,
             target = target,
             updater = {
                 this.follow(it)
@@ -126,9 +134,9 @@ class ActivityPubStatusResolver @Inject constructor(
         )
     }
 
-    override suspend fun unfollow(account: LoggedAccount, target: BlogAuthor): Result<Unit>? {
+    override suspend fun unfollow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {
         return updateRelationship(
-            account = account,
+            role = role,
             target = target,
             updater = {
                 this.unfollow(it)
@@ -137,16 +145,15 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     private suspend fun updateRelationship(
-        account: LoggedAccount,
+        role: IdentityRole,
         target: BlogAuthor,
         updater: suspend AccountsRepo.(userId: String) -> Result<*>,
     ): Result<Unit>? {
-        if (!account.platform.protocol.isActivityPub) return null
-        val baseUrl = account.platform.baseUrl
-        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, baseUrl)
+        userUriTransformer.parse(target.uri) ?: return null
+        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
         if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
         val userId = userIdResult.getOrThrow()
-        return clientManager.getClient(baseUrl)
+        return clientManager.getClient(role)
             .accountRepo
             .updater(userId)
             .map {}

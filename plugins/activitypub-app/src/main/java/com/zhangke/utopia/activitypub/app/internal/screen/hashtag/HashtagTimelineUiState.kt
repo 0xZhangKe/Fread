@@ -1,9 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.hashtag
 
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.status.model.IdentityRole
 
 data class HashtagTimelineUiState(
-    val baseUrl: FormalBaseUrl,
+    val role: IdentityRole,
     val hashTag: String,
     val following: Boolean,
     val description: String,

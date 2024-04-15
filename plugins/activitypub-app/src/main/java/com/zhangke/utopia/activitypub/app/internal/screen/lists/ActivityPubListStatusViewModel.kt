@@ -9,6 +9,7 @@ import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlat
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -31,20 +32,20 @@ class ActivityPubListStatusViewModel @Inject constructor(
         statusAdapter = statusAdapter,
         interactiveHandler = interactiveHandler,
         pollAdapter = pollAdapter,
-        serverBaseUrl = params.baseUrl,
+        role = params.role,
         listId = params.listId,
     )
 
     fun getSubViewModel(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         listId: String,
     ): ActivityPubListStatusSubViewModel {
-        val params = Params(baseUrl, listId)
+        val params = Params(role, listId)
         return obtainSubViewModel(params)
     }
 
-    class Params(val baseUrl: FormalBaseUrl, val listId: String) : SubViewModelParams() {
+    class Params(val role: IdentityRole, val listId: String) : SubViewModelParams() {
         override val key: String
-            get() = "${baseUrl}_$listId"
+            get() = "${role}_$listId"
     }
 }

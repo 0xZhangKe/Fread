@@ -4,16 +4,15 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.controller.CommonLoadableUiState
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.screen.StatusScreenProvider
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -29,18 +28,18 @@ class InteractiveHandler @Inject constructor(
     private val screenProvider: StatusScreenProvider get() = statusProvider.screenProvider
 
     suspend fun onStatusInteractive(
-        useAccount: LoggedAccount,
+        role: IdentityRole,
         status: Status,
         uiInteraction: StatusUiInteraction,
     ): InteractiveHandleResult {
         if (uiInteraction is StatusUiInteraction.Comment) {
-            return screenProvider.getReplyBlogScreen(useAccount, status.intrinsicBlog)
+            return screenProvider.getReplyBlogScreen(role, status.intrinsicBlog)
                 ?.let { KRouter.route<Screen>(it)?.let(InteractiveHandleResult::OpenScreen) }
                 ?: InteractiveHandleResult.NoOp
         }
         val interaction = uiInteraction.statusInteraction ?: return InteractiveHandleResult.NoOp
         val result = statusProvider.statusResolver
-            .interactive(status, interaction)
+            .interactive(role, status, interaction)
             .map { buildStatusUiState(it) }
         return if (result.isFailure) {
             val errorMessage = result.exceptionOrNull()?.message?.let { textOf(it) }
@@ -55,20 +54,21 @@ class InteractiveHandler @Inject constructor(
     }
 
     fun onUserInfoClick(
-        account: LoggedAccount,
+        role: IdentityRole,
         blogAuthor: BlogAuthor,
     ): InteractiveHandleResult {
-        return screenProvider.getUserDetailRoute(blogAuthor.uri)?.let { route ->
-            KRouter.route<Screen>(route)?.let(InteractiveHandleResult::OpenScreen)
-        } ?: InteractiveHandleResult.NoOp
+        return screenProvider.getUserDetailRoute(role, blogAuthor.uri)
+            ?.let { route ->
+                KRouter.route<Screen>(route)?.let(InteractiveHandleResult::OpenScreen)
+            } ?: InteractiveHandleResult.NoOp
     }
 
     suspend fun onVoted(
-        account: LoggedAccount,
+        role: IdentityRole,
         status: Status,
         votedOption: List<BlogPoll.Option>,
     ): InteractiveHandleResult {
-        val result = statusProvider.statusResolver.votePoll(status, votedOption)
+        val result = statusProvider.statusResolver.votePoll(role, status, votedOption)
             .map { buildStatusUiState(it) }
         return if (result.isFailure) {
             val errorMessage = result.exceptionOrNull()?.message?.let { textOf(it) }
@@ -83,17 +83,17 @@ class InteractiveHandler @Inject constructor(
     }
 
     suspend fun onFollowClick(
-        account: LoggedAccount,
+        role: IdentityRole,
         target: BlogAuthor,
     ): Result<Unit> {
-        return statusProvider.statusResolver.follow(account, target)
+        return statusProvider.statusResolver.follow(role, target)
     }
 
     suspend fun onUnfollowClick(
-        account: LoggedAccount,
+        role: IdentityRole,
         target: BlogAuthor,
     ): Result<Unit> {
-        return statusProvider.statusResolver.unfollow(account, target)
+        return statusProvider.statusResolver.unfollow(role, target)
     }
 }
 

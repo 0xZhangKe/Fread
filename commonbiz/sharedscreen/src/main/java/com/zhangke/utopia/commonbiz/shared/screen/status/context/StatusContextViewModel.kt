@@ -6,6 +6,7 @@ import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -24,17 +25,17 @@ class StatusContextViewModel @Inject constructor(
             statusProvider = statusProvider,
             buildStatusUiState = buildStatusUiState,
             refactorToNewBlog = refactorToNewBlog,
-            baseUrl = params.baseUrl,
+            role = params.role,
             anchorStatus = params.anchorStatus
         )
     }
 
-    fun getSubViewModel(baseUrl: FormalBaseUrl, anchorStatus: Status): StatusContextSubViewModel {
-        return obtainSubViewModel(Params(baseUrl, anchorStatus))
+    fun getSubViewModel(role: IdentityRole, anchorStatus: Status): StatusContextSubViewModel {
+        return obtainSubViewModel(Params(role, anchorStatus))
     }
 
-    class Params(val baseUrl: FormalBaseUrl, val anchorStatus: Status) : SubViewModelParams() {
+    class Params(val role: IdentityRole, val anchorStatus: Status) : SubViewModelParams() {
 
-        override val key: String = anchorStatus.id + baseUrl
+        override val key: String = anchorStatus.id + role
     }
 }

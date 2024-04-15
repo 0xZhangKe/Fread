@@ -25,7 +25,7 @@ class ActivityPubPlatformRepo @Inject constructor(
         return getPlatform(resolveBaseUrl(role))
     }
 
-    suspend fun getPlatform(baseUrl: FormalBaseUrl): Result<BlogPlatform> {
+    private suspend fun getPlatform(baseUrl: FormalBaseUrl): Result<BlogPlatform> {
         return getInstanceInfo(baseUrl).map {
             activityPubInstanceAdapter.toPlatform(baseUrl, it)
         }

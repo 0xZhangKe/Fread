@@ -123,7 +123,7 @@ class HashtagTimelineScreen(
                 Box(modifier = Modifier.fillMaxSize()) {
                     ActivityPubListStatusContent(
                         uiState = statusUiState,
-                        baseUrl = hashtagTimelineUiState.baseUrl,
+                        role = hashtagTimelineUiState.role,
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
                         onInteractive = onInteractive,

@@ -28,6 +28,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListS
 import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
 import com.zhangke.utopia.activitypub.app.internal.screen.trending.TrendingStatusTab
 import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.model.IdentityRole
 
 class ActivityPubContentScreen(
     private val configId: Long,
@@ -97,43 +98,43 @@ class ActivityPubContentScreen(
         return uiState.config
             .showingTabList
             .sortedBy { it.order }
-            .map { it.toPagerTab(uiState.config.baseUrl) }
+            .map { it.toPagerTab(uiState.role) }
     }
 
     private fun ContentConfig.ActivityPubContent.ContentTab.toPagerTab(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
     ): PagerTab {
         return when (this) {
             is ContentConfig.ActivityPubContent.ContentTab.HomeTimeline -> {
                 ActivityPubTimelineTab(
-                    baseUrl = baseUrl,
+                    role = role,
                     type = ActivityPubTimelineType.HOME,
                 )
             }
 
             is ContentConfig.ActivityPubContent.ContentTab.LocalTimeline -> {
                 ActivityPubTimelineTab(
-                    baseUrl = baseUrl,
+                    role = role,
                     type = ActivityPubTimelineType.LOCAL,
                 )
             }
 
             is ContentConfig.ActivityPubContent.ContentTab.PublicTimeline -> {
                 ActivityPubTimelineTab(
-                    baseUrl = baseUrl,
+                    role = role,
                     type = ActivityPubTimelineType.PUBLIC,
                 )
             }
 
             is ContentConfig.ActivityPubContent.ContentTab.Trending -> {
                 TrendingStatusTab(
-                    baseUrl = baseUrl,
+                    role = role,
                 )
             }
 
             is ContentConfig.ActivityPubContent.ContentTab.ListTimeline -> {
                 ActivityPubListStatusTab(
-                    baseUrl = baseUrl,
+                    role = role,
                     listId = listId,
                     listTitle = name,
                 )

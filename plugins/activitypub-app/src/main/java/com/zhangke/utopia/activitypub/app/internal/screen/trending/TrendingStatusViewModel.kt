@@ -8,6 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -28,20 +29,20 @@ class TrendingStatusViewModel @Inject constructor(
             buildStatusUiState = buildStatusUiState,
             platformRepo = platformRepo,
             pollAdapter = pollAdapter,
-            baseUrl = params.baseUrl,
+            role = params.role,
             interactiveHandler = interactiveHandler,
         )
     }
 
     fun getSubViewModel(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
     ): TrendingStatusSubViewModel {
-        val params = Params(baseUrl)
+        val params = Params(role)
         return obtainSubViewModel(params)
     }
 
-    class Params(val baseUrl: FormalBaseUrl) : SubViewModelParams() {
+    class Params(val role: IdentityRole) : SubViewModelParams() {
         override val key: String
-            get() = baseUrl.toString()
+            get() = role.toString()
     }
 }

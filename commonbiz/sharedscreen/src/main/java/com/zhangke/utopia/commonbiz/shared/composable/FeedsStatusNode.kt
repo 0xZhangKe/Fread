@@ -15,6 +15,7 @@ import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
@@ -22,7 +23,7 @@ import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 @Composable
 fun FeedsStatusNode(
     modifier: Modifier = Modifier,
-    baseUrl: FormalBaseUrl,
+    role: IdentityRole,
     status: StatusUiState,
     indexInList: Int,
     onUserInfoClick: (BlogAuthor) -> Unit,
@@ -33,7 +34,7 @@ fun FeedsStatusNode(
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            navigator.push(StatusContextScreen(baseUrl, status.status))
+            navigator.push(StatusContextScreen(role, status.status))
         },
         status = status,
         indexInList = indexInList,

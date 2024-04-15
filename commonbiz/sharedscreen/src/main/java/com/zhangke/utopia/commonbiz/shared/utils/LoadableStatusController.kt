@@ -12,6 +12,7 @@ import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.richtext.preParseRichText
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
@@ -81,27 +82,30 @@ open class LoadableStatusController(
     }
 
     open fun onInteractive(
-        useAccount: LoggedAccount,
+        role: IdentityRole,
         status: Status,
         uiInteraction: StatusUiInteraction,
     ) {
         interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
-            interactiveHandler.onStatusInteractive(useAccount, status, uiInteraction).handleResult()
+            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
         }
     }
 
-    open fun onUserInfoClick(blogAuthor: BlogAuthor) {
+    open fun onUserInfoClick(
+        role: IdentityRole,
+        blogAuthor: BlogAuthor,
+    ) {
         interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
-            interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
+            interactiveHandler.onUserInfoClick(role, blogAuthor).handleResult()
         }
     }
 
-    open fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
+    open fun onVoted(role: IdentityRole, status: Status, votedOption: List<BlogPoll.Option>) {
         interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
         coroutineScope.launch {
-            interactiveHandler.onVoted(status, votedOption).handleResult()
+            interactiveHandler.onVoted(role, status, votedOption).handleResult()
         }
     }
 

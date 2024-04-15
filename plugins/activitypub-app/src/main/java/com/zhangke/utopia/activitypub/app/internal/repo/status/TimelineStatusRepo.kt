@@ -6,23 +6,26 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
+import com.zhangke.utopia.status.model.IdentityRole
 import javax.inject.Inject
 
 class TimelineStatusRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     statusDatabase: ActivityPubStatusDatabase,
     formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-) : StatusRepo(statusDatabase, formatDatetimeToDate) {
+    resolveBaseUrl: ResolveBaseUrlUseCase,
+) : StatusRepo(statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
 
     override suspend fun loadStatusFromServer(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         maxId: String?,
         limit: Int,
         listId: String?
     ): Result<List<ActivityPubStatusEntity>> {
-        val timelineRepo = clientManager.getClient(serverBaseUrl).timelinesRepo
+        val timelineRepo = clientManager.getClient(role).timelinesRepo
         return when (type) {
             ActivityPubStatusSourceType.TIMELINE_HOME -> timelineRepo.homeTimeline(
                 limit = limit,
@@ -47,12 +50,12 @@ class TimelineStatusRepo @Inject constructor(
     }
 
     suspend fun getLocalStatus(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
     ): List<ActivityPubStatusEntity> {
         return getLocalStatusInternal(
-            serverBaseUrl = serverBaseUrl,
+            role = role,
             type = type,
             limit = limit,
             listId = null,
@@ -60,12 +63,12 @@ class TimelineStatusRepo @Inject constructor(
     }
 
     suspend fun getRemoteStatus(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
     ): Result<List<ActivityPubStatusEntity>> {
         return getRemoteStatusInternal(
-            serverBaseUrl = serverBaseUrl,
+            role = role,
             type = type,
             limit = limit,
             listId = null,
@@ -73,13 +76,13 @@ class TimelineStatusRepo @Inject constructor(
     }
 
     suspend fun loadMore(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         maxId: String,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
     ): Result<List<ActivityPubStatusEntity>> {
         return loadMoreInternal(
-            serverBaseUrl = serverBaseUrl,
+            role = role,
             type = type,
             maxId = maxId,
             limit = limit,

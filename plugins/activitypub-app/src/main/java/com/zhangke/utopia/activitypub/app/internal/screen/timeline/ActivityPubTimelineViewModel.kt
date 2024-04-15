@@ -11,6 +11,7 @@ import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlat
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -34,25 +35,25 @@ class ActivityPubTimelineViewModel @Inject constructor(
             buildStatusUiState = buildStatusUiState,
             interactiveHandler = interactiveHandler,
             pollAdapter = pollAdapter,
-            baseUrl = params.baseUrl,
+            role = params.role,
             type = params.timelineSourceType.toSourceType(),
         )
     }
 
     fun getSubViewModel(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         timelineSourceType: ActivityPubTimelineType,
     ): ActivityPubTimelineSubViewModel {
-        val params = Params(baseUrl, timelineSourceType)
+        val params = Params(role, timelineSourceType)
         return obtainSubViewModel(params)
     }
 
     class Params(
-        val baseUrl: FormalBaseUrl,
+        val role: IdentityRole,
         val timelineSourceType: ActivityPubTimelineType,
     ) : SubViewModelParams() {
         override val key: String
-            get() = "${baseUrl}_${timelineSourceType.name}"
+            get() = "${role}_${timelineSourceType.name}"
     }
 
     private fun ActivityPubTimelineType.toSourceType(): ActivityPubStatusSourceType {

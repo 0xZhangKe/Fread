@@ -55,7 +55,7 @@ class ExplorerHomeScreen : Screen {
                     accountList = uiState.loggedAccountsList,
                     onAccountSelected = onAccountSelected,
                 )
-                if (selectedAccount != null) {
+                if (uiState.role != null) {
                     CompositionLocalProvider(
                         LocalSnackbarHostState provides snackbarHostState
                     ) {
@@ -63,15 +63,15 @@ class ExplorerHomeScreen : Screen {
                             listOf(
                                 ExplorerFeedsTab(
                                     type = ExplorerFeedsTabType.STATUS,
-                                    accountUri = selectedAccount.uri,
+                                    role = uiState.role,
                                 ),
                                 ExplorerFeedsTab(
                                     type = ExplorerFeedsTabType.HASHTAG,
-                                    accountUri = selectedAccount.uri,
+                                    role = uiState.role,
                                 ),
                                 ExplorerFeedsTab(
                                     type = ExplorerFeedsTabType.USERS,
-                                    accountUri = selectedAccount.uri,
+                                    role = uiState.role,
                                 ),
                             )
                         }

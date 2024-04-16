@@ -26,7 +26,6 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.utils.LoadState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -35,9 +34,10 @@ import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 
-class SearchedStatusTab(private val baseUrl: FormalBaseUrl, private val query: String) : PagerTab {
+class SearchedStatusTab(private val role: IdentityRole, private val query: String) : PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -49,7 +49,7 @@ class SearchedStatusTab(private val baseUrl: FormalBaseUrl, private val query: S
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         val viewModel = getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory>{
-            it.create(baseUrl)
+            it.create(role)
         }
         val uiState by viewModel.uiState.collectAsState()
 
@@ -59,7 +59,6 @@ class SearchedStatusTab(private val baseUrl: FormalBaseUrl, private val query: S
 
         SearchStatusTabContent(
             uiState = uiState,
-            baseUrl = baseUrl,
             onUserInfoClick = viewModel::onUserInfoClick,
             onInteractive = viewModel::onInteractive,
             onRefresh = {
@@ -82,7 +81,6 @@ class SearchedStatusTab(private val baseUrl: FormalBaseUrl, private val query: S
     @Composable
     private fun SearchStatusTabContent(
         uiState: CommonLoadableUiState<StatusUiState>,
-        baseUrl: FormalBaseUrl,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onRefresh: () -> Unit,
@@ -105,7 +103,7 @@ class SearchedStatusTab(private val baseUrl: FormalBaseUrl, private val query: S
             itemsIndexed(uiState.dataList) { index, item ->
                 FeedsStatusNode(
                     modifier = Modifier.fillMaxWidth(),
-                    baseUrl = baseUrl,
+                    role = role,
                     status = item,
                     indexInList = index,
                     onUserInfoClick = onUserInfoClick,

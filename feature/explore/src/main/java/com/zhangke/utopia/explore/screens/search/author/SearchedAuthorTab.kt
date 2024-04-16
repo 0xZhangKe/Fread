@@ -27,9 +27,13 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.BlogAuthorUi
 
-class SearchedAuthorTab(private val baseUrl: FormalBaseUrl, private val query: String) : PagerTab {
+class SearchedAuthorTab(
+    private val role: IdentityRole,
+    private val query: String,
+) : PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -41,7 +45,7 @@ class SearchedAuthorTab(private val baseUrl: FormalBaseUrl, private val query: S
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<SearchAuthorViewModel, SearchAuthorViewModel.Factory> {
-            it.create(baseUrl)
+            it.create(role)
         }
         val uiState by viewModel.uiState.collectAsState()
 

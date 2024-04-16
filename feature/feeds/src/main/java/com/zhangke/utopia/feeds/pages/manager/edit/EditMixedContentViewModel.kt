@@ -72,7 +72,7 @@ internal class EditMixedContentViewModel @AssistedInject constructor(
             val sourceList = _uiState.value.requireSuccessData().sourceList.toMutableList()
             sourceList.map { it.uri }
             if (sourceList.any { it.uri == uri }) return@launchInViewModel
-            statusProvider.statusSourceResolver.resolveSourceByUri(uri)
+            statusProvider.statusSourceResolver.resolveSourceByUri(null, uri)
                 .onSuccess { source ->
                     source?.let {
                         statusSourceUiStateAdapter.adapt(
@@ -99,7 +99,7 @@ internal class EditMixedContentViewModel @AssistedInject constructor(
                 return@launchInViewModel
             }
             val sourceList = contentConfig.sourceUriList.mapNotNull {
-                statusProvider.statusSourceResolver.resolveSourceByUri(it).getOrNull()
+                statusProvider.statusSourceResolver.resolveSourceByUri(null, it).getOrNull()
             }.map { source ->
                 statusSourceUiStateAdapter.adapt(
                     source,

@@ -4,6 +4,7 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -18,23 +19,23 @@ class ExplorerFeedsContainerViewModel @Inject constructor(
     override fun createSubViewModel(params: Params): ExplorerFeedsViewModel {
         return ExplorerFeedsViewModel(
             type = params.type,
-            accountUri = params.accountUri,
+            role = params.role,
             statusProvider = statusProvider,
             interactiveHandler = interactiveHandler,
             getExplorerItem = getExplorerItem,
         )
     }
 
-    fun getSubViewModel(type: ExplorerFeedsTabType, accountUri: FormalUri): ExplorerFeedsViewModel {
-        return obtainSubViewModel(Params(type, accountUri))
+    fun getSubViewModel(type: ExplorerFeedsTabType, role: IdentityRole): ExplorerFeedsViewModel {
+        return obtainSubViewModel(Params(type, role))
     }
 
     class Params(
         val type: ExplorerFeedsTabType,
-        val accountUri: FormalUri,
+        val role: IdentityRole,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = type.name + accountUri.toString()
+            get() = type.name + role
     }
 }

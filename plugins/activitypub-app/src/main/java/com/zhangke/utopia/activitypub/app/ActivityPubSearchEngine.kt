@@ -6,7 +6,6 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubSearchAdap
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.baseurl.BaseUrlManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.search.SearchPlatformUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.source.user.SearchUserSourceUseCase
@@ -23,7 +22,6 @@ import javax.inject.Inject
 
 class ActivityPubSearchEngine @Inject constructor(
     private val searchUserSource: SearchUserSourceUseCase,
-    private val baseUrlManager: BaseUrlManager,
     private val clientManager: ActivityPubClientManager,
     private val platformRepo: ActivityPubPlatformRepo,
     private val searchAdapter: ActivityPubSearchAdapter,
@@ -34,7 +32,7 @@ class ActivityPubSearchEngine @Inject constructor(
 ) : ISearchEngine {
 
     override suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>> {
-        return doSearch { searchRepo, platform ->
+        return doSearch(role) { searchRepo, platform ->
             searchRepo.query(query).map {
                 searchAdapter.toSearchResult(it, platform)
             }
@@ -46,7 +44,7 @@ class ActivityPubSearchEngine @Inject constructor(
         query: String,
         maxId: String?,
     ): Result<List<Status>> {
-        return doSearch { searchRepo, blogPlatform ->
+        return doSearch(role) { searchRepo, blogPlatform ->
             searchRepo.queryStatus(
                 query = query,
                 maxId = maxId,
@@ -61,7 +59,7 @@ class ActivityPubSearchEngine @Inject constructor(
         query: String,
         offset: Int?,
     ): Result<List<Hashtag>> {
-        return doSearch { searchRepo, _ ->
+        return doSearch(role) { searchRepo, _ ->
             searchRepo.queryHashtags(
                 query = query,
                 offset = offset,
@@ -76,7 +74,7 @@ class ActivityPubSearchEngine @Inject constructor(
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>> {
-        return doSearch { searchRepo, _ ->
+        return doSearch(role) { searchRepo, _ ->
             searchRepo.queryAccount(
                 query = query,
                 offset = offset,
@@ -98,15 +96,15 @@ class ActivityPubSearchEngine @Inject constructor(
     }
 
     private suspend fun <T> doSearch(
+        role: IdentityRole,
         onSearch: suspend (SearchRepo, BlogPlatform) -> Result<List<T>>,
     ): Result<List<T>> {
-        val baseUrl = baseUrlManager.decideBaseUrl()
-        val platformResult = platformRepo.getPlatform(baseUrl)
+        val platformResult = platformRepo.getPlatform(role)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val searchRepo = clientManager.getClient(baseUrl).searchRepo
+        val searchRepo = clientManager.getClient(role).searchRepo
         return onSearch(searchRepo, platform)
     }
 
@@ -114,7 +112,7 @@ class ActivityPubSearchEngine @Inject constructor(
         role: IdentityRole,
         query: String,
     ): Result<List<StatusSource>> {
-        return searchUserSource(query).map {
+        return searchUserSource(role, query).map {
             if (it == null) {
                 emptyList()
             } else {
@@ -127,7 +125,7 @@ class ActivityPubSearchEngine @Inject constructor(
         role: IdentityRole,
         query: String,
     ): Result<List<SearchContentResult>>? {
-        val searchedSource = searchUserSource(query).getOrNull()
+        val searchedSource = searchUserSource(role, query).getOrNull()
         if (searchedSource != null) {
             return Result.success(listOf(SearchContentResult.Source(searchedSource)))
         }

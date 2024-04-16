@@ -9,9 +9,9 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.explore.R
+import com.zhangke.utopia.status.model.IdentityRole
 
-class SearchedPlatformTab(private val baseUrl: FormalBaseUrl, private val query: String): PagerTab {
-
+class SearchedPlatformTab(private val role: IdentityRole, private val query: String): PagerTab {
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
             title = stringResource(R.string.explorer_search_tab_title_server),

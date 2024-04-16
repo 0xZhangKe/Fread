@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.auth
 
-import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.status.uri.FormalUri

@@ -3,9 +3,10 @@ package com.zhangke.utopia.feeds.pages.home.feeds
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.status.model.IdentityRole
 
 data class MixedContentUiState(
-    val feeds: List<StatusUiState>,
+    val feeds: List<MixedContentItemUiState>,
     /**
      * 初始化中，feeds 为空时UI层显示loading
      */
@@ -26,3 +27,8 @@ data class MixedContentUiState(
         )
     }
 }
+
+data class MixedContentItemUiState(
+    val role: IdentityRole,
+    val statusUiState: StatusUiState,
+)

@@ -4,6 +4,7 @@ import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
@@ -23,7 +24,9 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
         limit: Int,
         maxCreateTime: Long,
     ): Result<Unit> {
+        val role = statusProvider.statusSourceResolver.resolveRoleByUri(sourceUri)
         return syncStatusAndSaveToLocal(
+            role = role,
             sourceUri = sourceUri,
             pageLimit = limit,
             maxStatus = decideMaxStatus(sourceUri, maxCreateTime)
@@ -31,11 +34,13 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
     }
 
     private suspend fun syncStatusAndSaveToLocal(
+        role: IdentityRole,
         sourceUri: FormalUri,
         pageLimit: Int,
         maxStatus: StatusContentEntity?,
     ): Result<Unit> {
         val result = statusResolver.getStatusList(
+            role = role,
             uri = sourceUri,
             limit = pageLimit,
             maxId = maxStatus?.statusIdOfPlatform,

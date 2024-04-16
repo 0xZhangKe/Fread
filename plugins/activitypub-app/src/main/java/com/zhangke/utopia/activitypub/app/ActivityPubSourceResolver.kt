@@ -25,6 +25,11 @@ class ActivityPubSourceResolver @Inject constructor(
         )
     }
 
+    override fun resolveRoleByUri(uri: FormalUri): IdentityRole? {
+        val userUriInsights = userUriTransformer.parse(uri) ?: return null
+        return IdentityRole(userUriInsights.uri, null)
+    }
+
     override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
         return emptyFlow()
     }

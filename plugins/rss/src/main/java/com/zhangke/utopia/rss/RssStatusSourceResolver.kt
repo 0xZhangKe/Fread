@@ -19,7 +19,10 @@ class RssStatusSourceResolver @Inject constructor(
     private val rssRepo: RssRepo,
 ) : IStatusSourceResolver {
 
-    override suspend fun resolveSourceByUri(role: IdentityRole?, uri: FormalUri): Result<StatusSource?> {
+    override suspend fun resolveSourceByUri(
+        role: IdentityRole?,
+        uri: FormalUri
+    ): Result<StatusSource?> {
         if (!uri.isRssUri) return Result.success(null)
         val uriInsight = rssUriTransformer.parse(uri) ?: return Result.failure(
             IllegalArgumentException("Unknown uri: $uri")
@@ -31,6 +34,11 @@ class RssStatusSourceResolver @Inject constructor(
         val source = sourceResult.getOrThrow() ?: return Result.success(null)
         return rssSourceTransformer.createSource(uriInsight, source)
             .let { Result.success(it) }
+    }
+
+    override fun resolveRoleByUri(uri: FormalUri): IdentityRole? {
+        if (!uri.isRssUri) return null
+        return IdentityRole.nonIdentityRole
     }
 
     override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {

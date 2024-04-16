@@ -20,7 +20,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 
-@HiltViewModel
+@HiltViewModel(assistedFactory = FollowViewModel.Factory::class)
 class FollowViewModel @AssistedInject constructor(
     private val accountManager: ActivityPubAccountManager,
     private val userUriTransformer: UserUriTransformer,

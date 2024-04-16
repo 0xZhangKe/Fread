@@ -1,6 +1,7 @@
 package com.zhangke.utopia.common.status.usecase.previous
 
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 

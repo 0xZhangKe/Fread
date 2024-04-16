@@ -6,6 +6,7 @@ import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo
 import com.zhangke.utopia.common.status.repo.db.StatusContentEntity
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
@@ -26,7 +27,6 @@ internal class RefreshStatusUseCase @Inject constructor(
         sourceUriList: List<FormalUri>,
         limit: Int,
     ): Result<RefreshResult> {
-        Log.d("U_TEST", "Status Refresh, sourceUriList: $sourceUriList, limit: $limit.")
         val resultList = sourceUriList.map {
             getStatus(it, limit)
         }
@@ -51,7 +51,8 @@ internal class RefreshStatusUseCase @Inject constructor(
         sourceUri: FormalUri,
         limit: Int,
     ): Result<RefreshResult> {
-        val entitiesResult = fetchStatus(sourceUri, limit)
+        val role = statusProvider.statusSourceResolver.resolveRoleByUri(sourceUri)
+        val entitiesResult = fetchStatus(role, sourceUri, limit)
         if (entitiesResult.isFailure) {
             return Result.failure(entitiesResult.exceptionOrNull()!!)
         }
@@ -89,11 +90,13 @@ internal class RefreshStatusUseCase @Inject constructor(
     }
 
     private suspend fun fetchStatus(
+        role: IdentityRole,
         sourceUri: FormalUri,
         limit: Int,
     ): Result<List<StatusContentEntity>> {
         return statusProvider.statusResolver
             .getStatusList(
+                role = role,
                 uri = sourceUri,
                 limit = limit,
             ).map { list ->

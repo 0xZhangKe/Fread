@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
-import android.util.Log
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
@@ -12,8 +11,6 @@ import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
@@ -69,8 +66,7 @@ class MixedContentSubViewModel(
         launchInViewModel {
             contentConfigRepo.getConfigFlow(configId)
                 .drop(1)
-                .collect { config ->
-                    Log.d("U_TEST", "onContent changed: $config")
+                .collect {
                     _uiState.update { it.resetState() }
                     initFeeds()
                 }
@@ -97,9 +93,13 @@ class MixedContentSubViewModel(
                 sourceUriList = sourceList,
                 limit = config.loadFromLocalLimit,
             )
-            _uiState.value = _uiState.value.copy(
-                feeds = localStatus.map(buildStatusUiState::invoke),
-            )
+            val newFeeds = localStatus.map {
+                val statusUiState = buildStatusUiState(it)
+                val role = statusProvider.statusSourceResolver
+                    .resolveRoleByUri(it.intrinsicBlog.author.uri)
+                MixedContentItemUiState(role, statusUiState)
+            }
+            _uiState.value = _uiState.value.copy(feeds = newFeeds)
             feedsRepo.refresh(
                 sourceUriList = sourceList,
                 limit = config.loadFromServerLimit,
@@ -121,17 +121,22 @@ class MixedContentSubViewModel(
         }
     }
 
-    private fun List<StatusUiState>.applyRefreshResult(
+    private fun List<MixedContentItemUiState>.applyRefreshResult(
         refreshResult: RefreshResult,
-    ): List<StatusUiState> {
+    ): List<MixedContentItemUiState> {
         val deletedIdsSet = refreshResult.deletedStatus
             .map { it.id }
             .toSet()
         val finalList = this.filter {
-            !deletedIdsSet.contains(it.status.id)
+            !deletedIdsSet.contains(it.statusUiState.status.id)
         }.toMutableList()
-        finalList.addAllIgnoreDuplicate(refreshResult.newStatus.map(buildStatusUiState::invoke))
-        return finalList.sortedByDescending { it.status.datetime }
+        val items = refreshResult.newStatus.map { statusItem ->
+            val role = statusProvider.statusSourceResolver
+                .resolveRoleByUri(statusItem.intrinsicBlog.author.uri)
+            MixedContentItemUiState(role, buildStatusUiState(statusItem))
+        }
+        finalList.addAllIgnoreDuplicate(items)
+        return finalList.sortedByDescending { it.statusUiState.status.datetime }
     }
 
     fun onRefresh() {
@@ -174,9 +179,9 @@ class MixedContentSubViewModel(
         launchInViewModel {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
             feedsRepo.getStatus(
-                sourceList,
+                sourceUriList = sourceList,
                 limit = config.loadFromServerLimit,
-                maxId = feeds.last().status.id,
+                maxId = feeds.last().statusUiState.status.id,
             ).map { statusList ->
                 statusList.preParseRichText()
                 statusList
@@ -185,7 +190,12 @@ class MixedContentSubViewModel(
                     it.copy(
                         loadMoreState = LoadState.Idle,
                         feeds = it.feeds.toMutableList().apply {
-                            addAllIgnoreDuplicate(list.map(buildStatusUiState::invoke))
+                            val items = list.map { statusItem ->
+                                val role = statusProvider.statusSourceResolver
+                                    .resolveRoleByUri(statusItem.intrinsicBlog.author.uri)
+                                MixedContentItemUiState(role, buildStatusUiState(statusItem))
+                            }
+                            addAllIgnoreDuplicate(items)
                         },
                     )
                 }
@@ -201,17 +211,24 @@ class MixedContentSubViewModel(
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
         launchInViewModel {
-            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
+            val accountUri = status.intrinsicBlog.author.uri
+            val role = statusProvider.statusSourceResolver.resolveRoleByUri(accountUri)
+            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
         }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
         launchInViewModel {
-            interactiveHandler.onUserInfoClick(blogAuthor).handleResult()
+            val role = statusProvider.statusSourceResolver.resolveRoleByUri(blogAuthor.uri)
+            interactiveHandler.onUserInfoClick(role, blogAuthor).handleResult()
         }
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        launchInViewModel { interactiveHandler.onVoted(status, options).handleResult() }
+        launchInViewModel {
+            val accountUri = status.intrinsicBlog.author.uri
+            val role = statusProvider.statusSourceResolver.resolveRoleByUri(accountUri)
+            interactiveHandler.onVoted(role, status, options).handleResult()
+        }
     }
 
     private suspend fun clearFeedsWhenAccountChanged() {
@@ -234,17 +251,17 @@ class MixedContentSubViewModel(
         )
     }
 
-    private fun MutableList<StatusUiState>.addAllIgnoreDuplicate(
-        newStatusList: List<StatusUiState>,
+    private fun MutableList<MixedContentItemUiState>.addAllIgnoreDuplicate(
+        newItems: List<MixedContentItemUiState>,
     ) {
-        newStatusList.forEach { newStatus ->
-            this.addIfNotExist(newStatus)
+        newItems.forEach {
+            this.addIfNotExist(it)
         }
     }
 
-    private fun MutableList<StatusUiState>.addIfNotExist(newStatus: StatusUiState) {
-        if (this.container { it.status.id == newStatus.status.id }) return
-        this += newStatus
+    private fun MutableList<MixedContentItemUiState>.addIfNotExist(newItemUiState: MixedContentItemUiState) {
+        if (this.container { it.statusUiState.status.id == newItemUiState.statusUiState.status.id }) return
+        this += newItemUiState
     }
 
     private suspend fun InteractiveHandleResult.handleResult() {
@@ -254,9 +271,14 @@ class MixedContentSubViewModel(
             uiStatusUpdater = { newUiState ->
                 feedsRepo.updateStatus(newUiState.status)
                 _uiState.update { currentUiState ->
-                    currentUiState.copy(
-                        feeds = currentUiState.feeds.updateStatus(newUiState)
-                    )
+                    val newFeeds = currentUiState.feeds.map {
+                        if (it.statusUiState.status.id == newUiState.status.id) {
+                            it.copy(statusUiState = newUiState)
+                        } else {
+                            it
+                        }
+                    }
+                    currentUiState.copy(feeds = newFeeds)
                 }
             }
         )

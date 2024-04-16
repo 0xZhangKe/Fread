@@ -100,12 +100,13 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                 itemsIndexed(
                     items = uiState.feeds,
                     key = { _, item ->
-                        item.status.id
+                        item.statusUiState.status.id
                     },
                 ) { index, item ->
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
-                        status = item,
+                        status = item.statusUiState,
+                        role = item.role,
                         onUserInfoClick = onUserInfoClick,
                         onInteractive = onInteractive,
                         indexInList = index,

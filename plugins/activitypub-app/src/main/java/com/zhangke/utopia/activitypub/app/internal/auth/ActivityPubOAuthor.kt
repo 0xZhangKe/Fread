@@ -11,6 +11,7 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPlatformEn
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -40,7 +41,7 @@ class ActivityPubOAuthor @Inject constructor(
                 applicationRepo.getApplicationByBaseUrl(baseUrl) ?: return@async Result.failure(
                     IllegalStateException("Can not get application info by $baseUrl")
                 )
-            val client = clientManager.getClient(baseUrl)
+            val client = clientManager.getClient(IdentityRole(null, baseUrl))
             val oauthUrl = client.oauthRepo.buildOAuthUrl(
                 baseUrl = baseUrl.toString(),
                 clientId = app.clientId,

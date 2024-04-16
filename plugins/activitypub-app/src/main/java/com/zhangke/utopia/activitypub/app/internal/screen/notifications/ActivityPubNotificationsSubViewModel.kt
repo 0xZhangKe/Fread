@@ -21,6 +21,7 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -59,6 +60,9 @@ class ActivityPubNotificationsSubViewModel(
     val snackMessage: SharedFlow<TextString> = _snackMessage.asSharedFlow()
 
     private var loggedAccount: ActivityPubLoggedAccount? = null
+
+    private val role: IdentityRole
+        get() = IdentityRole(userUriInsights.uri, null)
 
     init {
         loadableController.initData(
@@ -148,7 +152,7 @@ class ActivityPubNotificationsSubViewModel(
         val status = statusNotification.status ?: return
         val interaction = uiInteraction.statusInteraction ?: return
         launchInViewModel {
-            statusInteractive(status.status, interaction)
+            statusInteractive(role, status.status, interaction)
                 .map { activityPubStatusAdapter.toStatus(it, status.status.platform) }
                 .map { buildStatusUiState(it) }
                 .onSuccess { newStatus ->
@@ -178,7 +182,7 @@ class ActivityPubNotificationsSubViewModel(
 
     fun onRejectClick(notification: NotificationUiState) {
         val accountId = notification.account.id
-        val accountRepo = clientManager.getClient(userUriInsights.baseUrl).accountRepo
+        val accountRepo = clientManager.getClient(role).accountRepo
         launchInViewModel {
             accountRepo.rejectFollowRequest(accountId)
                 .onFailure {
@@ -191,7 +195,7 @@ class ActivityPubNotificationsSubViewModel(
 
     fun onAcceptClick(notification: NotificationUiState) {
         val accountId = notification.account.id
-        val accountRepo = clientManager.getClient(userUriInsights.baseUrl).accountRepo
+        val accountRepo = clientManager.getClient(role).accountRepo
         launchInViewModel {
             accountRepo.authorizeFollowRequest(accountId)
                 .onFailure {
@@ -205,7 +209,7 @@ class ActivityPubNotificationsSubViewModel(
     fun onVoted(statusNotification: NotificationUiState, options: List<BlogPoll.Option>) {
         val status = statusNotification.status?.status ?: return
         launchInViewModel {
-            votePoll(status, options, userUriInsights.baseUrl)
+            votePoll(role, status, options)
                 .map { buildStatusUiState(it) }
                 .onSuccess {
                     updateStatus(statusNotification, it)

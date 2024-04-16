@@ -6,6 +6,7 @@ import com.zhangke.utopia.rss.internal.source.RssSourceTransformer
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.source.IStatusSourceResolver
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
@@ -18,7 +19,7 @@ class RssStatusSourceResolver @Inject constructor(
     private val rssRepo: RssRepo,
 ) : IStatusSourceResolver {
 
-    override suspend fun resolveSourceByUri(uri: FormalUri): Result<StatusSource?> {
+    override suspend fun resolveSourceByUri(role: IdentityRole?, uri: FormalUri): Result<StatusSource?> {
         if (!uri.isRssUri) return Result.success(null)
         val uriInsight = rssUriTransformer.parse(uri) ?: return Result.failure(
             IllegalArgumentException("Unknown uri: $uri")

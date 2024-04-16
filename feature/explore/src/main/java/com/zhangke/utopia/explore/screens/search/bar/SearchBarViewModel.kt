@@ -4,11 +4,9 @@ import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.usecase.GetDefaultBaseUrlUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
@@ -18,6 +16,7 @@ import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
@@ -33,7 +32,6 @@ class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
     private val interactiveHandler: InteractiveHandler,
-    private val getDefaultBaseUrl: GetDefaultBaseUrlUseCase,
 ) : ViewModel() {
 
     private var searchJob: Job? = null
@@ -41,12 +39,18 @@ class SearchBarViewModel @Inject constructor(
     var selectedAccount: LoggedAccount? = null
         set(value) {
             field = value
-            _uiState.update { it.copy(baseUrl = getBaseUrl()) }
+            _uiState.update { it.copy(role = role) }
+        }
+
+    private val role: IdentityRole
+        get() {
+            val accountUri = selectedAccount?.uri
+            return IdentityRole(accountUri, null)
         }
 
     private val _uiState = MutableStateFlow(
         SearchBarUiState(
-            baseUrl = getBaseUrl(),
+            role = role,
             query = "",
             resultList = emptyList(),
         )
@@ -71,7 +75,7 @@ class SearchBarViewModel @Inject constructor(
         searchJob?.cancel()
         searchJob = launchInViewModel {
             statusProvider.searchEngine
-                .search(getBaseUrl(), query)
+                .search(role, query)
                 .map { list ->
                     list.map { buildSearchResultUiState(it) }
                 }.onSuccess { searchResult ->
@@ -84,19 +88,19 @@ class SearchBarViewModel @Inject constructor(
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
         launchInViewModel {
-            interactiveHandler.onStatusInteractive(status, uiInteraction).handleResult()
+            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
         }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
         launchInViewModel {
-            interactiveHandler.onUserInfoClick(blogAuthor)
+            interactiveHandler.onUserInfoClick(role, blogAuthor)
                 .handleResult()
         }
     }
 
     fun onHashtagClick(hashtag: Hashtag) {
         launchInViewModel {
-            statusProvider.screenProvider.getTagTimelineScreenRoute(hashtag)
+            statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag)
                 ?.let { KRouter.route<Screen>(it) }
                 ?.let { _openScreenFlow.emit(it) }
         }
@@ -104,12 +108,8 @@ class SearchBarViewModel @Inject constructor(
 
     fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
         launchInViewModel {
-            interactiveHandler.onVoted(status, votedOption).handleResult()
+            interactiveHandler.onVoted(role, status, votedOption).handleResult()
         }
-    }
-
-    private fun getBaseUrl(): FormalBaseUrl {
-        return selectedAccount?.platform?.baseUrl ?: getDefaultBaseUrl()
     }
 
     private suspend fun InteractiveHandleResult.handleResult() {

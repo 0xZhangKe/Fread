@@ -8,6 +8,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.BlogAuthorUi
 import com.zhangke.utopia.status.ui.BlogPlatformUi
@@ -16,7 +17,7 @@ import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 @Composable
 fun SearchResultUi(
     searchResult: SearchResultUiState,
-    baseUrl: FormalBaseUrl,
+    role: IdentityRole,
     modifier: Modifier = Modifier,
     indexInList: Int,
     onUserInfoClick: (BlogAuthor) -> Unit,
@@ -35,7 +36,7 @@ fun SearchResultUi(
         is SearchResultUiState.SearchedStatus -> {
             FeedsStatusNode(
                 modifier = modifier,
-                baseUrl = baseUrl,
+                role = role,
                 status = searchResult.status,
                 indexInList = indexInList,
                 onUserInfoClick = onUserInfoClick,

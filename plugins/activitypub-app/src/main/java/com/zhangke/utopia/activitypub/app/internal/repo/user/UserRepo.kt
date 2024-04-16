@@ -6,6 +6,7 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.source.UserSourceTransformer
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.source.StatusSource
 import javax.inject.Inject
 
@@ -16,30 +17,30 @@ class UserRepo @Inject constructor(
 ) {
 
     suspend fun getUserSource(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         userUriInsights: UserUriInsights,
     ): Result<StatusSource> {
         val userIdResult =
-            webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, baseUrl)
+            webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, role)
         if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
         val userId = userIdResult.getOrThrow()
-        return clientManager.getClient(baseUrl)
+        return clientManager.getClient(role)
             .accountRepo
             .getAccount(userId)
             .map(userSourceTransformer::createByUserEntity)
     }
 
     suspend fun lookupUserSource(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         acct: String,
     ): Result<StatusSource?> {
-        return clientManager.getClient(baseUrl).accountRepo
+        return clientManager.getClient(role).accountRepo
             .lookup(acct)
             .onSuccess {
                 if (it != null) {
                     val webFinger = WebFinger.create(it.acct)
                     if (webFinger != null) {
-                        webFingerBaseUrlToUserIdRepo.insert(webFinger, baseUrl, it.id)
+                        webFingerBaseUrlToUserIdRepo.insert(webFinger, role, it.id)
                     }
                 }
             }

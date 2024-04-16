@@ -6,9 +6,9 @@ import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -20,12 +20,12 @@ import kotlinx.coroutines.flow.StateFlow
 @HiltViewModel(assistedFactory = SearchAuthorViewModel.Factory::class)
 open class SearchAuthorViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
-    @Assisted val baseUrl: FormalBaseUrl,
+    @Assisted val role: IdentityRole,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(baseUrl: FormalBaseUrl): SearchAuthorViewModel
+        fun create(role: IdentityRole): SearchAuthorViewModel
     }
 
     private val loadableController = CommonLoadableController<BlogAuthor>(viewModelScope)
@@ -36,7 +36,7 @@ open class SearchAuthorViewModel @AssistedInject constructor(
 
     fun onRefresh(query: String) {
         loadableController.onRefresh {
-            statusProvider.searchEngine.searchAuthor(baseUrl, query, null)
+            statusProvider.searchEngine.searchAuthor(role, query, null)
         }
     }
 
@@ -44,12 +44,12 @@ open class SearchAuthorViewModel @AssistedInject constructor(
         val offset = uiState.value.dataList.size
         if (offset == 0) return
         loadableController.onLoadMore {
-            statusProvider.searchEngine.searchAuthor(baseUrl, query, offset)
+            statusProvider.searchEngine.searchAuthor(role, query, offset)
         }
     }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        val route = statusProvider.screenProvider.getUserDetailRoute(blogAuthor.uri) ?: return
+        val route = statusProvider.screenProvider.getUserDetailRoute(role, blogAuthor.uri) ?: return
         launchInViewModel {
             _openScreenFlow.emit(route)
         }

@@ -22,8 +22,12 @@ import com.zhangke.utopia.explore.screens.search.author.SearchedAuthorTab
 import com.zhangke.utopia.explore.screens.search.hashtag.SearchedHashtagTab
 import com.zhangke.utopia.explore.screens.search.platform.SearchedPlatformTab
 import com.zhangke.utopia.explore.screens.search.status.SearchedStatusTab
+import com.zhangke.utopia.status.model.IdentityRole
 
-class SearchScreen(private val baseUrl: FormalBaseUrl, private val query: String) : Screen {
+class SearchScreen(
+    private val role: IdentityRole,
+    private val query: String,
+) : Screen {
 
     @Composable
     override fun Content() {
@@ -52,10 +56,10 @@ class SearchScreen(private val baseUrl: FormalBaseUrl, private val query: String
         ) { paddingValues ->
             val tabs = remember {
                 listOf(
-                    SearchedAuthorTab(baseUrl, query),
-                    SearchedStatusTab(baseUrl, query),
-                    SearchedPlatformTab(baseUrl, query),
-                    SearchedHashtagTab(baseUrl, query),
+                    SearchedAuthorTab(role, query),
+                    SearchedStatusTab(role, query),
+                    SearchedPlatformTab(role, query),
+                    SearchedHashtagTab(role, query),
                 )
             }
             Column(

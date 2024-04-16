@@ -26,9 +26,10 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 
-class SearchedHashtagTab(private val baseUrl: FormalBaseUrl, private val query: String) : PagerTab {
+class SearchedHashtagTab(private val role: IdentityRole, private val query: String) : PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -40,7 +41,7 @@ class SearchedHashtagTab(private val baseUrl: FormalBaseUrl, private val query: 
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<SearchHashtagViewModel, SearchHashtagViewModel.Factory> {
-            it.create(baseUrl)
+            it.create(role)
         }
         val uiState by viewModel.uiState.collectAsState()
 

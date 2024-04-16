@@ -2,13 +2,11 @@ package com.zhangke.utopia.explore.screens.home.tab
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
@@ -18,12 +16,11 @@ import com.zhangke.utopia.commonbiz.shared.usecase.handle
 import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -32,14 +29,11 @@ import kotlinx.coroutines.flow.update
 
 class ExplorerFeedsViewModel(
     private val type: ExplorerFeedsTabType,
-    private val accountUri: FormalUri,
+    private val role: IdentityRole,
     private val statusProvider: StatusProvider,
     private val interactiveHandler: InteractiveHandler,
     private val getExplorerItem: GetExplorerItemUseCase,
 ) : SubViewModel() {
-
-    var baseUrl: FormalBaseUrl? = null
-        private set
 
     private val loadController = CommonLoadableController<ExplorerItem>(viewModelScope)
 
@@ -53,40 +47,25 @@ class ExplorerFeedsViewModel(
 
     init {
         launchInViewModel {
-            baseUrl = statusProvider.accountManager
-                .getAllLoggedAccount()
-                .firstOrNull { it.uri == accountUri }
-                ?.platform
-                ?.baseUrl
-            if (baseUrl == null) {
-                loadController.mutableUiState.update {
-                    it.copy(
-                        errorMessage = textOf("No account found for $accountUri"),
-                    )
-                }
-                return@launchInViewModel
-            }
             loadController.initData(
-                getDataFromServer = { getExplorerItem(baseUrl!!, type, 0, "") },
+                getDataFromServer = { getExplorerItem(role, type, 0, "") },
                 getDataFromLocal = null,
             )
         }
     }
 
     fun onRefresh() {
-        val baseUrl = baseUrl ?: return
         loadController.onRefresh(false) {
-            getExplorerItem(baseUrl, type, 0, "")
+            getExplorerItem(role, type, 0, "")
         }
     }
 
     fun onLoadMore() {
-        val baseUrl = baseUrl ?: return
         val dataList = uiState.value.dataList
         if (dataList.isEmpty()) return
         loadController.onLoadMore {
             getExplorerItem(
-                baseUrl = baseUrl,
+                role = role,
                 type = type,
                 offset = loadController.uiState.value.dataList.size,
                 sinceId = dataList.last().id,
@@ -95,28 +74,24 @@ class ExplorerFeedsViewModel(
     }
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        val baseUrl = baseUrl ?: return
         launchInViewModel {
-            interactiveHandler.onStatusInteractive(baseUrl, status, uiInteraction).handleResult()
+            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
         }
     }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        val baseUrl = baseUrl ?: return
         launchInViewModel {
-            interactiveHandler.onUserInfoClick(baseUrl, blogAuthor).handleResult()
+            interactiveHandler.onUserInfoClick(role, blogAuthor).handleResult()
         }
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        val baseUrl = baseUrl ?: return
-        launchInViewModel { interactiveHandler.onVoted(baseUrl, status, options).handleResult() }
+        launchInViewModel { interactiveHandler.onVoted(role, status, options).handleResult() }
     }
 
     fun onHashtagClick(hashtag: Hashtag) {
-        val baseUrl = baseUrl ?: return
         launchInViewModel {
-            statusProvider.screenProvider.getTagTimelineScreenRoute(baseUrl, hashtag)
+            statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag)
                 ?.let { KRouter.route<Screen>(it) }
                 ?.let { _openScreenFlow.emit(it) }
         }
@@ -135,11 +110,10 @@ class ExplorerFeedsViewModel(
         follow: Boolean,
     ) {
         launchInViewModel {
-            val baseUrl = baseUrl ?: return@launchInViewModel
             val result = if (follow) {
-                interactiveHandler.onFollowClick(baseUrl, blogAuthor)
+                interactiveHandler.onFollowClick(role, blogAuthor)
             } else {
-                interactiveHandler.onUnfollowClick(baseUrl, blogAuthor)
+                interactiveHandler.onUnfollowClick(role, blogAuthor)
             }
             result.onSuccess {
                 loadController.mutableUiState.update { state ->

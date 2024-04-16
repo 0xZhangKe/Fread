@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo
 
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
@@ -26,7 +25,7 @@ class WebFingerBaseUrlToUserIdRepo @Inject constructor(
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
         val account = result.getOrNull()
             ?: return Result.failure(IllegalArgumentException("Can't find $webFinger in $baseUrl"))
-        insert(webFinger, baseUrl, account.id)
+        insert(webFinger, role, account.id)
         return Result.success(account.id)
     }
 
@@ -47,11 +46,13 @@ class WebFingerBaseUrlToUserIdRepo @Inject constructor(
         return accountRepo.lookup(webFinger.name)
     }
 
-    suspend fun insert(webFinger: WebFinger, baseUrl: FormalBaseUrl, userId: String) {
+    suspend fun insert(webFinger: WebFinger, role: IdentityRole, userId: String) {
+        val baseUrl = resolveBaseUrl(role)
         userIdDao.insert(WebFingerBaseurlToIdEntity(webFinger, baseUrl, userId))
     }
 
-    suspend fun delete(webFinger: WebFinger, baseUrl: String) {
-        userIdDao.delete(webFinger, baseUrl)
+    suspend fun delete(webFinger: WebFinger, role: IdentityRole) {
+        val baseUrl = resolveBaseUrl(role)
+        userIdDao.delete(webFinger, baseUrl.toString())
     }
 }

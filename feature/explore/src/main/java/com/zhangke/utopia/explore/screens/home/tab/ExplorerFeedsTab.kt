@@ -45,6 +45,7 @@ import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.RecommendAuthorUi
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
@@ -53,7 +54,7 @@ import com.zhangke.utopia.status.uri.FormalUri
 
 class ExplorerFeedsTab(
     private val type: ExplorerFeedsTabType,
-    private val accountUri: FormalUri,
+    private val role: IdentityRole,
 ) : PagerTab {
 
     override val options: PagerTabOptions
@@ -69,7 +70,7 @@ class ExplorerFeedsTab(
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
-            getViewModel<ExplorerFeedsContainerViewModel>().getSubViewModel(type, accountUri)
+            getViewModel<ExplorerFeedsContainerViewModel>().getSubViewModel(type, role)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
@@ -78,7 +79,6 @@ class ExplorerFeedsTab(
         }
         ExplorerFeedsTabContent(
             uiState = uiState,
-            baseUrl = viewModel.baseUrl,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onInteractive = viewModel::onInteractive,
@@ -94,7 +94,6 @@ class ExplorerFeedsTab(
     @Composable
     private fun ExplorerFeedsTabContent(
         uiState: CommonLoadableUiState<ExplorerItem>,
-        baseUrl: FormalBaseUrl?,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onUserInfoClick: (BlogAuthor) -> Unit,
@@ -137,7 +136,7 @@ class ExplorerFeedsTab(
                     ExplorerItemUi(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
-                        baseUrl = baseUrl,
+                        role = role,
                         onUserInfoClick = onUserInfoClick,
                         onInteractive = onInteractive,
                         indexInList = index,
@@ -175,7 +174,7 @@ class ExplorerFeedsTab(
     private fun ExplorerItemUi(
         modifier: Modifier,
         item: ExplorerItem,
-        baseUrl: FormalBaseUrl?,
+        role: IdentityRole?,
         indexInList: Int,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
@@ -184,7 +183,7 @@ class ExplorerFeedsTab(
         onFollowClick: (BlogAuthor) -> Unit,
         onUnfollowClick: (BlogAuthor) -> Unit,
     ) {
-        if (baseUrl == null) {
+        if (role == null) {
             Text(
                 modifier = Modifier.padding(16.dp),
                 text = "illegal state: baseUrl is null",
@@ -196,7 +195,7 @@ class ExplorerFeedsTab(
                 FeedsStatusNode(
                     modifier = modifier,
                     status = item.status,
-                    baseUrl = baseUrl,
+                    role = role,
                     indexInList = indexInList,
                     onInteractive = onInteractive,
                     onUserInfoClick = onUserInfoClick,

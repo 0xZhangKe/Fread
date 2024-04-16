@@ -7,10 +7,10 @@ import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -18,17 +18,16 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Inject
 
 @HiltViewModel(assistedFactory = SearchHashtagViewModel.Factory::class)
 open class SearchHashtagViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
-    @Assisted private val baseUrl: FormalBaseUrl,
+    @Assisted private val role: IdentityRole,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(baseUrl: FormalBaseUrl): SearchHashtagViewModel
+        fun create(role: IdentityRole): SearchHashtagViewModel
     }
 
     private val loadableController = CommonLoadableController<Hashtag>(viewModelScope)
@@ -40,7 +39,7 @@ open class SearchHashtagViewModel @AssistedInject constructor(
 
     fun onRefresh(query: String) {
         loadableController.onRefresh {
-            statusProvider.searchEngine.searchHashtag(baseUrl, query, null)
+            statusProvider.searchEngine.searchHashtag(role, query, null)
         }
     }
 
@@ -48,13 +47,13 @@ open class SearchHashtagViewModel @AssistedInject constructor(
         val offset = uiState.value.dataList.size
         if (offset == 0) return
         loadableController.onLoadMore {
-            statusProvider.searchEngine.searchHashtag(baseUrl, query, offset)
+            statusProvider.searchEngine.searchHashtag(role, query, offset)
         }
     }
 
     fun onHashtagClick(hashtag: Hashtag) {
         launchInViewModel {
-            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(hashtag)
+            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag)
                 ?: return@launchInViewModel
             KRouter.route<Screen>(route)?.let {
                 _openScreenFlow.emit(it)

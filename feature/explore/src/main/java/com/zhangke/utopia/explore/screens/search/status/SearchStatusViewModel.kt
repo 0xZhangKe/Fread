@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableUiState
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
@@ -14,6 +13,7 @@ import com.zhangke.utopia.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -27,12 +27,12 @@ open class SearchStatusViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
     interactiveHandler: InteractiveHandler,
     buildStatusUiState: BuildStatusUiStateUseCase,
-    @Assisted val baseUrl: FormalBaseUrl,
+    @Assisted val role: IdentityRole,
 ) : ViewModel() {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
-        fun create(baseUrl: FormalBaseUrl): SearchStatusViewModel
+        fun create(role: IdentityRole): SearchStatusViewModel
     }
 
     private val loadStatusController = LoadableStatusController(
@@ -50,25 +50,25 @@ open class SearchStatusViewModel @AssistedInject constructor(
     fun onRefresh(query: String) {
         loadStatusController.onRefresh {
             statusProvider.searchEngine
-                .searchStatus(baseUrl, query, null)
+                .searchStatus(role, query, null)
         }
     }
 
     fun onLoadMore(query: String) {
         loadStatusController.onLoadMore {
-            statusProvider.searchEngine.searchStatus(baseUrl, query, it)
+            statusProvider.searchEngine.searchStatus(role, query, it)
         }
     }
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        loadStatusController.onInteractive(status, uiInteraction)
+        loadStatusController.onInteractive(role, status, uiInteraction)
     }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        loadStatusController.onUserInfoClick(blogAuthor)
+        loadStatusController.onUserInfoClick(role, blogAuthor)
     }
 
     fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
-        loadStatusController.onVoted(status, votedOption)
+        loadStatusController.onVoted(role, status, votedOption)
     }
 }

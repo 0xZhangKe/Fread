@@ -19,7 +19,8 @@
     <string name="activity_pub_user_detail_relationship_not_follow">Follow</string>
     <string name="activity_pub_user_detail_relationship_requested">Pending</string>
     <string name="activity_pub_user_detail_request_by_tip">They are requesting to follow you</string>
-    <string name="activity_pub_user_detail_follow_info">%s Followers · %s Following</string>
+    <string name="activity_pub_user_detail_follower_info">%s Followers</string>
+    <string name="activity_pub_user_detail_following_info">%s Following</string>
     <string name="activity_pub_user_detail_tab_timeline">Timeline</string>
     <string name="activity_pub_user_detail_tab_about">About</string>
 

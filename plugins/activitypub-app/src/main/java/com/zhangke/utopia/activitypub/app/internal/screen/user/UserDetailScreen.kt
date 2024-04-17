@@ -1,7 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -22,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
@@ -44,13 +47,13 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.utopiaPlaceholder
-import com.zhangke.framework.utils.formatAsCount
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
 import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
+import com.zhangke.utopia.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import kotlinx.coroutines.flow.SharedFlow
@@ -95,6 +98,26 @@ class UserDetailScreen(
                         navigator.push(EditAccountInfoScreen(it))
                     }
             },
+            onFollowerClick = {
+                if (uiState.userInsight != null) {
+                    val screen = FollowScreen(
+                        role = uiState.role,
+                        userUri = uiState.userInsight!!.uri,
+                        isFollowing = false,
+                    )
+                    navigator.push(screen)
+                }
+            },
+            onFollowingClick = {
+                if (uiState.userInsight != null) {
+                    val screen = FollowScreen(
+                        role = uiState.role,
+                        userUri = uiState.userInsight!!.uri,
+                        isFollowing = true,
+                    )
+                    navigator.push(screen)
+                }
+            },
         )
     }
 
@@ -114,6 +137,8 @@ class UserDetailScreen(
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
         onEditClick: () -> Unit,
+        onFollowerClick: () -> Unit,
+        onFollowingClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -191,25 +216,49 @@ class UserDetailScreen(
                             baseUrl = uiState.userInsight?.baseUrl,
                         )
 
-                        val followInfo = if (account == null) {
-                            ""
-                        } else {
-                            val followersCount = account.followersCount.formatAsCount()
-                            val followingCount = account.followingCount.formatAsCount()
-                            stringResource(
-                                R.string.activity_pub_user_detail_follow_info,
-                                followersCount,
-                                followingCount,
-                            )
-                        }
-                        Text(
+                        Row(
                             modifier = Modifier
                                 .padding(top = 4.dp)
-                                .utopiaPlaceholder(followInfo.isEmpty())
-                                .fillMaxWidth(),
-                            text = followInfo,
-                            style = MaterialTheme.typography.bodySmall,
-                        )
+                                .utopiaPlaceholder(account == null),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier.clickable(account != null) {
+                                    onFollowerClick()
+                                },
+                                text = if (account == null) {
+                                    "     "
+                                } else {
+                                    stringResource(
+                                        R.string.activity_pub_user_detail_follower_info,
+                                        account.followersCount
+                                    )
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+
+                            Text(
+                                modifier = Modifier
+                                    .padding(horizontal = 4.dp),
+                                text = "·",
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+
+                            Text(
+                                modifier = Modifier.clickable(account != null) {
+                                    onFollowingClick()
+                                },
+                                text = if (account == null) {
+                                    "     "
+                                } else {
+                                    stringResource(
+                                        R.string.activity_pub_user_detail_following_info,
+                                        account.followingCount
+                                    )
+                                },
+                                style = MaterialTheme.typography.bodySmall,
+                            )
+                        }
                     }
                 },
             ) {

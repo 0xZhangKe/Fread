@@ -45,7 +45,7 @@ fun LoadableLazyColumn(
             .pullRefresh(state.pullRefreshState)
     ) {
         LazyColumn(
-            modifier = modifier,
+            modifier = Modifier,
             state = state.lazyListState,
             contentPadding = contentPadding,
             reverseLayout = reverseLayout,

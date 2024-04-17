@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
+import kotlinx.coroutines.flow.MutableSharedFlow
 
 sealed class TextString {
 
@@ -52,4 +53,8 @@ fun Throwable.toTextStringOrNull(): TextString? {
     }
     if (errorMessage.isNullOrEmpty()) return null
     return textOf(errorMessage)
+}
+
+suspend fun MutableSharedFlow<TextString>.emitTextMessageFromThrowable(t: Throwable) {
+    t.toTextStringOrNull()?.let { this.emit(it) }
 }

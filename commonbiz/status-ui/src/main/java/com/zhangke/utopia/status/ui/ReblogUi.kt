@@ -49,11 +49,13 @@ fun ReblogUi(
             Text(
                 modifier = Modifier.padding(start = 6.dp),
                 text = reblog.author.name,
+                maxLines = 1,
                 style = MaterialTheme.typography.bodySmall,
             )
             Text(
                 modifier = Modifier.padding(start = 4.dp),
                 text = stringResource(R.string.status_ui_forward),
+                maxLines = 1,
                 style = MaterialTheme.typography.bodySmall,
             )
         }

@@ -176,7 +176,7 @@ class PostStatusViewModel @Inject constructor(
 
     private fun buildUploadFileJob(file: ContentProviderFile) = UploadMediaJob(
         file = file,
-        account = _uiState.value.requireSuccessData().account,
+        role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null),
         uploadMediaAttachment = uploadMediaAttachment,
         scope = viewModelScope,
     )

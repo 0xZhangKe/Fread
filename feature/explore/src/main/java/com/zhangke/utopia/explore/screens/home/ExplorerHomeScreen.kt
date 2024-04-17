@@ -55,7 +55,7 @@ class ExplorerHomeScreen : Screen {
                     accountList = uiState.loggedAccountsList,
                     onAccountSelected = onAccountSelected,
                 )
-                if (uiState.role != null) {
+                if (uiState.selectedAccount != null) {
                     CompositionLocalProvider(
                         LocalSnackbarHostState provides snackbarHostState
                     ) {

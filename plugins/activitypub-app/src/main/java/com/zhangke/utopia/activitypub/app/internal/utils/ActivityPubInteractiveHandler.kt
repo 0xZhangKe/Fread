@@ -8,6 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteract
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
@@ -18,12 +19,13 @@ class ActivityPubInteractiveHandler @Inject constructor(
 ) {
 
     suspend fun onStatusInteractive(
+        role: IdentityRole,
         status: Status,
         uiInteraction: StatusUiInteraction,
     ): ActivityPubInteractiveHandleResult {
         val statusInteraction =
             uiInteraction.statusInteraction ?: return ActivityPubInteractiveHandleResult.NoOp
-        val result = statusInteractive(status, statusInteraction)
+        val result = statusInteractive(role, status, statusInteraction)
         return if (result.isFailure) {
             val errorMessage = result.exceptionOrNull()?.message?.let { textOf(it) }
             if (errorMessage == null) {

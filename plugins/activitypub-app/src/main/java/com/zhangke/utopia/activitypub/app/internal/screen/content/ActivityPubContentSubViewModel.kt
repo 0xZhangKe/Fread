@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import com.zhangke.framework.composable.LoadableState
+import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.composable.updateToLoading
 import com.zhangke.framework.composable.updateToSuccess
@@ -38,7 +39,7 @@ class ActivityPubContentSubViewModel(
                     if (contentConfig != null) {
                         val role = IdentityRole(accountUri = null, baseUrl = contentConfig.baseUrl)
                         _uiState.updateToSuccess(ActivityPubContentUiState(role, contentConfig))
-                        updateUserCreateList(contentConfig.baseUrl)
+                        updateUserCreateList()
                     } else {
                         _uiState.updateToFailed(IllegalArgumentException("Cant find validate config by id: $configId"))
                     }
@@ -46,14 +47,15 @@ class ActivityPubContentSubViewModel(
         }
     }
 
-    private fun updateUserCreateList(baseUrl: FormalBaseUrl) {
+    private fun updateUserCreateList() {
         if (userCreatedListUpdated) return
         userCreatedListUpdated = true
         if (updateUserListJob?.isActive == true) {
             updateUserListJob?.cancel()
         }
+        val role = _uiState.value.successDataOrNull()?.role ?: return
         updateUserListJob = launchInViewModel {
-            getUserCreatedList(baseUrl)
+            getUserCreatedList(role)
                 .map { list ->
                     list.map {
                         // 此处的 order 并不会使用，repo 内部会重新计算，因此次数放一个较大的值填充即可。

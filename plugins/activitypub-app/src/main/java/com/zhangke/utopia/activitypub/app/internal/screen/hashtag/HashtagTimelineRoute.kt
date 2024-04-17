@@ -16,7 +16,7 @@ object HashtagTimelineRoute {
 
     fun buildRoute(role: IdentityRole, hashtag: String): String {
         val encodedHashtag = URLEncoder.encode(hashtag.removePrefix("#"), Charsets.UTF_8.name())
-        return "$ROUTE?$PARAM_HASHTAG=$encodedHashtag$PARAMS_ROLE=${role.encodeToUrlString()}"
+        return "$ROUTE?$PARAM_HASHTAG=$encodedHashtag&$PARAMS_ROLE=${role.encodeToUrlString()}"
     }
 
     fun parseRoute(route: String): Pair<IdentityRole, String> {

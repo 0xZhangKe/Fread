@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
@@ -15,7 +16,7 @@ import kotlinx.coroutines.launch
 
 class UploadMediaJob(
     private val file: ContentProviderFile,
-    private val account: ActivityPubLoggedAccount,
+    private val role: IdentityRole,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val scope: CoroutineScope,
 ) {
@@ -31,7 +32,7 @@ class UploadMediaJob(
             val uploadState = UploadState.Uploading()
             _uploadState.value = uploadState
             val result = uploadMediaAttachment(
-                account = account,
+                role = role,
                 fileUri = file.uri,
                 onProgress = {
                     scope.launch {

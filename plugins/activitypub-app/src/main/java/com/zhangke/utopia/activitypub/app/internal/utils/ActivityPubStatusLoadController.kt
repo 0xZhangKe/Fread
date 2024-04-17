@@ -70,7 +70,7 @@ class ActivityPubStatusLoadController(
         uiInteraction: StatusUiInteraction,
     ) {
         coroutineScope.launch {
-            when (val result = interactiveHandler.onStatusInteractive(status, uiInteraction)) {
+            when (val result = interactiveHandler.onStatusInteractive(role, status, uiInteraction)) {
                 is ActivityPubInteractiveHandleResult.ShowErrorMessage -> {
                     mutableErrorMessageFlow.emit(result.message)
                 }

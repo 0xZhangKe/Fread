@@ -23,10 +23,12 @@ import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
 @Composable
 fun FollowNotification(
+    role: IdentityRole,
     notification: NotificationUiState,
     style: NotificationStyle,
 ) {
@@ -36,7 +38,7 @@ fun FollowNotification(
             .fillMaxWidth()
             .clickable {
                 navigator.pushDestination(
-                    UserDetailRoute.buildRoute(notification.accountUri)
+                    UserDetailRoute.buildRoute(role, notification.accountUri)
                 )
             }
             .padding(vertical = 8.dp),

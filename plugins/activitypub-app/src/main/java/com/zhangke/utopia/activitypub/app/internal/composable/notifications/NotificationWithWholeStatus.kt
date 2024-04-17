@@ -15,9 +15,11 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 
 @Composable
 fun NotificationWithWholeStatus(
+    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     icon: ImageVector,
@@ -38,7 +40,7 @@ fun NotificationWithWholeStatus(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navigator.push(StatusContextScreen(status.status))
+                navigator.push(StatusContextScreen(role, status.status))
             }
             .padding(vertical = 8.dp)
     ) {
@@ -55,6 +57,7 @@ fun NotificationWithWholeStatus(
                 .padding(top = style.headLineToContentPadding)
                 .statusBorder()
                 .padding(style.internalBlogPadding),
+            role = role,
             statusUiState = status,
             indexInList = indexInList,
             style = style,

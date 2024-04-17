@@ -40,9 +40,13 @@ class ActivityPubNotificationsSubViewModel(
     private val votePoll: VotePollUseCase,
 ) : SubViewModel() {
 
+    private val role: IdentityRole
+        get() = IdentityRole(userUriInsights.uri, null)
+
     private val loadableController = LoadableController(
         coroutineScope = viewModelScope,
         initialUiState = ActivityPubNotificationsUiState(
+            role = role,
             inMentionsTab = false,
             dataList = emptyList(),
             initializing = false,
@@ -60,9 +64,6 @@ class ActivityPubNotificationsSubViewModel(
     val snackMessage: SharedFlow<TextString> = _snackMessage.asSharedFlow()
 
     private var loggedAccount: ActivityPubLoggedAccount? = null
-
-    private val role: IdentityRole
-        get() = IdentityRole(userUriInsights.uri, null)
 
     init {
         loadableController.initData(

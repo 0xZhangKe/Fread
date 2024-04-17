@@ -10,9 +10,11 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 
 @Composable
 fun UpdateNotification(
+    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle,
@@ -20,6 +22,7 @@ fun UpdateNotification(
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     NotificationWithWholeStatus(
+        role = role,
         notification = notification,
         indexInList = indexInList,
         icon = Icons.Default.Edit,

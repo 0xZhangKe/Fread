@@ -7,9 +7,11 @@ import androidx.compose.ui.res.stringResource
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 
 @Composable
 fun FavouriteNotification(
+    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle,
@@ -23,6 +25,7 @@ fun FavouriteNotification(
         return
     }
     BlogInteractionNotification(
+        role = role,
         statusUiState = status,
         author = notification.account,
         icon = Icons.Default.Star,

@@ -9,9 +9,11 @@ import com.zhangke.utopia.activitypub.app.internal.screen.notifications.Notifica
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 
 @Composable
 fun NewStatusNotification(
+    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle,
@@ -19,6 +21,7 @@ fun NewStatusNotification(
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     NotificationWithWholeStatus(
+        role = role,
         notification = notification,
         indexInList = indexInList,
         icon = Icons.Default.NotificationsNone,

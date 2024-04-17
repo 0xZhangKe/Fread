@@ -5,6 +5,8 @@ import com.zhangke.utopia.status.model.IdentityRole
 
 data class ExplorerHomeUiState(
     val selectedAccount: LoggedAccount?,
-    val role: IdentityRole?,
     val loggedAccountsList: List<LoggedAccount>,
-)
+) {
+
+    val role: IdentityRole get() = IdentityRole(accountUri = selectedAccount?.uri, baseUrl = null)
+}

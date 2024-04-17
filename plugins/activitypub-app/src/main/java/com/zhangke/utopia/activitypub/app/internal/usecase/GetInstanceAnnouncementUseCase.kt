@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.utopia.status.model.IdentityRole
 import javax.inject.Inject
 
 class GetInstanceAnnouncementUseCase @Inject constructor(
@@ -14,7 +15,7 @@ class GetInstanceAnnouncementUseCase @Inject constructor(
         baseUrl: FormalBaseUrl,
         justActive: Boolean = true,
     ): Result<List<ActivityPubAnnouncementEntity>> {
-        val client = clientManager.getClient(baseUrl)
+        val client = clientManager.getClient(IdentityRole(null, baseUrl))
         return client.instanceRepo.getAnnouncement()
             .map {
                 if (justActive) {

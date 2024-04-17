@@ -42,11 +42,10 @@ class SearchEngine(
     }
 
     suspend fun searchPlatform(
-        role: IdentityRole,
         query: String,
         offset: Int?
     ): Result<List<BlogPlatform>> {
-        return engineList.map { it.searchPlatform(role, query, offset) }.collect()
+        return engineList.map { it.searchPlatform(query, offset) }.collect()
     }
 
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>> {
@@ -85,7 +84,6 @@ interface ISearchEngine {
     ): Result<List<BlogAuthor>>
 
     suspend fun searchPlatform(
-        role: IdentityRole,
         query: String,
         offset: Int?,
     ): Result<List<BlogPlatform>>

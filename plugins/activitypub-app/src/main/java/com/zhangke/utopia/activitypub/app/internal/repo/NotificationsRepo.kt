@@ -10,6 +10,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
@@ -37,12 +38,13 @@ class NotificationsRepo @Inject constructor(
         onlyMentions: Boolean = false,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
     ): Result<List<StatusNotification>> {
-        val platformResult = getBlogPlatform(account.baseUrl)
+        val role = IdentityRole(accountUri = account.uri, null)
+        val platformResult = getBlogPlatform(role)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val notificationsRepo = clientManager.getClient(account.baseUrl).notificationsRepo
+        val notificationsRepo = clientManager.getClient(role).notificationsRepo
         val types = mutableListOf<String>()
         if (onlyMentions) {
             types += ActivityPubNotificationsEntity.Type.mention
@@ -65,6 +67,7 @@ class NotificationsRepo @Inject constructor(
         onlyMentions: Boolean = false,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
     ): Result<List<StatusNotification>> {
+        val role = IdentityRole(accountUri = account.uri, null)
         val notificationsFromLocal = notificationDao.query(
             accountOwnershipUri = account.uri,
         ).filter {
@@ -81,12 +84,12 @@ class NotificationsRepo @Inject constructor(
         if (onlyMentions) {
             types += ActivityPubNotificationsEntity.Type.mention
         }
-        val platformResult = getBlogPlatform(account.baseUrl)
+        val platformResult = getBlogPlatform(role)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        val notificationsRepo = clientManager.getClient(account.baseUrl).notificationsRepo
+        val notificationsRepo = clientManager.getClient(role).notificationsRepo
         return notificationsRepo.getNotifications(
             limit = limit,
             types = types,

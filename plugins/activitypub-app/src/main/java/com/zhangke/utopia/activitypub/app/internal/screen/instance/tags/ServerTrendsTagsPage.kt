@@ -20,6 +20,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 
 @Composable
@@ -38,7 +39,8 @@ internal fun Screen.ServerTrendsTagsPage(
         uiState = uiState,
         contentCanScrollBackward = contentCanScrollBackward,
         onHashtagClick = { tag ->
-            HashtagTimelineRoute.buildRoute(tag.name).let {
+            val role = IdentityRole(accountUri = null, baseUrl = baseUrl)
+            HashtagTimelineRoute.buildRoute(role, tag.name).let {
                 navigator.tryPush(it)
             }
         },

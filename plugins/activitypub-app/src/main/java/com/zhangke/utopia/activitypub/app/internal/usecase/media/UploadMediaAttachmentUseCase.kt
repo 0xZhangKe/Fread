@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.usecase.media
 import android.net.Uri
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.utopia.status.model.IdentityRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
@@ -13,13 +13,13 @@ class UploadMediaAttachmentUseCase @Inject constructor(
 ) {
 
     suspend operator fun invoke(
-        account: ActivityPubLoggedAccount,
+        role: IdentityRole,
         fileUri: Uri,
         onProgress: (Float) -> Unit,
     ): Result<String> {
         val contentFile = withContext(Dispatchers.IO) { fileUri.toContentProviderFile() }
             ?: return Result.failure(RuntimeException("File invalid!"))
-        val client = clientManager.getClient(account.baseUrl)
+        val client = clientManager.getClient(role)
         try {
             contentFile.openInputStream().use { inputStream ->
                 if (inputStream == null) return Result.failure(RuntimeException("File invalid!"))

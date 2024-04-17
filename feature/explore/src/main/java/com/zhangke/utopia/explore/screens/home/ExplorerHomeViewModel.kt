@@ -7,7 +7,6 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.config.LocalConfigManager
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,7 +26,7 @@ class ExplorerHomeViewModel @Inject constructor(
         private const val LATEST_SELECTED_ACCOUNT = "explorer_tab_last_selected_account"
     }
 
-    private val _uiState = MutableStateFlow(ExplorerHomeUiState(null, null, emptyList()))
+    private val _uiState = MutableStateFlow(ExplorerHomeUiState(null, emptyList()))
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -47,7 +46,6 @@ class ExplorerHomeViewModel @Inject constructor(
                     _uiState.value = currentUiState.copy(
                         loggedAccountsList = accountsList,
                         selectedAccount = selectedAccount,
-                        role = IdentityRole(accountUri = selectedAccount?.uri, baseUrl = null),
                     )
                 }
         }

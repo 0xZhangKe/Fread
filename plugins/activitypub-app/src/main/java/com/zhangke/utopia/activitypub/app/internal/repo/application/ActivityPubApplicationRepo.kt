@@ -8,6 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubApplicationsDao
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubApplication
 import com.zhangke.utopia.activitypub.app.internal.platform.UtopiaApplicationRegisterInfo
+import com.zhangke.utopia.status.model.IdentityRole
 import javax.inject.Inject
 
 class ActivityPubApplicationRepo @Inject constructor(
@@ -23,7 +24,8 @@ class ActivityPubApplicationRepo @Inject constructor(
         applicationsDao.queryByBaseUrl(baseUrl)
             ?.let(applicationEntityAdapter::toApplication)
             ?.let { return it }
-        val application = clientManager.getClient(baseUrl)
+        val role = IdentityRole(accountUri = null, baseUrl = baseUrl)
+        val application = clientManager.getClient(role)
             .appsRepo
             .registerApplication(
                 clientName = UtopiaApplicationRegisterInfo.clientName,

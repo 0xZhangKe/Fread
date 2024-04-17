@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.usecase.GetServerTrendTagsUseCase
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +23,7 @@ class ServerTrendsTagsViewModel @Inject constructor(
 
     fun onPageResume() {
         launchInViewModel {
-            getServerTrendsTags(baseUrl)
+            getServerTrendsTags(IdentityRole(null, baseUrl))
                 .onSuccess { list ->
                     _uiState.update { it.copy(list = list) }
                 }.onFailure {

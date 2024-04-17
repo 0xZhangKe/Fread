@@ -9,12 +9,10 @@ import com.zhangke.activitypub.entities.UpdateFieldRequestEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
-import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -29,9 +27,7 @@ import kotlinx.coroutines.flow.update
 
 @HiltViewModel(assistedFactory = EditAccountInfoViewModel.Factory::class)
 class EditAccountInfoViewModel @AssistedInject constructor(
-    private val accountRepo: ActivityPubLoggedAccountRepo,
     private val clientManager: ActivityPubClientManager,
-    private val userUriTransformer: UserUriTransformer,
     @Assisted private val accountUri: FormalUri,
 ) : ViewModel() {
 
@@ -66,11 +62,12 @@ class EditAccountInfoViewModel @AssistedInject constructor(
 
     private var originalAccountInfo: ActivityPubAccountEntity? = null
 
-    private val baseUrl: FormalBaseUrl get() = userUriTransformer.parse(accountUri)!!.baseUrl
+    private val role = IdentityRole(accountUri = accountUri, baseUrl = null)
 
     init {
         launchInViewModel {
-            clientManager.getClient(baseUrl).accountRepo
+            clientManager.getClient(role)
+                .accountRepo
                 .getCredentialAccount()
                 .onSuccess {
                     updateUiStateByEntity(it)
@@ -168,7 +165,8 @@ class EditAccountInfoViewModel @AssistedInject constructor(
             return@launchInViewModel
         }
         _uiState.update { it.copy(requesting = true) }
-        clientManager.getClient(baseUrl).accountRepo
+        clientManager.getClient(role)
+            .accountRepo
             .updateCredentials(
                 name = newName,
                 note = newNote,

@@ -69,7 +69,6 @@ class RssSearchEngine @Inject constructor(
     }
 
     override suspend fun searchPlatform(
-        role: IdentityRole,
         query: String,
         offset: Int?,
     ): Result<List<BlogPlatform>> {

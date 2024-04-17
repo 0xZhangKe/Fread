@@ -13,6 +13,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.notifications.Notifica
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.BlogDivider
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
@@ -20,6 +21,7 @@ import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 @Composable
 fun StatusNotificationUi(
     modifier: Modifier,
+    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle = defaultNotificationStyle(),
@@ -30,6 +32,7 @@ fun StatusNotificationUi(
 ) {
     if (notification.type == StatusNotificationType.MENTION) {
         MentionNotification(
+            role = role,
             notification = notification,
             indexInList = indexInList,
             onInteractive = onInteractive,
@@ -43,6 +46,7 @@ fun StatusNotificationUi(
             when (notification.type) {
                 StatusNotificationType.FAVOURITE -> {
                     FavouriteNotification(
+                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
@@ -52,6 +56,7 @@ fun StatusNotificationUi(
 
                 StatusNotificationType.REBLOG -> {
                     ReblogNotification(
+                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
@@ -70,6 +75,7 @@ fun StatusNotificationUi(
 
                 StatusNotificationType.FOLLOW -> {
                     FollowNotification(
+                        role = role,
                         notification = notification,
                         style = style,
                     )
@@ -77,6 +83,7 @@ fun StatusNotificationUi(
 
                 StatusNotificationType.UPDATE -> {
                     UpdateNotification(
+                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
@@ -96,6 +103,7 @@ fun StatusNotificationUi(
 
                 StatusNotificationType.STATUS -> {
                     NewStatusNotification(
+                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,

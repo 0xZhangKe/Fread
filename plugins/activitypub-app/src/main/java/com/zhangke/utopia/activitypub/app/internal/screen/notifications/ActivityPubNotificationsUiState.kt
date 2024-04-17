@@ -7,11 +7,13 @@ import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import java.util.Date
 
 data class ActivityPubNotificationsUiState(
     val inMentionsTab: Boolean,
+    val role: IdentityRole,
     override val initializing: Boolean,
     override val dataList: List<NotificationUiState>,
     override val refreshing: Boolean,

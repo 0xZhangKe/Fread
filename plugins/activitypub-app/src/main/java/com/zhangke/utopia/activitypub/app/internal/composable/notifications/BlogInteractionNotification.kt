@@ -18,6 +18,7 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 
 /**
  * 关于博客的通知UI。
@@ -25,6 +26,7 @@ import com.zhangke.utopia.status.blog.BlogPoll
  */
 @Composable
 fun BlogInteractionNotification(
+    role: IdentityRole,
     statusUiState: StatusUiState,
     author: ActivityPubAccountEntity,
     icon: ImageVector,
@@ -38,7 +40,7 @@ fun BlogInteractionNotification(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navigator.push(StatusContextScreen(statusUiState.status))
+                navigator.push(StatusContextScreen(role, statusUiState.status))
             }
     ) {
         NotificationHeadLine(

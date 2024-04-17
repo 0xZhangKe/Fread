@@ -16,6 +16,7 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.BlogUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
@@ -63,6 +64,7 @@ fun OnlyBlogContentUi(
 @Composable
 fun WholeBlogUi(
     modifier: Modifier,
+    role: IdentityRole,
     statusUiState: StatusUiState,
     indexInList: Int,
     style: NotificationStyle,
@@ -84,7 +86,7 @@ fun WholeBlogUi(
             style = style.statusStyle,
             onInteractive = statusInteractive(statusUiState, onInteractive),
             onUserInfoClick = {
-                navigator.pushDestination(UserDetailRoute.buildRoute(it.uri))
+                navigator.pushDestination(UserDetailRoute.buildRoute(role, it.uri))
             },
             onMediaClick = { event ->
                 when (event) {

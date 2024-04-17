@@ -111,6 +111,7 @@ class ActivityPubNotificationsScreen(
                     ) { index, notification ->
                         StatusNotificationUi(
                             modifier = Modifier.fillMaxWidth(),
+                            role = uiState.role,
                             notification = notification,
                             onInteractive = { _, interaction ->
                                 onInteractive(notification, interaction)

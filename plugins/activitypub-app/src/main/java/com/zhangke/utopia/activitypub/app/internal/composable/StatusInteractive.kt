@@ -14,10 +14,11 @@ fun statusInteractive(
     onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
 ): (StatusUiInteraction) -> Unit {
     val navigator = LocalNavigator.currentOrThrow
-    return {interaction ->
+    return { interaction ->
         if (interaction is StatusUiInteraction.Comment) {
             navigator.pushDestination(
                 PostStatusScreenRoute.buildRoute(
+                    accountUri = statusUiState.status.intrinsicBlog.author.uri,
                     replyToBlogId = statusUiState.status.id,
                     replyAuthorName = statusUiState.status.intrinsicBlog.author.name,
                 )

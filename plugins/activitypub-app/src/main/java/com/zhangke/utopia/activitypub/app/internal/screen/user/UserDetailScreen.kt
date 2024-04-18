@@ -32,7 +32,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -63,15 +62,15 @@ class UserDetailScreen(
     @Router val route: String = "",
 ) : Screen {
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<UserDetailViewModel, UserDetailViewModel.Factory> {
-            val (role, userUri) = UserDetailRoute.parseRoute(route)
-            it.create(role, userUri)
+        val (role, userUri) = remember(route) {
+            UserDetailRoute.parseRoute(route)
         }
+        val viewModel = getViewModel<UserDetailContainerViewModel>()
+            .getViewModel(role, userUri)
         val uiState by viewModel.uiState.collectAsState()
         UserDetailContent(
             uiState = uiState,
@@ -263,7 +262,7 @@ class UserDetailScreen(
                 },
             ) {
                 if (uiState.userInsight != null) {
-                    val tabs: List<PagerTab> = remember {
+                    val tabs: List<PagerTab> = remember(uiState) {
                         listOf(
                             UserTimelineTab(
                                 contentCanScrollBackward = contentCanScrollBackward,

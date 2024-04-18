@@ -1,12 +1,11 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
-import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.api.AccountsRepo
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
@@ -14,30 +13,20 @@ import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapAccountEntityEmojiUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-@HiltViewModel(assistedFactory = UserDetailViewModel.Factory::class)
-class UserDetailViewModel @AssistedInject constructor(
+class UserDetailViewModel(
     private val accountManager: ActivityPubAccountManager,
     private val userUriTransformer: UserUriTransformer,
     private val clientManager: ActivityPubClientManager,
     private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
-    @Assisted val role: IdentityRole,
-    @Assisted val userUri: FormalUri,
-) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
-        fun create(role: IdentityRole, uri: FormalUri): UserDetailViewModel
-    }
+    val role: IdentityRole,
+    val userUri: FormalUri,
+) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(
         UserDetailUiState(

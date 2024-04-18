@@ -10,10 +10,12 @@ import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.assisted.Assisted
@@ -31,6 +33,7 @@ class FollowViewModel @AssistedInject constructor(
     private val userUriTransformer: UserUriTransformer,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val clientManager: ActivityPubClientManager,
+    private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     @Assisted private val role: IdentityRole,
     @Assisted private val userUri: FormalUri,
     @Assisted private val isFollowing: Boolean,
@@ -56,6 +59,8 @@ class FollowViewModel @AssistedInject constructor(
     val messageFlow = _messageFlow.asSharedFlow()
 
     private var userId: String? = null
+
+    private var nextMaxId: String? = null
 
     init {
         launchInViewModel {
@@ -89,6 +94,7 @@ class FollowViewModel @AssistedInject constructor(
 
     fun onRefresh() {
         val userId = userId ?: return
+        nextMaxId = null
         launchInViewModel {
             _uiState.update { it.copy(refreshing = true) }
             loadFollowList(userId).onFailure { t ->
@@ -107,12 +113,12 @@ class FollowViewModel @AssistedInject constructor(
 
     fun onLoadMore() {
         val userId = userId ?: return
-        val latestAccount = _uiState.value.list.lastOrNull() ?: return
+        if (_uiState.value.list.isEmpty()) return
+        if (nextMaxId.isNullOrEmpty()) return
         launchInViewModel {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
             loadFollowList(
                 id = userId,
-                maxId = latestAccount.id,
             ).onFailure { t ->
                 _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
             }.onSuccess { list ->
@@ -126,23 +132,32 @@ class FollowViewModel @AssistedInject constructor(
         }
     }
 
+    fun onUserInfoClick(accountEntity: ActivityPubAccountEntity) {
+
+    }
+
     private suspend fun loadFollowList(
         id: String,
-        maxId: String? = null,
-    ): Result<List<ActivityPubAccountEntity>> {
+    ): Result<List<BlogAuthor>> {
         val repo = clientManager.getClient(role).accountRepo
         return if (isFollowing) {
             repo.getFollowing(
                 id = id,
                 limit = StatusConfigurationDefault.config.loadFromServerLimit,
-                maxId = maxId,
-            )
+                maxId = nextMaxId,
+            ).map { result ->
+                nextMaxId = result.pagingInfo.nextMaxId
+                result.data.map { accountEntityAdapter.toAuthor(it) }
+            }
         } else {
             repo.getFollowers(
                 id = id,
                 limit = StatusConfigurationDefault.config.loadFromServerLimit,
-                maxId = maxId,
-            )
+                maxId = nextMaxId,
+            ).map { result ->
+                nextMaxId = result.pagingInfo.nextMaxId
+                result.data.map { accountEntityAdapter.toAuthor(it) }
+            }
         }
     }
 }

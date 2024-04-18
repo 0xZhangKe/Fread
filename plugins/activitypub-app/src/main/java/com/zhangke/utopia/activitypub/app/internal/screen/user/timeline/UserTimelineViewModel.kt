@@ -1,11 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
@@ -19,12 +17,8 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 
-@HiltViewModel(assistedFactory = UserTimelineViewModel.Factory::class)
 class UserTimelineViewModel @AssistedInject constructor(
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
@@ -33,14 +27,9 @@ class UserTimelineViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     interactiveHandler: ActivityPubInteractiveHandler,
     pollAdapter: ActivityPubPollAdapter,
-    @Assisted val role: IdentityRole,
-    @Assisted val userUriInsights: UserUriInsights,
-) : ViewModel() {
-
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
-        fun create(role: IdentityRole, userUriInsights: UserUriInsights): UserTimelineViewModel
-    }
+    val role: IdentityRole,
+    val userUriInsights: UserUriInsights,
+) : SubViewModel() {
 
     private val loadableController = ActivityPubStatusLoadController(
         statusAdapter = statusAdapter,

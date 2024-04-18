@@ -15,7 +15,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubField
@@ -40,12 +39,10 @@ class UserAboutTab(
             title = stringResource(R.string.activity_pub_user_detail_tab_about)
         )
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
-        val viewModel = getViewModel<UserAboutViewModel, UserAboutViewModel.Factory>() {
-            it.create(role, userUriInsights)
-        }
+        val viewModel =
+            getViewModel<UserAboutContainerViewModel>().getViewModel(role, userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(
             uiState = uiState,

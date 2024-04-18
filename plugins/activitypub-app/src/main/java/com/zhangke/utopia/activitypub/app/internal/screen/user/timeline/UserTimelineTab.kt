@@ -6,7 +6,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -29,12 +28,10 @@ class UserTimelineTab(
             title = stringResource(R.string.activity_pub_user_detail_tab_timeline)
         )
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
-        val viewModel = getViewModel<UserTimelineViewModel, UserTimelineViewModel.Factory>() {
-            it.create(role, userUriInsights)
-        }
+        val viewModel =
+            getViewModel<UserTimelineContainerViewModel>().getSubViewModel(role, userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubListStatusContent(
             uiState = uiState,

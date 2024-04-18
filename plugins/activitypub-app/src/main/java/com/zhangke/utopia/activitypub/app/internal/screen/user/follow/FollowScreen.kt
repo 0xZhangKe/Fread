@@ -1,12 +1,13 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.follow
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -28,7 +29,6 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -36,6 +36,9 @@ import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailRoute
+import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailScreen
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
@@ -62,6 +65,10 @@ class FollowScreen(
             snackbarHostState = snackbarHostState,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
+            onAccountClick = {
+                val route = UserDetailRoute.buildRoute(role, it.uri)
+                navigator.push(UserDetailScreen(route))
+            },
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.messageFlow)
     }
@@ -73,6 +80,7 @@ class FollowScreen(
         snackbarHostState: SnackbarHostState,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
+        onAccountClick: (BlogAuthor) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -115,7 +123,10 @@ class FollowScreen(
                         loadState = uiState.loadMoreState,
                     ) {
                         items(uiState.list) { account ->
-                            FollowAccountUi(account)
+                            FollowAccountUi(
+                                account = account,
+                                onClick = onAccountClick,
+                            )
                         }
                     }
                 }
@@ -127,15 +138,24 @@ class FollowScreen(
     private fun InitializingUi() {
         Column(modifier = Modifier.fillMaxSize()) {
             repeat(20) {
-                FollowAccountUi(null)
+                FollowAccountUi(null) {}
             }
         }
     }
 
     @Composable
-    private fun FollowAccountUi(account: ActivityPubAccountEntity?) {
+    private fun FollowAccountUi(
+        account: BlogAuthor?,
+        onClick: (BlogAuthor) -> Unit,
+    ) {
         ConstraintLayout(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable {
+                    if (account != null) {
+                        onClick(account)
+                    }
+                },
         ) {
             val (avatarRef, nameRef, acctRef, descRef, dividerRef) = createRefs()
             BlogAuthorAvatar(
@@ -157,7 +177,7 @@ class FollowScreen(
                         width = Dimension.fillToConstraints
                     },
                 textAlign = TextAlign.Start,
-                text = account?.displayName.orEmpty(),
+                text = account?.name.orEmpty(),
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.titleMedium,
@@ -173,7 +193,7 @@ class FollowScreen(
                     },
                 maxLines = 1,
                 textAlign = TextAlign.Start,
-                text = "@${account?.acct}",
+                text = "@${account?.webFinger}",
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelMedium,
             )
@@ -189,10 +209,10 @@ class FollowScreen(
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
                 textStyle = MaterialTheme.typography.bodyMedium,
-                content = account?.note.orEmpty(),
+                content = account?.description.orEmpty(),
                 mentions = emptyList(),
             )
-            Divider(
+            HorizontalDivider(
                 modifier = Modifier.constrainAs(dividerRef) {
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)

@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,7 +14,9 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.style.TextAlign
@@ -39,7 +42,9 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
+import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
 class MixedContentScreen(private val configId: Long) : PagerTab {
 
@@ -125,10 +130,28 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
                     mutableStateOf(false)
                 }
                 ConsumeFlow(newStatusNotifyFlow) {
-                    showNewStatusNotifyBar = true
+                    if (state.lazyListState.firstVisibleItemIndex > 0) {
+                        showNewStatusNotifyBar = true
+                    }
                 }
-                if (showNewStatusNotifyBar){
-
+                val coroutineScope = rememberCoroutineScope()
+                AnimatedVisibility(
+                    modifier = Modifier
+                        .padding(top = 32.dp)
+                        .align(Alignment.TopCenter),
+                    visible = showNewStatusNotifyBar,
+                ) {
+                    NewStatusNotifyBar(
+                        modifier = Modifier,
+                        onClick = {
+                            showNewStatusNotifyBar = false
+                            coroutineScope.launch {
+                                if (uiState.feeds.isNotEmpty()) {
+                                    state.lazyListState.animateScrollToItem(0)
+                                }
+                            }
+                        },
+                    )
                 }
             }
         }

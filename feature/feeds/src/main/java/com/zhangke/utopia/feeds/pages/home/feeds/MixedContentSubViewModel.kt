@@ -90,8 +90,8 @@ class MixedContentSubViewModel(
         }
         launchInViewModel {
             while (true) {
-                autoFetchNewerFeeds()
                 delay(StatusConfigurationDefault.config.autoFetchNewerFeedsInterval)
+                autoFetchNewerFeeds()
             }
         }
         initFeeds(true)
@@ -184,8 +184,8 @@ class MixedContentSubViewModel(
         val feeds = uiState.feeds
         if (feeds.isEmpty()) return
         val sourceList = mixedContent?.sourceUriList ?: return
-        loadMoreJob?.cancel()
-        loadMoreJob = launchInViewModel {
+        refreshJob?.cancel()
+        refreshJob = launchInViewModel {
             _uiState.update { it.copy(refreshing = true) }
             feedsRepo.refresh(
                 sourceUriList = sourceList,

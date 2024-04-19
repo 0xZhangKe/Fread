@@ -36,4 +36,6 @@
     <string name="feeds_mixed_config_edit_new_name_dialog_title">Please input name</string>
     <string name="feeds_mixed_config_edit_new_name_dialog_label">Name</string>
     <string name="feeds_mixed_config_edit_delete_content_dialog_message">Are you sure you want to delete this feeds?</string>
+
+    <string name="feeds_mixed_config_not_found">Abnormal status, configuration not found.</string>
 </resources>

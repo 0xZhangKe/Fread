@@ -1,6 +1,5 @@
 package com.zhangke.utopia.common.status.usecase
 
-import android.util.Log
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.utopia.common.status.repo.StatusContentRepo

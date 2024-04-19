@@ -3,6 +3,8 @@ package com.zhangke.utopia.feeds.pages.home.feeds
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
@@ -16,17 +18,20 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.handle
+import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.richtext.preParseRichText
 import com.zhangke.utopia.status.status.model.Status
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 
@@ -48,74 +53,157 @@ class MixedContentSubViewModel(
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
 
+    private val _newStatusNotifyFlow = MutableSharedFlow<Unit>()
+    val newStatusNotifyFlow = _newStatusNotifyFlow.asSharedFlow()
+
     private var mixedContent: ContentConfig.MixedContent? = null
 
     private val config = StatusConfigurationDefault.config
 
+    private var initFeedsJob: Job? = null
+    private var refreshJob: Job? = null
+    private var loadMoreJob: Job? = null
+
     init {
         launchInViewModel {
-            clearFeedsWhenAccountChanged()
+            statusProvider.accountManager
+                .getAllAccountFlow()
+                .collect {
+                    delay(200)
+                    initFeeds(false)
+                }
         }
         launchInViewModel {
             feedsRepo.feedsInfoChangedFlow
                 .collect {
-                    _uiState.update { it.resetState() }
-                    initFeeds()
+                    delay(50)
+                    initFeeds(false)
                 }
         }
         launchInViewModel {
             contentConfigRepo.getConfigFlow(configId)
                 .drop(1)
                 .collect {
-                    _uiState.update { it.resetState() }
-                    initFeeds()
+                    delay(50)
+                    initFeeds(false)
                 }
         }
         launchInViewModel {
-            initFeeds()
+            while (true) {
+                autoFetchNewerFeeds()
+                delay(StatusConfigurationDefault.config.autoFetchNewerFeedsInterval)
+            }
         }
+        initFeeds(true)
     }
 
-    /**
-     * 初始化Feeds
-     * 先获取本地，然后获取服务端。
-     */
-    private fun initFeeds() {
-        if (_uiState.value.initializing) return
-        launchInViewModel {
+    private fun initFeeds(needLocalData: Boolean) {
+        initFeedsJob?.cancel()
+        initFeedsJob = launchInViewModel {
             mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
-            val sourceList = mixedContent?.sourceUriList ?: return@launchInViewModel
-            _uiState.value = _uiState.value.copy(
-                initializing = true,
-                initErrorMessage = null,
-            )
-            val localStatus = feedsRepo.getLocalFirstPageStatus(
-                sourceUriList = sourceList,
-                limit = config.loadFromLocalLimit,
-            )
-            val newFeeds = localStatus.map {
-                val statusUiState = buildStatusUiState(it)
-                val role = statusProvider.statusSourceResolver
-                    .resolveRoleByUri(it.intrinsicBlog.author.uri)
-                MixedContentItemUiState(role, statusUiState)
+            if (mixedContent == null) {
+                _uiState.update { it.copy(pageErrorContent = textOf(R.string.feeds_mixed_config_not_found)) }
+                return@launchInViewModel
             }
-            _uiState.value = _uiState.value.copy(feeds = newFeeds)
+            _uiState.update {
+                it.copy(
+                    showPagingLoadingPlaceholder = true,
+                    pageErrorContent = null,
+                    feeds = emptyList(),
+                )
+            }
+            val sourceList = mixedContent!!.sourceUriList
+            if (needLocalData) {
+                val localStatus = feedsRepo.getLocalFirstPageStatus(
+                    sourceUriList = sourceList,
+                    limit = config.loadFromLocalLimit,
+                )
+                val newFeeds = localStatus.map {
+                    val statusUiState = buildStatusUiState(it)
+                    val role = statusProvider.statusSourceResolver
+                        .resolveRoleByUri(it.intrinsicBlog.author.uri)
+                    MixedContentItemUiState(role, statusUiState)
+                }
+                _uiState.update { state ->
+                    state.copy(
+                        feeds = newFeeds,
+                        showPagingLoadingPlaceholder = false,
+                        pageErrorContent = null,
+                    )
+                }
+            }
             feedsRepo.refresh(
                 sourceUriList = sourceList,
                 limit = config.loadFromServerLimit,
             ).onFailure {
                 _uiState.update { state ->
                     state.copy(
-                        initializing = false,
-                        initErrorMessage = it.toTextStringOrNull(),
+                        showPagingLoadingPlaceholder = false,
+                        pageErrorContent = if (state.feeds.isEmpty()) {
+                            it.toTextStringOrNull()
+                        } else {
+                            null
+                        },
                     )
+                }
+                if (_uiState.value.feeds.isNotEmpty()) {
+                    _errorMessageFlow.emitTextMessageFromThrowable(it)
                 }
             }.onSuccess {
                 _uiState.update { state ->
                     state.copy(
-                        initializing = false,
                         feeds = state.feeds.applyRefreshResult(it),
+                        pageErrorContent = null,
+                        showPagingLoadingPlaceholder = false,
                     )
+                }
+            }
+        }
+    }
+
+    private suspend fun autoFetchNewerFeeds() {
+        val sourceList = mixedContent?.sourceUriList ?: return
+        feedsRepo.refresh(
+            sourceUriList = sourceList,
+            limit = config.loadFromServerLimit,
+        ).onSuccess {
+            _uiState.update { state ->
+                state.copy(
+                    feeds = state.feeds.applyRefreshResult(it),
+                )
+            }
+            if (it.newStatus.isNotEmpty()) {
+                _newStatusNotifyFlow.emit(Unit)
+            }
+        }
+    }
+
+    fun onRefresh() {
+        val uiState = _uiState.value
+        if (uiState.showPagingLoadingPlaceholder || uiState.refreshing || uiState.loadMoreState.loading) return
+        val feeds = uiState.feeds
+        if (feeds.isEmpty()) return
+        val sourceList = mixedContent?.sourceUriList ?: return
+        loadMoreJob?.cancel()
+        loadMoreJob = launchInViewModel {
+            _uiState.update { it.copy(refreshing = true) }
+            feedsRepo.refresh(
+                sourceUriList = sourceList,
+                limit = config.loadFromServerLimit,
+            ).map {
+                it.newStatus.preParseRichText()
+                it
+            }.onSuccess { refreshResult ->
+                _uiState.update {
+                    it.copy(
+                        refreshing = false,
+                        feeds = it.feeds.applyRefreshResult(refreshResult),
+                    )
+                }
+            }.onFailure { e ->
+                _errorMessageFlow.emitTextMessageFromThrowable(e)
+                _uiState.update {
+                    it.copy(refreshing = false)
                 }
             }
         }
@@ -139,44 +227,14 @@ class MixedContentSubViewModel(
         return finalList.sortedByDescending { it.statusUiState.status.datetime }
     }
 
-    fun onRefresh() {
-        val uiState = _uiState.value
-        if (uiState.initializing || uiState.refreshing || uiState.loadMoreState.loading) return
-        val feeds = uiState.feeds
-        if (feeds.isEmpty()) return
-        val sourceList = mixedContent?.sourceUriList ?: return
-        launchInViewModel {
-            _uiState.update {
-                it.copy(refreshing = true)
-            }
-            feedsRepo.refresh(
-                sourceUriList = sourceList,
-                limit = config.loadFromServerLimit,
-            ).onSuccess { refreshResult ->
-                _uiState.update {
-                    it.copy(
-                        refreshing = false,
-                        feeds = it.feeds.applyRefreshResult(refreshResult),
-                    )
-                }
-            }.onFailure { e ->
-                e.toTextStringOrNull()?.let {
-                    _errorMessageFlow.emit(it)
-                }
-                _uiState.update {
-                    it.copy(refreshing = false)
-                }
-            }
-        }
-    }
-
     fun onLoadMore() {
         val uiState = _uiState.value
-        if (uiState.initializing || uiState.refreshing || uiState.loadMoreState.loading) return
+        if (uiState.showPagingLoadingPlaceholder || uiState.refreshing || uiState.loadMoreState.loading) return
         val feeds = uiState.feeds
         if (feeds.isEmpty()) return
         val sourceList = mixedContent?.sourceUriList ?: return
-        launchInViewModel {
+        loadMoreJob?.cancel()
+        loadMoreJob = launchInViewModel {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
             feedsRepo.getStatus(
                 sourceUriList = sourceList,
@@ -229,26 +287,6 @@ class MixedContentSubViewModel(
             val role = statusProvider.statusSourceResolver.resolveRoleByUri(accountUri)
             interactiveHandler.onVoted(role, status, options).handleResult()
         }
-    }
-
-    private suspend fun clearFeedsWhenAccountChanged() {
-        statusProvider.accountManager
-            .getAllAccountFlow()
-            .collect {
-                _uiState.update { it.resetState() }
-                delay(200)
-                initFeeds()
-            }
-    }
-
-    private fun MixedContentUiState.resetState(): MixedContentUiState {
-        return copy(
-            feeds = emptyList(),
-            initializing = false,
-            initErrorMessage = null,
-            refreshing = false,
-            loadMoreState = LoadState.Idle,
-        )
     }
 
     private fun MutableList<MixedContentItemUiState>.addAllIgnoreDuplicate(

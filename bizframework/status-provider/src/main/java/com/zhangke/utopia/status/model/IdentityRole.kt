@@ -22,6 +22,9 @@ data class IdentityRole(
     val baseUrl: FormalBaseUrl?,
 ) : Parcelable {
 
+    val nonRole: Boolean
+        get() = accountUri == null && baseUrl == null
+
     companion object {
 
         val nonIdentityRole = IdentityRole(null, null)

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.manager.add
+package com.zhangke.utopia.feeds.pages.manager.add.mixed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -30,8 +30,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 
-@HiltViewModel(assistedFactory = AddFeedsManagerViewModel.Factory::class)
-internal class AddFeedsManagerViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = AddMixedFeedsViewModel.Factory::class)
+internal class AddMixedFeedsViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val configManager: UtopiaConfigManager,
@@ -43,12 +43,12 @@ internal class AddFeedsManagerViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory : ScreenModelFactory {
 
-        fun create(statusSource: StatusSource?): AddFeedsManagerViewModel
+        fun create(statusSource: StatusSource?): AddMixedFeedsViewModel
     }
 
     private val viewModelState = MutableStateFlow(initialViewModelState())
 
-    val uiState: StateFlow<AddFeedsManagerUiState> =
+    val uiState: StateFlow<AddMixedFeedsUiState> =
         viewModelState.map(viewModelScope) { it.toUiState() }
 
     private val _errorMessageFlow = MutableSharedFlow<TextString>()
@@ -146,8 +146,8 @@ internal class AddFeedsManagerViewModel @AssistedInject constructor(
         )
     }
 
-    private fun AddSourceViewModelState.toUiState(): AddFeedsManagerUiState {
-        return AddFeedsManagerUiState(
+    private fun AddSourceViewModelState.toUiState(): AddMixedFeedsUiState {
+        return AddMixedFeedsUiState(
             sourceList = sourceList.map { it.toUiState() },
             sourceName = sourceName,
             maxNameLength = configManager.contentTitleMaxLength,

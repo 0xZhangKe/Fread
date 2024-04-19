@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.manager.add
+package com.zhangke.utopia.feeds.pages.manager.add.mixed
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -54,7 +54,7 @@ import com.zhangke.utopia.status.uri.FormalUri
 /**
  * 添加混合 Feeds 页面
  */
-internal class AddFeedsManagerScreen(
+internal class AddMixedFeedsScreen(
     private val statusSource: StatusSource? = null
 ) : Screen {
 
@@ -64,7 +64,7 @@ internal class AddFeedsManagerScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
-        val viewModel = getViewModel<AddFeedsManagerViewModel, AddFeedsManagerViewModel.Factory> {
+        val viewModel = getViewModel<AddMixedFeedsViewModel, AddMixedFeedsViewModel.Factory> {
             it.create(statusSource)
         }
         val snackbarHostState = rememberSnackbarHostState()
@@ -98,7 +98,7 @@ internal class AddFeedsManagerScreen(
 
     @Composable
     private fun FeedsManager(
-        uiState: AddFeedsManagerUiState,
+        uiState: AddMixedFeedsUiState,
         snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onAddSourceClick: () -> Unit,

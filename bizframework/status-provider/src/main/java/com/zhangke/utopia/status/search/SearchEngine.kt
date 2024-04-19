@@ -54,7 +54,7 @@ class SearchEngine(
 
     suspend fun searchContent(
         role: IdentityRole,
-        query: String
+        query: String,
     ): Result<List<SearchContentResult>> {
         return engineList.mapNotNull { it.searchContent(role, query) }
             .collect()

@@ -8,7 +8,7 @@ import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.R
-import com.zhangke.utopia.feeds.pages.manager.add.AddFeedsManagerScreen
+import com.zhangke.utopia.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
@@ -100,7 +100,7 @@ class PreAddFeedsViewModel @Inject constructor(
         addContentJob = launchInViewModel {
             when (result) {
                 is SearchContentResult.Source -> {
-                    _openScreenFlow.emit(AddFeedsManagerScreen(result.source))
+                    _openScreenFlow.emit(AddMixedFeedsScreen(result.source))
                 }
 
                 is SearchContentResult.ActivityPubPlatform -> {

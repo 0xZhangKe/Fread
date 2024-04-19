@@ -11,6 +11,9 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.style.TextAlign
@@ -36,6 +39,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
+import kotlinx.coroutines.flow.SharedFlow
 
 class MixedContentScreen(private val configId: Long) : PagerTab {
 
@@ -51,6 +55,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         MixedContentUi(
             uiState = uiState,
+            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
             onInteractive = viewModel::onInteractive,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
@@ -67,6 +72,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
     @Composable
     private fun MixedContentUi(
         uiState: MixedContentUiState,
+        newStatusNotifyFlow: SharedFlow<Unit>,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
         onRefresh: () -> Unit,
@@ -75,43 +81,54 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
         nestedScrollConnection: NestedScrollConnection?,
     ) {
         if (uiState.feeds.isEmpty()) {
-            if (uiState.initializing) {
+            if (uiState.showPagingLoadingPlaceholder) {
                 StatusListPlaceholder()
-            } else if (uiState.initErrorMessage != null) {
-                InitErrorContent(uiState.initErrorMessage)
+            } else if (uiState.pageErrorContent != null) {
+                InitErrorContent(uiState.pageErrorContent)
             }
         } else {
-            val state = rememberLoadableInlineVideoLazyColumnState(
-                refreshing = uiState.refreshing,
-                onRefresh = onRefresh,
-                onLoadMore = onLoadMore,
-            )
-            LoadableInlineVideoLazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .applyNestedScrollConnection(nestedScrollConnection),
-                state = state,
-                refreshing = uiState.refreshing,
-                loadState = uiState.loadMoreState,
-                contentPadding = PaddingValues(
-                    bottom = 20.dp,
+            Box(modifier = Modifier.fillMaxSize()) {
+                val state = rememberLoadableInlineVideoLazyColumnState(
+                    refreshing = uiState.refreshing,
+                    onRefresh = onRefresh,
+                    onLoadMore = onLoadMore,
                 )
-            ) {
-                itemsIndexed(
-                    items = uiState.feeds,
-                    key = { _, item ->
-                        item.statusUiState.status.id
-                    },
-                ) { index, item ->
-                    FeedsStatusNode(
-                        modifier = Modifier.fillMaxWidth(),
-                        status = item.statusUiState,
-                        role = item.role,
-                        onUserInfoClick = onUserInfoClick,
-                        onInteractive = onInteractive,
-                        indexInList = index,
-                        onVoted = onVoted,
+                LoadableInlineVideoLazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .applyNestedScrollConnection(nestedScrollConnection),
+                    state = state,
+                    refreshing = uiState.refreshing,
+                    loadState = uiState.loadMoreState,
+                    contentPadding = PaddingValues(
+                        bottom = 20.dp,
                     )
+                ) {
+                    itemsIndexed(
+                        items = uiState.feeds,
+                        key = { _, item ->
+                            item.statusUiState.status.id
+                        },
+                    ) { index, item ->
+                        FeedsStatusNode(
+                            modifier = Modifier.fillMaxWidth(),
+                            status = item.statusUiState,
+                            role = item.role,
+                            onUserInfoClick = onUserInfoClick,
+                            onInteractive = onInteractive,
+                            indexInList = index,
+                            onVoted = onVoted,
+                        )
+                    }
+                }
+                var showNewStatusNotifyBar by remember {
+                    mutableStateOf(false)
+                }
+                ConsumeFlow(newStatusNotifyFlow) {
+                    showNewStatusNotifyBar = true
+                }
+                if (showNewStatusNotifyBar){
+
                 }
             }
         }

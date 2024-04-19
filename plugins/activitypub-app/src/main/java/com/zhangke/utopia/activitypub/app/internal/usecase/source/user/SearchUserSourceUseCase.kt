@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.usecase.source.user
 
 import android.net.Uri
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.repo.user.UserRepo
@@ -25,8 +26,13 @@ class SearchUserSourceUseCase @Inject constructor(
         FormalUri.from(query)
             ?.let(userUriTransformer::parse)
             ?.let {
+                val finalRole = if (role.nonRole) {
+                    IdentityRole(it.uri, null)
+                } else {
+                    role
+                }
                 userRepo.getUserSource(
-                    role = role,
+                    role = finalRole,
                     userUriInsights = it,
                 ).getOrNull()
             }?.let {
@@ -58,8 +64,14 @@ class SearchUserSourceUseCase @Inject constructor(
             ?.removePrefix("/")
             ?.removeSuffix("/")
         if (acct.isNullOrEmpty()) return Result.success(null)
+        val finalRole = if (role.nonRole) {
+            val baseUrl = FormalBaseUrl.parse(query)
+            IdentityRole(null, baseUrl)
+        } else {
+            role
+        }
         return userRepo.lookupUserSource(
-            role = role,
+            role = finalRole,
             acct = acct,
         )
     }

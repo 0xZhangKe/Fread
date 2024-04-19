@@ -8,6 +8,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -30,7 +31,7 @@ internal class SearchSourceForAddViewModel @Inject constructor(
         _uiState.updateToLoading()
         launchInViewModel {
             statusProvider.searchEngine
-                .searchSource(query)
+                .searchSource(IdentityRole.nonIdentityRole, query)
                 .onSuccess { list ->
                     _uiState.value = LoadableState.success(list.map { it.toUiState() })
                 }.onFailure { e ->

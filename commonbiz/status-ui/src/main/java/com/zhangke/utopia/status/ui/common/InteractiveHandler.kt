@@ -1,4 +1,4 @@
-package com.zhangke.utopia.commonbiz.shared.usecase
+package com.zhangke.utopia.status.ui.common
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString

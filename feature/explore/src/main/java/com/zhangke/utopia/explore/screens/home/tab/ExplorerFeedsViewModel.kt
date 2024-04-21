@@ -10,9 +10,9 @@ import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandleResult
-import com.zhangke.utopia.commonbiz.shared.usecase.InteractiveHandler
-import com.zhangke.utopia.commonbiz.shared.usecase.handle
+import com.zhangke.utopia.status.ui.common.InteractiveHandleResult
+import com.zhangke.utopia.status.ui.common.InteractiveHandler
+import com.zhangke.utopia.status.ui.common.handle
 import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider

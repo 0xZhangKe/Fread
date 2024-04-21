@@ -5,11 +5,13 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusTableEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 
 abstract class StatusRepo(
+    private val platformRepo: ActivityPubPlatformRepo,
     private val statusDatabase: ActivityPubStatusDatabase,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val resolveBaseUrl: ResolveBaseUrlUseCase,

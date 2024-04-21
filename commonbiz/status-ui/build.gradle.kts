@@ -74,4 +74,6 @@ dependencies {
     implementation(libs.ktml)
     implementation(libs.compose.richtext.ui)
     implementation(libs.compose.richtext.ui.material3)
+    implementation(libs.krouter.core)
+    ksp(libs.krouter.compiler)
 }

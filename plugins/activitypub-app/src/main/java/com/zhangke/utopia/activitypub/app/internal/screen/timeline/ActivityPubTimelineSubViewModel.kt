@@ -16,6 +16,8 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.common.FeedsViewModelController
+import com.zhangke.utopia.status.ui.common.InteractiveHandler
 
 class ActivityPubTimelineSubViewModel(
     clientManager: ActivityPubClientManager,
@@ -23,11 +25,29 @@ class ActivityPubTimelineSubViewModel(
     platformRepo: ActivityPubPlatformRepo,
     statusAdapter: ActivityPubStatusAdapter,
     buildStatusUiState: BuildStatusUiStateUseCase,
-    interactiveHandler: ActivityPubInteractiveHandler,
+    interactiveHandler: InteractiveHandler,
     pollAdapter: ActivityPubPollAdapter,
     private val role: IdentityRole,
     private val type: ActivityPubStatusSourceType,
 ) : SubViewModel() {
+
+    private val feedsViewModelController = FeedsViewModelController(
+        coroutineScope = viewModelScope,
+        interactiveHandler = interactiveHandler,
+        buildStatusUiState = buildStatusUiState,
+        loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
+        loadNewFromServerFunction = ::loadNewFromServer,
+        loadMoreFunction = ::loadMore,
+        resolveRole = ::getRoleFromStatus,
+        onStatusUpdate = ::onStatusUpdate,
+    )
+
+    private suspend fun loadFirstPageLocalFeeds(): List<Status> {
+        return timelineStatusRepo.getLocalStatus(
+            role = role,
+            type = type,
+        )
+    }
 
     private val loadableController = ActivityPubStatusLoadController(
         statusAdapter = statusAdapter,

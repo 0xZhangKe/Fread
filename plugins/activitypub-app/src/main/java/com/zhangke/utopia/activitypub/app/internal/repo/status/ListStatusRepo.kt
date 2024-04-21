@@ -1,10 +1,10 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.status
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
+import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
@@ -13,10 +13,11 @@ import javax.inject.Inject
 
 class ListStatusRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
+    platformRepo: ActivityPubPlatformRepo,
     statusDatabase: ActivityPubStatusDatabase,
     formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     resolveBaseUrl: ResolveBaseUrlUseCase,
-) : StatusRepo(statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
+) : StatusRepo(platformRepo, statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
 
     override suspend fun loadStatusFromServer(
         role: IdentityRole,

@@ -42,6 +42,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
+import com.zhangke.utopia.status.ui.common.CommonFeedsUiState
 import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -76,7 +77,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun MixedContentUi(
-        uiState: MixedContentUiState,
+        uiState: CommonFeedsUiState,
         newStatusNotifyFlow: SharedFlow<Unit>,
         onUserInfoClick: (BlogAuthor) -> Unit,
         onInteractive: (Status, StatusUiInteraction) -> Unit,
@@ -89,7 +90,7 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             if (uiState.showPagingLoadingPlaceholder) {
                 StatusListPlaceholder()
             } else if (uiState.pageErrorContent != null) {
-                InitErrorContent(uiState.pageErrorContent)
+                InitErrorContent(uiState.pageErrorContent!!)
             }
         } else {
             Box(modifier = Modifier.fillMaxSize()) {

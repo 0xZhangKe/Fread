@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.ui.common
+package com.zhangke.utopia.status.ui.feeds
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString

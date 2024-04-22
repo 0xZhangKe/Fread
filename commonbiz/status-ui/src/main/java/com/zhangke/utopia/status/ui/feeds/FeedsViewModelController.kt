@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.ui.common
+package com.zhangke.utopia.status.ui.feeds
 
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
@@ -30,7 +30,7 @@ class FeedsViewModelController(
     private val coroutineScope: CoroutineScope,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val interactiveHandler: InteractiveHandler,
-    private val loadFirstPageLocalFeeds: suspend () -> List<Status>,
+    private val loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>,
     private val loadNewFromServerFunction: suspend () -> Result<RefreshResult>,
     private val loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>,
     private val resolveRole: (BlogAuthor) -> IdentityRole,
@@ -73,16 +73,18 @@ class FeedsViewModelController(
                 )
             }
             if (needLocalData) {
-                val localStatus = loadFirstPageLocalFeeds()
-                    .map(::transformCommonUiState)
-                if (localStatus.isNotEmpty()) {
-                    _uiState.update { state ->
-                        state.copy(
-                            feeds = localStatus,
-                            showPagingLoadingPlaceholder = false,
-                        )
+                loadFirstPageLocalFeeds()
+                    .map { it.map(::transformCommonUiState) }
+                    .onSuccess { localStatus ->
+                        if (localStatus.isNotEmpty()) {
+                            _uiState.update { state ->
+                                state.copy(
+                                    feeds = localStatus,
+                                    showPagingLoadingPlaceholder = false,
+                                )
+                            }
+                        }
                     }
-                }
             }
             loadNewFromServerFunction()
                 .onFailure {

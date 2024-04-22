@@ -8,7 +8,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.status.ui.common.InteractiveHandler
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor

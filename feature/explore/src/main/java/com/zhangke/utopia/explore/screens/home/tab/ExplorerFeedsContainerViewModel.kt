@@ -1,7 +1,7 @@
 package com.zhangke.utopia.explore.screens.home.tab
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
-import com.zhangke.utopia.status.ui.common.InteractiveHandler
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole

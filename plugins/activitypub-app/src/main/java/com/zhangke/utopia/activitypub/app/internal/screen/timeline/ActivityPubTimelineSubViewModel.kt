@@ -9,21 +9,21 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
+import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.common.FeedsViewModelController
-import com.zhangke.utopia.status.ui.common.InteractiveHandler
+import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 
 class ActivityPubTimelineSubViewModel(
     clientManager: ActivityPubClientManager,
     private val timelineStatusRepo: TimelineStatusRepo,
-    platformRepo: ActivityPubPlatformRepo,
-    statusAdapter: ActivityPubStatusAdapter,
+    private val platformRepo: ActivityPubPlatformRepo,
+    private val statusAdapter: ActivityPubStatusAdapter,
     buildStatusUiState: BuildStatusUiStateUseCase,
     interactiveHandler: InteractiveHandler,
     pollAdapter: ActivityPubPollAdapter,
@@ -42,8 +42,22 @@ class ActivityPubTimelineSubViewModel(
         onStatusUpdate = ::onStatusUpdate,
     )
 
-    private suspend fun loadFirstPageLocalFeeds(): List<Status> {
+    private suspend fun loadFirstPageLocalFeeds(): Result<List<Status>> {
+        val platformResult = platformRepo.getPlatform(role)
+        if (platformResult.isFailure) {
+            return Result.failure(platformResult.exceptionOrNull()!!)
+        }
+        val platform = platformResult.getOrThrow()
         return timelineStatusRepo.getLocalStatus(
+            role = role,
+            type = type,
+        ).let { list ->
+            Result.success(list.map { statusAdapter.toStatus(it, platform) })
+        }
+    }
+
+    private suspend fun loadNewFromServer(): Result<RefreshResult>{
+        timelineStatusRepo.getRemoteStatus(
             role = role,
             type = type,
         )

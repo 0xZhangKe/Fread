@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.status
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
@@ -25,7 +24,7 @@ class TimelineStatusRepo @Inject constructor(
         type: ActivityPubStatusSourceType,
         maxId: String?,
         limit: Int,
-        listId: String?
+        listId: String?,
     ): Result<List<ActivityPubStatusEntity>> {
         val timelineRepo = clientManager.getClient(role).timelinesRepo
         return when (type) {

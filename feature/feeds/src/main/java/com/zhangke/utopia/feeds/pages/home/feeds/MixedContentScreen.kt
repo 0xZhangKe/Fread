@@ -42,7 +42,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
-import com.zhangke.utopia.status.ui.common.CommonFeedsUiState
+import com.zhangke.utopia.status.ui.feeds.CommonFeedsUiState
 import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch

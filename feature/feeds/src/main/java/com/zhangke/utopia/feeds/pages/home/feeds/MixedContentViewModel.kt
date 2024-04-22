@@ -4,7 +4,7 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.status.ui.common.InteractiveHandler
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject

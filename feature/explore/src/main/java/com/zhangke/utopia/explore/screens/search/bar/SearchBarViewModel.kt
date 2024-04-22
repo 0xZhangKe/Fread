@@ -7,9 +7,9 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.status.ui.common.InteractiveHandleResult
-import com.zhangke.utopia.status.ui.common.InteractiveHandler
-import com.zhangke.utopia.status.ui.common.handle
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandleResult
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
+import com.zhangke.utopia.status.ui.feeds.handle
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount

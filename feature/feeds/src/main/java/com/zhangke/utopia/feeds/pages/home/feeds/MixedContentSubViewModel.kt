@@ -16,9 +16,9 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.common.CommonFeedsUiState
-import com.zhangke.utopia.status.ui.common.FeedsViewModelController
-import com.zhangke.utopia.status.ui.common.InteractiveHandler
+import com.zhangke.utopia.status.ui.feeds.CommonFeedsUiState
+import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -52,12 +52,12 @@ class MixedContentSubViewModel(
     val openScreenFlow: SharedFlow<Screen> get() = feedsViewModelController.openScreenFlow
     val newStatusNotifyFlow: SharedFlow<Unit> get() = feedsViewModelController.newStatusNotifyFlow
 
-    private suspend fun loadFirstPageLocalFeeds(): List<Status> {
-        if (mixedContent == null) return emptyList()
+    private suspend fun loadFirstPageLocalFeeds(): Result<List<Status>> {
+        if (mixedContent == null) return Result.success(emptyList())
         return feedsRepo.getLocalFirstPageStatus(
             sourceUriList = mixedContent!!.sourceUriList,
             limit = config.loadFromLocalLimit,
-        )
+        ).let { Result.success(it) }
     }
 
     private suspend fun loadNewFromServer(): Result<RefreshResult> {

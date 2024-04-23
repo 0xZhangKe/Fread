@@ -26,7 +26,7 @@ class FeedsRepo @Inject internal constructor(
 ) {
 
     /**
-     * 目前，知识 BlogAuthor 发生变化会通知
+     * 目前，只有 BlogAuthor 发生变化会通知
      */
     private val _feedsInfoChangedFlow = MutableSharedFlow<Unit>()
     val feedsInfoChangedFlow = _feedsInfoChangedFlow.asSharedFlow()
@@ -44,7 +44,7 @@ class FeedsRepo @Inject internal constructor(
 
     suspend fun getLocalFirstPageStatus(
         sourceUriList: List<FormalUri>,
-        limit: Int
+        limit: Int,
     ): List<Status> {
         return statusContentRepo.query(sourceUriList, limit)
             .map { statusContentEntityAdapter.toStatus(it) }

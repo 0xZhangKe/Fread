@@ -1,12 +1,19 @@
 package com.zhangke.utopia.status.ui.feeds
 
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
+import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -22,6 +29,8 @@ class LoadFeedsController(
     private val coroutineScope: CoroutineScope,
     private val feedsRepo: AbstractFeedsRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val interactiveHandler: InteractiveHandler,
+    private val resolveRole: (BlogAuthor) -> IdentityRole,
 ) {
 
     private val _uiState = MutableStateFlow(
@@ -73,7 +82,7 @@ class LoadFeedsController(
                         }
                     }
             }
-            loadNewFromServerFunction()
+            feedsRepo.refreshStatus()
                 .onFailure {
                     _uiState.update { state ->
                         state.copy(
@@ -110,7 +119,7 @@ class LoadFeedsController(
     }
 
     private suspend fun autoFetchNewerFeeds() {
-        loadNewFromServerFunction()
+        feedsRepo.refreshStatus()
             .onSuccess {
                 _uiState.update { state ->
                     state.copy(
@@ -131,7 +140,7 @@ class LoadFeedsController(
         refreshJob?.cancel()
         refreshJob = coroutineScope.launch {
             _uiState.update { it.copy(refreshing = true) }
-            loadNewFromServerFunction()
+            feedsRepo.refreshStatus()
                 .onSuccess { refreshResult ->
                     _uiState.update {
                         it.copy(
@@ -139,7 +148,6 @@ class LoadFeedsController(
                             feeds = it.feeds.applyRefreshResult(refreshResult),
                         )
                     }
-
                 }.onFailure { e ->
                     _errorMessageFlow.emitTextMessageFromThrowable(e)
                     _uiState.update {
@@ -157,7 +165,7 @@ class LoadFeedsController(
         loadMoreJob?.cancel()
         loadMoreJob = coroutineScope.launch {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
-            loadMoreFunction(feeds.last().statusUiState.status.id)
+            feedsRepo.loadMoreStatus(feeds.last().statusUiState.status.id)
                 .onFailure { e ->
                     _uiState.update {
                         it.copy(
@@ -177,4 +185,81 @@ class LoadFeedsController(
         }
     }
 
+    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
+        coroutineScope.launch {
+            val role = resolveRole(status.intrinsicBlog.author)
+            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
+        }
+
+    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        coroutineScope.launch {
+            val role = resolveRole(blogAuthor)
+            interactiveHandler.onUserInfoClick(role, blogAuthor).handleResult()
+        }
+    }
+
+    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
+        coroutineScope.launch {
+            val role = resolveRole(status.intrinsicBlog.author)
+            interactiveHandler.onVoted(role, status, options).handleResult()
+        }
+    }
+
+    private suspend fun InteractiveHandleResult.handleResult() {
+        this.handle(
+            messageFlow = _errorMessageFlow,
+            openScreenFlow = _openScreenFlow,
+            uiStatusUpdater = { newUiState ->
+                feedsRepo.updateLocalStatus(newUiState.status)
+                _uiState.update { currentUiState ->
+                    val newFeeds = currentUiState.feeds.map {
+                        if (it.statusUiState.status.id == newUiState.status.id) {
+                            it.copy(statusUiState = newUiState)
+                        } else {
+                            it
+                        }
+                    }
+                    currentUiState.copy(feeds = newFeeds)
+                }
+            }
+        )
+    }
+
+    private fun List<CommonStatusUiState>.applyRefreshResult(
+        refreshResult: RefreshResult,
+    ): List<CommonStatusUiState> {
+        val deletedIdsSet = refreshResult.deletedStatus
+            .map { it.id }
+            .toSet()
+        val finalList = this.filter {
+            !deletedIdsSet.contains(it.statusUiState.status.id)
+        }.toMutableList()
+        val items = refreshResult.newStatus.map { statusItem ->
+            CommonStatusUiState(
+                statusUiState = buildStatusUiState(statusItem),
+                role = resolveRole(statusItem.intrinsicBlog.author),
+            )
+        }
+        finalList.addAllIgnoreDuplicate(items)
+        return finalList.sortedByDescending { it.statusUiState.status.datetime }
+    }
+
+    private fun MutableList<CommonStatusUiState>.addAllIgnoreDuplicate(
+        newItems: List<CommonStatusUiState>,
+    ) {
+        newItems.forEach { this.addIfNotExist(it) }
+    }
+
+    private fun MutableList<CommonStatusUiState>.addIfNotExist(newItemUiState: CommonStatusUiState) {
+        if (this.container { it.statusUiState.status.id == newItemUiState.statusUiState.status.id }) return
+        this += newItemUiState
+    }
+
+    private fun transformCommonUiState(status: Status): CommonStatusUiState {
+        val role = resolveRole(status.intrinsicBlog.author)
+        return CommonStatusUiState(
+            statusUiState = buildStatusUiState(status),
+            role = role,
+        )
+    }
 }

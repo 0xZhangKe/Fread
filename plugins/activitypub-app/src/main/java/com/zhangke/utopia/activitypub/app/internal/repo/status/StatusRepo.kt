@@ -5,13 +5,12 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusTableEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
+import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.status.model.IdentityRole
 
 abstract class StatusRepo(
-    private val platformRepo: ActivityPubPlatformRepo,
     private val statusDatabase: ActivityPubStatusDatabase,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val resolveBaseUrl: ResolveBaseUrlUseCase,
@@ -63,11 +62,11 @@ abstract class StatusRepo(
         }
     }
 
-    protected suspend fun loadMoreInternal(
+    suspend fun loadMore(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         maxId: String,
-        limit: Int,
+        limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
         listId: String? = null,
     ): Result<List<ActivityPubStatusEntity>> {
         val allStatusFromLocal = queryListFromLocal(
@@ -97,6 +96,71 @@ abstract class StatusRepo(
                 statuses = it,
             )
         }
+    }
+
+    suspend fun refreshStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
+        listId: String? = null,
+    ): Result<ActivityPubRefreshStatusResult> {
+        val serverStatusResult = loadStatusFromServer(
+            role = role,
+            type = type,
+            maxId = null,
+            limit = limit,
+            listId = listId,
+        )
+        if (serverStatusResult.isFailure) {
+            return Result.failure(serverStatusResult.exceptionOrNull()!!)
+        }
+        val remoteStatus = serverStatusResult.getOrThrow()
+        val recentLocalStatus = if (listId != null) {
+            statusDao.queryRecentListStatus(
+                serverBaseUrl = resolveBaseUrl(role),
+                type = type,
+                listId = listId,
+            )
+        } else {
+            statusDao.queryRecentStatus(
+                serverBaseUrl = resolveBaseUrl(role),
+                type = type,
+            )
+        }
+        val deletedStatus = mutableListOf<ActivityPubStatusEntity>()
+        if (recentLocalStatus != null) {
+            // 清理本地过期数据
+            // 将新的数据更新到本地
+            val localInNewIndex = remoteStatus.indexOfFirst {
+                it.id == recentLocalStatus.id
+            }
+            if (localInNewIndex < 0) {
+                // 本地最新数据不在新数据中，表示本地数据已经过期
+                val localStatus = queryListFromLocal(
+                    role = role,
+                    type = type,
+                    limit = Int.MAX_VALUE,
+                    listId = listId,
+                )
+                replaceLocalStatus(
+                    role = role,
+                    type = type,
+                    listId = listId,
+                    statuses = emptyList(),
+                )
+                deletedStatus.addAll(localStatus)
+            } else {
+                // 新数据与本地数据有重合，清除本地数据重复部分，然后插入全部新数据
+                val repeatedList = remoteStatus.subList(localInNewIndex, remoteStatus.size)
+                deletedStatus.addAll(repeatedList)
+            }
+        }
+        return Result.success(
+            ActivityPubRefreshStatusResult(
+                newStatus = remoteStatus,
+                deletedStatus = deletedStatus,
+            )
+        )
     }
 
     private suspend fun queryListFromLocal(

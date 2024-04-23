@@ -50,6 +50,12 @@ interface ActivityPubStatusDao {
         limit: Int,
     ): List<ActivityPubStatusTableEntity>
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE serverBaseUrl = :serverBaseUrl AND type = :type ORDER BY createTimestamp DESC LIMIT 1")
+    suspend fun queryRecentStatus(
+        serverBaseUrl: FormalBaseUrl,
+        type: ActivityPubStatusSourceType,
+    ): ActivityPubStatusTableEntity?
+
     @Query("SELECT * FROM $TABLE_NAME WHERE serverBaseUrl = :serverBaseUrl AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryListStatus(
         serverBaseUrl: FormalBaseUrl,
@@ -57,6 +63,13 @@ interface ActivityPubStatusDao {
         listId: String,
         limit: Int,
     ): List<ActivityPubStatusTableEntity>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE serverBaseUrl = :serverBaseUrl AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT 1")
+    suspend fun queryRecentListStatus(
+        serverBaseUrl: FormalBaseUrl,
+        type: ActivityPubStatusSourceType,
+        listId: String,
+    ): ActivityPubStatusTableEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: ActivityPubStatusTableEntity)

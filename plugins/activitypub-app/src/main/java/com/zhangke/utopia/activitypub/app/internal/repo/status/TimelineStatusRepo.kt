@@ -17,7 +17,7 @@ class TimelineStatusRepo @Inject constructor(
     statusDatabase: ActivityPubStatusDatabase,
     formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     resolveBaseUrl: ResolveBaseUrlUseCase,
-) : StatusRepo(platformRepo, statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
+) : StatusRepo(statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
 
     override suspend fun loadStatusFromServer(
         role: IdentityRole,
@@ -58,34 +58,6 @@ class TimelineStatusRepo @Inject constructor(
         return getLocalStatusInternal(
             role = role,
             type = type,
-            limit = limit,
-            listId = null,
-        )
-    }
-
-    suspend fun getRemoteStatus(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
-    ): Result<List<ActivityPubStatusEntity>> {
-        return getRemoteStatusInternal(
-            role = role,
-            type = type,
-            limit = limit,
-            listId = null,
-        )
-    }
-
-    suspend fun loadMore(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        maxId: String,
-        limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
-    ): Result<List<ActivityPubStatusEntity>> {
-        return loadMoreInternal(
-            role = role,
-            type = type,
-            maxId = maxId,
             limit = limit,
             listId = null,
         )

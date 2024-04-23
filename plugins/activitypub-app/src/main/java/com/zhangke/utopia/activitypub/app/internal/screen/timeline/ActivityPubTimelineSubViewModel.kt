@@ -13,6 +13,7 @@ import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadCo
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
@@ -38,7 +39,7 @@ class ActivityPubTimelineSubViewModel(
         loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
         loadNewFromServerFunction = ::loadNewFromServer,
         loadMoreFunction = ::loadMore,
-        resolveRole = ::getRoleFromStatus,
+        resolveRole = ::resolveRole,
         onStatusUpdate = ::onStatusUpdate,
     )
 
@@ -56,11 +57,46 @@ class ActivityPubTimelineSubViewModel(
         }
     }
 
-    private suspend fun loadNewFromServer(): Result<RefreshResult>{
-        timelineStatusRepo.getRemoteStatus(
+    private suspend fun loadNewFromServer(): Result<RefreshResult> {
+        val platformResult = platformRepo.getPlatform(role)
+        if (platformResult.isFailure) {
+            return Result.failure(platformResult.exceptionOrNull()!!)
+        }
+        val platform = platformResult.getOrThrow()
+        return timelineStatusRepo.refreshStatus(
             role = role,
             type = type,
-        )
+        ).map { result ->
+            RefreshResult(
+                newStatus = result.newStatus.map { statusAdapter.toStatus(it, platform) },
+                deletedStatus = result.deletedStatus.map { statusAdapter.toStatus(it, platform) },
+            )
+        }
+    }
+
+    private suspend fun loadMore(maxId: String): Result<List<Status>> {
+        val platformResult = platformRepo.getPlatform(role)
+        if (platformResult.isFailure) {
+            return Result.failure(platformResult.exceptionOrNull()!!)
+        }
+        val platform = platformResult.getOrThrow()
+        return timelineStatusRepo.loadMore(
+            role = role,
+            type = type,
+            maxId = maxId,
+        ).map { list ->
+            list.map { statusAdapter.toStatus(it, platform) }
+        }
+    }
+
+    private fun resolveRole(author: BlogAuthor): IdentityRole {
+        return role
+    }
+
+    private fun onStatusUpdate(status: Status){
+        launchInViewModel {
+            timelineStatusRepo.updateEntity(statusAdapter.toStatus(status))
+        }
     }
 
     private val loadableController = ActivityPubStatusLoadController(

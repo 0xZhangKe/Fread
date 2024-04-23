@@ -13,11 +13,10 @@ import javax.inject.Inject
 
 class ListStatusRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    platformRepo: ActivityPubPlatformRepo,
     statusDatabase: ActivityPubStatusDatabase,
     formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     resolveBaseUrl: ResolveBaseUrlUseCase,
-) : StatusRepo(platformRepo, statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
+) : StatusRepo(statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
 
     override suspend fun loadStatusFromServer(
         role: IdentityRole,
@@ -66,7 +65,7 @@ class ListStatusRepo @Inject constructor(
         maxId: String,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
     ): Result<List<ActivityPubStatusEntity>> {
-        return loadMoreInternal(
+        return loadMore(
             role = role,
             type = ActivityPubStatusSourceType.LIST,
             maxId = maxId,

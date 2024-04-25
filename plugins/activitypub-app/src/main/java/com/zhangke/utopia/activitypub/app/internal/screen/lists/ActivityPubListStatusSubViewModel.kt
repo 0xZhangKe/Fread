@@ -91,7 +91,7 @@ class ActivityPubListStatusSubViewModel(
 
     private fun updateLocalStatus(status: ActivityPubStatusEntity) {
         launchInViewModel {
-            listStatusRepo.updateEntity(status)
+            listStatusRepo.updateStatus(status)
         }
     }
 

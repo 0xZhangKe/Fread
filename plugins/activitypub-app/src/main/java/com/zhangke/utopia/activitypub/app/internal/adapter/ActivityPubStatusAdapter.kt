@@ -37,42 +37,6 @@ class ActivityPubStatusAdapter @Inject constructor(
         }
     }
 
-    fun toEntity(status: Status): ActivityPubStatusEntity{
-        return ActivityPubStatusEntity(
-            id = status.id,
-            account = activityPubAccountEntityAdapter.toEntity(status.author),
-            content = status.content,
-            sensitive = status.sensitive,
-            spoilerText = status.spoilerText,
-            createdAt = formatDatetimeToDate.formatDateToDatetime(status.datetime),
-            reblogsCount = status.forwardCount,
-            favouritesCount = status.likeCount,
-            repliesCount = status.repliesCount,
-            emojis = status.emojis.map(emojiEntityAdapter::toEntity),
-            mentions = status.mentions.mapNotNull { mention ->
-                ActivityPubStatusEntity.Mention(
-                    id = mention.id,
-                    username = mention.username,
-                    url = mention.url,
-                    acct = mention.webFinger.toString(),
-                )
-            },
-            mediaAttachments = status.mediaList.map { media ->
-                ActivityPubMediaAttachmentEntity(
-                    id = media.id,
-                    type = media.type.name,
-                    url = media.url,
-                    previewUrl = media.previewUrl,
-                    remoteUrl = media.remoteUrl,
-                    description = media.description,
-                    meta = media.meta?.let { metaAdapter.adapt(it) },
-                    blurhash = media.blurhash,
-                )
-            },
-            poll = status.poll?.let(pollAdapter::adapt),
-        )
-    }
-
     private fun ActivityPubStatusEntity.toNewBlog(
         supportActions: List<StatusInteraction>,
         platform: BlogPlatform,

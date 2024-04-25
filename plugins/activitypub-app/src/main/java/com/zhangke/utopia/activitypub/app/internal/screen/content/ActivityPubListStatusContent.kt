@@ -23,23 +23,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.composable.textString
-import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubStatusUi
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
+import com.zhangke.utopia.status.ui.feeds.CommonFeedsUiState
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
 internal fun ActivityPubListStatusContent(
-    uiState: CommonLoadableUiState<StatusUiState>,
+    uiState: CommonFeedsUiState,
     role: IdentityRole,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
@@ -48,7 +46,7 @@ internal fun ActivityPubListStatusContent(
     onVoted: (Status, List<BlogPoll.Option>) -> Unit,
     nestedScrollConnection: NestedScrollConnection? = null,
 ) {
-    if (uiState.initializing) {
+    if (uiState.showPagingLoadingPlaceholder) {
         StatusListPlaceholder()
     } else {
         val state = rememberLoadableInlineVideoLazyColumnState(
@@ -57,7 +55,7 @@ internal fun ActivityPubListStatusContent(
             onLoadMore = onLoadMore,
         )
         canScrollBackward?.value = state.lazyListState.canScrollBackward
-        val errorMessage = uiState.errorMessage?.let { textString(it) }
+        val pageErrorContent = uiState.pageErrorContent?.let { textString(it) }
         var containerHeight: Dp? by remember {
             mutableStateOf(null)
         }
@@ -78,21 +76,21 @@ internal fun ActivityPubListStatusContent(
                 )
             ) {
                 itemsIndexed(
-                    items = uiState.dataList,
+                    items = uiState.feeds,
                     key = { _, item ->
-                        item.status.id
+                        item.statusUiState.status.id
                     },
                 ) { index, status ->
                     ActivityPubStatusUi(
                         modifier = Modifier.fillMaxWidth(),
                         role = role,
-                        status = status,
+                        status = status.statusUiState,
                         onInteractive = onInteractive,
                         indexInList = index,
                         onVoted = onVoted,
                     )
                 }
-                if (!errorMessage.isNullOrEmpty() && uiState.dataList.isEmpty()) {
+                if (!pageErrorContent.isNullOrEmpty() && uiState.feeds.isEmpty()) {
                     item {
                         Box(
                             modifier = Modifier
@@ -106,7 +104,7 @@ internal fun ActivityPubListStatusContent(
                         ) {
                             Text(
                                 modifier = Modifier.align(Alignment.Center),
-                                text = errorMessage,
+                                text = pageErrorContent,
                             )
                         }
                     }

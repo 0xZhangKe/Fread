@@ -20,7 +20,6 @@ data class StatusContentEntity(
      * 这个 ID 不会，也不应该暴露到repo之外，只用作内部。
      */
     @PrimaryKey val id: String,
-    val type: StatusType,
     /**
      * 这个 ID 是服务端返回的，帖子实际上的 ID。
      */

@@ -34,7 +34,6 @@ class StatusContentEntityAdapter @Inject constructor(
             id = statusIdGenerator.generate(sourceUri, status),
             isFirstStatus = isFirstStatus,
             sourceUri = sourceUri,
-            type = StatusType.BLOG,
             statusIdOfPlatform = status.id,
             status = status,
             createTimestamp = status.datetime,

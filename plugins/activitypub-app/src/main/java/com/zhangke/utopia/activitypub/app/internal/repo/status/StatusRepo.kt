@@ -1,22 +1,16 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.status
 
-import com.zhangke.activitypub.entities.ActivityPubPollEntity
-import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
-import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusTableEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
+import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
+import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.status.model.Status
 
 abstract class StatusRepo(
-    private val statusDatabase: ActivityPubStatusDatabase,
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-    private val resolveBaseUrl: ResolveBaseUrlUseCase,
+    private val apStatusRepo: ActivityPubStatusRepo,
 ) {
-
-    private val statusDao get() = statusDatabase.getDao()
 
     protected abstract suspend fun loadStatusFromServer(
         role: IdentityRole,
@@ -24,14 +18,14 @@ abstract class StatusRepo(
         maxId: String?,
         limit: Int,
         listId: String? = null,
-    ): Result<List<ActivityPubStatusEntity>>
+    ): Result<List<Status>>
 
     protected suspend fun getLocalStatusInternal(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int,
         listId: String? = null,
-    ): List<ActivityPubStatusEntity> {
+    ): List<Status> {
         return queryListFromLocal(
             role = role,
             type = type,
@@ -45,7 +39,7 @@ abstract class StatusRepo(
         type: ActivityPubStatusSourceType,
         limit: Int,
         listId: String? = null,
-    ): Result<List<ActivityPubStatusEntity>> {
+    ): Result<List<Status>> {
         return loadStatusFromServer(
             role = role,
             type = type,
@@ -68,7 +62,7 @@ abstract class StatusRepo(
         maxId: String,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
         listId: String? = null,
-    ): Result<List<ActivityPubStatusEntity>> {
+    ): Result<List<Status>> {
         val allStatusFromLocal = queryListFromLocal(
             role = role,
             type = type,
@@ -103,7 +97,7 @@ abstract class StatusRepo(
         type: ActivityPubStatusSourceType,
         limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
         listId: String? = null,
-    ): Result<ActivityPubRefreshStatusResult> {
+    ): Result<RefreshResult> {
         val serverStatusResult = loadStatusFromServer(
             role = role,
             type = type,
@@ -115,19 +109,12 @@ abstract class StatusRepo(
             return Result.failure(serverStatusResult.exceptionOrNull()!!)
         }
         val remoteStatus = serverStatusResult.getOrThrow()
-        val recentLocalStatus = if (listId != null) {
-            statusDao.queryRecentListStatus(
-                serverBaseUrl = resolveBaseUrl(role),
-                type = type,
-                listId = listId,
-            )
-        } else {
-            statusDao.queryRecentStatus(
-                serverBaseUrl = resolveBaseUrl(role),
-                type = type,
-            )
-        }
-        val deletedStatus = mutableListOf<ActivityPubStatusEntity>()
+        val recentLocalStatus = apStatusRepo.queryRecentListStatus(
+            role = role,
+            type = type,
+            listId = listId,
+        )
+        val deletedStatus = mutableListOf<Status>()
         if (recentLocalStatus != null) {
             // 清理本地过期数据
             // 将新的数据更新到本地
@@ -156,7 +143,7 @@ abstract class StatusRepo(
             }
         }
         return Result.success(
-            ActivityPubRefreshStatusResult(
+            RefreshResult(
                 newStatus = remoteStatus,
                 deletedStatus = deletedStatus,
             )
@@ -168,14 +155,13 @@ abstract class StatusRepo(
         type: ActivityPubStatusSourceType,
         limit: Int,
         listId: String?,
-    ): List<ActivityPubStatusEntity> {
-        val baseUrl = resolveBaseUrl(role)
-        return if (!listId.isNullOrEmpty() && type == ActivityPubStatusSourceType.LIST) {
-            statusDao
-                .queryListStatus(baseUrl, ActivityPubStatusSourceType.LIST, listId, limit)
-        } else {
-            statusDao.query(baseUrl, type, limit)
-        }.map { it.status }
+    ): List<Status> {
+        return apStatusRepo.query(
+            role = role,
+            type = type,
+            listId = listId,
+            limit = limit,
+        )
     }
 
     private suspend fun appendToLocal(
@@ -183,72 +169,50 @@ abstract class StatusRepo(
         type: ActivityPubStatusSourceType,
         maxId: String,
         listId: String?,
-        statuses: List<ActivityPubStatusEntity>,
+        statuses: List<Status>,
     ) {
-        if (statusDao.query(maxId) == null) return
-        insertEntities(role, type, listId, statuses)
+        if (apStatusRepo.query(role, maxId) == null) return
+        insertStatues(role, type, listId, statuses)
     }
 
     private suspend fun replaceLocalStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String?,
-        statuses: List<ActivityPubStatusEntity>,
+        statuses: List<Status>,
     ) {
         if (listId.isNullOrEmpty().not() && type == ActivityPubStatusSourceType.LIST) {
-            statusDao.deleteListStatus(resolveBaseUrl(role), type, listId!!)
+            apStatusRepo.deleteListStatus(role, type, listId!!)
         } else {
-            statusDao.delete(resolveBaseUrl(role), type)
+            apStatusRepo.deleteStatus(role, type)
         }
-        insertEntities(role, type, listId, statuses)
+        apStatusRepo.insertOrReplace(
+            role = role,
+            type = type,
+            listId = listId,
+            statuses = statuses,
+        )
     }
 
-    private suspend fun insertEntities(
+    private suspend fun insertStatues(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String?,
-        statuses: List<ActivityPubStatusEntity>,
+        statuses: List<Status>,
     ) {
-        val tableEntities = statuses.map {
-            it.toTableEntity(
-                role = role,
-                type = type,
-                listId = listId,
-            )
-        }
-        statusDao.insert(tableEntities)
-    }
-
-    suspend fun updateEntity(entity: ActivityPubStatusEntity) {
-        val originEntity = statusDao.query(entity.id) ?: return
-        val newEntity = originEntity.copy(
-            status = entity,
-            createTimestamp = formatDatetimeToDate(entity.createdAt).time,
-        )
-        statusDao.insert(newEntity)
-    }
-
-    suspend fun updatePoll(id: String, poll: ActivityPubPollEntity) {
-        val originEntity = statusDao.query(id) ?: return
-        val newEntity = originEntity.copy(
-            status = originEntity.status.copy(poll = poll),
-        )
-        statusDao.insert(newEntity)
-    }
-
-    private fun ActivityPubStatusEntity.toTableEntity(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        listId: String? = null,
-    ): ActivityPubStatusTableEntity {
-        val baseUrl = resolveBaseUrl(role)
-        return ActivityPubStatusTableEntity(
-            id = this.id,
+        apStatusRepo.insertOrReplace(
+            role = role,
             type = type,
-            serverBaseUrl = baseUrl,
             listId = listId,
-            status = this,
-            createTimestamp = formatDatetimeToDate(this.createdAt).time,
+            statuses = statuses,
         )
+    }
+
+    suspend fun updateStatus(role: IdentityRole, status: Status) {
+        apStatusRepo.updateStatus(role, status)
+    }
+
+    suspend fun updatePoll(role: IdentityRole, id: String, poll: BlogPoll) {
+        apStatusRepo.updatePoll(role, id, poll)
     }
 }

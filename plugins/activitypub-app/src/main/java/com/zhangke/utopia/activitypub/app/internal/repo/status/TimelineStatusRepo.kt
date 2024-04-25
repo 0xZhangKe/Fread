@@ -1,23 +1,20 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.status
 
-import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
 
 class TimelineStatusRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    platformRepo: ActivityPubPlatformRepo,
-    statusDatabase: ActivityPubStatusDatabase,
-    formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-    resolveBaseUrl: ResolveBaseUrlUseCase,
-) : StatusRepo(statusDatabase, formatDatetimeToDate, resolveBaseUrl) {
+    statusRepo: ActivityPubStatusRepo,
+    private val platformRepo: ActivityPubPlatformRepo,
+    private val statusAdapter: ActivityPubStatusAdapter,
+) : StatusRepo(statusRepo) {
 
     override suspend fun loadStatusFromServer(
         role: IdentityRole,
@@ -25,9 +22,14 @@ class TimelineStatusRepo @Inject constructor(
         maxId: String?,
         limit: Int,
         listId: String?,
-    ): Result<List<ActivityPubStatusEntity>> {
+    ): Result<List<Status>> {
         val timelineRepo = clientManager.getClient(role).timelinesRepo
-        return when (type) {
+        val platformResult = platformRepo.getPlatform(role)
+        if (platformResult.isFailure) {
+            return Result.failure(platformResult.exceptionOrNull()!!)
+        }
+        val platform = platformResult.getOrThrow()
+        val entitiesResult = when (type) {
             ActivityPubStatusSourceType.TIMELINE_HOME -> timelineRepo.homeTimeline(
                 limit = limit,
                 sinceId = null,
@@ -48,13 +50,16 @@ class TimelineStatusRepo @Inject constructor(
 
             else -> throw IllegalStateException("Unsupported type: $type")
         }
+        return entitiesResult.map { list ->
+            list.map { statusAdapter.toStatus(it, platform) }
+        }
     }
 
     suspend fun getLocalStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
-    ): List<ActivityPubStatusEntity> {
+    ): List<Status> {
         return getLocalStatusInternal(
             role = role,
             type = type,

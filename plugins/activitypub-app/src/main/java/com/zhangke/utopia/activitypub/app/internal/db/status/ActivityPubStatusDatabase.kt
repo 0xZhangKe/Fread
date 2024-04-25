@@ -6,17 +6,18 @@ import androidx.room.Database
 import androidx.room.Entity
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
-import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
-import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubStatusEntityConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalBaseUrlConverter
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
+import com.zhangke.utopia.common.status.repo.db.converts.IdentityRoleConverter
+import com.zhangke.utopia.common.status.repo.db.converts.StatusConverter
+import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.status.model.Status
 
 private const val DB_VERSION = 1
 private const val DB_NAME = "activity_pub_status.db"
@@ -27,46 +28,46 @@ private const val TABLE_NAME = "activity_pub_status"
  * 然后再获取网络数据，替换所有本地数据。
  * 另外，本地数据库存储的列表都是连续的。
  */
-@Entity(tableName = TABLE_NAME)
+@Entity(tableName = TABLE_NAME, primaryKeys = ["id", "role"])
 data class ActivityPubStatusTableEntity(
-    @PrimaryKey val id: String,
+    val id: String,
+    val role: IdentityRole,
     val type: ActivityPubStatusSourceType,
-    val serverBaseUrl: FormalBaseUrl,
     val listId: String?,
-    val status: ActivityPubStatusEntity,
+    val status: Status,
     val createTimestamp: Long,
 )
 
 @Dao
 interface ActivityPubStatusDao {
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE id = :id")
-    suspend fun query(id: String): ActivityPubStatusTableEntity?
+    @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role")
+    suspend fun query(role: IdentityRole, id: String): ActivityPubStatusTableEntity?
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE serverBaseUrl = :serverBaseUrl AND type = :type ORDER BY createTimestamp DESC LIMIT :limit")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun query(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int,
     ): List<ActivityPubStatusTableEntity>
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE serverBaseUrl = :serverBaseUrl AND type = :type ORDER BY createTimestamp DESC LIMIT 1")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT 1")
     suspend fun queryRecentStatus(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
     ): ActivityPubStatusTableEntity?
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE serverBaseUrl = :serverBaseUrl AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT :limit")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryListStatus(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String,
         limit: Int,
     ): List<ActivityPubStatusTableEntity>
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE serverBaseUrl = :serverBaseUrl AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT 1")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT 1")
     suspend fun queryRecentListStatus(
-        serverBaseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String,
     ): ActivityPubStatusTableEntity?
@@ -77,12 +78,12 @@ interface ActivityPubStatusDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entities: List<ActivityPubStatusTableEntity>)
 
-    @Query("DELETE FROM $TABLE_NAME WHERE serverBaseUrl=:baseUrl AND type=:type")
-    suspend fun delete(baseUrl: FormalBaseUrl, type: ActivityPubStatusSourceType)
+    @Query("DELETE FROM $TABLE_NAME WHERE role=:role AND type=:type")
+    suspend fun delete(role: IdentityRole, type: ActivityPubStatusSourceType)
 
-    @Query("DELETE FROM $TABLE_NAME WHERE serverBaseUrl=:baseUrl AND type=:type AND listId=:listId")
+    @Query("DELETE FROM $TABLE_NAME WHERE role=:role AND type=:type AND listId=:listId")
     suspend fun deleteListStatus(
-        baseUrl: FormalBaseUrl,
+        role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String,
     )
@@ -95,6 +96,8 @@ interface ActivityPubStatusDao {
     FormalBaseUrlConverter::class,
     ActivityPubStatusSourceTypeConverter::class,
     ActivityPubStatusEntityConverter::class,
+    StatusConverter::class,
+    IdentityRoleConverter::class,
 )
 @Database(
     entities = [ActivityPubStatusTableEntity::class],

@@ -50,32 +50,4 @@ class ListStatusRepo @Inject constructor(
             listId = listId,
         )
     }
-
-    suspend fun getRemoteStatus(
-        role: IdentityRole,
-        listId: String,
-        limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
-    ): Result<List<Status>> {
-        return getRemoteStatusInternal(
-            role = role,
-            type = ActivityPubStatusSourceType.LIST,
-            limit = limit,
-            listId = listId,
-        )
-    }
-
-    suspend fun loadMore(
-        role: IdentityRole,
-        listId: String,
-        maxId: String,
-        limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
-    ): Result<List<Status>> {
-        return loadMore(
-            role = role,
-            type = ActivityPubStatusSourceType.LIST,
-            maxId = maxId,
-            limit = limit,
-            listId = listId,
-        )
-    }
 }

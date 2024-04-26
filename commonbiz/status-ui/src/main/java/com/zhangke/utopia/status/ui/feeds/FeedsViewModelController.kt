@@ -1,5 +1,6 @@
 package com.zhangke.utopia.status.ui.feeds
 
+import android.util.Log
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
@@ -63,6 +64,7 @@ class FeedsViewModelController(
     private var autoFetchNewerFeedsJob: Job? = null
 
     fun initFeeds(needLocalData: Boolean) {
+        Log.d("U_TEST", "Controller: initFeeds needLocalData=$needLocalData")
         initFeedsJob?.cancel()
         initFeedsJob = coroutineScope.launch {
             _uiState.update {
@@ -76,6 +78,10 @@ class FeedsViewModelController(
                 loadFirstPageLocalFeeds()
                     .map { it.map(::transformCommonUiState) }
                     .onSuccess { localStatus ->
+                        Log.d(
+                            "U_TEST",
+                            "Controller: initFeeds from local size: ${localStatus.size}"
+                        )
                         if (localStatus.isNotEmpty()) {
                             _uiState.update { state ->
                                 state.copy(
@@ -123,8 +129,13 @@ class FeedsViewModelController(
     }
 
     private suspend fun autoFetchNewerFeeds() {
+        Log.d("U_TEST", "Controller: start autoFetchNewerFeeds")
         loadNewFromServerFunction()
             .onSuccess {
+                Log.d(
+                    "U_TEST",
+                    "Controller: autoFetchNewerFeeds success, newStatus: ${it.newStatus.size}, delete: ${it.deletedStatus.size}"
+                )
                 _uiState.update { state ->
                     state.copy(
                         feeds = state.feeds.applyRefreshResult(it),
@@ -207,6 +218,12 @@ class FeedsViewModelController(
         coroutineScope.launch {
             val role = resolveRole(status.intrinsicBlog.author)
             interactiveHandler.onVoted(role, status, options).handleResult()
+        }
+    }
+
+    fun showErrorMessage(message: TextString) {
+        coroutineScope.launch {
+            _errorMessageFlow.emit(message)
         }
     }
 

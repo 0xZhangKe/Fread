@@ -2,7 +2,6 @@ package com.zhangke.utopia.commonbiz.shared.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor

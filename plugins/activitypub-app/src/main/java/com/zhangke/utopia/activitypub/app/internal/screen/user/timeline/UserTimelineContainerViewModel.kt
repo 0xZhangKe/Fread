@@ -1,15 +1,14 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
@@ -20,8 +19,7 @@ class UserTimelineContainerViewModel @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
-    private val interactiveHandler: ActivityPubInteractiveHandler,
-    private val pollAdapter: ActivityPubPollAdapter,
+    private val interactiveHandler: InteractiveHandler,
 ) : ContainerViewModel<UserTimelineViewModel, UserTimelineContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): UserTimelineViewModel {
@@ -32,7 +30,6 @@ class UserTimelineContainerViewModel @Inject constructor(
             statusAdapter = statusAdapter,
             clientManager = clientManager,
             interactiveHandler = interactiveHandler,
-            pollAdapter = pollAdapter,
             role = params.role,
             userUriInsights = params.userUriInsights,
         )

@@ -44,15 +44,15 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.feeds.CommonFeedsUiState
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(HashtagTimelineRoute.ROUTE)
@@ -74,6 +74,8 @@ class HashtagTimelineScreen(
             hashtagTimelineUiState = hashtagTimelineUiState,
             statusUiState = statusUiState,
             messageFlow = viewModel.errorMessageFlow,
+            openScreenFlow = viewModel.openScreenFlow,
+            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
@@ -81,6 +83,7 @@ class HashtagTimelineScreen(
             onFollowClick = viewModel::onFollowClick,
             onUnfollowClick = viewModel::onUnfollowClick,
             onVoted = viewModel::onVoted,
+            onUserInfoClick = viewModel::onUserInfoClick,
         )
     }
 
@@ -88,8 +91,10 @@ class HashtagTimelineScreen(
     @Composable
     private fun HashtagTimelineContent(
         hashtagTimelineUiState: HashtagTimelineUiState,
-        statusUiState: CommonLoadableUiState<StatusUiState>,
+        statusUiState: CommonFeedsUiState,
         messageFlow: SharedFlow<TextString>,
+        openScreenFlow: SharedFlow<Screen>,
+        newStatusNotifyFlow: SharedFlow<Unit>,
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
@@ -97,6 +102,7 @@ class HashtagTimelineScreen(
         onFollowClick: () -> Unit,
         onUnfollowClick: () -> Unit,
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
+        onUserInfoClick: (BlogAuthor) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         val contentCanScrollBackward = remember {
@@ -121,13 +127,16 @@ class HashtagTimelineScreen(
             },
             scrollableContent = {
                 Box(modifier = Modifier.fillMaxSize()) {
-                    ActivityPubListStatusContent(
+                    FeedsContent(
                         uiState = statusUiState,
-                        role = hashtagTimelineUiState.role,
+                        openScreenFlow = openScreenFlow,
+                        newStatusNotifyFlow = newStatusNotifyFlow,
+                        onInteractive = onInteractive,
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
-                        onInteractive = onInteractive,
+                        onUserInfoClick = onUserInfoClick,
                         onVoted = onVoted,
+                        nestedScrollConnection = null,
                     )
                     SnackbarHost(
                         hostState = snackbarHostState,

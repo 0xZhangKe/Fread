@@ -25,7 +25,6 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.framework.voyager.tryPush
 import com.zhangke.utopia.common.status.model.StatusUiInteraction

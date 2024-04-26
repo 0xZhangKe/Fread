@@ -5,24 +5,23 @@ import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
-import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
-import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
+import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -38,11 +37,10 @@ import java.util.Calendar
 class HashtagTimelineViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     @ApplicationContext private val context: Context,
+    private val statusAdapter: ActivityPubStatusAdapter,
+    private val platformRepo: ActivityPubPlatformRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
-    statusAdapter: ActivityPubStatusAdapter,
-    platformRepo: ActivityPubPlatformRepo,
-    interactiveHandler: ActivityPubInteractiveHandler,
-    pollAdapter: ActivityPubPollAdapter,
+    interactiveHandler: InteractiveHandler,
     @Assisted private val role: IdentityRole,
     @Assisted private val hashtag: String,
 ) : ViewModel() {
@@ -52,19 +50,34 @@ class HashtagTimelineViewModel @AssistedInject constructor(
         fun create(role: IdentityRole, hashtag: String): HashtagTimelineViewModel
     }
 
-    private val loadableController = ActivityPubStatusLoadController(
+    private val feedsViewModelController = FeedsViewModelController(
         coroutineScope = viewModelScope,
-        clientManager = clientManager,
-        statusAdapter = statusAdapter,
-        platformRepo = platformRepo,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
-        pollAdapter = pollAdapter,
+        loadFirstPageLocalFeeds = { Result.success(emptyList()) },
+        loadNewFromServerFunction = ::loadNewFromServer,
+        loadMoreFunction = ::loadMore,
+        resolveRole = { role },
+        onStatusUpdate = {},
     )
 
-    val errorMessageFlow = loadableController.errorMessageFlow
+    private suspend fun loadNewFromServer(): Result<RefreshResult> {
+        return loadHashtagTimeline().map {
+            RefreshResult(
+                newStatus = it,
+                deletedStatus = emptyList(),
+            )
+        }
+    }
 
-    val statusUiState = loadableController.uiState
+    private suspend fun loadMore(maxId: String?): Result<List<Status>> {
+        return loadHashtagTimeline(maxId)
+    }
+
+    val statusUiState = feedsViewModelController.uiState
+    val errorMessageFlow = feedsViewModelController.errorMessageFlow
+    val openScreenFlow = feedsViewModelController.openScreenFlow
+    val newStatusNotifyFlow = feedsViewModelController.newStatusNotifyFlow
 
     private val _hashtagTimelineUiState = MutableStateFlow(
         HashtagTimelineUiState(
@@ -77,18 +90,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     val hashtagTimelineUiState = _hashtagTimelineUiState.asStateFlow()
 
     init {
-        launchInViewModel {
-            loadableController.initStatusData(
-                role = role,
-                getStatusFromServer = {
-                    loadHashtagTimeline(
-                        role = it,
-                        maxId = null,
-                    )
-                },
-            )
-        }
-
+        feedsViewModelController.initFeeds(false)
         launchInViewModel {
             clientManager.getClient(role)
                 .accountRepo
@@ -99,11 +101,9 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                         description = buildDescription(it),
                     )
                 }.onFailure { e ->
-                    e.message
-                        ?.let { textOf(it) }
-                        ?.let {
-                            loadableController.mutableErrorMessageFlow.emit(it)
-                        }
+                    e.toTextStringOrNull()?.let {
+                        feedsViewModelController.showErrorMessage(it)
+                    }
                 }
         }
     }
@@ -138,35 +138,15 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     }
 
     fun onRefresh() {
-        launchInViewModel {
-            loadableController.onRefresh(
-                role = role,
-                getStatusFromServer = {
-                    loadHashtagTimeline(
-                        role = it,
-                        maxId = null,
-                    )
-                },
-            )
-        }
+        feedsViewModelController.refresh()
     }
 
     fun onLoadMore() {
-        launchInViewModel {
-            loadableController.onLoadMore(
-                role = role,
-                loadMoreFunction = { maxId, baseUrl ->
-                    loadHashtagTimeline(
-                        role = baseUrl,
-                        maxId = maxId,
-                    )
-                },
-            )
-        }
+        feedsViewModelController.loadMore()
     }
 
     fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        loadableController.onInteractive(role, status, uiInteraction)
+        feedsViewModelController.onInteractive(status, uiInteraction)
     }
 
     fun onFollowClick() {
@@ -188,10 +168,14 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        loadableController.onVoted(role, status, options)
+        feedsViewModelController.onVoted(status, options)
     }
 
-    private suspend fun Result<ActivityPubTagEntity>.handle() {
+    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        feedsViewModelController.onUserInfoClick(blogAuthor)
+    }
+
+    private fun Result<ActivityPubTagEntity>.handle() {
         this.onSuccess { newEntity ->
             _hashtagTimelineUiState.update { state ->
                 state.copy(
@@ -200,22 +184,24 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                 )
             }
         }.onFailure { e ->
-            e.message?.let { m -> textOf(m) }?.let {
-                loadableController.mutableErrorMessageFlow.emit(it)
+            e.toTextStringOrNull()?.let {
+                feedsViewModelController.showErrorMessage(it)
             }
         }
     }
 
-    private suspend fun loadHashtagTimeline(
-        role: IdentityRole,
-        maxId: String? = null,
-    ): Result<List<ActivityPubStatusEntity>> {
+    private suspend fun loadHashtagTimeline(maxId: String? = null): Result<List<Status>> {
+        val platformResult = platformRepo.getPlatform(role)
+        if (platformResult.isFailure) {
+            return Result.failure(platformResult.exceptionOrNull()!!)
+        }
+        val platform = platformResult.getOrThrow()
         return clientManager.getClient(role)
             .timelinesRepo
             .getTagTimeline(
                 hashtag = hashtag,
                 limit = StatusConfigurationDefault.config.loadFromServerLimit,
                 maxId = maxId,
-            )
+            ).map { list -> list.map { statusAdapter.toStatus(it, platform) } }
     }
 }

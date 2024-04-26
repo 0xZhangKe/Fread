@@ -1,102 +1,98 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.lists
 
-import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
+import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 
 class ActivityPubListStatusSubViewModel(
-    platformRepo: ActivityPubPlatformRepo,
-    clientManager: ActivityPubClientManager,
     private val listStatusRepo: ListStatusRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
-    statusAdapter: ActivityPubStatusAdapter,
-    interactiveHandler: ActivityPubInteractiveHandler,
-    pollAdapter: ActivityPubPollAdapter,
+    interactiveHandler: InteractiveHandler,
     private val role: IdentityRole,
     private val listId: String,
 ) : SubViewModel() {
 
-    private val loadableController = ActivityPubStatusLoadController(
-        statusAdapter = statusAdapter,
-        platformRepo = platformRepo,
-        clientManager = clientManager,
+    private val feedsViewModelController = FeedsViewModelController(
         coroutineScope = viewModelScope,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
-        pollAdapter = pollAdapter,
-        updateStatus = ::updateLocalStatus,
-        updatePoll = { status, poll ->
-            launchInViewModel {
-                listStatusRepo.updatePoll(status.id, poll)
-            }
-        }
+        loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
+        loadNewFromServerFunction = ::loadNewFromServer,
+        loadMoreFunction = ::loadMore,
+        resolveRole = ::resolveRole,
+        onStatusUpdate = ::onStatusUpdate,
     )
 
-    val uiState = loadableController.uiState
-    val errorMessageFlow = loadableController.errorMessageFlow
-
-    init {
-        loadableController.initStatusData(
-            role = role,
-            getStatusFromServer = ::getRemoteStatus,
-            getStatusFromLocal = ::getLocalStatus,
-        )
-    }
-
-    fun onRefresh() {
-        loadableController.onRefresh(role) {
-            getRemoteStatus(it)
-        }
-    }
-
-    fun onLoadMore() {
-        loadableController.onLoadMore(role) { maxId, role ->
-            listStatusRepo.loadMore(
-                role = role,
-                listId = listId,
-                maxId = maxId,
-            )
-        }
-    }
-
-    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
-        loadableController.onInteractive(role, status, interaction)
-    }
-
-    private suspend fun getLocalStatus(): List<ActivityPubStatusEntity> {
+    private suspend fun loadFirstPageLocalFeeds(): Result<List<Status>> {
         return listStatusRepo.getLocalStatus(
             role = role,
             listId = listId,
-        )
+        ).let { Result.success(it) }
     }
 
-    private suspend fun getRemoteStatus(role: IdentityRole): Result<List<ActivityPubStatusEntity>> {
-        return listStatusRepo.getRemoteStatus(
+    private suspend fun loadNewFromServer(): Result<RefreshResult> {
+        return listStatusRepo.refreshStatus(
             role = role,
+            type = ActivityPubStatusSourceType.LIST,
             listId = listId,
         )
     }
 
-    private fun updateLocalStatus(status: ActivityPubStatusEntity) {
+    private suspend fun loadMore(maxId: String): Result<List<Status>> {
+        return listStatusRepo.loadMore(
+            role = role,
+            type = ActivityPubStatusSourceType.LIST,
+            maxId = maxId,
+        )
+    }
+
+    private fun resolveRole(author: BlogAuthor): IdentityRole {
+        return role
+    }
+
+    private fun onStatusUpdate(status: Status) {
         launchInViewModel {
-            listStatusRepo.updateStatus(status)
+            listStatusRepo.updateStatus(role, status)
         }
     }
 
-    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        loadableController.onVoted(role, status, options)
+    val uiState = feedsViewModelController.uiState
+    val errorMessageFlow = feedsViewModelController.errorMessageFlow
+    val newStatusNotifyFlow = feedsViewModelController.newStatusNotifyFlow
+    val openScreenFlow = feedsViewModelController.openScreenFlow
+
+    init {
+        feedsViewModelController.initFeeds(true)
+        feedsViewModelController.startAutoFetchNewerFeeds()
     }
 
+    fun onRefresh() {
+        feedsViewModelController.refresh()
+    }
+
+    fun onLoadMore() {
+        feedsViewModelController.loadMore()
+    }
+
+    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
+        feedsViewModelController.onInteractive(status, interaction)
+    }
+
+    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
+        feedsViewModelController.onVoted(status, options)
+    }
+
+    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        feedsViewModelController.onUserInfoClick(blogAuthor)
+    }
 }

@@ -2,11 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.timeline
 
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
-import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -19,13 +15,9 @@ import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
 import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 
 class ActivityPubTimelineSubViewModel(
-    clientManager: ActivityPubClientManager,
     private val timelineStatusRepo: TimelineStatusRepo,
-    private val platformRepo: ActivityPubPlatformRepo,
-    private val statusAdapter: ActivityPubStatusAdapter,
     buildStatusUiState: BuildStatusUiStateUseCase,
     interactiveHandler: InteractiveHandler,
-    pollAdapter: ActivityPubPollAdapter,
     private val role: IdentityRole,
     private val type: ActivityPubStatusSourceType,
 ) : SubViewModel() {
@@ -82,6 +74,7 @@ class ActivityPubTimelineSubViewModel(
 
     init {
         feedsViewModelController.initFeeds(true)
+        feedsViewModelController.startAutoFetchNewerFeeds()
     }
 
     fun onRefresh() {
@@ -98,5 +91,9 @@ class ActivityPubTimelineSubViewModel(
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
         feedsViewModelController.onVoted(status, options)
+    }
+
+    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        feedsViewModelController.onUserInfoClick(blogAuthor)
     }
 }

@@ -14,7 +14,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
-import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
+import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
 import com.zhangke.utopia.status.model.IdentityRole
 
 class UserTimelineTab(
@@ -33,13 +33,14 @@ class UserTimelineTab(
         val viewModel =
             getViewModel<UserTimelineContainerViewModel>().getSubViewModel(role, userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
-        ActivityPubListStatusContent(
+        FeedsContent(
             uiState = uiState,
-            role = role,
-            onLoadMore = viewModel::loadMore,
-            onRefresh = viewModel::refresh,
+            openScreenFlow = viewModel.openScreenFlow,
+            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
             onInteractive = viewModel::onInteractive,
-            canScrollBackward = contentCanScrollBackward,
+            onRefresh = viewModel::onRefresh,
+            onLoadMore = viewModel::onLoadMore,
+            onUserInfoClick = viewModel::onUserInfoClick,
             onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
         )

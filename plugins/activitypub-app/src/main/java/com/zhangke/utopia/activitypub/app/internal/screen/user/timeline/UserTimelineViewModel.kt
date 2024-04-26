@@ -1,100 +1,102 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
-import com.zhangke.activitypub.ActivityPubClient
-import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubInteractiveHandler
-import com.zhangke.utopia.activitypub.app.internal.utils.ActivityPubStatusLoadController
+import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
+import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import dagger.assisted.AssistedInject
 
 class UserTimelineViewModel @AssistedInject constructor(
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
-    platformRepo: ActivityPubPlatformRepo,
-    statusAdapter: ActivityPubStatusAdapter,
+    private val platformRepo: ActivityPubPlatformRepo,
+    private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
-    interactiveHandler: ActivityPubInteractiveHandler,
-    pollAdapter: ActivityPubPollAdapter,
+    interactiveHandler: InteractiveHandler,
     val role: IdentityRole,
     val userUriInsights: UserUriInsights,
 ) : SubViewModel() {
 
-    private val loadableController = ActivityPubStatusLoadController(
-        statusAdapter = statusAdapter,
-        clientManager = clientManager,
-        platformRepo = platformRepo,
+    private val feedsViewModelController = FeedsViewModelController(
         coroutineScope = viewModelScope,
-        pollAdapter = pollAdapter,
         interactiveHandler = interactiveHandler,
         buildStatusUiState = buildStatusUiState,
+        loadFirstPageLocalFeeds = { Result.success(emptyList()) },
+        loadNewFromServerFunction = ::loadNewFromServer,
+        loadMoreFunction = ::loadMore,
+        resolveRole = { role },
+        onStatusUpdate = {},
     )
 
-    val uiState = loadableController.uiState
-    val errorMessageFlow = loadableController.errorMessageFlow
+    private suspend fun loadNewFromServer(): Result<RefreshResult> {
+        return loadUserTimeline().map {
+            RefreshResult(
+                newStatus = it,
+                deletedStatus = emptyList(),
+            )
+        }
+    }
+
+    private suspend fun loadMore(maxId: String?): Result<List<Status>> {
+        return loadUserTimeline(maxId)
+    }
+
+    val uiState = feedsViewModelController.uiState
+    val errorMessageFlow = feedsViewModelController.errorMessageFlow
+    val openScreenFlow = feedsViewModelController.openScreenFlow
+    val newStatusNotifyFlow = feedsViewModelController.newStatusNotifyFlow
 
     init {
-        launchInViewModel {
-            loadableController.initStatusData(
-                role = role,
-                getStatusFromServer = { loadStatus(it) },
-            )
-        }
+        feedsViewModelController.initFeeds(false)
     }
 
-    fun refresh() {
-        launchInViewModel {
-            loadableController.onRefresh(
-                role = role,
-                getStatusFromServer = { loadStatus(it) },
-            )
-        }
+    fun onRefresh() {
+        feedsViewModelController.refresh()
     }
 
-    fun loadMore() {
-        launchInViewModel {
-            loadableController.onLoadMore(
-                role = role,
-                loadMoreFunction = { maxId, role -> loadStatus(role, maxId) },
-            )
-        }
+    fun onLoadMore() {
+        feedsViewModelController.loadMore()
     }
 
-    private suspend fun loadStatus(
-        role: IdentityRole,
-        maxId: String? = null,
-    ): Result<List<ActivityPubStatusEntity>> {
+    private suspend fun loadUserTimeline(maxId: String? = null): Result<List<Status>> {
         val accountIdResult =
             webFingerBaseUrlToUserIdRepo.getUserId(userUriInsights.webFinger, role)
         if (accountIdResult.isFailure) {
             return Result.failure(accountIdResult.exceptionOrNull()!!)
         }
-        return getClient().accountRepo.getStatuses(
-            id = accountIdResult.getOrThrow(),
-            maxId = maxId,
-        )
+        val platformResult = platformRepo.getPlatform(role)
+        if (platformResult.isFailure) {
+            return Result.failure(platformResult.exceptionOrNull()!!)
+        }
+        val platform = platformResult.getOrThrow()
+        return clientManager.getClient(role)
+            .accountRepo
+            .getStatuses(
+                id = accountIdResult.getOrThrow(),
+                maxId = maxId,
+            ).map { it.map { item -> statusAdapter.toStatus(item, platform) } }
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        loadableController.onInteractive(role, status, uiInteraction)
+    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
+        feedsViewModelController.onInteractive(status, interaction)
     }
 
     fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        loadableController.onVoted(role, status, options)
+        feedsViewModelController.onVoted(status, options)
     }
 
-    private fun getClient(): ActivityPubClient {
-        return clientManager.getClient(role)
+    fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        feedsViewModelController.onUserInfoClick(blogAuthor)
     }
 }

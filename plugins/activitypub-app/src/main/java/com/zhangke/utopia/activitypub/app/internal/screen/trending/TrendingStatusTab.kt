@@ -10,9 +10,8 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubTabNames
-import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubListStatusContent
+import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
 import com.zhangke.utopia.status.model.IdentityRole
 
 class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
@@ -27,12 +26,14 @@ class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = getViewModel<TrendingStatusViewModel>().getSubViewModel(role)
         val uiState by viewModel.uiState.collectAsState()
-        ActivityPubListStatusContent(
+        FeedsContent(
             uiState = uiState,
-            role = role,
+            openScreenFlow = viewModel.openScreenFlow,
+            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
+            onInteractive = viewModel::onInteractive,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onInteractive = viewModel::onInteractive,
+            onUserInfoClick = viewModel::onUserInfoClick,
             onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
         )

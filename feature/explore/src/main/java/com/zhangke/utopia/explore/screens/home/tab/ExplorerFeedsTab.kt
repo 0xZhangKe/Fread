@@ -36,7 +36,6 @@ import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
@@ -50,7 +49,6 @@ import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.RecommendAuthorUi
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
-import com.zhangke.utopia.status.uri.FormalUri
 
 class ExplorerFeedsTab(
     private val type: ExplorerFeedsTabType,

@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.status
 
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.status.blog.BlogPoll
@@ -32,28 +31,6 @@ abstract class StatusRepo(
             limit = limit,
             listId = listId,
         )
-    }
-
-    protected suspend fun getRemoteStatusInternal(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        limit: Int,
-        listId: String? = null,
-    ): Result<List<Status>> {
-        return loadStatusFromServer(
-            role = role,
-            type = type,
-            maxId = null,
-            limit = limit,
-            listId = listId,
-        ).onSuccess {
-            replaceLocalStatus(
-                role = role,
-                type = type,
-                listId = listId,
-                statuses = it,
-            )
-        }
     }
 
     suspend fun loadMore(
@@ -133,14 +110,27 @@ abstract class StatusRepo(
                     role = role,
                     type = type,
                     listId = listId,
-                    statuses = emptyList(),
+                    statuses = remoteStatus,
                 )
                 deletedStatus.addAll(localStatus)
             } else {
                 // 新数据与本地数据有重合，清除本地数据重复部分，然后插入全部新数据
                 val repeatedList = remoteStatus.subList(localInNewIndex, remoteStatus.size)
                 deletedStatus.addAll(repeatedList)
+                insertStatues(
+                    role = role,
+                    type = type,
+                    listId = listId,
+                    statuses = remoteStatus,
+                )
             }
+        } else {
+            insertStatues(
+                role = role,
+                type = type,
+                listId = listId,
+                statuses = remoteStatus,
+            )
         }
         return Result.success(
             RefreshResult(

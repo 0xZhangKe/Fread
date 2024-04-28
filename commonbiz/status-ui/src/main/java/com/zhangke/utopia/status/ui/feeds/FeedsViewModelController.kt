@@ -136,12 +136,15 @@ class FeedsViewModelController(
                     "U_TEST",
                     "Controller: autoFetchNewerFeeds success, newStatus: ${it.newStatus.size}, delete: ${it.deletedStatus.size}"
                 )
+                val oldFirstId = _uiState.value.feeds.firstOrNull()?.statusUiState?.status?.id
+                val newFirstId = it.newStatus.firstOrNull()?.id
                 _uiState.update { state ->
                     state.copy(
                         feeds = state.feeds.applyRefreshResult(it),
                     )
                 }
-                if (it.newStatus.isNotEmpty()) {
+
+                if (it.newStatus.isNotEmpty() && oldFirstId != newFirstId) {
                     _newStatusNotifyFlow.emit(Unit)
                 }
             }

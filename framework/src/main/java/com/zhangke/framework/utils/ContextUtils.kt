@@ -1,3 +1,4 @@
+@file:JvmName("ContextUtils")
 package com.zhangke.framework.utils
 
 import android.app.Activity

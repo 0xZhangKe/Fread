@@ -71,6 +71,8 @@ composeReorderable = "0.9.0"
 ktml = "0.0.6"
 compose-richtext = "0.20.0"
 
+jsoup = "1.14.3"
+
 [bundles]
 androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]
 androidx-compose-foundation = ["androidx.compose.foundation", "androidx.compose.foundation.layout"]
@@ -211,7 +213,7 @@ composeReorderable = { group = "org.burnoutcrew.composereorderable", name = "reo
 ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
 compose-richtext-ui = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "compose-richtext" }
 compose-richtext-ui-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "compose-richtext" }
-
+jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

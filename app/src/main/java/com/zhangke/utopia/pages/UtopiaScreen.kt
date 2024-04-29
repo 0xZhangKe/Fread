@@ -1,10 +1,31 @@
 package com.zhangke.utopia.pages
 
+import android.graphics.Canvas
+import android.graphics.Paint
+import android.graphics.Paint.FontMetricsInt
+import android.graphics.drawable.Drawable
+import android.text.SpannableStringBuilder
+import android.text.Spanned
+import android.text.style.ReplacementSpan
+import android.widget.TextView
+import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.height
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.utopia.pages.main.MainPage
+import com.zhangke.framework.utils.appContext
+import com.zhangke.utopia.R
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class UtopiaScreen : Screen {
 
@@ -21,8 +42,8 @@ class UtopiaScreen : Screen {
         <p>可爱小猫来吃鱼罐头啦 姿势透着戒备...</p>
     """.trimIndent()
 
-    @Composable
-    private fun RichTextPreview() {
+//    @Composable
+//    private fun RichTextPreview() {
 //        Column(
 //            modifier = Modifier
 //                .fillMaxSize()
@@ -43,7 +64,7 @@ class UtopiaScreen : Screen {
 //                mentions = emptyList(),
 //                fontSp = 14F,
 //            )
-
+//
 //            val coroutineScope = rememberCoroutineScope()
 //            AndroidView(
 //                factory = {
@@ -59,7 +80,7 @@ class UtopiaScreen : Screen {
 //                    view
 //                },
 //            )
-
+//
 //            Box(modifier = Modifier.height(16.dp))
 //            HorizontalDivider()
 //            Box(modifier = Modifier.height(16.dp))
@@ -100,14 +121,121 @@ class UtopiaScreen : Screen {
 //                fontSp = 14F,
 //            )
 //        }
-    }
+//    }
 
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-        MainPage()
+//        MainPage()
 
 //        RichTextPreview()
+
+        AndroidRichTextPreview()
     }
 
+    @Composable
+    private fun AndroidRichTextPreview() {
+        Column(modifier = Modifier.fillMaxSize()) {
+            Spacer(modifier = Modifier.height(100.dp))
+
+            val coroutineScope = rememberCoroutineScope()
+            AndroidView(
+                factory = {
+                    val view = TextView(it)
+                    view.textSize = 14F
+                    view.text = buildSpan(coroutineScope, view)
+                    view
+                },
+            )
+        }
+    }
+
+    private fun buildSpan(
+        coroutineScope: CoroutineScope,
+        textView: TextView,
+    ): SpannableStringBuilder {
+        val spanBuilder = SpannableStringBuilder()
+        spanBuilder.append("123")
+        spanBuilder.setSpan(
+            ImageSpan(coroutineScope, textView),
+            1,
+            2,
+            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
+        )
+        spanBuilder.append("abc")
+        return spanBuilder
+    }
+
+    class ImageSpan(
+        private val coroutineScope: CoroutineScope,
+        private val view: TextView,
+    ) : ReplacementSpan() {
+
+        private var drawable: Drawable? = null
+
+        init {
+            coroutineScope.launch {
+                delay(3000)
+                drawable =
+                    AppCompatResources.getDrawable(appContext, R.drawable.ic_launcher_foreground)
+                view.invalidate()
+            }
+        }
+
+        override fun getSize(
+            paint: Paint,
+            text: CharSequence?,
+            start: Int,
+            end: Int,
+            fm: FontMetricsInt?
+        ): Int {
+            return Math.round(paint.descent() - paint.ascent())
+        }
+
+        override fun draw(
+            canvas: Canvas,
+            text: CharSequence?,
+            start: Int,
+            end: Int,
+            x: Float,
+            top: Int,
+            y: Int,
+            bottom: Int,
+            paint: Paint
+        ) {
+            val drawable = drawable
+            val size = Math.round(paint.descent() - paint.ascent())
+            if (drawable == null) {
+                val alpha = paint.alpha
+                paint.setAlpha(alpha shr 1)
+                canvas.drawRoundRect(
+                    x,
+                    top.toFloat(),
+                    x + size,
+                    (top + size).toFloat(),
+                    dpToPx(2F),
+                    dpToPx(2F),
+                    paint
+                )
+                paint.setAlpha(alpha)
+            } else {
+                // AnimatedImageDrawable doesn't like when its bounds don't start at (0, 0)
+                val bounds = drawable.getBounds()
+                val dw = drawable.intrinsicWidth
+                val dh = drawable.intrinsicHeight
+                if (bounds.left != 0 || bounds.top != 0 || bounds.right != dw || bounds.left != dh) {
+                    drawable.setBounds(0, 0, dw, dh)
+                }
+                canvas.save()
+                canvas.translate(x, top.toFloat())
+                canvas.scale(size / dw.toFloat(), size / dh.toFloat(), 0f, 0f)
+                drawable.draw(canvas)
+                canvas.restore()
+            }
+        }
+
+        private fun dpToPx(dp: Float): Float {
+            return Math.round(dp * appContext.resources.displayMetrics.density).toFloat()
+        }
+    }
 }

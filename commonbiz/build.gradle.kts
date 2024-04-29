@@ -38,4 +38,5 @@ dependencies {
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
+    api(libs.jsoup)
 }

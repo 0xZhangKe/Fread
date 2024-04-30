@@ -1,14 +1,8 @@
 package com.zhangke.utopia.pages
 
-import android.graphics.Canvas
-import android.graphics.Paint
-import android.graphics.Paint.FontMetricsInt
-import android.graphics.drawable.Drawable
 import android.text.SpannableStringBuilder
-import android.text.Spanned
-import android.text.style.ReplacementSpan
+import android.text.method.LinkMovementMethod
 import android.widget.TextView
-import androidx.appcompat.content.res.AppCompatResources
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -21,11 +15,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.R
+import com.zhangke.framework.composable.textOf
+import com.zhangke.utopia.status.model.Emoji
+import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.StatusProviderProtocol
+import com.zhangke.utopia.status.ui.richtext.android.HtmlParser
 import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class UtopiaScreen : Screen {
 
@@ -142,6 +137,7 @@ class UtopiaScreen : Screen {
             AndroidView(
                 factory = {
                     val view = TextView(it)
+                    view.movementMethod = LinkMovementMethod.getInstance()
                     view.textSize = 14F
                     view.text = buildSpan(coroutineScope, view)
                     view
@@ -154,88 +150,30 @@ class UtopiaScreen : Screen {
         coroutineScope: CoroutineScope,
         textView: TextView,
     ): SpannableStringBuilder {
-        val spanBuilder = SpannableStringBuilder()
-        spanBuilder.append("123")
-        spanBuilder.setSpan(
-            ImageSpan(coroutineScope, textView),
-            1,
-            2,
-            Spanned.SPAN_EXCLUSIVE_EXCLUSIVE,
-        )
-        spanBuilder.append("abc")
-        return spanBuilder
-    }
-
-    class ImageSpan(
-        private val coroutineScope: CoroutineScope,
-        private val view: TextView,
-    ) : ReplacementSpan() {
-
-        private var drawable: Drawable? = null
-
-        init {
-            coroutineScope.launch {
-                delay(3000)
-                drawable =
-                    AppCompatResources.getDrawable(appContext, R.drawable.ic_launcher_foreground)
-                view.invalidate()
-            }
-        }
-
-        override fun getSize(
-            paint: Paint,
-            text: CharSequence?,
-            start: Int,
-            end: Int,
-            fm: FontMetricsInt?
-        ): Int {
-            return Math.round(paint.descent() - paint.ascent())
-        }
-
-        override fun draw(
-            canvas: Canvas,
-            text: CharSequence?,
-            start: Int,
-            end: Int,
-            x: Float,
-            top: Int,
-            y: Int,
-            bottom: Int,
-            paint: Paint
-        ) {
-            val drawable = drawable
-            val size = Math.round(paint.descent() - paint.ascent())
-            if (drawable == null) {
-                val alpha = paint.alpha
-                paint.setAlpha(alpha shr 1)
-                canvas.drawRoundRect(
-                    x,
-                    top.toFloat(),
-                    x + size,
-                    (top + size).toFloat(),
-                    dpToPx(2F),
-                    dpToPx(2F),
-                    paint
+        return HtmlParser.parse(
+            document = richText1,
+            hashTag = listOf(
+                Hashtag(
+                    name = "漂亮的小玩意",
+                    url = "https://m.cmx.im/tags/%E6%BC%82%E4%BA%AE%E7%9A%84%E5%B0%8F%E7%8E%A9%E6%84%8F",
+                    description = textOf("漂亮的小玩意"),
+                    history = Hashtag.History(
+                        history = emptyList(),
+                        min = null,
+                        max = null,
+                    ),
+                    following = false,
+                    protocol = StatusProviderProtocol("", ""),
                 )
-                paint.setAlpha(alpha)
-            } else {
-                // AnimatedImageDrawable doesn't like when its bounds don't start at (0, 0)
-                val bounds = drawable.getBounds()
-                val dw = drawable.intrinsicWidth
-                val dh = drawable.intrinsicHeight
-                if (bounds.left != 0 || bounds.top != 0 || bounds.right != dw || bounds.left != dh) {
-                    drawable.setBounds(0, 0, dw, dh)
-                }
-                canvas.save()
-                canvas.translate(x, top.toFloat())
-                canvas.scale(size / dw.toFloat(), size / dh.toFloat(), 0f, 0f)
-                drawable.draw(canvas)
-                canvas.restore()
-            }
-        }
-
-        private fun dpToPx(dp: Float): Float {
-            return Math.round(dp * appContext.resources.displayMetrics.density).toFloat()
-        }
+            ),
+            mentions = emptyList(),
+            emojis = listOf(
+                Emoji(
+                    shortcode = "awesome",
+                    url = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/original/72ae4469639d0a2e.png",
+                    staticUrl = "https://media.cmx.edu.kg/custom_emojis/images/000/067/590/static/72ae4469639d0a2e.png",
+                )
+            ),
+        )
     }
 }

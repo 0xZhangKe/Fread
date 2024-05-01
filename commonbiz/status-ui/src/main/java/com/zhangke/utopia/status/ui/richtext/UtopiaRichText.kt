@@ -8,8 +8,8 @@ import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import com.zhangke.framework.composable.richtext.RichText
-import com.zhangke.framework.composable.richtext.RichTextUi
+import com.zhangke.utopia.status.ui.richtext.composable.RichText
+import com.zhangke.utopia.status.ui.richtext.composable.RichTextUi
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.richtext.buildRichText

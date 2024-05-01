@@ -1,6 +1,6 @@
 package com.zhangke.utopia.status.richtext
 
-import com.zhangke.framework.composable.richtext.RichText
+import com.zhangke.utopia.status.ui.richtext.composable.RichText
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.Mention
@@ -12,8 +12,8 @@ fun buildRichText(
     document: String,
     mentions: List<Mention>,
     baseUrl: FormalBaseUrl?,
-): RichText {
-    return RichText(
+): com.zhangke.utopia.status.ui.richtext.composable.RichText {
+    return com.zhangke.utopia.status.ui.richtext.composable.RichText(
         document = document,
         postProcess = { element ->
             if (baseUrl == null) {

@@ -1,19 +1,38 @@
 package com.zhangke.utopia.status.ui.richtext.android.span
 
+import android.content.Context
 import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.text.style.ReplacementSpan
+import android.util.Log
+import coil.imageLoader
+import coil.request.ImageRequest
+import coil.request.SuccessResult
 import com.zhangke.framework.utils.appContext
 import com.zhangke.utopia.status.model.Emoji
-import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.withContext
 
 class CustomEmojiSpan(
     private val emoji: Emoji,
 
-) : ReplacementSpan() {
+    ) : ReplacementSpan() {
 
     private var drawable: Drawable? = null
+
+    suspend fun loadDrawable(context: Context): Boolean = withContext(Dispatchers.IO) {
+        Log.d("U_TEST", "CustomEmojiSpan loadDrawable: $emoji")
+        val request = ImageRequest.Builder(context)
+            .data(emoji.url)
+            .build()
+        val result = context.imageLoader.execute(request)
+        Log.d("U_TEST", "CustomEmojiSpan loadDrawable: $emoji, result: $result")
+        if (result is SuccessResult) {
+            this@CustomEmojiSpan.drawable = result.drawable
+        }
+        result is SuccessResult
+    }
 
     override fun getSize(
         paint: Paint,

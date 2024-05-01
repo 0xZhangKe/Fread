@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.ui.richtext
+package com.zhangke.utopia.status.ui.richtext.android
 
 import android.content.Context
 import android.graphics.Canvas
@@ -109,10 +109,6 @@ private fun parseHtml(
         Log.d("U_TEST", "parseHtml: $it")
     }
 }
-
-//class AsyncImageSpan: ImageSpan(){
-//
-//}
 
 private class HtmlImageGetter(
     private val view: View,

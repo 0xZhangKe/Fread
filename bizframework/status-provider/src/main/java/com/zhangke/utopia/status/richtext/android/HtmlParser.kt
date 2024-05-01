@@ -1,13 +1,13 @@
-package com.zhangke.utopia.status.ui.richtext.android
+package com.zhangke.utopia.status.richtext.android
 
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.Mention
-import com.zhangke.utopia.status.ui.richtext.android.span.CustomEmojiSpan
-import com.zhangke.utopia.status.ui.richtext.android.span.InvisibleSpan
-import com.zhangke.utopia.status.ui.richtext.android.span.LinkSpan
+import com.zhangke.utopia.status.richtext.android.span.CustomEmojiSpan
+import com.zhangke.utopia.status.richtext.android.span.InvisibleSpan
+import com.zhangke.utopia.status.richtext.android.span.LinkSpan
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node

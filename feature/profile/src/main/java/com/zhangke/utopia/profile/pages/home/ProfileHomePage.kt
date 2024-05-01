@@ -215,7 +215,6 @@ class ProfileHomePage : Screen {
                         maxLines = 3,
                         content = account.description!!,
                         mentions = emptyList(),
-                        textStyle = MaterialTheme.typography.bodySmall,
                     )
                 }
             }

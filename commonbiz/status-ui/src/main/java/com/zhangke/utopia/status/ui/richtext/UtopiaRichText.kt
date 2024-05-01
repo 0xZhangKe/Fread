@@ -1,18 +1,16 @@
 package com.zhangke.utopia.status.ui.richtext
 
-import androidx.compose.material3.LocalTextStyle
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import com.zhangke.utopia.status.ui.richtext.composable.RichText
-import com.zhangke.utopia.status.ui.richtext.composable.RichTextUi
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.model.Mention
+import com.zhangke.utopia.status.richtext.RichText
 import com.zhangke.utopia.status.richtext.buildRichText
+import com.zhangke.utopia.status.ui.richtext.android.AndroidRichText
 
 @Composable
 fun UtopiaRichText(
@@ -20,18 +18,14 @@ fun UtopiaRichText(
     richText: RichText,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
-    softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
-    textStyle: TextStyle = LocalTextStyle.current,
 ) {
-    RichTextUi(
+    AndroidRichText(
         modifier = modifier,
         richText = richText,
         layoutDirection = layoutDirection,
         overflow = overflow,
-        softWrap = softWrap,
         maxLines = maxLines,
-        textStyle = textStyle,
     )
 }
 
@@ -43,20 +37,22 @@ fun UtopiaRichText(
     baseUrl: FormalBaseUrl? = null,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
-    softWrap: Boolean = true,
     maxLines: Int = Int.MAX_VALUE,
-    textStyle: TextStyle = LocalTextStyle.current,
 ) {
     val richText = remember(content, mentions, baseUrl) {
-        buildRichText(content, mentions, baseUrl)
+        buildRichText(
+            document = content,
+            mentions = mentions,
+            baseUrl = baseUrl,
+            hashTags = emptyList(),
+            emojis = emptyList(),
+        )
     }
-    RichTextUi(
+    UtopiaRichText(
         modifier = modifier,
         richText = richText,
         layoutDirection = layoutDirection,
         overflow = overflow,
-        softWrap = softWrap,
         maxLines = maxLines,
-        textStyle = textStyle,
     )
 }

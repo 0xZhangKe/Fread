@@ -11,26 +11,26 @@ import androidx.compose.ui.unit.LayoutDirection
 import moe.tlaster.ktml.Ktml
 import moe.tlaster.ktml.dom.Element
 
-@Composable
-fun RichTextUi(
-    modifier: Modifier,
-    richText: RichText,
-    layoutDirection: LayoutDirection = LocalLayoutDirection.current,
-    overflow: TextOverflow = TextOverflow.Ellipsis,
-    softWrap: Boolean = true,
-    maxLines: Int = Int.MAX_VALUE,
-    textStyle: TextStyle = LocalTextStyle.current,
-) {
-    val element = remember(richText) {
-        richText.parseElement()
-    }
-    HtmlText2(
-        modifier = modifier,
-        element = element,
-        layoutDirection = layoutDirection,
-        overflow = overflow,
-        softWrap = softWrap,
-        maxLines = maxLines,
-        textStyle = textStyle,
-    )
-}
+//@Composable
+//fun RichTextUi(
+//    modifier: Modifier,
+//    richText: RichText,
+//    layoutDirection: LayoutDirection = LocalLayoutDirection.current,
+//    overflow: TextOverflow = TextOverflow.Ellipsis,
+//    softWrap: Boolean = true,
+//    maxLines: Int = Int.MAX_VALUE,
+//    textStyle: TextStyle = LocalTextStyle.current,
+//) {
+//    val element = remember(richText) {
+//        richText.parseElement()
+//    }
+//    HtmlText2(
+//        modifier = modifier,
+//        element = element,
+//        layoutDirection = layoutDirection,
+//        overflow = overflow,
+//        softWrap = softWrap,
+//        maxLines = maxLines,
+//        textStyle = textStyle,
+//    )
+//}

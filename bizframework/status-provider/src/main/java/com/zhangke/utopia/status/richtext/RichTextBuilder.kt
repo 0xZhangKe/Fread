@@ -1,8 +1,9 @@
 package com.zhangke.utopia.status.richtext
 
-import com.zhangke.utopia.status.ui.richtext.composable.RichText
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.blog.Blog
+import com.zhangke.utopia.status.model.Emoji
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
 import moe.tlaster.ktml.dom.Element
@@ -11,22 +12,30 @@ import moe.tlaster.ktml.dom.Node
 fun buildRichText(
     document: String,
     mentions: List<Mention>,
+    hashTags: List<Hashtag>,
+    emojis: List<Emoji>,
     baseUrl: FormalBaseUrl?,
-): com.zhangke.utopia.status.ui.richtext.composable.RichText {
-    return com.zhangke.utopia.status.ui.richtext.composable.RichText(
+): RichText {
+    return RichText(
         document = document,
-        postProcess = { element ->
-            if (baseUrl == null) {
-                return@RichText element
-            }
-            replaceMentionAndHashtag(
-                mentions = mentions,
-                node = element,
-                host = baseUrl.host,
-            )
-            element
-        }
+        mentions = mentions,
+        hashTags = hashTags,
+        emojis = emojis,
     )
+//    return RichText(
+//        document = document,
+//        postProcess = { element ->
+//            if (baseUrl == null) {
+//                return@RichText element
+//            }
+//            replaceMentionAndHashtag(
+//                mentions = mentions,
+//                node = element,
+//                host = baseUrl.host,
+//            )
+//            element
+//        }
+//    )
 }
 
 private fun replaceMentionAndHashtag(
@@ -52,8 +61,8 @@ private fun buildMentionUrl(
 }
 
 fun Blog.preParseRichText() {
-    humanizedContent.parseElement()
-    humanizedSpoilerText.parseElement()
+    humanizedContent.parse()
+    humanizedSpoilerText.parse()
 }
 
 fun List<Status>.preParseRichText() {

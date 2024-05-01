@@ -16,11 +16,12 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.textOf
+import com.zhangke.utopia.pages.main.MainPage
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.StatusProviderProtocol
-import com.zhangke.utopia.status.ui.richtext.android.HtmlParser
-import com.zhangke.utopia.status.ui.richtext.android.span.CustomEmojiSpan
+import com.zhangke.utopia.status.richtext.android.HtmlParser
+import com.zhangke.utopia.status.richtext.android.span.CustomEmojiSpan
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -125,11 +126,11 @@ class UtopiaScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
-//        MainPage()
+        MainPage()
 
 //        RichTextPreview()
 
-        AndroidRichTextPreview()
+//        AndroidRichTextPreview()
     }
 
     @Composable

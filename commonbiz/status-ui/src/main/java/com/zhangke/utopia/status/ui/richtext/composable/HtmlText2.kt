@@ -1,4 +1,4 @@
-package com.zhangke.framework.composable.richtext
+package com.zhangke.utopia.status.ui.richtext.composable
 
 import android.util.Log
 import androidx.compose.foundation.ExperimentalFoundationApi

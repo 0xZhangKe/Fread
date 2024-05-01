@@ -20,7 +20,11 @@ import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.ui.richtext.android.HtmlParser
+import com.zhangke.utopia.status.ui.richtext.android.span.CustomEmojiSpan
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.launch
 
 class UtopiaScreen : Screen {
 
@@ -139,7 +143,19 @@ class UtopiaScreen : Screen {
                     val view = TextView(it)
                     view.movementMethod = LinkMovementMethod.getInstance()
                     view.textSize = 14F
-                    view.text = buildSpan(coroutineScope, view)
+                    val spans = buildSpan(coroutineScope, view)
+                    view.text = spans
+                    val customEmojiSpans =
+                        spans.getSpans(0, spans.length, CustomEmojiSpan::class.java)
+                    coroutineScope.launch {
+                        customEmojiSpans.map { emojiSpan ->
+                            async {
+                                if (emojiSpan.loadDrawable(it)) {
+                                    view.invalidate()
+                                }
+                            }
+                        }.awaitAll()
+                    }
                     view
                 },
             )

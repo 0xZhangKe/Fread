@@ -2,7 +2,6 @@ package com.zhangke.utopia.status.ui.richtext.android
 
 import android.text.SpannableStringBuilder
 import android.text.Spanned
-import android.util.Log
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.Mention
@@ -19,7 +18,6 @@ import java.util.regex.Pattern
 object HtmlParser {
 
     private val EMOJI_CODE_PATTERN = Pattern.compile(":(\\w+):")
-
 
     fun parse(
         document: String,
@@ -83,11 +81,9 @@ object HtmlParser {
         when (element.nodeName()) {
             "br" -> {
                 spanBuilder.append("\n")
-                Log.d("U_TEST", "parseElement br: $element")
             }
 
             "a" -> {
-                Log.d("U_TEST", "parseElement a: $element")
                 val href = element.attr("href")
                 var linkTarget: LinkSpan.LinkTarget? = null
                 if (element.hasClass("hashtag")) {
@@ -130,7 +126,6 @@ object HtmlParser {
             }
 
             "span" -> {
-                Log.d("U_TEST", "parseElement span: $element")
                 if (element.hasClass("invisible")) {
                     openSpans.add(SpanInfo(InvisibleSpan(), spanBuilder.length, element));
                 }

@@ -34,4 +34,8 @@ dependencies {
     implementation(libs.ktml)
     implementation(libs.compose.richtext.ui)
     implementation(libs.compose.richtext.ui.material3)
+    api(libs.jsoup)
+    implementation(libs.coil)
+    implementation(libs.coil.compose)
+    implementation(libs.coil.gif)
 }

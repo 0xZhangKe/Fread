@@ -1,11 +1,11 @@
 package com.zhangke.utopia.status.blog
 
-import com.zhangke.utopia.status.ui.richtext.composable.RichText
 import com.zhangke.framework.serialize.DateSerializer
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.richtext.RichText
 import com.zhangke.utopia.status.richtext.buildRichText
 import kotlinx.serialization.Serializable
 import java.util.Date
@@ -29,18 +29,22 @@ data class Blog(
     val poll: BlogPoll?,
 ) {
 
-    val humanizedSpoilerText: com.zhangke.utopia.status.ui.richtext.composable.RichText by lazy {
+    val humanizedSpoilerText: RichText by lazy {
         buildRichText(
             document = spoilerText,
             mentions = mentions,
+            emojis = emojis,
+            hashTags = emptyList(),
             baseUrl = platform.baseUrl,
         )
     }
 
-    val humanizedContent: com.zhangke.utopia.status.ui.richtext.composable.RichText by lazy {
+    val humanizedContent: RichText by lazy {
         buildRichText(
             document = content,
             mentions = mentions,
+            emojis = emojis,
+            hashTags = emptyList(),
             baseUrl = platform.baseUrl,
         )
     }

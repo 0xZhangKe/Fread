@@ -208,7 +208,6 @@ class FollowScreen(
                     },
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
-                textStyle = MaterialTheme.typography.bodyMedium,
                 content = account?.description.orEmpty(),
                 mentions = emptyList(),
             )

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.ui.richtext.android.span
+package com.zhangke.utopia.status.richtext.android.span
 
 import android.graphics.Canvas
 import android.graphics.Paint

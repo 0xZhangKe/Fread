@@ -215,6 +215,8 @@ class ProfileHomePage : Screen {
                         maxLines = 3,
                         content = account.description!!,
                         mentions = emptyList(),
+                        tags = emptyList(),
+                        emojis = account.emojis,
                     )
                 }
             }

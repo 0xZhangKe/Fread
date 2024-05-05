@@ -66,11 +66,11 @@ class UserDetailScreen(
     override fun Content() {
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
-        val (role, userUri) = remember(route) {
+        val (role, userUri, webFinger) = remember(route) {
             UserDetailRoute.parseRoute(route)
         }
         val viewModel = getViewModel<UserDetailContainerViewModel>()
-            .getViewModel(role, userUri)
+            .getViewModel(role, userUri, webFinger)
         val uiState by viewModel.uiState.collectAsState()
         UserDetailContent(
             uiState = uiState,
@@ -86,15 +86,14 @@ class UserDetailScreen(
             onBlockDomainClick = viewModel::onBlockDomainClick,
             onUnblockDomainClick = viewModel::onUnblockDomainClick,
             onOpenInBrowserClick = {
-                uiState.account?.url?.let {
+                uiState.accountUiState?.account?.url?.let {
                     BrowserLauncher().launch(context, it)
                 }
             },
             onEditClick = {
                 uiState.userInsight
-                    ?.uri
                     ?.let {
-                        navigator.push(EditAccountInfoScreen(it))
+                        navigator.push(EditAccountInfoScreen(it.uri))
                     }
             },
             onFollowerClick = {
@@ -149,7 +148,8 @@ class UserDetailScreen(
                 SnackbarHost(hostState = snackbarHost)
             },
         ) { paddings ->
-            val account = uiState.account
+            val accountUiState = uiState.accountUiState
+            val account = accountUiState?.account
             CollapsableTopBarScaffold(
                 modifier = Modifier
                     .statusBarsPadding()
@@ -211,8 +211,11 @@ class UserDetailScreen(
                                 .utopiaPlaceholder(account?.note.isNullOrEmpty())
                                 .fillMaxWidth(),
                             content = account?.note.orEmpty(),
+                            onMentionClick = {},
+                            onHashtagClick = {},
                             mentions = emptyList(),
-                            baseUrl = uiState.userInsight?.baseUrl,
+                            emojis = accountUiState?.emojis.orEmpty(),
+                            tags = emptyList(),
                         )
 
                         Row(
@@ -265,14 +268,13 @@ class UserDetailScreen(
                     val tabs: List<PagerTab> = remember(uiState) {
                         listOf(
                             UserTimelineTab(
-                                contentCanScrollBackward = contentCanScrollBackward,
                                 role = uiState.role,
-                                userUriInsights = uiState.userInsight,
+                                userWebFinger = uiState.userInsight.webFinger,
                             ),
                             UserAboutTab(
                                 contentCanScrollBackward = contentCanScrollBackward,
                                 role = uiState.role,
-                                userUriInsights = uiState.userInsight,
+                                userWebFinger = uiState.userInsight.webFinger,
                             ),
                         )
                     }
@@ -296,7 +298,7 @@ class UserDetailScreen(
         onOpenInBrowserClick: () -> Unit,
         onEditClick: () -> Unit,
     ) {
-        val account = uiState.account ?: return
+        val account = uiState.accountUiState?.account ?: return
         val userInsights = uiState.userInsight ?: return
         if (uiState.editable) {
             SimpleIconButton(

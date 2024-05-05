@@ -6,9 +6,9 @@ import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandleResult
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
-import com.zhangke.utopia.status.ui.feeds.handle
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.handle
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
@@ -109,7 +109,7 @@ open class LoadableStatusController(
     }
 
     private suspend fun InteractiveHandleResult.handleResult() {
-        handle(
+        com.zhangke.utopia.commonbiz.shared.feeds.handle(
             messageFlow = mutableErrorMessageFlow,
             openScreenFlow = _openScreenFlow,
             mutableUiState = loadableController.mutableUiState,

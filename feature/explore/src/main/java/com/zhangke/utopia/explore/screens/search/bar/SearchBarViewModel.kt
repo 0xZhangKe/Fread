@@ -1,28 +1,22 @@
 package com.zhangke.utopia.explore.screens.search.bar
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.composable.TextString
+import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.SearchResultUiState
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandleResult
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
-import com.zhangke.utopia.status.ui.feeds.handle
+import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
-import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.commonbiz.shared.feeds.DynamicAllInOneRoleResolver
+import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.handle
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
@@ -31,10 +25,11 @@ import javax.inject.Inject
 class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
-    private val interactiveHandler: InteractiveHandler,
-) : ViewModel() {
-
-    private var searchJob: Job? = null
+    buildStatusUiState: BuildStatusUiStateUseCase,
+) : ViewModel(), IInteractiveHandler by InteractiveHandler(
+    statusProvider = statusProvider,
+    buildStatusUiState = buildStatusUiState,
+) {
 
     var selectedAccount: LoggedAccount? = null
         set(value) {
@@ -48,6 +43,8 @@ class SearchBarViewModel @Inject constructor(
             return IdentityRole(accountUri, null)
         }
 
+    private var searchJob: Job? = null
+
     private val _uiState = MutableStateFlow(
         SearchBarUiState(
             role = role,
@@ -57,11 +54,20 @@ class SearchBarViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val _errorMessageFlow = MutableSharedFlow<TextString>()
-    val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
+    inner class RoleResolver : DynamicAllInOneRoleResolver() {
 
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
-    val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
+        override fun getRole(): IdentityRole {
+            return role
+        }
+    }
+
+    init {
+        initInteractiveHandler(
+            coroutineScope = viewModelScope,
+            roleResolver = RoleResolver(),
+            onInteractiveHandleResult = { it.handleResult() },
+        )
+    }
 
     fun onSearchQueryChanged(query: String) {
         if (query == _uiState.value.query) return
@@ -86,36 +92,8 @@ class SearchBarViewModel @Inject constructor(
         }
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
-        launchInViewModel {
-            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
-        }
-
-    fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        launchInViewModel {
-            interactiveHandler.onUserInfoClick(role, blogAuthor)
-                .handleResult()
-        }
-    }
-
-    fun onHashtagClick(hashtag: Hashtag) {
-        launchInViewModel {
-            statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag)
-                ?.let { KRouter.route<Screen>(it) }
-                ?.let { _openScreenFlow.emit(it) }
-        }
-    }
-
-    fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
-        launchInViewModel {
-            interactiveHandler.onVoted(role, status, votedOption).handleResult()
-        }
-    }
-
     private suspend fun InteractiveHandleResult.handleResult() {
         handle(
-            messageFlow = _errorMessageFlow,
-            openScreenFlow = _openScreenFlow,
             uiStatusUpdater = { newUiState ->
                 _uiState.update { currentUiState ->
                     currentUiState.copy(
@@ -126,6 +104,9 @@ class SearchBarViewModel @Inject constructor(
                         }
                     )
                 }
+            },
+            followStateUpdater = { _, _ ->
+
             }
         )
     }

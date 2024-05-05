@@ -2,13 +2,12 @@ package com.zhangke.utopia.status.screen
 
 import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.composable.PagerTab
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
-import com.zhangke.utopia.status.model.ContentType
-import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -59,8 +58,20 @@ class StatusScreenProvider(
         return providerList.mapFirstOrNull { it.getUserDetailRoute(role, uri) }
     }
 
-    fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String? {
-        return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(role, tag) }
+    fun getUserDetailRoute(
+        role: IdentityRole,
+        webFinger: WebFinger,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        return providerList.mapFirstOrNull { it.getUserDetailRoute(role, webFinger, protocol) }
+    }
+
+    fun getTagTimelineScreenRoute(
+        role: IdentityRole,
+        tag: String,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(role, tag, protocol) }
     }
 }
 
@@ -83,5 +94,15 @@ interface IStatusScreenProvider {
 
     fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String?
 
-    fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String?
+    fun getUserDetailRoute(
+        role: IdentityRole,
+        webFinger: WebFinger,
+        protocol: StatusProviderProtocol
+    ): String?
+
+    fun getTagTimelineScreenRoute(
+        role: IdentityRole,
+        tag: String,
+        protocol: StatusProviderProtocol
+    ): String?
 }

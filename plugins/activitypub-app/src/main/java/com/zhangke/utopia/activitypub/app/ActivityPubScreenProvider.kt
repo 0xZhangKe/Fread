@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
@@ -14,6 +15,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.uri.FormalUri
@@ -67,8 +69,21 @@ class ActivityPubScreenProvider @Inject constructor(
         return UserDetailRoute.buildRoute(role, uri)
     }
 
-    override fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String? {
-        if (tag.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
-        return HashtagTimelineRoute.buildRoute(role, tag.name)
+    override fun getUserDetailRoute(
+        role: IdentityRole,
+        webFinger: WebFinger,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        if (protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
+        return UserDetailRoute.buildRoute(role, webFinger)
+    }
+
+    override fun getTagTimelineScreenRoute(
+        role: IdentityRole,
+        tag: String,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        if (!protocol.isActivityPub) return null
+        return HashtagTimelineRoute.buildRoute(role, tag)
     }
 }

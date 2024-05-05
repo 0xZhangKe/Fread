@@ -49,6 +49,7 @@ class RssStatusAdapter @Inject constructor(
             poll = null,
             emojis = emptyList(),
             mentions = emptyList(),
+            tags = emptyList(),
         )
     }
 }

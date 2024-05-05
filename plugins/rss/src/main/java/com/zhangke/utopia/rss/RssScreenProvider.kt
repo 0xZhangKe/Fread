@@ -1,15 +1,16 @@
 package com.zhangke.utopia.rss
 
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.rss.internal.screen.source.RssSourceScreenRoute
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
-import com.zhangke.utopia.status.model.ContentType
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.uri.FormalUri
@@ -50,7 +51,19 @@ class RssScreenProvider @Inject constructor(
         return RssSourceScreenRoute.buildRoute(url)
     }
 
-    override fun getTagTimelineScreenRoute(role: IdentityRole, tag: Hashtag): String? {
+    override fun getUserDetailRoute(
+        role: IdentityRole,
+        webFinger: WebFinger,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        return null
+    }
+
+    override fun getTagTimelineScreenRoute(
+        role: IdentityRole,
+        tag: String,
+        protocol: StatusProviderProtocol,
+    ): String? {
         return null
     }
 }

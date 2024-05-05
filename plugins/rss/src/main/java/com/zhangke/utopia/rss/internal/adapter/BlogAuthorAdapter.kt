@@ -21,6 +21,7 @@ class BlogAuthorAdapter @Inject constructor(
             name = source.displayName.ifNullOrEmpty { source.title },
             description = source.description.orEmpty(),
             avatar = source.thumbnail,
+            emojis = emptyList(),
         )
     }
 }

@@ -1,6 +1,8 @@
 package com.zhangke.utopia.status.ui.richtext.android
 
+import android.content.Context
 import android.text.SpannableStringBuilder
+import android.text.method.LinkMovementMethod
 import android.view.Gravity
 import android.widget.TextView
 import androidx.compose.material.LocalContentAlpha
@@ -17,6 +19,10 @@ import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.viewinterop.AndroidView
 import com.zhangke.utopia.status.richtext.RichText
 import com.zhangke.utopia.status.richtext.android.span.CustomEmojiSpan
+import com.zhangke.utopia.status.richtext.android.span.LinkSpan
+import com.zhangke.utopia.status.richtext.android.span.OnLinkTargetClick
+import com.zhangke.utopia.status.ui.richtext.LinkClickNavigator
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
@@ -31,6 +37,7 @@ fun AndroidRichText(
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
+    onLinkTargetClick: OnLinkTargetClick,
 ) {
     val localContentColor = LocalContentColor.current
     val localContentAlpha = LocalContentAlpha.current
@@ -46,6 +53,7 @@ fun AndroidRichText(
         factory = {
             TextView(it).apply {
                 this.gravity = Gravity.START
+                this.movementMethod = LinkMovementMethod.getInstance()
             }
         },
         update = { textView ->
@@ -66,16 +74,48 @@ fun AndroidRichText(
 
             val charSequence = richText.parse()
             textView.text = charSequence
-            coroutineScope.launch {
-                val spans = (charSequence as? SpannableStringBuilder) ?: return@launch
-                val customEmojiSpans = spans.getSpans(0, spans.length, CustomEmojiSpan::class.java)
-                customEmojiSpans.map {
-                    async {
-                        it.loadDrawable(context)
-                        textView.invalidate()
-                    }
-                }.awaitAll()
-            }
+            startLoadEmojiImage(
+                coroutineScope = coroutineScope,
+                context = context,
+                textView = textView,
+                charSequence = charSequence,
+            )
+            processLinkClick(
+                charSequence = charSequence,
+                onLinkTargetClick = onLinkTargetClick,
+            )
         }
     )
+}
+
+private fun startLoadEmojiImage(
+    coroutineScope: CoroutineScope,
+    context: Context,
+    textView: TextView,
+    charSequence: CharSequence,
+) {
+    coroutineScope.launch {
+        val customEmojiSpans = charSequence.getAllSpans<CustomEmojiSpan>()
+        customEmojiSpans.map {
+            async {
+                it.loadDrawable(context)
+                textView.invalidate()
+            }
+        }.awaitAll()
+    }
+}
+
+private fun processLinkClick(
+    charSequence: CharSequence,
+    onLinkTargetClick: OnLinkTargetClick,
+) {
+    val linkSpans = charSequence.getAllSpans<LinkSpan>()
+    linkSpans.forEach { linkSpan ->
+        linkSpan.onLinkClick = onLinkTargetClick
+    }
+}
+
+private inline fun <reified T> CharSequence.getAllSpans(): List<T> {
+    val spans = (this as? SpannableStringBuilder) ?: return emptyList()
+    return spans.getSpans(0, spans.length, T::class.java).toList()
 }

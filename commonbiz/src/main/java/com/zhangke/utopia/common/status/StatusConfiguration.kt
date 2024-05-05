@@ -16,6 +16,6 @@ object StatusConfigurationDefault {
         loadFromServerLimit = 40,
         loadFromLocalLimit = 100,
         loadFromLocalRedundancies = 3,
-        autoFetchNewerFeedsInterval = 30.seconds,
+        autoFetchNewerFeedsInterval = 60.seconds,
     )
 }

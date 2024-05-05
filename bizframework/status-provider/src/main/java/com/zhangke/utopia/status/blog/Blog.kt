@@ -3,6 +3,7 @@ package com.zhangke.utopia.status.blog
 import com.zhangke.framework.serialize.DateSerializer
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Emoji
+import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.richtext.RichText
@@ -26,6 +27,7 @@ data class Blog(
     val mediaList: List<BlogMedia>,
     val emojis: List<Emoji>,
     val mentions: List<Mention>,
+    val tags: List<HashtagInStatus>,
     val poll: BlogPoll?,
 ) {
 
@@ -34,8 +36,7 @@ data class Blog(
             document = spoilerText,
             mentions = mentions,
             emojis = emojis,
-            hashTags = emptyList(),
-            baseUrl = platform.baseUrl,
+            hashTags = tags,
         )
     }
 
@@ -44,8 +45,7 @@ data class Blog(
             document = content,
             mentions = mentions,
             emojis = emojis,
-            hashTags = emptyList(),
-            baseUrl = platform.baseUrl,
+            hashTags = tags,
         )
     }
 }

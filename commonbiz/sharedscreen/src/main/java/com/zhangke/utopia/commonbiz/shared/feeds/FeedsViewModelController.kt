@@ -1,7 +1,6 @@
-package com.zhangke.utopia.status.ui.feeds
+package com.zhangke.utopia.commonbiz.shared.feeds
 
 import android.util.Log
-import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
@@ -12,33 +11,38 @@ import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
-import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 class FeedsViewModelController(
-    private val coroutineScope: CoroutineScope,
+    statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val interactiveHandler: InteractiveHandler,
-    private val loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>,
-    private val loadNewFromServerFunction: suspend () -> Result<RefreshResult>,
-    private val loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>,
-    private val resolveRole: (BlogAuthor) -> IdentityRole,
-    private val onStatusUpdate: suspend (Status) -> Unit,
-) {
+) : IFeedsViewModelController {
 
-    private val _uiState = MutableStateFlow(
+    private lateinit var coroutineScope: CoroutineScope
+    private lateinit var loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>
+    private lateinit var loadNewFromServerFunction: suspend () -> Result<RefreshResult>
+    private lateinit var loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>
+    private lateinit var onStatusUpdate: suspend (Status) -> Unit
+
+    private val interactiveHandler = InteractiveHandler(
+        statusProvider = statusProvider,
+        buildStatusUiState = buildStatusUiState,
+    )
+
+    override val mutableUiState = MutableStateFlow(
         CommonFeedsUiState(
             feeds = emptyList(),
             showPagingLoadingPlaceholder = false,
@@ -47,27 +51,43 @@ class FeedsViewModelController(
             loadMoreState = LoadState.Idle,
         )
     )
-    val uiState = _uiState.asStateFlow()
 
-    private val _errorMessageFlow = MutableSharedFlow<TextString>()
-    val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
-
-    private val _newStatusNotifyFlow = MutableSharedFlow<Unit>()
-    val newStatusNotifyFlow = _newStatusNotifyFlow.asSharedFlow()
-
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
-    val openScreenFlow: SharedFlow<Screen> get() = _openScreenFlow
+    override val mutableNewStatusNotifyFlow = MutableSharedFlow<Unit>()
+    override val mutableErrorMessageFlow = interactiveHandler.mutableErrorMessageFlow
+    override val errorMessageFlow = interactiveHandler.errorMessageFlow
+    override val mutableOpenScreenFlow = interactiveHandler.mutableOpenScreenFlow
 
     private var initFeedsJob: Job? = null
     private var refreshJob: Job? = null
     private var loadMoreJob: Job? = null
     private var autoFetchNewerFeedsJob: Job? = null
 
-    fun initFeeds(needLocalData: Boolean) {
-        Log.d("U_TEST", "Controller: initFeeds needLocalData=$needLocalData")
+    override fun initController(
+        coroutineScope: CoroutineScope,
+        roleResolver: IdentityRoleResolver,
+        loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>,
+        loadNewFromServerFunction: suspend () -> Result<RefreshResult>,
+        loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>,
+        onStatusUpdate: suspend (Status) -> Unit
+    ) {
+        this.coroutineScope = coroutineScope
+        interactiveHandler.initInteractiveHandler(
+            coroutineScope = coroutineScope,
+            roleResolver = roleResolver,
+            onInteractiveHandleResult = {
+                it.handleResult()
+            },
+        )
+        this.loadFirstPageLocalFeeds = loadFirstPageLocalFeeds
+        this.loadNewFromServerFunction = loadNewFromServerFunction
+        this.loadMoreFunction = loadMoreFunction
+        this.onStatusUpdate = onStatusUpdate
+    }
+
+    override fun initFeeds(needLocalData: Boolean) {
         initFeedsJob?.cancel()
         initFeedsJob = coroutineScope.launch {
-            _uiState.update {
+            mutableUiState.update {
                 it.copy(
                     showPagingLoadingPlaceholder = true,
                     pageErrorContent = null,
@@ -76,16 +96,13 @@ class FeedsViewModelController(
             }
             if (needLocalData) {
                 loadFirstPageLocalFeeds()
-                    .map { it.map(::transformCommonUiState) }
                     .onSuccess { localStatus ->
-                        Log.d(
-                            "U_TEST",
-                            "Controller: initFeeds from local size: ${localStatus.size}"
-                        )
                         if (localStatus.isNotEmpty()) {
-                            _uiState.update { state ->
+                            mutableUiState.update { state ->
                                 state.copy(
-                                    feeds = localStatus,
+                                    feeds = localStatus.map { status ->
+                                        buildStatusUiState(status)
+                                    },
                                     showPagingLoadingPlaceholder = false,
                                 )
                             }
@@ -94,7 +111,7 @@ class FeedsViewModelController(
             }
             loadNewFromServerFunction()
                 .onFailure {
-                    _uiState.update { state ->
+                    mutableUiState.update { state ->
                         state.copy(
                             showPagingLoadingPlaceholder = false,
                             pageErrorContent = if (state.feeds.isEmpty()) {
@@ -104,13 +121,13 @@ class FeedsViewModelController(
                             },
                         )
                     }
-                    if (_uiState.value.feeds.isNotEmpty()) {
-                        _errorMessageFlow.emitTextMessageFromThrowable(it)
+                    if (mutableUiState.value.feeds.isNotEmpty()) {
+                        mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
                     }
                 }.onSuccess {
-                    _uiState.update { state ->
+                    mutableUiState.update { state ->
                         state.copy(
-                            feeds = it.newStatus.map(::transformCommonUiState),
+                            feeds = it.newStatus.map { buildStatusUiState(it) },
                             showPagingLoadingPlaceholder = false,
                         )
                     }
@@ -118,7 +135,7 @@ class FeedsViewModelController(
         }
     }
 
-    fun startAutoFetchNewerFeeds() {
+    override fun startAutoFetchNewerFeeds() {
         if (autoFetchNewerFeedsJob != null) return
         autoFetchNewerFeedsJob = coroutineScope.launch {
             while (true) {
@@ -136,31 +153,83 @@ class FeedsViewModelController(
                     "U_TEST",
                     "Controller: autoFetchNewerFeeds success, newStatus: ${it.newStatus.size}, delete: ${it.deletedStatus.size}"
                 )
-                val oldFirstId = _uiState.value.feeds.firstOrNull()?.statusUiState?.status?.id
+                val oldFirstId = mutableUiState.value.feeds.firstOrNull()?.status?.id
                 val newFirstId = it.newStatus.firstOrNull()?.id
-                _uiState.update { state ->
+                mutableUiState.update { state ->
                     state.copy(
                         feeds = state.feeds.applyRefreshResult(it),
                     )
                 }
 
                 if (it.newStatus.isNotEmpty() && oldFirstId != newFirstId) {
-                    _newStatusNotifyFlow.emit(Unit)
+                    mutableNewStatusNotifyFlow.emit(Unit)
                 }
             }
     }
 
-    fun refresh() {
-        val uiState = _uiState.value
+    override fun initInteractiveHandler(
+        coroutineScope: CoroutineScope,
+        roleResolver: IdentityRoleResolver,
+        onInteractiveHandleResult: suspend (InteractiveHandleResult) -> Unit
+    ) {
+        interactiveHandler.initInteractiveHandler(
+            coroutineScope = coroutineScope,
+            roleResolver = roleResolver,
+            onInteractiveHandleResult = onInteractiveHandleResult,
+        )
+    }
+
+    override fun onStatusInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+        interactiveHandler.onStatusInteractive(status, uiInteraction)
+    }
+
+    override fun onUserInfoClick(blogAuthor: BlogAuthor) {
+        interactiveHandler.onUserInfoClick(blogAuthor)
+    }
+
+    override fun onStatusClick(status: Status) {
+        interactiveHandler.onStatusClick(status)
+    }
+
+    override fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
+        interactiveHandler.onVoted(status, votedOption)
+    }
+
+    override fun onFollowClick(target: BlogAuthor) {
+        interactiveHandler.onFollowClick(target)
+    }
+
+    override fun onUnfollowClick(target: BlogAuthor) {
+        interactiveHandler.onUnfollowClick(target)
+    }
+
+    override fun onMentionClick(author: BlogAuthor, mention: Mention) {
+        interactiveHandler.onMentionClick(author, mention)
+    }
+
+    override fun onHashtagClick(status: Status, tag: HashtagInStatus) {
+        interactiveHandler.onHashtagClick(status, tag)
+    }
+
+    override fun onHashtagClick(author: BlogAuthor, tag: HashtagInStatus) {
+        interactiveHandler.onHashtagClick(author, tag)
+    }
+
+    override fun onHashtagClick(tag: Hashtag) {
+        interactiveHandler.onHashtagClick(tag)
+    }
+
+    override fun onRefresh() {
+        val uiState = mutableUiState.value
         if (uiState.showPagingLoadingPlaceholder || uiState.refreshing || uiState.loadMoreState.loading) return
         val feeds = uiState.feeds
         if (feeds.isEmpty()) return
         refreshJob?.cancel()
         refreshJob = coroutineScope.launch {
-            _uiState.update { it.copy(refreshing = true) }
+            mutableUiState.update { it.copy(refreshing = true) }
             loadNewFromServerFunction()
                 .onSuccess { refreshResult ->
-                    _uiState.update {
+                    mutableUiState.update {
                         it.copy(
                             refreshing = false,
                             feeds = it.feeds.applyRefreshResult(refreshResult),
@@ -168,136 +237,95 @@ class FeedsViewModelController(
                     }
 
                 }.onFailure { e ->
-                    _errorMessageFlow.emitTextMessageFromThrowable(e)
-                    _uiState.update {
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(e)
+                    mutableUiState.update {
                         it.copy(refreshing = false)
                     }
                 }
         }
     }
 
-    fun loadMore() {
-        val uiState = _uiState.value
+    override fun onLoadMore() {
+        val uiState = mutableUiState.value
         if (uiState.showPagingLoadingPlaceholder || uiState.refreshing || uiState.loadMoreState.loading) return
         val feeds = uiState.feeds
         if (feeds.isEmpty()) return
         loadMoreJob?.cancel()
         loadMoreJob = coroutineScope.launch {
-            _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
-            loadMoreFunction(feeds.last().statusUiState.status.id)
+            mutableUiState.update { it.copy(loadMoreState = LoadState.Loading) }
+            loadMoreFunction(feeds.last().status.id)
                 .onFailure { e ->
-                    _uiState.update {
+                    mutableUiState.update {
                         it.copy(
                             loadMoreState = LoadState.Failed(e.toTextStringOrNull()),
                         )
                     }
                 }.onSuccess { list ->
-                    _uiState.update {
+                    mutableUiState.update {
                         it.copy(
                             loadMoreState = LoadState.Idle,
-                            feeds = it.feeds.toMutableList().apply {
-                                addAllIgnoreDuplicate(list.map(::transformCommonUiState))
-                            },
+                            feeds = it.feeds.toMutableList(),
                         )
                     }
                 }
         }
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) =
-        coroutineScope.launch {
-            val role = resolveRole(status.intrinsicBlog.author)
-            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
-        }
-
-    fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        coroutineScope.launch {
-            val role = resolveRole(blogAuthor)
-            interactiveHandler.onUserInfoClick(role, blogAuthor).handleResult()
-        }
-    }
-
-    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        coroutineScope.launch {
-            val role = resolveRole(status.intrinsicBlog.author)
-            interactiveHandler.onVoted(role, status, options).handleResult()
-        }
-    }
-
-    fun showErrorMessage(message: TextString) {
-        coroutineScope.launch {
-            _errorMessageFlow.emit(message)
-        }
-    }
-
-    private fun List<CommonStatusUiState>.applyRefreshResult(
+    private fun List<StatusUiState>.applyRefreshResult(
         refreshResult: RefreshResult,
-    ): List<CommonStatusUiState> {
+    ): List<StatusUiState> {
         val deletedIdsSet = refreshResult.deletedStatus
             .map { it.id }
             .toSet()
         val finalList = this.filter {
-            !deletedIdsSet.contains(it.statusUiState.status.id)
+            !deletedIdsSet.contains(it.status.id)
         }.toMutableList()
         val items = refreshResult.newStatus.map { statusItem ->
-            CommonStatusUiState(
-                statusUiState = buildStatusUiState(statusItem),
-                role = resolveRole(statusItem.intrinsicBlog.author),
-            )
+            buildStatusUiState(statusItem)
         }
         finalList.addAllIgnoreDuplicate(items)
-        return finalList.sortedByDescending { it.statusUiState.status.datetime }
+        return finalList.sortedByDescending { it.status.datetime }
     }
 
-    private fun MutableList<CommonStatusUiState>.addAllIgnoreDuplicate(
-        newItems: List<CommonStatusUiState>,
+    private fun MutableList<StatusUiState>.addAllIgnoreDuplicate(
+        newItems: List<StatusUiState>,
     ) {
         newItems.forEach { this.addIfNotExist(it) }
     }
 
-    private fun MutableList<CommonStatusUiState>.addIfNotExist(newItemUiState: CommonStatusUiState) {
-        if (this.container { it.statusUiState.status.id == newItemUiState.statusUiState.status.id }) return
+    private fun MutableList<StatusUiState>.addIfNotExist(newItemUiState: StatusUiState) {
+        if (this.container { it.status.id == newItemUiState.status.id }) return
         this += newItemUiState
-    }
-
-    private fun transformCommonUiState(status: Status): CommonStatusUiState {
-        val role = resolveRole(status.intrinsicBlog.author)
-        return CommonStatusUiState(
-            statusUiState = buildStatusUiState(status),
-            role = role,
-        )
     }
 
     private suspend fun InteractiveHandleResult.handleResult() {
         this.handle(
-            messageFlow = _errorMessageFlow,
-            openScreenFlow = _openScreenFlow,
             uiStatusUpdater = { newUiState ->
                 onStatusUpdate(newUiState.status)
-                _uiState.update { currentUiState ->
+                mutableUiState.update { currentUiState ->
                     val newFeeds = currentUiState.feeds.map {
-                        if (it.statusUiState.status.id == newUiState.status.id) {
-                            it.copy(statusUiState = newUiState)
+                        if (it.status.id == newUiState.status.id) {
+                            it.copy(status = newUiState.status)
                         } else {
                             it
                         }
                     }
                     currentUiState.copy(feeds = newFeeds)
                 }
+            },
+            followStateUpdater = { userUri, following ->
+
             }
         )
     }
+
+
 }
 
 data class CommonFeedsUiState(
-    val feeds: List<CommonStatusUiState>,
+    val feeds: List<StatusUiState>,
     val showPagingLoadingPlaceholder: Boolean,
     val pageErrorContent: TextString?,
     val refreshing: Boolean,
     val loadMoreState: LoadState,
-)
-
-data class CommonStatusUiState(
-    val statusUiState: StatusUiState,
-    val role: IdentityRole,
 )

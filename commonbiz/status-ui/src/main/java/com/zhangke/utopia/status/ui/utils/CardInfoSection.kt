@@ -77,6 +77,8 @@ fun CardInfoSection(
                         modifier = Modifier.padding(top = 2.dp),
                         content = description!!,
                         mentions = emptyList(),
+                        emojis = emptyList(),
+                        tags = emptyList(),
                         baseUrl = null,
                         maxLines = 3,
                     )

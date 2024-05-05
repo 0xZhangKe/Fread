@@ -10,9 +10,9 @@ import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandleResult
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
-import com.zhangke.utopia.status.ui.feeds.handle
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.handle
 import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -143,7 +143,7 @@ class ExplorerFeedsViewModel(
     }
 
     private suspend fun InteractiveHandleResult.handleResult() {
-        this.handle(
+        com.zhangke.utopia.commonbiz.shared.feeds.handle(
             uiStatusUpdater = { newStatusUiState ->
                 loadController.mutableUiState.update {
                     it.copy(dataList = it.dataList.updateStatus(newStatusUiState))

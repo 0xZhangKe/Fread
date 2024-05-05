@@ -1,9 +1,8 @@
 package com.zhangke.utopia.status.richtext
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.Emoji
-import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
 import moe.tlaster.ktml.dom.Element
@@ -12,9 +11,8 @@ import moe.tlaster.ktml.dom.Node
 fun buildRichText(
     document: String,
     mentions: List<Mention>,
-    hashTags: List<Hashtag>,
+    hashTags: List<HashtagInStatus>,
     emojis: List<Emoji>,
-    baseUrl: FormalBaseUrl?,
 ): RichText {
     return RichText(
         document = document,

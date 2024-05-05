@@ -19,6 +19,8 @@ import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import com.zhangke.utopia.status.ui.style.StatusInfoStyleDefaults
 import com.zhangke.utopia.statusui.R
@@ -80,7 +82,11 @@ fun BlogAuthorUi(
                     width = Dimension.fillToConstraints
                 },
                 content = author.description,
+                emojis = author.emojis,
                 mentions = emptyList(),
+                tags = emptyList(),
+                onHashtagClick = {},
+                onMentionClick = {},
                 maxLines = 1,
             )
         }
@@ -96,6 +102,8 @@ fun RecommendAuthorUi(
     onInfoClick: (BlogAuthor) -> Unit,
     onFollowClick: (BlogAuthor) -> Unit,
     onUnfollowClick: (BlogAuthor) -> Unit,
+    onMentionClick: (BlogAuthor, Mention) -> Unit,
+    onHashtagClick: (BlogAuthor, HashtagInStatus) -> Unit,
 ) {
     ConstraintLayout(
         modifier = modifier
@@ -147,7 +155,15 @@ fun RecommendAuthorUi(
                 width = Dimension.fillToConstraints
             },
             content = author.description,
+            emojis = author.emojis,
             mentions = emptyList(),
+            tags = emptyList(),
+            onMentionClick = {
+                onMentionClick(author, it)
+            },
+            onHashtagClick = {
+                onHashtagClick(author, it)
+            },
             overflow = TextOverflow.Ellipsis,
             maxLines = 3,
         )

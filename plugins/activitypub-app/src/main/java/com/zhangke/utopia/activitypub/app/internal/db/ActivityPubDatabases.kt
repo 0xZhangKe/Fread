@@ -7,6 +7,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubInstanceEntityConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.ActivityPubUserTokenConverter
+import com.zhangke.utopia.activitypub.app.internal.db.converter.EmojiListConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.FormalBaseUrlConverter
 import com.zhangke.utopia.activitypub.app.internal.db.converter.PlatformEntityTypeConverter
 import com.zhangke.utopia.common.utils.WebFingerConverter
@@ -20,6 +21,7 @@ private const val DB_VERSION = 1
     ActivityPubUserTokenConverter::class,
     ActivityPubInstanceEntityConverter::class,
     FormalBaseUrlConverter::class,
+    EmojiListConverter::class,
 )
 @Database(
     entities = [

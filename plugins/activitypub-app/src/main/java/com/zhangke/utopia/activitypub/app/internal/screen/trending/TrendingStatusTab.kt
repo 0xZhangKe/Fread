@@ -30,12 +30,13 @@ class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
             uiState = uiState,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onInteractive = viewModel::onInteractive,
+            onInteractive = viewModel::onStatusInteractive,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onUserInfoClick = viewModel::onUserInfoClick,
             onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
+            onStatusClick = viewModel::onStatusClick,
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }

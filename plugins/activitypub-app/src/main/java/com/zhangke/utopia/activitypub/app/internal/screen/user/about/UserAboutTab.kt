@@ -23,15 +23,16 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
+import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 
 class UserAboutTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
-    private val userUriInsights: UserUriInsights,
+    private val userWebFinger: WebFinger,
 ) : PagerTab {
 
     override val options: PagerTabOptions
@@ -42,7 +43,7 @@ class UserAboutTab(
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel =
-            getViewModel<UserAboutContainerViewModel>().getViewModel(role, userUriInsights)
+            getViewModel<UserAboutContainerViewModel>().getViewModel(role, userWebFinger)
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(
             uiState = uiState,
@@ -80,6 +81,7 @@ class UserAboutTab(
             for (field in uiState.fieldList) {
                 FieldUi(
                     field = field,
+                    emojis = uiState.emojis,
                 )
             }
         }
@@ -88,6 +90,7 @@ class UserAboutTab(
     @Composable
     private fun FieldUi(
         field: ActivityPubField,
+        emojis: List<Emoji>,
     ) {
         Text(
             modifier = Modifier
@@ -101,7 +104,10 @@ class UserAboutTab(
                 .fillMaxWidth(),
             content = field.value,
             mentions = emptyList(),
-            baseUrl = userUriInsights.baseUrl,
+            tags = emptyList(),
+            onMentionClick = {},
+            onHashtagClick = {},
+            emojis = emojis,
         )
     }
 }

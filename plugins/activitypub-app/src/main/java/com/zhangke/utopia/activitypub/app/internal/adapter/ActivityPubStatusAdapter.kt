@@ -1,18 +1,21 @@
 package com.zhangke.utopia.activitypub.app.internal.adapter
 
+import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.BlogMediaType
+import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusInteraction
+import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
@@ -22,7 +25,7 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    private val mapCustomEmoji: MapCustomEmojiUseCase,
+    @ApplicationContext private val context: Context,
 ) {
 
     suspend fun toStatus(
@@ -63,9 +66,9 @@ class ActivityPubStatusAdapter @Inject constructor(
             id = id,
             author = activityPubAccountEntityAdapter.toAuthor(account),
             title = null,
-            content = mapCustomEmoji(content, emojis),
+            content = content,
             sensitive = sensitive,
-            spoilerText = mapCustomEmoji(spoilerText, emojis),
+            spoilerText = spoilerText,
             date = formatDatetimeToDate(createdAt),
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
@@ -74,7 +77,8 @@ class ActivityPubStatusAdapter @Inject constructor(
             mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = poll?.let(pollAdapter::adapt),
             emojis = emojis,
-            mentions = this.mentions.mapNotNull { it.toMention() }
+            mentions = this.mentions.mapNotNull { it.toMention() },
+            tags = tags.map { it.toTag() },
         )
     }
 
@@ -89,6 +93,14 @@ class ActivityPubStatusAdapter @Inject constructor(
             description = description,
             meta = this.meta?.let { metaAdapter.adapt(mediaType, it) },
             blurhash = blurhash,
+        )
+    }
+
+    private fun ActivityPubStatusEntity.Tag.toTag(): HashtagInStatus {
+        return HashtagInStatus(
+            name = name,
+            url = url,
+            protocol = getActivityPubProtocol(context),
         )
     }
 
@@ -110,6 +122,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             username = username,
             url = url,
             webFinger = webFinger,
+            protocol = getActivityPubProtocol(context),
         )
     }
 }

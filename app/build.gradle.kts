@@ -6,6 +6,7 @@ plugins {
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
+    id("kotlin-parcelize")
 }
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
@@ -154,6 +155,8 @@ dependencies {
     implementation(libs.krouter.core)
     ksp(libs.krouter.compiler)
     implementation(libs.bundles.androidx.media3)
+    implementation(libs.kotlinx.serialization.core)
+    implementation(libs.kotlinx.serialization.json)
 }
 
 // Allow references to generated code

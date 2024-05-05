@@ -37,6 +37,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             avatar = entity.avatar,
             url = entity.url,
             token = entity.token,
+            emojis = entity.emojis,
         )
     }
 
@@ -54,6 +55,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             avatar = user.avatar,
             url = user.url,
             token = user.token,
+            emojis = user.emojis,
         )
     }
 
@@ -63,7 +65,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         token: ActivityPubTokenEntity,
     ): ActivityPubLoggedAccount {
         val webFinger = accountToWebFinger(account)
-        val emojis = account.emojis.map(emojiEntityAdapter::toEmoji)
         val baseUrl = FormalBaseUrl.parse(account.url)!!
         return ActivityPubLoggedAccount(
             userId = account.id,
@@ -72,10 +73,11 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             platform = instanceAdapter.toPlatform(baseUrl, instance),
             baseUrl = baseUrl,
             name = account.displayName,
-            description = mapCustomEmoji(account.note, emojis),
+            description = account.note,
             avatar = account.avatar,
             url = account.url,
             token = token,
+            emojis = account.emojis.map(emojiEntityAdapter::toEmoji),
         )
     }
 

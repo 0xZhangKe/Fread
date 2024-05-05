@@ -1,16 +1,19 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
 import com.zhangke.activitypub.api.AccountsRepo
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapAccountEntityEmojiUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,18 +24,20 @@ import kotlinx.coroutines.flow.update
 
 class UserDetailViewModel(
     private val accountManager: ActivityPubAccountManager,
+    private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val userUriTransformer: UserUriTransformer,
     private val clientManager: ActivityPubClientManager,
-    private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
+    private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
     val role: IdentityRole,
-    val userUri: FormalUri,
+    val userUri: FormalUri?,
+    val webFinger: WebFinger?,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(
         UserDetailUiState(
             role = role,
             userInsight = null,
-            account = null,
+            accountUiState = null,
             relationship = null,
             domainBlocked = false,
             editable = false,
@@ -45,11 +50,19 @@ class UserDetailViewModel(
 
     init {
         launchInViewModel {
-            val userInsight = userUriTransformer.parse(userUri)
-            if (userInsight == null) {
-                _messageFlow.emit(textOf("Invalid user uri: $userUri"))
+            val webFinger = userUri?.let(userUriTransformer::parse)?.webFinger ?: webFinger
+            if (webFinger == null) {
+                _messageFlow.emit(textOf("Invalid user."))
                 return@launchInViewModel
             }
+            val accountRepo = clientManager.getClient(role).accountRepo
+            val accountResult = accountRepo.lookup(webFinger.toString())
+            if (accountResult.isFailure) {
+                _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))
+                return@launchInViewModel
+            }
+            val account = accountResult.getOrThrow()!!
+            val userInsight = accountEntityAdapter.toUri(account).let(userUriTransformer::parse)!!
             val editable = accountManager.getAllLoggedAccount()
                 .any { loggedAccount ->
                     loggedAccount.uri == userInsight.uri
@@ -58,15 +71,8 @@ class UserDetailViewModel(
                 userInsight = userInsight,
                 editable = editable,
             )
-            val accountRepo = clientManager.getClient(role).accountRepo
-            val accountResult = accountRepo.lookup(userInsight.webFinger.toString())
-            if (accountResult.isFailure) {
-                _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))
-                return@launchInViewModel
-            }
-            val account = mapAccountEntityEmoji(accountResult.getOrThrow()!!)
             _uiState.value = _uiState.value.copy(
-                account = account
+                accountUiState = account.toAccountUiState()
             )
             loadRelationship(accountRepo, account.id)
             loadDomainBlockState(accountRepo, userInsight)
@@ -184,7 +190,7 @@ class UserDetailViewModel(
     private fun performRelationshipAction(
         action: suspend (accountsRepo: AccountsRepo, accountId: String) -> Result<ActivityPubRelationshipEntity>,
     ) {
-        val accountId = _uiState.value.account?.id ?: return
+        val accountId = _uiState.value.accountUiState?.account?.id ?: return
         launchInViewModel {
             val accountRepo = clientManager.getClient(role).accountRepo
             action(accountRepo, accountId)
@@ -198,5 +204,12 @@ class UserDetailViewModel(
                     }
                 }
         }
+    }
+
+    private fun ActivityPubAccountEntity.toAccountUiState(): UserDetailAccountUiState {
+        return UserDetailAccountUiState(
+            account = this,
+            emojis = emojis.map(emojiEntityAdapter::toEmoji),
+        )
     }
 }

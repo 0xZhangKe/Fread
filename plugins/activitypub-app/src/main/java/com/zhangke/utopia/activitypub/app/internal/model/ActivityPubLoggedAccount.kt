@@ -4,6 +4,7 @@ import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.status.account.LoggedAccount
+import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 
@@ -18,6 +19,7 @@ class ActivityPubLoggedAccount(
     avatar: String?,
     val url: String,
     val token: ActivityPubTokenEntity,
+    emojis: List<Emoji>,
 ) : LoggedAccount(
     uri = uri,
     webFinger = webFinger,
@@ -25,4 +27,5 @@ class ActivityPubLoggedAccount(
     userName = name,
     description = description,
     avatar = avatar,
+    emojis = emojis,
 )

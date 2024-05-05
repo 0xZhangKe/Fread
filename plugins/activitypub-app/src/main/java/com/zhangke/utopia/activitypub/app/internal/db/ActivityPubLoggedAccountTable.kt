@@ -9,6 +9,7 @@ import androidx.room.Query
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.status.model.Emoji
 import kotlinx.coroutines.flow.Flow
 
 private const val TABLE_NAME = "logged_accounts"
@@ -31,6 +32,7 @@ data class ActivityPubLoggedAccountEntity(
     val avatar: String?,
     val url: String,
     val token: ActivityPubTokenEntity,
+    val emojis: List<Emoji>,
 ) {
 
     data class BlogPlatformEntity(

@@ -7,35 +7,38 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
+import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
+import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 
 class TrendingStatusSubViewModel(
+    private val statusProvider: StatusProvider,
     private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
-    interactiveHandler: InteractiveHandler,
     private val role: IdentityRole,
-) : SubViewModel() {
+) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
+    statusProvider = statusProvider,
+    buildStatusUiState = buildStatusUiState,
+) {
 
-    private val feedsViewModelController = FeedsViewModelController(
-        coroutineScope = viewModelScope,
-        interactiveHandler = interactiveHandler,
-        buildStatusUiState = buildStatusUiState,
-        loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
-        loadNewFromServerFunction = ::loadNewFromServer,
-        loadMoreFunction = ::loadMore,
-        resolveRole = ::resolveRole,
-        onStatusUpdate = {},
-    )
+    init {
+        initController(
+            coroutineScope = viewModelScope,
+            roleResolver = AllInOneRoleResolver(role),
+            loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
+            loadNewFromServerFunction = ::loadNewFromServer,
+            loadMoreFunction = ::loadMore,
+            onStatusUpdate = {},
+        )
+        initFeeds(false)
+    }
 
     private fun loadFirstPageLocalFeeds(): Result<List<Status>> {
         return Result.success(emptyList())
@@ -54,41 +57,6 @@ class TrendingStatusSubViewModel(
         val offset = uiState.value.feeds.size
         if (offset == 0) return Result.success(emptyList())
         return getServerTrending(offset)
-    }
-
-    private fun resolveRole(author: BlogAuthor): IdentityRole {
-        return role
-    }
-
-    val uiState = feedsViewModelController.uiState
-    val errorMessageFlow = feedsViewModelController.errorMessageFlow
-    val openScreenFlow = feedsViewModelController.openScreenFlow
-    val newStatusNotifyFlow = feedsViewModelController.newStatusNotifyFlow
-
-    init {
-        feedsViewModelController.initFeeds(false)
-    }
-
-    fun onRefresh() {
-        feedsViewModelController.refresh()
-    }
-
-    fun onLoadMore() {
-        val offset = uiState.value.feeds.size
-        if (offset == 0) return
-        feedsViewModelController.loadMore()
-    }
-
-    fun onInteractive(status: Status, interaction: StatusUiInteraction) {
-        feedsViewModelController.onInteractive(status, interaction)
-    }
-
-    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        feedsViewModelController.onVoted(status, options)
-    }
-
-    fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        feedsViewModelController.onUserInfoClick(blogAuthor)
     }
 
     private suspend fun getServerTrending(

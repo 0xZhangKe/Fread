@@ -1,13 +1,10 @@
 package com.zhangke.utopia.status.model
 
-import com.zhangke.framework.utils.WebFinger
 import kotlinx.serialization.Serializable
 
 @Serializable
-data class Mention(
-    val id: String,
-    val username: String,
+data class HashtagInStatus(
+    val name: String,
     val url: String,
-    val webFinger: WebFinger,
     val protocol: StatusProviderProtocol,
 )

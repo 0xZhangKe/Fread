@@ -117,6 +117,8 @@ class RssSourceScreen(
                         .utopiaPlaceholder(uiState.source?.description.isNullOrEmpty()),
                     content = uiState.source?.description.orEmpty(),
                     mentions = emptyList(),
+                    emojis = emptyList(),
+                    tags = emptyList(),
                 )
 
                 Spacer(modifier = Modifier.height(22.dp))

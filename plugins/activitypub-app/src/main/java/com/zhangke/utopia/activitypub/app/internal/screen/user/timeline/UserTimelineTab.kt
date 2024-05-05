@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -12,15 +11,14 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
 import com.zhangke.utopia.status.model.IdentityRole
 
 class UserTimelineTab(
-    private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
-    private val userUriInsights: UserUriInsights,
+    private val userWebFinger: WebFinger,
 ) : PagerTab {
 
     override val options: PagerTabOptions
@@ -31,18 +29,19 @@ class UserTimelineTab(
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel =
-            getViewModel<UserTimelineContainerViewModel>().getSubViewModel(role, userUriInsights)
+            getViewModel<UserTimelineContainerViewModel>().getSubViewModel(role, userWebFinger)
         val uiState by viewModel.uiState.collectAsState()
         FeedsContent(
             uiState = uiState,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onInteractive = viewModel::onInteractive,
+            onInteractive = viewModel::onStatusInteractive,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onUserInfoClick = viewModel::onUserInfoClick,
             onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
+            onStatusClick = viewModel::onStatusClick,
         )
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

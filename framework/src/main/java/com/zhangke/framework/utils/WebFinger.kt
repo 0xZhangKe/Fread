@@ -4,6 +4,9 @@ import android.os.Parcelable
 import com.zhangke.framework.network.HttpScheme
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.json.Json
+import java.net.URLDecoder
+import java.net.URLEncoder
 
 /**
  * Supported:
@@ -50,6 +53,16 @@ class WebFinger private constructor(
             return WebFinger(name, host)
         }
 
+        fun decodeFromUrlString(text: String): WebFinger? {
+            return try {
+                URLDecoder.decode(text, Charsets.UTF_8.name()).let {
+                    Json.decodeFromString(serializer(), it)
+                }
+            } catch (e: Throwable) {
+                null
+            }
+        }
+
         private fun createAsAcct(content: String): WebFinger? {
             val maybeAcct = content
                 .removePrefix("acct:")
@@ -81,5 +94,11 @@ class WebFinger private constructor(
         private fun hostValidate(host: String): Boolean {
             return RegexFactory.getDomainRegex().matches(host)
         }
+    }
+}
+
+fun WebFinger.encodeToUrlString(): String {
+    return Json.encodeToString(WebFinger.serializer(), this).let {
+        URLEncoder.encode(it, Charsets.UTF_8.name())
     }
 }

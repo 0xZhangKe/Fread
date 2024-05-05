@@ -102,7 +102,6 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
             itemsIndexed(uiState.dataList) { index, item ->
                 FeedsStatusNode(
                     modifier = Modifier.fillMaxWidth(),
-                    role = role,
                     status = item,
                     indexInList = index,
                     onUserInfoClick = onUserInfoClick,

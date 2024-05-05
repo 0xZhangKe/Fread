@@ -16,8 +16,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.media.BlogMedias
 import com.zhangke.utopia.status.ui.poll.BlogPoll
@@ -36,6 +39,8 @@ fun BlogContent(
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
     onVoted: (List<BlogPoll.Option>) -> Unit,
+    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
+    onMentionClick: (BlogAuthor, Mention) -> Unit,
 ) {
     Column(
         modifier = modifier,
@@ -47,14 +52,19 @@ fun BlogContent(
             mutableStateOf(canHidden)
         }
         if (spoilerText.isNotEmpty()) {
+            // todo font size
             UtopiaRichText(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
                     .padding(start = 15.dp, end = 15.dp, top = 8.dp),
                 richText = blog.humanizedSpoilerText,
-                // todo font size
-//                style = style,
+                onMentionClick = {
+                    onMentionClick(blog.author, it)
+                },
+                onHashtagClick = { hashtag ->
+                    onHashtagInStatusClick(blog.author, hashtag)
+                },
             )
         }
         val hasContent = blog.content.isNotEmpty()
@@ -72,6 +82,7 @@ fun BlogContent(
                 }
             }
             if (!hideContent) {
+                // todo font size
                 UtopiaRichText(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -79,7 +90,12 @@ fun BlogContent(
                         .padding(start = 15.dp, end = 15.dp, top = 4.dp),
                     richText = blog.humanizedContent,
                     maxLines = style.contentMaxLine,
-                    // todo font size
+                    onMentionClick = {
+                        onMentionClick(blog.author, it)
+                    },
+                    onHashtagClick = { hashtag ->
+                        onHashtagInStatusClick(blog.author, hashtag)
+                    },
                 )
                 if (canHidden) {
                     TextButton(

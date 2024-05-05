@@ -27,11 +27,12 @@ class MixedContentScreen(private val configId: Long) : PagerTab {
             uiState = uiState,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onInteractive = viewModel::onInteractive,
+            onInteractive = viewModel::onStatusInteractive,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onUserInfoClick = viewModel::onUserInfoClick,
             onVoted = viewModel::onVoted,
+            onStatusClick = viewModel::onStatusClick,
             nestedScrollConnection = nestedScrollConnection,
         )
     }

@@ -6,16 +6,15 @@ import androidx.compose.ui.Modifier
 import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusUi
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
@@ -23,18 +22,20 @@ import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 @Composable
 fun FeedsStatusNode(
     modifier: Modifier = Modifier,
-    role: IdentityRole,
     status: StatusUiState,
     indexInList: Int,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onInteractive: (Status, StatusUiInteraction) -> Unit,
     onVoted: (Status, List<BlogPoll.Option>) -> Unit,
+    onStatusClick: (Status) -> Unit,
+    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
+    onMentionClick: (BlogAuthor, Mention) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            navigator.push(StatusContextScreen(role, status.status))
+            onStatusClick(status.status)
         },
         status = status,
         indexInList = indexInList,
@@ -63,5 +64,7 @@ fun FeedsStatusNode(
         onVoted = {
             onVoted(status.status, it)
         },
+        onHashtagInStatusClick = onHashtagInStatusClick,
+        onMentionClick = onMentionClick,
     )
 }

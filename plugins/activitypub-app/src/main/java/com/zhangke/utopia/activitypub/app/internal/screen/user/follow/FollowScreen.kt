@@ -138,7 +138,7 @@ class FollowScreen(
     private fun InitializingUi() {
         Column(modifier = Modifier.fillMaxSize()) {
             repeat(20) {
-                FollowAccountUi(null) {}
+                FollowAccountUi(null, {})
             }
         }
     }
@@ -206,10 +206,14 @@ class FollowScreen(
                         end.linkTo(parent.end, 16.dp)
                         width = Dimension.fillToConstraints
                     },
+                content = account?.description.orEmpty(),
+                onMentionClick = {},
+                onHashtagClick = {},
                 maxLines = 3,
                 overflow = TextOverflow.Ellipsis,
-                content = account?.description.orEmpty(),
                 mentions = emptyList(),
+                tags = emptyList(),
+                emojis = account?.emojis.orEmpty(),
             )
             HorizontalDivider(
                 modifier = Modifier.constrainAs(dividerRef) {

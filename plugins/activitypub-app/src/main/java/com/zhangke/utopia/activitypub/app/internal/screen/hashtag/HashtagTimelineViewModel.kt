@@ -6,7 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
-import com.zhangke.framework.composable.toTextStringOrNull
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -14,14 +14,13 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
+import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
+import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
@@ -30,54 +29,29 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Calendar
 
 @SuppressLint("StaticFieldLeak")
 @HiltViewModel(assistedFactory = HashtagTimelineViewModel.Factory::class)
 class HashtagTimelineViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
+    private val statusProvider: StatusProvider,
     @ApplicationContext private val context: Context,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
-    interactiveHandler: InteractiveHandler,
     @Assisted private val role: IdentityRole,
     @Assisted private val hashtag: String,
-) : ViewModel() {
+) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
+    statusProvider = statusProvider,
+    buildStatusUiState = buildStatusUiState,
+) {
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
         fun create(role: IdentityRole, hashtag: String): HashtagTimelineViewModel
     }
-
-    private val feedsViewModelController = FeedsViewModelController(
-        coroutineScope = viewModelScope,
-        interactiveHandler = interactiveHandler,
-        buildStatusUiState = buildStatusUiState,
-        loadFirstPageLocalFeeds = { Result.success(emptyList()) },
-        loadNewFromServerFunction = ::loadNewFromServer,
-        loadMoreFunction = ::loadMore,
-        resolveRole = { role },
-        onStatusUpdate = {},
-    )
-
-    private suspend fun loadNewFromServer(): Result<RefreshResult> {
-        return loadHashtagTimeline().map {
-            RefreshResult(
-                newStatus = it,
-                deletedStatus = emptyList(),
-            )
-        }
-    }
-
-    private suspend fun loadMore(maxId: String?): Result<List<Status>> {
-        return loadHashtagTimeline(maxId)
-    }
-
-    val statusUiState = feedsViewModelController.uiState
-    val errorMessageFlow = feedsViewModelController.errorMessageFlow
-    val openScreenFlow = feedsViewModelController.openScreenFlow
-    val newStatusNotifyFlow = feedsViewModelController.newStatusNotifyFlow
 
     private val _hashtagTimelineUiState = MutableStateFlow(
         HashtagTimelineUiState(
@@ -90,7 +64,15 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     val hashtagTimelineUiState = _hashtagTimelineUiState.asStateFlow()
 
     init {
-        feedsViewModelController.initFeeds(false)
+        initController(
+            coroutineScope = viewModelScope,
+            roleResolver = AllInOneRoleResolver(role),
+            loadFirstPageLocalFeeds = { Result.success(emptyList()) },
+            loadNewFromServerFunction = ::loadNewFromServer,
+            loadMoreFunction = ::loadMore,
+            onStatusUpdate = {},
+        )
+        initFeeds(false)
         launchInViewModel {
             clientManager.getClient(role)
                 .accountRepo
@@ -101,11 +83,22 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                         description = buildDescription(it),
                     )
                 }.onFailure { e ->
-                    e.toTextStringOrNull()?.let {
-                        feedsViewModelController.showErrorMessage(it)
-                    }
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(e)
                 }
         }
+    }
+
+    private suspend fun loadNewFromServer(): Result<RefreshResult> {
+        return loadHashtagTimeline().map {
+            RefreshResult(
+                newStatus = it,
+                deletedStatus = emptyList(),
+            )
+        }
+    }
+
+    private suspend fun loadMore(maxId: String?): Result<List<Status>> {
+        return loadHashtagTimeline(maxId)
     }
 
     private fun buildDescription(hashTag: ActivityPubTagEntity): String {
@@ -137,18 +130,6 @@ class HashtagTimelineViewModel @AssistedInject constructor(
         return calendar.timeInMillis
     }
 
-    fun onRefresh() {
-        feedsViewModelController.refresh()
-    }
-
-    fun onLoadMore() {
-        feedsViewModelController.loadMore()
-    }
-
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        feedsViewModelController.onInteractive(status, uiInteraction)
-    }
-
     fun onFollowClick() {
         launchInViewModel {
             clientManager.getClient(role)
@@ -167,14 +148,6 @@ class HashtagTimelineViewModel @AssistedInject constructor(
         }
     }
 
-    fun onVoted(status: Status, options: List<BlogPoll.Option>) {
-        feedsViewModelController.onVoted(status, options)
-    }
-
-    fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        feedsViewModelController.onUserInfoClick(blogAuthor)
-    }
-
     private fun Result<ActivityPubTagEntity>.handle() {
         this.onSuccess { newEntity ->
             _hashtagTimelineUiState.update { state ->
@@ -184,8 +157,8 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                 )
             }
         }.onFailure { e ->
-            e.toTextStringOrNull()?.let {
-                feedsViewModelController.showErrorMessage(it)
+            viewModelScope.launch {
+                mutableErrorMessageFlow.emitTextMessageFromThrowable(e)
             }
         }
     }

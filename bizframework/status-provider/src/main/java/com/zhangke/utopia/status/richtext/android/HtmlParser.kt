@@ -3,7 +3,7 @@ package com.zhangke.utopia.status.richtext.android
 import android.text.SpannableStringBuilder
 import android.text.Spanned
 import com.zhangke.utopia.status.model.Emoji
-import com.zhangke.utopia.status.model.Hashtag
+import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.richtext.android.span.CustomEmojiSpan
 import com.zhangke.utopia.status.richtext.android.span.InvisibleSpan
@@ -23,7 +23,7 @@ object HtmlParser {
         document: String,
         emojis: List<Emoji>,
         mentions: List<Mention>,
-        hashTag: List<Hashtag>,
+        hashTag: List<HashtagInStatus>,
     ): SpannableStringBuilder {
         val fixedHashTags = hashTag.map { it.copy(name = it.name.lowercase()) }
         val spanBuilder = SpannableStringBuilder()
@@ -76,7 +76,7 @@ object HtmlParser {
         element: Element,
         openSpans: MutableList<SpanInfo>,
         mentions: List<Mention>,
-        hashTags: List<Hashtag>,
+        hashTags: List<HashtagInStatus>,
     ) {
         when (element.nodeName()) {
             "br" -> {

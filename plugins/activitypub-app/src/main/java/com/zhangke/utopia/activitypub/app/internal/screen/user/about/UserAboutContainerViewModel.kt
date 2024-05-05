@@ -1,11 +1,12 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.about
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
+import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.emoji.MapAccountEntityEmojiUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -15,7 +16,7 @@ class UserAboutContainerViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
-    private val mapAccountEntityEmoji: MapAccountEntityEmojiUseCase,
+    private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) : ContainerViewModel<UserAboutViewModel, UserAboutContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): UserAboutViewModel {
@@ -23,27 +24,27 @@ class UserAboutContainerViewModel @Inject constructor(
             clientManager = clientManager,
             formatDatetimeToDate = formatDatetimeToDate,
             webFingerBaseUrlToUserIdRepo = webFingerBaseUrlToUserIdRepo,
-            mapAccountEntityEmoji = mapAccountEntityEmoji,
+            emojiEntityAdapter = emojiEntityAdapter,
             role = params.role,
-            userUriInsights = params.userUriInsights,
+            webFinger = params.webFinger,
         )
     }
 
     fun getViewModel(
         role: IdentityRole,
-        userUriInsights: UserUriInsights
+        webFinger: WebFinger,
     ): UserAboutViewModel {
         return obtainSubViewModel(
-            Params(role, userUriInsights)
+            Params(role, webFinger)
         )
     }
 
     class Params(
         val role: IdentityRole,
-        val userUriInsights: UserUriInsights,
+        val webFinger: WebFinger,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + userUriInsights
+            get() = role.toString() + webFinger
     }
 }

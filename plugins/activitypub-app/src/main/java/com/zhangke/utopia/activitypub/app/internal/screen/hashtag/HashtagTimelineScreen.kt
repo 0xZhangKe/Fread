@@ -52,7 +52,7 @@ import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.feeds.CommonFeedsUiState
+import com.zhangke.utopia.commonbiz.shared.feeds.CommonFeedsUiState
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(HashtagTimelineRoute.ROUTE)
@@ -69,7 +69,7 @@ class HashtagTimelineScreen(
             it.create(role, hashtag)
         }
         val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
-        val statusUiState by viewModel.statusUiState.collectAsState()
+        val statusUiState by viewModel.uiState.collectAsState()
         HashtagTimelineContent(
             hashtagTimelineUiState = hashtagTimelineUiState,
             statusUiState = statusUiState,
@@ -79,11 +79,12 @@ class HashtagTimelineScreen(
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onInteractive = viewModel::onInteractive,
+            onInteractive = viewModel::onStatusInteractive,
             onFollowClick = viewModel::onFollowClick,
             onUnfollowClick = viewModel::onUnfollowClick,
             onVoted = viewModel::onVoted,
             onUserInfoClick = viewModel::onUserInfoClick,
+            onStatusClick = viewModel::onStatusClick,
         )
     }
 
@@ -103,6 +104,7 @@ class HashtagTimelineScreen(
         onUnfollowClick: () -> Unit,
         onVoted: (Status, List<BlogPoll.Option>) -> Unit,
         onUserInfoClick: (BlogAuthor) -> Unit,
+        onStatusClick: (Status) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         val contentCanScrollBackward = remember {
@@ -136,6 +138,7 @@ class HashtagTimelineScreen(
                         onLoadMore = onLoadMore,
                         onUserInfoClick = onUserInfoClick,
                         onVoted = onVoted,
+                        onStatusClick = onStatusClick,
                         nestedScrollConnection = null,
                     )
                     SnackbarHost(

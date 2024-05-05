@@ -36,7 +36,7 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
 import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
-import com.zhangke.utopia.status.ui.feeds.CommonFeedsUiState
+import com.zhangke.utopia.commonbiz.shared.feeds.CommonFeedsUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -52,6 +52,7 @@ fun FeedsContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     onVoted: (Status, List<BlogPoll.Option>) -> Unit,
+    onStatusClick: (Status) -> Unit,
     nestedScrollConnection: NestedScrollConnection?,
 ) {
     val navigator = LocalNavigator.currentOrThrow
@@ -85,17 +86,17 @@ fun FeedsContent(
                 itemsIndexed(
                     items = uiState.feeds,
                     key = { _, item ->
-                        item.statusUiState.status.id
+                        item.status.id
                     },
                 ) { index, item ->
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
-                        status = item.statusUiState,
-                        role = item.role,
+                        status = item,
                         onUserInfoClick = onUserInfoClick,
                         onInteractive = onInteractive,
                         indexInList = index,
                         onVoted = onVoted,
+                        onStatusClick = onStatusClick,
                     )
                 }
             }

@@ -11,6 +11,8 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
@@ -25,10 +27,7 @@ fun BlogUi(
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
     reblogAuthor: BlogAuthor? = null,
-    onInteractive: (StatusUiInteraction) -> Unit,
-    onMediaClick: OnBlogMediaClick,
-    onUserInfoClick: (BlogAuthor) -> Unit,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
     showDivider: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -38,8 +37,8 @@ fun BlogUi(
             blogAuthor = blog.author,
             displayTime = displayTime,
             moreInteractions = moreInteractions,
-            onInteractive = onInteractive,
-            onUserInfoClick = onUserInfoClick,
+            onInteractive = composedStatusInteraction::onInteractive,
+            onUserInfoClick = composedStatusInteraction::onUserInfoClick,
             style = style,
             reblogAuthor = reblogAuthor,
         )
@@ -50,15 +49,17 @@ fun BlogUi(
             blog = blog,
             indexOfFeeds = indexInList,
             style = style.blogStyle,
-            onMediaClick = onMediaClick,
-            onVoted = onVoted,
+            onMediaClick = composedStatusInteraction::onMediaClick,
+            onVoted = composedStatusInteraction::onVoted,
+            onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
+            onMentionClick = composedStatusInteraction::onMentionClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier
                 .fillMaxWidth()
                 .horizontalPadding(style.containerPaddings),
             interactions = bottomPanelInteractions,
-            onInteractive = onInteractive,
+            onInteractive = composedStatusInteraction::onInteractive,
         )
         Spacer(
             modifier = Modifier

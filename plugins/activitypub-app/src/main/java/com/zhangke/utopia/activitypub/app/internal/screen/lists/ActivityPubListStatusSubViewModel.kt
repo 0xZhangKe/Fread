@@ -11,8 +11,8 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.feeds.FeedsViewModelController
-import com.zhangke.utopia.status.ui.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
 
 class ActivityPubListStatusSubViewModel(
     private val listStatusRepo: ListStatusRepo,

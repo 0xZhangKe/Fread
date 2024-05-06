@@ -11,6 +11,7 @@ import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
@@ -20,6 +21,7 @@ fun StatusUi(
     status: StatusUiState,
     indexInList: Int,
     style: StatusStyle = defaultStatusStyle(),
+    onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     Surface(
@@ -35,7 +37,20 @@ fun StatusUi(
                     bottomPanelInteractions = status.bottomInteractions,
                     moreInteractions = status.moreInteractions,
                     style = style,
-                    composedStatusInteraction = composedStatusInteraction,
+                    onInteractive = {
+                        composedStatusInteraction.onInteractive(status.status, it)
+                    },
+                    onMediaClick = onMediaClick,
+                    onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                    onVoted = { options ->
+                        composedStatusInteraction.onVoted(status.status, options)
+                    },
+                    onHashtagInStatusClick = { blogAuthor, hashtagInStatus ->
+                        composedStatusInteraction.onHashtagInStatusClick(blogAuthor, hashtagInStatus)
+                    },
+                    onMentionClick = { blogAuthor, mention ->
+                        composedStatusInteraction.onMentionClick(blogAuthor, mention)
+                    },
                 )
             }
 
@@ -47,8 +62,21 @@ fun StatusUi(
                     bottomPanelInteractions = status.bottomInteractions,
                     moreInteractions = status.moreInteractions,
                     indexInList = indexInList,
-                    composedStatusInteraction = composedStatusInteraction,
                     style = style,
+                    onInteractive = {
+                        composedStatusInteraction.onInteractive(status.status, it)
+                    },
+                    onMediaClick = onMediaClick,
+                    onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                    onVoted = { options ->
+                        composedStatusInteraction.onVoted(status.status, options)
+                    },
+                    onHashtagInStatusClick = { blogAuthor, hashtagInStatus ->
+                        composedStatusInteraction.onHashtagInStatusClick(blogAuthor, hashtagInStatus)
+                    },
+                    onMentionClick = { blogAuthor, mention ->
+                        composedStatusInteraction.onMentionClick(blogAuthor, mention)
+                    },
                 )
             }
         }
@@ -58,10 +86,9 @@ fun StatusUi(
 
 interface ComposedStatusInteraction {
 
-    fun onInteractive(interaction: StatusUiInteraction)
-    fun onMediaClick(event: BlogMediaClickEvent)
+    fun onInteractive(status: Status, interaction: StatusUiInteraction)
     fun onUserInfoClick(blogAuthor: BlogAuthor)
-    fun onVoted(blogPollOptions: List<BlogPoll.Option>)
+    fun onVoted(status: Status, blogPollOptions: List<BlogPoll.Option>)
     fun onHashtagInStatusClick(blogAuthor: BlogAuthor, hashtagInStatus: HashtagInStatus)
     fun onMentionClick(blogAuthor: BlogAuthor, mention: Mention)
     fun onStatusClick(status: Status)

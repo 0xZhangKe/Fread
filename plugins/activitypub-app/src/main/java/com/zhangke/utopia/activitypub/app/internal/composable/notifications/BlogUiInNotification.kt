@@ -8,17 +8,19 @@ import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.framework.voyager.pushDestination
-import com.zhangke.utopia.activitypub.app.internal.composable.statusInteractive
-import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.BlogUi
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 
 @Composable
@@ -28,6 +30,8 @@ fun OnlyBlogContentUi(
     indexInList: Int,
     style: NotificationStyle,
     onVoted: (List<BlogPoll.Option>) -> Unit,
+    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
+    onMentionClick: (BlogAuthor, Mention) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -39,24 +43,15 @@ fun OnlyBlogContentUi(
             indexOfFeeds = indexInList,
             style = style.statusStyle.blogStyle,
             onMediaClick = { event ->
-                when (event) {
-                    is BlogMediaClickEvent.BlogImageClickEvent -> {
-                        transparentNavigator.push(
-                            ImageViewerScreen(
-                                mediaList = event.mediaList,
-                                selectedIndex = event.index,
-                                coordinatesList = event.coordinatesList,
-                                onDismiss = event.onDismiss,
-                            )
-                        )
-                    }
-
-                    is BlogMediaClickEvent.BlogVideoClickEvent -> {
-                        navigator.push(FullVideoScreen(event.media.url.toUri()))
-                    }
-                }
+                onStatusMediaClick(
+                    transparentNavigator = transparentNavigator,
+                    navigator = navigator,
+                    event = event,
+                )
             },
             onVoted = onVoted,
+            onHashtagInStatusClick = onHashtagInStatusClick,
+            onMentionClick = onMentionClick,
         )
     }
 }
@@ -64,13 +59,11 @@ fun OnlyBlogContentUi(
 @Composable
 fun WholeBlogUi(
     modifier: Modifier,
-    role: IdentityRole,
     statusUiState: StatusUiState,
     indexInList: Int,
     style: NotificationStyle,
-    onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
     showDivider: Boolean = true,
+    composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -84,30 +77,23 @@ fun WholeBlogUi(
             bottomPanelInteractions = statusUiState.bottomInteractions,
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,
-            onInteractive = statusInteractive(statusUiState, onInteractive),
-            onUserInfoClick = {
-                navigator.pushDestination(UserDetailRoute.buildRoute(role, it.uri))
+            onInteractive = {
+                composedStatusInteraction.onInteractive(statusUiState.status, it)
             },
+            onUserInfoClick = composedStatusInteraction::onUserInfoClick,
             onMediaClick = { event ->
-                when (event) {
-                    is BlogMediaClickEvent.BlogImageClickEvent -> {
-                        transparentNavigator.push(
-                            ImageViewerScreen(
-                                mediaList = event.mediaList,
-                                selectedIndex = event.index,
-                                coordinatesList = event.coordinatesList,
-                                onDismiss = event.onDismiss,
-                            )
-                        )
-                    }
-
-                    is BlogMediaClickEvent.BlogVideoClickEvent -> {
-                        navigator.push(FullVideoScreen(event.media.url.toUri()))
-                    }
-                }
+                onStatusMediaClick(
+                    transparentNavigator = transparentNavigator,
+                    navigator = navigator,
+                    event = event,
+                )
             },
             showDivider = showDivider,
-            onVoted = onVoted,
+            onVoted = {
+                composedStatusInteraction.onVoted(statusUiState.status, it)
+            },
+            onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
+            onMentionClick = composedStatusInteraction::onMentionClick,
         )
     }
 }

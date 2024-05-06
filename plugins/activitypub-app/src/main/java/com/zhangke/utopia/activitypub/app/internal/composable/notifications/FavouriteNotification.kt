@@ -6,16 +6,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 
 @Composable
 fun FavouriteNotification(
-    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val status = notification.status
     if (status == null) {
@@ -25,13 +23,12 @@ fun FavouriteNotification(
         return
     }
     BlogInteractionNotification(
-        role = role,
         statusUiState = status,
         author = notification.account,
         icon = Icons.Default.Star,
         interactionDesc = stringResource(R.string.activity_pub_notification_favourited_desc),
         indexInList = indexInList,
         style = style,
-        onVoted = onVoted,
+        composedStatusInteraction = composedStatusInteraction,
     )
 }

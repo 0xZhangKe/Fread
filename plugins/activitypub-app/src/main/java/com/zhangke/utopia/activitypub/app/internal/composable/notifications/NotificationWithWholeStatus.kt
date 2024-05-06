@@ -16,17 +16,16 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 
 @Composable
 fun NotificationWithWholeStatus(
-    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     icon: ImageVector,
     interactionDesc: String,
     style: NotificationStyle,
-    onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val status = notification.status
     if (status == null) {
@@ -35,12 +34,11 @@ fun NotificationWithWholeStatus(
         )
         return
     }
-    val navigator = LocalNavigator.currentOrThrow
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navigator.push(StatusContextScreen(role, status.status))
+                composedStatusInteraction.onStatusClick(status.status)
             }
             .padding(vertical = 8.dp)
     ) {
@@ -57,13 +55,11 @@ fun NotificationWithWholeStatus(
                 .padding(top = style.headLineToContentPadding)
                 .statusBorder()
                 .padding(style.internalBlogPadding),
-            role = role,
             statusUiState = status,
             indexInList = indexInList,
             style = style,
-            onInteractive = onInteractive,
             showDivider = false,
-            onVoted = onVoted,
+            composedStatusInteraction = composedStatusInteraction,
         )
     }
 }

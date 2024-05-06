@@ -27,7 +27,12 @@ fun BlogUi(
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
     reblogAuthor: BlogAuthor? = null,
-    composedStatusInteraction: ComposedStatusInteraction,
+    onInteractive: (StatusUiInteraction) -> Unit,
+    onMediaClick: OnBlogMediaClick,
+    onUserInfoClick: (BlogAuthor) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
+    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
+    onMentionClick: (BlogAuthor, Mention) -> Unit,
     showDivider: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
@@ -37,8 +42,8 @@ fun BlogUi(
             blogAuthor = blog.author,
             displayTime = displayTime,
             moreInteractions = moreInteractions,
-            onInteractive = composedStatusInteraction::onInteractive,
-            onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+            onInteractive = onInteractive,
+            onUserInfoClick = onUserInfoClick,
             style = style,
             reblogAuthor = reblogAuthor,
         )
@@ -49,17 +54,17 @@ fun BlogUi(
             blog = blog,
             indexOfFeeds = indexInList,
             style = style.blogStyle,
-            onMediaClick = composedStatusInteraction::onMediaClick,
-            onVoted = composedStatusInteraction::onVoted,
-            onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
-            onMentionClick = composedStatusInteraction::onMentionClick,
+            onMediaClick = onMediaClick,
+            onVoted = onVoted,
+            onHashtagInStatusClick = onHashtagInStatusClick,
+            onMentionClick = onMentionClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier
                 .fillMaxWidth()
                 .horizontalPadding(style.containerPaddings),
             interactions = bottomPanelInteractions,
-            onInteractive = composedStatusInteraction::onInteractive,
+            onInteractive = onInteractive,
         )
         Spacer(
             modifier = Modifier

@@ -28,9 +28,9 @@ import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
 @Composable
 fun FollowNotification(
-    role: IdentityRole,
     notification: NotificationUiState,
     style: NotificationStyle,
+    onUserInfoClick:
 ) {
     val navigator = LocalNavigator.currentOrThrow
     Row(

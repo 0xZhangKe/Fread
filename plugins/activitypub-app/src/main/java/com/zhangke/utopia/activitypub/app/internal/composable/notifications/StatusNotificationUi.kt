@@ -15,29 +15,26 @@ import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.BlogDivider
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 
 @Composable
 fun StatusNotificationUi(
     modifier: Modifier,
-    role: IdentityRole,
     notification: NotificationUiState,
     indexInList: Int,
     style: NotificationStyle = defaultNotificationStyle(),
-    onInteractive: (StatusUiState, StatusUiInteraction) -> Unit,
     onRejectClick: (NotificationUiState) -> Unit,
     onAcceptClick: (NotificationUiState) -> Unit,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
 ) {
     if (notification.type == StatusNotificationType.MENTION) {
         MentionNotification(
-            role = role,
             notification = notification,
             indexInList = indexInList,
-            onInteractive = onInteractive,
             style = style,
-            onVoted = onVoted,
+            composedStatusInteraction = composedStatusInteraction,
         )
         return
     }
@@ -46,21 +43,19 @@ fun StatusNotificationUi(
             when (notification.type) {
                 StatusNotificationType.FAVOURITE -> {
                     FavouriteNotification(
-                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
-                        onVoted = onVoted,
+                        composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
                 StatusNotificationType.REBLOG -> {
                     ReblogNotification(
-                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
-                        onVoted = onVoted,
+                        composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
@@ -69,7 +64,7 @@ fun StatusNotificationUi(
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
-                        onVoted = onVoted,
+                        composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
@@ -83,12 +78,10 @@ fun StatusNotificationUi(
 
                 StatusNotificationType.UPDATE -> {
                     UpdateNotification(
-                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
-                        onInteractive = onInteractive,
-                        onVoted = onVoted,
+                        composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
@@ -103,12 +96,10 @@ fun StatusNotificationUi(
 
                 StatusNotificationType.STATUS -> {
                     NewStatusNotification(
-                        role = role,
                         notification = notification,
                         indexInList = indexInList,
                         style = style,
-                        onInteractive = onInteractive,
-                        onVoted = onVoted,
+                        composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 

@@ -11,14 +11,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 
 /**
  * 关于博客的通知UI。
@@ -26,21 +21,19 @@ import com.zhangke.utopia.status.model.IdentityRole
  */
 @Composable
 fun BlogInteractionNotification(
-    role: IdentityRole,
     statusUiState: StatusUiState,
     author: ActivityPubAccountEntity,
     icon: ImageVector,
     interactionDesc: String,
     indexInList: Int,
     style: NotificationStyle,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navigator.push(StatusContextScreen(role, statusUiState.status))
+                composedStatusInteraction.onStatusClick(statusUiState.status)
             }
     ) {
         NotificationHeadLine(
@@ -58,7 +51,11 @@ fun BlogInteractionNotification(
             statusUiState = statusUiState,
             indexInList = indexInList,
             style = style,
-            onVoted = onVoted,
+            onVoted = {
+                composedStatusInteraction.onVoted(statusUiState.status, it)
+            },
+            onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
+            onMentionClick = composedStatusInteraction::onMentionClick,
         )
     }
 }

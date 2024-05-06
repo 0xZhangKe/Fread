@@ -16,7 +16,12 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.statusui.R
 
@@ -29,7 +34,12 @@ fun ReblogUi(
     style: StatusStyle,
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
-    composedStatusInteraction: ComposedStatusInteraction,
+    onInteractive: (StatusUiInteraction) -> Unit,
+    onMediaClick: OnBlogMediaClick,
+    onUserInfoClick: (BlogAuthor) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit,
+    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
+    onMentionClick: (BlogAuthor, Mention) -> Unit,
 ) {
     Column(modifier = modifier) {
         Row(
@@ -61,10 +71,15 @@ fun ReblogUi(
             displayTime = displayTime,
             bottomPanelInteractions = bottomPanelInteractions,
             moreInteractions = moreInteractions,
-            composedStatusInteraction = composedStatusInteraction,
             indexInList = indexInList,
             style = style,
             reblogAuthor = reblog.author,
+            onInteractive = onInteractive,
+            onMediaClick = onMediaClick,
+            onUserInfoClick = onUserInfoClick,
+            onVoted = onVoted,
+            onHashtagInStatusClick = onHashtagInStatusClick,
+            onMentionClick = onMentionClick,
         )
     }
 }

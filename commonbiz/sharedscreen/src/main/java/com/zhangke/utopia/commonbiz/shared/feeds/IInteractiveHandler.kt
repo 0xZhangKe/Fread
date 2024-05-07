@@ -10,6 +10,7 @@ import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -21,6 +22,8 @@ interface IInteractiveHandler {
 
     val mutableOpenScreenFlow: MutableSharedFlow<Screen>
     val openScreenFlow: SharedFlow<Screen> get() = mutableOpenScreenFlow
+
+    val composedStatusInteraction: ComposedStatusInteraction
 
     fun initInteractiveHandler(
         coroutineScope: CoroutineScope,
@@ -66,6 +69,14 @@ abstract class DynamicAllInOneRoleResolver: IdentityRoleResolver {
     override fun resolveRole(blogAuthor: BlogAuthor) = getRole()
 
     override fun resolveRole(tag: Hashtag) = getRole()
+}
+
+fun DynamicAllInOneRoleResolver(roleProvider: () -> IdentityRole): DynamicAllInOneRoleResolver{
+    return object : DynamicAllInOneRoleResolver() {
+        override fun getRole(): IdentityRole {
+            return roleProvider()
+        }
+    }
 }
 
 class AllInOneRoleResolver(private val role: IdentityRole) : IdentityRoleResolver {

@@ -17,6 +17,7 @@ import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -35,6 +36,36 @@ class InteractiveHandler(
     private lateinit var coroutineScope: CoroutineScope
 
     private val screenProvider = statusProvider.screenProvider
+
+    override val composedStatusInteraction = object : ComposedStatusInteraction {
+
+        override fun onStatusInteractive(status: Status, interaction: StatusUiInteraction) {
+            this@InteractiveHandler.onStatusInteractive(status, interaction)
+        }
+
+        override fun onUserInfoClick(blogAuthor: BlogAuthor) {
+            this@InteractiveHandler.onUserInfoClick(blogAuthor)
+        }
+
+        override fun onVoted(status: Status, blogPollOptions: List<BlogPoll.Option>) {
+            this@InteractiveHandler.onVoted(status, blogPollOptions)
+        }
+
+        override fun onHashtagInStatusClick(
+            blogAuthor: BlogAuthor,
+            hashtagInStatus: HashtagInStatus
+        ) {
+            this@InteractiveHandler.onHashtagClick(blogAuthor, hashtagInStatus)
+        }
+
+        override fun onMentionClick(blogAuthor: BlogAuthor, mention: Mention) {
+            this@InteractiveHandler.onMentionClick(blogAuthor, mention)
+        }
+
+        override fun onStatusClick(status: Status) {
+            this@InteractiveHandler.onStatusClick(status)
+        }
+    }
 
     override fun initInteractiveHandler(
         coroutineScope: CoroutineScope,

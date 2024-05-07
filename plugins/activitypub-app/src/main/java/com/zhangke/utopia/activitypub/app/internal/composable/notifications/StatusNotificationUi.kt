@@ -70,9 +70,9 @@ fun StatusNotificationUi(
 
                 StatusNotificationType.FOLLOW -> {
                     FollowNotification(
-                        role = role,
                         notification = notification,
                         style = style,
+                        onUserInfoClick = composedStatusInteraction::onUserInfoClick,
                     )
                 }
 

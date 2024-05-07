@@ -10,7 +10,6 @@ import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultStatusStyle
@@ -38,7 +37,7 @@ fun StatusUi(
                     moreInteractions = status.moreInteractions,
                     style = style,
                     onInteractive = {
-                        composedStatusInteraction.onInteractive(status.status, it)
+                        composedStatusInteraction.onStatusInteractive(status.status, it)
                     },
                     onMediaClick = onMediaClick,
                     onUserInfoClick = composedStatusInteraction::onUserInfoClick,
@@ -64,7 +63,7 @@ fun StatusUi(
                     indexInList = indexInList,
                     style = style,
                     onInteractive = {
-                        composedStatusInteraction.onInteractive(status.status, it)
+                        composedStatusInteraction.onStatusInteractive(status.status, it)
                     },
                     onMediaClick = onMediaClick,
                     onUserInfoClick = composedStatusInteraction::onUserInfoClick,
@@ -83,10 +82,9 @@ fun StatusUi(
     }
 }
 
-
 interface ComposedStatusInteraction {
 
-    fun onInteractive(status: Status, interaction: StatusUiInteraction)
+    fun onStatusInteractive(status: Status, interaction: StatusUiInteraction)
     fun onUserInfoClick(blogAuthor: BlogAuthor)
     fun onVoted(status: Status, blogPollOptions: List<BlogPoll.Option>)
     fun onHashtagInStatusClick(blogAuthor: BlogAuthor, hashtagInStatus: HashtagInStatus)

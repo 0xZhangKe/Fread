@@ -10,7 +10,9 @@ import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
@@ -113,6 +115,20 @@ class NotificationsRepo @Inject constructor(
         notificationDao.insert(
             notificationsEntityAdapter.toEntity(notification, accountOwnershipUri)
         )
+    }
+
+    suspend fun updateNotificationStatus(
+        accountOwnershipUri: FormalUri,
+        status: Status,
+    ) {
+        notificationDao.query(accountOwnershipUri)
+            .filter {
+                it.status?.id == status.id
+            }.map {
+                it.copy(status = status)
+            }.let {
+                notificationDao.insert(it)
+            }
     }
 
     private suspend fun replaceLocalNotifications(

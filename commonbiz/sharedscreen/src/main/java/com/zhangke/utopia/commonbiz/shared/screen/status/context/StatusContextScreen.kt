@@ -15,7 +15,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import androidx.core.net.toUri
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -27,18 +26,13 @@ import com.zhangke.framework.composable.LoadingLineItem
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.pushDestination
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
-import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.utopia.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.utopia.commonbiz.shared.screen.R
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
 class StatusContextScreen(
@@ -57,34 +51,17 @@ class StatusContextScreen(
             uiState = uiState,
             snackbarHostState = snackbarHostState,
             onMediaClick = { event ->
-                when (event) {
-                    is BlogMediaClickEvent.BlogImageClickEvent -> {
-                        transparentNavigator.push(
-                            ImageViewerScreen(
-                                mediaList = event.mediaList,
-                                selectedIndex = event.index,
-                                coordinatesList = event.coordinatesList,
-                                onDismiss = event.onDismiss,
-                            )
-                        )
-                    }
-
-                    is BlogMediaClickEvent.BlogVideoClickEvent -> {
-                        navigator.push(FullVideoScreen(event.media.url.toUri()))
-                    }
-                }
+                onStatusMediaClick(
+                    transparentNavigator = transparentNavigator,
+                    navigator = navigator,
+                    event = event,
+                )
             },
             onBackClick = navigator::pop,
-            onInteractive = viewModel::onInteractive,
-            onStatusClick = {
-                if (it.status.status.id == status.id) return@StatusContextContent
-                navigator.push(StatusContextScreen(role, it.status.status))
-            },
-            onUserInfoClick = viewModel::onUserInfoClick,
-            onVoted = viewModel::onVote,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.pushDestination(it)
+            navigator.push(it)
         }
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
@@ -95,10 +72,7 @@ class StatusContextScreen(
         snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit = {},
         onMediaClick: OnBlogMediaClick,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
-        onStatusClick: (StatusInContext) -> Unit,
-        onUserInfoClick: (BlogAuthor) -> Unit,
-        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
+        composedStatusInteraction: ComposedStatusInteraction,
     ) {
         Scaffold(
             snackbarHost = {
@@ -133,16 +107,12 @@ class StatusContextScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    onStatusClick(statusInContext)
+                                    composedStatusInteraction.onStatusClick(status)
                                 },
                             statusInContext = statusInContext,
                             indexInList = index,
                             onMediaClick = onMediaClick,
-                            onInteractive = onInteractive,
-                            onUserInfoClick = onUserInfoClick,
-                            onVoted = {
-                                onVoted(statusInContext.status.status, it)
-                            },
+                            composedStatusInteraction = composedStatusInteraction,
                         )
                     }
                     if (uiState.loading) {
@@ -168,56 +138,41 @@ class StatusContextScreen(
         statusInContext: StatusInContext,
         indexInList: Int,
         onMediaClick: OnBlogMediaClick,
-        onUserInfoClick: (BlogAuthor) -> Unit,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
-        onVoted: (List<BlogPoll.Option>) -> Unit,
+        composedStatusInteraction: ComposedStatusInteraction,
     ) {
         val blog = statusInContext.status.status.intrinsicBlog
         when (statusInContext.type) {
             StatusInContextType.ANCESTOR -> AncestorBlogUi(
                 modifier = modifier,
-                blog = blog,
+                status = statusInContext.status,
                 displayTime = statusInContext.status.displayTime,
                 indexInList = indexInList,
                 isFirst = indexInList == 0,
-                bottomPanelInteractions = statusInContext.status.bottomInteractions,
-                moreInteractions = statusInContext.status.moreInteractions,
                 onMediaClick = onMediaClick,
-                onInteractive = {
-                    onInteractive(statusInContext.status.status, it)
-                },
-                onVoted = onVoted,
+                composedStatusInteraction = composedStatusInteraction,
             )
 
             StatusInContextType.ANCHOR -> AnchorBlogUi(
                 modifier = modifier,
-                blog = blog,
+                status = statusInContext.status,
                 displayTime = statusInContext.status.displayTime,
                 indexInList = indexInList,
                 showUpThread = indexInList > 0,
                 onMediaClick = onMediaClick,
                 bottomPanelInteractions = statusInContext.status.bottomInteractions,
                 moreInteractions = statusInContext.status.moreInteractions,
-                onInteractive = {
-                    onInteractive(statusInContext.status.status, it)
-                },
-                onUserInfoClick = onUserInfoClick,
-                onVoted = onVoted,
+                composedStatusInteraction = composedStatusInteraction,
             )
 
             StatusInContextType.DESCENDANT -> DescendantStatusUi(
                 modifier = modifier,
-                blog = blog,
+                status = statusInContext.status,
                 displayTime = statusInContext.status.displayTime,
                 bottomPanelInteractions = statusInContext.status.bottomInteractions,
                 moreInteractions = statusInContext.status.moreInteractions,
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
-                onInteractive = {
-                    onInteractive(statusInContext.status.status, it)
-                },
-                onUserInfoClick = onUserInfoClick,
-                onVoted = onVoted,
+                composedStatusInteraction = composedStatusInteraction,
             )
         }
     }

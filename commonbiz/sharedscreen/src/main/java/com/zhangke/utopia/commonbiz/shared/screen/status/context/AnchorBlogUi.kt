@@ -9,11 +9,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.BlogDivider
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.StatusInfoLine
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
@@ -24,7 +23,7 @@ import com.zhangke.utopia.status.ui.style.defaultStatusStyle
 @Composable
 fun AnchorBlogUi(
     modifier: Modifier,
-    blog: Blog,
+    status: StatusUiState,
     displayTime: String,
     indexInList: Int,
     showUpThread: Boolean,
@@ -35,15 +34,12 @@ fun AnchorBlogUi(
     ),
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
-    reblogAuthor: BlogAuthor? = null,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
     onMediaClick: OnBlogMediaClick,
-    onUserInfoClick: (BlogAuthor) -> Unit,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
+    val blog = status.status.intrinsicBlog
     Surface(modifier = modifier) {
         Column(modifier = Modifier.fillMaxWidth()) {
-
             StatusInfoLine(
                 modifier = Modifier,
                 blogAuthor = blog.author,
@@ -51,9 +47,10 @@ fun AnchorBlogUi(
                 showUpThread = showUpThread,
                 style = style,
                 moreInteractions = moreInteractions,
-                onInteractive = onInteractive,
-                reblogAuthor = reblogAuthor,
-                onUserInfoClick = onUserInfoClick,
+                onInteractive = {
+                    composedStatusInteraction.onStatusInteractive(status.status, it)
+                },
+                onUserInfoClick = composedStatusInteraction::onUserInfoClick,
             )
             BlogContent(
                 modifier = Modifier
@@ -63,14 +60,20 @@ fun AnchorBlogUi(
                 style = style.blogStyle,
                 indexOfFeeds = indexInList,
                 onMediaClick = onMediaClick,
-                onVoted = onVoted,
+                onVoted = {
+                    composedStatusInteraction.onVoted(status.status, it)
+                },
+                onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
+                onMentionClick = composedStatusInteraction::onMentionClick,
             )
             StatusBottomInteractionPanel(
                 modifier = Modifier
                     .fillMaxWidth()
                     .horizontalPadding(style.containerPaddings),
                 interactions = bottomPanelInteractions,
-                onInteractive = onInteractive,
+                onInteractive = {
+                    composedStatusInteraction.onStatusInteractive(status.status, it)
+                },
             )
             Spacer(
                 modifier = Modifier

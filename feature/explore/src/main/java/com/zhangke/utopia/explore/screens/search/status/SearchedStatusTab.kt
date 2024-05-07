@@ -27,14 +27,11 @@ import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.framework.voyager.tryPush
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.explore.R
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
-import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 
 class SearchedStatusTab(private val role: IdentityRole, private val query: String) : PagerTab {
 
@@ -47,7 +44,7 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        val viewModel = getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory>{
+        val viewModel = getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {
             it.create(role)
         }
         val uiState by viewModel.uiState.collectAsState()
@@ -58,15 +55,13 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
 
         SearchStatusTabContent(
             uiState = uiState,
-            onUserInfoClick = viewModel::onUserInfoClick,
-            onInteractive = viewModel::onInteractive,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
             onRefresh = {
                 viewModel.onRefresh(query)
             },
             onLoadMore = {
                 viewModel.onLoadMore(query)
             },
-            onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
@@ -80,11 +75,9 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
     @Composable
     private fun SearchStatusTabContent(
         uiState: CommonLoadableUiState<StatusUiState>,
-        onUserInfoClick: (BlogAuthor) -> Unit,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
+        composedStatusInteraction: ComposedStatusInteraction,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
         val state = rememberLoadableInlineVideoLazyColumnState(
@@ -93,7 +86,8 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
             onLoadMore = onLoadMore,
         )
         LoadableInlineVideoLazyColumn(
-            modifier = Modifier.fillMaxSize()
+            modifier = Modifier
+                .fillMaxSize()
                 .applyNestedScrollConnection(nestedScrollConnection),
             state = state,
             refreshing = uiState.refreshing,
@@ -104,9 +98,7 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
                     modifier = Modifier.fillMaxWidth(),
                     status = item,
                     indexInList = index,
-                    onUserInfoClick = onUserInfoClick,
-                    onInteractive = onInteractive,
-                    onVoted = onVoted,
+                    composedStatusInteraction = composedStatusInteraction,
                 )
             }
         }

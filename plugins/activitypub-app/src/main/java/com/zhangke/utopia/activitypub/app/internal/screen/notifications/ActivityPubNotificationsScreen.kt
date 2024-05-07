@@ -25,6 +25,9 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
@@ -35,8 +38,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.notifications.StatusNotificationUi
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
 
 class ActivityPubNotificationsScreen(
@@ -48,6 +50,7 @@ class ActivityPubNotificationsScreen(
 
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+        val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = getViewModel<ActivityPubNotificationsViewModel>()
             .getSubViewModel(userUriInsights)
@@ -59,11 +62,13 @@ class ActivityPubNotificationsScreen(
             onLoadMore = viewModel::onLoadMore,
             onRejectClick = viewModel::onRejectClick,
             onAcceptClick = viewModel::onAcceptClick,
-            onInteractive = viewModel::onInteractive,
-            onVoted = viewModel::onVoted,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
             nestedScrollConnection = nestedScrollConnection,
         )
-        ConsumeSnackbarFlow(snackbarHostState, messageTextFlow = viewModel.snackMessage)
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
+        ConsumeFlow(viewModel.openScreenFlow) {
+            navigator.push(it)
+        }
     }
 
     @OptIn(ExperimentalMaterialApi::class)
@@ -75,8 +80,7 @@ class ActivityPubNotificationsScreen(
         onLoadMore: () -> Unit,
         onRejectClick: (NotificationUiState) -> Unit,
         onAcceptClick: (NotificationUiState) -> Unit,
-        onInteractive: (NotificationUiState, StatusUiInteraction) -> Unit,
-        onVoted: (NotificationUiState, List<BlogPoll.Option>) -> Unit,
+        composedStatusInteraction: ComposedStatusInteraction,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
         Column(
@@ -111,17 +115,11 @@ class ActivityPubNotificationsScreen(
                     ) { index, notification ->
                         StatusNotificationUi(
                             modifier = Modifier.fillMaxWidth(),
-                            role = uiState.role,
                             notification = notification,
-                            onInteractive = { _, interaction ->
-                                onInteractive(notification, interaction)
-                            },
+                            composedStatusInteraction = composedStatusInteraction,
                             indexInList = index,
                             onAcceptClick = onAcceptClick,
                             onRejectClick = onRejectClick,
-                            onVoted = {
-                                onVoted(notification, it)
-                            },
                         )
                     }
                 }

@@ -5,23 +5,23 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSource
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.repo.status.TimelineStatusRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
-import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class ActivityPubTimelineViewModel @Inject constructor(
-    private val interactiveHandler: InteractiveHandler,
+    private val statusProvider: StatusProvider,
     private val timelineStatusRepo: TimelineStatusRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
 ) : ContainerViewModel<ActivityPubTimelineSubViewModel, ActivityPubTimelineViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubTimelineSubViewModel {
         return ActivityPubTimelineSubViewModel(
+            statusProvider = statusProvider,
             timelineStatusRepo = timelineStatusRepo,
             buildStatusUiState = buildStatusUiState,
-            interactiveHandler = interactiveHandler,
             role = params.role,
             type = params.timelineSourceType.toSourceType(),
         )

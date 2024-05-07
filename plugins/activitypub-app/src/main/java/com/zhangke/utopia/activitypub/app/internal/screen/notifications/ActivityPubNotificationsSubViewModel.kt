@@ -1,44 +1,41 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.notifications
 
-import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotification
 import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.NotificationsRepo
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.VotePollUseCase
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
-import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.commonbiz.shared.feeds.DynamicAllInOneRoleResolver
+import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 
 class ActivityPubNotificationsSubViewModel(
+    private val statusProvider: StatusProvider,
     private val userUriInsights: UserUriInsights,
     private val accountManager: ActivityPubAccountManager,
-    private val statusInteractive: StatusInteractiveUseCase,
-    private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val notificationsRepo: NotificationsRepo,
     private val clientManager: ActivityPubClientManager,
-    private val votePoll: VotePollUseCase,
-) : SubViewModel() {
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
+) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
+    statusProvider = statusProvider,
+    buildStatusUiState = buildStatusUiState,
+) {
 
     private val role: IdentityRole
         get() = IdentityRole(userUriInsights.uri, null)
@@ -60,12 +57,26 @@ class ActivityPubNotificationsSubViewModel(
 
     val uiState = loadableController.uiState
 
-    private val _snackMessage = MutableSharedFlow<TextString>()
-    val snackMessage: SharedFlow<TextString> = _snackMessage.asSharedFlow()
-
     private var loggedAccount: ActivityPubLoggedAccount? = null
 
     init {
+        initInteractiveHandler(
+            coroutineScope = viewModelScope,
+            roleResolver = DynamicAllInOneRoleResolver {
+                role
+            },
+            onInteractiveHandleResult = { interactiveResult ->
+                when (interactiveResult) {
+                    is InteractiveHandleResult.UpdateStatus -> {
+                        updateStatus(interactiveResult.status)
+                    }
+
+                    is InteractiveHandleResult.UpdateFollowState -> {
+                        // no-op
+                    }
+                }
+            }
+        )
         loadableController.initData(
             getDataFromServer = {
                 getDataFromServer(_uiState.value.inMentionsTab)
@@ -146,25 +157,7 @@ class ActivityPubNotificationsSubViewModel(
         return account
     }
 
-    fun onInteractive(
-        statusNotification: NotificationUiState,
-        uiInteraction: StatusUiInteraction,
-    ) {
-        val status = statusNotification.status ?: return
-        val interaction = uiInteraction.statusInteraction ?: return
-        launchInViewModel {
-            statusInteractive(role, status.status, interaction)
-                .map { activityPubStatusAdapter.toStatus(it, status.status.platform) }
-                .map { buildStatusUiState(it) }
-                .onSuccess { newStatus ->
-                    updateStatus(statusNotification, newStatus)
-                }.onFailure {
-                    _snackMessage.emit(textOf(it.message.orEmpty()))
-                }
-        }
-    }
-
-    private suspend fun updateStatus(statusNotification: NotificationUiState, newStatus: StatusUiState) {
+    private suspend fun updateStatus(newStatus: StatusUiState) {
         _uiState.update { current ->
             current.copy(
                 dataList = current.dataList.map {
@@ -176,9 +169,11 @@ class ActivityPubNotificationsSubViewModel(
                 }
             )
         }
-        statusNotification.toNotification()
-            .copy(status = newStatus.status)
-            .let { notificationsRepo.updateNotifications(it, userUriInsights.uri) }
+
+        notificationsRepo.updateNotificationStatus(
+            accountOwnershipUri = userUriInsights.uri,
+            status = newStatus.status
+        )
     }
 
     fun onRejectClick(notification: NotificationUiState) {
@@ -187,7 +182,7 @@ class ActivityPubNotificationsSubViewModel(
         launchInViewModel {
             accountRepo.rejectFollowRequest(accountId)
                 .onFailure {
-                    _snackMessage.emit(textOf(it.message.orEmpty()))
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
                 }.onSuccess {
                     onRefresh(true)
                 }
@@ -200,22 +195,9 @@ class ActivityPubNotificationsSubViewModel(
         launchInViewModel {
             accountRepo.authorizeFollowRequest(accountId)
                 .onFailure {
-                    _snackMessage.emit(textOf(it.message.orEmpty()))
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
                 }.onSuccess {
                     onRefresh(true)
-                }
-        }
-    }
-
-    fun onVoted(statusNotification: NotificationUiState, options: List<BlogPoll.Option>) {
-        val status = statusNotification.status?.status ?: return
-        launchInViewModel {
-            votePoll(role, status, options)
-                .map { buildStatusUiState(it) }
-                .onSuccess {
-                    updateStatus(statusNotification, it)
-                }.onFailure {
-                    _snackMessage.emit(textOf(it.message.orEmpty()))
                 }
         }
     }
@@ -226,20 +208,9 @@ class ActivityPubNotificationsSubViewModel(
             type = type,
             createdAt = createdAt,
             account = account,
-            accountUri = accountEntityAdapter.toUri(account),
+            author = accountEntityAdapter.toAuthor(account),
             displayTime = formatStatusDisplayTime(createdAt.time),
             status = status?.let { buildStatusUiState(it) },
-            relationshipSeveranceEvent = relationshipSeveranceEvent,
-        )
-    }
-
-    private fun NotificationUiState.toNotification(): StatusNotification {
-        return StatusNotification(
-            id = id,
-            type = type,
-            createdAt = createdAt,
-            account = account,
-            status = status?.status,
             relationshipSeveranceEvent = relationshipSeveranceEvent,
         )
     }

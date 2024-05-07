@@ -5,15 +5,15 @@ import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
-import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.commonbiz.shared.feeds.DynamicAllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.handle
+import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
+import com.zhangke.utopia.status.StatusProvider
+import com.zhangke.utopia.status.account.LoggedAccount
+import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -54,17 +54,12 @@ class SearchBarViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
-    inner class RoleResolver : DynamicAllInOneRoleResolver() {
-
-        override fun getRole(): IdentityRole {
-            return role
-        }
-    }
-
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = RoleResolver(),
+            roleResolver = DynamicAllInOneRoleResolver {
+                role
+            },
             onInteractiveHandleResult = { it.handleResult() },
         )
     }

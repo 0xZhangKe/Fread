@@ -1,24 +1,21 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
-import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
+import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -29,7 +26,10 @@ class StatusContextSubViewModel(
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val role: IdentityRole,
     private val anchorStatus: Status,
-) : SubViewModel() {
+) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
+    statusProvider = statusProvider,
+    buildStatusUiState = buildStatusUiState,
+) {
 
     private val _uiState = MutableStateFlow(
         StatusContextUiState(
@@ -40,13 +40,22 @@ class StatusContextSubViewModel(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val _errorMessageFlow = MutableSharedFlow<TextString>()
-    val errorMessageFlow: SharedFlow<TextString> = _errorMessageFlow
-
-    private val _openScreenFlow = MutableSharedFlow<String>()
-    val openScreenFlow: SharedFlow<String> get() = _openScreenFlow
-
     init {
+        initInteractiveHandler(
+            coroutineScope = viewModelScope,
+            roleResolver = AllInOneRoleResolver(role),
+            onInteractiveHandleResult = {
+                when (it) {
+                    is InteractiveHandleResult.UpdateStatus -> {
+                        updateStatus(it.status)
+                    }
+
+                    is InteractiveHandleResult.UpdateFollowState -> {
+                        // no-op
+                    }
+                }
+            },
+        )
         launchInViewModel {
             val fixedAnchorStatus = refactorToNewBlog(anchorStatus)
             _uiState.value = _uiState.value.copy(
@@ -95,57 +104,13 @@ class StatusContextSubViewModel(
         return contextStatus
     }
 
-    fun onInteractive(status: Status, uiInteraction: StatusUiInteraction) {
-        launchInViewModel {
-            if (uiInteraction is StatusUiInteraction.Comment) {
-                statusProvider.screenProvider
-                    .getReplyBlogScreen(role, status.intrinsicBlog)
-                    ?.let {
-                        _openScreenFlow.emit(it)
-                    }
-                return@launchInViewModel
-            }
-            val interaction = uiInteraction.statusInteraction ?: return@launchInViewModel
-            statusProvider.statusResolver
-                .interactive(role, status, interaction)
-                .onSuccess { newStatus ->
-                    updateStatus(newStatus)
-                }.onFailure { e ->
-                    e.message?.takeIf { it.isNotEmpty() }
-                        ?.let { message ->
-                            _errorMessageFlow.emit(textOf(message))
-                        }
-                }
-        }
-    }
-
-    fun onUserInfoClick(author: BlogAuthor) {
-        statusProvider.screenProvider
-            .getUserDetailRoute(role, author.uri)
-            ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
-    }
-
-    fun onVote(status: Status, votedOption: List<BlogPoll.Option>) {
-        launchInViewModel {
-            statusProvider.statusResolver.votePoll(role, status, votedOption)
-                .onSuccess {
-                    updateStatus(it)
-                }.onFailure { e ->
-                    e.message?.takeIf { it.isNotEmpty() }
-                        ?.let { message ->
-                            _errorMessageFlow.emit(textOf(message))
-                        }
-                }
-        }
-    }
-
-    private suspend fun updateStatus(newStatus: Status) {
-        feedsRepo.updateStatus(newStatus)
+    private suspend fun updateStatus(newStatus: StatusUiState) {
+        feedsRepo.updateStatus(newStatus.status)
         _uiState.update { state ->
             val contextStatus = state.contextStatus.map { item ->
                 item.copy(
-                    status = if (item.status.status.id == newStatus.id) {
-                        buildStatusUiState(newStatus)
+                    status = if (item.status.status.id == newStatus.status.id) {
+                        newStatus
                     } else {
                         item.status
                     }

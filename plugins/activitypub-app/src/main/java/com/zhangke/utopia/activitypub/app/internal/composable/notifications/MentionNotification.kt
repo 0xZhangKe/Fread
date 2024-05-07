@@ -23,7 +23,6 @@ fun MentionNotification(
         )
         return
     }
-    val navigator = LocalNavigator.currentOrThrow
     WholeBlogUi(
         modifier = Modifier
             .fillMaxWidth()

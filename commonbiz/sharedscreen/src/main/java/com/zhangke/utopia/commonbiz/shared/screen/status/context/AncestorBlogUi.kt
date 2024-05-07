@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.Surface
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -18,12 +18,10 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.endPadding
 import com.zhangke.framework.composable.startPadding
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 import com.zhangke.utopia.status.ui.BlogContent
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
@@ -34,18 +32,15 @@ import com.zhangke.utopia.status.ui.threads.StatusThread
 @Composable
 fun AncestorBlogUi(
     modifier: Modifier,
-    blog: Blog,
+    status: StatusUiState,
     displayTime: String,
     isFirst: Boolean,
     style: StatusStyle = defaultStatusStyle(),
     indexInList: Int,
-    bottomPanelInteractions: List<StatusUiInteraction>,
-    moreInteractions: List<StatusUiInteraction>,
-    reblogAuthor: BlogAuthor? = null,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
     onMediaClick: OnBlogMediaClick,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
+    val blog = status.status.intrinsicBlog
     Surface(modifier = modifier.background(Color.Blue)) {
         ConstraintLayout(
             modifier = Modifier
@@ -85,8 +80,8 @@ fun AncestorBlogUi(
                         top.linkTo(upThread.bottom, 2.dp)
                         start.linkTo(parent.start)
                     },
-                reblogAvatar = reblogAuthor?.avatar,
                 authorAvatar = blog.author.avatar,
+                reblogAvatar = null,
             )
 
             StatusThread(modifier = Modifier.constrainAs(downThread) {
@@ -138,8 +133,10 @@ fun AncestorBlogUi(
                     end.linkTo(parent.end, style.iconEndPadding)
                     top.linkTo(name.top)
                 },
-                moreActionList = moreInteractions,
-                onActionClick = onInteractive,
+                moreActionList = status.moreInteractions,
+                onActionClick = {
+                    composedStatusInteraction.onStatusInteractive(status.status, it)
+                },
             )
 
             Column(modifier = Modifier
@@ -155,14 +152,20 @@ fun AncestorBlogUi(
                     style = style.blogStyle,
                     indexOfFeeds = indexInList,
                     onMediaClick = onMediaClick,
-                    onVoted = onVoted,
+                    onVoted = {
+                        composedStatusInteraction.onVoted(status.status, it)
+                    },
+                    onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
+                    onMentionClick = composedStatusInteraction::onMentionClick,
                 )
                 StatusBottomInteractionPanel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .endPadding(style.containerPaddings),
-                    interactions = bottomPanelInteractions,
-                    onInteractive = onInteractive,
+                    interactions = status.bottomInteractions,
+                    onInteractive = {
+                        composedStatusInteraction.onStatusInteractive(status.status, it)
+                    },
                 )
                 Spacer(
                     modifier = Modifier

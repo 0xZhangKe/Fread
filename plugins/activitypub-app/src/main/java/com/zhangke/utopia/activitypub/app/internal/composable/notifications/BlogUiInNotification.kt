@@ -4,24 +4,18 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.onStatusMediaClick
-import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
-import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.HashtagInStatus
-import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.ui.BlogContent
 import com.zhangke.utopia.status.ui.BlogUi
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
-import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 
 @Composable
 fun OnlyBlogContentUi(
@@ -78,7 +72,7 @@ fun WholeBlogUi(
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,
             onInteractive = {
-                composedStatusInteraction.onInteractive(statusUiState.status, it)
+                composedStatusInteraction.onStatusInteractive(statusUiState.status, it)
             },
             onUserInfoClick = composedStatusInteraction::onUserInfoClick,
             onMediaClick = { event ->

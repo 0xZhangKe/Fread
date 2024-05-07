@@ -15,31 +15,22 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
-import com.zhangke.utopia.activitypub.app.internal.screen.user.UserDetailRoute
-import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
 @Composable
 fun FollowNotification(
     notification: NotificationUiState,
     style: NotificationStyle,
-    onUserInfoClick:
+    onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
     Row(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                navigator.pushDestination(
-                    UserDetailRoute.buildRoute(role, notification.accountUri)
-                )
+                onUserInfoClick(notification.author)
             }
             .padding(vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,

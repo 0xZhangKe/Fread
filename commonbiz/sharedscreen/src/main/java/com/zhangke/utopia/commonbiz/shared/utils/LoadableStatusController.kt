@@ -3,25 +3,16 @@ package com.zhangke.utopia.commonbiz.shared.utils
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
-import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.utopia.commonbiz.shared.feeds.handle
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.richtext.preParseRichText
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
 
 open class LoadableStatusController(
     protected val coroutineScope: CoroutineScope,
-    private val interactiveHandler: InteractiveHandler?,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
 ) {
 
@@ -30,7 +21,7 @@ open class LoadableStatusController(
     val mutableUiState = loadableController.mutableUiState
     val uiState = loadableController.uiState
 
-    val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
+    private val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
     val errorMessageFlow: SharedFlow<TextString> = mutableErrorMessageFlow
 
     private val _openScreenFlow = MutableSharedFlow<Screen>()
@@ -78,41 +69,5 @@ open class LoadableStatusController(
                 list.map { buildStatusUiState(it) }
             }
         }
-    }
-
-    open fun onInteractive(
-        role: IdentityRole,
-        status: Status,
-        uiInteraction: StatusUiInteraction,
-    ) {
-        interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
-        coroutineScope.launch {
-            interactiveHandler.onStatusInteractive(role, status, uiInteraction).handleResult()
-        }
-    }
-
-    open fun onUserInfoClick(
-        role: IdentityRole,
-        blogAuthor: BlogAuthor,
-    ) {
-        interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
-        coroutineScope.launch {
-            interactiveHandler.onUserInfoClick(role, blogAuthor).handleResult()
-        }
-    }
-
-    open fun onVoted(role: IdentityRole, status: Status, votedOption: List<BlogPoll.Option>) {
-        interactiveHandler ?: throw IllegalArgumentException("InteractiveHandler is not provided")
-        coroutineScope.launch {
-            interactiveHandler.onVoted(role, status, votedOption).handleResult()
-        }
-    }
-
-    private suspend fun InteractiveHandleResult.handleResult() {
-        com.zhangke.utopia.commonbiz.shared.feeds.handle(
-            messageFlow = mutableErrorMessageFlow,
-            openScreenFlow = _openScreenFlow,
-            mutableUiState = loadableController.mutableUiState,
-        )
     }
 }

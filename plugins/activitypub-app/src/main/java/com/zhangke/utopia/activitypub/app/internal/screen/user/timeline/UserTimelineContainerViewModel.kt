@@ -7,6 +7,7 @@ import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -20,6 +21,7 @@ class UserTimelineContainerViewModel @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ContainerViewModel<UserTimelineViewModel, UserTimelineContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): UserTimelineViewModel {
@@ -30,6 +32,7 @@ class UserTimelineContainerViewModel @Inject constructor(
             platformRepo = platformRepo,
             statusAdapter = statusAdapter,
             clientManager = clientManager,
+            refactorToNewBlog = refactorToNewBlog,
             role = params.role,
             webFinger = params.webFinger,
         )

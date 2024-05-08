@@ -11,6 +11,7 @@ import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
@@ -30,6 +31,7 @@ import kotlinx.coroutines.launch
 class FeedsViewModelController(
     statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : IFeedsViewModelController {
 
     private lateinit var coroutineScope: CoroutineScope
@@ -41,6 +43,7 @@ class FeedsViewModelController(
     private val interactiveHandler = InteractiveHandler(
         statusProvider = statusProvider,
         buildStatusUiState = buildStatusUiState,
+        refactorToNewBlog = refactorToNewBlog,
     )
 
     override val mutableUiState = MutableStateFlow(

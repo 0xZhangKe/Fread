@@ -18,6 +18,7 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
@@ -41,11 +42,13 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
+    refactorToNewBlog: RefactorToNewBlogUseCase,
     @Assisted private val role: IdentityRole,
     @Assisted private val hashtag: String,
 ) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     @AssistedFactory

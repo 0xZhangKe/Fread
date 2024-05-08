@@ -4,6 +4,7 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -14,6 +15,7 @@ class MixedContentViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ContainerViewModel<MixedContentSubViewModel, MixedContentViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): MixedContentSubViewModel {
@@ -23,6 +25,7 @@ class MixedContentViewModel @Inject constructor(
             buildStatusUiState = buildStatusUiState,
             statusProvider = statusProvider,
             configId = params.configId,
+            refactorToNewBlog = refactorToNewBlog,
         )
     }
 

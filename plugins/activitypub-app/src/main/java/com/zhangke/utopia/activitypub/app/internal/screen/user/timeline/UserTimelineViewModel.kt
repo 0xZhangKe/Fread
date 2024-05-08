@@ -11,6 +11,7 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
@@ -23,11 +24,13 @@ class UserTimelineViewModel @AssistedInject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
     val role: IdentityRole,
     val webFinger: WebFinger,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     init {

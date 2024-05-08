@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.lists
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -13,12 +14,14 @@ class ActivityPubListStatusViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val listStatusRepo: ListStatusRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ContainerViewModel<ActivityPubListStatusSubViewModel, ActivityPubListStatusViewModel.Params>() {
 
     override fun createSubViewModel(params: Params) = ActivityPubListStatusSubViewModel(
         listStatusRepo = listStatusRepo,
         statusProvider = statusProvider,
         buildStatusUiState = buildStatusUiState,
+        refactorToNewBlog = refactorToNewBlog,
         role = params.role,
         listId = params.listId,
     )

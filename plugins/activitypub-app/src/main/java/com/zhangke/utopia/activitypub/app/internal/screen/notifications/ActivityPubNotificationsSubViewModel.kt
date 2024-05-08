@@ -19,6 +19,7 @@ import com.zhangke.utopia.commonbiz.shared.feeds.DynamicAllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import kotlinx.coroutines.flow.update
@@ -32,9 +33,11 @@ class ActivityPubNotificationsSubViewModel(
     private val notificationsRepo: NotificationsRepo,
     private val clientManager: ActivityPubClientManager,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     private val role: IdentityRole

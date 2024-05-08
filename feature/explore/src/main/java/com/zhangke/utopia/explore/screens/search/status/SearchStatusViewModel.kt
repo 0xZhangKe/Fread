@@ -10,6 +10,7 @@ import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
@@ -23,10 +24,12 @@ import kotlinx.coroutines.flow.StateFlow
 class SearchStatusViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
     buildStatusUiState: BuildStatusUiStateUseCase,
+    refactorToNewBlog: RefactorToNewBlogUseCase,
     @Assisted val role: IdentityRole,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     @AssistedFactory

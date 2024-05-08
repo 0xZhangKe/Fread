@@ -9,6 +9,7 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
@@ -17,11 +18,13 @@ class ActivityPubListStatusSubViewModel(
     private val statusProvider: StatusProvider,
     private val listStatusRepo: ListStatusRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
+    refactorToNewBlog: RefactorToNewBlogUseCase,
     private val role: IdentityRole,
     private val listId: String,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     init {

@@ -54,7 +54,7 @@ fun BlogImageMedias(
     onMediaClick: OnBlogMediaClick,
 ) {
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
-    val mediaPosition: Array<LayoutCoordinates?> = remember {
+    val mediaPosition: Array<LayoutCoordinates?> = remember(mediaList) {
         arrayOfNulls(mediaList.size)
     }
     BlogImageLayout(

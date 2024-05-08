@@ -10,6 +10,7 @@ import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.handle
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
@@ -26,9 +27,11 @@ class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
     buildStatusUiState: BuildStatusUiStateUseCase,
+    refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     var selectedAccount: LoggedAccount? = null

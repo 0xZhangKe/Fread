@@ -8,6 +8,7 @@ import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
@@ -25,6 +26,7 @@ import kotlinx.coroutines.launch
 class InteractiveHandler(
     private val statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : IInteractiveHandler {
 
     override val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
@@ -125,7 +127,7 @@ class InteractiveHandler(
             mutableOpenScreenFlow.emit(
                 StatusContextScreen(
                     role = roleResolver.resolveRole(status.intrinsicBlog.author),
-                    status = status,
+                    status = refactorToNewBlog(status),
                 )
             )
         }

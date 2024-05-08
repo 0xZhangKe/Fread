@@ -29,6 +29,7 @@ class StatusContextSubViewModel(
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     private val _uiState = MutableStateFlow(

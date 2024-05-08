@@ -19,7 +19,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadErrorLineItem
 import com.zhangke.framework.composable.LoadingLineItem
@@ -27,7 +27,6 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.framework.voyager.pushDestination
 import com.zhangke.utopia.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.model.IdentityRole
@@ -35,9 +34,9 @@ import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 
-class StatusContextScreen(
-    private val role: IdentityRole,
-    private val status: Status,
+data class StatusContextScreen(
+    val role: IdentityRole,
+    val status: Status,
 ) : Screen {
 
     @Composable
@@ -60,9 +59,7 @@ class StatusContextScreen(
             onBackClick = navigator::pop,
             composedStatusInteraction = viewModel.composedStatusInteraction,
         )
-        ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.push(it)
-        }
+        ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
 
@@ -107,7 +104,7 @@ class StatusContextScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    composedStatusInteraction.onStatusClick(status)
+                                    composedStatusInteraction.onStatusClick(statusInContext.status.status)
                                 },
                             statusInContext = statusInContext,
                             indexInList = index,
@@ -140,7 +137,6 @@ class StatusContextScreen(
         onMediaClick: OnBlogMediaClick,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
-        val blog = statusInContext.status.status.intrinsicBlog
         when (statusInContext.type) {
             StatusInContextType.ANCESTOR -> AncestorBlogUi(
                 modifier = modifier,

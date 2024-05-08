@@ -1,6 +1,5 @@
 package com.zhangke.utopia.commonbiz.shared.composable
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -22,9 +21,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.composable.textString
@@ -49,10 +47,7 @@ fun FeedsContent(
     composedStatusInteraction: ComposedStatusInteraction,
     nestedScrollConnection: NestedScrollConnection?,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
-    ConsumeFlow(openScreenFlow) {
-        navigator.push(it)
-    }
+    ConsumeOpenScreenFlow(openScreenFlow)
     if (uiState.feeds.isEmpty()) {
         if (uiState.showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
@@ -96,10 +91,6 @@ fun FeedsContent(
             }
             ConsumeFlow(newStatusNotifyFlow) {
                 delay(1000)
-                Log.d(
-                    "U_TEST",
-                    "UI: get new status, firstVisibleItemIndex: ${state.lazyListState.firstVisibleItemIndex}",
-                )
                 if (state.lazyListState.firstVisibleItemIndex > 0) {
                     showNewStatusNotifyBar = true
                 }

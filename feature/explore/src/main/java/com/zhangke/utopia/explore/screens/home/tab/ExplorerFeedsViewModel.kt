@@ -10,6 +10,7 @@ import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -23,9 +24,11 @@ class ExplorerFeedsViewModel(
     private val statusProvider: StatusProvider,
     private val getExplorerItem: GetExplorerItemUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     private val loadController = CommonLoadableController<ExplorerItem>(viewModelScope)

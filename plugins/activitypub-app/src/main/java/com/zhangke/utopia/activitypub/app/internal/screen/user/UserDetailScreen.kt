@@ -58,7 +58,7 @@ import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(UserDetailRoute.ROUTE)
-class UserDetailScreen(
+data class UserDetailScreen(
     @Router val route: String = "",
 ) : Screen {
 

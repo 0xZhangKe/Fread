@@ -13,6 +13,9 @@ fun ConsumeOpenScreenFlow(
     navigator: Navigator = LocalNavigator.currentOrThrow,
 ) {
     ConsumeFlow(openScreenFlow) {
-        navigator.push(it)
+        val lastItem = navigator.items.lastOrNull()
+        if (lastItem != it) {
+            navigator.push(it)
+        }
     }
 }

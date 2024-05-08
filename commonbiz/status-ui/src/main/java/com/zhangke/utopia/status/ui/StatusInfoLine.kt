@@ -53,7 +53,9 @@ fun StatusInfoLine(
     reblogAuthor: BlogAuthor? = null,
 ) {
     val infoStyle = style.statusInfoStyle
-    ConstraintLayout(modifier = modifier.startPadding(style.containerPaddings)) {
+    ConstraintLayout(modifier = modifier
+        .clickable { onUserInfoClick(blogAuthor) }
+        .startPadding(style.containerPaddings)) {
         val (
             avatar,
             upThread,
@@ -124,9 +126,6 @@ fun StatusInfoLine(
 
         Text(
             modifier = Modifier
-                .clickable {
-                    onUserInfoClick(blogAuthor)
-                }
                 .constrainAs(name) {
                     start.linkTo(avatar.end, infoStyle.avatarToNamePadding)
                     end.linkTo(moreOptions.start, 2.dp)
@@ -152,9 +151,6 @@ fun StatusInfoLine(
 
         Text(
             modifier = Modifier
-                .clickable {
-                    onUserInfoClick(blogAuthor)
-                }
                 .constrainAs(userId) {
                     baseline.linkTo(dateTime.baseline)
                     start.linkTo(dateTime.end, infoStyle.timeToIdPadding)
@@ -217,9 +213,10 @@ fun BlogAuthorAvatar(
         mutableStateOf(false)
     }
     AsyncImage(
-        modifier = modifier
+        modifier = Modifier
             .clip(CircleShape)
-            .utopiaPlaceholder(!loadSuccess),
+            .utopiaPlaceholder(!loadSuccess)
+            .then(modifier),
         model = imageUrl,
         imageLoader = LocalContext.current.imageLoader,
         onState = {

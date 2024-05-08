@@ -8,6 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.utopia.activitypub.app.internal.repo.NotificationsRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -21,6 +22,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
     private val notificationsRepo: NotificationsRepo,
     private val clientManager: ActivityPubClientManager,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ContainerViewModel<ActivityPubNotificationsSubViewModel, ActivityPubNotificationsViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubNotificationsSubViewModel {
@@ -33,6 +35,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
             notificationsRepo = notificationsRepo,
             clientManager = clientManager,
             accountEntityAdapter = accountEntityAdapter,
+            refactorToNewBlog = refactorToNewBlog,
         )
     }
 

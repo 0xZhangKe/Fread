@@ -10,14 +10,10 @@ import com.zhangke.utopia.status.model.Mention
 typealias OnLinkTargetClick = (Context, LinkSpan.LinkTarget) -> Unit
 
 class LinkSpan(
-    private val linkTarget: LinkTarget,
+    val linkTarget: LinkTarget,
 ) : ClickableSpan() {
 
-    var onLinkClick: (OnLinkTargetClick)? = null
-
-    override fun onClick(widget: View) {
-        onLinkClick?.invoke(widget.context, linkTarget)
-    }
+    override fun onClick(widget: View) {}
 
     override fun updateDrawState(tp: TextPaint) {
         tp.setColor(tp.linkColor)

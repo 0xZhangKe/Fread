@@ -11,6 +11,7 @@ import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IdentityRoleResolver
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.ContentConfig
@@ -25,10 +26,12 @@ class MixedContentSubViewModel(
     private val feedsRepo: FeedsRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val configId: Long,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
 ) {
 
     private val config = StatusConfigurationDefault.config

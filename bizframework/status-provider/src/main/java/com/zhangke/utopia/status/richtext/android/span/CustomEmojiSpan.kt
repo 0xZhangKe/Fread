@@ -14,20 +14,22 @@ import com.zhangke.utopia.status.model.Emoji
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 
-class CustomEmojiSpan(
-    private val emoji: Emoji,
+class CustomEmojiSpan(private val emoji: Emoji) : ReplacementSpan() {
 
-    ) : ReplacementSpan() {
+    val needLoad: Boolean get() = drawable == null && !loading
 
+    private var loading = false
     private var drawable: Drawable? = null
 
     suspend fun loadDrawable(context: Context): Boolean = withContext(Dispatchers.IO) {
+        loading = true
         Log.d("U_TEST", "CustomEmojiSpan loadDrawable: $emoji")
         val request = ImageRequest.Builder(context)
             .data(emoji.url)
             .build()
         val result = context.imageLoader.execute(request)
         Log.d("U_TEST", "CustomEmojiSpan loadDrawable: $emoji, result: $result")
+        loading = false
         if (result is SuccessResult) {
             this@CustomEmojiSpan.drawable = result.drawable
         }

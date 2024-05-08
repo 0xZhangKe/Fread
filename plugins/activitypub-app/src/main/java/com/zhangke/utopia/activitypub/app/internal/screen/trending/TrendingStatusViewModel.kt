@@ -5,6 +5,7 @@ import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdap
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,6 +18,7 @@ class TrendingStatusViewModel @Inject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ContainerViewModel<TrendingStatusSubViewModel, TrendingStatusViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): TrendingStatusSubViewModel {
@@ -24,6 +26,7 @@ class TrendingStatusViewModel @Inject constructor(
             statusProvider = statusProvider,
             clientManager = clientManager,
             statusAdapter = statusAdapter,
+            refactorToNewBlog = refactorToNewBlog,
             buildStatusUiState = buildStatusUiState,
             platformRepo = platformRepo,
             role = params.role,

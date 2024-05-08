@@ -39,13 +39,10 @@ class ActivityPubTimelineTab(
             uiState = uiState,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onInteractive = viewModel::onStatusInteractive,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onUserInfoClick = viewModel::onUserInfoClick,
-            onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
-            onStatusClick = viewModel::onStatusClick,
         )
     }
 }

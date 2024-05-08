@@ -37,6 +37,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.framework.composable.TextString
@@ -47,12 +48,9 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.commonbiz.shared.feeds.CommonFeedsUiState
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(HashtagTimelineRoute.ROUTE)
@@ -79,13 +77,11 @@ class HashtagTimelineScreen(
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onInteractive = viewModel::onStatusInteractive,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
             onFollowClick = viewModel::onFollowClick,
             onUnfollowClick = viewModel::onUnfollowClick,
-            onVoted = viewModel::onVoted,
-            onUserInfoClick = viewModel::onUserInfoClick,
-            onStatusClick = viewModel::onStatusClick,
         )
+        ConsumeSnackbarFlow(LocalSnackbarHostState.current, viewModel.errorMessageFlow)
     }
 
     @OptIn(ExperimentalMotionApi::class)
@@ -99,12 +95,9 @@ class HashtagTimelineScreen(
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
+        composedStatusInteraction: ComposedStatusInteraction,
         onFollowClick: () -> Unit,
         onUnfollowClick: () -> Unit,
-        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
-        onUserInfoClick: (BlogAuthor) -> Unit,
-        onStatusClick: (Status) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
         val contentCanScrollBackward = remember {
@@ -133,12 +126,9 @@ class HashtagTimelineScreen(
                         uiState = statusUiState,
                         openScreenFlow = openScreenFlow,
                         newStatusNotifyFlow = newStatusNotifyFlow,
-                        onInteractive = onInteractive,
+                        composedStatusInteraction = composedStatusInteraction,
                         onRefresh = onRefresh,
                         onLoadMore = onLoadMore,
-                        onUserInfoClick = onUserInfoClick,
-                        onVoted = onVoted,
-                        onStatusClick = onStatusClick,
                         nestedScrollConnection = null,
                     )
                     SnackbarHost(

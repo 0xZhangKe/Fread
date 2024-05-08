@@ -7,6 +7,8 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
@@ -28,6 +30,7 @@ class UserTimelineTab(
 
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel =
             getViewModel<UserTimelineContainerViewModel>().getSubViewModel(role, userWebFinger)
         val uiState by viewModel.uiState.collectAsState()
@@ -35,13 +38,10 @@ class UserTimelineTab(
             uiState = uiState,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onInteractive = viewModel::onStatusInteractive,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onUserInfoClick = viewModel::onUserInfoClick,
-            onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
-            onStatusClick = viewModel::onStatusClick,
         )
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

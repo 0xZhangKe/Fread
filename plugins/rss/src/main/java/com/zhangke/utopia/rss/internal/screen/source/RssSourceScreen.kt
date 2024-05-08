@@ -119,6 +119,8 @@ class RssSourceScreen(
                     mentions = emptyList(),
                     emojis = emptyList(),
                     tags = emptyList(),
+                    onHashtagClick = {},
+                    onMentionClick = {},
                 )
 
                 Spacer(modifier = Modifier.height(22.dp))

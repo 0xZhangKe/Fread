@@ -37,15 +37,11 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.pxToDp
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.explore.model.ExplorerItem
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
-import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.RecommendAuthorUi
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
@@ -79,12 +75,7 @@ class ExplorerFeedsTab(
             uiState = uiState,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onInteractive = viewModel::onInteractive,
-            onUserInfoClick = viewModel::onUserInfoClick,
-            onVoted = viewModel::onVoted,
-            onHashtagClick = viewModel::onHashtagClick,
-            onFollowClick = viewModel::onFollowClick,
-            onUnfollowClick = viewModel::onUnfollowClick,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
         )
     }
 
@@ -94,12 +85,7 @@ class ExplorerFeedsTab(
         uiState: CommonLoadableUiState<ExplorerItem>,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onUserInfoClick: (BlogAuthor) -> Unit,
-        onFollowClick: (BlogAuthor) -> Unit,
-        onHashtagClick: (Hashtag) -> Unit,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
-        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
-        onUnfollowClick: (BlogAuthor) -> Unit,
+        composedStatusInteraction: ComposedStatusInteraction,
     ) {
         val errorMessage = uiState.errorMessage?.let { textString(it) }
         var containerHeight: Dp? by remember {
@@ -135,13 +121,8 @@ class ExplorerFeedsTab(
                         modifier = Modifier.fillMaxWidth(),
                         item = item,
                         role = role,
-                        onUserInfoClick = onUserInfoClick,
-                        onInteractive = onInteractive,
+                        composedStatusInteraction = composedStatusInteraction,
                         indexInList = index,
-                        onVoted = onVoted,
-                        onFollowClick = onFollowClick,
-                        onHashtagClick = onHashtagClick,
-                        onUnfollowClick = onUnfollowClick,
                     )
                 }
 
@@ -174,12 +155,7 @@ class ExplorerFeedsTab(
         item: ExplorerItem,
         role: IdentityRole?,
         indexInList: Int,
-        onUserInfoClick: (BlogAuthor) -> Unit,
-        onInteractive: (Status, StatusUiInteraction) -> Unit,
-        onVoted: (Status, List<BlogPoll.Option>) -> Unit,
-        onHashtagClick: (Hashtag) -> Unit,
-        onFollowClick: (BlogAuthor) -> Unit,
-        onUnfollowClick: (BlogAuthor) -> Unit,
+        composedStatusInteraction: ComposedStatusInteraction,
     ) {
         if (role == null) {
             Text(
@@ -193,11 +169,8 @@ class ExplorerFeedsTab(
                 FeedsStatusNode(
                     modifier = modifier,
                     status = item.status,
-                    role = role,
+                    composedStatusInteraction = composedStatusInteraction,
                     indexInList = indexInList,
-                    onInteractive = onInteractive,
-                    onUserInfoClick = onUserInfoClick,
-                    onVoted = onVoted,
                 )
             }
 
@@ -206,9 +179,7 @@ class ExplorerFeedsTab(
                     modifier = modifier,
                     author = item.user,
                     following = item.following,
-                    onInfoClick = { onUserInfoClick(item.user) },
-                    onFollowClick = onFollowClick,
-                    onUnfollowClick = onUnfollowClick,
+                    composedStatusInteraction = composedStatusInteraction,
                 )
             }
 
@@ -216,7 +187,9 @@ class ExplorerFeedsTab(
                 HashtagUi(
                     modifier = modifier,
                     tag = item.hashtag,
-                    onClick = onHashtagClick,
+                    onClick = {
+                        composedStatusInteraction.onHashtagClick(it)
+                    },
                 )
             }
         }

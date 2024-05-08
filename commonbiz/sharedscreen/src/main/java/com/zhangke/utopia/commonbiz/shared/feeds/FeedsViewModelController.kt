@@ -18,6 +18,7 @@ import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -56,6 +57,9 @@ class FeedsViewModelController(
     override val mutableErrorMessageFlow = interactiveHandler.mutableErrorMessageFlow
     override val errorMessageFlow = interactiveHandler.errorMessageFlow
     override val mutableOpenScreenFlow = interactiveHandler.mutableOpenScreenFlow
+
+    override val composedStatusInteraction: ComposedStatusInteraction
+        get() = interactiveHandler.composedStatusInteraction
 
     private var initFeedsJob: Job? = null
     private var refreshJob: Job? = null
@@ -313,7 +317,7 @@ class FeedsViewModelController(
                     currentUiState.copy(feeds = newFeeds)
                 }
             },
-            followStateUpdater = { userUri, following ->
+            followStateUpdater = { _, _ ->
 
             }
         )

@@ -52,18 +52,12 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.utopia.explore.R
 import com.zhangke.utopia.explore.screens.search.SearchScreen
 import com.zhangke.utopia.status.account.LoggedAccount
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.Hashtag
-import com.zhangke.utopia.status.model.HashtagInStatus
-import com.zhangke.utopia.status.model.Mention
-import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.flow.Flow
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -147,13 +141,7 @@ fun Screen.ExplorerSearchBar(
             SearchContent(
                 uiState = uiState,
                 snackbarMessageFlow = viewModel.errorMessageFlow,
-                onUserInfoClick = viewModel::onUserInfoClick,
-                onInteractive = viewModel::onStatusInteractive,
-                onHashtagClick = viewModel::onHashtagClick,
-                onVoted = viewModel::onVoted,
-                onMentionClick = viewModel::onMentionClick,
-                onHashtagInStatusClick = viewModel::onHashtagClick,
-                onStatusClick = viewModel::onStatusClick,
+                composedStatusInteraction = viewModel.composedStatusInteraction,
             )
         }
     }
@@ -166,13 +154,7 @@ fun Screen.ExplorerSearchBar(
 private fun SearchContent(
     uiState: SearchBarUiState,
     snackbarMessageFlow: Flow<TextString>,
-    onUserInfoClick: (BlogAuthor) -> Unit,
-    onInteractive: (Status, StatusUiInteraction) -> Unit,
-    onHashtagClick: (Hashtag) -> Unit,
-    onVoted: (Status, List<BlogPoll.Option>) -> Unit,
-    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
-    onMentionClick: (BlogAuthor, Mention) -> Unit,
-    onStatusClick: (Status) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
 ) {
     Box(modifier = Modifier.fillMaxSize()) {
         val state = rememberLazyListState()
@@ -185,13 +167,7 @@ private fun SearchContent(
                     modifier = Modifier.fillMaxWidth(),
                     searchResult = item,
                     indexInList = index,
-                    onUserInfoClick = onUserInfoClick,
-                    onInteractive = onInteractive,
-                    onHashtagClick = onHashtagClick,
-                    onVoted = onVoted,
-                    onHashtagInStatusClick = onHashtagInStatusClick,
-                    onMentionClick = onMentionClick,
-                    onStatusClick = onStatusClick,
+                    composedStatusInteraction = composedStatusInteraction,
                 )
             }
         }

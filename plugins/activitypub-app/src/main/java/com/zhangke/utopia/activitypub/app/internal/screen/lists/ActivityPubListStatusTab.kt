@@ -34,11 +34,9 @@ class ActivityPubListStatusTab(
             uiState = uiState,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            onInteractive = viewModel::onInteractive,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onUserInfoClick = viewModel::onUserInfoClick,
-            onVoted = viewModel::onVoted,
             nestedScrollConnection = nestedScrollConnection,
         )
     }

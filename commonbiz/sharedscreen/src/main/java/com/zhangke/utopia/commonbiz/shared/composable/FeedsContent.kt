@@ -30,13 +30,10 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.commonbiz.shared.feeds.CommonFeedsUiState
+import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
 import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
-import com.zhangke.utopia.commonbiz.shared.feeds.CommonFeedsUiState
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
@@ -47,12 +44,9 @@ fun FeedsContent(
     uiState: CommonFeedsUiState,
     openScreenFlow: SharedFlow<Screen>,
     newStatusNotifyFlow: SharedFlow<Unit>,
-    onUserInfoClick: (BlogAuthor) -> Unit,
-    onInteractive: (Status, StatusUiInteraction) -> Unit,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
-    onVoted: (Status, List<BlogPoll.Option>) -> Unit,
-    onStatusClick: (Status) -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
     nestedScrollConnection: NestedScrollConnection?,
 ) {
     val navigator = LocalNavigator.currentOrThrow
@@ -92,11 +86,8 @@ fun FeedsContent(
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
                         status = item,
-                        onUserInfoClick = onUserInfoClick,
-                        onInteractive = onInteractive,
+                        composedStatusInteraction = composedStatusInteraction,
                         indexInList = index,
-                        onVoted = onVoted,
-                        onStatusClick = onStatusClick,
                     )
                 }
             }

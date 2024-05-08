@@ -79,7 +79,8 @@ fun CardInfoSection(
                         mentions = emptyList(),
                         emojis = emptyList(),
                         tags = emptyList(),
-                        baseUrl = null,
+                        onHashtagClick = {},
+                        onMentionClick = {},
                         maxLines = 3,
                     )
                 }

@@ -7,6 +7,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
@@ -88,6 +89,9 @@ interface ComposedStatusInteraction {
     fun onUserInfoClick(blogAuthor: BlogAuthor)
     fun onVoted(status: Status, blogPollOptions: List<BlogPoll.Option>)
     fun onHashtagInStatusClick(blogAuthor: BlogAuthor, hashtagInStatus: HashtagInStatus)
+    fun onHashtagClick(tag: Hashtag)
     fun onMentionClick(blogAuthor: BlogAuthor, mention: Mention)
     fun onStatusClick(status: Status)
+    fun onFollowClick(target: BlogAuthor)
+    fun onUnfollowClick(target: BlogAuthor)
 }

@@ -25,6 +25,7 @@ import com.zhangke.utopia.pages.main.MainPage
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.richtext.android.HtmlParser
 import com.zhangke.utopia.status.richtext.android.span.CustomEmojiSpan
 import com.zhangke.utopia.status.status.model.Status
@@ -130,7 +131,6 @@ class UtopiaScreen : Screen {
 //        }
 //    }
 
-
     private val detailRole = """
         {"accountUri":{"host":"activitypub.com","rawPath":"/user","queries":{"finger":"@AtomZ@m.cmx.im","baseUrl":"https://m.cmx.im"}},"baseUrl":null}
     """.trimIndent()
@@ -202,6 +202,7 @@ class UtopiaScreen : Screen {
                 HashtagInStatus(
                     name = "漂亮的小玩意",
                     url = "https://m.cmx.im/tags/%E6%BC%82%E4%BA%AE%E7%9A%84%E5%B0%8F%E7%8E%A9%E6%84%8F",
+                    protocol = StatusProviderProtocol("", ""),
                 )
             ),
             mentions = emptyList(),

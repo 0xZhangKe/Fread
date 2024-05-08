@@ -53,7 +53,7 @@ open class SearchHashtagViewModel @AssistedInject constructor(
 
     fun onHashtagClick(hashtag: Hashtag) {
         launchInViewModel {
-            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag)
+            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag.name, hashtag.protocol)
                 ?: return@launchInViewModel
             KRouter.route<Screen>(route)?.let {
                 _openScreenFlow.emit(it)

@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.user
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
@@ -16,6 +17,7 @@ class UserDetailContainerViewModel @Inject constructor(
     private val accountManager: ActivityPubAccountManager,
     private val userUriTransformer: UserUriTransformer,
     private val clientManager: ActivityPubClientManager,
+    private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) : ContainerViewModel<UserDetailViewModel, UserDetailContainerViewModel.Params>() {
 
@@ -25,6 +27,7 @@ class UserDetailContainerViewModel @Inject constructor(
             userUriTransformer = userUriTransformer,
             clientManager = clientManager,
             emojiEntityAdapter = emojiEntityAdapter,
+            accountEntityAdapter = accountEntityAdapter,
             role = params.role,
             userUri = params.userUri,
             webFinger = params.webFinger,

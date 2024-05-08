@@ -65,6 +65,18 @@ class InteractiveHandler(
         override fun onStatusClick(status: Status) {
             this@InteractiveHandler.onStatusClick(status)
         }
+
+        override fun onFollowClick(target: BlogAuthor) {
+            this@InteractiveHandler.onFollowClick(target)
+        }
+
+        override fun onUnfollowClick(target: BlogAuthor) {
+            this@InteractiveHandler.onUnfollowClick(target)
+        }
+
+        override fun onHashtagClick(tag: Hashtag) {
+            this@InteractiveHandler.onHashtagClick(tag)
+        }
     }
 
     override fun initInteractiveHandler(

@@ -21,7 +21,7 @@ fun FeedsStatusNode(
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            composedStatusInteraction.onStatusClick(status.status)
+            composedStatusInteraction.onStatusClick(status)
         },
         status = status,
         indexInList = indexInList,

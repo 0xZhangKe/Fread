@@ -1,9 +1,11 @@
 package com.zhangke.utopia.common.status.model
 
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 
 data class StatusUiState(
     val status: Status,
+    val role: IdentityRole,
     val displayTime: String,
     val bottomInteractions: List<StatusUiInteraction>,
     val moreInteractions: List<StatusUiInteraction>,

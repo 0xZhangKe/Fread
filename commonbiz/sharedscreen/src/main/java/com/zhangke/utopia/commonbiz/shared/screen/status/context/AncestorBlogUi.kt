@@ -1,6 +1,5 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -80,7 +79,7 @@ fun AncestorBlogUi(
                         start.linkTo(parent.start)
                     },
                 onClick = {
-                    composedStatusInteraction.onUserInfoClick(blog.author)
+                    composedStatusInteraction.onUserInfoClick(status.role, blog.author)
                 },
                 authorAvatar = blog.author.avatar,
                 reblogAvatar = null,
@@ -137,7 +136,7 @@ fun AncestorBlogUi(
                 },
                 moreActionList = status.moreInteractions,
                 onActionClick = {
-                    composedStatusInteraction.onStatusInteractive(status.status, it)
+                    composedStatusInteraction.onStatusInteractive(status, it)
                 },
             )
 
@@ -155,10 +154,14 @@ fun AncestorBlogUi(
                     indexOfFeeds = indexInList,
                     onMediaClick = onMediaClick,
                     onVoted = {
-                        composedStatusInteraction.onVoted(status.status, it)
+                        composedStatusInteraction.onVoted(status, it)
                     },
-                    onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
-                    onMentionClick = composedStatusInteraction::onMentionClick,
+                    onHashtagInStatusClick = {
+                        composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+                    },
+                    onMentionClick = {
+                        composedStatusInteraction.onMentionClick(status.role, it)
+                    },
                 )
                 StatusBottomInteractionPanel(
                     modifier = Modifier
@@ -166,7 +169,7 @@ fun AncestorBlogUi(
                         .endPadding(style.containerPaddings),
                     interactions = status.bottomInteractions,
                     onInteractive = {
-                        composedStatusInteraction.onStatusInteractive(status.status, it)
+                        composedStatusInteraction.onStatusInteractive(status, it)
                     },
                 )
                 Spacer(

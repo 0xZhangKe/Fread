@@ -36,7 +36,9 @@ fun SearchResultUi(
             HashtagUi(
                 modifier = modifier,
                 tag = searchResult.hashtag,
-                onClick = composedStatusInteraction::onHashtagClick,
+                onClick = {
+                    composedStatusInteraction.onHashtagClick(searchResult.role, it)
+                },
             )
         }
 
@@ -44,7 +46,9 @@ fun SearchResultUi(
             BlogAuthorUi(
                 modifier = modifier,
                 author = searchResult.author,
-                onClick = composedStatusInteraction::onUserInfoClick,
+                onClick = {
+                    composedStatusInteraction.onUserInfoClick(searchResult.role, it)
+                },
             )
         }
     }

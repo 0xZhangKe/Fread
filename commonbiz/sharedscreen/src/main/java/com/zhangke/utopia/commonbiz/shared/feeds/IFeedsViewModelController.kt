@@ -1,6 +1,7 @@
 package com.zhangke.utopia.commonbiz.shared.feeds
 
 import com.zhangke.utopia.common.feeds.model.RefreshResult
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -17,7 +18,7 @@ interface IFeedsViewModelController : IInteractiveHandler {
 
     fun initController(
         coroutineScope: CoroutineScope,
-        roleResolver: IdentityRoleResolver,
+        roleResolver: (Status) -> IdentityRole,
         loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>,
         loadNewFromServerFunction: suspend () -> Result<RefreshResult>,
         loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>,

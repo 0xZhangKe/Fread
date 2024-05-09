@@ -16,18 +16,16 @@ class ActivityPubSourceResolver @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
 ) : IStatusSourceResolver {
 
-    override suspend fun resolveSourceByUri(role: IdentityRole?, uri: FormalUri): Result<StatusSource?> {
+    override suspend fun resolveSourceByUri(
+        role: IdentityRole?,
+        uri: FormalUri
+    ): Result<StatusSource?> {
         val userUriInsights = userUriTransformer.parse(uri) ?: return Result.success(null)
         val finalRole = role ?: IdentityRole(userUriInsights.uri, null)
         return userRepo.getUserSource(
             role = finalRole,
             userUriInsights = userUriInsights,
         )
-    }
-
-    override fun resolveRoleByUri(uri: FormalUri): IdentityRole? {
-        val userUriInsights = userUriTransformer.parse(uri) ?: return null
-        return IdentityRole(userUriInsights.uri, null)
     }
 
     override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {

@@ -15,7 +15,6 @@ import com.zhangke.utopia.activitypub.app.internal.repo.NotificationsRepo
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.common.status.usecase.FormatStatusDisplayTimeUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.DynamicAllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
@@ -65,9 +64,6 @@ class ActivityPubNotificationsSubViewModel(
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = DynamicAllInOneRoleResolver {
-                role
-            },
             onInteractiveHandleResult = { interactiveResult ->
                 when (interactiveResult) {
                     is InteractiveHandleResult.UpdateStatus -> {
@@ -208,12 +204,13 @@ class ActivityPubNotificationsSubViewModel(
     private fun StatusNotification.toUiState(): NotificationUiState {
         return NotificationUiState(
             id = id,
+            role = role,
             type = type,
             createdAt = createdAt,
             account = account,
             author = accountEntityAdapter.toAuthor(account),
             displayTime = formatStatusDisplayTime(createdAt.time),
-            status = status?.let { buildStatusUiState(it) },
+            status = status?.let { buildStatusUiState(role, it) },
             relationshipSeveranceEvent = relationshipSeveranceEvent,
         )
     }

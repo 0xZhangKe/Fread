@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
@@ -153,17 +152,10 @@ class ExplorerFeedsTab(
     private fun ExplorerItemUi(
         modifier: Modifier,
         item: ExplorerItem,
-        role: IdentityRole?,
+        role: IdentityRole,
         indexInList: Int,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
-        if (role == null) {
-            Text(
-                modifier = Modifier.padding(16.dp),
-                text = "illegal state: baseUrl is null",
-            )
-            return
-        }
         when (item) {
             is ExplorerItem.ExplorerStatus -> {
                 FeedsStatusNode(
@@ -177,6 +169,7 @@ class ExplorerFeedsTab(
             is ExplorerItem.ExplorerUser -> {
                 RecommendAuthorUi(
                     modifier = modifier,
+                    role = role,
                     author = item.user,
                     following = item.following,
                     composedStatusInteraction = composedStatusInteraction,
@@ -188,7 +181,7 @@ class ExplorerFeedsTab(
                     modifier = modifier,
                     tag = item.hashtag,
                     onClick = {
-                        composedStatusInteraction.onHashtagClick(it)
+                        composedStatusInteraction.onHashtagClick(role, it)
                     },
                 )
             }

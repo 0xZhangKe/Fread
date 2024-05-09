@@ -6,7 +6,6 @@ import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
@@ -44,7 +43,6 @@ class StatusContextSubViewModel(
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = AllInOneRoleResolver(role),
             onInteractiveHandleResult = {
                 when (it) {
                     is InteractiveHandleResult.UpdateStatus -> {
@@ -92,15 +90,15 @@ class StatusContextSubViewModel(
         val contextStatus = mutableListOf<StatusInContext>()
         if (statusContext != null) {
             contextStatus += statusContext.ancestors.sortedBy { it.datetime }
-                .map { StatusInContext(buildStatusUiState(it), StatusInContextType.ANCESTOR) }
+                .map { StatusInContext(buildStatusUiState(role, it), StatusInContextType.ANCESTOR) }
         }
         contextStatus += StatusInContext(
-            buildStatusUiState(anchorStatus),
+            buildStatusUiState(role, anchorStatus),
             StatusInContextType.ANCHOR,
         )
         if (statusContext != null) {
             contextStatus += statusContext.descendants.sortedBy { it.datetime }
-                .map { StatusInContext(buildStatusUiState(it), StatusInContextType.DESCENDANT) }
+                .map { StatusInContext(buildStatusUiState(role, it), StatusInContextType.DESCENDANT) }
         }
         return contextStatus
     }

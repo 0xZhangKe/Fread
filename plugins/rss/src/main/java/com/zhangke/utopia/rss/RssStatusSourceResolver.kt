@@ -36,11 +36,6 @@ class RssStatusSourceResolver @Inject constructor(
             .let { Result.success(it) }
     }
 
-    override fun resolveRoleByUri(uri: FormalUri): IdentityRole? {
-        if (!uri.isRssUri) return null
-        return IdentityRole.nonIdentityRole
-    }
-
     override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
         return rssRepo.sourceChangedFlow
     }

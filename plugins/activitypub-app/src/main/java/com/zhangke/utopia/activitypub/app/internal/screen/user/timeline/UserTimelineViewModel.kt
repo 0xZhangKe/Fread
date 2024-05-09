@@ -8,7 +8,6 @@ import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserId
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -36,7 +35,7 @@ class UserTimelineViewModel @AssistedInject constructor(
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = AllInOneRoleResolver(role),
+            roleResolver = { role },
             loadFirstPageLocalFeeds = { Result.success(emptyList()) },
             loadNewFromServerFunction = ::loadNewFromServer,
             loadMoreFunction = ::loadMore,

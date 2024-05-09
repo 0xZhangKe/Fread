@@ -11,7 +11,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
@@ -34,12 +33,12 @@ fun BlogInteractionNotification(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                composedStatusInteraction.onStatusClick(statusUiState.status)
+                composedStatusInteraction.onStatusClick(statusUiState)
             }
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
-                composedStatusInteraction.onUserInfoClick(author)
+                composedStatusInteraction.onUserInfoClick(statusUiState.role, author)
             },
             icon = icon,
             avatar = author.avatar,
@@ -56,10 +55,14 @@ fun BlogInteractionNotification(
             indexInList = indexInList,
             style = style,
             onVoted = {
-                composedStatusInteraction.onVoted(statusUiState.status, it)
+                composedStatusInteraction.onVoted(statusUiState, it)
             },
-            onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
-            onMentionClick = composedStatusInteraction::onMentionClick,
+            onHashtagInStatusClick = {
+                composedStatusInteraction.onHashtagInStatusClick(statusUiState.role, it)
+            },
+            onMentionClick = {
+                composedStatusInteraction.onMentionClick(statusUiState.role, it)
+            },
         )
     }
 }

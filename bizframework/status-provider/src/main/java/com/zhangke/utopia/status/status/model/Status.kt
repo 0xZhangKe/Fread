@@ -22,10 +22,20 @@ sealed class Status {
      */
     abstract val platform: BlogPlatform
 
-    val intrinsicBlog: Blog get() = when (this) {
-        is NewBlog -> blog
-        is Reblog -> reblog
-    }
+    /**
+     * 触发该 Status 的用户
+     */
+    val triggerAuthor: BlogAuthor
+        get() = when (this) {
+            is NewBlog -> blog.author
+            is Reblog -> author
+        }
+
+    val intrinsicBlog: Blog
+        get() = when (this) {
+            is NewBlog -> blog
+            is Reblog -> reblog
+        }
 
     @Serializable
     data class NewBlog(

@@ -104,7 +104,7 @@ data class StatusContextScreen(
                             modifier = Modifier
                                 .fillMaxWidth()
                                 .clickable {
-                                    composedStatusInteraction.onStatusClick(statusInContext.status.status)
+                                    composedStatusInteraction.onStatusClick(statusInContext.status)
                                 },
                             statusInContext = statusInContext,
                             indexInList = index,

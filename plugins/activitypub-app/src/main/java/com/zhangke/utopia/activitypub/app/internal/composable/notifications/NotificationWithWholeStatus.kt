@@ -31,13 +31,13 @@ fun NotificationWithWholeStatus(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                composedStatusInteraction.onStatusClick(status.status)
+                composedStatusInteraction.onStatusClick(status)
             }
             .padding(vertical = 8.dp)
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
-                composedStatusInteraction.onUserInfoClick(notification.author)
+                composedStatusInteraction.onUserInfoClick(notification.role, notification.author)
             },
             icon = icon,
             avatar = notification.account.avatar,

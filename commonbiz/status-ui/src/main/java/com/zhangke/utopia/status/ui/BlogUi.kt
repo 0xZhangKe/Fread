@@ -31,8 +31,8 @@ fun BlogUi(
     onMediaClick: OnBlogMediaClick,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onVoted: (List<BlogPoll.Option>) -> Unit,
-    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
-    onMentionClick: (BlogAuthor, Mention) -> Unit,
+    onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onMentionClick: (Mention) -> Unit,
     showDivider: Boolean = true,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {

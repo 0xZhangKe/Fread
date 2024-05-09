@@ -3,6 +3,7 @@ package com.zhangke.utopia.commonbiz.shared.feeds
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
@@ -27,65 +28,24 @@ interface IInteractiveHandler {
 
     fun initInteractiveHandler(
         coroutineScope: CoroutineScope,
-        roleResolver: IdentityRoleResolver,
         onInteractiveHandleResult: suspend (InteractiveHandleResult) -> Unit,
     )
 
-    fun onStatusInteractive(status: Status, uiInteraction: StatusUiInteraction)
+    fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction)
 
-    fun onUserInfoClick(blogAuthor: BlogAuthor)
+    fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor)
 
-    fun onStatusClick(status: Status)
+    fun onStatusClick(status: StatusUiState)
 
-    fun onVoted(
-        status: Status,
-        votedOption: List<BlogPoll.Option>,
-    )
+    fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>)
 
-    fun onFollowClick(target: BlogAuthor)
+    fun onFollowClick(role: IdentityRole, target: BlogAuthor)
 
-    fun onUnfollowClick(target: BlogAuthor)
+    fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
 
-    fun onMentionClick(author: BlogAuthor, mention: Mention)
+    fun onMentionClick(role: IdentityRole, mention: Mention)
 
-    fun onHashtagClick(status: Status, tag: HashtagInStatus)
+    fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus)
 
-    fun onHashtagClick(author: BlogAuthor, tag: HashtagInStatus)
-
-    fun onHashtagClick(tag: Hashtag)
-}
-
-interface IdentityRoleResolver {
-
-    fun resolveRole(blogAuthor: BlogAuthor): IdentityRole
-
-    fun resolveRole(tag: Hashtag): IdentityRole
-}
-
-abstract class DynamicAllInOneRoleResolver: IdentityRoleResolver {
-
-    abstract fun getRole(): IdentityRole
-
-    override fun resolveRole(blogAuthor: BlogAuthor) = getRole()
-
-    override fun resolveRole(tag: Hashtag) = getRole()
-}
-
-fun DynamicAllInOneRoleResolver(roleProvider: () -> IdentityRole): DynamicAllInOneRoleResolver{
-    return object : DynamicAllInOneRoleResolver() {
-        override fun getRole(): IdentityRole {
-            return roleProvider()
-        }
-    }
-}
-
-class AllInOneRoleResolver(private val role: IdentityRole) : IdentityRoleResolver {
-
-    override fun resolveRole(blogAuthor: BlogAuthor): IdentityRole {
-        return role
-    }
-
-    override fun resolveRole(tag: Hashtag): IdentityRole {
-        return role
-    }
+    fun onHashtagClick(role: IdentityRole, tag: Hashtag)
 }

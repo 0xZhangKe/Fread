@@ -24,7 +24,7 @@ internal class SyncPreviousStatusUseCase @Inject constructor(
         limit: Int,
         maxCreateTime: Long,
     ): Result<Unit> {
-        val role = statusProvider.statusSourceResolver.resolveRoleByUri(sourceUri)
+        val role = IdentityRole(sourceUri, null)
         return syncStatusAndSaveToLocal(
             role = role,
             sourceUri = sourceUri,

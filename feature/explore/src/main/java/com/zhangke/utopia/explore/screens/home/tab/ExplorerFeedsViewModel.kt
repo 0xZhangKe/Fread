@@ -6,7 +6,6 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
@@ -38,7 +37,6 @@ class ExplorerFeedsViewModel(
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = AllInOneRoleResolver(role),
             onInteractiveHandleResult = { interactiveResult ->
                 when (interactiveResult) {
                     is InteractiveHandleResult.UpdateStatus -> {

@@ -69,6 +69,11 @@ class SearchStatusViewModel @AssistedInject constructor(
         )
     }
 
+    fun initQuery(query: String) {
+        if (uiState.value.dataList.isNotEmpty()) return
+        onRefresh(query)
+    }
+
     fun onRefresh(query: String) {
         loadStatusController.onRefresh {
             statusProvider.searchEngine

@@ -19,6 +19,11 @@ open class SearchPlatformViewModel @Inject constructor(
 
     val uiState: StateFlow<CommonLoadableUiState<BlogPlatform>> get() = loadableController.uiState
 
+    fun initQuery(query: String) {
+        if (uiState.value.dataList.isNotEmpty()) return
+        onRefresh(query)
+    }
+
     fun onRefresh(query: String) {
         loadableController.onRefresh {
             statusProvider.searchEngine.searchPlatform(query, null)

@@ -46,7 +46,7 @@ class SearchedHashtagTab(private val role: IdentityRole, private val query: Stri
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(query) {
-            viewModel.onRefresh(query)
+            viewModel.initQuery(query)
         }
 
         SearchedHashtagContent(

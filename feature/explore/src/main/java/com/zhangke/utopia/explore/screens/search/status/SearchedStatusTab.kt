@@ -50,7 +50,7 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(query) {
-            viewModel.onRefresh(query)
+            viewModel.initQuery(query)
         }
 
         SearchStatusTabContent(

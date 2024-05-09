@@ -89,6 +89,7 @@ fun StatusNotificationUi(
                     FollowRequestNotification(
                         notification = notification,
                         style = style,
+                        onUserInfoClick = composedStatusInteraction::onUserInfoClick,
                         onRejectClick = onRejectClick,
                         onAcceptClick = onAcceptClick,
                     )
@@ -107,6 +108,7 @@ fun StatusNotificationUi(
                     SeveredRelationshipsNotification(
                         notification = notification,
                         style = style,
+                        onUserInfoClick = composedStatusInteraction::onUserInfoClick,
                     )
                 }
 

@@ -20,5 +20,6 @@ class SearchedPlatformTab(private val role: IdentityRole, private val query: Str
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
         val viewModel = getViewModel<SearchPlatformViewModel>()
+
     }
 }

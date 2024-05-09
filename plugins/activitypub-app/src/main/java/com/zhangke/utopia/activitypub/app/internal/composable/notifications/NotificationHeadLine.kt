@@ -15,6 +15,7 @@ import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
 @Composable
 fun NotificationHeadLine(
+    modifier: Modifier,
     icon: ImageVector,
     avatar: String?,
     accountName: String?,
@@ -22,7 +23,7 @@ fun NotificationHeadLine(
     style: NotificationStyle,
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(

@@ -34,6 +34,11 @@ open class SearchAuthorViewModel @AssistedInject constructor(
     private val _openScreenFlow = MutableSharedFlow<Any>()
     val openScreenFlow: SharedFlow<Any> get() = _openScreenFlow
 
+    fun initQuery(query: String) {
+        if (loadableController.uiState.value.dataList.isNotEmpty()) return
+        onRefresh(query)
+    }
+
     fun onRefresh(query: String) {
         loadableController.onRefresh {
             statusProvider.searchEngine.searchAuthor(role, query, null)

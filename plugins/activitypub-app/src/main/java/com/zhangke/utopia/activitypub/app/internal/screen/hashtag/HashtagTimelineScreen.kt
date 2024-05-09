@@ -30,7 +30,6 @@ import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.ExperimentalMotionApi
 import androidx.constraintlayout.compose.MotionLayout
 import androidx.constraintlayout.compose.MotionScene
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -54,18 +53,17 @@ import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(HashtagTimelineRoute.ROUTE)
-class HashtagTimelineScreen(
+data class HashtagTimelineScreen(
     @Router private val route: String = "",
 ) : Screen {
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<HashtagTimelineViewModel, HashtagTimelineViewModel.Factory> {
-            val (role, hashtag) = HashtagTimelineRoute.parseRoute(route)
-            it.create(role, hashtag)
+        val (role, hashtag) = remember(route) {
+            HashtagTimelineRoute.parseRoute(route)
         }
+        val viewModel = getViewModel<HashtagTimelineContainerViewModel>().getViewModel(role, hashtag)
         val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
         val statusUiState by viewModel.uiState.collectAsState()
         HashtagTimelineContent(

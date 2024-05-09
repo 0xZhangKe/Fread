@@ -1,5 +1,6 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -78,6 +79,9 @@ fun AncestorBlogUi(
                         top.linkTo(upThread.bottom, 2.dp)
                         start.linkTo(parent.start)
                     },
+                onClick = {
+                    composedStatusInteraction.onUserInfoClick(blog.author)
+                },
                 authorAvatar = blog.author.avatar,
                 reblogAvatar = null,
             )

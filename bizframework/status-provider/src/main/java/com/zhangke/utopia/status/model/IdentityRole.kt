@@ -20,7 +20,7 @@ import java.net.URLEncoder
 data class IdentityRole(
     val accountUri: FormalUri?,
     val baseUrl: FormalBaseUrl?,
-) : Parcelable {
+) : Parcelable, java.io.Serializable {
 
     val nonRole: Boolean
         get() = accountUri == null && baseUrl == null

@@ -11,7 +11,7 @@ import java.net.URLEncoder
 class FormalBaseUrl private constructor(
     val scheme: String,
     val host: String,
-) : Parcelable {
+) : Parcelable, java.io.Serializable {
 
     override fun toString(): String {
         return "$scheme$SCHEME_SEPARATOR$host"

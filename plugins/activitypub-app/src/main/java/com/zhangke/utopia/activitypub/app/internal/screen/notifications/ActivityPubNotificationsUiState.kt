@@ -42,6 +42,7 @@ data class ActivityPubNotificationsUiState(
 data class NotificationUiState(
     val id: String,
     val type: StatusNotificationType,
+    val role: IdentityRole,
     val createdAt: Date,
     val displayTime: String,
     /**

@@ -6,7 +6,6 @@ import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
@@ -19,6 +18,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel(assistedFactory = SearchStatusViewModel.Factory::class)
 class SearchStatusViewModel @AssistedInject constructor(
@@ -47,17 +47,19 @@ class SearchStatusViewModel @AssistedInject constructor(
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = AllInOneRoleResolver(role),
             onInteractiveHandleResult = { result ->
                 when (result) {
                     is InteractiveHandleResult.UpdateStatus -> {
-                        val dataList = loadStatusController.mutableUiState.value.dataList
+                        val dataList = uiState.value.dataList
                         dataList.map {
                             if (it.status.id == result.status.status.id) {
                                 result.status
                             } else {
                                 it
                             }
+                        }
+                        loadStatusController.mutableUiState.update {
+                            it.copy(dataList = dataList)
                         }
                     }
 
@@ -75,14 +77,15 @@ class SearchStatusViewModel @AssistedInject constructor(
     }
 
     fun onRefresh(query: String) {
-        loadStatusController.onRefresh {
+        loadStatusController.onRefresh(role) {
+
             statusProvider.searchEngine
                 .searchStatus(role, query, null)
         }
     }
 
     fun onLoadMore(query: String) {
-        loadStatusController.onLoadMore {
+        loadStatusController.onLoadMore(role) {
             statusProvider.searchEngine.searchStatus(role, query, it)
         }
     }

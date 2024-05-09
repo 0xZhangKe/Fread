@@ -9,7 +9,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.commonbiz.shared.composable.onStatusMediaClick
-import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
@@ -24,8 +23,8 @@ fun OnlyBlogContentUi(
     indexInList: Int,
     style: NotificationStyle,
     onVoted: (List<BlogPoll.Option>) -> Unit,
-    onHashtagInStatusClick: (BlogAuthor, HashtagInStatus) -> Unit,
-    onMentionClick: (BlogAuthor, Mention) -> Unit,
+    onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onMentionClick: (Mention) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -72,9 +71,11 @@ fun WholeBlogUi(
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,
             onInteractive = {
-                composedStatusInteraction.onStatusInteractive(statusUiState.status, it)
+                composedStatusInteraction.onStatusInteractive(statusUiState, it)
             },
-            onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+            onUserInfoClick = {
+                composedStatusInteraction.onUserInfoClick(statusUiState.role, it)
+            },
             onMediaClick = { event ->
                 onStatusMediaClick(
                     transparentNavigator = transparentNavigator,
@@ -84,10 +85,14 @@ fun WholeBlogUi(
             },
             showDivider = showDivider,
             onVoted = {
-                composedStatusInteraction.onVoted(statusUiState.status, it)
+                composedStatusInteraction.onVoted(statusUiState, it)
             },
-            onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
-            onMentionClick = composedStatusInteraction::onMentionClick,
+            onHashtagInStatusClick = {
+                composedStatusInteraction.onHashtagInStatusClick(statusUiState.role, it)
+            },
+            onMentionClick = {
+                composedStatusInteraction.onMentionClick(statusUiState.role, it)
+            },
         )
     }
 }

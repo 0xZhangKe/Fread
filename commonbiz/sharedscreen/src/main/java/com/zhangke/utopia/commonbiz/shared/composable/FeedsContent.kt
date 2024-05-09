@@ -52,7 +52,7 @@ fun FeedsContent(
         if (uiState.showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
         } else if (uiState.pageErrorContent != null) {
-            InitErrorContent(uiState.pageErrorContent!!)
+            InitErrorContent(uiState.pageErrorContent)
         }
     } else {
         Box(modifier = Modifier.fillMaxSize()) {

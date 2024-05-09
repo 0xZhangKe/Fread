@@ -50,7 +50,7 @@ internal class RefreshStatusUseCase @Inject constructor(
         sourceUri: FormalUri,
         limit: Int,
     ): Result<RefreshResult> {
-        val role = statusProvider.statusSourceResolver.resolveRoleByUri(sourceUri)
+        val role = IdentityRole(sourceUri, null)
         val entitiesResult = fetchStatus(role, sourceUri, limit)
         if (entitiesResult.isFailure) {
             return Result.failure(entitiesResult.exceptionOrNull()!!)

@@ -1,6 +1,5 @@
 package com.zhangke.utopia.explore.usecase
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.explore.model.ExplorerItem
 import com.zhangke.utopia.explore.screens.home.tab.ExplorerFeedsTabType
@@ -46,7 +45,16 @@ class GetExplorerItemUseCase @Inject constructor(
                     role = role,
                     limit = DEFAULT_LIMIT,
                     sinceId = sinceId,
-                ).map { list -> list.map { ExplorerItem.ExplorerStatus(buildStatusUiState(it)) } }
+                ).map { list ->
+                    list.map {
+                        ExplorerItem.ExplorerStatus(
+                            buildStatusUiState(
+                                role = role,
+                                status = it,
+                            )
+                        )
+                    }
+                }
             }
         }
     }

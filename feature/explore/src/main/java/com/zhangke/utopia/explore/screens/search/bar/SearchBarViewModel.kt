@@ -5,7 +5,6 @@ import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.DynamicAllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
@@ -60,9 +59,6 @@ class SearchBarViewModel @Inject constructor(
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = DynamicAllInOneRoleResolver {
-                role
-            },
             onInteractiveHandleResult = { it.handleResult() },
         )
     }
@@ -81,7 +77,7 @@ class SearchBarViewModel @Inject constructor(
             statusProvider.searchEngine
                 .search(role, query)
                 .map { list ->
-                    list.map { buildSearchResultUiState(it) }
+                    list.map { buildSearchResultUiState(role, it) }
                 }.onSuccess { searchResult ->
                     _uiState.update {
                         it.copy(resultList = searchResult)

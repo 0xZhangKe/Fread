@@ -9,6 +9,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
@@ -38,18 +39,20 @@ fun StatusUi(
                     moreInteractions = status.moreInteractions,
                     style = style,
                     onInteractive = {
-                        composedStatusInteraction.onStatusInteractive(status.status, it)
+                        composedStatusInteraction.onStatusInteractive(status, it)
                     },
                     onMediaClick = onMediaClick,
-                    onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                    onUserInfoClick = {
+                        composedStatusInteraction.onUserInfoClick(status.role, it)
+                    },
                     onVoted = { options ->
-                        composedStatusInteraction.onVoted(status.status, options)
+                        composedStatusInteraction.onVoted(status, options)
                     },
-                    onHashtagInStatusClick = { blogAuthor, hashtagInStatus ->
-                        composedStatusInteraction.onHashtagInStatusClick(blogAuthor, hashtagInStatus)
+                    onHashtagInStatusClick = {
+                        composedStatusInteraction.onHashtagInStatusClick(status.role, it)
                     },
-                    onMentionClick = { blogAuthor, mention ->
-                        composedStatusInteraction.onMentionClick(blogAuthor, mention)
+                    onMentionClick = {
+                        composedStatusInteraction.onMentionClick(status.role, it)
                     },
                 )
             }
@@ -64,18 +67,20 @@ fun StatusUi(
                     indexInList = indexInList,
                     style = style,
                     onInteractive = {
-                        composedStatusInteraction.onStatusInteractive(status.status, it)
+                        composedStatusInteraction.onStatusInteractive(status, it)
                     },
                     onMediaClick = onMediaClick,
-                    onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                    onUserInfoClick = {
+                        composedStatusInteraction.onUserInfoClick(status.role, it)
+                    },
                     onVoted = { options ->
-                        composedStatusInteraction.onVoted(status.status, options)
+                        composedStatusInteraction.onVoted(status, options)
                     },
-                    onHashtagInStatusClick = { blogAuthor, hashtagInStatus ->
-                        composedStatusInteraction.onHashtagInStatusClick(blogAuthor, hashtagInStatus)
+                    onHashtagInStatusClick = {
+                        composedStatusInteraction.onHashtagInStatusClick(status.role, it)
                     },
-                    onMentionClick = { blogAuthor, mention ->
-                        composedStatusInteraction.onMentionClick(blogAuthor, mention)
+                    onMentionClick = {
+                        composedStatusInteraction.onMentionClick(status.role, it)
                     },
                 )
             }
@@ -85,13 +90,14 @@ fun StatusUi(
 
 interface ComposedStatusInteraction {
 
-    fun onStatusInteractive(status: Status, interaction: StatusUiInteraction)
-    fun onUserInfoClick(blogAuthor: BlogAuthor)
-    fun onVoted(status: Status, blogPollOptions: List<BlogPoll.Option>)
-    fun onHashtagInStatusClick(blogAuthor: BlogAuthor, hashtagInStatus: HashtagInStatus)
-    fun onHashtagClick(tag: Hashtag)
-    fun onMentionClick(blogAuthor: BlogAuthor, mention: Mention)
-    fun onStatusClick(status: Status)
-    fun onFollowClick(target: BlogAuthor)
-    fun onUnfollowClick(target: BlogAuthor)
+    fun onStatusInteractive(status: StatusUiState, interaction: StatusUiInteraction)
+    fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor)
+    fun onVoted(status: StatusUiState, blogPollOptions: List<BlogPoll.Option>)
+    fun onHashtagInStatusClick(role: IdentityRole, hashtagInStatus: HashtagInStatus)
+    fun onHashtagClick(role: IdentityRole, tag: Hashtag)
+    fun onMentionClick(role: IdentityRole, mention: Mention)
+    fun onStatusClick(status: StatusUiState)
+    fun onFollowClick(role: IdentityRole, target: BlogAuthor)
+    fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
+    // 后面如果需要给 Status 加上 follow 按钮，这里可以新增一个 onFollowClick(Status, BlogAuthor)
 }

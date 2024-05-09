@@ -1,6 +1,5 @@
 package com.zhangke.utopia.commonbiz.shared.feeds
 
-import android.util.Log
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
@@ -17,6 +16,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.HashtagInStatus
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
@@ -35,6 +35,7 @@ class FeedsViewModelController(
 ) : IFeedsViewModelController {
 
     private lateinit var coroutineScope: CoroutineScope
+    private lateinit var roleResolver: (Status) -> IdentityRole
     private lateinit var loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>
     private lateinit var loadNewFromServerFunction: suspend () -> Result<RefreshResult>
     private lateinit var loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>
@@ -71,16 +72,16 @@ class FeedsViewModelController(
 
     override fun initController(
         coroutineScope: CoroutineScope,
-        roleResolver: IdentityRoleResolver,
+        roleResolver: (Status) -> IdentityRole,
         loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>,
         loadNewFromServerFunction: suspend () -> Result<RefreshResult>,
         loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>,
         onStatusUpdate: suspend (Status) -> Unit
     ) {
         this.coroutineScope = coroutineScope
+        this.roleResolver = roleResolver
         interactiveHandler.initInteractiveHandler(
             coroutineScope = coroutineScope,
-            roleResolver = roleResolver,
             onInteractiveHandleResult = {
                 it.handleResult()
             },
@@ -108,7 +109,7 @@ class FeedsViewModelController(
                             mutableUiState.update { state ->
                                 state.copy(
                                     feeds = localStatus.map { status ->
-                                        buildStatusUiState(status)
+                                        status.toUiState()
                                     },
                                     showPagingLoadingPlaceholder = false,
                                 )
@@ -134,7 +135,7 @@ class FeedsViewModelController(
                 }.onSuccess {
                     mutableUiState.update { state ->
                         state.copy(
-                            feeds = it.newStatus.map { buildStatusUiState(it) },
+                            feeds = it.newStatus.map { it.toUiState() },
                             showPagingLoadingPlaceholder = false,
                         )
                     }
@@ -153,13 +154,8 @@ class FeedsViewModelController(
     }
 
     private suspend fun autoFetchNewerFeeds() {
-        Log.d("U_TEST", "Controller: start autoFetchNewerFeeds")
         loadNewFromServerFunction()
             .onSuccess {
-                Log.d(
-                    "U_TEST",
-                    "Controller: autoFetchNewerFeeds success, newStatus: ${it.newStatus.size}, delete: ${it.deletedStatus.size}"
-                )
                 val oldFirstId = mutableUiState.value.feeds.firstOrNull()?.status?.id
                 val newFirstId = it.newStatus.firstOrNull()?.id
                 mutableUiState.update { state ->
@@ -176,54 +172,51 @@ class FeedsViewModelController(
 
     override fun initInteractiveHandler(
         coroutineScope: CoroutineScope,
-        roleResolver: IdentityRoleResolver,
         onInteractiveHandleResult: suspend (InteractiveHandleResult) -> Unit
     ) {
         interactiveHandler.initInteractiveHandler(
             coroutineScope = coroutineScope,
-            roleResolver = roleResolver,
             onInteractiveHandleResult = onInteractiveHandleResult,
         )
     }
 
-    override fun onStatusInteractive(status: Status, uiInteraction: StatusUiInteraction) {
+    override fun onStatusInteractive(
+        status: StatusUiState,
+        uiInteraction: StatusUiInteraction
+    ) {
         interactiveHandler.onStatusInteractive(status, uiInteraction)
     }
 
-    override fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        interactiveHandler.onUserInfoClick(blogAuthor)
+    override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
+        interactiveHandler.onUserInfoClick(role, blogAuthor)
     }
 
-    override fun onStatusClick(status: Status) {
+    override fun onStatusClick(status: StatusUiState) {
         interactiveHandler.onStatusClick(status)
     }
 
-    override fun onVoted(status: Status, votedOption: List<BlogPoll.Option>) {
+    override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {
         interactiveHandler.onVoted(status, votedOption)
     }
 
-    override fun onFollowClick(target: BlogAuthor) {
-        interactiveHandler.onFollowClick(target)
+    override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
+        interactiveHandler.onFollowClick(role, target)
     }
 
-    override fun onUnfollowClick(target: BlogAuthor) {
-        interactiveHandler.onUnfollowClick(target)
+    override fun onUnfollowClick(role: IdentityRole, target: BlogAuthor) {
+        interactiveHandler.onUnfollowClick(role, target)
     }
 
-    override fun onMentionClick(author: BlogAuthor, mention: Mention) {
-        interactiveHandler.onMentionClick(author, mention)
+    override fun onMentionClick(role: IdentityRole, mention: Mention) {
+        interactiveHandler.onMentionClick(role, mention)
     }
 
-    override fun onHashtagClick(status: Status, tag: HashtagInStatus) {
-        interactiveHandler.onHashtagClick(status, tag)
+    override fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus) {
+        interactiveHandler.onHashtagClick(role, tag)
     }
 
-    override fun onHashtagClick(author: BlogAuthor, tag: HashtagInStatus) {
-        interactiveHandler.onHashtagClick(author, tag)
-    }
-
-    override fun onHashtagClick(tag: Hashtag) {
-        interactiveHandler.onHashtagClick(tag)
+    override fun onHashtagClick(role: IdentityRole, tag: Hashtag) {
+        interactiveHandler.onHashtagClick(role, tag)
     }
 
     override fun onRefresh() {
@@ -288,7 +281,7 @@ class FeedsViewModelController(
             !deletedIdsSet.contains(it.status.id)
         }.toMutableList()
         val items = refreshResult.newStatus.map { statusItem ->
-            buildStatusUiState(statusItem)
+            statusItem.toUiState()
         }
         finalList.addAllIgnoreDuplicate(items)
         return finalList.sortedByDescending { it.status.datetime }
@@ -312,7 +305,7 @@ class FeedsViewModelController(
                 mutableUiState.update { currentUiState ->
                     val newFeeds = currentUiState.feeds.map {
                         if (it.status.id == newUiState.status.id) {
-                            it.copy(status = newUiState.status)
+                            newUiState
                         } else {
                             it
                         }
@@ -326,7 +319,9 @@ class FeedsViewModelController(
         )
     }
 
-
+    private fun Status.toUiState(): StatusUiState {
+        return buildStatusUiState(roleResolver(this), this)
+    }
 }
 
 data class CommonFeedsUiState(

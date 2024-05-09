@@ -6,6 +6,7 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -17,7 +18,6 @@ import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.model.StatusProviderProtocol
-import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,7 +32,6 @@ class InteractiveHandler(
     override val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
     override val mutableOpenScreenFlow = MutableSharedFlow<Screen>()
 
-    private lateinit var roleResolver: IdentityRoleResolver
     private lateinit var onInteractiveHandleResult: suspend (InteractiveHandleResult) -> Unit
 
     private lateinit var coroutineScope: CoroutineScope
@@ -41,71 +40,65 @@ class InteractiveHandler(
 
     override val composedStatusInteraction = object : ComposedStatusInteraction {
 
-        override fun onStatusInteractive(status: Status, interaction: StatusUiInteraction) {
+        override fun onStatusInteractive(status: StatusUiState, interaction: StatusUiInteraction) {
             this@InteractiveHandler.onStatusInteractive(status, interaction)
         }
 
-        override fun onUserInfoClick(blogAuthor: BlogAuthor) {
-            this@InteractiveHandler.onUserInfoClick(blogAuthor)
+        override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
+            this@InteractiveHandler.onUserInfoClick(role, blogAuthor)
         }
 
-        override fun onVoted(status: Status, blogPollOptions: List<BlogPoll.Option>) {
+        override fun onVoted(status: StatusUiState, blogPollOptions: List<BlogPoll.Option>) {
             this@InteractiveHandler.onVoted(status, blogPollOptions)
         }
 
         override fun onHashtagInStatusClick(
-            blogAuthor: BlogAuthor,
+            role: IdentityRole,
             hashtagInStatus: HashtagInStatus
         ) {
-            this@InteractiveHandler.onHashtagClick(blogAuthor, hashtagInStatus)
+            this@InteractiveHandler.onHashtagClick(role, hashtagInStatus)
         }
 
-        override fun onMentionClick(blogAuthor: BlogAuthor, mention: Mention) {
-            this@InteractiveHandler.onMentionClick(blogAuthor, mention)
+        override fun onMentionClick(role: IdentityRole, mention: Mention) {
+            this@InteractiveHandler.onMentionClick(role, mention)
         }
 
-        override fun onStatusClick(status: Status) {
+        override fun onStatusClick(status: StatusUiState) {
             this@InteractiveHandler.onStatusClick(status)
         }
 
-        override fun onFollowClick(target: BlogAuthor) {
-            this@InteractiveHandler.onFollowClick(target)
+        override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
+            this@InteractiveHandler.onFollowClick(role, target)
         }
 
-        override fun onUnfollowClick(target: BlogAuthor) {
-            this@InteractiveHandler.onUnfollowClick(target)
+        override fun onUnfollowClick(role: IdentityRole, target: BlogAuthor) {
+            this@InteractiveHandler.onUnfollowClick(role, target)
         }
 
-        override fun onHashtagClick(tag: Hashtag) {
-            this@InteractiveHandler.onHashtagClick(tag)
+        override fun onHashtagClick(role: IdentityRole, tag: Hashtag) {
+            this@InteractiveHandler.onHashtagClick(role, tag)
         }
     }
 
     override fun initInteractiveHandler(
         coroutineScope: CoroutineScope,
-        roleResolver: IdentityRoleResolver,
         onInteractiveHandleResult: suspend (InteractiveHandleResult) -> Unit,
     ) {
         this.coroutineScope = coroutineScope
-        this.roleResolver = roleResolver
         this.onInteractiveHandleResult = onInteractiveHandleResult
     }
 
-    override fun onStatusInteractive(
-        status: Status,
-        uiInteraction: StatusUiInteraction,
-    ) {
-        val role = roleResolver.resolveRole(status.intrinsicBlog.author)
+    override fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction) {
         if (uiInteraction is StatusUiInteraction.Comment) {
-            screenProvider.getReplyBlogScreen(role, status.intrinsicBlog)
+            screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
                 ?.let(::tryOpenScreenByRoute)
             return
         }
         coroutineScope.launch {
             val interaction = uiInteraction.statusInteraction ?: return@launch
             val result = statusProvider.statusResolver
-                .interactive(role, status, interaction)
-                .map { buildStatusUiState(it) }
+                .interactive(status.role, status.status, interaction)
+                .map { buildStatusUiState(status.role, it) }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch
@@ -115,32 +108,29 @@ class InteractiveHandler(
         }
     }
 
-    override fun onUserInfoClick(blogAuthor: BlogAuthor) {
+    override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
         coroutineScope.launch {
-            screenProvider.getUserDetailRoute(roleResolver.resolveRole(blogAuthor), blogAuthor.uri)
+            screenProvider.getUserDetailRoute(role, blogAuthor.uri)
                 ?.let(::tryOpenScreenByRoute)
         }
     }
 
-    override fun onStatusClick(status: Status) {
+    override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
             mutableOpenScreenFlow.emit(
                 StatusContextScreen(
-                    role = roleResolver.resolveRole(status.intrinsicBlog.author),
-                    status = refactorToNewBlog(status),
+                    role = status.role,
+                    status = refactorToNewBlog(status.status),
                 )
             )
         }
     }
 
-    override fun onVoted(
-        status: Status,
-        votedOption: List<BlogPoll.Option>,
-    ) {
+    override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {
         coroutineScope.launch {
-            val role = roleResolver.resolveRole(status.intrinsicBlog.author)
-            val result = statusProvider.statusResolver.votePoll(role, status, votedOption)
-                .map { buildStatusUiState(it) }
+            val result = statusProvider.statusResolver
+                .votePoll(status.role, status.status, votedOption)
+                .map { buildStatusUiState(status.role, it) }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch
@@ -150,9 +140,8 @@ class InteractiveHandler(
         }
     }
 
-    override fun onFollowClick(target: BlogAuthor) {
+    override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
         coroutineScope.launch {
-            val role = roleResolver.resolveRole(target)
             statusProvider.statusResolver
                 .follow(role, target)
                 .onSuccess {
@@ -168,9 +157,8 @@ class InteractiveHandler(
         }
     }
 
-    override fun onUnfollowClick(target: BlogAuthor) {
+    override fun onUnfollowClick(role: IdentityRole, target: BlogAuthor) {
         coroutineScope.launch {
-            val role = roleResolver.resolveRole(target)
             statusProvider.statusResolver
                 .unfollow(role, target)
                 .onSuccess {
@@ -186,9 +174,8 @@ class InteractiveHandler(
         }
     }
 
-    override fun onMentionClick(author: BlogAuthor, mention: Mention) {
+    override fun onMentionClick(role: IdentityRole, mention: Mention) {
         coroutineScope.launch {
-            val role = roleResolver.resolveRole(author)
             screenProvider.getUserDetailRoute(
                 role = role,
                 webFinger = mention.webFinger,
@@ -197,25 +184,17 @@ class InteractiveHandler(
         }
     }
 
-    override fun onHashtagClick(status: Status, tag: HashtagInStatus) {
+    override fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus) {
         openHashtagTimelineScreen(
-            role = roleResolver.resolveRole(status.intrinsicBlog.author),
+            role = role,
             tag = tag.name,
             protocol = tag.protocol,
         )
     }
 
-    override fun onHashtagClick(author: BlogAuthor, tag: HashtagInStatus) {
+    override fun onHashtagClick(role: IdentityRole, tag: Hashtag) {
         openHashtagTimelineScreen(
-            role = roleResolver.resolveRole(author),
-            tag = tag.name,
-            protocol = tag.protocol,
-        )
-    }
-
-    override fun onHashtagClick(tag: Hashtag) {
-        openHashtagTimelineScreen(
-            role = roleResolver.resolveRole(tag),
+            role = role,
             tag = tag.name,
             protocol = tag.protocol,
         )

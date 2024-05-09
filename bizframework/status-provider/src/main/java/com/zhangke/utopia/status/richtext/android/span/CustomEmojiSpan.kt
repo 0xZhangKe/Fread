@@ -5,7 +5,6 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.text.style.ReplacementSpan
-import android.util.Log
 import coil.imageLoader
 import coil.request.ImageRequest
 import coil.request.SuccessResult
@@ -23,12 +22,10 @@ class CustomEmojiSpan(private val emoji: Emoji) : ReplacementSpan() {
 
     suspend fun loadDrawable(context: Context): Boolean = withContext(Dispatchers.IO) {
         loading = true
-        Log.d("U_TEST", "CustomEmojiSpan loadDrawable: $emoji")
         val request = ImageRequest.Builder(context)
             .data(emoji.url)
             .build()
         val result = context.imageLoader.execute(request)
-        Log.d("U_TEST", "CustomEmojiSpan loadDrawable: $emoji, result: $result")
         loading = false
         if (result is SuccessResult) {
             this@CustomEmojiSpan.drawable = result.drawable

@@ -6,7 +6,6 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSource
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ListStatusRepo
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.AllInOneRoleResolver
 import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -30,7 +29,7 @@ class ActivityPubListStatusSubViewModel(
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = AllInOneRoleResolver(role),
+            roleResolver = { role },
             loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
             loadNewFromServerFunction = ::loadNewFromServer,
             loadMoreFunction = ::loadMore,

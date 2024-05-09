@@ -45,10 +45,12 @@ fun DescendantStatusUi(
                 style = style,
                 moreInteractions = moreInteractions,
                 onInteractive = {
-                    composedStatusInteraction.onStatusInteractive(status.status, it)
+                    composedStatusInteraction.onStatusInteractive(status, it)
                 },
                 reblogAuthor = reblogAuthor,
-                onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                onUserInfoClick = {
+                    composedStatusInteraction.onUserInfoClick(status.role, it)
+                },
             )
             BlogContent(
                 modifier = Modifier
@@ -59,10 +61,14 @@ fun DescendantStatusUi(
                 indexOfFeeds = indexInList,
                 onMediaClick = onMediaClick,
                 onVoted = {
-                    composedStatusInteraction.onVoted(status.status, it)
+                    composedStatusInteraction.onVoted(status, it)
                 },
-                onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
-                onMentionClick = composedStatusInteraction::onMentionClick,
+                onHashtagInStatusClick = {
+                    composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+                },
+                onMentionClick = {
+                    composedStatusInteraction.onMentionClick(status.role, it)
+                },
             )
             StatusBottomInteractionPanel(
                 modifier = Modifier
@@ -70,7 +76,7 @@ fun DescendantStatusUi(
                     .horizontalPadding(style.containerPaddings),
                 interactions = bottomPanelInteractions,
                 onInteractive = {
-                    composedStatusInteraction.onStatusInteractive(status.status, it)
+                    composedStatusInteraction.onStatusInteractive(status, it)
                 },
             )
             Spacer(

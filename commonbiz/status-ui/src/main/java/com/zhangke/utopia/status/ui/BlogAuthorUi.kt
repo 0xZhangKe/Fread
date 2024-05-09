@@ -19,6 +19,7 @@ import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.utopia.status.author.BlogAuthor
+import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import com.zhangke.utopia.status.ui.style.StatusInfoStyleDefaults
 import com.zhangke.utopia.statusui.R
@@ -95,6 +96,7 @@ fun BlogAuthorUi(
 @Composable
 fun RecommendAuthorUi(
     modifier: Modifier,
+    role: IdentityRole,
     author: BlogAuthor,
     following: Boolean,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -102,7 +104,7 @@ fun RecommendAuthorUi(
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
-            .clickable { composedStatusInteraction.onUserInfoClick(author) }
+            .clickable { composedStatusInteraction.onUserInfoClick(role, author) }
             .padding(bottom = 8.dp)
     ) {
         val (avatarRef, nameRef, webFingerRef, descRef, followBtn) = createRefs()
@@ -153,10 +155,10 @@ fun RecommendAuthorUi(
             mentions = emptyList(),
             tags = emptyList(),
             onMentionClick = {
-                composedStatusInteraction.onMentionClick(author, it)
+                composedStatusInteraction.onMentionClick(role, it)
             },
             onHashtagClick = {
-                composedStatusInteraction.onHashtagInStatusClick(author, it)
+                composedStatusInteraction.onHashtagInStatusClick(role, it)
             },
             overflow = TextOverflow.Ellipsis,
             maxLines = 3,
@@ -174,9 +176,9 @@ fun RecommendAuthorUi(
             style = TextButtonStyle.STANDARD,
             onClick = {
                 if (following) {
-                    composedStatusInteraction.onUnfollowClick(author)
+                    composedStatusInteraction.onUnfollowClick(role, author)
                 } else {
-                    composedStatusInteraction.onFollowClick(author)
+                    composedStatusInteraction.onFollowClick(role, author)
                 }
             },
         )

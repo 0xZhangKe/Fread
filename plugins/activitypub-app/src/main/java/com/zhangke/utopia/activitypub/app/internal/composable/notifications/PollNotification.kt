@@ -33,7 +33,7 @@ fun PollNotification(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                composedStatusInteraction.onStatusClick(status.status)
+                composedStatusInteraction.onStatusClick(status)
             },
     ) {
         NotificationHeadLine(
@@ -56,10 +56,14 @@ fun PollNotification(
                 indexInList = indexInList,
                 style = style,
                 onVoted = {
-                    composedStatusInteraction.onVoted(status.status, it)
+                    composedStatusInteraction.onVoted(status, it)
                 },
-                onMentionClick = composedStatusInteraction::onMentionClick,
-                onHashtagInStatusClick = composedStatusInteraction::onHashtagInStatusClick,
+                onMentionClick = {
+                    composedStatusInteraction.onMentionClick(status.role, it)
+                },
+                onHashtagInStatusClick = {
+                    composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+                },
             )
             val poll = status.status.intrinsicBlog.poll
             if (poll != null) {

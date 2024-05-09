@@ -27,7 +27,7 @@ fun MentionNotification(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                composedStatusInteraction.onStatusClick(status.status)
+                composedStatusInteraction.onStatusClick(status)
             },
         statusUiState = status,
         indexInList = indexInList,

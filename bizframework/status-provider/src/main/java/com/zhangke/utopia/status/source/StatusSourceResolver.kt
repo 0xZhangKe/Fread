@@ -1,6 +1,5 @@
 package com.zhangke.utopia.status.source
 
-import com.zhangke.framework.collections.mapFirst
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.uri.FormalUri
@@ -22,10 +21,6 @@ class StatusSourceResolver(
         return Result.success(null)
     }
 
-    fun resolveRoleByUri(uri: FormalUri): IdentityRole {
-        return resolverList.mapFirst { it.resolveRoleByUri(uri) }
-    }
-
     suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
         return resolverList.map { it.getAuthorUpdateFlow() }.merge()
     }
@@ -34,8 +29,6 @@ class StatusSourceResolver(
 interface IStatusSourceResolver {
 
     suspend fun resolveSourceByUri(role: IdentityRole?, uri: FormalUri): Result<StatusSource?>
-
-    fun resolveRoleByUri(uri: FormalUri): IdentityRole?
 
     suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor>
 }

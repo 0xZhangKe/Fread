@@ -10,10 +10,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.utopia.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
-import com.zhangke.utopia.common.status.model.StatusUiInteraction
-import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.BlogDivider
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.style.StatusStyle
@@ -72,7 +68,9 @@ fun StatusNotificationUi(
                     FollowNotification(
                         notification = notification,
                         style = style,
-                        onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                        onUserInfoClick = {
+                            composedStatusInteraction.onUserInfoClick(notification.role, it)
+                        },
                     )
                 }
 
@@ -89,7 +87,9 @@ fun StatusNotificationUi(
                     FollowRequestNotification(
                         notification = notification,
                         style = style,
-                        onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                        onUserInfoClick = {
+                            composedStatusInteraction.onUserInfoClick(notification.role, it)
+                        },
                         onRejectClick = onRejectClick,
                         onAcceptClick = onAcceptClick,
                     )
@@ -108,7 +108,9 @@ fun StatusNotificationUi(
                     SeveredRelationshipsNotification(
                         notification = notification,
                         style = style,
-                        onUserInfoClick = composedStatusInteraction::onUserInfoClick,
+                        onUserInfoClick = {
+                            composedStatusInteraction.onUserInfoClick(notification.role, it)
+                        },
                     )
                 }
 

@@ -2,7 +2,6 @@ package com.zhangke.utopia.feeds.pages.home.feeds
 
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
@@ -10,12 +9,9 @@ import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
-import com.zhangke.utopia.commonbiz.shared.feeds.IdentityRoleResolver
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.ContentConfig
-import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.delay
@@ -24,7 +20,7 @@ import kotlinx.coroutines.flow.drop
 class MixedContentSubViewModel(
     private val contentConfigRepo: ContentConfigRepo,
     private val feedsRepo: FeedsRepo,
-    buildStatusUiState: BuildStatusUiStateUseCase,
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val configId: Long,
@@ -37,23 +33,12 @@ class MixedContentSubViewModel(
     private val config = StatusConfigurationDefault.config
     private var mixedContent: ContentConfig.MixedContent? = null
 
-    inner class RoleResolver : IdentityRoleResolver {
-
-        override fun resolveRole(blogAuthor: BlogAuthor): IdentityRole {
-            return statusProvider.statusSourceResolver
-                .resolveRoleByUri(blogAuthor.uri)
-        }
-
-        override fun resolveRole(tag: Hashtag): IdentityRole {
-            val baseUrl = FormalBaseUrl.parse(tag.url) ?: return IdentityRole.nonIdentityRole
-            return IdentityRole(null, baseUrl)
-        }
-    }
-
     init {
         initController(
             coroutineScope = viewModelScope,
-            roleResolver = RoleResolver(),
+            roleResolver = {
+                generateRole(it)
+            },
             loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
             loadNewFromServerFunction = ::loadNewFromServer,
             loadMoreFunction = ::loadMore,
@@ -67,6 +52,7 @@ class MixedContentSubViewModel(
         launchInViewModel {
             statusProvider.accountManager
                 .getAllAccountFlow()
+                .drop(1)
                 .collect {
                     delay(200)
                     initFeeds(false)
@@ -116,5 +102,9 @@ class MixedContentSubViewModel(
 
     private suspend fun onStatusUpdate(status: Status) {
         feedsRepo.updateStatus(status)
+    }
+
+    private fun generateRole(status: Status): IdentityRole {
+        return IdentityRole(status.triggerAuthor.uri, null)
     }
 }

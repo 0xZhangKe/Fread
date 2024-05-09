@@ -50,7 +50,7 @@ class SearchedAuthorTab(
         val uiState by viewModel.uiState.collectAsState()
 
         LaunchedEffect(query) {
-            viewModel.onRefresh(query)
+            viewModel.initQuery(query)
         }
 
         SearchedAuthorContent(

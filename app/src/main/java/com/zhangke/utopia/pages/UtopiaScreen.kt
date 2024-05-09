@@ -4,36 +4,27 @@ import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
 import android.widget.TextView
 import androidx.compose.foundation.ExperimentalFoundationApi
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.pages.main.MainPage
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.HashtagInStatus
-import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.richtext.android.HtmlParser
 import com.zhangke.utopia.status.richtext.android.span.CustomEmojiSpan
-import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.Json
 
 class UtopiaScreen : Screen {
 

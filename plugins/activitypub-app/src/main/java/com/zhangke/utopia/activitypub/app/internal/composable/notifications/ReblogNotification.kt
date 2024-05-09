@@ -26,7 +26,7 @@ fun ReblogNotification(
     }
     BlogInteractionNotification(
         statusUiState = status,
-        author = notification.account,
+        author = notification.author,
         icon = Icons.Default.Star,
         interactionDesc = stringResource(R.string.activity_pub_notification_reblog_desc),
         indexInList = indexInList,

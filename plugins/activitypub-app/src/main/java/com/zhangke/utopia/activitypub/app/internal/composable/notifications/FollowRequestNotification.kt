@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.composable.notifications
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
@@ -21,17 +22,22 @@ import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
 
 @Composable
 fun FollowRequestNotification(
     notification: NotificationUiState,
     style: NotificationStyle,
+    onUserInfoClick: (BlogAuthor) -> Unit,
     onRejectClick: (NotificationUiState) -> Unit,
     onAcceptClick: (NotificationUiState) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         NotificationHeadLine(
+            modifier = Modifier.clickable {
+                onUserInfoClick(notification.author)
+            },
             icon = Icons.Default.PersonAddAlt1,
             avatar = null,
             accountName = null,

@@ -13,6 +13,7 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 
 /**
@@ -22,7 +23,7 @@ import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 @Composable
 fun BlogInteractionNotification(
     statusUiState: StatusUiState,
-    author: ActivityPubAccountEntity,
+    author: BlogAuthor,
     icon: ImageVector,
     interactionDesc: String,
     indexInList: Int,
@@ -37,9 +38,12 @@ fun BlogInteractionNotification(
             }
     ) {
         NotificationHeadLine(
+            modifier = Modifier.clickable {
+                composedStatusInteraction.onUserInfoClick(author)
+            },
             icon = icon,
             avatar = author.avatar,
-            accountName = author.displayName,
+            accountName = author.name,
             interactionDesc = interactionDesc,
             style = style,
         )

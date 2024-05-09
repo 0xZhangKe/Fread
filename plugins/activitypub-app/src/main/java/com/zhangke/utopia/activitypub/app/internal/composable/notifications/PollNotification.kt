@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.composable.notifications
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -28,8 +29,15 @@ fun PollNotification(
         )
         return
     }
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                composedStatusInteraction.onStatusClick(status.status)
+            },
+    ) {
         NotificationHeadLine(
+            modifier = Modifier,
             icon = Icons.Default.Poll,
             avatar = null,
             accountName = null,

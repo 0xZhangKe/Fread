@@ -1,13 +1,10 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.hashtag
 
-import android.annotation.SuppressLint
 import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
@@ -22,39 +19,28 @@ import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-@SuppressLint("StaticFieldLeak")
-@HiltViewModel(assistedFactory = HashtagTimelineViewModel.Factory::class)
 class HashtagTimelineViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusProvider: StatusProvider,
-    @ApplicationContext private val context: Context,
+    private val context: Context,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     buildStatusUiState: BuildStatusUiStateUseCase,
     refactorToNewBlog: RefactorToNewBlogUseCase,
-    @Assisted private val role: IdentityRole,
-    @Assisted private val hashtag: String,
-) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
+    private val role: IdentityRole,
+    private val hashtag: String,
+) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {
-
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
-        fun create(role: IdentityRole, hashtag: String): HashtagTimelineViewModel
-    }
 
     private val _hashtagTimelineUiState = MutableStateFlow(
         HashtagTimelineUiState(

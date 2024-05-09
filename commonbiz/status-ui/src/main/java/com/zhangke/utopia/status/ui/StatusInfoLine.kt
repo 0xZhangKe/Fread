@@ -87,13 +87,13 @@ fun StatusInfoLine(
         BlogAuthorAvatar(
             modifier = Modifier
                 .size(infoStyle.avatarSize)
-                .clickable {
-                    onUserInfoClick(blogAuthor)
-                }
                 .constrainAs(avatar) {
                     top.linkTo(upThread.bottom, 2.dp)
                     start.linkTo(parent.start)
                 },
+            onClick = {
+                onUserInfoClick(blogAuthor)
+            },
             reblogAvatar = reblogAuthor?.avatar,
             authorAvatar = blogAuthor.avatar,
         )
@@ -176,10 +176,12 @@ fun BlogAuthorAvatar(
     modifier: Modifier,
     reblogAvatar: String?,
     authorAvatar: String?,
+    onClick: (() -> Unit)? = null,
 ) {
     if (reblogAvatar.isNullOrEmpty()) {
         BlogAuthorAvatar(
             modifier = modifier,
+            onClick = onClick,
             imageUrl = authorAvatar,
         )
     } else {
@@ -191,6 +193,7 @@ fun BlogAuthorAvatar(
             ) {
                 BlogAuthorAvatar(
                     modifier = Modifier.fillMaxSize(),
+                    onClick = onClick,
                     imageUrl = authorAvatar,
                 )
             }
@@ -198,6 +201,7 @@ fun BlogAuthorAvatar(
                 modifier = Modifier
                     .size(18.dp)
                     .align(Alignment.BottomEnd),
+                onClick = onClick,
                 imageUrl = reblogAvatar,
             )
         }
@@ -208,15 +212,22 @@ fun BlogAuthorAvatar(
 fun BlogAuthorAvatar(
     modifier: Modifier,
     imageUrl: String?,
+    onClick: (() -> Unit)? = null,
 ) {
     var loadSuccess by remember {
         mutableStateOf(false)
     }
     AsyncImage(
-        modifier = Modifier
+        modifier = modifier
             .clip(CircleShape)
             .utopiaPlaceholder(!loadSuccess)
-            .then(modifier),
+            .let {
+                if (onClick == null) {
+                    it
+                } else {
+                    it.clickable { onClick() }
+                }
+            },
         model = imageUrl,
         imageLoader = LocalContext.current.imageLoader,
         onState = {

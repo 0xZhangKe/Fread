@@ -16,7 +16,7 @@ class FormalUri private constructor(
      */
     private val rawPath: String,
     val queries: Map<String, String>,
-) : Parcelable {
+) : Parcelable, java.io.Serializable {
 
     @IgnoredOnParcel
     @Suppress("MemberVisibilityCanBePrivate")

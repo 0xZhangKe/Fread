@@ -37,6 +37,11 @@ open class SearchHashtagViewModel @AssistedInject constructor(
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
+    fun initQuery(query: String){
+        if (uiState.value.dataList.isNotEmpty()) return
+        onRefresh(query)
+    }
+
     fun onRefresh(query: String) {
         loadableController.onRefresh {
             statusProvider.searchEngine.searchHashtag(role, query, null)

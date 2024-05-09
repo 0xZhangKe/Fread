@@ -17,21 +17,24 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.utopia.status.author.BlogAuthor
 
 @Composable
 fun SeveredRelationshipsNotification(
     notification: NotificationUiState,
     style: NotificationStyle,
+    onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                // nav to user profile
+                onUserInfoClick(notification.author)
             },
     ) {
         NotificationHeadLine(
+            modifier = Modifier,
             icon = Icons.Default.WarningAmber,
             avatar = notification.account.avatar,
             accountName = notification.account.displayName,

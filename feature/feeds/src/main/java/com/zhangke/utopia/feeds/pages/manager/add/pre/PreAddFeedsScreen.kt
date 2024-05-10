@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.OutlinedTextField
@@ -19,13 +21,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.utopia.status.ui.utils.CardInfoSection
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
@@ -35,6 +37,7 @@ import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.ui.BlogPlatformUi
+import com.zhangke.utopia.status.ui.utils.CardInfoSection
 
 /**
  * 添加 Feeds 预先搜索页，用于输入内容，判断类型添加内容。
@@ -46,7 +49,7 @@ class PreAddFeedsScreen : Screen {
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
-        val viewModel = getViewModel<PreAddFeedsViewModel>()
+        val viewModel = getScreenModel<PreAddFeedsViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = rememberSnackbarHostState()
         PreAddFeedsContent(
@@ -58,8 +61,7 @@ class PreAddFeedsScreen : Screen {
             onContentClick = viewModel::onContentClick,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.pop()
-            navigator.push(it)
+            navigator.replace(it)
         }
         ConsumeFlow(viewModel.loginRecommendPlatform) {
             bottomSheetNavigator.show(LoginBottomSheetScreen(it))
@@ -104,6 +106,14 @@ class PreAddFeedsScreen : Screen {
                     value = uiState.query,
                     onValueChange = onQueryChanged,
                     maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            onSearchClick()
+                        }
+                    ),
                     trailingIcon = {
                         SimpleIconButton(
                             onClick = onSearchClick,

@@ -50,16 +50,18 @@ class SearchStatusViewModel @AssistedInject constructor(
             onInteractiveHandleResult = { result ->
                 when (result) {
                     is InteractiveHandleResult.UpdateStatus -> {
-                        val dataList = uiState.value.dataList
-                        dataList.map {
-                            if (it.status.id == result.status.status.id) {
-                                result.status
-                            } else {
-                                it
-                            }
-                        }
-                        loadStatusController.mutableUiState.update {
-                            it.copy(dataList = dataList)
+                        loadStatusController.mutableUiState.update { state ->
+                            state.copy(
+                                dataList = uiState.value
+                                    .dataList
+                                    .map {
+                                        if (it.status.id == result.status.status.id) {
+                                            result.status
+                                        } else {
+                                            it
+                                        }
+                                    },
+                            )
                         }
                     }
 

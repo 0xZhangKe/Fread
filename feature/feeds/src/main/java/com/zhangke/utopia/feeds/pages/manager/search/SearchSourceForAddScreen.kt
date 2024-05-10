@@ -45,6 +45,7 @@ internal class SearchSourceForAddScreen : Screen {
         SearchSourceForAdd(
             loadableState = uiState,
             onBackClick = navigator::pop,
+            onQueryChanged = viewModel::onQueryChanged,
             onSearchClick = viewModel::onSearchClick,
             onAddClick = {
                 resultNavigator.popWithResult(it.uri)
@@ -56,6 +57,7 @@ internal class SearchSourceForAddScreen : Screen {
     internal fun SearchSourceForAdd(
         loadableState: LoadableState<List<StatusSourceUiState>>,
         onBackClick: () -> Unit,
+        onQueryChanged: (String) -> Unit,
         onSearchClick: (query: String) -> Unit,
         onAddClick: (StatusSourceUiState) -> Unit,
     ) {
@@ -65,7 +67,7 @@ internal class SearchSourceForAddScreen : Screen {
         SearchToolbar(
             onBackClick = onBackClick,
             placeholderText = stringResource(R.string.search_feeds_title_hint),
-            onQueryChange = {},
+            onQueryChange = onQueryChanged,
             onSearch = {
                 onSearchClick(it)
             },

@@ -11,6 +11,7 @@ import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.source.StatusSource
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
@@ -27,17 +28,32 @@ internal class SearchSourceForAddViewModel @Inject constructor(
 
     val uiState get() = _uiState.asStateFlow()
 
+    private var searchJob: Job? = null
+
     fun onSearchClick(query: String) {
         _uiState.updateToLoading()
         launchInViewModel {
-            statusProvider.searchEngine
-                .searchSource(IdentityRole.nonIdentityRole, query)
+            doSearch(query)
                 .onSuccess { list ->
                     _uiState.value = LoadableState.success(list.map { it.toUiState() })
                 }.onFailure { e ->
                     _uiState.updateToFailed(e)
                 }
         }
+    }
+
+    fun onQueryChanged(query: String) {
+        searchJob?.cancel()
+        searchJob = launchInViewModel {
+            doSearch(query)
+                .onSuccess { list ->
+                    _uiState.value = LoadableState.success(list.map { it.toUiState() })
+                }
+        }
+    }
+
+    private suspend fun doSearch(query: String): Result<List<StatusSource>> {
+        return statusProvider.searchEngine.searchSource(IdentityRole.nonIdentityRole, query)
     }
 
     private fun StatusSource.toUiState(): StatusSourceUiState {

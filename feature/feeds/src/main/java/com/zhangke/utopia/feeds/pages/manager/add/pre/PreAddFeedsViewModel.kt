@@ -1,11 +1,11 @@
 package com.zhangke.utopia.feeds.pages.manager.add.pre
 
-import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.tryEmitException
-import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
@@ -14,7 +14,6 @@ import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.search.SearchContentResult
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,11 +23,10 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
-@HiltViewModel
 class PreAddFeedsViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
-) : ViewModel() {
+) : ScreenModel {
 
     private val _uiState = MutableStateFlow(
         PreAddFeedsUiState(
@@ -55,7 +53,7 @@ class PreAddFeedsViewModel @Inject constructor(
     private var pendingLoginPlatform: BlogPlatform? = null
 
     init {
-        launchInViewModel {
+        launchInScreenModel {
             val initAccountList = statusProvider.accountManager.getAllLoggedAccount()
             statusProvider.accountManager
                 .getAllAccountFlow()
@@ -78,7 +76,7 @@ class PreAddFeedsViewModel @Inject constructor(
 
     private fun doSearch(showErrorMessage: Boolean = false) {
         searchJob?.cancel()
-        searchJob = launchInViewModel {
+        searchJob = launchInScreenModel {
             statusProvider.searchEngine
                 .searchContent(IdentityRole.nonIdentityRole, _uiState.value.query)
                 .onSuccess { list ->
@@ -97,7 +95,7 @@ class PreAddFeedsViewModel @Inject constructor(
     fun onContentClick(result: SearchContentResult) {
         pendingLoginPlatform = null
         if (addContentJob?.isActive == true) return
-        addContentJob = launchInViewModel {
+        addContentJob = launchInScreenModel {
             when (result) {
                 is SearchContentResult.Source -> {
                     _openScreenFlow.emit(AddMixedFeedsScreen(result.source))
@@ -109,7 +107,7 @@ class PreAddFeedsViewModel @Inject constructor(
                         .firstOrNull { it.baseUrl == result.platform.baseUrl }
                     if (existsConfig != null) {
                         _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
-                        return@launchInViewModel
+                        return@launchInScreenModel
                     }
                     statusProvider.accountManager
                         .checkPlatformLogged(result.platform)

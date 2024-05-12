@@ -18,15 +18,9 @@ class PlatformResolver(
         if (exception != null) return Result.failure(exception)
         return Result.success(emptyList())
     }
-
-    suspend fun getAllRecordedPlatformForLogin(): List<BlogPlatform> {
-        return resolverList.flatMap { it.getAllRecordedPlatformForLogin() }
-    }
 }
 
 interface IPlatformResolver {
 
     suspend fun resolveBySourceUri(sourceUri: FormalUri): Result<BlogPlatform?>
-
-    suspend fun getAllRecordedPlatformForLogin(): List<BlogPlatform>
 }

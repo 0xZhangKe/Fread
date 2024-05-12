@@ -27,8 +27,7 @@ class LoginViewModel @Inject constructor(
     fun onPrepared() {
         _uiState.update { it.copy(platformList = defaultBlogPlatform) }
         viewModelScope.launch {
-            val allRecordedPlatform = statusProvider.platformResolver.getAllRecordedPlatformForLogin()
-            val allPlatforms = defaultBlogPlatform.plus(allRecordedPlatform).distinctBy { it.uri }
+            val allPlatforms = defaultBlogPlatform
             _uiState.update { it.copy(platformList = allPlatforms) }
         }
     }

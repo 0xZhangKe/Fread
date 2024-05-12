@@ -31,14 +31,13 @@ class ActivityPubPlatformRepo @Inject constructor(
         }
     }
 
-    suspend fun getAllLocalPlatform(): List<BlogPlatform> {
-        return platformDao.queryAll().map {
-            activityPubInstanceAdapter.toPlatform(it.baseUrl, it.instanceEntity)
-        }
-    }
-
     suspend fun getInstanceEntity(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {
         return getInstanceInfo(baseUrl)
+    }
+
+    suspend fun searchPlatform(query: String): Result<List<BlogPlatform>>{
+
+
     }
 
     private suspend fun getInstanceInfo(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {

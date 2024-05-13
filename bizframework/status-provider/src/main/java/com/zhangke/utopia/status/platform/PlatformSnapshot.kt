@@ -1,5 +1,7 @@
 package com.zhangke.utopia.status.platform
 
+import com.zhangke.utopia.status.model.StatusProviderProtocol
+
 data class PlatformSnapshot (
     val domain: String,
     val description: String,
@@ -9,4 +11,5 @@ data class PlatformSnapshot (
     val totalUsers: Int,
     val lastWeekUsers: Int,
     val category: String,
+    val protocol: StatusProviderProtocol,
 )

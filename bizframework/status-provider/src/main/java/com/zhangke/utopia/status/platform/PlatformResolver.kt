@@ -2,11 +2,16 @@ package com.zhangke.utopia.status.platform
 
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.framework.collections.mapFirstOrNull
+import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.uri.FormalUri
 
 class PlatformResolver(
     private val resolverList: List<IPlatformResolver>,
 ) {
+
+    suspend fun resolve(blogSnapshot: PlatformSnapshot): Result<BlogPlatform> {
+        return resolverList.mapFirst { it.resolve(blogSnapshot) }
+    }
 
     suspend fun resolveBySourceUriList(uriList: List<FormalUri>): Result<List<BlogPlatform>> {
         val resultList = uriList.map { uri ->
@@ -21,6 +26,8 @@ class PlatformResolver(
 }
 
 interface IPlatformResolver {
+
+    suspend fun resolve(blogSnapshot: PlatformSnapshot): Result<BlogPlatform>?
 
     suspend fun resolveBySourceUri(sourceUri: FormalUri): Result<BlogPlatform?>
 }

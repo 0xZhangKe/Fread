@@ -36,6 +36,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.search.SearchContentResult
+import com.zhangke.utopia.status.ui.BlogPlatformSnapshotUi
 import com.zhangke.utopia.status.ui.BlogPlatformUi
 import com.zhangke.utopia.status.ui.utils.CardInfoSection
 
@@ -144,6 +145,15 @@ class PreAddFeedsScreen : Screen {
             is SearchContentResult.Source -> StatusSourceUi(content, onContentClick)
             is SearchContentResult.ActivityPubPlatform -> {
                 BlogPlatformUi(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .clickable { onContentClick(content) },
+                    platform = content.platform,
+                )
+            }
+
+            is SearchContentResult.ActivityPubPlatformSnapshot -> {
+                BlogPlatformSnapshotUi(
                     modifier = Modifier
                         .fillMaxWidth()
                         .clickable { onContentClick(content) },

@@ -97,19 +97,20 @@ class RssSearchEngine @Inject constructor(
     override suspend fun searchContent(
         role: IdentityRole,
         query: String,
-    ): Result<List<SearchContentResult>>? {
-        val result = queryWithChannelByUrl(
+    ): List<SearchContentResult> {
+        return queryWithChannelByUrl(
             query = query,
             defaultResult = null,
             block = { source, uriInsight ->
                 rssSourceTransformer.createSource(uriInsight, source)
             }
-        )
-        if (result.isFailure) {
-            return Result.failure(result.exceptionOrThrow())
+        ).getOrNull().let {
+            if (it == null) {
+                emptyList()
+            } else {
+                listOf(SearchContentResult.Source(it))
+            }
         }
-        val contentResult = result.getOrNull() ?: return null
-        return Result.success(listOf(SearchContentResult.Source(contentResult)))
     }
 
     private suspend fun searchAuthorByUrl(query: String): Result<BlogAuthor?> {

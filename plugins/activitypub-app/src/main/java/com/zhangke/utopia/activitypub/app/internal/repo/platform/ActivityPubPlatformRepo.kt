@@ -9,6 +9,7 @@ import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.platform.PlatformSnapshot
 import javax.inject.Inject
 
 class ActivityPubPlatformRepo @Inject constructor(
@@ -17,7 +18,10 @@ class ActivityPubPlatformRepo @Inject constructor(
     private val activityPubPlatformEntityAdapter: ActivityPubPlatformEntityAdapter,
     private val activityPubInstanceAdapter: ActivityPubInstanceAdapter,
     private val resolveBaseUrl: ResolveBaseUrlUseCase,
+    private val platformResourceLoader: BlogPlatformResourceLoader,
 ) {
+
+    private val localPlatformSnapshotList = mutableListOf<PlatformSnapshot>()
 
     private val platformDao = databases.getPlatformDao()
 
@@ -35,9 +39,14 @@ class ActivityPubPlatformRepo @Inject constructor(
         return getInstanceInfo(baseUrl)
     }
 
-    suspend fun searchPlatform(query: String): Result<List<BlogPlatform>>{
-
-
+    suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot> {
+        if (localPlatformSnapshotList.isEmpty()){
+            localPlatformSnapshotList += platformResourceLoader.loadLocalPlatforms()
+        }
+        val localPlatforms = localPlatformSnapshotList
+        return localPlatforms.filter {
+            it.domain.contains(query, true) || it.description.contains(query, true)
+        }.distinctBy { it.domain }
     }
 
     private suspend fun getInstanceInfo(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {

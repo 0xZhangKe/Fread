@@ -102,28 +102,41 @@ class PreAddFeedsViewModel @Inject constructor(
                 }
 
                 is SearchContentResult.ActivityPubPlatform -> {
-                    val existsConfig = contentConfigRepo.getAllConfig()
-                        .filterIsInstance<ContentConfig.ActivityPubContent>()
-                        .firstOrNull { it.baseUrl == result.platform.baseUrl }
-                    if (existsConfig != null) {
-                        _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
-                        return@launchInScreenModel
-                    }
-                    statusProvider.accountManager
-                        .checkPlatformLogged(result.platform)
+                    onAddActivityPubContent(result.platform)
+                }
+
+                is SearchContentResult.ActivityPubPlatformSnapshot -> {
+                    statusProvider.platformResolver.resolve(result.platform)
                         .onFailure {
                             _snackBarMessageFlow.tryEmitException(it)
                         }.onSuccess {
-                            if (it) {
-                                performAddActivityPubContent(result.platform)
-                            } else {
-                                pendingLoginPlatform = result.platform
-                                _loginRecommendPlatform.emit(listOf(result.platform))
-                            }
+                            onAddActivityPubContent(it)
                         }
                 }
             }
         }
+    }
+
+    private suspend fun onAddActivityPubContent(platform: BlogPlatform) {
+        val existsConfig = contentConfigRepo.getAllConfig()
+            .filterIsInstance<ContentConfig.ActivityPubContent>()
+            .firstOrNull { it.baseUrl == platform.baseUrl }
+        if (existsConfig != null) {
+            _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
+            return
+        }
+        statusProvider.accountManager
+            .checkPlatformLogged(platform)
+            .onFailure {
+                _snackBarMessageFlow.tryEmitException(it)
+            }.onSuccess {
+                if (it) {
+                    performAddActivityPubContent(platform)
+                } else {
+                    pendingLoginPlatform = platform
+                    _loginRecommendPlatform.emit(listOf(platform))
+                }
+            }
     }
 
     private suspend fun performAddActivityPubContent(platform: BlogPlatform) {

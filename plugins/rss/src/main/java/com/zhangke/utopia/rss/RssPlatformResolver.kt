@@ -4,8 +4,10 @@ import com.zhangke.utopia.rss.internal.platform.RssPlatformTransformer
 import com.zhangke.utopia.rss.internal.repo.RssRepo
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
+import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.platform.IPlatformResolver
+import com.zhangke.utopia.status.platform.PlatformSnapshot
 import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
@@ -26,7 +28,7 @@ class RssPlatformResolver @Inject constructor(
             }
     }
 
-    override suspend fun getAllRecordedPlatformForLogin(): List<BlogPlatform> {
-        return emptyList()
+    override suspend fun resolve(blogSnapshot: PlatformSnapshot): Result<BlogPlatform>? {
+        return null
     }
 }

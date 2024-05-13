@@ -1,6 +1,5 @@
 package com.zhangke.utopia.status.search
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
@@ -56,8 +55,8 @@ class SearchEngine(
         role: IdentityRole,
         query: String,
     ): Result<List<SearchContentResult>> {
-        return engineList.mapNotNull { it.searchContent(role, query) }
-            .collect()
+        return engineList.map { it.searchContent(role, query) }.flatten()
+            .let { Result.success(it) }
     }
 }
 
@@ -90,5 +89,5 @@ interface ISearchEngine {
 
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>>
 
-    suspend fun searchContent(role: IdentityRole, query: String): Result<List<SearchContentResult>>?
+    suspend fun searchContent(role: IdentityRole, query: String): List<SearchContentResult>
 }

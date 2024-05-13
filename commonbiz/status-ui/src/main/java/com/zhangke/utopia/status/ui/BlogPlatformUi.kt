@@ -25,6 +25,7 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.platform.PlatformSnapshot
 
 @Composable
 fun BlogPlatformUi(
@@ -95,6 +96,76 @@ fun BlogPlatformUi(
                 modifier = Modifier.constrainAs(descRef) {
                     start.linkTo(nameRef.start)
                     top.linkTo(domainRef.bottom, 2.dp)
+                    end.linkTo(parent.end, 16.dp)
+                    width = Dimension.fillToConstraints
+                },
+                text = platform.description,
+                maxLines = 1,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        HorizontalDivider()
+    }
+}
+
+@Composable
+fun BlogPlatformSnapshotUi(
+    modifier: Modifier,
+    platform: PlatformSnapshot,
+) {
+    Column(modifier = modifier) {
+        ConstraintLayout(modifier = Modifier
+            .fillMaxWidth()
+            .padding(bottom = 8.dp)) {
+            val (avatarRef, protocolRef, nameRef, descRef) = createRefs()
+            var loadSuccess by remember {
+                mutableStateOf(false)
+            }
+            AsyncImage(
+                modifier = Modifier
+                    .constrainAs(avatarRef) {
+                        start.linkTo(parent.start, 16.dp)
+                        top.linkTo(parent.top, 8.dp)
+                        width = Dimension.value(48.dp)
+                        height = Dimension.value(48.dp)
+                    }
+                    .clip(CircleShape)
+                    .utopiaPlaceholder(!loadSuccess),
+                onState = {
+                    loadSuccess = it is AsyncImagePainter.State.Success
+                },
+                model = platform.thumbnail,
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+            Text(
+                modifier = Modifier.constrainAs(nameRef) {
+                    start.linkTo(avatarRef.end, 8.dp)
+                    top.linkTo(parent.top, 6.dp)
+                },
+                text = platform.domain,
+                maxLines = 1,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleMedium,
+            )
+            Text(
+                modifier = Modifier.constrainAs(protocolRef) {
+                    start.linkTo(nameRef.end, 6.dp)
+                    baseline.linkTo(nameRef.baseline)
+                },
+                text = platform.protocol.name,
+                maxLines = 1,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Text(
+                modifier = Modifier.constrainAs(descRef) {
+                    start.linkTo(nameRef.start)
+                    top.linkTo(nameRef.bottom, 2.dp)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },

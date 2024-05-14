@@ -254,6 +254,9 @@ class FeedsViewModelController(
         loadMoreJob = coroutineScope.launch {
             mutableUiState.update { it.copy(loadMoreState = LoadState.Loading) }
             loadMoreFunction(feeds.last().status.id)
+                .map { list ->
+                    list.map { it.toUiState() }
+                }
                 .onFailure { e ->
                     mutableUiState.update {
                         it.copy(
@@ -262,9 +265,11 @@ class FeedsViewModelController(
                     }
                 }.onSuccess { list ->
                     mutableUiState.update {
+                        val newList = it.feeds.toMutableList()
+                        newList.addAllIgnoreDuplicate(list)
                         it.copy(
                             loadMoreState = LoadState.Idle,
-                            feeds = it.feeds.toMutableList(),
+                            feeds = newList,
                         )
                     }
                 }

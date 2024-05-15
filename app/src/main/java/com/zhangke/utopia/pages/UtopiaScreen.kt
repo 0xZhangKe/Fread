@@ -149,8 +149,7 @@ class UtopiaScreen : Screen {
     ){
         val state = rememberLazyListState()
         val layoutInfo by remember { derivedStateOf { state.layoutInfo } }
-        Log.d("U_TEST", "layoutInfo: $layoutInfo")
-        val loadMoreStateI by remember(loadMoreState) {
+        val rememberedLoadMoreState by remember(loadMoreState) {
             mutableStateOf(loadMoreState)
         }
         LazyColumn(
@@ -171,7 +170,7 @@ class UtopiaScreen : Screen {
                 }
             }
             item {
-                LoadMoreUi(loadState = loadMoreStateI) {
+                LoadMoreUi(loadState = rememberedLoadMoreState) {
 
                 }
             }

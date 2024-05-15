@@ -40,6 +40,7 @@ fun BlogContent(
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    textSelectable: Boolean = false,
 ) {
     Column(
         modifier = modifier,
@@ -60,6 +61,7 @@ fun BlogContent(
                 richText = blog.humanizedSpoilerText,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
+                textSelectable = textSelectable,
             )
         }
         val hasContent = blog.content.isNotEmpty()
@@ -87,6 +89,7 @@ fun BlogContent(
                     maxLines = style.contentMaxLine,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagInStatusClick,
+                    textSelectable = textSelectable,
                 )
                 if (canHidden) {
                     TextButton(

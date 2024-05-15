@@ -102,10 +102,7 @@ data class StatusContextScreen(
                     ) { index, statusInContext ->
                         StatusInContextUi(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .clickable {
-                                    composedStatusInteraction.onStatusClick(statusInContext.status)
-                                },
+                                .fillMaxWidth(),
                             statusInContext = statusInContext,
                             indexInList = index,
                             onMediaClick = onMediaClick,
@@ -139,7 +136,9 @@ data class StatusContextScreen(
     ) {
         when (statusInContext.type) {
             StatusInContextType.ANCESTOR -> AncestorBlogUi(
-                modifier = modifier,
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
                 status = statusInContext.status,
                 displayTime = statusInContext.status.displayTime,
                 indexInList = indexInList,
@@ -161,7 +160,9 @@ data class StatusContextScreen(
             )
 
             StatusInContextType.DESCENDANT -> DescendantStatusUi(
-                modifier = modifier,
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
                 status = statusInContext.status,
                 displayTime = statusInContext.status.displayTime,
                 bottomPanelInteractions = statusInContext.status.bottomInteractions,

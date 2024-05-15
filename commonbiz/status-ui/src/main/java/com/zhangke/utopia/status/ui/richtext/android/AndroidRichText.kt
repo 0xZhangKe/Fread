@@ -11,7 +11,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.isSpecified
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -34,6 +33,7 @@ fun AndroidRichText(
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
     minLines: Int = 1,
+    textSelectable: Boolean = false,
     onLinkTargetClick: OnLinkTargetClick,
 ) {
     val localContentColor = LocalContentColor.current
@@ -43,7 +43,45 @@ fun AndroidRichText(
     } else {
         localContentColor.copy(localContentAlpha)
     }
-    val context = LocalContext.current
+    if (textSelectable) {
+        SelectableTextView(
+            modifier = modifier,
+            richText = richText,
+            finalColor = finalColor,
+            fontSp = fontSp,
+            layoutDirection = layoutDirection,
+            overflow = overflow,
+            maxLines = maxLines,
+            minLines = minLines,
+            onLinkTargetClick = onLinkTargetClick,
+        )
+    } else {
+        UnSelectableTextView(
+            modifier = modifier,
+            richText = richText,
+            finalColor = finalColor,
+            fontSp = fontSp,
+            layoutDirection = layoutDirection,
+            overflow = overflow,
+            maxLines = maxLines,
+            minLines = minLines,
+            onLinkTargetClick = onLinkTargetClick,
+        )
+    }
+}
+
+@Composable
+private fun UnSelectableTextView(
+    modifier: Modifier,
+    richText: RichText,
+    finalColor: Color,
+    fontSp: Float,
+    layoutDirection: LayoutDirection,
+    overflow: TextOverflow,
+    maxLines: Int,
+    minLines: Int,
+    onLinkTargetClick: OnLinkTargetClick,
+) {
     val coroutineScope = rememberCoroutineScope()
     AndroidView(
         modifier = modifier,
@@ -52,33 +90,98 @@ fun AndroidRichText(
                 this.gravity = Gravity.START
             }
         },
-        update = { textView ->
-            textView.textSize = fontSp
-            if (color != Color.Unspecified) {
-                textView.setTextColor(finalColor.value.toInt())
-            }
-            textView.layoutDirection = when (layoutDirection) {
-                LayoutDirection.Ltr -> android.view.View.LAYOUT_DIRECTION_LTR
-                LayoutDirection.Rtl -> android.view.View.LAYOUT_DIRECTION_RTL
-            }
-            textView.maxLines = maxLines
-            textView.minLines = minLines
-            textView.ellipsize = when (overflow) {
-                TextOverflow.Ellipsis -> android.text.TextUtils.TruncateAt.END
-                else -> android.text.TextUtils.TruncateAt.START
-            }
-            textView.onLinkSpanClick = {
-                onLinkTargetClick(context, it.linkTarget)
-            }
-            val charSequence = richText.parse()
-            textView.text = charSequence
-            startLoadEmojiImage(
+        update = {
+            it.applyUpdate(
+                richText = richText,
+                finalColor = finalColor,
+                fontSp = fontSp,
                 coroutineScope = coroutineScope,
-                context = context,
-                textView = textView,
-                charSequence = charSequence,
+                layoutDirection = layoutDirection,
+                overflow = overflow,
+                maxLines = maxLines,
+                minLines = minLines,
+                onLinkTargetClick = onLinkTargetClick,
             )
         }
+    )
+}
+
+@Composable
+private fun SelectableTextView(
+    modifier: Modifier,
+    richText: RichText,
+    finalColor: Color,
+    fontSp: Float = 14F,
+    layoutDirection: LayoutDirection = LocalLayoutDirection.current,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = Int.MAX_VALUE,
+    minLines: Int = 1,
+    onLinkTargetClick: OnLinkTargetClick,
+) {
+    val coroutineScope = rememberCoroutineScope()
+    AndroidView(
+        modifier = modifier,
+        factory = {
+            LinkedTextView(it).apply {
+                this.gravity = Gravity.START
+                this.focusable = TextView.FOCUSABLE
+                this.isEnabled = true
+                this.setTextIsSelectable(true)
+                this.isLongClickable = true
+            }
+        },
+        update = {
+            it.applyUpdate(
+                richText = richText,
+                finalColor = finalColor,
+                fontSp = fontSp,
+                coroutineScope = coroutineScope,
+                layoutDirection = layoutDirection,
+                overflow = overflow,
+                maxLines = maxLines,
+                minLines = minLines,
+                onLinkTargetClick = onLinkTargetClick,
+            )
+        }
+    )
+}
+
+private fun LinkedTextView.applyUpdate(
+    richText: RichText,
+    finalColor: Color,
+    fontSp: Float = 14F,
+    coroutineScope: CoroutineScope,
+    layoutDirection: LayoutDirection,
+    overflow: TextOverflow,
+    maxLines: Int,
+    minLines: Int,
+    onLinkTargetClick: OnLinkTargetClick,
+) {
+    val textView = this
+    textView.textSize = fontSp
+//    if (finalColor != Color.Unspecified) {
+//        textView.setTextColor(finalColor.value.toInt())
+//    }
+    textView.layoutDirection = when (layoutDirection) {
+        LayoutDirection.Ltr -> android.view.View.LAYOUT_DIRECTION_LTR
+        LayoutDirection.Rtl -> android.view.View.LAYOUT_DIRECTION_RTL
+    }
+    textView.maxLines = maxLines
+    textView.minLines = minLines
+    textView.ellipsize = when (overflow) {
+        TextOverflow.Ellipsis -> android.text.TextUtils.TruncateAt.END
+        else -> android.text.TextUtils.TruncateAt.START
+    }
+    textView.onLinkSpanClick = {
+        onLinkTargetClick(context, it.linkTarget)
+    }
+    val charSequence = richText.parse()
+    textView.text = charSequence
+    startLoadEmojiImage(
+        coroutineScope = coroutineScope,
+        context = context,
+        textView = textView,
+        charSequence = charSequence,
     )
 }
 

@@ -71,6 +71,7 @@ fun AnchorBlogUi(
                 onMentionClick = {
                     composedStatusInteraction.onMentionClick(status.role, it)
                 },
+                textSelectable = true,
             )
             StatusBottomInteractionPanel(
                 modifier = Modifier

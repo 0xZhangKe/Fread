@@ -24,6 +24,7 @@ fun UtopiaRichText(
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
+    textSelectable: Boolean = false,
 ) {
     AndroidRichText(
         modifier = modifier,

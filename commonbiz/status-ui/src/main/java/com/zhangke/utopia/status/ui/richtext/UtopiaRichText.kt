@@ -32,6 +32,7 @@ fun UtopiaRichText(
         layoutDirection = layoutDirection,
         overflow = overflow,
         maxLines = maxLines,
+        textSelectable = textSelectable,
         onLinkTargetClick = { context, linkTarget ->
             when (linkTarget) {
                 is LinkSpan.LinkTarget.UrlTarget -> {

@@ -9,4 +9,4 @@ import kotlinx.serialization.Serializable
 data class StatusProviderProtocol(
     val id: String,
     val name: String,
-) : Parcelable
+) : Parcelable, java.io.Serializable

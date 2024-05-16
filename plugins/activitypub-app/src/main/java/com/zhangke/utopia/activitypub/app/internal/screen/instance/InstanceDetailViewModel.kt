@@ -3,10 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.instance
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
-import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,9 +13,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class InstanceDetailViewModel @Inject constructor(
-    private val accountManager: ActivityPubAccountManager,
     private val platformRepo: ActivityPubPlatformRepo,
-    private val instanceAdapter: ActivityPubInstanceAdapter,
 ) : ViewModel() {
 
     lateinit var serverBaseUrl: FormalBaseUrl
@@ -28,13 +23,9 @@ class InstanceDetailViewModel @Inject constructor(
             loading = false,
             baseUrl = null,
             instance = null,
-            addable = false,
         )
     )
     val uiState = _uiState.asStateFlow()
-
-    private val _openLoginFlow = MutableSharedFlow<List<BlogPlatform>>()
-    val openLoginFlow: SharedFlow<List<BlogPlatform>> get() = _openLoginFlow
 
     private val _contentConfigFlow = MutableSharedFlow<Unit>()
     val contentConfigFlow: SharedFlow<Unit> get() = _contentConfigFlow
@@ -42,7 +33,6 @@ class InstanceDetailViewModel @Inject constructor(
     fun onPrepared() {
         _uiState.value = _uiState.value.copy(
             loading = true,
-            addable = false,
             baseUrl = serverBaseUrl
         )
         launchInViewModel {
@@ -51,17 +41,6 @@ class InstanceDetailViewModel @Inject constructor(
                 loading = false,
                 instance = platform,
             )
-        }
-    }
-
-    fun onAddClick() {
-        val instance = _uiState.value.instance ?: return
-        launchInViewModel {
-            if (accountManager.getAllLoggedAccount().isEmpty()) {
-                _openLoginFlow.emit(listOf(instanceAdapter.toPlatform(serverBaseUrl, instance)))
-            } else {
-                emitCurrentContentConfigFlow()
-            }
         }
     }
 

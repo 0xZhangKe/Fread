@@ -13,6 +13,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.platform.PlatformSnapshot
 import com.zhangke.utopia.status.search.ISearchEngine
 import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.search.SearchResult
@@ -79,6 +80,10 @@ class RssSearchEngine @Inject constructor(
                 listOf(rssPlatformTransformer.create(uriInsight, channel))
             }
         )
+    }
+
+    override suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot> {
+        return emptyList()
     }
 
     override suspend fun searchSource(

@@ -28,6 +28,10 @@ class RssPlatformResolver @Inject constructor(
             }
     }
 
+    override suspend fun getSuggestedPlatformSnapshotList(): List<PlatformSnapshot> {
+        return emptyList()
+    }
+
     override suspend fun resolve(blogSnapshot: PlatformSnapshot): Result<BlogPlatform>? {
         return null
     }

@@ -1,171 +1,155 @@
 package com.zhangke.utopia.commonbiz.shared.screen.login
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material3.Card
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
-import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
-import com.zhangke.utopia.status.ui.utils.CardInfoSection
-import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LoadingDialog
+import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.platform.PlatformSnapshot
+import com.zhangke.utopia.status.ui.BlogPlatformSnapshotUi
+import com.zhangke.utopia.status.ui.BlogPlatformUi
 
-class LoginBottomSheetScreen(
-    private val defaultBlogPlatform: List<BlogPlatform> = emptyList(),
-) : Screen {
+class LoginBottomSheetScreen : Screen {
 
     @Composable
     override fun Content() {
         val navigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<LoginViewModel>()
-        LaunchedEffect(Unit){
-            viewModel.defaultBlogPlatform = defaultBlogPlatform
-            viewModel.onPrepared()
-        }
         val uiState by viewModel.uiState.collectAsState()
-        var showInputContent by remember {
-            mutableStateOf(false)
-        }
 
-        AnimatedVisibility(visible = !showInputContent) {
-            LoginScreenContent(
-                uiState = uiState,
-                onPlatformClick = {
-                    viewModel.onServerHostConfirmClick(it.baseUrl)
-                    navigator.hide()
-                },
-                onInputClick = { showInputContent = true },
-            )
-        }
-        AnimatedVisibility(visible = showInputContent) {
-            InputServerHostContent(
-                onBackClick = { showInputContent = false },
-                onConfirmClick = {
-                    viewModel.onServerHostConfirmClick(FormalBaseUrl.parse(it)!!)
-                    navigator.hide()
-                },
-            )
-        }
-    }
-
-    @Composable
-    private fun LoginScreenContent(
-        uiState: LoginUiState,
-        onPlatformClick: (BlogPlatform) -> Unit,
-        onInputClick: () -> Unit,
-    ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Toolbar(
-                title = stringResource(R.string.login_dialog_title),
-            )
-
-            Card(
-                modifier = Modifier
-                    .padding(16.dp)
-                    .fillMaxWidth()
-                    .height(48.dp)
-            ) {
-                TextButton(
-                    modifier = Modifier.align(Alignment.CenterHorizontally),
-                    onClick = onInputClick,
-                ) {
-                    Text(text = stringResource(R.string.login_dialog_input_tip))
-                }
-            }
-
-            uiState.platformList.forEach {
-                BlogPlatformUi(
-                    modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                        .clickable { onPlatformClick(it) },
-                    platform = it,
-                )
-            }
-        }
-    }
-
-    @Composable
-    private fun BlogPlatformUi(
-        modifier: Modifier,
-        platform: BlogPlatform
-    ) {
-        CardInfoSection(
-            modifier = modifier,
-            avatar = platform.thumbnail,
-            title = platform.name,
-            description = platform.description,
+        val snackbarHostState = rememberSnackbarHostState()
+        LoginContent(
+            uiState = uiState,
+            snackbarHostState = snackbarHostState,
+            onQueryChanged = viewModel::onQueryChanged,
+            onSnapshotClick = {
+                viewModel.onSnapshotClick(it)
+            },
+            onPlatformClick = {
+                viewModel.onPlatformClick(it)
+            },
+            onSearchClick = viewModel::onSearchClick,
         )
+
+        LoadingDialog(loading = uiState.loading) {
+            viewModel.onDismissRequest()
+        }
+
+        ConsumeFlow(viewModel.hideScreenFlow) {
+            navigator.hide()
+        }
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
     }
 
     @Composable
-    private fun InputServerHostContent(
-        onBackClick: () -> Unit,
-        onConfirmClick: (String) -> Unit,
+    private fun LoginContent(
+        uiState: LoginUiState,
+        snackbarHostState: SnackbarHostState,
+        onQueryChanged: (String) -> Unit,
+        onSearchClick: () -> Unit,
+        onSnapshotClick: (PlatformSnapshot) -> Unit,
+        onPlatformClick: (BlogPlatform) -> Unit,
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Toolbar(
-                title = stringResource(R.string.login_dialog_title),
-                onBackClick = onBackClick,
-            )
-
-            var inputtedValue by remember {
-                mutableStateOf("")
-            }
-            TextField(
-                modifier = Modifier
-                    .align(Alignment.CenterHorizontally)
-                    .padding(top = 40.dp, bottom = 40.dp),
-                value = inputtedValue,
-                label = {
-                    Text(text = stringResource(R.string.login_dialog_input_label))
-                },
-                onValueChange = { inputtedValue = it },
-                keyboardActions = KeyboardActions(
-                    onGo = {
-                        if (inputtedValue.isNotBlank()) {
-                            onConfirmClick(inputtedValue)
-                        }
+        val configuration = LocalConfiguration.current
+        val screenHeight = configuration.screenHeightDp.dp * 0.8F
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(screenHeight)
+        ) {
+            Column(modifier = Modifier.fillMaxSize()) {
+                Spacer(modifier = Modifier.height(24.dp))
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 22.dp, top = 36.dp, end = 22.dp),
+                    value = uiState.query,
+                    onValueChange = onQueryChanged,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search
+                    ),
+                    placeholder = {
+                        Text(text = stringResource(R.string.login_dialog_input_hint))
                     },
-                ),
-                keyboardOptions = KeyboardOptions.Default.copy(
-                    imeAction = ImeAction.Go
-                ),
-                trailingIcon = {
-                    TextButton(
-                        onClick = {
-                            if (inputtedValue.isNotBlank()) {
-                                onConfirmClick(inputtedValue)
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            onSearchClick()
+                        }
+                    ),
+                    trailingIcon = {
+                        SimpleIconButton(
+                            onClick = onSearchClick,
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                        )
+                    }
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(1F),
+                ) {
+                    items(uiState.platformList) { platform ->
+                        when (platform) {
+                            is SearchPlatformForLogin.Snapshot -> {
+                                BlogPlatformSnapshotUi(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable { onSnapshotClick(platform.snapshot) },
+                                    platform = platform.snapshot,
+                                )
+                            }
+
+                            is SearchPlatformForLogin.Platform -> {
+                                BlogPlatformUi(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable { onPlatformClick(platform.platform) },
+                                    platform = platform.platform,
+                                )
                             }
                         }
-                    ) {
-                        Text(text = stringResource(com.zhangke.utopia.framework.R.string.ok))
                     }
                 }
+            }
+            SnackbarHost(
+                hostState = snackbarHostState,
+                modifier = Modifier.align(Alignment.Center),
             )
-
         }
     }
 }

@@ -39,14 +39,23 @@ class ActivityPubPlatformRepo @Inject constructor(
         return getInstanceInfo(baseUrl)
     }
 
+    suspend fun getSuggestedPlatformSnapshotList(): List<PlatformSnapshot> {
+        return getAllLocalPlatformSnapshot()
+    }
+
     suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot> {
-        if (localPlatformSnapshotList.isEmpty()){
-            localPlatformSnapshotList += platformResourceLoader.loadLocalPlatforms()
-        }
-        val localPlatforms = localPlatformSnapshotList
+        val localPlatforms = getAllLocalPlatformSnapshot()
         return localPlatforms.filter {
             it.domain.contains(query, true) || it.description.contains(query, true)
         }.distinctBy { it.domain }
+    }
+
+    private suspend fun getAllLocalPlatformSnapshot(): List<PlatformSnapshot> {
+        if (localPlatformSnapshotList.isEmpty()) {
+            localPlatformSnapshotList += platformResourceLoader.loadLocalPlatforms()
+                .sortedByDescending { it.lastWeekUsers }
+        }
+        return localPlatformSnapshotList
     }
 
     private suspend fun getInstanceInfo(baseUrl: FormalBaseUrl): Result<ActivityPubInstanceEntity> {

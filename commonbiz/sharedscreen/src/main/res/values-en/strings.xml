@@ -3,8 +3,11 @@
     <string name="shared_select_language_title">Select Language</string>
     <string name="shared_status_context_screen_title">Detail</string>
 
+    <string name="login_dialog_input_hint">Please input the server to log in to</string>
     <string name="login_dialog_title">Please select the server to log in to</string>
     <string name="login_dialog_input_tip">Input Server Host</string>
     <string name="login_dialog_input_title">Please Input Server Host</string>
     <string name="login_dialog_input_label">Server Host</string>
+
+    <string name="login_dialog_target_title">Please log in</string>
 </resources>

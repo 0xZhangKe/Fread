@@ -3,8 +3,11 @@
     <string name="shared_select_language_title">选择语言</string>
     <string name="shared_status_context_screen_title">详情</string>
 
+    <string name="login_dialog_input_hint">请输入要登录的服务器</string>
     <string name="login_dialog_title">请选择要登录的服务器</string>
     <string name="login_dialog_input_tip">请输入服务器地址</string>
     <string name="login_dialog_input_title">请输入服务器地址</string>
     <string name="login_dialog_input_label">服务器地址</string>
+
+    <string name="login_dialog_target_title">请登录</string>
 </resources>

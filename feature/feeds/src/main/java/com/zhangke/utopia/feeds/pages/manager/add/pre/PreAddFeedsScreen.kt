@@ -30,10 +30,11 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
+import com.zhangke.utopia.commonbiz.shared.screen.login.target.LoginToTargetPlatformScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.ui.BlogPlatformSnapshotUi
@@ -60,12 +61,13 @@ class PreAddFeedsScreen : Screen {
             onQueryChanged = viewModel::onQueryChanged,
             onSearchClick = viewModel::onSearchClick,
             onContentClick = viewModel::onContentClick,
+            onLoadingDismissRequest = viewModel::onLoadingDismissRequest,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.replace(it)
         }
         ConsumeFlow(viewModel.loginRecommendPlatform) {
-            bottomSheetNavigator.show(LoginBottomSheetScreen(it))
+            bottomSheetNavigator.show(LoginToTargetPlatformScreen(it))
         }
         ConsumeFlow(viewModel.addContentSuccessFlow) {
             snackbarHostState.showSnackbar(context.getString(R.string.add_content_success_snackbar))
@@ -82,6 +84,7 @@ class PreAddFeedsScreen : Screen {
         onQueryChanged: (String) -> Unit,
         onSearchClick: () -> Unit,
         onContentClick: (SearchContentResult) -> Unit,
+        onLoadingDismissRequest: () -> Unit,
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -133,6 +136,10 @@ class PreAddFeedsScreen : Screen {
                     }
                 }
             }
+            LoadingDialog(
+                loading = uiState.loading,
+                onDismissRequest = onLoadingDismissRequest,
+            )
         }
     }
 

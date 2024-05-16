@@ -7,5 +7,4 @@ data class InstanceDetailUiState(
     val loading: Boolean,
     val baseUrl: FormalBaseUrl?,
     val instance: ActivityPubInstanceEntity?,
-    val addable: Boolean,
 )

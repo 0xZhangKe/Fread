@@ -4,8 +4,6 @@ import android.content.Context
 import android.text.SpannableStringBuilder
 import android.view.Gravity
 import android.widget.TextView
-import androidx.compose.material.LocalContentAlpha
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
@@ -36,18 +34,11 @@ fun AndroidRichText(
     textSelectable: Boolean = false,
     onLinkTargetClick: OnLinkTargetClick,
 ) {
-    val localContentColor = LocalContentColor.current
-    val localContentAlpha = LocalContentAlpha.current
-    val finalColor = if (color.isSpecified) {
-        color
-    } else {
-        localContentColor.copy(localContentAlpha)
-    }
     if (textSelectable) {
         SelectableTextView(
             modifier = modifier,
             richText = richText,
-            finalColor = finalColor,
+            finalColor = color,
             fontSp = fontSp,
             layoutDirection = layoutDirection,
             overflow = overflow,
@@ -59,7 +50,7 @@ fun AndroidRichText(
         UnSelectableTextView(
             modifier = modifier,
             richText = richText,
-            finalColor = finalColor,
+            finalColor = color,
             fontSp = fontSp,
             layoutDirection = layoutDirection,
             overflow = overflow,
@@ -159,9 +150,9 @@ private fun LinkedTextView.applyUpdate(
 ) {
     val textView = this
     textView.textSize = fontSp
-//    if (finalColor != Color.Unspecified) {
-//        textView.setTextColor(finalColor.value.toInt())
-//    }
+    if (finalColor.isSpecified) {
+        textView.setTextColor(finalColor.value.toInt())
+    }
     textView.layoutDirection = when (layoutDirection) {
         LayoutDirection.Ltr -> android.view.View.LAYOUT_DIRECTION_LTR
         LayoutDirection.Rtl -> android.view.View.LAYOUT_DIRECTION_RTL

@@ -24,6 +24,10 @@ class ActivityPubPlatformResolver @Inject constructor(
         return getActivityPubServer(role)
     }
 
+    override suspend fun getSuggestedPlatformSnapshotList(): List<PlatformSnapshot> {
+        return platformRepo.getSuggestedPlatformSnapshotList()
+    }
+
     override suspend fun resolve(blogSnapshot: PlatformSnapshot): Result<BlogPlatform>? {
         if (!blogSnapshot.protocol.isActivityPub) return null
         val baseUrl = FormalBaseUrl.parse(blogSnapshot.domain) ?: return null

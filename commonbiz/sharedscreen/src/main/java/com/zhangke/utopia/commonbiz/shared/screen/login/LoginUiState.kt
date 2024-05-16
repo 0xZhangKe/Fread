@@ -1,7 +1,17 @@
 package com.zhangke.utopia.commonbiz.shared.screen.login
 
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.platform.PlatformSnapshot
 
 data class LoginUiState(
-    val platformList: List<BlogPlatform>,
+    val query: String,
+    val platformList: List<SearchPlatformForLogin>,
+    val loading: Boolean,
 )
+
+sealed interface SearchPlatformForLogin{
+
+    data class Snapshot(val snapshot: PlatformSnapshot): SearchPlatformForLogin
+
+    data class Platform(val platform: BlogPlatform): SearchPlatformForLogin
+}

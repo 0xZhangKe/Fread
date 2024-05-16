@@ -15,4 +15,4 @@ data class BlogPlatform(
     val baseUrl: FormalBaseUrl,
     val protocol: StatusProviderProtocol,
     val thumbnail: String?,
-) : Parcelable
+) : Parcelable, java.io.Serializable

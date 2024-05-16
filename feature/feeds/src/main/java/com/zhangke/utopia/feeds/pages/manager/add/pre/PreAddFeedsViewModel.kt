@@ -32,6 +32,7 @@ class PreAddFeedsViewModel @Inject constructor(
         PreAddFeedsUiState(
             query = "",
             allSearchedResult = emptyList(),
+            loading = false,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -42,7 +43,7 @@ class PreAddFeedsViewModel @Inject constructor(
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
-    private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
+    private val _loginRecommendPlatform = MutableSharedFlow<BlogPlatform>()
     val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
 
     private val _addContentSuccessFlow = MutableSharedFlow<Unit>()
@@ -63,10 +64,23 @@ class PreAddFeedsViewModel @Inject constructor(
                     pendingLoginPlatform?.let { performAddActivityPubContent(it) }
                 }
         }
+        launchInScreenModel {
+            _uiState.update {
+                it.copy(allSearchedResult = getSuggestedPlatformSnapshots())
+            }
+        }
     }
 
     fun onQueryChanged(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
+        if (query.isEmpty()) {
+            launchInScreenModel {
+                _uiState.update {
+                    it.copy(allSearchedResult = getSuggestedPlatformSnapshots())
+                }
+            }
+            return
+        }
         doSearch()
     }
 
@@ -106,15 +120,22 @@ class PreAddFeedsViewModel @Inject constructor(
                 }
 
                 is SearchContentResult.ActivityPubPlatformSnapshot -> {
+                    _uiState.update { it.copy(loading = true) }
                     statusProvider.platformResolver.resolve(result.platform)
                         .onFailure {
+                            _uiState.update { state -> state.copy(loading = false) }
                             _snackBarMessageFlow.tryEmitException(it)
                         }.onSuccess {
+                            _uiState.update { state -> state.copy(loading = false) }
                             onAddActivityPubContent(it)
                         }
                 }
             }
         }
+    }
+
+    fun onLoadingDismissRequest(){
+        _uiState.update { it.copy(loading = false) }
     }
 
     private suspend fun onAddActivityPubContent(platform: BlogPlatform) {
@@ -134,7 +155,7 @@ class PreAddFeedsViewModel @Inject constructor(
                     performAddActivityPubContent(platform)
                 } else {
                     pendingLoginPlatform = platform
-                    _loginRecommendPlatform.emit(listOf(platform))
+                    _loginRecommendPlatform.emit(platform)
                 }
             }
     }
@@ -159,5 +180,11 @@ class PreAddFeedsViewModel @Inject constructor(
         tabList += ContentConfig.ActivityPubContent.ContentTab.PublicTimeline(2)
         tabList += ContentConfig.ActivityPubContent.ContentTab.Trending(3)
         return tabList
+    }
+
+    private suspend fun getSuggestedPlatformSnapshots(): List<SearchContentResult.ActivityPubPlatformSnapshot> {
+        return statusProvider.platformResolver
+            .getSuggestedPlatformList()
+            .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
     }
 }

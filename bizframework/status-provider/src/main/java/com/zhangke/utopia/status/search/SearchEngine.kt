@@ -4,6 +4,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.platform.BlogPlatform
+import com.zhangke.utopia.status.platform.PlatformSnapshot
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.utils.collect
@@ -47,6 +48,10 @@ class SearchEngine(
         return engineList.map { it.searchPlatform(query, offset) }.collect()
     }
 
+    suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot>{
+        return engineList.map { it.searchPlatformSnapshot(query) }.flatten()
+    }
+
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>> {
         return engineList.map { it.searchSource(role, query.trim()) }.collect()
     }
@@ -86,6 +91,8 @@ interface ISearchEngine {
         query: String,
         offset: Int?,
     ): Result<List<BlogPlatform>>
+
+    suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot>
 
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>>
 

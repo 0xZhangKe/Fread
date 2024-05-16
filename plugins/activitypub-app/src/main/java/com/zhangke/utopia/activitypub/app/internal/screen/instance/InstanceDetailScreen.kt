@@ -13,8 +13,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -41,7 +39,6 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeFlow
-import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.utopiaPlaceholder
@@ -50,7 +47,6 @@ import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
-import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import kotlinx.coroutines.launch
 
 @Destination(PlatformDetailRoute.ROUTE)
@@ -77,13 +73,9 @@ class InstanceDetailScreen(
                     navigationResult.popWithResult(false)
                 }
             },
-            onAddClick = viewModel::onAddClick,
         )
         ConsumeFlow(viewModel.contentConfigFlow) {
             navigationResult.popWithResult(true)
-        }
-        ConsumeFlow(viewModel.openLoginFlow) {
-            bottomSheetDialogNavigator.show(LoginBottomSheetScreen(it))
         }
     }
 
@@ -92,7 +84,6 @@ class InstanceDetailScreen(
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,
         onBackClick: () -> Unit,
-        onAddClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -108,15 +99,7 @@ class InstanceDetailScreen(
                 avatar = instance?.thumbnail?.url,
                 contentCanScrollBackward = contentCanScrollBackward,
                 onBackClick = onBackClick,
-                toolbarAction = { fontColor ->
-                    if (uiState.addable) {
-                        SimpleIconButton(
-                            onClick = onAddClick,
-                            imageVector = Icons.Default.Check,
-                            contentDescription = "Confirm add",
-                            tint = fontColor,
-                        )
-                    }
+                toolbarAction = { _ ->
                 },
                 headerAction = { },
                 headerContent = {

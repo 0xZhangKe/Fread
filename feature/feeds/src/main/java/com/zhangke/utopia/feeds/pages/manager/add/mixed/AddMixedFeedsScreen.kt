@@ -43,7 +43,6 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.framework.voyager.navigationResult
-import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
@@ -79,9 +78,6 @@ internal class AddMixedFeedsScreen(
             onNameInputValueChanged = viewModel::onSourceNameInput,
             onRemoveSourceClick = viewModel::onRemoveSource,
         )
-        ConsumeFlow(viewModel.loginRecommendPlatform) {
-            bottomSheetNavigator.show(LoginBottomSheetScreen(it))
-        }
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.addContentSuccessFlow) {
             snackbarHostState.showSnackbar(context.getString(R.string.add_content_success_snackbar))

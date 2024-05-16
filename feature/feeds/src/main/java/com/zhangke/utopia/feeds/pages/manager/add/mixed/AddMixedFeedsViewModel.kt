@@ -15,7 +15,6 @@ import com.zhangke.utopia.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.ContentConfig
-import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
 import dagger.assisted.Assisted
@@ -56,9 +55,6 @@ internal class AddMixedFeedsViewModel @AssistedInject constructor(
 
     private val _addContentSuccessFlow = MutableSharedFlow<Unit>()
     val addContentSuccessFlow: SharedFlow<Unit> get() = _addContentSuccessFlow
-
-    private val _loginRecommendPlatform = MutableSharedFlow<List<BlogPlatform>>()
-    val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
 
     init {
         launchInViewModel {

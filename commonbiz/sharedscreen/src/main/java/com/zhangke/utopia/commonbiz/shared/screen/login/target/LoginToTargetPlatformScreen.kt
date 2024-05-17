@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -22,6 +23,7 @@ class LoginToTargetPlatformScreen(val platform: BlogPlatform) : Screen {
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        val navigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<LoginToTargetPlatformViewModel, LoginToTargetPlatformViewModel.Factory> {
                 it.create(platform)
@@ -38,7 +40,10 @@ class LoginToTargetPlatformScreen(val platform: BlogPlatform) : Screen {
             ) {
                 BlogPlatformUi(
                     modifier = Modifier
-                        .clickable { viewModel.onServerHostConfirmClick() },
+                        .clickable {
+                            navigator.hide()
+                            viewModel.onServerHostConfirmClick()
+                        },
                     platform = platform,
                     showDivider = false,
                 )

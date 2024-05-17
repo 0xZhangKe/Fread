@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.horizontalPadding
@@ -34,6 +35,7 @@ fun BlogUi(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
     showDivider: Boolean = true,
+    showUpThread: Boolean = false,
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         StatusInfoLine(
@@ -45,6 +47,7 @@ fun BlogUi(
             onInteractive = onInteractive,
             onUserInfoClick = onUserInfoClick,
             style = style,
+            showUpThread = showUpThread,
             reblogAuthor = reblogAuthor,
         )
         BlogContent(
@@ -62,7 +65,7 @@ fun BlogUi(
         StatusBottomInteractionPanel(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalPadding(style.containerPaddings),
+                .padding(start = style.iconStartPadding, end = style.iconEndPadding),
             interactions = bottomPanelInteractions,
             onInteractive = onInteractive,
         )

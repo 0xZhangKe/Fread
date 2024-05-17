@@ -4,11 +4,13 @@ import android.content.Context
 import android.text.SpannableStringBuilder
 import android.view.Gravity
 import android.widget.TextView
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.isSpecified
+import androidx.compose.ui.graphics.takeOrElse
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
@@ -34,11 +36,14 @@ fun AndroidRichText(
     textSelectable: Boolean = false,
     onLinkTargetClick: OnLinkTargetClick,
 ) {
+    val textColor = color.takeOrElse {
+        LocalContentColor.current
+    }
     if (textSelectable) {
         SelectableTextView(
             modifier = modifier,
             richText = richText,
-            finalColor = color,
+            textColor = textColor,
             fontSp = fontSp,
             layoutDirection = layoutDirection,
             overflow = overflow,
@@ -50,7 +55,7 @@ fun AndroidRichText(
         UnSelectableTextView(
             modifier = modifier,
             richText = richText,
-            finalColor = color,
+            finalColor = textColor,
             fontSp = fontSp,
             layoutDirection = layoutDirection,
             overflow = overflow,
@@ -84,7 +89,7 @@ private fun UnSelectableTextView(
         update = {
             it.applyUpdate(
                 richText = richText,
-                finalColor = finalColor,
+                textColor = finalColor,
                 fontSp = fontSp,
                 coroutineScope = coroutineScope,
                 layoutDirection = layoutDirection,
@@ -101,7 +106,7 @@ private fun UnSelectableTextView(
 private fun SelectableTextView(
     modifier: Modifier,
     richText: RichText,
-    finalColor: Color,
+    textColor: Color,
     fontSp: Float = 14F,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
@@ -124,7 +129,7 @@ private fun SelectableTextView(
         update = {
             it.applyUpdate(
                 richText = richText,
-                finalColor = finalColor,
+                textColor = textColor,
                 fontSp = fontSp,
                 coroutineScope = coroutineScope,
                 layoutDirection = layoutDirection,
@@ -139,7 +144,7 @@ private fun SelectableTextView(
 
 private fun LinkedTextView.applyUpdate(
     richText: RichText,
-    finalColor: Color,
+    textColor: Color,
     fontSp: Float = 14F,
     coroutineScope: CoroutineScope,
     layoutDirection: LayoutDirection,
@@ -150,9 +155,7 @@ private fun LinkedTextView.applyUpdate(
 ) {
     val textView = this
     textView.textSize = fontSp
-    if (finalColor.isSpecified) {
-        textView.setTextColor(finalColor.value.toInt())
-    }
+    textView.setTextColor(textColor.toArgb())
     textView.layoutDirection = when (layoutDirection) {
         LayoutDirection.Ltr -> android.view.View.LAYOUT_DIRECTION_LTR
         LayoutDirection.Rtl -> android.view.View.LAYOUT_DIRECTION_RTL

@@ -163,7 +163,7 @@ fun StatusInfoLine(
         StatusMoreInteractionIcon(
             modifier = Modifier.constrainAs(moreOptions) {
                 end.linkTo(parent.end, style.iconEndPadding)
-                top.linkTo(name.top)
+                top.linkTo(parent.top)
             },
             moreActionList = moreInteractions,
             onActionClick = onInteractive,

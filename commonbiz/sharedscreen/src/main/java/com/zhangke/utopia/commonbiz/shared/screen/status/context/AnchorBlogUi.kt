@@ -1,20 +1,12 @@
 package com.zhangke.utopia.commonbiz.shared.screen.status.context
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.status.ui.BlogContent
-import com.zhangke.utopia.status.ui.BlogDivider
+import com.zhangke.utopia.status.ui.BlogUi
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
-import com.zhangke.utopia.status.ui.StatusInfoLine
-import com.zhangke.utopia.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.style.StatusStyle
 import com.zhangke.utopia.status.ui.style.defaultBlogStyle
@@ -39,55 +31,32 @@ fun AnchorBlogUi(
 ) {
     val blog = status.status.intrinsicBlog
     Surface(modifier = modifier) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            StatusInfoLine(
-                modifier = Modifier,
-                blogAuthor = blog.author,
-                displayTime = displayTime,
-                showUpThread = showUpThread,
-                style = style,
-                moreInteractions = moreInteractions,
-                onInteractive = {
-                    composedStatusInteraction.onStatusInteractive(status, it)
-                },
-                onUserInfoClick = {
-                    composedStatusInteraction.onUserInfoClick(status.role, it)
-                },
-            )
-            BlogContent(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalPadding(style.containerPaddings),
-                blog = blog,
-                style = style.blogStyle,
-                indexOfFeeds = indexInList,
-                onMediaClick = onMediaClick,
-                onVoted = {
-                    composedStatusInteraction.onVoted(status, it)
-                },
-                onHashtagInStatusClick = {
-                    composedStatusInteraction.onHashtagInStatusClick(status.role, it)
-                },
-                onMentionClick = {
-                    composedStatusInteraction.onMentionClick(status.role, it)
-                },
-                textSelectable = true,
-            )
-            StatusBottomInteractionPanel(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .horizontalPadding(style.containerPaddings),
-                interactions = bottomPanelInteractions,
-                onInteractive = {
-                    composedStatusInteraction.onStatusInteractive(status, it)
-                },
-            )
-            Spacer(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(style.containerPaddings.calculateBottomPadding())
-            )
-            BlogDivider()
-        }
+        BlogUi(
+            modifier = Modifier,
+            blog = blog,
+            showUpThread = showUpThread,
+            displayTime = displayTime,
+            indexInList = indexInList,
+            style = style,
+            bottomPanelInteractions = bottomPanelInteractions,
+            moreInteractions = moreInteractions,
+            onInteractive = {
+                composedStatusInteraction.onStatusInteractive(status, it)
+            },
+            onMediaClick = onMediaClick,
+            onUserInfoClick = {
+                composedStatusInteraction.onUserInfoClick(status.role, it)
+            },
+            onVoted = {
+                composedStatusInteraction.onVoted(status, it)
+            },
+            onHashtagInStatusClick = {
+                composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+            },
+            onMentionClick = {
+                composedStatusInteraction.onMentionClick(status.role, it)
+            },
+            showDivider = true,
+        )
     }
 }

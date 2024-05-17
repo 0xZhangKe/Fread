@@ -41,6 +41,9 @@ sealed class StatusUiInteraction {
         override val enabled: Boolean get() = interaction.enable
 
         override val label: String? get() = interaction.forwardCount.countToLabel()
+
+        override val highLight: Boolean
+            get() = interaction.forwarded
     }
 
     data class Bookmark(val interaction: StatusInteraction.Bookmark) : StatusUiInteraction() {

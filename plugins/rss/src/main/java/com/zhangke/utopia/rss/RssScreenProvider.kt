@@ -28,7 +28,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         return null
     }
 

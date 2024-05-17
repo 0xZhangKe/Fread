@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.utopia.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.utopia.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
@@ -13,7 +14,6 @@ import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
-import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.StatusProviderProtocol
 import com.zhangke.utopia.status.platform.BlogPlatform
@@ -23,6 +23,7 @@ import javax.inject.Inject
 
 class ActivityPubScreenProvider @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
+    private val loggedAccountProvider: LoggedAccountProvider,
 ) : IStatusScreenProvider {
 
     override fun getServerDetailScreenRoute(config: ContentConfig): String? {
@@ -42,9 +43,13 @@ class ActivityPubScreenProvider @Inject constructor(
         }
     }
 
-    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         if (blog.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID) return null
-        val accountUri = role.accountUri ?: return null
+        var accountUri = role.accountUri
+        if (accountUri == null && role.baseUrl != null) {
+            accountUri = loggedAccountProvider.getAccount(role.baseUrl!!)?.uri
+        }
+        accountUri ?: return null
         return PostStatusScreenRoute.buildRoute(accountUri, blog.id, blog.author.name)
     }
 

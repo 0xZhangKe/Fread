@@ -90,8 +90,10 @@ class InteractiveHandler(
 
     override fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction) {
         if (uiInteraction is StatusUiInteraction.Comment) {
-            screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
-                ?.let(::tryOpenScreenByRoute)
+            coroutineScope.launch {
+                screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
+                    ?.let(::tryOpenScreenByRoute)
+            }
             return
         }
         coroutineScope.launch {

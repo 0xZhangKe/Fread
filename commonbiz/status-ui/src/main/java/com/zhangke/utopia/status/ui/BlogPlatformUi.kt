@@ -31,11 +31,14 @@ import com.zhangke.utopia.status.platform.PlatformSnapshot
 fun BlogPlatformUi(
     modifier: Modifier,
     platform: BlogPlatform,
+    showDivider: Boolean = true,
 ) {
     Column(modifier = modifier) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
             val (avatarRef, protocolRef, domainRef, nameRef, descRef) = createRefs()
             var loadSuccess by remember {
                 mutableStateOf(false)
@@ -106,7 +109,9 @@ fun BlogPlatformUi(
                 style = MaterialTheme.typography.bodyMedium,
             )
         }
-        HorizontalDivider()
+        if (showDivider) {
+            HorizontalDivider()
+        }
     }
 }
 
@@ -116,9 +121,11 @@ fun BlogPlatformSnapshotUi(
     platform: PlatformSnapshot,
 ) {
     Column(modifier = modifier) {
-        ConstraintLayout(modifier = Modifier
-            .fillMaxWidth()
-            .padding(bottom = 8.dp)) {
+        ConstraintLayout(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 8.dp)
+        ) {
             val (avatarRef, protocolRef, nameRef, descRef) = createRefs()
             var loadSuccess by remember {
                 mutableStateOf(false)

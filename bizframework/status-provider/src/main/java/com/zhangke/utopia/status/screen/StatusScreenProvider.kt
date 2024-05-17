@@ -30,7 +30,7 @@ class StatusScreenProvider(
         }
     }
 
-    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         return providerList.mapFirstOrNull {
             it.getReplyBlogScreen(role, blog)
         }
@@ -84,7 +84,7 @@ interface IStatusScreenProvider {
         accountUri: FormalUri? = null,
     ): String?
 
-    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String?
+    suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String?
 
     fun getContentScreen(contentConfig: ContentConfig): PagerTab?
 

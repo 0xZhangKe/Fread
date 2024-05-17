@@ -7,8 +7,11 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.text.HtmlCompat
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
+import com.zhangke.utopia.common.utils.ShareHelper
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogPoll
@@ -37,6 +40,7 @@ fun BlogUi(
     showDivider: Boolean = true,
     showUpThread: Boolean = false,
 ) {
+    val context = LocalContext.current
     Column(modifier = modifier.fillMaxWidth()) {
         StatusInfoLine(
             modifier = Modifier
@@ -67,7 +71,13 @@ fun BlogUi(
                 .fillMaxWidth()
                 .padding(start = style.iconStartPadding, end = style.iconEndPadding),
             interactions = bottomPanelInteractions,
-            onInteractive = onInteractive,
+            onInteractive = {
+                if (it is StatusUiInteraction.Share) {
+                    ShareHelper.shareRichText(context, blog.content)
+                    return@StatusBottomInteractionPanel
+                }
+                onInteractive(it)
+            },
         )
         Spacer(
             modifier = Modifier

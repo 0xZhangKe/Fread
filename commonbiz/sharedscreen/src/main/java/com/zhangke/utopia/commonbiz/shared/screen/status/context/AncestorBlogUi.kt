@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -55,8 +56,9 @@ fun AncestorBlogUi(
                 userId,
                 moreOptions,
                 blogContent,
+                bottomPanelRef,
+                bottomPaddingRef,
             ) = createRefs()
-
             val upThreadModifier = Modifier.constrainAs(upThread) {
                 start.linkTo(avatar.start)
                 end.linkTo(avatar.end)
@@ -140,44 +142,52 @@ fun AncestorBlogUi(
                 },
             )
 
-            Column(modifier = Modifier
-                .constrainAs(blogContent) {
-                    start.linkTo(name.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(dateTime.bottom)
-                    width = Dimension.fillToConstraints
-                }) {
-                BlogContent(
-                    modifier = Modifier.endPadding(style.containerPaddings),
-                    blog = blog,
-                    style = style.blogStyle,
-                    indexOfFeeds = indexInList,
-                    onMediaClick = onMediaClick,
-                    onVoted = {
-                        composedStatusInteraction.onVoted(status, it)
+            BlogContent(
+                modifier = Modifier
+                    .endPadding(style.containerPaddings)
+                    .constrainAs(blogContent) {
+                        start.linkTo(name.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(dateTime.bottom)
+                        width = Dimension.fillToConstraints
                     },
-                    onHashtagInStatusClick = {
-                        composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+                blog = blog,
+                style = style.blogStyle,
+                indexOfFeeds = indexInList,
+                onMediaClick = onMediaClick,
+                onVoted = {
+                    composedStatusInteraction.onVoted(status, it)
+                },
+                onHashtagInStatusClick = {
+                    composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+                },
+                onMentionClick = {
+                    composedStatusInteraction.onMentionClick(status.role, it)
+                },
+            )
+            StatusBottomInteractionPanel(
+                modifier = Modifier
+                    .constrainAs(bottomPanelRef) {
+                        start.linkTo(avatar.end)
+                        end.linkTo(parent.end, style.iconEndPadding)
+                        top.linkTo(blogContent.bottom)
+                        width = Dimension.fillToConstraints
                     },
-                    onMentionClick = {
-                        composedStatusInteraction.onMentionClick(status.role, it)
-                    },
-                )
-                StatusBottomInteractionPanel(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .endPadding(style.containerPaddings),
-                    interactions = status.bottomInteractions,
-                    onInteractive = {
-                        composedStatusInteraction.onStatusInteractive(status, it)
-                    },
-                )
-                Spacer(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(style.containerPaddings.calculateBottomPadding())
-                )
-            }
+                interactions = status.bottomInteractions,
+                onInteractive = {
+                    composedStatusInteraction.onStatusInteractive(status, it)
+                },
+            )
+            Spacer(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(style.containerPaddings.calculateBottomPadding())
+                    .constrainAs(bottomPaddingRef) {
+                        start.linkTo(parent.start)
+                        end.linkTo(parent.end)
+                        top.linkTo(bottomPanelRef.bottom)
+                    }
+            )
         }
     }
 }

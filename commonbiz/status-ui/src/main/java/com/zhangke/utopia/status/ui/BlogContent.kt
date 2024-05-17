@@ -1,7 +1,9 @@
 package com.zhangke.utopia.status.ui
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.ButtonDefaults
@@ -52,12 +54,11 @@ fun BlogContent(
             mutableStateOf(canHidden)
         }
         if (spoilerText.isNotEmpty()) {
-            // todo font size
             UtopiaRichText(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(start = 15.dp, end = 15.dp, top = 8.dp),
+                    .padding(top = 8.dp),
                 richText = blog.humanizedSpoilerText,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
@@ -79,12 +80,11 @@ fun BlogContent(
                 }
             }
             if (!hideContent) {
-                // todo font size
                 UtopiaRichText(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
-                        .padding(start = 15.dp, end = 15.dp, top = 4.dp),
+                        .padding(top = 4.dp),
                     richText = blog.humanizedContent,
                     maxLines = style.contentMaxLine,
                     onMentionClick = onMentionClick,
@@ -107,6 +107,7 @@ fun BlogContent(
         }
 
         if (blog.mediaList.isNotEmpty()) {
+            Spacer(modifier = Modifier.height(8.dp))
             BlogMedias(
                 modifier = Modifier
                     .fillMaxWidth(),
@@ -117,6 +118,7 @@ fun BlogContent(
             )
         }
         if (blog.poll != null) {
+            Spacer(modifier = Modifier.height(8.dp))
             BlogPoll(
                 modifier = Modifier.fillMaxWidth(),
                 poll = blog.poll!!,

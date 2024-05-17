@@ -38,9 +38,9 @@ class LoginToTargetPlatformScreen(val platform: BlogPlatform) : Screen {
             ) {
                 BlogPlatformUi(
                     modifier = Modifier
-                        .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                         .clickable { viewModel.onServerHostConfirmClick() },
                     platform = platform,
+                    showDivider = false,
                 )
             }
         }

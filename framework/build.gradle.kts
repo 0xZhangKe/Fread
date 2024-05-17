@@ -46,9 +46,7 @@ dependencies {
     implementation(libs.bundles.androidx.preference)
     implementation(libs.bundles.androidx.datastore)
     implementation(libs.bundles.androidx.collection)
-    implementation(libs.bundles.androidx.nav)
     implementation(libs.androidx.compose.constraintlayout)
-    implementation(libs.androidx.hilt.nav.compose)
     implementation(libs.androidx.browser)
     implementation(libs.accompanist.placeholder.material)
     implementation(libs.androidx.room)
@@ -79,6 +77,6 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
     implementation(libs.ktml)
-    implementation(libs.compose.richtext.ui)
-    implementation(libs.compose.richtext.ui.material3)
+    implementation(libs.halilibo.richtext)
+    implementation(libs.halilibo.richtext.material3)
 }

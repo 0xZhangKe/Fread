@@ -278,5 +278,5 @@ private fun buildMotionScene(
             alpha = 0F
         }
     }
-    transition("default", start1, end1) {}
+    transition(name = "default", from = start1, to = end1) {}
 }

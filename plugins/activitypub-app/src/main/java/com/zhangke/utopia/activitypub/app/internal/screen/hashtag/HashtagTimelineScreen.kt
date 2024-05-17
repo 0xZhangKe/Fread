@@ -174,7 +174,7 @@ data class HashtagTimelineScreen(
                 width = Dimension.fillToConstraints
             }
         }
-        transition("default", start1, end1) {}
+        transition(name = "default", from = start1, to = end1) {}
     }
 
     @OptIn(ExperimentalMaterial3Api::class)

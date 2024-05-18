@@ -98,7 +98,12 @@ class StatusContextSubViewModel(
         )
         if (statusContext != null) {
             contextStatus += statusContext.descendants.sortedBy { it.datetime }
-                .map { StatusInContext(buildStatusUiState(role, it), StatusInContextType.DESCENDANT) }
+                .map {
+                    StatusInContext(
+                        buildStatusUiState(role, it),
+                        StatusInContextType.DESCENDANT
+                    )
+                }
         }
         return contextStatus
     }
@@ -108,7 +113,7 @@ class StatusContextSubViewModel(
         _uiState.update { state ->
             val contextStatus = state.contextStatus.map { item ->
                 item.copy(
-                    status = if (item.status.status.id == newStatus.status.id) {
+                    status = if (item.status.status.intrinsicBlog.id == newStatus.status.intrinsicBlog.id) {
                         newStatus
                     } else {
                         item.status

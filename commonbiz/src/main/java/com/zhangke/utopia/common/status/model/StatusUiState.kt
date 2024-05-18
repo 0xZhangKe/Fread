@@ -15,7 +15,7 @@ fun List<StatusUiState>.updateStatus(
     status: StatusUiState,
 ): List<StatusUiState> {
     return map {
-        if (it.status.id == status.status.id) {
+        if (it.status.intrinsicBlog.id == status.status.intrinsicBlog.id) {
             status
         } else {
             it

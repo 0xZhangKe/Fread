@@ -93,7 +93,7 @@ class SearchBarViewModel @Inject constructor(
                     currentUiState.copy(
                         resultList = currentUiState.resultList.map {
                             if (it !is SearchResultUiState.SearchedStatus) return@map it
-                            if (it.status.status.id != newUiState.status.id) return@map it
+                            if (it.status.status.intrinsicBlog.id != newUiState.status.intrinsicBlog.id) return@map it
                             return@map it.copy(status = newUiState)
                         }
                     )

@@ -13,6 +13,7 @@ local.properties
 *.aar
 *.ap_
 *.aab
+.kotlin
 
 # Files for the ART/Dalvik VM
 *.dex

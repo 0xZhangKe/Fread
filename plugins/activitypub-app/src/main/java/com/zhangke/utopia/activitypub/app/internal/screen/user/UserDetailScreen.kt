@@ -171,16 +171,18 @@ data class UserDetailScreen(
                     )
                 },
                 headerAction = {
-                    RelationshipStateButton(
-                        modifier = Modifier,
-                        uiState = uiState,
-                        onFollowClick = onFollowClick,
-                        onUnfollowClick = onUnfollowClick,
-                        onAcceptClick = onAcceptClick,
-                        onRejectClick = onRejectClick,
-                        onCancelFollowRequestClick = onCancelFollowRequestClick,
-                        onUnblockClick = onUnblockClick,
-                    )
+                    if (!uiState.isAccountOwner) {
+                        RelationshipStateButton(
+                            modifier = Modifier,
+                            uiState = uiState,
+                            onFollowClick = onFollowClick,
+                            onUnfollowClick = onUnfollowClick,
+                            onAcceptClick = onAcceptClick,
+                            onRejectClick = onRejectClick,
+                            onCancelFollowRequestClick = onCancelFollowRequestClick,
+                            onUnblockClick = onUnblockClick,
+                        )
+                    }
                 },
                 headerContent = {
                     Column(modifier = Modifier.fillMaxWidth()) {
@@ -300,7 +302,7 @@ data class UserDetailScreen(
     ) {
         val account = uiState.accountUiState?.account ?: return
         val userInsights = uiState.userInsight ?: return
-        if (uiState.editable) {
+        if (uiState.isAccountOwner) {
             SimpleIconButton(
                 onClick = onEditClick,
                 tint = color,

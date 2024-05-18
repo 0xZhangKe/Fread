@@ -40,7 +40,7 @@ class UserDetailViewModel(
             accountUiState = null,
             relationship = null,
             domainBlocked = false,
-            editable = false,
+            isAccountOwner = false,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -69,7 +69,7 @@ class UserDetailViewModel(
                 }
             _uiState.value = _uiState.value.copy(
                 userInsight = userInsight,
-                editable = editable,
+                isAccountOwner = editable,
             )
             _uiState.value = _uiState.value.copy(
                 accountUiState = account.toAccountUiState()

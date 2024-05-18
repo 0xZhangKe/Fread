@@ -236,7 +236,6 @@ class FeedsViewModelController(
                             feeds = it.feeds.applyRefreshResult(refreshResult),
                         )
                     }
-
                 }.onFailure { e ->
                     mutableErrorMessageFlow.emitTextMessageFromThrowable(e)
                     mutableUiState.update {

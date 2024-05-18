@@ -13,4 +13,4 @@ data class BlogAuthor (
     val description: String,
     val avatar: String?,
     val emojis: List<Emoji>,
-)
+): java.io.Serializable

@@ -23,7 +23,7 @@ import java.net.URLEncoder
 class WebFinger private constructor(
     val name: String,
     val host: String,
-) : Parcelable {
+) : Parcelable, java.io.Serializable {
 
     override fun toString(): String {
         return "@$name@$host"

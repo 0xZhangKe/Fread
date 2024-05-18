@@ -10,4 +10,4 @@ data class Mention(
     val url: String,
     val webFinger: WebFinger,
     val protocol: StatusProviderProtocol,
-)
+): java.io.Serializable

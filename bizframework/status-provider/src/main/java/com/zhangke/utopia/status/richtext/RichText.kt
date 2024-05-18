@@ -1,7 +1,6 @@
 package com.zhangke.utopia.status.richtext
 
 import com.zhangke.utopia.status.model.Emoji
-import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.richtext.android.HtmlParser
@@ -12,8 +11,9 @@ class RichText(
     private val mentions: List<Mention>,
     private val hashTags: List<HashtagInStatus>,
     private val emojis: List<Emoji>,
-) {
+): java.io.Serializable {
 
+    @Transient
     private var charSequence: CharSequence? = null
 
     fun parse(): CharSequence {

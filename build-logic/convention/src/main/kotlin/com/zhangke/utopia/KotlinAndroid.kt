@@ -27,6 +27,7 @@ import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
@@ -72,21 +73,32 @@ internal fun Project.configureKotlinJvm() {
  */
 private fun Project.configureKotlin() {
     // Use withType to workaround https://youtrack.jetbrains.com/issue/KT-55947
+//    tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask::class.java){
+//        compilerOptions{
+//            languageVersion.set(KotlinVersion.KOTLIN_2_0)
+//            freeCompilerArgs.add("-Xcontext-receivers")
+//            freeCompilerArgs.add("-XXLanguage:+ExplicitBackingFields")
+//            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+//            freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
+//            freeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
+//        }
+//    }
     tasks.withType<KotlinCompile>().configureEach {
         kotlinOptions {
             // Set JVM target to 11
             jvmTarget = JavaVersion.VERSION_11.toString()
-            freeCompilerArgs = listOf("-Xcontext-receivers")
+            languageVersion = KotlinVersion.KOTLIN_2_0.version
+            val newFreeCompilerArgs = freeCompilerArgs.toMutableList()
+            newFreeCompilerArgs.add("-Xcontext-receivers")
+            newFreeCompilerArgs.add("-XXLanguage:+ExplicitBackingFields")
+            newFreeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
+            newFreeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
+            newFreeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
+            freeCompilerArgs = newFreeCompilerArgs
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
             val warningsAsErrors: String? by project
             allWarningsAsErrors = warningsAsErrors.toBoolean()
-            freeCompilerArgs = freeCompilerArgs + listOf(
-                "-opt-in=kotlin.RequiresOptIn",
-                // Enable experimental coroutines APIs, including Flow
-                "-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi",
-                "-opt-in=kotlinx.coroutines.FlowPreview",
-            )
         }
     }
     extensions.configure<KotlinProjectExtension>("kotlin") {
@@ -101,6 +113,11 @@ private fun Project.configureKotlin() {
         sourceSets.findByName("release")?.apply {
             kotlin.srcDir("build/generated/ksp/release/kotlin")
             resources.srcDir("build/generated/ksp/release/resources")
+        }
+        sourceSets.all {
+            languageSettings {
+                languageVersion = "2.0"
+            }
         }
     }
     tasks.withType<ProcessResources>{

@@ -7,4 +7,4 @@ data class Emoji(
     val shortcode: String,
     val url: String,
     val staticUrl: String,
-)
+): java.io.Serializable

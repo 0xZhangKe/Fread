@@ -3,14 +3,14 @@ package com.zhangke.utopia.status.blog
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class BlogMediaMeta {
+sealed class BlogMediaMeta: java.io.Serializable {
 
     @Serializable
     data class ImageMeta(
         val original: LayoutMeta?,
         val small: LayoutMeta?,
         val focus: FocusMeta?,
-    ) : BlogMediaMeta() {
+    ) : BlogMediaMeta(), java.io.Serializable {
 
         @Serializable
         data class LayoutMeta(
@@ -18,13 +18,13 @@ sealed class BlogMediaMeta {
             val height: Int?,
             val size: String?,
             val aspect: Float?,
-        )
+        ): java.io.Serializable
 
         @Serializable
         data class FocusMeta(
             val x: Float?,
             val y: Float?,
-        )
+        ): java.io.Serializable
     }
 
     @Serializable
@@ -41,7 +41,7 @@ sealed class BlogMediaMeta {
         val audioChannels: String?,
         val original: LayoutMeta?,
         val small: LayoutMeta?,
-    ) : BlogMediaMeta() {
+    ) : BlogMediaMeta(), java.io.Serializable {
 
         @Serializable
         data class LayoutMeta(
@@ -52,7 +52,7 @@ sealed class BlogMediaMeta {
             val frameRate: String?,
             val duration: Double?,
             val bitrate: Int?,
-        )
+        ): java.io.Serializable
     }
 
     @Serializable
@@ -66,7 +66,7 @@ sealed class BlogMediaMeta {
         val aspect: Float?,
         val original: LayoutMeta?,
         val small: LayoutMeta?,
-    ) : BlogMediaMeta() {
+    ) : BlogMediaMeta(), java.io.Serializable {
 
         @Serializable
         data class LayoutMeta(
@@ -77,7 +77,7 @@ sealed class BlogMediaMeta {
             val frameRate: String?,
             val duration: Double?,
             val bitrate: Int?,
-        )
+        ): java.io.Serializable
     }
 
     @Serializable
@@ -88,13 +88,13 @@ sealed class BlogMediaMeta {
         val audioBitrate: String?,
         val audioChannels: String?,
         val original: FrameMeta?,
-    ) : BlogMediaMeta() {
+    ) : BlogMediaMeta(), java.io.Serializable {
 
         @Serializable
         data class FrameMeta(
             val duration: Double?,
             val bitrate: Int?,
-        )
+        ): java.io.Serializable
     }
 }
 

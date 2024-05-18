@@ -12,4 +12,4 @@ data class BlogMedia(
     val description: String?,
     val blurhash: String?,
     val meta: BlogMediaMeta?,
-)
+): java.io.Serializable

@@ -25,12 +25,12 @@ data class BlogPoll(
     val options: List<Option>,
     val voted: Boolean?,
     val ownVotes: List<Int>,
-) {
+): java.io.Serializable {
 
     @Serializable
     data class Option(
         val index: Int,
         val title: String,
         val votesCount: Int?,
-    )
+    ): java.io.Serializable
 }

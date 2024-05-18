@@ -29,7 +29,7 @@ data class Blog(
     val mentions: List<Mention>,
     val tags: List<HashtagInStatus>,
     val poll: BlogPoll?,
-) {
+): java.io.Serializable {
 
     val humanizedSpoilerText: RichText by lazy {
         buildRichText(

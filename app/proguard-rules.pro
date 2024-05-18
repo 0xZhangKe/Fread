@@ -128,3 +128,48 @@
 -keep,allowobfuscation,allowshrinking class com.google.gson.reflect.TypeToken
 -keep,allowobfuscation,allowshrinking class * extends com.google.gson.reflect.TypeToken
 ##---------------End: proguard configuration for Gson  ----------
+
+-keep class **.entities.** { *; }
+-keep class **.entity.** { *; }
+
+# Keep `INSTANCE.serializer()` of serializable objects.
+-if @kotlinx.serialization.Serializable class ** {
+    public static ** INSTANCE;
+}
+-keepclassmembers class <1> {
+    public static <1> INSTANCE;
+    kotlinx.serialization.KSerializer serializer(...);
+}
+# Serializer for classes with named companion objects are retrieved using `getDeclaredClasses`.
+# If you have any, replace classes with those containing named companion objects.
+-keepattributes InnerClasses # Needed for `getDeclaredClasses`.
+
+-keepnames class <1>$$serializer { # -keepnames suffices; class is kept when serializer() is kept.
+    static <1>$$serializer INSTANCE;
+}
+
+-keepnames class * implements java.io.Serializable
+-keepclassmembers class * implements java.io.Serializable {
+    static final long serialVersionUID;
+    private static final java.io.ObjectStreamField[] serialPersistentFields;
+    !static !transient <fields>;
+    private void writeObject(java.io.ObjectOutputStream);
+    private void readObject(java.io.ObjectInputStream);
+    java.lang.Object writeReplace();
+    java.lang.Object readResolve();
+}
+
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}
+
+-keepclassmembers class **.R$* {
+    public static <fields>;
+}
+
+-keep class * extends androidx.room.RoomDatabase
+-dontwarn androidx.room.paging.**
+-dontwarn androidx.lifecycle.LiveData
+-keep @androidx.room.Entity class * {
+    *;
+}

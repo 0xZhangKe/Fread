@@ -1,6 +1,7 @@
 package com.zhangke.utopia.common.status
 
 import kotlin.time.Duration
+import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 
 data class StatusConfiguration(
@@ -16,6 +17,6 @@ object StatusConfigurationDefault {
         loadFromServerLimit = 40,
         loadFromLocalLimit = 100,
         loadFromLocalRedundancies = 3,
-        autoFetchNewerFeedsInterval = 60.seconds,
+        autoFetchNewerFeedsInterval = 2.minutes,
     )
 }

@@ -35,6 +35,7 @@ import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterialApi::class)
 @Composable
@@ -94,6 +95,7 @@ fun FeedsContent(
                 if (state.lazyListState.firstVisibleItemIndex > 0) {
                     showNewStatusNotifyBar = true
                 }
+                delay(20.seconds)
             }
             val coroutineScope = rememberCoroutineScope()
             AnimatedVisibility(

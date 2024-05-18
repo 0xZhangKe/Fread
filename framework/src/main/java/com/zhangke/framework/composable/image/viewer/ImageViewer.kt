@@ -1,5 +1,6 @@
 package com.zhangke.framework.composable.image.viewer
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -64,6 +65,7 @@ fun ImageViewer(
     }
     state.onDismissRequest = onDismissRequest
     state.onStartDismiss = onStartDismiss
+    Log.d("U_TEST", "${state.currentWidthPixel}, ${state.currentHeightPixel}, ${state.currentOffsetXPixel}, ${state.currentOffsetYPixel}")
     Layout(
         modifier = modifier
             .onGloballyPositioned { position ->
@@ -84,7 +86,7 @@ fun ImageViewer(
                             }
                         } else {
                             coroutineScope.launch {
-                                state.animateToBig()
+                                state.animateToBig(it)
                             }
                         }
                     },

@@ -77,7 +77,7 @@ class ImageViewerState(
 
     val exceed: Boolean get() = !_currentWidthPixel.floatValue.equalsExactly(layoutSize.width)
 
-    var alreadyAnimationIn = false
+    private var alreadyAnimationIn = false
 
     private var flingAnimation: AnimationScope<Offset, AnimationVector2D>? = null
     private var scaleAnimation: AnimationScope<Float, AnimationVector1D>? = null
@@ -85,14 +85,7 @@ class ImageViewerState(
 
     private val draggableBounds: Bounds
         get() {
-            val imageWidth = _currentWidthPixel.floatValue
-            val imageHeight = _currentHeightPixel.floatValue
-            return Bounds(
-                left = (-(imageWidth - layoutSize.width)).coerceAtMost(0F),
-                top = (-(imageHeight - layoutSize.height)).coerceAtMost(0F),
-                right = 0F,
-                bottom = 0F,
-            )
+            return calculateDragBounds()
         }
 
     init {
@@ -104,6 +97,35 @@ class ImageViewerState(
             _currentOffsetXPixel.floatValue = initialOffset.x
             _currentOffsetYPixel.floatValue = initialOffset.y
         }
+    }
+
+    private fun calculateDragBounds(): Bounds {
+        val imageWidth = _currentWidthPixel.floatValue
+        val imageHeight = _currentHeightPixel.floatValue
+        val left: Float
+        val right: Float
+        if (imageWidth > layoutSize.width) {
+            left = -(imageWidth - layoutSize.width)
+            right = 0F
+        } else {
+            left = (layoutSize.width - imageWidth) / 2F
+            right = left
+        }
+        val top: Float
+        val bottom: Float
+        if (imageHeight > layoutSize.height) {
+            top = -(imageHeight - layoutSize.height)
+            bottom = 0F
+        } else {
+            top = (layoutSize.height - imageHeight) / 2F
+            bottom = top
+        }
+        return Bounds(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+        )
     }
 
     suspend fun updateLayoutSize(size: Size) {
@@ -144,7 +166,7 @@ class ImageViewerState(
         )
     }
 
-    suspend fun animateToBig() {
+    suspend fun animateToBig(point: Offset) {
         val layoutSize = layoutSize
         if (layoutSize == Size.Zero) return
 
@@ -155,6 +177,7 @@ class ImageViewerState(
             targetHeight = targetHeight,
             targetOffsetX = 0F,
             targetOffsetY = layoutSize.height / 2F - targetHeight / 2F,
+            center = point,
         )
     }
 
@@ -179,10 +202,10 @@ class ImageViewerState(
         val dragAmountY = dragAmount.y
         if (dragAmountY <= 0F) {
             if (_currentOffsetYPixel.floatValue > 0F) {
-                _currentOffsetYPixel.floatValue = _currentOffsetYPixel.floatValue + dragAmountY
+                _currentOffsetYPixel.floatValue += dragAmountY
             }
         } else {
-            _currentOffsetYPixel.floatValue = _currentOffsetYPixel.floatValue + dragAmountY
+            _currentOffsetYPixel.floatValue += dragAmountY
         }
     }
 
@@ -223,7 +246,7 @@ class ImageViewerState(
             val anim = AnimationState(initialValue = _currentOffsetYPixel.floatValue)
             anim.animateTo(
                 targetValue = standardOffsetY,
-                animationSpec = tween(durationMillis = ImageViewerDefault.animationDuration),
+                animationSpec = tween(durationMillis = ImageViewerDefault.ANIMATION_DURATION),
             ) {
                 resumeOffsetYAnimation = this
                 _currentOffsetYPixel.floatValue = value
@@ -259,6 +282,7 @@ class ImageViewerState(
         targetHeight: Float,
         targetOffsetX: Float,
         targetOffsetY: Float,
+        center: Offset? = null,
     ) {
         cancelAnimation()
         val startWidth = _currentWidthPixel.floatValue
@@ -275,7 +299,7 @@ class ImageViewerState(
             val anim = AnimationState(initialValue = 0f)
             anim.animateTo(
                 targetValue = 1f,
-                animationSpec = tween(durationMillis = ImageViewerDefault.animationDuration),
+                animationSpec = tween(durationMillis = ImageViewerDefault.ANIMATION_DURATION),
             ) {
                 scaleAnimation = this
                 val progress = value
@@ -389,9 +413,16 @@ class ImageViewerState(
             }
         )
     }
+
+    private fun Offset.coerceIn(bounds: Bounds): Offset {
+        return Offset(
+            x = this.x.coerceIn(bounds.left..bounds.right),
+            y = this.y.coerceIn(bounds.top..bounds.bottom),
+        )
+    }
 }
 
 object ImageViewerDefault {
 
-    const val animationDuration = 300
+    const val ANIMATION_DURATION = 200
 }

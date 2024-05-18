@@ -59,7 +59,7 @@ class ImageViewerScreen(
             Animatable(0F).animateTo(
                 targetValue = backgroundCommonAlpha,
                 animationSpec = tween(
-                    ImageViewerDefault.animationDuration,
+                    ImageViewerDefault.ANIMATION_DURATION,
                     easing = FastOutSlowInEasing
                 ),
             ) {
@@ -108,7 +108,7 @@ class ImageViewerScreen(
                             Animatable(backgroundCommonAlpha).animateTo(
                                 targetValue = 0.1F,
                                 animationSpec = tween(
-                                    ImageViewerDefault.animationDuration,
+                                    ImageViewerDefault.ANIMATION_DURATION,
                                     easing = FastOutSlowInEasing
                                 ),
                             ) {

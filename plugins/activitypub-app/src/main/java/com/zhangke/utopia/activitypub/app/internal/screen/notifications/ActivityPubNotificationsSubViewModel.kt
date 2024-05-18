@@ -160,7 +160,7 @@ class ActivityPubNotificationsSubViewModel(
         _uiState.update { current ->
             current.copy(
                 dataList = current.dataList.map {
-                    if (it.status?.status?.id == newStatus.status.id) {
+                    if (it.status?.status?.intrinsicBlog?.id == newStatus.status.intrinsicBlog.id) {
                         it.copy(status = newStatus)
                     } else {
                         it

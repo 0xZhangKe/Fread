@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
@@ -52,15 +53,7 @@ class SearchStatusViewModel @AssistedInject constructor(
                     is InteractiveHandleResult.UpdateStatus -> {
                         loadStatusController.mutableUiState.update { state ->
                             state.copy(
-                                dataList = uiState.value
-                                    .dataList
-                                    .map {
-                                        if (it.status.id == result.status.status.id) {
-                                            result.status
-                                        } else {
-                                            it
-                                        }
-                                    },
+                                dataList = state.dataList.updateStatus(result.status),
                             )
                         }
                     }

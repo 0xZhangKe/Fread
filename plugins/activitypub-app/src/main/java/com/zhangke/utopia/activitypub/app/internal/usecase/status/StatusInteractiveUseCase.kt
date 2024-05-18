@@ -16,7 +16,11 @@ class StatusInteractiveUseCase @Inject constructor(
         status: Status,
         interaction: StatusInteraction,
     ): Result<ActivityPubStatusEntity> {
-        val statusId = status.id
+        val statusId = if (status is Status.Reblog) {
+            status.reblog.id
+        } else {
+            status.id
+        }
         val statusRepo = clientManager.getClient(role).statusRepo
         return when (interaction) {
             is StatusInteraction.Like -> {

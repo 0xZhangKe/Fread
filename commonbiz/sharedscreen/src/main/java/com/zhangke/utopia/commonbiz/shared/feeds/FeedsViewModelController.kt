@@ -9,6 +9,7 @@ import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
+import com.zhangke.utopia.common.status.model.updateStatus
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -308,14 +309,7 @@ class FeedsViewModelController(
             uiStatusUpdater = { newUiState ->
                 onStatusUpdate(newUiState.status)
                 mutableUiState.update { currentUiState ->
-                    val newFeeds = currentUiState.feeds.map {
-                        if (it.status.id == newUiState.status.id) {
-                            newUiState
-                        } else {
-                            it
-                        }
-                    }
-                    currentUiState.copy(feeds = newFeeds)
+                    currentUiState.copy(feeds = currentUiState.feeds.updateStatus(newUiState))
                 }
             },
             followStateUpdater = { _, _ ->

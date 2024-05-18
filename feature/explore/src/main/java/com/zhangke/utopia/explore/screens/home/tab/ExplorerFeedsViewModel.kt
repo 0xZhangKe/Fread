@@ -91,7 +91,7 @@ class ExplorerFeedsViewModel(
 
     private fun List<ExplorerItem>.updateStatus(newStatus: StatusUiState): List<ExplorerItem> {
         return map { item ->
-            if (item is ExplorerItem.ExplorerStatus && item.status.status.id == newStatus.status.id) {
+            if (item is ExplorerItem.ExplorerStatus && item.status.status.intrinsicBlog.id == newStatus.status.intrinsicBlog.id) {
                 item.copy(status = newStatus)
             } else {
                 item

@@ -14,6 +14,8 @@ import com.zhangke.utopia.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.richtext.preParseRichText
+import com.zhangke.utopia.status.search.SearchResult
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -77,6 +79,11 @@ class SearchBarViewModel @Inject constructor(
             statusProvider.searchEngine
                 .search(role, query)
                 .map { list ->
+                    list.filterIsInstance<SearchResult.SearchedStatus>()
+                        .map { it.status }
+                        .preParseRichText()
+                    list
+                }.map { list ->
                     list.map { buildSearchResultUiState(role, it) }
                 }.onSuccess { searchResult ->
                     _uiState.update {

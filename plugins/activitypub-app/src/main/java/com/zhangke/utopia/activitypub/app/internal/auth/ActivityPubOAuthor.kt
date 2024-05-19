@@ -78,6 +78,6 @@ class ActivityPubOAuthor @Inject constructor(
     }
 
     private fun openOauthPage(oauthUrl: String) {
-        BrowserLauncher().launch(context, oauthUrl)
+        BrowserLauncher.launchWebTabInApp(context, oauthUrl)
     }
 }

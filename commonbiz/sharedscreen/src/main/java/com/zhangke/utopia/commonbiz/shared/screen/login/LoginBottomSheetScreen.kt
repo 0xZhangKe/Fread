@@ -38,8 +38,8 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.platform.PlatformSnapshot
-import com.zhangke.utopia.status.ui.BlogPlatformSnapshotUi
-import com.zhangke.utopia.status.ui.BlogPlatformUi
+import com.zhangke.utopia.status.ui.source.BlogPlatformSnapshotUi
+import com.zhangke.utopia.status.ui.source.BlogPlatformUi
 
 class LoginBottomSheetScreen : Screen {
 

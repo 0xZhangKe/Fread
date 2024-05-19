@@ -4,7 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.utopia.common.status.model.SearchResultUiState
 import com.zhangke.utopia.status.ui.BlogAuthorUi
-import com.zhangke.utopia.status.ui.BlogPlatformUi
+import com.zhangke.utopia.status.ui.source.BlogPlatformUi
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.hashtag.HashtagUi
 

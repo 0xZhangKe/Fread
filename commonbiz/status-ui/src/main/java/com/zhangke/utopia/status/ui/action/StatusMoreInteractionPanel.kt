@@ -22,39 +22,40 @@ fun StatusMoreInteractionIcon(
     moreActionList: List<StatusUiInteraction>,
     onActionClick: (StatusUiInteraction) -> Unit,
 ) {
-    if (moreActionList.isEmpty()) return
     var showMorePopup by remember {
         mutableStateOf(false)
     }
     Box(modifier = modifier) {
-        SimpleIconButton(
-            onClick = {
-                showMorePopup = !showMorePopup
-            },
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = "More",
-        )
+        if (moreActionList.isNotEmpty()) {
+            SimpleIconButton(
+                onClick = {
+                    showMorePopup = !showMorePopup
+                },
+                imageVector = Icons.Default.MoreVert,
+                contentDescription = "More",
+            )
 
-        DropdownMenu(
-            expanded = showMorePopup,
-            onDismissRequest = { showMorePopup = false },
-        ) {
-            moreActionList.forEach {
-                DropdownMenuItem(
-                    text = {
-                        Text(text = it.actionName)
-                    },
-                    leadingIcon = {
-                        Icon(
-                            imageVector = it.logo,
-                            contentDescription = it.actionName,
-                        )
-                    },
-                    onClick = {
-                        onActionClick(it)
-                        showMorePopup = false
-                    },
-                )
+            DropdownMenu(
+                expanded = showMorePopup,
+                onDismissRequest = { showMorePopup = false },
+            ) {
+                moreActionList.forEach {
+                    DropdownMenuItem(
+                        text = {
+                            Text(text = it.actionName)
+                        },
+                        leadingIcon = {
+                            Icon(
+                                imageVector = it.logo,
+                                contentDescription = it.actionName,
+                            )
+                        },
+                        onClick = {
+                            onActionClick(it)
+                            showMorePopup = false
+                        },
+                    )
+                }
             }
         }
     }

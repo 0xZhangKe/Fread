@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.core.text.HtmlCompat
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.utils.ShareHelper
@@ -73,7 +72,7 @@ fun BlogUi(
             interactions = bottomPanelInteractions,
             onInteractive = {
                 if (it is StatusUiInteraction.Share) {
-                    ShareHelper.shareRichText(context, blog.content)
+                    ShareHelper.shareUrl(context, blog.url, blog.content)
                     return@StatusBottomInteractionPanel
                 }
                 onInteractive(it)

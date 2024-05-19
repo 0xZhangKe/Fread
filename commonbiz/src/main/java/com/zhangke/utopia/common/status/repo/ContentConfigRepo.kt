@@ -7,7 +7,7 @@ import com.zhangke.utopia.common.status.repo.db.ContentConfigEntity
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent
 import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent.ContentTab
-import com.zhangke.utopia.status.model.isActivityPub
+import com.zhangke.utopia.status.model.notActivityPub
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -46,7 +46,7 @@ class ContentConfigRepo @Inject constructor(
     }
 
     suspend fun insertActivityPubContent(platform: BlogPlatform) {
-        if (!platform.protocol.isActivityPub) return
+        if (platform.protocol.notActivityPub) return
         val contentConfig = ActivityPubContent(
             id = 0,
             order = generateNextOrder(),

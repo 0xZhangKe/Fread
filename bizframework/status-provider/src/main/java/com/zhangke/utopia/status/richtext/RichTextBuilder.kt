@@ -61,6 +61,7 @@ private fun buildMentionUrl(
 fun Blog.preParseRichText() {
     humanizedContent.parse()
     humanizedSpoilerText.parse()
+    humanizedDescription.parse()
 }
 
 fun List<Status>.preParseRichText() {

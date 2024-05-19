@@ -133,7 +133,7 @@ class RssSourceScreen(
                     )
                     RssInfoItem(
                         modifier = Modifier.clickable {
-                            BrowserLauncher().launch(context, rssSource.url)
+                            BrowserLauncher.launchWebTabInApp(context, rssSource.url)
                         },
                         title = stringResource(R.string.rss_source_detail_screen_url),
                         content = rssSource.url,
@@ -141,7 +141,7 @@ class RssSourceScreen(
                     if (rssSource.homePage.isNullOrEmpty().not()) {
                         RssInfoItem(
                             modifier = Modifier.clickable {
-                                BrowserLauncher().launch(context, rssSource.homePage!!)
+                                BrowserLauncher.launchWebTabInApp(context, rssSource.homePage!!)
                             },
                             title = stringResource(R.string.rss_source_detail_screen_home_url),
                             content = rssSource.homePage!!,

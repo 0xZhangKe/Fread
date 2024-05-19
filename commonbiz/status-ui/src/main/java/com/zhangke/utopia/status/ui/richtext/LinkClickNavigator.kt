@@ -18,6 +18,6 @@ interface LinkClickNavigator {
 abstract class CommonLinkClickNavigator : LinkClickNavigator {
 
     override fun onUrlClick(context: Context, url: String) {
-        BrowserLauncher().launch(context, url)
+        BrowserLauncher.launchWebTabInApp(context, url)
     }
 }

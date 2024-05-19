@@ -73,7 +73,6 @@ class SearchStatusViewModel @AssistedInject constructor(
 
     fun onRefresh(query: String) {
         loadStatusController.onRefresh(role) {
-
             statusProvider.searchEngine
                 .searchStatus(role, query, null)
         }

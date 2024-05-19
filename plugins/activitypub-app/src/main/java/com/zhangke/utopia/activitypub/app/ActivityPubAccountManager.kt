@@ -8,7 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccoun
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.account.IAccountManager
-import com.zhangke.utopia.status.model.isActivityPub
+import com.zhangke.utopia.status.model.notActivityPub
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -42,9 +42,7 @@ class ActivityPubAccountManager @Inject constructor(
     }
 
     override suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>? {
-        if (!platform.protocol.isActivityPub) {
-            return null
-        }
+        if (platform.protocol.notActivityPub) return null
         val account = getAllLoggedAccount().firstOrNull {
             it.baseUrl == platform.baseUrl
         }

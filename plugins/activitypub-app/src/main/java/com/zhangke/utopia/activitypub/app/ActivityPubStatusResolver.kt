@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app
 
 import com.zhangke.activitypub.api.AccountsRepo
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubTagAdapter
@@ -13,12 +12,11 @@ import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusConte
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.VotePollUseCase
-import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
-import com.zhangke.utopia.status.model.isActivityPub
+import com.zhangke.utopia.status.model.notActivityPub
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -94,7 +92,7 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     private fun Status.notThisPlatform(): Boolean {
-        return this.platform.protocol.isActivityPub.not()
+        return this.platform.protocol.notActivityPub
     }
 
     override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {

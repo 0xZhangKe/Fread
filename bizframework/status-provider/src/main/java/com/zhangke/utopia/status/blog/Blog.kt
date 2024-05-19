@@ -16,7 +16,9 @@ data class Blog(
     val id: String,
     val author: BlogAuthor,
     val title: String?,
+    val description: String?,
     val content: String,
+    val url: String,
     @Serializable(with = DateSerializer::class) val date: Date,
     val forwardCount: Int?,
     val likeCount: Int?,
@@ -29,7 +31,7 @@ data class Blog(
     val mentions: List<Mention>,
     val tags: List<HashtagInStatus>,
     val poll: BlogPoll?,
-): java.io.Serializable {
+) : java.io.Serializable {
 
     val humanizedSpoilerText: RichText by lazy {
         buildRichText(
@@ -43,6 +45,15 @@ data class Blog(
     val humanizedContent: RichText by lazy {
         buildRichText(
             document = content,
+            mentions = mentions,
+            emojis = emojis,
+            hashTags = tags,
+        )
+    }
+
+    val humanizedDescription: RichText by lazy {
+        buildRichText(
+            document = description.orEmpty(),
             mentions = mentions,
             emojis = emojis,
             hashTags = tags,

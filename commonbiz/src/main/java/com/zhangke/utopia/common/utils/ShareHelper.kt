@@ -6,14 +6,16 @@ import androidx.core.text.HtmlCompat
 
 object ShareHelper {
 
-    fun shareRichText(context: Context, text: String) {
+    fun shareUrl(
+        context: Context,
+        url: String,
+        text: String,
+    ) {
         val intent = Intent().apply {
             action = Intent.ACTION_SEND
-            putExtra(
-                Intent.EXTRA_TEXT,
-                HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY).toString()
-            )
             type = "text/plain"
+            putExtra(Intent.EXTRA_TITLE, HtmlCompat.fromHtml(text, HtmlCompat.FROM_HTML_MODE_LEGACY).toString())
+            putExtra(Intent.EXTRA_TEXT, url)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
         context.startActivity(intent)

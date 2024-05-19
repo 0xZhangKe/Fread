@@ -54,7 +54,7 @@ class BlogDetailScreen(
                     actions = {
                         SimpleIconButton(
                             onClick = {
-                                BrowserLauncher.launchBySystemBrowser(context, blog.url)
+                                BrowserLauncher.launchWebTabInApp(context, blog.url)
                             },
                             imageVector = Icons.Default.OpenInBrowser,
                             contentDescription = "Open In Browser",

@@ -8,10 +8,14 @@ import androidx.browser.customtabs.CustomTabsIntent
 object BrowserLauncher {
 
     fun launchWebTabInApp(context: Context, url: String) {
+        launchWebTabInApp(context, Uri.parse(url))
+    }
+
+    fun launchWebTabInApp(context: Context, uri: Uri) {
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        customTabsIntent.launchUrl(context, Uri.parse(url))
+        customTabsIntent.launchUrl(context, uri)
     }
 
     fun launchBySystemBrowser(context: Context, url: String) {

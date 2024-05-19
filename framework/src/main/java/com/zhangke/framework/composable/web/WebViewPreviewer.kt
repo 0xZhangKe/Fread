@@ -33,7 +33,7 @@ fun WebViewPreviewer(
                         view: WebView?,
                         request: WebResourceRequest,
                     ): Boolean {
-                        BrowserLauncher.launchBySystemBrowser(context, request.url)
+                        BrowserLauncher.launchWebTabInApp(context, request.url)
                         return true
                     }
                 }

@@ -6,7 +6,7 @@ import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
+import com.zhangke.utopia.activitypub.app.createActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
@@ -88,7 +88,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             description = description,
             baseUrl = baseUrl,
             thumbnail = thumbnail,
-            protocol = getActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(context),
         )
 
     private fun BlogPlatform.toEntity() = ActivityPubLoggedAccountEntity.BlogPlatformEntity(

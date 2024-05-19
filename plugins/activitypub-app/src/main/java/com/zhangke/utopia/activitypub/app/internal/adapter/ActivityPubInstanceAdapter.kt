@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
+import com.zhangke.utopia.activitypub.app.createActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.hilt.android.qualifiers.ApplicationContext
@@ -27,7 +27,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
             baseUrl = baseUrl,
             name = instance.title,
             description = instance.description,
-            protocol = getActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(context),
             thumbnail = instance.thumbnail.url,
         )
     }

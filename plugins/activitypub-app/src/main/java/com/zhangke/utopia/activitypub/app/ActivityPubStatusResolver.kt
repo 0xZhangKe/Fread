@@ -18,6 +18,7 @@ import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.isActivityPub
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -93,7 +94,7 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     private fun Status.notThisPlatform(): Boolean {
-        return this.platform.protocol.id != ACTIVITY_PUB_PROTOCOL_ID
+        return this.platform.protocol.isActivityPub.not()
     }
 
     override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {

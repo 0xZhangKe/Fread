@@ -5,6 +5,7 @@ import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlat
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.isActivityPub
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.platform.IPlatformResolver
 import com.zhangke.utopia.status.platform.PlatformSnapshot

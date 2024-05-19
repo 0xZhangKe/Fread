@@ -3,10 +3,13 @@ package com.zhangke.utopia.profile.pages.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.krouter.KRouter
+import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
+import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -21,6 +24,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class ProfileHomeViewModel @Inject constructor(
+    private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
@@ -31,6 +35,11 @@ class ProfileHomeViewModel @Inject constructor(
     val openPageFlow = _openPageFlow.asSharedFlow()
 
     init {
+        observeAccountFlow()
+    }
+
+    private fun observeAccountFlow() {
+        var latestAccountList: List<LoggedAccount>? = null
         viewModelScope.launch {
             statusProvider.accountManager
                 .getAllAccountFlow()
@@ -39,8 +48,27 @@ class ProfileHomeViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(accountDataList = list)
                     }
+                    val newAccountList = list.flatMap { it.second }
+                    if (latestAccountList != null && latestAccountList!!.size < newAccountList.size) {
+                        // has new added account
+                        val newAccount = newAccountList.firstOrNull { account ->
+                            !latestAccountList!!.container { it.uri == account.uri }
+                        }
+                        newAccount?.let {
+                            onNewAccountAdded(it)
+                        }
+                    }
+                    latestAccountList = newAccountList
                 }
         }
+    }
+
+    private suspend fun onNewAccountAdded(account: LoggedAccount) {
+        val hasContentOfThisAccountPlatform = contentConfigRepo.getAllConfig()
+            .filterIsInstance<ContentConfig.ActivityPubContent>()
+            .firstOrNull { it.baseUrl == account.platform.baseUrl } != null
+        if (hasContentOfThisAccountPlatform) return
+        contentConfigRepo.insertActivityPubContent(account.platform)
     }
 
     fun onLogoutClick(account: LoggedAccount) {

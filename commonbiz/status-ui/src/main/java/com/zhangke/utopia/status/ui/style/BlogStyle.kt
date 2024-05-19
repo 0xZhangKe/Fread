@@ -10,7 +10,7 @@ data class BlogStyle(
 
 object BlogStyleDefaults {
 
-    const val contentMaxLine: Int = 6
+    const val contentMaxLine: Int = 10
 
     const val contentFontSizeSp: Float = 14F
 

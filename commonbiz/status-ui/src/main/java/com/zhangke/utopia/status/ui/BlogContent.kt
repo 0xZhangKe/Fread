@@ -22,6 +22,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.Mention
+import com.zhangke.utopia.status.model.isRss
 import com.zhangke.utopia.status.ui.image.OnBlogMediaClick
 import com.zhangke.utopia.status.ui.media.BlogMedias
 import com.zhangke.utopia.status.ui.poll.BlogPoll
@@ -80,13 +81,18 @@ fun BlogContent(
                 }
             }
             if (!hideContent) {
+                val contentMaxLine = if (blog.platform.protocol.isRss) {
+                    style.contentMaxLine
+                } else {
+                    Int.MAX_VALUE
+                }
                 UtopiaRichText(
                     modifier = Modifier
                         .fillMaxWidth()
                         .wrapContentHeight()
                         .padding(top = 4.dp),
                     richText = blog.humanizedContent,
-                    maxLines = style.contentMaxLine,
+                    maxLines = contentMaxLine,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagInStatusClick,
                     textSelectable = textSelectable,

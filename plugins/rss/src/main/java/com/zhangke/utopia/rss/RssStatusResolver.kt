@@ -1,15 +1,14 @@
 package com.zhangke.utopia.rss
 
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.utopia.rss.internal.repo.RssStatusRepo
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
-import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.model.isRss
 import com.zhangke.utopia.status.status.IStatusResolver
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.status.model.StatusContext
@@ -69,7 +68,7 @@ class RssStatusResolver @Inject constructor(
         role: IdentityRole,
         status: Status,
     ): Result<StatusContext>? {
-        if (!status.platform.protocol.isRssProtocol) return null
+        if (!status.platform.protocol.isRss) return null
         return Result.success(
             StatusContext(
                 ancestors = emptyList(),

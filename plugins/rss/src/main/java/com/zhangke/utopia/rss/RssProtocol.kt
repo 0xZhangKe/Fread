@@ -10,9 +10,3 @@ fun getRssProtocol(context: Context): StatusProviderProtocol {
         name = context.getString(R.string.rss_protocol_name),
     )
 }
-
-val StatusProviderProtocol.isRssProtocol: Boolean
-    get() = this.id == RSS_PROTOCOL_ID
-
-val StatusProviderProtocol.notRssProtocol: Boolean
-    get() = this.id != RSS_PROTOCOL_ID

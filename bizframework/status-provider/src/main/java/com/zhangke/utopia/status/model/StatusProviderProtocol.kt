@@ -16,3 +16,13 @@ data class StatusProviderProtocol(
 
 val StatusProviderProtocol.isActivityPub: Boolean
     get() = id == ACTIVITY_PUB_PROTOCOL_ID
+
+val StatusProviderProtocol.notActivityPub: Boolean
+    get() = !isActivityPub
+
+val StatusProviderProtocol.isRss: Boolean
+    get() = id == RSS_PROTOCOL_ID
+
+
+val StatusProviderProtocol.notRss: Boolean
+    get() = !isRss

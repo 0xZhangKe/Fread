@@ -64,7 +64,7 @@ class ImageViewerScreen(
 
     private val backgroundCommonAlpha = 0.95F
 
-    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
+    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow

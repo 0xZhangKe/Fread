@@ -4,7 +4,7 @@ import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.textOf
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
+import com.zhangke.utopia.activitypub.app.createActivityPubProtocol
 import com.zhangke.utopia.status.model.Hashtag
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.Calendar
@@ -28,7 +28,7 @@ class ActivityPubTagAdapter @Inject constructor(
             description = textOf(R.string.activity_pub_trends_tag_description, pass2DayUses),
             following = entity.following,
             history = convertHistoryList(entity.history),
-            protocol = getActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(context),
         )
     }
 

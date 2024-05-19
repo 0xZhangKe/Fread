@@ -7,6 +7,8 @@ import com.zhangke.utopia.common.status.repo.db.ContentConfigEntity
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent
 import com.zhangke.utopia.status.model.ContentConfig.ActivityPubContent.ContentTab
+import com.zhangke.utopia.status.model.isActivityPub
+import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
@@ -39,8 +41,30 @@ class ContentConfigRepo @Inject constructor(
         return contentConfigDao.queryById(id)?.toContentConfig()
     }
 
-    suspend fun getConfigFlowById(id: Long): Flow<ContentConfig> {
+    fun getConfigFlowById(id: Long): Flow<ContentConfig> {
         return contentConfigDao.queryFlowById(id).map { it.toContentConfig() }
+    }
+
+    suspend fun insertActivityPubContent(platform: BlogPlatform) {
+        if (!platform.protocol.isActivityPub) return
+        val contentConfig = ActivityPubContent(
+            id = 0,
+            order = generateNextOrder(),
+            name = platform.name,
+            baseUrl = platform.baseUrl,
+            showingTabList = buildInitialTabConfigList(),
+            hiddenTabList = emptyList(),
+        )
+        insert(contentConfig)
+    }
+
+    private fun buildInitialTabConfigList(): List<ContentTab> {
+        val tabList = mutableListOf<ContentTab>()
+        tabList += ContentTab.HomeTimeline(0)
+        tabList += ContentTab.LocalTimeline(1)
+        tabList += ContentTab.PublicTimeline(2)
+        tabList += ContentTab.Trending(3)
+        return tabList
     }
 
     suspend fun insert(config: ContentConfig) {

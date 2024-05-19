@@ -8,6 +8,7 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccoun
 import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.status.account.IAccountManager
+import com.zhangke.utopia.status.model.isActivityPub
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow

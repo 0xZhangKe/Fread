@@ -6,7 +6,7 @@ import com.google.gson.JsonObject
 import com.google.gson.JsonPrimitive
 import com.zhangke.framework.architect.json.globalGson
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
+import com.zhangke.utopia.activitypub.app.createActivityPubProtocol
 import com.zhangke.utopia.status.platform.PlatformSnapshot
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
@@ -41,7 +41,7 @@ class BlogPlatformResourceLoader @Inject constructor(
             totalUsers = getAsInt("total_users") ?: 0,
             lastWeekUsers = getAsInt("last_week_users") ?: 0,
             category = getAsString("category").orEmpty(),
-            protocol = getActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(context),
         )
     }
 

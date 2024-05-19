@@ -134,7 +134,7 @@ class PreAddFeedsViewModel @Inject constructor(
         }
     }
 
-    fun onLoadingDismissRequest(){
+    fun onLoadingDismissRequest() {
         _uiState.update { it.copy(loading = false) }
     }
 
@@ -161,25 +161,8 @@ class PreAddFeedsViewModel @Inject constructor(
     }
 
     private suspend fun performAddActivityPubContent(platform: BlogPlatform) {
-        val contentConfig = ContentConfig.ActivityPubContent(
-            id = 0,
-            order = contentConfigRepo.generateNextOrder(),
-            name = platform.name,
-            baseUrl = platform.baseUrl,
-            showingTabList = buildInitialTabConfigList(),
-            hiddenTabList = emptyList(),
-        )
-        contentConfigRepo.insert(contentConfig)
+        contentConfigRepo.insertActivityPubContent(platform)
         _addContentSuccessFlow.emit(Unit)
-    }
-
-    private fun buildInitialTabConfigList(): List<ContentConfig.ActivityPubContent.ContentTab> {
-        val tabList = mutableListOf<ContentConfig.ActivityPubContent.ContentTab>()
-        tabList += ContentConfig.ActivityPubContent.ContentTab.HomeTimeline(0)
-        tabList += ContentConfig.ActivityPubContent.ContentTab.LocalTimeline(1)
-        tabList += ContentConfig.ActivityPubContent.ContentTab.PublicTimeline(2)
-        tabList += ContentConfig.ActivityPubContent.ContentTab.Trending(3)
-        return tabList
     }
 
     private suspend fun getSuggestedPlatformSnapshots(): List<SearchContentResult.ActivityPubPlatformSnapshot> {

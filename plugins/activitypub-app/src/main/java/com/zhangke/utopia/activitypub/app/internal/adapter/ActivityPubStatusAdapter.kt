@@ -4,7 +4,7 @@ import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.activitypub.app.getActivityPubProtocol
+import com.zhangke.utopia.activitypub.app.createActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.utopia.status.blog.Blog
@@ -100,7 +100,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         return HashtagInStatus(
             name = name,
             url = url,
-            protocol = getActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(context),
         )
     }
 
@@ -122,7 +122,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             username = username,
             url = url,
             webFinger = webFinger,
-            protocol = getActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(context),
         )
     }
 }

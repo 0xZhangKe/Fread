@@ -35,6 +35,10 @@ data class Bounds(
         return y.coerceAtLeast(top).coerceAtMost(bottom)
     }
 
+    fun coerceInX(x: Float): Float{
+        return x.coerceAtLeast(left).coerceAtMost(right)
+    }
+
     fun coerceIn(offset: Offset): Offset {
         return Offset(
             x = offset.x.coerceIn(left..right),

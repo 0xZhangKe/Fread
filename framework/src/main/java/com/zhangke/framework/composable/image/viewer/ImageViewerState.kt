@@ -18,6 +18,7 @@ import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.unit.Velocity
 import com.zhangke.framework.composable.Bounds
@@ -32,6 +33,9 @@ fun rememberImageViewerState(
     initialOffset: Offset = Offset.Unspecified,
     minimumScale: Float = 1f,
     maximumScale: Float = 3f,
+    onStartDismiss: (() -> Unit)? = null,
+    onDismissRequest: (() -> Unit)? = null,
+    onAnimateInFinished: (() -> Unit)? = null,
 ): ImageViewerState {
     return rememberSaveable(saver = ImageViewerState.Saver) {
         ImageViewerState(
@@ -41,6 +45,9 @@ fun rememberImageViewerState(
             minimumScale = minimumScale,
             maximumScale = maximumScale,
             needAnimateIn = needAnimateIn,
+            onDismissRequest = onDismissRequest,
+            onStartDismiss = onStartDismiss,
+            onAnimateInFinished = onAnimateInFinished,
         )
     }
 }
@@ -53,6 +60,9 @@ class ImageViewerState(
     private val needAnimateIn: Boolean,
     private val minimumScale: Float = 1f,
     private val maximumScale: Float = 3f,
+    private val onAnimateInFinished: (() -> Unit)? = null,
+    private val onDismissRequest: (() -> Unit)? = null,
+    private val onStartDismiss: (() -> Unit)? = null,
 ) {
 
     private var _currentWidthPixel = mutableFloatStateOf(0F)
@@ -69,12 +79,6 @@ class ImageViewerState(
     private val standardWidth: Float get() = layoutSize.width
     private val standardHeight: Float get() = standardWidth / aspectRatio
 
-    var onAnimateInFinished: (() -> Unit)? = null
-
-    var onDismissRequest: (() -> Unit)? = null
-
-    var onStartDismiss: (() -> Unit)? = null
-
     val exceed: Boolean get() = !_currentWidthPixel.floatValue.equalsExactly(layoutSize.width)
 
     private var alreadyAnimationIn = false
@@ -85,7 +89,10 @@ class ImageViewerState(
 
     private val draggableBounds: Bounds
         get() {
-            return calculateDragBounds()
+            return calculateDragBounds(
+                imageWidth = _currentWidthPixel.floatValue,
+                imageHeight = _currentHeightPixel.floatValue,
+            )
         }
 
     init {
@@ -97,35 +104,6 @@ class ImageViewerState(
             _currentOffsetXPixel.floatValue = initialOffset.x
             _currentOffsetYPixel.floatValue = initialOffset.y
         }
-    }
-
-    private fun calculateDragBounds(): Bounds {
-        val imageWidth = _currentWidthPixel.floatValue
-        val imageHeight = _currentHeightPixel.floatValue
-        val left: Float
-        val right: Float
-        if (imageWidth > layoutSize.width) {
-            left = -(imageWidth - layoutSize.width)
-            right = 0F
-        } else {
-            left = (layoutSize.width - imageWidth) / 2F
-            right = left
-        }
-        val top: Float
-        val bottom: Float
-        if (imageHeight > layoutSize.height) {
-            top = -(imageHeight - layoutSize.height)
-            bottom = 0F
-        } else {
-            top = (layoutSize.height - imageHeight) / 2F
-            bottom = top
-        }
-        return Bounds(
-            left = left,
-            top = top,
-            right = right,
-            bottom = bottom,
-        )
     }
 
     suspend fun updateLayoutSize(size: Size) {
@@ -172,12 +150,26 @@ class ImageViewerState(
 
         val targetWidth = standardWidth * maximumScale
         val targetHeight = targetWidth / aspectRatio
+        var targetOffsetX = currentOffsetXPixel * maximumScale
+        var targetOffsetY = layoutSize.height / 2F - targetHeight / 2F
+
+        if (point.isSpecified && point.isValid()) {
+            // tap point must be in the image bounds
+            if (point.y < currentOffsetYPixel || point.y > (currentOffsetYPixel + currentHeightPixel)) return
+            val xRatio = point.x / currentWidthPixel
+            val yRatio = (point.y - currentOffsetYPixel) / currentHeightPixel
+            targetOffsetX = -(targetWidth * xRatio - point.x)
+            targetOffsetY = point.y - targetHeight * yRatio
+        }
+        val dragBounds = calculateDragBounds(
+            imageWidth = targetWidth,
+            imageHeight = targetHeight,
+        )
         animateToTarget(
             targetWidth = targetWidth,
             targetHeight = targetHeight,
-            targetOffsetX = 0F,
-            targetOffsetY = layoutSize.height / 2F - targetHeight / 2F,
-            center = point,
+            targetOffsetX = dragBounds.coerceInX(targetOffsetX),
+            targetOffsetY = dragBounds.coerceInY(targetOffsetY),
         )
     }
 
@@ -282,13 +274,12 @@ class ImageViewerState(
         targetHeight: Float,
         targetOffsetX: Float,
         targetOffsetY: Float,
-        center: Offset? = null,
     ) {
         cancelAnimation()
-        val startWidth = _currentWidthPixel.floatValue
-        val startHeight = _currentWidthPixel.floatValue
-        val startOffsetX = _currentOffsetXPixel.floatValue
-        val startOffsetY = _currentOffsetYPixel.floatValue
+        val startWidth = currentWidthPixel
+        val startHeight = currentHeightPixel
+        val startOffsetX = currentOffsetXPixel
+        val startOffsetY = currentOffsetYPixel
         if (startWidth != targetWidth || startHeight != targetHeight
             || startOffsetX != targetOffsetX || startOffsetY != targetOffsetY
         ) {
@@ -328,14 +319,21 @@ class ImageViewerState(
         resumeOffsetYAnimation = null
     }
 
-    internal fun zoom(zoom: Float) {
-        val newWidth = (_currentWidthPixel.floatValue * zoom).coerceInWidth()
-        val newHeight = (_currentHeightPixel.floatValue * zoom).coerceInHeight()
+    internal fun zoom(centroid: Offset, zoom: Float) {
+        val newWidth = (currentWidthPixel * zoom).coerceInWidth()
+        val newHeight = (currentHeightPixel * zoom).coerceInHeight()
+        val xRatio = (centroid.x - currentOffsetXPixel) / currentWidthPixel
+        val yRatio = (centroid.y - currentOffsetYPixel) / currentHeightPixel
         _currentWidthPixel.floatValue = newWidth
         _currentHeightPixel.floatValue = newHeight
-        _currentOffsetYPixel.floatValue = layoutSize.height / 2F - newHeight / 2F
+        val xOffset = -(newWidth * xRatio - centroid.x)
+        val yOffset = -(newHeight * yRatio - centroid.y)
+        val bounds = calculateDragBounds(newWidth, newHeight)
+        _currentOffsetYPixel.floatValue = bounds.coerceInY(yOffset)
         if (newWidth == standardWidth) {
             _currentOffsetXPixel.floatValue = 0F
+        } else {
+            _currentOffsetXPixel.floatValue = bounds.coerceInX(xOffset)
         }
     }
 
@@ -347,6 +345,33 @@ class ImageViewerState(
         val yRange = yOffset..yOffset + height
         val xRange = xOffset..xOffset + width
         return position.x in xRange && position.y in yRange
+    }
+
+    private fun calculateDragBounds(imageWidth: Float, imageHeight: Float): Bounds {
+        val left: Float
+        val right: Float
+        if (imageWidth > layoutSize.width) {
+            left = -(imageWidth - layoutSize.width)
+            right = 0F
+        } else {
+            left = (layoutSize.width - imageWidth) / 2F
+            right = left
+        }
+        val top: Float
+        val bottom: Float
+        if (imageHeight > layoutSize.height) {
+            top = -(imageHeight - layoutSize.height)
+            bottom = 0F
+        } else {
+            top = (layoutSize.height - imageHeight) / 2F
+            bottom = top
+        }
+        return Bounds(
+            left = left,
+            top = top,
+            right = right,
+            bottom = bottom,
+        )
     }
 
     private fun Float.coerceInWidth(): Float {

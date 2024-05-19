@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.image.viewer
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.gestures.detectTapGestures
@@ -11,7 +10,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.width
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -28,8 +26,6 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.toSize
-import com.zhangke.framework.composable.transformable.rememberTransformableCleverlyState
-import com.zhangke.framework.composable.transformable.transformableCleverly
 import com.zhangke.framework.ktx.isSingle
 import com.zhangke.framework.utils.pxToDp
 import kotlinx.coroutines.launch
@@ -40,8 +36,6 @@ private val infinityConstraints = Constraints()
 fun ImageViewer(
     state: ImageViewerState,
     modifier: Modifier = Modifier,
-    onStartDismiss: () -> Unit,
-    onDismissRequest: () -> Unit,
     content: @Composable () -> Unit,
 ) {
     val density = LocalDensity.current
@@ -49,23 +43,11 @@ fun ImageViewer(
     var latestSize: Size? by remember {
         mutableStateOf(null)
     }
-    var latestZoomChang: Float by remember {
-        mutableFloatStateOf(1F)
-    }
-    val transformableState = rememberTransformableCleverlyState { zoomChange, _ ->
-        if (latestZoomChang != zoomChange) {
-            state.zoom(zoomChange)
-        }
-        latestZoomChang = zoomChange
-    }
     BackHandler {
         coroutineScope.launch {
             state.startDismiss()
         }
     }
-    state.onDismissRequest = onDismissRequest
-    state.onStartDismiss = onStartDismiss
-    Log.d("U_TEST", "${state.currentWidthPixel}, ${state.currentHeightPixel}, ${state.currentOffsetXPixel}, ${state.currentOffsetYPixel}")
     Layout(
         modifier = modifier
             .onGloballyPositioned { position ->
@@ -110,7 +92,11 @@ fun ImageViewer(
                     }
                 },
             )
-            .transformableCleverly(transformableState),
+            .pointerInput(state) {
+                detectZoom { centroid, zoom ->
+                    state.zoom(centroid, zoom)
+                }
+            },
         content = {
             Box(
                 modifier = Modifier

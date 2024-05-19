@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.adapter
 import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.createActivityPubProtocol
 import com.zhangke.utopia.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
@@ -66,10 +67,12 @@ class ActivityPubStatusAdapter @Inject constructor(
             id = id,
             author = activityPubAccountEntityAdapter.toAuthor(account),
             title = null,
+            description = null,
             content = content,
             sensitive = sensitive,
             spoilerText = spoilerText,
             date = formatDatetimeToDate(createdAt),
+            url = this.url.ifNullOrEmpty { this.uri },
             forwardCount = reblogsCount,
             likeCount = favouritesCount,
             repliesCount = repliesCount,

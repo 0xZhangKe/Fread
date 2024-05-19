@@ -87,7 +87,7 @@ data class UserDetailScreen(
             onUnblockDomainClick = viewModel::onUnblockDomainClick,
             onOpenInBrowserClick = {
                 uiState.accountUiState?.account?.url?.let {
-                    BrowserLauncher().launch(context, it)
+                    BrowserLauncher.launchWebTabInApp(context, it)
                 }
             },
             onEditClick = {

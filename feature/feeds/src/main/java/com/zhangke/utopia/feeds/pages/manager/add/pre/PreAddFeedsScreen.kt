@@ -37,8 +37,9 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.commonbiz.shared.screen.login.target.LoginToTargetPlatformScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.status.search.SearchContentResult
-import com.zhangke.utopia.status.ui.BlogPlatformSnapshotUi
-import com.zhangke.utopia.status.ui.BlogPlatformUi
+import com.zhangke.utopia.status.ui.source.BlogPlatformSnapshotUi
+import com.zhangke.utopia.status.ui.source.BlogPlatformUi
+import com.zhangke.utopia.status.ui.source.StatusSourceUi
 import com.zhangke.utopia.status.ui.utils.CardInfoSection
 
 /**
@@ -149,40 +150,28 @@ class PreAddFeedsScreen : Screen {
         onContentClick: (SearchContentResult) -> Unit,
     ) {
         when (content) {
-            is SearchContentResult.Source -> StatusSourceUi(content, onContentClick)
-            is SearchContentResult.ActivityPubPlatform -> {
-                BlogPlatformUi(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onContentClick(content) },
-                    platform = content.platform,
-                )
-            }
+            is SearchContentResult.Source -> StatusSourceUi(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onContentClick(content)
+                    },
+                source = content.source,
+            )
 
-            is SearchContentResult.ActivityPubPlatformSnapshot -> {
-                BlogPlatformSnapshotUi(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clickable { onContentClick(content) },
-                    platform = content.platform,
-                )
-            }
+            is SearchContentResult.ActivityPubPlatform -> BlogPlatformUi(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onContentClick(content) },
+                platform = content.platform,
+            )
+
+            is SearchContentResult.ActivityPubPlatformSnapshot -> BlogPlatformSnapshotUi(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onContentClick(content) },
+                platform = content.platform,
+            )
         }
-    }
-
-    @Composable
-    private fun StatusSourceUi(
-        searchedSource: SearchContentResult.Source,
-        onContentClick: (SearchContentResult) -> Unit,
-    ) {
-        val source = searchedSource.source
-        CardInfoSection(
-            modifier = Modifier
-                .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
-                .clickable { onContentClick(searchedSource) },
-            avatar = source.thumbnail,
-            title = source.name,
-            description = source.description,
-        )
     }
 }

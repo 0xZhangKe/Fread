@@ -5,7 +5,7 @@ import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlat
 import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.utopia.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.utopia.status.model.IdentityRole
-import com.zhangke.utopia.status.model.isActivityPub
+import com.zhangke.utopia.status.model.notActivityPub
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.platform.IPlatformResolver
 import com.zhangke.utopia.status.platform.PlatformSnapshot
@@ -30,7 +30,7 @@ class ActivityPubPlatformResolver @Inject constructor(
     }
 
     override suspend fun resolve(blogSnapshot: PlatformSnapshot): Result<BlogPlatform>? {
-        if (!blogSnapshot.protocol.isActivityPub) return null
+        if (blogSnapshot.protocol.notActivityPub) return null
         val baseUrl = FormalBaseUrl.parse(blogSnapshot.domain) ?: return null
         return platformRepo.getPlatform(baseUrl)
     }

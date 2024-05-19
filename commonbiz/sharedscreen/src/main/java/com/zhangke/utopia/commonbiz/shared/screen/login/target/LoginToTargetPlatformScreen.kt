@@ -16,7 +16,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.utopia.commonbiz.shared.screen.R
 import com.zhangke.utopia.status.platform.BlogPlatform
-import com.zhangke.utopia.status.ui.BlogPlatformUi
+import com.zhangke.utopia.status.ui.source.BlogPlatformUi
 
 class LoginToTargetPlatformScreen(val platform: BlogPlatform) : Screen {
 

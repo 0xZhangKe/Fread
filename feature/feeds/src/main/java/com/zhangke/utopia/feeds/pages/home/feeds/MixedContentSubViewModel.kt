@@ -70,6 +70,7 @@ class MixedContentSubViewModel(
                 .drop(1)
                 .collect {
                     delay(50)
+                    mixedContent = it as? ContentConfig.MixedContent
                     initFeeds(false)
                 }
         }

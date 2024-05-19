@@ -36,7 +36,7 @@ fun UtopiaRichText(
         onLinkTargetClick = { context, linkTarget ->
             when (linkTarget) {
                 is LinkSpan.LinkTarget.UrlTarget -> {
-                    BrowserLauncher().launch(context, linkTarget.url)
+                    BrowserLauncher.launchWebTabInApp(context, linkTarget.url)
                 }
 
                 is LinkSpan.LinkTarget.HashtagTarget -> {

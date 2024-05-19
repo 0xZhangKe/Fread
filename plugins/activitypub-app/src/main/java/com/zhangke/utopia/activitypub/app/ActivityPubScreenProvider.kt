@@ -16,7 +16,7 @@ import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.StatusProviderProtocol
-import com.zhangke.utopia.status.model.isActivityPub
+import com.zhangke.utopia.status.model.notActivityPub
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.screen.IStatusScreenProvider
 import com.zhangke.utopia.status.uri.FormalUri
@@ -36,7 +36,7 @@ class ActivityPubScreenProvider @Inject constructor(
         platform: BlogPlatform,
         accountUri: FormalUri?,
     ): String? {
-        if (!platform.protocol.isActivityPub) return null
+        if (platform.protocol.notActivityPub) return null
         return if (accountUri == null) {
             PostStatusScreenRoute.ROUTE
         } else {
@@ -45,7 +45,7 @@ class ActivityPubScreenProvider @Inject constructor(
     }
 
     override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
-        if (!blog.platform.protocol.isActivityPub) return null
+        if (blog.platform.protocol.notActivityPub) return null
         var accountUri = role.accountUri
         if (accountUri == null && role.baseUrl != null) {
             accountUri = loggedAccountProvider.getAccount(role.baseUrl!!)?.uri
@@ -65,7 +65,7 @@ class ActivityPubScreenProvider @Inject constructor(
     }
 
     override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
-        if (!account.platform.protocol.isActivityPub) return null
+        if (account.platform.protocol.notActivityPub) return null
         val userInsights = userUriTransformer.parse(account.uri) ?: return null
         return ActivityPubNotificationsScreen(userInsights)
     }
@@ -80,7 +80,7 @@ class ActivityPubScreenProvider @Inject constructor(
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
     ): String? {
-        if (!protocol.isActivityPub) return null
+        if (protocol.notActivityPub) return null
         return UserDetailRoute.buildRoute(role, webFinger)
     }
 
@@ -89,7 +89,7 @@ class ActivityPubScreenProvider @Inject constructor(
         tag: String,
         protocol: StatusProviderProtocol,
     ): String? {
-        if (!protocol.isActivityPub) return null
+        if (protocol.notActivityPub) return null
         return HashtagTimelineRoute.buildRoute(role, tag)
     }
 }

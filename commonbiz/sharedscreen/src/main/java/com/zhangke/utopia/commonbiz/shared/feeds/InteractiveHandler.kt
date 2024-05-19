@@ -8,6 +8,7 @@ import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.utopia.commonbiz.shared.blog.detail.BlogDetailScreen
 import com.zhangke.utopia.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
@@ -18,6 +19,7 @@ import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
 import com.zhangke.utopia.status.model.StatusProviderProtocol
+import com.zhangke.utopia.status.model.isRss
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -119,12 +121,15 @@ class InteractiveHandler(
 
     override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
-            mutableOpenScreenFlow.emit(
+            val screen = if (status.status.intrinsicBlog.platform.protocol.isRss) {
+                BlogDetailScreen(status.status.intrinsicBlog)
+            } else {
                 StatusContextScreen(
                     role = status.role,
                     status = refactorToNewBlog(status.status),
                 )
-            )
+            }
+            mutableOpenScreenFlow.emit(screen)
         }
     }
 

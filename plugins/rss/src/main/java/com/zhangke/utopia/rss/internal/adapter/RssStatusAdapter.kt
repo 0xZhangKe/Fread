@@ -1,5 +1,6 @@
 package com.zhangke.utopia.rss.internal.adapter
 
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.utopia.rss.internal.model.RssChannelItem
 import com.zhangke.utopia.rss.internal.model.RssSource
 import com.zhangke.utopia.rss.internal.platform.RssPlatformTransformer
@@ -13,6 +14,11 @@ class RssStatusAdapter @Inject constructor(
     private val blogAuthorAdapter: BlogAuthorAdapter,
     private val rssPlatformTransformer: RssPlatformTransformer,
 ) {
+
+    private val meaninglessTitleList = listOf(
+        "unknown",
+        "null",
+    )
 
     fun toStatus(
         uriInsight: RssUriInsight,
@@ -36,8 +42,10 @@ class RssStatusAdapter @Inject constructor(
         return Blog(
             id = this.id,
             author = blogAuthorAdapter.createAuthor(uriInsight, source),
-            title = this.title,
-            content = this.description.orEmpty(),
+            title = removeMeaninglessTitle(this.title),
+            url = this.link.ifNullOrEmpty { uriInsight.url },
+            content = this.content.ifNullOrEmpty { this.description.ifNullOrEmpty { this.link.orEmpty() } },
+            description = this.description,
             date = this.pubDate,
             forwardCount = null,
             likeCount = null,
@@ -51,5 +59,13 @@ class RssStatusAdapter @Inject constructor(
             mentions = emptyList(),
             tags = emptyList(),
         )
+    }
+
+    private fun removeMeaninglessTitle(title: String): String? {
+        return if (meaninglessTitleList.contains(title.lowercase())) {
+            null
+        } else {
+            title
+        }
     }
 }

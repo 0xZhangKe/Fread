@@ -74,6 +74,7 @@ class PreAddFeedsViewModel @Inject constructor(
     fun onQueryChanged(query: String) {
         _uiState.value = _uiState.value.copy(query = query)
         if (query.isEmpty()) {
+            searchJob?.cancel()
             launchInScreenModel {
                 _uiState.update {
                     it.copy(allSearchedResult = getSuggestedPlatformSnapshots())

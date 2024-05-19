@@ -31,6 +31,7 @@ fun createStatus(
         blog = Blog(
             id = id,
             author = author,
+            description = null,
             content = content,
             title = title,
             date = date,
@@ -38,12 +39,14 @@ fun createStatus(
             forwardCount = forwardCount,
             likeCount = likeCount,
             repliesCount = repliesCount,
+            url = "",
             sensitive = sensitive,
             spoilerText = spoilerText,
             mediaList = mediaList,
             poll = poll,
             platform = createBlogPlatform(),
             mentions = emptyList(),
+            tags = emptyList(),
         ),
         supportInteraction = emptyList()
     )
@@ -86,4 +89,5 @@ fun createBlogAuthor(
     name = name,
     description = description,
     avatar = avatar,
+    emojis = emptyList(),
 )

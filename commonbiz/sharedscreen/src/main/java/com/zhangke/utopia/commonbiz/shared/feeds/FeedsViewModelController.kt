@@ -19,6 +19,7 @@ import com.zhangke.utopia.status.model.Hashtag
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.model.Mention
+import com.zhangke.utopia.status.richtext.preParseRichText
 import com.zhangke.utopia.status.status.model.Status
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
@@ -105,13 +106,15 @@ class FeedsViewModelController(
             }
             if (needLocalData) {
                 loadFirstPageLocalFeeds()
+                    .map { list ->
+                        list.preParseRichText()
+                        list.map { it.toUiState() }
+                    }
                     .onSuccess { localStatus ->
                         if (localStatus.isNotEmpty()) {
                             mutableUiState.update { state ->
                                 state.copy(
-                                    feeds = localStatus.map { status ->
-                                        status.toUiState()
-                                    },
+                                    feeds = localStatus,
                                     showPagingLoadingPlaceholder = false,
                                 )
                             }
@@ -119,6 +122,11 @@ class FeedsViewModelController(
                     }
             }
             loadNewFromServerFunction()
+                .map { result ->
+                    val newStatus = result.newStatus
+                    newStatus.preParseRichText()
+                    newStatus.map { it.toUiState() }
+                }
                 .onFailure {
                     mutableUiState.update { state ->
                         state.copy(
@@ -136,7 +144,7 @@ class FeedsViewModelController(
                 }.onSuccess {
                     mutableUiState.update { state ->
                         state.copy(
-                            feeds = it.newStatus.map { it.toUiState() },
+                            feeds = it,
                             showPagingLoadingPlaceholder = false,
                         )
                     }
@@ -156,6 +164,10 @@ class FeedsViewModelController(
 
     private suspend fun autoFetchNewerFeeds() {
         loadNewFromServerFunction()
+            .map {
+                it.newStatus.preParseRichText()
+                it
+            }
             .onSuccess {
                 val oldFirstId = mutableUiState.value.feeds.firstOrNull()?.status?.id
                 val newFirstId = it.newStatus.firstOrNull()?.id

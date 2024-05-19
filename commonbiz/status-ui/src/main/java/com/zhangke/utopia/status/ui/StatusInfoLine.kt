@@ -154,6 +154,8 @@ fun StatusInfoLine(
                 .constrainAs(userId) {
                     baseline.linkTo(dateTime.baseline)
                     start.linkTo(dateTime.end, infoStyle.timeToIdPadding)
+                    end.linkTo(moreOptions.start, 8.dp)
+                    width = Dimension.fillToConstraints
                 },
             text = blogAuthor.webFinger.toString(),
             style = infoStyle.descStyle,

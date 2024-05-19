@@ -19,7 +19,6 @@ fun onStatusMediaClick(
                     mediaList = event.mediaList,
                     selectedIndex = event.index,
                     coordinatesList = event.coordinatesList,
-                    onDismiss = event.onDismiss,
                 )
             )
         }

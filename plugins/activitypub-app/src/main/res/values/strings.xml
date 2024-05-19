@@ -3,9 +3,9 @@
 
     <string name="activity_pub_home_timeline">主页</string>
 
-    <string name="activity_pub_local_timeline">本站时间轴</string>
+    <string name="activity_pub_local_timeline">本站</string>
 
-    <string name="activity_pub_public_timeline">跨站时间轴</string>
+    <string name="activity_pub_public_timeline">跨站</string>
 
     <string name="activity_pub_protocol_name">长毛象</string>
 
@@ -62,8 +62,8 @@
     <string name="add_instance_input_service_error">请输入正确的服务器地址</string>
 
     <string name="activity_pub_content_tab_home">主页</string>
-    <string name="activity_pub_content_tab_local_timeline">本地时间轴</string>
-    <string name="activity_pub_content_tab_public_timeline">跨站时间轴</string>
+    <string name="activity_pub_content_tab_local_timeline">本站</string>
+    <string name="activity_pub_content_tab_public_timeline">跨站</string>
     <string name="activity_pub_content_tab_trending">趋势</string>
 
     <string name="activity_pub_notification_tab_title_all">所有</string>

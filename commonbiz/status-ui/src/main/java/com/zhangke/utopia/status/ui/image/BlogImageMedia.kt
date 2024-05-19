@@ -33,7 +33,6 @@ sealed interface BlogMediaClickEvent {
         val index: Int,
         val mediaList: List<BlogMedia>,
         val coordinatesList: List<LayoutCoordinates?>,
-        val onDismiss: () -> Unit,
     ) : BlogMediaClickEvent
 
     data class BlogVideoClickEvent(
@@ -76,9 +75,6 @@ fun BlogImageMedias(
                                 index = index,
                                 mediaList = mediaList,
                                 coordinatesList = mediaPosition.toList(),
-                                onDismiss = {
-
-                                },
                             )
                         )
                     },

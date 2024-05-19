@@ -5,10 +5,25 @@ import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Download
+import androidx.compose.material.icons.filled.Info
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -17,12 +32,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -30,6 +47,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
@@ -41,13 +59,12 @@ import kotlinx.coroutines.launch
 class ImageViewerScreen(
     private val selectedIndex: Int,
     private val mediaList: List<BlogMedia>,
-    private val coordinatesList: List<LayoutCoordinates?>,
-    private val onDismiss: () -> Unit,
+    @Transient private val coordinatesList: List<LayoutCoordinates?> = emptyList(),
 ) : Screen {
 
     private val backgroundCommonAlpha = 0.95F
 
-    @OptIn(ExperimentalFoundationApi::class)
+    @OptIn(ExperimentalFoundationApi::class, ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -84,39 +101,43 @@ class ImageViewerScreen(
             val animatedInHolder = remember {
                 arrayOf(false)
             }
-            HorizontalPager(
-                modifier = Modifier
-                    .fillMaxSize(),
-                state = pagerState,
-            ) { pageIndex ->
-                val currentMedia = mediaList[pageIndex]
-                val coordinates = coordinatesList[pageIndex]
-                val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
-                ImagePageContent(
-                    currentMedia,
-                    coordinates,
-                    animatedIn,
-                    animateInFinished = {
-                        animatedInHolder[0] = true
-                    },
-                    onDismissRequest = {
-                        navigator.pop()
-                        onDismiss()
-                    },
-                    onStartDismiss = {
-                        coroutineScope.launch {
-                            Animatable(backgroundCommonAlpha).animateTo(
-                                targetValue = 0.1F,
-                                animationSpec = tween(
-                                    ImageViewerDefault.ANIMATION_DURATION,
-                                    easing = FastOutSlowInEasing
-                                ),
-                            ) {
-                                backgroundColorAlpha = value
+
+            Box(modifier = Modifier.fillMaxSize()) {
+                HorizontalPager(
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    state = pagerState,
+                ) { pageIndex ->
+                    val currentMedia = mediaList[pageIndex]
+                    val coordinates = coordinatesList[pageIndex]
+                    val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
+                    ImagePageContent(
+                        currentMedia,
+                        coordinates,
+                        animatedIn,
+                        animateInFinished = {
+                            animatedInHolder[0] = true
+                        },
+                        onDismissRequest = {
+                            navigator.pop()
+                        },
+                        onStartDismiss = {
+                            coroutineScope.launch {
+                                Animatable(backgroundCommonAlpha).animateTo(
+                                    targetValue = 0.1F,
+                                    animationSpec = tween(
+                                        ImageViewerDefault.ANIMATION_DURATION,
+                                        easing = FastOutSlowInEasing
+                                    ),
+                                ) {
+                                    backgroundColorAlpha = value
+                                }
                             }
                         }
-                    }
-                )
+                    )
+                }
+
+                ImageTopBar(media = mediaList[pagerState.currentPage])
             }
         }
     }
@@ -152,17 +173,16 @@ class ImageViewerScreen(
                     needAnimateIn = needAnimateIn,
                     initialSize = coordinates.size.toSize(),
                     initialOffset = coordinates.positionInRoot(),
-                ).also {
-                    it.onAnimateInFinished = animateInFinished
-                }
+                    onAnimateInFinished = animateInFinished,
+                    onDismissRequest = onDismissRequest,
+                    onStartDismiss = onStartDismiss,
+                )
             } else {
                 rememberImageViewerState(aspectRatio = aspectRatio!!, needAnimateIn = false)
             }
             ImageViewer(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
-                onDismissRequest = onDismissRequest,
-                onStartDismiss = onStartDismiss,
             ) {
                 AsyncImage(
                     modifier = Modifier
@@ -171,6 +191,53 @@ class ImageViewerScreen(
                     contentScale = ContentScale.FillBounds,
                     contentDescription = media.description,
                 )
+            }
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun BoxScope.ImageTopBar(media: BlogMedia) {
+        var showBottomSheet by remember { mutableStateOf(false) }
+        Row(
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 8.dp, end = 8.dp),
+            horizontalArrangement = Arrangement.Center,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SimpleIconButton(
+                onClick = {
+
+                },
+                tint = MaterialTheme.colorScheme.inverseOnSurface,
+                imageVector = Icons.Default.Download,
+                contentDescription = "Download",
+            )
+            if (media.description != null) {
+                Spacer(modifier = Modifier.width(16.dp))
+                SimpleIconButton(
+                    onClick = {
+                        showBottomSheet = true
+                    },
+                    tint = MaterialTheme.colorScheme.inverseOnSurface,
+                    imageVector = Icons.Default.Info,
+                    contentDescription = "Image description",
+                )
+                if (showBottomSheet) {
+                    ModalBottomSheet(
+                        onDismissRequest = { showBottomSheet = false },
+                    ) {
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 28.dp)
+                                .wrapContentHeight()
+                        ) {
+                            Text(text = media.description.orEmpty())
+                        }
+                    }
+                }
             }
         }
     }

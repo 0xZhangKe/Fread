@@ -119,7 +119,7 @@ class ActivityPubStatusAdapter @Inject constructor(
     }
 
     private fun ActivityPubStatusEntity.Mention.toMention(): Mention? {
-        val webFinger = WebFinger.create(acct) ?: return null
+        val webFinger = WebFinger.create(acct) ?: WebFinger.create(this.url) ?: return null
         return Mention(
             id = id,
             username = username,

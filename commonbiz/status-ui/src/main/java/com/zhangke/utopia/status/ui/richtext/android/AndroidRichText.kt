@@ -1,6 +1,7 @@
 package com.zhangke.utopia.status.ui.richtext.android
 
 import android.content.Context
+import android.os.Build
 import android.text.SpannableStringBuilder
 import android.view.Gravity
 import android.widget.TextView
@@ -120,7 +121,9 @@ private fun SelectableTextView(
         factory = {
             LinkedTextView(it).apply {
                 this.gravity = Gravity.START
-                this.focusable = TextView.FOCUSABLE
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                    this.focusable = TextView.FOCUSABLE
+                }
                 this.isEnabled = true
                 this.setTextIsSelectable(true)
                 this.isLongClickable = true

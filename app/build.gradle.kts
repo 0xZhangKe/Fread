@@ -55,7 +55,7 @@ android {
             )
         }
         debug {
-            isMinifyEnabled = true
+            isMinifyEnabled = false
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -116,6 +116,7 @@ dependencies {
     implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.androidx.browser)
     implementation(libs.accompanist.placeholder.material)
+    implementation(libs.accompanist.permissions)
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)

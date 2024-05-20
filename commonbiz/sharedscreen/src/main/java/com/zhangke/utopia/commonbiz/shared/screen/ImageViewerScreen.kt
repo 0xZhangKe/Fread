@@ -4,7 +4,6 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -47,10 +46,13 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
+import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
+import com.zhangke.framework.media.MediaFileHelper
+import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.aspectRatio
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.asImageMetaOrNull
@@ -64,7 +66,6 @@ class ImageViewerScreen(
 
     private val backgroundCommonAlpha = 0.95F
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -186,7 +187,17 @@ class ImageViewerScreen(
             ) {
                 AsyncImage(
                     modifier = Modifier
-                        .fillMaxSize(),
+                        .fillMaxSize()
+                        .run {
+                            if (media.blurhash
+                                    .isNullOrEmpty()
+                                    .not()
+                            ) {
+                                blurhash(media.blurhash!!)
+                            } else {
+                                this
+                            }
+                        },
                     model = media.url,
                     contentScale = ContentScale.FillBounds,
                     contentDescription = media.description,
@@ -199,6 +210,7 @@ class ImageViewerScreen(
     @Composable
     private fun BoxScope.ImageTopBar(media: BlogMedia) {
         var showBottomSheet by remember { mutableStateOf(false) }
+        val context = LocalContext.current
         Row(
             modifier = Modifier
                 .align(Alignment.TopEnd)
@@ -206,9 +218,21 @@ class ImageViewerScreen(
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            var needSaveImage by remember { mutableStateOf(false) }
+            if (needSaveImage) {
+                RequireLocalStoragePermission(
+                    onPermissionGranted = {
+                        MediaFileHelper.saveImageToGallery(context, media.url)
+                        needSaveImage = false
+                    },
+                    onPermissionDenied = {
+                        needSaveImage = false
+                    },
+                )
+            }
             SimpleIconButton(
                 onClick = {
-
+                    needSaveImage = true
                 },
                 tint = MaterialTheme.colorScheme.inverseOnSurface,
                 imageVector = Icons.Default.Download,

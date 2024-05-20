@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -32,8 +33,6 @@ fun StatusBottomInteractionPanel(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         interactions.forEachIndexed { index, interaction ->
-            val highlightColor = MaterialTheme.colorScheme.primary
-            val normalColor = MaterialTheme.colorScheme.onSurface
             val weight = when (index) {
                 0 -> 1F
                 interactions.lastIndex -> 1F
@@ -51,7 +50,7 @@ fun StatusBottomInteractionPanel(
                     enabled = interaction.enabled,
                     contentDescription = interaction.actionName,
                     text = interaction.label,
-                    tint = if (interaction.highLight) highlightColor else normalColor,
+                    highLight = interaction.highLight,
                     onClick = {
                         onInteractive(interaction)
                     },
@@ -68,7 +67,7 @@ private fun StatusActionIcon(
     enabled: Boolean,
     contentDescription: String,
     text: String? = null,
-    tint: Color,
+    highLight: Boolean,
     onClick: () -> Unit,
 ) {
     IconButton(
@@ -83,7 +82,11 @@ private fun StatusActionIcon(
                 modifier = Modifier.size(18.dp),
                 imageVector = imageVector,
                 contentDescription = contentDescription,
-                tint = tint,
+                tint = if (highLight) {
+                    MaterialTheme.colorScheme.primary
+                } else {
+                    LocalContentColor.current
+                },
             )
             if (text != null) {
                 Text(

@@ -38,6 +38,7 @@ fun BlogUi(
     onMentionClick: (Mention) -> Unit,
     showDivider: Boolean = true,
     showUpThread: Boolean = false,
+    textSelectable: Boolean = false,
 ) {
     val context = LocalContext.current
     Column(modifier = modifier.fillMaxWidth()) {
@@ -62,6 +63,7 @@ fun BlogUi(
             style = style.blogStyle,
             onMediaClick = onMediaClick,
             onVoted = onVoted,
+            textSelectable = textSelectable,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
         )

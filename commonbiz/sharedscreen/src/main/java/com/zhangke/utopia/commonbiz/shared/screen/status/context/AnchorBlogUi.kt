@@ -38,6 +38,7 @@ fun AnchorBlogUi(
             displayTime = displayTime,
             indexInList = indexInList,
             style = style,
+            textSelectable = true,
             bottomPanelInteractions = bottomPanelInteractions,
             moreInteractions = moreInteractions,
             onInteractive = {

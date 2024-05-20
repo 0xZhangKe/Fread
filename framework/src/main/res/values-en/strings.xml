@@ -20,4 +20,10 @@
     <string name="retry">Try Again</string>
 
     <string name="load_more_error">Oops! Couldn\'t load.</string>
+
+    <string name="image_saving">Saving…</string>
+    <string name="image_save_success">Save successful</string>
+    <string name="image_save_failed">Save failed</string>
+
+    <string name="permission_write_external_permission_denied">Storage permission is denied, please open it in the settings.</string>
 </resources>

@@ -20,4 +20,10 @@
     <string name="retry">重试</string>
 
     <string name="load_more_error">哦！加载失败</string>
+
+    <string name="image_saving">保存中…</string>
+    <string name="image_save_success">保存成功</string>
+    <string name="image_save_failed">保存失败</string>
+
+    <string name="permission_write_external_permission_denied">存储权限被拒绝，请到设置中打开。</string>
 </resources>

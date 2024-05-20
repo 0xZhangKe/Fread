@@ -18,6 +18,6 @@ object ShareHelper {
             putExtra(Intent.EXTRA_TEXT, url)
             addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         }
-        context.startActivity(intent)
+        context.startActivity(Intent.createChooser(intent, null))
     }
 }

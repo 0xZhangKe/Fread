@@ -36,11 +36,11 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.commonbiz.shared.screen.login.target.LoginToTargetPlatformScreen
 import com.zhangke.utopia.feeds.R
+import com.zhangke.utopia.feeds.pages.manager.add.showAddContentSuccessToast
 import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.utopia.status.ui.source.BlogPlatformUi
 import com.zhangke.utopia.status.ui.source.StatusSourceUi
-import com.zhangke.utopia.status.ui.utils.CardInfoSection
 
 /**
  * 添加 Feeds 预先搜索页，用于输入内容，判断类型添加内容。
@@ -71,7 +71,7 @@ class PreAddFeedsScreen : Screen {
             bottomSheetNavigator.show(LoginToTargetPlatformScreen(it))
         }
         ConsumeFlow(viewModel.addContentSuccessFlow) {
-            snackbarHostState.showSnackbar(context.getString(R.string.add_content_success_snackbar))
+            showAddContentSuccessToast(context)
             navigator.pop()
         }
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)

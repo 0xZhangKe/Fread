@@ -90,6 +90,7 @@ class PreAddFeedsViewModel @Inject constructor(
     }
 
     private fun doSearch(showErrorMessage: Boolean = false) {
+        val query = _uiState.value.query
         searchJob?.cancel()
         searchJob = launchInScreenModel {
             statusProvider.searchEngine

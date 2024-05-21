@@ -25,6 +25,7 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.zhangke.framework.composable.utopiaPlaceholder
+import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 
 @Composable
 fun SourceCommonUi(
@@ -112,18 +113,20 @@ fun SourceCommonUi(
                     style = MaterialTheme.typography.bodyMedium,
                 )
             }
-            Text(
+            UtopiaRichText(
                 modifier = Modifier.constrainAs(descRef) {
                     start.linkTo(nameRef.start)
                     top.linkTo(subtitleRef.bottom, 2.dp)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-                text = description,
-                maxLines = 1,
-                textAlign = TextAlign.Start,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.bodyMedium,
+                content = description,
+                maxLines = 3,
+                emojis = emptyList(),
+                mentions = emptyList(),
+                tags = emptyList(),
+                onMentionClick = {},
+                onHashtagClick = {},
             )
         }
         if (showDivider) {

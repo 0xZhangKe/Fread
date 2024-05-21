@@ -32,7 +32,6 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -46,6 +45,7 @@ import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.composable.RemovableStatusSource
 import com.zhangke.utopia.feeds.composable.StatusSourceUiState
+import com.zhangke.utopia.feeds.pages.manager.add.showAddContentSuccessToast
 import com.zhangke.utopia.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.utopia.status.source.StatusSource
 import com.zhangke.utopia.status.uri.FormalUri
@@ -62,7 +62,6 @@ internal class AddMixedFeedsScreen(
     override fun Content() {
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
-        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<AddMixedFeedsViewModel, AddMixedFeedsViewModel.Factory> {
             it.create(statusSource)
         }
@@ -80,7 +79,7 @@ internal class AddMixedFeedsScreen(
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.addContentSuccessFlow) {
-            snackbarHostState.showSnackbar(context.getString(R.string.add_content_success_snackbar))
+            showAddContentSuccessToast(context)
             navigator.pop()
         }
         val resultNavigator = navigator.navigationResult

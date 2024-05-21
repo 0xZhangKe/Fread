@@ -2,6 +2,7 @@ package com.zhangke.utopia.feeds.pages.home.drawer
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -41,6 +42,7 @@ fun ContentHomeDrawer(
     contentConfigList: List<ContentConfig>,
     onContentConfigClick: (ContentConfig) -> Unit,
     onAddContentClick: () -> Unit,
+    onImportClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
     onEditClick: (ContentConfig) -> Unit,
 ) {
@@ -50,6 +52,7 @@ fun ContentHomeDrawer(
         onAddContentClick = onAddContentClick,
         onMove = onMove,
         onEditClick = onEditClick,
+        onImportClick = onImportClick,
     )
 }
 
@@ -57,6 +60,7 @@ fun ContentHomeDrawer(
 private fun ContentHomeDrawerContent(
     contentConfigList: List<ContentConfig>,
     onContentConfigClick: (ContentConfig) -> Unit,
+    onImportClick: () -> Unit,
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
     onEditClick: (ContentConfig) -> Unit,
@@ -111,14 +115,25 @@ private fun ContentHomeDrawerContent(
                     }
                 }
 
-
-                Button(
+                Row(
                     modifier = Modifier
                         .padding(vertical = 16.dp)
-                        .align(Alignment.CenterHorizontally),
-                    onClick = onAddContentClick
+                        .fillMaxWidth(),
+                    horizontalArrangement = Arrangement.Center,
                 ) {
-                    Text(text = "Add")
+                    Button(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        onClick = onImportClick,
+                    ) {
+                        Text(text = "import")
+                    }
+
+                    Button(
+                        modifier = Modifier.padding(horizontal = 8.dp),
+                        onClick = onAddContentClick,
+                    ) {
+                        Text(text = "Add")
+                    }
                 }
             }
         }

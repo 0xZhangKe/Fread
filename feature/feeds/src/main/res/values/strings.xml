@@ -5,6 +5,10 @@
 
     <string name="add_provider_page_confirm_button">确定添加</string>
 
+    <string name="feeds_import_page_title">导入</string>
+    <string name="feeds_import_page_hint">请选择要导入的 OPML 文件</string>
+    <string name="feeds_import_button">导入</string>
+
     <string name="search_page_title">搜索</string>
     <string name="search_result_not_found">未搜索到任何结果</string>
 

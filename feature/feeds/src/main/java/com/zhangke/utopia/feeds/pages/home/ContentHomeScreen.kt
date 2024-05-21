@@ -45,6 +45,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.home.drawer.ContentHomeDrawer
 import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsScreen
+import com.zhangke.utopia.feeds.pages.manager.import.ImportFeedsScreen
 import kotlinx.coroutines.launch
 
 class ContentHomeScreen : Screen {
@@ -87,6 +88,9 @@ class ContentHomeScreen : Screen {
                                 viewModel.onContentConfigEditClick(it)
                             }
                         },
+                        onImportClick = {
+                            navigator.push(ImportFeedsScreen())
+                        }
                     )
                 }
             },

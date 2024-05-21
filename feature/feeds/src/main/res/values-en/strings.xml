@@ -8,6 +8,10 @@
     <string name="search_page_title">Search</string>
     <string name="search_result_not_found">No search results found</string>
 
+    <string name="feeds_import_page_title">Import</string>
+    <string name="feeds_import_page_hint">Please select the OPML file to import</string>
+    <string name="feeds_import_button">Import</string>
+
     <string name="add_feeds_page_title">Add Content</string>
     <string name="add_feeds_page_feeds_name_label">Content Name</string>
     <string name="add_feeds_page_feeds_name_hint">Please enter the content name</string>

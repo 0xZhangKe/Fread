@@ -17,4 +17,9 @@ abstract class ScreenModelModule {
     @IntoMap
     @ScreenModelKey(PreAddFeedsViewModel::class)
     abstract fun bindPreAddFeedsViewModel(viewModel: PreAddFeedsViewModel): ScreenModel
+
+//    @Binds
+//    @IntoMap
+//    @ScreenModelKey(ImportFeedsConfigViewModel::class)
+//    abstract fun bindImportFeedsConfigViewModel(viewModel: ImportFeedsConfigViewModel): ScreenModel
 }

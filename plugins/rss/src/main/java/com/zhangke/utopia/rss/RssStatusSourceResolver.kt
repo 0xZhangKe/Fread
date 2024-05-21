@@ -1,8 +1,11 @@
 package com.zhangke.utopia.rss
 
 import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.utopia.rss.internal.adapter.RssStatusAdapter
 import com.zhangke.utopia.rss.internal.repo.RssRepo
+import com.zhangke.utopia.rss.internal.rss.RssFetcher
 import com.zhangke.utopia.rss.internal.source.RssSourceTransformer
+import com.zhangke.utopia.rss.internal.uri.RssUriInsight
 import com.zhangke.utopia.rss.internal.uri.RssUriTransformer
 import com.zhangke.utopia.rss.internal.uri.isRssUri
 import com.zhangke.utopia.status.author.BlogAuthor
@@ -16,6 +19,7 @@ import javax.inject.Inject
 class RssStatusSourceResolver @Inject constructor(
     private val rssUriTransformer: RssUriTransformer,
     private val rssSourceTransformer: RssSourceTransformer,
+    private val rssStatusAdapter: RssStatusAdapter,
     private val rssRepo: RssRepo,
 ) : IStatusSourceResolver {
 
@@ -38,5 +42,15 @@ class RssStatusSourceResolver @Inject constructor(
 
     override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
         return rssRepo.sourceChangedFlow
+    }
+
+    override suspend fun resolveRssSource(rssUrl: String): Result<StatusSource> {
+        return RssFetcher.fetchRss(rssUrl)
+            .map { it.first }
+            .map {
+                val uri = rssUriTransformer.build(rssUrl)
+                val uriInsight = RssUriInsight(uri, rssUrl)
+                rssSourceTransformer.createSource(uriInsight, it)
+            }
     }
 }

@@ -31,4 +31,8 @@ class ActivityPubSourceResolver @Inject constructor(
     override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
         return emptyFlow()
     }
+
+    override suspend fun resolveRssSource(rssUrl: String): Result<StatusSource>? {
+        return null
+    }
 }

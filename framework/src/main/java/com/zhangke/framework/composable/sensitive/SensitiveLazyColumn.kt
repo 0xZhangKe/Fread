@@ -46,6 +46,9 @@ fun SensitiveLazyColumn(
             LaunchedEffect(
                 visibleItemsInfo,
                 isScrollInProgress,
+                firstVisiblePercent,
+                lastVisiblePercent,
+                isScrollInProgress,
             ) {
                 sensitiveLazyColumnState.value = SensitiveLazyColumnState(
                     firstVisibleIndex = firstItemLayoutInfo.index,

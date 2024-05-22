@@ -1,32 +1,34 @@
-package com.zhangke.utopia.feeds.pages.manager.import
+package com.zhangke.utopia.feeds.pages.manager.importing
 
 import android.content.Context
 import android.net.Uri
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
-import com.zhangke.framework.ktx.launchInViewModel
+import cafe.adriel.voyager.core.model.ScreenModel
+import cafe.adriel.voyager.core.model.screenModelScope
+import com.zhangke.framework.collections.remove
+import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.framework.opml.OpmlOutline
 import com.zhangke.framework.opml.OpmlParser
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.uri.FormalUri
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.CoroutineExceptionHandler
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-@HiltViewModel
 class ImportFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val configRepo: ContentConfigRepo,
-) : ViewModel() {
+) : ScreenModel {
 
     private val _uiState = MutableStateFlow(
         ImportFeedsUiState(
@@ -37,6 +39,11 @@ class ImportFeedsViewModel @Inject constructor(
         )
     )
     val uiState = _uiState.asStateFlow()
+
+    private val _saveSuccessFlow = MutableSharedFlow<Unit>()
+    val saveSuccessFlow = _saveSuccessFlow.asSharedFlow()
+
+    private var importingJob: Job? = null
 
     fun onFileSelected(uri: Uri) {
         _uiState.value = _uiState.value.copy(selectedFileUri = uri)
@@ -55,7 +62,7 @@ class ImportFeedsViewModel @Inject constructor(
                 )
             }
         }
-        launchInViewModel(exceptionHandler) {
+        importingJob = launchInScreenModel(exceptionHandler) {
             appendOutputLog("Start parsing outlines...")
             val list = parseOpml(context, uiState.value.selectedFileUri!!)
             appendOutputLog("Parsed ${list.size} outlines.")
@@ -63,29 +70,47 @@ class ImportFeedsViewModel @Inject constructor(
                 parseOutlineToContent(it)
             }
             appendOutputLog("All outlines parsed.")
+            _uiState.update { it.copy(importing = false) }
+        }
+    }
+
+    fun onImportCancelClick() {
+        importingJob?.cancel()
+        appendOutputLog("Cancelled.")
+        _uiState.update { it.copy(importing = false) }
+    }
+
+    fun onContentConfigDelete(contentConfig: ContentConfig) {
+        _uiState.update { state ->
+            state.copy(
+                parsedContent = state.parsedContent.remove { it == contentConfig }
+            )
+        }
+    }
+
+    fun onSaveClick() {
+        launchInScreenModel {
+            configRepo.insert(uiState.value.parsedContent)
+            _saveSuccessFlow.emit(Unit)
         }
     }
 
     private suspend fun parseOutlineToContent(outline: OpmlOutline) {
         appendOutputLog("Start parsing ${outline.title}...")
         val sourceUriList = mutableListOf<FormalUri>()
-        outline.children
-            .chunked(6)
-            .forEach { list ->
-                list.map { outline ->
-                    viewModelScope.async {
-                        appendOutputLog("Checkout ${outline.xmlUrl}...")
-                        statusProvider.statusSourceResolver
-                            .resolveRssSource(outline.xmlUrl)
-                            .onSuccess {
-                                sourceUriList += it.uri
-                                appendOutputLog("Checkout ${outline.xmlUrl} success.")
-                            }.onFailure {
-                                appendOutputLog("Checkout ${outline.xmlUrl} failed: ${it.message}.")
-                            }
+        outline.children.map { item ->
+            screenModelScope.async {
+                appendOutputLog("fetching:${item.xmlUrl}")
+                statusProvider.statusSourceResolver
+                    .resolveRssSource(item.xmlUrl)
+                    .onSuccess {
+                        sourceUriList += it.uri
+                        appendOutputLog("checkout success: ${item.xmlUrl}")
+                    }.onFailure {
+                        appendOutputLog("checkout ${item.xmlUrl} failed: ${it.message}.")
                     }
-                }.awaitAll()
             }
+        }.awaitAll()
         val contentConfig = ContentConfig.MixedContent(
             id = 0,
             order = configRepo.generateNextOrder(),

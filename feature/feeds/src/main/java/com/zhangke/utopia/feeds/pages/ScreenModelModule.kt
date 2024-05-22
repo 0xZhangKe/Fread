@@ -3,6 +3,7 @@ package com.zhangke.utopia.feeds.pages
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.hilt.ScreenModelKey
 import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsViewModel
+import com.zhangke.utopia.feeds.pages.manager.importing.ImportFeedsViewModel
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,8 +19,8 @@ abstract class ScreenModelModule {
     @ScreenModelKey(PreAddFeedsViewModel::class)
     abstract fun bindPreAddFeedsViewModel(viewModel: PreAddFeedsViewModel): ScreenModel
 
-//    @Binds
-//    @IntoMap
-//    @ScreenModelKey(ImportFeedsConfigViewModel::class)
-//    abstract fun bindImportFeedsConfigViewModel(viewModel: ImportFeedsConfigViewModel): ScreenModel
+    @Binds
+    @IntoMap
+    @ScreenModelKey(ImportFeedsViewModel::class)
+    abstract fun bindImportFeedsConfigViewModel(viewModel: ImportFeedsViewModel): ScreenModel
 }

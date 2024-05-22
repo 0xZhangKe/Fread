@@ -4,6 +4,7 @@ import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.drawable.BitmapDrawable
+import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import coil.imageLoader
@@ -11,6 +12,7 @@ import coil.request.ImageRequest
 import coil.request.SuccessResult
 import com.zhangke.framework.permission.hasWriteStoragePermission
 import com.zhangke.framework.utils.ifDebugging
+import java.net.URLDecoder
 
 object MediaFileUtil {
 
@@ -49,6 +51,25 @@ object MediaFileUtil {
                 e.printStackTrace()
             }
             null
+        }
+    }
+
+    fun queryFileName(context: Context, uri: Uri): String {
+        context.contentResolver
+            .query(uri, null, null, null, null)
+            ?.use { cursor ->
+                if (cursor.moveToFirst()) {
+                    val columnIndex = cursor.getColumnIndex(MediaStore.MediaColumns.DISPLAY_NAME)
+                    if (columnIndex >= 0) {
+                        return cursor.getString(columnIndex)
+                    }
+                }
+            }
+        return try {
+            val path = URLDecoder.decode(uri.path, "UTF-8")
+            path.split("/").lastOrNull() ?: path
+        } catch (e: Throwable) {
+            uri.toString()
         }
     }
 }

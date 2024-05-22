@@ -71,6 +71,11 @@ class ContentConfigRepo @Inject constructor(
         contentConfigDao.insert(contentConfigAdapter.toEntity(config))
     }
 
+    suspend fun insert(configList: List<ContentConfig>) {
+        configList.map { contentConfigAdapter.toEntity(it) }
+            .let { contentConfigDao.insertList(it) }
+    }
+
     suspend fun updateSourceList(id: Long, sourceList: List<FormalUri>) {
         contentConfigDao.updateSourceList(id, sourceList)
     }

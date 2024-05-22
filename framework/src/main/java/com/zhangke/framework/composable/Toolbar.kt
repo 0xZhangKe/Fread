@@ -54,7 +54,6 @@ fun Toolbar(
                 overflow = TextOverflow.Ellipsis,
             )
         },
-        colors = topAppBarColors(),
     )
 }
 

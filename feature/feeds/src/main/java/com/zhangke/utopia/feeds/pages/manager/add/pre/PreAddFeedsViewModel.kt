@@ -43,8 +43,11 @@ class PreAddFeedsViewModel @Inject constructor(
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
-    private val _loginRecommendPlatform = MutableSharedFlow<BlogPlatform>()
-    val loginRecommendPlatform = _loginRecommendPlatform.asSharedFlow()
+    private val _showNotifyToLoginDialog = MutableSharedFlow<BlogPlatform>()
+    val showNotifyToLoginDialog = _showNotifyToLoginDialog.asSharedFlow()
+
+    private val _exitScreenFlow = MutableSharedFlow<Unit>()
+    val exitScreenFlow = _exitScreenFlow.asSharedFlow()
 
     private val _addContentSuccessFlow = MutableSharedFlow<Unit>()
     val addContentSuccessFlow: SharedFlow<Unit> get() = _addContentSuccessFlow
@@ -54,16 +57,6 @@ class PreAddFeedsViewModel @Inject constructor(
     private var pendingLoginPlatform: BlogPlatform? = null
 
     init {
-        launchInScreenModel {
-            val initAccountList = statusProvider.accountManager.getAllLoggedAccount()
-            statusProvider.accountManager
-                .getAllAccountFlow()
-                .collect { currentAccountList ->
-                    if (initAccountList.isNotEmpty()) return@collect
-                    if (currentAccountList.isEmpty()) return@collect
-                    pendingLoginPlatform?.let { performAddActivityPubContent(it) }
-                }
-        }
         launchInScreenModel {
             _uiState.update {
                 it.copy(allSearchedResult = getSuggestedPlatformSnapshots())
@@ -90,7 +83,6 @@ class PreAddFeedsViewModel @Inject constructor(
     }
 
     private fun doSearch(showErrorMessage: Boolean = false) {
-        val query = _uiState.value.query
         searchJob?.cancel()
         searchJob = launchInScreenModel {
             statusProvider.searchEngine
@@ -148,16 +140,16 @@ class PreAddFeedsViewModel @Inject constructor(
             _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
             return
         }
+        performAddActivityPubContent(platform)
         statusProvider.accountManager
             .checkPlatformLogged(platform)
             .onFailure {
-                _snackBarMessageFlow.tryEmitException(it)
+                _exitScreenFlow.emit(Unit)
             }.onSuccess {
                 if (it) {
-                    performAddActivityPubContent(platform)
+                    _exitScreenFlow.emit(Unit)
                 } else {
-                    pendingLoginPlatform = platform
-                    _loginRecommendPlatform.emit(platform)
+                    _showNotifyToLoginDialog.emit(platform)
                 }
             }
     }

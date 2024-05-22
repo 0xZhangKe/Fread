@@ -67,6 +67,7 @@ class ActivityPubStatusResolver @Inject constructor(
         return statusInteractive(role, status, interaction).map { entity ->
             val platform = status.platform
             if (interaction is StatusInteraction.Forward && entity.reblog != null) {
+                val reblog = activityPubStatusAdapter.toStatus(entity.reblog!!, platform)
                 activityPubStatusAdapter.toStatus(entity.reblog!!, platform)
             } else {
                 activityPubStatusAdapter.toStatus(entity, platform)

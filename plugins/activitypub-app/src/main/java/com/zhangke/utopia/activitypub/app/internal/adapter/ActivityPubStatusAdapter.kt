@@ -61,6 +61,10 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
+    fun entityToBlog(entity: ActivityPubStatusEntity, platform: BlogPlatform): Blog {
+        return entity.toBlog(platform)
+    }
+
     private fun ActivityPubStatusEntity.toBlog(platform: BlogPlatform): Blog {
         val emojis = this.emojis.map(emojiEntityAdapter::toEmoji)
         return Blog(

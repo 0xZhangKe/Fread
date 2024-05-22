@@ -64,15 +64,7 @@ class ActivityPubStatusResolver @Inject constructor(
         interaction: StatusInteraction,
     ): Result<Status>? {
         if (status.notThisPlatform()) return null
-        return statusInteractive(role, status, interaction).map { entity ->
-            val platform = status.platform
-            if (interaction is StatusInteraction.Forward && entity.reblog != null) {
-                val reblog = activityPubStatusAdapter.toStatus(entity.reblog!!, platform)
-                activityPubStatusAdapter.toStatus(entity.reblog!!, platform)
-            } else {
-                activityPubStatusAdapter.toStatus(entity, platform)
-            }
-        }
+        return statusInteractive(role, status, interaction)
     }
 
     override suspend fun votePoll(

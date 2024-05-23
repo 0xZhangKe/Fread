@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feeds.pages.manager.add.pre
 
-import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -11,6 +10,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -42,6 +42,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.commonbiz.shared.screen.login.target.LoginToTargetPlatformScreen
 import com.zhangke.utopia.feeds.R
 import com.zhangke.utopia.feeds.pages.manager.add.showAddContentSuccessToast
+import com.zhangke.utopia.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.utopia.status.ui.source.BlogPlatformUi
@@ -68,6 +69,9 @@ class PreAddFeedsScreen : Screen {
             onSearchClick = viewModel::onSearchClick,
             onContentClick = viewModel::onContentClick,
             onLoadingDismissRequest = viewModel::onLoadingDismissRequest,
+            onImportClick = {
+                navigator.push(ImportFeedsScreen())
+            },
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.replace(it)
@@ -77,7 +81,6 @@ class PreAddFeedsScreen : Screen {
         }
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
         val bottomSheetIsVisible = bottomSheetNavigator.isVisible
-        Log.d("U_TEST", "bottomSheetIsVisible: $bottomSheetIsVisible")
         var loginPageShown by remember {
             mutableStateOf(false)
         }
@@ -102,6 +105,7 @@ class PreAddFeedsScreen : Screen {
         uiState: PreAddFeedsUiState,
         snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
+        onImportClick: () -> Unit,
         onQueryChanged: (String) -> Unit,
         onSearchClick: () -> Unit,
         onContentClick: (SearchContentResult) -> Unit,
@@ -113,6 +117,13 @@ class PreAddFeedsScreen : Screen {
                 Toolbar(
                     title = stringResource(id = R.string.add_feeds_page_title),
                     onBackClick = onBackClick,
+                    actions = {
+                        SimpleIconButton(
+                            onClick = onImportClick,
+                            imageVector = Icons.Default.ImportExport,
+                            contentDescription = "Import",
+                        )
+                    },
                 )
             },
             snackbarHost = {

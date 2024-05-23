@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -83,18 +84,28 @@ class LoginBottomSheetScreen : Screen {
         onPlatformClick: (BlogPlatform) -> Unit,
     ) {
         val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp * 0.8F
+        val screenHeight = configuration.screenHeightDp.dp * 0.9F
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(screenHeight)
         ) {
             Column(modifier = Modifier.fillMaxSize()) {
-                Spacer(modifier = Modifier.height(24.dp))
+                Text(
+                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                    text = stringResource(R.string.login_dialog_target_title),
+                    style = MaterialTheme.typography.titleMedium,
+                )
+                Text(
+                    modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
+                    text = stringResource(R.string.profile_description),
+                    style = MaterialTheme.typography.bodySmall,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 22.dp, top = 36.dp, end = 22.dp),
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
                     value = uiState.query,
                     onValueChange = onQueryChanged,
                     maxLines = 1,

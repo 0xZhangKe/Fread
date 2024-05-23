@@ -8,7 +8,7 @@ import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
-import com.zhangke.utopia.profile.pages.home.ProfileHomePage
+import com.zhangke.utopia.profile.screen.home.ProfileHomePage
 
 class ProfileTab(private val tabIndex: UShort) : Tab {
 

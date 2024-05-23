@@ -1,9 +1,10 @@
-package com.zhangke.utopia.profile.pages.home
+package com.zhangke.utopia.profile.screen.home
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -16,6 +17,7 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -46,9 +48,11 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.utopia.profile.R
+import com.zhangke.utopia.profile.screen.setting.SettingScreen
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
@@ -66,6 +70,9 @@ class ProfileHomePage : Screen {
             onAddAccountClick = {
                 bottomSheetNavigator.show(LoginBottomSheetScreen())
             },
+            onSettingClick = {
+                navigator.push(SettingScreen())
+            },
             onLogoutClick = viewModel::onLogoutClick,
             onAccountClick = viewModel::onAccountClick,
         )
@@ -78,23 +85,30 @@ class ProfileHomePage : Screen {
     private fun ProfileHomePageContent(
         uiState: ProfileHomeUiState,
         onAddAccountClick: () -> Unit,
+        onSettingClick: () -> Unit,
         onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
     ) {
         Column(modifier = Modifier.fillMaxSize()) {
-            Text(
-                modifier = Modifier.padding(start = 16.dp, top = 56.dp),
-                text = stringResource(R.string.profile_page_title),
-                style = MaterialTheme.typography.displayMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
-
-            Text(
-                modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp),
-                text = stringResource(R.string.profile_description),
-                style = MaterialTheme.typography.bodyMedium,
-                color = MaterialTheme.colorScheme.onBackground,
-            )
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 32.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = stringResource(R.string.profile_page_title),
+                    style = MaterialTheme.typography.displayMedium,
+                    color = MaterialTheme.colorScheme.onBackground,
+                )
+                Spacer(modifier = Modifier.weight(1F))
+                SimpleIconButton(
+                    onClick = onSettingClick,
+                    imageVector = Icons.Default.Settings,
+                    contentDescription = "Settings",
+                )
+            }
 
             LazyColumn(
                 modifier = Modifier

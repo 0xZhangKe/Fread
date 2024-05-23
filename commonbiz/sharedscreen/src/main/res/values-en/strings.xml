@@ -10,4 +10,7 @@
     <string name="login_dialog_input_label">Server Host</string>
 
     <string name="login_dialog_target_title">Please log in</string>
+
+    <string name="profile_description">Utopia supports adding multiple accounts. The added accounts can be used to post, like, forward, comment, etc. You can also view the list created by the added accounts.</string>
+
 </resources>

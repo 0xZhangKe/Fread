@@ -1,4 +1,4 @@
-package com.zhangke.utopia.profile.pages.home
+package com.zhangke.utopia.profile.screen.home
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope

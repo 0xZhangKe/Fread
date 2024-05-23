@@ -1,4 +1,4 @@
-package com.zhangke.utopia.pages
+package com.zhangke.utopia.screen
 
 import android.os.Bundle
 import androidx.activity.compose.setContent

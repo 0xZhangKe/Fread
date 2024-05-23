@@ -68,11 +68,12 @@ class ContentConfigRepo @Inject constructor(
     }
 
     suspend fun insert(config: ContentConfig) {
-        contentConfigDao.insert(contentConfigAdapter.toEntity(config))
+        contentConfigDao.insert(contentConfigAdapter.toEntity(fixContent(config)))
     }
 
     suspend fun insert(configList: List<ContentConfig>) {
-        configList.map { contentConfigAdapter.toEntity(it) }
+        configList.map { fixContent(it) }
+            .map { contentConfigAdapter.toEntity(it) }
             .let { contentConfigDao.insertList(it) }
     }
 
@@ -244,5 +245,13 @@ class ContentConfigRepo @Inject constructor(
 
     private fun ContentConfigEntity.toContentConfig(): ContentConfig {
         return contentConfigAdapter.toContentConfig(this)
+    }
+
+    private fun fixContent(contentConfig: ContentConfig): ContentConfig {
+        return if (contentConfig is ContentConfig.MixedContent) {
+            contentConfig.copy(sourceUriList = contentConfig.sourceUriList.distinct())
+        } else {
+            contentConfig
+        }
     }
 }

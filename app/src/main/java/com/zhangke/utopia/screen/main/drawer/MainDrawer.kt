@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds.pages.home.drawer
+package com.zhangke.utopia.screen.main.drawer
 
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
@@ -19,6 +19,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -29,8 +30,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.feeds.pages.home.EmptyContent
+import com.zhangke.utopia.feeds.pages.home.LocalHomeToFeedLinker
+import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsScreen
+import com.zhangke.utopia.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.utopia.status.model.ContentConfig
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -38,33 +47,46 @@ import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 
 @Composable
-fun ContentHomeDrawer(
-    contentConfigList: List<ContentConfig>,
-    onContentConfigClick: (ContentConfig) -> Unit,
-    onAddContentClick: () -> Unit,
-    onImportClick: () -> Unit,
-    onMove: (from: Int, to: Int) -> Unit,
-    onEditClick: (ContentConfig) -> Unit,
+fun Screen.MainDrawer(
+    onDismissRequest: () -> Unit,
 ) {
-    ContentHomeDrawerContent(
-        contentConfigList = contentConfigList,
-        onContentConfigClick = onContentConfigClick,
-        onAddContentClick = onAddContentClick,
-        onMove = onMove,
-        onEditClick = onEditClick,
-        onImportClick = onImportClick,
+    val navigator = LocalNavigator.currentOrThrow
+    val viewModel = getScreenModel<MainDrawerScreenModel>()
+    val uiState by viewModel.uiState.collectAsState()
+    val homeToFeedsLinker = LocalHomeToFeedLinker.current
+    MainDrawerContent(
+        uiState = uiState,
+        onContentConfigClick = {
+            onDismissRequest()
+            homeToFeedsLinker?.scrollToContentTab(it)
+        },
+        onAddContentClick = {
+            onDismissRequest()
+            navigator.push(PreAddFeedsScreen())
+        },
+        onMove = viewModel::onContentConfigMove,
+        onEditClick = {
+            onDismissRequest()
+            viewModel.onContentConfigEditClick(it)
+        },
+        onImportClick = {
+            onDismissRequest()
+            navigator.push(ImportFeedsScreen())
+        },
     )
+    ConsumeOpenScreenFlow(viewModel.openScreenFlow)
 }
 
 @Composable
-private fun ContentHomeDrawerContent(
-    contentConfigList: List<ContentConfig>,
+private fun MainDrawerContent(
+    uiState: MainDrawerUiState,
     onContentConfigClick: (ContentConfig) -> Unit,
     onImportClick: () -> Unit,
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
     onEditClick: (ContentConfig) -> Unit,
 ) {
+    val contentConfigList = uiState.contentConfigList
     Surface(modifier = Modifier.fillMaxSize()) {
         if (contentConfigList.isEmpty()) {
             EmptyContent(Modifier.fillMaxSize(), onAddContentClick)

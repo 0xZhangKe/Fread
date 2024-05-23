@@ -143,6 +143,7 @@ dependencies {
     implementation(libs.bundles.androidx.media3)
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
+    implementation(libs.composeReorderable)
 }
 
 // Allow references to generated code

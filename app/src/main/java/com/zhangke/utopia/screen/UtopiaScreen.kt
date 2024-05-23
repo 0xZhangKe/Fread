@@ -1,8 +1,7 @@
-package com.zhangke.utopia.pages
+package com.zhangke.utopia.screen
 
 import android.text.SpannableStringBuilder
 import android.text.method.LinkMovementMethod
-import android.util.Log
 import android.widget.TextView
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Box
@@ -26,10 +25,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.loadable.lazycolumn.LoadMoreState
 import com.zhangke.framework.loadable.lazycolumn.LoadMoreUi
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.utopia.pages.main.MainPage
+import com.zhangke.utopia.screen.main.MainPage
 import com.zhangke.utopia.status.model.Emoji
 import com.zhangke.utopia.status.model.HashtagInStatus
 import com.zhangke.utopia.status.model.StatusProviderProtocol

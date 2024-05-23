@@ -18,7 +18,7 @@
         tools:replace="android:allowBackup">
 
         <activity
-            android:name=".pages.UtopiaActivity"
+            android:name=".screen.UtopiaActivity"
             android:exported="true"
             android:windowSoftInputMode="adjustResize">
             <intent-filter>

@@ -7,7 +7,6 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.pages.home.feeds.MixedContentScreen
-import com.zhangke.utopia.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.model.ContentConfig
@@ -99,30 +98,6 @@ class ContentHomeViewModel @Inject constructor(
 
     fun onPostStatusAccountClick(account: LoggedAccount) {
         openPostStatusScreen(account)
-    }
-
-    fun onContentConfigMove(from: Int, to: Int) {
-        launchInViewModel {
-            val configList = _uiState.value.contentConfigList
-            if (configList.isEmpty()) return@launchInViewModel
-            contentConfigRepo.reorderConfig(configList[from], configList[to])
-        }
-    }
-
-    fun onContentConfigEditClick(contentConfig: ContentConfig) {
-        launchInViewModel {
-            when (contentConfig) {
-                is ContentConfig.MixedContent -> {
-                    _openScreenFlow.emit(EditMixedContentScreen(contentConfig.id))
-                }
-
-                is ContentConfig.ActivityPubContent -> {
-                    statusProvider.screenProvider.getEditContentConfigScreenRoute(contentConfig)
-                        ?.let { KRouter.route<Screen>(it) }
-                        ?.let { _openScreenFlow.emit(it) }
-                }
-            }
-        }
     }
 
     private fun openPostStatusScreen(account: LoggedAccount) {

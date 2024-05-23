@@ -1,7 +1,7 @@
-package com.zhangke.utopia.feeds.pages.home.drawer
+package com.zhangke.utopia.screen.main.drawer
 
 import com.zhangke.utopia.status.model.ContentConfig
 
-data class ContentHomeDrawerUiState(
+data class MainDrawerUiState(
     val contentConfigList: List<ContentConfig>
 )

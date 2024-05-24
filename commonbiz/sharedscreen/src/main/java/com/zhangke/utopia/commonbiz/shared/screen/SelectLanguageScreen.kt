@@ -21,7 +21,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.utils.LanguageHelper
+import com.zhangke.framework.utils.LanguageUtil
 import java.util.Locale
 
 class SelectLanguageScreen(
@@ -31,7 +31,7 @@ class SelectLanguageScreen(
     @Composable
     override fun Content() {
         val languageList = remember {
-            LanguageHelper().getAllLanguages()
+            LanguageUtil().getAllLanguages()
         }
         val navigator = LocalNavigator.currentOrThrow
         Scaffold(

@@ -6,6 +6,8 @@ import cafe.adriel.voyager.core.model.ScreenModel
 import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.utopia.common.daynight.DayNightHelper
 import com.zhangke.utopia.common.daynight.DayNightMode
+import com.zhangke.utopia.common.language.LanguageHelper
+import com.zhangke.utopia.common.language.LanguageSettingType
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -18,6 +20,7 @@ class SettingScreenModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         SettingUiState(
             dayNightMode = DayNightHelper.dayNightMode,
+            languageSettingType = LanguageHelper.currentType,
             settingInfo = getAppVersionInfo(),
         )
     )
@@ -29,11 +32,18 @@ class SettingScreenModel @Inject constructor(
                 _uiState.value = _uiState.value.copy(dayNightMode = DayNightHelper.dayNightMode)
             }
         }
+        launchInScreenModel {
+            LanguageHelper.systemLocale
+        }
     }
 
     fun onChangeDayNightMode(mode: DayNightMode) {
         if (mode == DayNightHelper.dayNightMode) return
         DayNightHelper.setMode(mode)
+    }
+
+    fun onLanguageClick(context: Context, type: LanguageSettingType) {
+        LanguageHelper.setLanguage(context, type)
     }
 
     private fun getAppVersionInfo(): String {

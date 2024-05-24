@@ -24,9 +24,8 @@ class UtopiaActivity : AppCompatActivity() {
 
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
         DayNightHelper.setActivityDayNightMode()
+        super.onCreate(savedInstanceState)
 
         WindowCompat.setDecorFitsSystemWindows(window, true)
 
@@ -48,5 +47,10 @@ class UtopiaActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    override fun onNightModeChanged(mode: Int) {
+        super.onNightModeChanged(mode)
+        recreate()
     }
 }

@@ -9,4 +9,9 @@
     <string name="profile_setting_dark_mode_follow_system">跟随系统</string>
     <string name="profile_setting_open_source_title">开源声明</string>
     <string name="profile_setting_open_source_desc">本项目使用到的依赖库的开源声明</string>
+    <string name="profile_setting_language_title">语言</string>
+    <string name="profile_setting_language_zh">简体中文</string>
+    <string name="profile_setting_language_en">English</string>
+    <string name="profile_setting_language_system">跟随系统</string>
 </resources>
+

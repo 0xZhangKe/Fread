@@ -22,6 +22,10 @@ class SettingScreenModel @Inject constructor(
         }
     }
 
+    fun onChangeDayNightMode(){
+
+    }
+
     private fun getAppVersionInfo(): String{
         return try {
             val info = appContext.packageManager.getPackageInfo(appContext.packageName, 0)

@@ -14,10 +14,11 @@ object DayNightHelper {
 
     private const val DAY_NIGHT_SETTING = "day_night_setting"
 
-    private val _nightModeFlow: MutableStateFlow<Boolean>
-    val nightModeFlow: StateFlow<Boolean> get() = _nightModeFlow
+    private val _nightModeFlow: MutableStateFlow<DayNightMode>
+    val dayNightModeFlow: StateFlow<DayNightMode> get() = _nightModeFlow
 
-    private var dayNightMode: DayNightMode
+    var dayNightMode: DayNightMode
+        private set
 
     init {
         val modeValue = runBlocking {
@@ -25,23 +26,11 @@ object DayNightHelper {
         }
         AppCompatDelegate.setDefaultNightMode(modeValue)
         dayNightMode = modeValue.toDayNightMode()
-        _nightModeFlow = MutableStateFlow(dayNightMode.isNight())
+        _nightModeFlow = MutableStateFlow(dayNightMode)
     }
 
     fun setActivityDayNightMode() {
         AppCompatDelegate.setDefaultNightMode(dayNightMode.modeValue)
-    }
-
-    private fun DayNightMode.isNight(): Boolean {
-        return when (this) {
-            DayNightMode.DAY -> false
-            DayNightMode.NIGHT -> true
-            DayNightMode.FOLLOW_SYSTEM -> systemIsNight()
-        }
-    }
-
-    private fun systemIsNight(): Boolean {
-        return appContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
     }
 
     fun setMode(mode: DayNightMode) {
@@ -51,7 +40,7 @@ object DayNightHelper {
         }
         AppCompatDelegate.setDefaultNightMode(mode.modeValue)
         ApplicationScope.launch {
-            _nightModeFlow.emit(mode.isNight())
+            _nightModeFlow.emit(mode)
         }
     }
 
@@ -76,5 +65,18 @@ enum class DayNightMode(val modeValue: Int) {
 
     NIGHT(AppCompatDelegate.MODE_NIGHT_YES),
 
-    FOLLOW_SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM)
+    FOLLOW_SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
+
+    val isNight: Boolean
+        get() {
+            return when (this) {
+                DAY -> false
+                NIGHT -> true
+                FOLLOW_SYSTEM -> systemIsNight()
+            }
+        }
+
+    private fun systemIsNight(): Boolean {
+        return appContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
+    }
 }

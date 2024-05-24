@@ -12,6 +12,7 @@ import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
 import com.zhangke.utopia.common.daynight.DayNightHelper
+import com.zhangke.utopia.common.language.LanguageHelper
 import dagger.Component
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
@@ -31,6 +32,7 @@ class UtopiaApplication : Application() {
         initDebuggable(BuildConfig.DEBUG)
         initApplication(this)
         DayNightHelper
+        LanguageHelper.prepare(this)
         initCoil(this)
         initModuleStartups()
     }

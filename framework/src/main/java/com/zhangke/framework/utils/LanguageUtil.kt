@@ -2,7 +2,7 @@ package com.zhangke.framework.utils
 
 import java.util.Locale
 
-class LanguageHelper {
+class LanguageUtil {
 
     fun getAllLanguages(): List<Locale> {
         return Locale.getAvailableLocales()

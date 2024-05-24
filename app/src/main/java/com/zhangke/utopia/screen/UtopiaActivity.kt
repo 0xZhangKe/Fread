@@ -32,7 +32,9 @@ class UtopiaActivity : AppCompatActivity() {
 
         setContent {
             val dayNightMode by DayNightHelper.dayNightModeFlow.collectAsState()
-            UtopiaTheme() {
+            UtopiaTheme(
+                useDarkTheme = dayNightMode.isNight,
+            ) {
                 TransparentNavigator {
                     BottomSheetNavigator(
                         modifier = Modifier.navigationBarsPadding(),

@@ -11,6 +11,7 @@ import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
+import com.zhangke.utopia.common.daynight.DayNightHelper
 import dagger.Component
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
@@ -29,6 +30,7 @@ class UtopiaApplication : Application() {
         super.onCreate()
         initDebuggable(BuildConfig.DEBUG)
         initApplication(this)
+        DayNightHelper
         initCoil(this)
         initModuleStartups()
     }

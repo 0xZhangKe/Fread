@@ -13,6 +13,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -33,11 +34,16 @@ fun rememberImageViewerState(
     initialOffset: Offset = Offset.Unspecified,
     minimumScale: Float = 1f,
     maximumScale: Float = 3f,
+    onDismissRequest: () -> Unit,
     onStartDismiss: (() -> Unit)? = null,
-    onDismissRequest: (() -> Unit)? = null,
     onAnimateInFinished: (() -> Unit)? = null,
 ): ImageViewerState {
-    return rememberSaveable(saver = ImageViewerState.Saver) {
+    val dismissRequest by rememberUpdatedState(newValue = onDismissRequest)
+    val startDismiss by rememberUpdatedState(newValue = onStartDismiss)
+    val animateInFinished by rememberUpdatedState(newValue = onAnimateInFinished)
+    return rememberSaveable(
+        saver = ImageViewerState.Saver,
+    ) {
         ImageViewerState(
             aspectRatio = aspectRatio,
             initialSize = initialSize,
@@ -45,10 +51,11 @@ fun rememberImageViewerState(
             minimumScale = minimumScale,
             maximumScale = maximumScale,
             needAnimateIn = needAnimateIn,
-            onDismissRequest = onDismissRequest,
-            onStartDismiss = onStartDismiss,
-            onAnimateInFinished = onAnimateInFinished,
         )
+    }.apply {
+        this.onDismissRequest = dismissRequest
+        this.onStartDismiss = startDismiss
+        this.onAnimateInFinished = animateInFinished
     }
 }
 
@@ -60,10 +67,11 @@ class ImageViewerState(
     private val needAnimateIn: Boolean,
     private val minimumScale: Float = 1f,
     private val maximumScale: Float = 3f,
-    private val onAnimateInFinished: (() -> Unit)? = null,
-    private val onDismissRequest: (() -> Unit)? = null,
-    private val onStartDismiss: (() -> Unit)? = null,
 ) {
+
+    var onAnimateInFinished: (() -> Unit)? = null
+    var onDismissRequest: (() -> Unit)? = null
+    var onStartDismiss: (() -> Unit)? = null
 
     private var _currentWidthPixel = mutableFloatStateOf(0F)
     private var _currentHeightPixel = mutableFloatStateOf(0F)

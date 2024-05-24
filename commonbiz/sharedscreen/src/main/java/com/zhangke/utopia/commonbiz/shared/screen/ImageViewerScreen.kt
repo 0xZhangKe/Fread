@@ -1,5 +1,6 @@
 package com.zhangke.utopia.commonbiz.shared.screen
 
+import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
@@ -115,9 +116,9 @@ class ImageViewerScreen(
                     val coordinates = coordinatesList[pageIndex]
                     val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
                     ImagePageContent(
-                        currentMedia,
-                        coordinates,
-                        animatedIn,
+                        media = currentMedia,
+                        coordinates = coordinates,
+                        needAnimateIn = animatedIn,
                         animateInFinished = {
                             animatedInHolder[0] = true
                         },
@@ -181,8 +182,13 @@ class ImageViewerScreen(
                     onStartDismiss = onStartDismiss,
                 )
             } else {
-                rememberImageViewerState(aspectRatio = aspectRatio!!, needAnimateIn = false)
+                rememberImageViewerState(
+                    aspectRatio = aspectRatio!!,
+                    needAnimateIn = false,
+                    onDismissRequest = onDismissRequest,
+                )
             }
+            Log.d("U_TEST", "viewerState: $viewerState")
             ImageViewer(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),

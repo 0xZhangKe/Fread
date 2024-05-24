@@ -5,6 +5,7 @@ import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.utopia.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.utopia.commonbiz.shared.screen.toImages
 import com.zhangke.utopia.status.ui.image.BlogMediaClickEvent
 
 fun onStatusMediaClick(
@@ -16,7 +17,7 @@ fun onStatusMediaClick(
         is BlogMediaClickEvent.BlogImageClickEvent -> {
             transparentNavigator.push(
                 ImageViewerScreen(
-                    mediaList = event.mediaList,
+                    imageList = event.mediaList.toImages(),
                     selectedIndex = event.index,
                     coordinatesList = event.coordinatesList,
                 )

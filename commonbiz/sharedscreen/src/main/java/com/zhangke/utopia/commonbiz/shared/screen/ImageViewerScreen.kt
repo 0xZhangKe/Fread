@@ -1,11 +1,9 @@
 package com.zhangke.utopia.commonbiz.shared.screen
 
-import android.util.Log
 import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -62,13 +60,12 @@ import kotlinx.coroutines.launch
 
 class ImageViewerScreen(
     private val selectedIndex: Int,
-    private val mediaList: List<BlogMedia>,
+    private val imageList: List<Image>,
     @Transient private val coordinatesList: List<LayoutCoordinates?> = emptyList(),
 ) : Screen {
 
     private val backgroundCommonAlpha = 0.95F
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
@@ -100,7 +97,7 @@ class ImageViewerScreen(
             }
             val pagerState = rememberPagerState(
                 initialPage = selectedIndex,
-                pageCount = mediaList::size,
+                pageCount = imageList::size,
             )
             val animatedInHolder = remember {
                 arrayOf(false)
@@ -112,11 +109,11 @@ class ImageViewerScreen(
                         .fillMaxSize(),
                     state = pagerState,
                 ) { pageIndex ->
-                    val currentMedia = mediaList[pageIndex]
-                    val coordinates = coordinatesList[pageIndex]
+                    val currentMedia = imageList[pageIndex]
+                    val coordinates = coordinatesList.getOrNull(pageIndex)
                     val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
                     ImagePageContent(
-                        media = currentMedia,
+                        image = currentMedia,
                         coordinates = coordinates,
                         needAnimateIn = animatedIn,
                         animateInFinished = {
@@ -141,14 +138,14 @@ class ImageViewerScreen(
                     )
                 }
 
-                ImageTopBar(media = mediaList[pagerState.currentPage])
+                ImageTopBar(imageList[pagerState.currentPage])
             }
         }
     }
 
     @Composable
     private fun ImagePageContent(
-        media: BlogMedia,
+        image: Image,
         coordinates: LayoutCoordinates?,
         needAnimateIn: Boolean,
         animateInFinished: () -> Unit,
@@ -157,12 +154,12 @@ class ImageViewerScreen(
     ) {
         val context = LocalContext.current
         var aspectRatio: Float? by remember {
-            mutableStateOf(media.meta?.asImageMetaOrNull()?.original?.aspect)
+            mutableStateOf(image.aspect)
         }
         if (aspectRatio == null) {
-            LaunchedEffect(media) {
+            LaunchedEffect(image) {
                 aspectRatio = ImageRequest.Builder(context)
-                    .data(media.url)
+                    .data(image.url)
                     .size(50, 50)
                     .build()
                     .let { context.imageLoader.execute(it) }
@@ -188,7 +185,6 @@ class ImageViewerScreen(
                     onDismissRequest = onDismissRequest,
                 )
             }
-            Log.d("U_TEST", "viewerState: $viewerState")
             ImageViewer(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
@@ -197,18 +193,18 @@ class ImageViewerScreen(
                     modifier = Modifier
                         .fillMaxSize()
                         .run {
-                            if (media.blurhash
+                            if (image.blurhash
                                     .isNullOrEmpty()
                                     .not()
                             ) {
-                                blurhash(media.blurhash!!)
+                                blurhash(image.blurhash!!)
                             } else {
                                 this
                             }
                         },
-                    model = media.url,
+                    model = image.url,
                     contentScale = ContentScale.FillBounds,
-                    contentDescription = media.description,
+                    contentDescription = image.description,
                 )
             }
         }
@@ -216,7 +212,7 @@ class ImageViewerScreen(
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun BoxScope.ImageTopBar(media: BlogMedia) {
+    private fun BoxScope.ImageTopBar(image: Image) {
         var showBottomSheet by remember { mutableStateOf(false) }
         val context = LocalContext.current
         Row(
@@ -230,7 +226,7 @@ class ImageViewerScreen(
             if (needSaveImage) {
                 RequireLocalStoragePermission(
                     onPermissionGranted = {
-                        MediaFileHelper.saveImageToGallery(context, media.url)
+                        MediaFileHelper.saveImageToGallery(context, image.url)
                         needSaveImage = false
                     },
                     onPermissionDenied = {
@@ -246,7 +242,7 @@ class ImageViewerScreen(
                 imageVector = Icons.Default.Download,
                 contentDescription = "Download",
             )
-            if (media.description != null) {
+            if (image.description != null) {
                 Spacer(modifier = Modifier.width(16.dp))
                 SimpleIconButton(
                     onClick = {
@@ -266,11 +262,31 @@ class ImageViewerScreen(
                                 .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 28.dp)
                                 .wrapContentHeight()
                         ) {
-                            Text(text = media.description.orEmpty())
+                            Text(text = image.description.orEmpty())
                         }
                     }
                 }
             }
         }
     }
+
+    data class Image(
+        val url: String,
+        val description: String? = null,
+        val blurhash: String? = null,
+        val aspect: Float? = null,
+    )
+}
+
+fun BlogMedia.toImage(): ImageViewerScreen.Image {
+    return ImageViewerScreen.Image(
+        url = this.url,
+        description = this.description,
+        blurhash = this.blurhash,
+        aspect = this.meta?.asImageMetaOrNull()?.original?.aspect,
+    )
+}
+
+fun List<BlogMedia>.toImages(): List<ImageViewerScreen.Image> {
+    return this.map { it.toImage() }
 }

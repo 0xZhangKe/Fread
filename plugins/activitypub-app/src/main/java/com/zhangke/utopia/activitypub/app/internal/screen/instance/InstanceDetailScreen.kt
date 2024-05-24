@@ -79,7 +79,6 @@ class InstanceDetailScreen(
         }
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,
@@ -99,6 +98,9 @@ class InstanceDetailScreen(
                 avatar = instance?.thumbnail?.url,
                 contentCanScrollBackward = contentCanScrollBackward,
                 onBackClick = onBackClick,
+                onAvatarClick = {
+
+                },
                 toolbarAction = { _ ->
                 },
                 headerAction = { },

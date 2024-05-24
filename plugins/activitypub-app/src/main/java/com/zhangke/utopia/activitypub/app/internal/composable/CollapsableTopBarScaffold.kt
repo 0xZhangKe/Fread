@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
@@ -50,6 +51,7 @@ fun CollapsableTopBarScaffold(
     avatar: String?,
     contentCanScrollBackward: State<Boolean>,
     onBackClick: () -> Unit,
+    onAvatarClick: () -> Unit,
     toolbarAction: @Composable RowScope.(Color) -> Unit,
     headerAction: @Composable () -> Unit,
     headerContent: @Composable () -> Unit,
@@ -75,6 +77,7 @@ fun CollapsableTopBarScaffold(
                     banner = banner,
                     avatar = avatar,
                     onBackClick = onBackClick,
+                    onAvatarClick = onAvatarClick,
                     toolbarAction = toolbarAction,
                     headerAction = headerAction,
                     headerContent = headerContent,
@@ -92,6 +95,7 @@ private fun MotionLayoutScope.MotionAppBar(
     banner: String?,
     avatar: String?,
     onBackClick: () -> Unit,
+    onAvatarClick: () -> Unit,
     toolbarAction: @Composable RowScope.(Color) -> Unit,
     headerAction: @Composable () -> Unit,
     headerContent: @Composable () -> Unit,
@@ -100,7 +104,8 @@ private fun MotionLayoutScope.MotionAppBar(
     AsyncImage(
         modifier = Modifier
             .layoutId("banner")
-            .utopiaPlaceholder(banner.isNullOrEmpty()),
+            .utopiaPlaceholder(banner.isNullOrEmpty())
+            .clickable { onAvatarClick() },
         model = banner,
         contentScale = ContentScale.Crop,
         contentDescription = null,

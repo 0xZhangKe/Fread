@@ -23,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -46,6 +47,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.utopiaPlaceholder
+import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
@@ -54,6 +56,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInf
 import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.utopia.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTab
+import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -66,6 +69,8 @@ data class UserDetailScreen(
     override fun Content() {
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
+        val transparentNavigator = LocalTransparentNavigator.current
+        val coroutineScope = rememberCoroutineScope()
         val (role, userUri, webFinger) = remember(route) {
             UserDetailRoute.parseRoute(route)
         }
@@ -85,6 +90,18 @@ data class UserDetailScreen(
             onBlockClick = viewModel::onBlockClick,
             onBlockDomainClick = viewModel::onBlockDomainClick,
             onUnblockDomainClick = viewModel::onUnblockDomainClick,
+            onAvatarClick = {
+                uiState.accountUiState
+                    ?.account
+                    ?.avatar
+                    ?.let {
+                        val screen = ImageViewerScreen(
+                            selectedIndex = 0,
+                            imageList = listOf(ImageViewerScreen.Image(url = it)),
+                        )
+                        transparentNavigator.push(screen)
+                    }
+            },
             onOpenInBrowserClick = {
                 uiState.accountUiState?.account?.url?.let {
                     BrowserLauncher.launchWebTabInApp(context, it)
@@ -124,6 +141,7 @@ data class UserDetailScreen(
         uiState: UserDetailUiState,
         messageFlow: SharedFlow<TextString>,
         onBackClick: () -> Unit,
+        onAvatarClick: () -> Unit,
         onUnblockClick: () -> Unit,
         onFollowClick: () -> Unit,
         onUnfollowClick: () -> Unit,
@@ -159,6 +177,7 @@ data class UserDetailScreen(
                 avatar = account?.avatar,
                 contentCanScrollBackward = contentCanScrollBackward,
                 onBackClick = onBackClick,
+                onAvatarClick = onAvatarClick,
                 toolbarAction = {
                     ToolbarActions(
                         uiState = uiState,

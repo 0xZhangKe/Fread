@@ -32,7 +32,7 @@ import com.zhangke.utopia.activitypub.app.R
 @Composable
 fun RelationshipStateButton(
     modifier: Modifier,
-    uiState: UserDetailUiState,
+    relationship: RelationshipUiState,
     onUnblockClick: () -> Unit,
     onFollowClick: () -> Unit,
     onUnfollowClick: () -> Unit,
@@ -40,7 +40,7 @@ fun RelationshipStateButton(
     onAcceptClick: () -> Unit,
     onRejectClick: () -> Unit,
 ) {
-    when (uiState.relationship.toUiState()) {
+    when (relationship) {
         RelationshipUiState.BLOCKING -> {
             var showDialog by remember {
                 mutableStateOf(false)
@@ -194,19 +194,6 @@ private fun FollowRequestBy(
                 contentDescription = "Accept",
             )
         }
-    }
-}
-
-private fun ActivityPubRelationshipEntity?.toUiState(): RelationshipUiState {
-    return when {
-        this == null -> RelationshipUiState.UNKNOWN
-        this.blockedBy -> RelationshipUiState.BLOCKED_BY
-        this.blocking -> RelationshipUiState.BLOCKING
-        this.requested -> RelationshipUiState.REQUESTED
-        this.requestedBy -> RelationshipUiState.REQUEST_BY
-        this.following -> RelationshipUiState.FOLLOWING
-        this.followedBy -> RelationshipUiState.FOLLOWED_BY
-        else -> RelationshipUiState.CAN_FOLLOW
     }
 }
 

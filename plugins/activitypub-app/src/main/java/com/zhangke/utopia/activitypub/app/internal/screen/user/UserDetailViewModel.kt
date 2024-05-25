@@ -36,6 +36,7 @@ class UserDetailViewModel(
     private val _uiState = MutableStateFlow(
         UserDetailUiState(
             role = role,
+            loading = false,
             userInsight = null,
             accountUiState = null,
             relationship = null,
@@ -55,9 +56,11 @@ class UserDetailViewModel(
                 _messageFlow.emit(textOf("Invalid user."))
                 return@launchInViewModel
             }
+            _uiState.update { it.copy(loading = true) }
             val accountRepo = clientManager.getClient(role).accountRepo
             val accountResult = accountRepo.lookup(webFinger.toString())
             if (accountResult.isFailure) {
+                _uiState.update { it.copy(loading = false) }
                 _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))
                 return@launchInViewModel
             }
@@ -70,9 +73,8 @@ class UserDetailViewModel(
             _uiState.value = _uiState.value.copy(
                 userInsight = userInsight,
                 isAccountOwner = editable,
-            )
-            _uiState.value = _uiState.value.copy(
-                accountUiState = account.toAccountUiState()
+                accountUiState = account.toAccountUiState(),
+                loading = false,
             )
             loadRelationship(accountRepo, account.id)
             loadDomainBlockState(accountRepo, userInsight)

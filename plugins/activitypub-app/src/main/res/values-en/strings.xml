@@ -99,4 +99,6 @@
 
     <string name="activity_pub_user_follower_list_title">Followers</string>
     <string name="activity_pub_user_following_list_title">Following</string>
+
+    <string name="activity_pub_user_detail_follows_you">Follows you</string>
 </resources>

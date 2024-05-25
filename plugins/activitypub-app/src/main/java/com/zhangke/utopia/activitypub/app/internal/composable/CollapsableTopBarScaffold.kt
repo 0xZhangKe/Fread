@@ -19,6 +19,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.layoutId
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.Dp
@@ -34,6 +35,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.collapsable.CollapsableTopBarLayout
 import com.zhangke.framework.composable.utopiaPlaceholder
+import com.zhangke.utopia.activitypub.app.R
 
 /**
  * 包含：
@@ -104,10 +106,11 @@ private fun MotionLayoutScope.MotionAppBar(
     AsyncImage(
         modifier = Modifier
             .layoutId("banner")
-            .utopiaPlaceholder(banner.isNullOrEmpty())
             .clickable { onAvatarClick() },
         model = banner,
         contentScale = ContentScale.Crop,
+        error = painterResource(R.drawable.detail_page_banner_background),
+        placeholder = painterResource(R.drawable.detail_page_banner_background),
         contentDescription = null,
     )
     // avatar

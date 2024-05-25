@@ -345,16 +345,6 @@ class ImageViewerState(
         }
     }
 
-    internal fun inImageBound(position: Offset): Boolean {
-        val yOffset = _currentOffsetYPixel.floatValue
-        val xOffset = _currentOffsetXPixel.floatValue
-        val height = _currentHeightPixel.floatValue
-        val width = _currentWidthPixel.floatValue
-        val yRange = yOffset..yOffset + height
-        val xRange = xOffset..xOffset + width
-        return position.x in xRange && position.y in yRange
-    }
-
     private fun calculateDragBounds(imageWidth: Float, imageHeight: Float): Bounds {
         val left: Float
         val right: Float

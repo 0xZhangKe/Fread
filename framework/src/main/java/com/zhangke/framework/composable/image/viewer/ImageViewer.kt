@@ -73,10 +73,8 @@ fun ImageViewer(
                         }
                     },
                     onTap = {
-                        if (!state.inImageBound(it)) {
-                            coroutineScope.launch {
-                                state.startDismiss()
-                            }
+                        coroutineScope.launch {
+                            state.startDismiss()
                         }
                     },
                 )

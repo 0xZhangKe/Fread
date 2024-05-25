@@ -47,6 +47,7 @@ import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.zhangke.framework.blurhash.blurhash
+import com.zhangke.framework.composable.HorizontalPageIndicator
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
@@ -56,6 +57,7 @@ import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.aspectRatio
 import com.zhangke.utopia.status.blog.BlogMedia
 import com.zhangke.utopia.status.blog.asImageMetaOrNull
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class ImageViewerScreen(
@@ -72,6 +74,9 @@ class ImageViewerScreen(
         val coroutineScope = rememberCoroutineScope()
         var backgroundColorAlpha by remember {
             mutableFloatStateOf(0F)
+        }
+        var showIndicator by remember {
+            mutableStateOf(false)
         }
         LaunchedEffect(Unit) {
             Animatable(0F).animateTo(
@@ -123,6 +128,7 @@ class ImageViewerScreen(
                             navigator.pop()
                         },
                         onStartDismiss = {
+                            showIndicator = false
                             coroutineScope.launch {
                                 Animatable(backgroundCommonAlpha).animateTo(
                                     targetValue = 0.1F,
@@ -139,6 +145,21 @@ class ImageViewerScreen(
                 }
 
                 ImageTopBar(imageList[pagerState.currentPage])
+
+                LaunchedEffect(Unit) {
+                    delay(300)
+                    showIndicator = true
+                }
+                if (showIndicator) {
+                    HorizontalPageIndicator(
+                        currentIndex = pagerState.currentPage,
+                        pageCount = pagerState.pageCount,
+                        modifier = Modifier
+                            .padding(bottom = 64.dp)
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth(),
+                    )
+                }
             }
         }
     }

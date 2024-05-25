@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -7,7 +8,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowRightAlt
-import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -33,6 +34,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.LocalImmersiveViewModeManager
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -49,6 +51,7 @@ class ContentHomeScreen : Screen {
         val viewModel: ContentHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val homeToFeedsLinker = LocalHomeToFeedLinker.current
+        val immersiveViewModeManager = LocalImmersiveViewModeManager.current
         LaunchedEffect(homeToFeedsLinker) {
             homeToFeedsLinker?.onScrollToContentTab = {
                 viewModel.switchPageIndex(uiState.contentConfigList.indexOf(it))
@@ -103,13 +106,18 @@ class ContentHomeScreen : Screen {
             },
             floatingActionButton = {
                 if (uiState.accountList.isNotEmpty()) {
-                    FloatingActionButton(
-                        onClick = viewModel::onPostStatusClick,
+                    val inImmersiveMode by immersiveViewModeManager.inImmersiveMode.collectAsState()
+                    AnimatedVisibility(
+                        visible = !inImmersiveMode,
                     ) {
-                        Icon(
-                            imageVector = Icons.Default.Add,
-                            contentDescription = "Add",
-                        )
+                        FloatingActionButton(
+                            onClick = viewModel::onPostStatusClick,
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Post Micro Blog",
+                            )
+                        }
                     }
                 }
             }

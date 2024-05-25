@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -30,7 +29,6 @@ data class PagerTabOptions(
     val icon: Painter? = null
 )
 
-@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun Screen.HorizontalPagerWithTab(
     tabList: List<PagerTab>,

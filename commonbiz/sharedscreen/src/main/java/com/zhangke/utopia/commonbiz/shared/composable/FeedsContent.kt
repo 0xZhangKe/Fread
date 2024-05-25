@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -23,8 +24,11 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
+import com.zhangke.framework.composable.LocalImmersiveViewModeManager
+import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.applyNestedScrollConnection
+import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
@@ -49,6 +53,7 @@ fun FeedsContent(
     nestedScrollConnection: NestedScrollConnection?,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
+    val immersiveViewModeManager = LocalImmersiveViewModeManager.current
     if (uiState.feeds.isEmpty()) {
         if (uiState.showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
@@ -62,6 +67,15 @@ fun FeedsContent(
                 onRefresh = onRefresh,
                 onLoadMore = onLoadMore,
             )
+            val lazyListState = state.lazyListState
+            val directional = rememberDirectionalLazyListState(lazyListState).scrollDirection
+            LaunchedEffect(directional) {
+                if (directional == ScrollDirection.Down) {
+                    immersiveViewModeManager.openImmersiveMode()
+                } else if (directional == ScrollDirection.Up) {
+                    immersiveViewModeManager.closeImmersiveMode()
+                }
+            }
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

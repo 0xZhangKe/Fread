@@ -150,7 +150,7 @@ class ImageViewerScreen(
                     delay(300)
                     showIndicator = true
                 }
-                if (showIndicator) {
+                if (showIndicator && pagerState.pageCount > 1) {
                     HorizontalPageIndicator(
                         currentIndex = pagerState.currentPage,
                         pageCount = pagerState.pageCount,

@@ -10,7 +10,7 @@ import androidx.compose.runtime.remember
 fun rememberDirectionalLazyListState(
     lazyListState: LazyListState,
 ): DirectionalLazyListState {
-    return remember {
+    return remember(lazyListState) {
         DirectionalLazyListState(lazyListState)
     }
 }

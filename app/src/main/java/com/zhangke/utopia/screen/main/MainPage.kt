@@ -1,8 +1,8 @@
 package com.zhangke.utopia.screen.main
 
 import android.annotation.SuppressLint
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -16,8 +16,11 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -25,6 +28,8 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.zhangke.framework.composable.ImmersiveViewModeManager
+import com.zhangke.framework.composable.LocalImmersiveViewModeManager
 import com.zhangke.utopia.explore.ExploreTab
 import com.zhangke.utopia.feature.message.NotificationsTab
 import com.zhangke.utopia.feeds.FeedsHomeTab
@@ -46,8 +51,12 @@ fun Screen.MainPage() {
             }
         }
     }
+    val immersiveViewModeManager = remember {
+        ImmersiveViewModeManager()
+    }
     CompositionLocalProvider(
-        LocalHomeToFeedLinker provides homeToFeedsLinker
+        LocalHomeToFeedLinker provides homeToFeedsLinker,
+        LocalImmersiveViewModeManager provides immersiveViewModeManager,
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -69,19 +78,25 @@ fun Screen.MainPage() {
             TabNavigator(
                 tab = tabs.first(),
             ) {
-                Column(modifier = Modifier.fillMaxSize()) {
+                Box(modifier = Modifier.fillMaxSize()) {
                     Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .weight(1F)
+                        modifier = Modifier.fillMaxSize()
                     ) {
                         CurrentTab()
                     }
-                    NavigationBar(
-                        modifier = Modifier.height(60.dp),
+                    val inImmersiveMode by immersiveViewModeManager.inImmersiveMode.collectAsState()
+                    AnimatedVisibility(
+                        modifier = Modifier
+                            .align(Alignment.BottomCenter)
+                            .fillMaxWidth(),
+                        visible = !inImmersiveMode,
                     ) {
-                        tabs.forEach { tab ->
-                            TabNavigationItem(tab)
+                        NavigationBar(
+                            modifier = Modifier.height(60.dp),
+                        ) {
+                            tabs.forEach { tab ->
+                                TabNavigationItem(tab)
+                            }
                         }
                     }
                 }

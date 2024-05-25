@@ -8,6 +8,7 @@ import com.zhangke.utopia.status.model.IdentityRole
 
 data class UserDetailUiState (
     val role: IdentityRole,
+    val loading: Boolean,
     val userInsight: UserUriInsights?,
     val accountUiState: UserDetailAccountUiState?,
     val relationship: ActivityPubRelationshipEntity?,

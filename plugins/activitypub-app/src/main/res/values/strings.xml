@@ -98,4 +98,6 @@
 
     <string name="activity_pub_user_follower_list_title">关注者</string>
     <string name="activity_pub_user_following_list_title">已关注</string>
+
+    <string name="activity_pub_user_detail_follows_you">关注了你</string>
 </resources>

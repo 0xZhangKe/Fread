@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -23,20 +25,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
+import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.browser.BrowserLauncher
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
@@ -70,7 +72,6 @@ data class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val coroutineScope = rememberCoroutineScope()
         val (role, userUri, webFinger) = remember(route) {
             UserDetailRoute.parseRoute(route)
         }
@@ -193,7 +194,7 @@ data class UserDetailScreen(
                     if (!uiState.isAccountOwner) {
                         RelationshipStateButton(
                             modifier = Modifier,
-                            uiState = uiState,
+                            relationship = uiState.relationship.toUiState(),
                             onFollowClick = onFollowClick,
                             onUnfollowClick = onUnfollowClick,
                             onAcceptClick = onAcceptClick,
@@ -205,31 +206,40 @@ data class UserDetailScreen(
                 },
                 headerContent = {
                     Column(modifier = Modifier.fillMaxWidth()) {
-                        // acct
-                        val acct = remember(account?.acct) {
-                            val acct = account?.acct.orEmpty()
-                            if (acct.isNotEmpty() && !acct.contains('@')) {
-                                "@$acct"
-                            } else {
-                                acct
-                            }
-                        }
-                        Text(
+                        // acct and follows you
+                        Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .utopiaPlaceholder(account?.acct.isNullOrEmpty()),
-                            text = acct,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                            textAlign = TextAlign.Start,
-                            style = MaterialTheme.typography.labelMedium,
-                        )
+                                .utopiaPlaceholder(uiState.loading),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier,
+                                text = account?.prettyAcct.orEmpty(),
+                                maxLines = 1,
+                                overflow = TextOverflow.Ellipsis,
+                                style = MaterialTheme.typography.labelMedium,
+                            )
+                            if (uiState.relationship?.followedBy == true) {
+                                Text(
+                                    modifier = Modifier
+                                        .padding(start = 4.dp)
+                                        .background(
+                                            color = MaterialTheme.colorScheme.surfaceContainer,
+                                            shape = RoundedCornerShape(2.dp),
+                                        )
+                                        .padding(horizontal = 4.dp),
+                                    text = stringResource(R.string.activity_pub_user_detail_follows_you),
+                                    style = MaterialTheme.typography.bodySmall,
+                                )
+                            }
+                        }
 
                         // description
                         UtopiaRichText(
                             modifier = Modifier
                                 .padding(top = 4.dp)
-                                .utopiaPlaceholder(account?.note.isNullOrEmpty())
+                                .utopiaPlaceholder(uiState.loading)
                                 .fillMaxWidth(),
                             content = account?.note.orEmpty(),
                             onMentionClick = {},
@@ -242,7 +252,7 @@ data class UserDetailScreen(
                         Row(
                             modifier = Modifier
                                 .padding(top = 4.dp)
-                                .utopiaPlaceholder(account == null),
+                                .utopiaPlaceholder(uiState.loading),
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
@@ -426,5 +436,28 @@ data class UserDetailScreen(
             },
             onClick = onClick,
         )
+    }
+
+    private val ActivityPubAccountEntity.prettyAcct: String
+        get() {
+            val acct = this.acct
+            return if (acct.isNotEmpty() && !acct.contains('@')) {
+                "@$acct"
+            } else {
+                acct
+            }
+        }
+
+    private fun ActivityPubRelationshipEntity?.toUiState(): RelationshipUiState {
+        return when {
+            this == null -> RelationshipUiState.UNKNOWN
+            this.blockedBy -> RelationshipUiState.BLOCKED_BY
+            this.blocking -> RelationshipUiState.BLOCKING
+            this.requested -> RelationshipUiState.REQUESTED
+            this.requestedBy -> RelationshipUiState.REQUEST_BY
+            this.following -> RelationshipUiState.FOLLOWING
+            this.followedBy -> RelationshipUiState.FOLLOWED_BY
+            else -> RelationshipUiState.CAN_FOLLOW
+        }
     }
 }

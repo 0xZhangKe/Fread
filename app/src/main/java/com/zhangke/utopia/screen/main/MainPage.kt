@@ -28,15 +28,14 @@ import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import com.zhangke.framework.composable.ImmersiveViewModeManager
-import com.zhangke.framework.composable.LocalImmersiveViewModeManager
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.utopia.explore.ExploreTab
 import com.zhangke.utopia.feature.message.NotificationsTab
 import com.zhangke.utopia.feeds.FeedsHomeTab
-import com.zhangke.utopia.feeds.pages.home.HomeToFeedsLinker
-import com.zhangke.utopia.feeds.pages.home.LocalHomeToFeedLinker
 import com.zhangke.utopia.profile.ProfileTab
 import com.zhangke.utopia.screen.main.drawer.MainDrawer
+import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
+import com.zhangke.utopia.status.ui.common.MainTabConnection
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -44,19 +43,14 @@ import kotlinx.coroutines.launch
 fun Screen.MainPage() {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    val homeToFeedsLinker = remember {
-        HomeToFeedsLinker {
-            coroutineScope.launch {
-                drawerState.open()
-            }
-        }
+    val mainTabConnection = remember {
+        MainTabConnection()
     }
-    val immersiveViewModeManager = remember {
-        ImmersiveViewModeManager()
+    ConsumeFlow(mainTabConnection.openDrawerFlow) {
+        drawerState.open()
     }
     CompositionLocalProvider(
-        LocalHomeToFeedLinker provides homeToFeedsLinker,
-        LocalImmersiveViewModeManager provides immersiveViewModeManager,
+        LocalMainTabConnection provides mainTabConnection,
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -84,7 +78,7 @@ fun Screen.MainPage() {
                     ) {
                         CurrentTab()
                     }
-                    val inImmersiveMode by immersiveViewModeManager.inImmersiveMode.collectAsState()
+                    val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
                     AnimatedVisibility(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)

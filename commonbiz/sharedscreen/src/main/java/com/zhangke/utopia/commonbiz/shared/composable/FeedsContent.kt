@@ -24,7 +24,6 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
-import com.zhangke.framework.composable.LocalImmersiveViewModeManager
 import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.applyNestedScrollConnection
@@ -35,6 +34,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.utopia.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
+import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
 import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
@@ -53,7 +53,7 @@ fun FeedsContent(
     nestedScrollConnection: NestedScrollConnection?,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
-    val immersiveViewModeManager = LocalImmersiveViewModeManager.current
+    val mainTabConnection = LocalMainTabConnection.current
     if (uiState.feeds.isEmpty()) {
         if (uiState.showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
@@ -71,9 +71,9 @@ fun FeedsContent(
             val directional = rememberDirectionalLazyListState(lazyListState).scrollDirection
             LaunchedEffect(directional) {
                 if (directional == ScrollDirection.Down) {
-                    immersiveViewModeManager.openImmersiveMode()
+                    mainTabConnection.openImmersiveMode()
                 } else if (directional == ScrollDirection.Up) {
-                    immersiveViewModeManager.closeImmersiveMode()
+                    mainTabConnection.closeImmersiveMode()
                 }
             }
             LoadableInlineVideoLazyColumn(

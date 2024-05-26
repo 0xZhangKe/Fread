@@ -1,5 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.account
 
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubLoggerAccountDao
@@ -28,6 +29,10 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
 
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccount? =
         accountDao.queryByUri(uri)?.let(adapter::adapt)
+
+    suspend fun queryByBaseUrl(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
+        return accountDao.queryByBaseUrl(baseUrl).firstOrNull()?.let(adapter::adapt)
+    }
 
     suspend fun insert(entry: ActivityPubLoggedAccount) =
         accountDao.insert(adapter.recovery(entry))

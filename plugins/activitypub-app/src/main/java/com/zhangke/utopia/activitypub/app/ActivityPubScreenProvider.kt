@@ -54,9 +54,9 @@ class ActivityPubScreenProvider @Inject constructor(
         return PostStatusScreenRoute.buildRoute(accountUri, blog.id, blog.author.name)
     }
 
-    override fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
+    override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
         if (contentConfig !is ContentConfig.ActivityPubContent) return null
-        return ActivityPubContentScreen(contentConfig.id)
+        return ActivityPubContentScreen(contentConfig.id, isLatestTab)
     }
 
     override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {

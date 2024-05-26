@@ -1,30 +1,31 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
-import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.successDataOrNull
-import com.zhangke.framework.composable.updateToFailed
-import com.zhangke.framework.composable.updateToLoading
-import com.zhangke.framework.composable.updateToSuccess
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
+import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.update
 
 class ActivityPubContentSubViewModel(
     private val contentConfigRepo: ContentConfigRepo,
     private val getUserCreatedList: GetUserCreatedListUseCase,
+    private val accountManager: ActivityPubAccountManager,
     val configId: Long,
 ) : SubViewModel() {
 
-    private val _uiState =
-        MutableStateFlow<LoadableState<ActivityPubContentUiState>>(LoadableState.idle())
+    private val _uiState = MutableStateFlow(ActivityPubContentUiState.DEFAULT)
     val uiState = _uiState.asStateFlow()
 
     private var updateUserListJob: Job? = null
@@ -32,28 +33,42 @@ class ActivityPubContentSubViewModel(
 
     init {
         launchInViewModel {
-            _uiState.updateToLoading()
             contentConfigRepo.getConfigFlowById(configId)
                 .map { it as? ContentConfig.ActivityPubContent }
                 .collect { contentConfig ->
                     if (contentConfig != null) {
                         val role = IdentityRole(accountUri = null, baseUrl = contentConfig.baseUrl)
-                        _uiState.updateToSuccess(ActivityPubContentUiState(role, contentConfig))
+                        _uiState.update {
+                            it.copy(
+                                role = role,
+                                config = contentConfig,
+                            )
+                        }
+                        queryLoggedAccount(contentConfig.baseUrl)
                         updateUserCreateList()
                     } else {
-                        _uiState.updateToFailed(IllegalArgumentException("Cant find validate config by id: $configId"))
+                        _uiState.update {
+                            it.copy(
+                                errorMessage = "Cant find validate config by id: $configId"
+                            )
+                        }
                     }
                 }
         }
     }
 
+    private suspend fun queryLoggedAccount(baseUrl: FormalBaseUrl) {
+        accountManager.getAccount(baseUrl)
+            ?.let { account ->
+                _uiState.update { it.copy(account = account) }
+            }
+    }
+
     private fun updateUserCreateList() {
         if (userCreatedListUpdated) return
         userCreatedListUpdated = true
-        if (updateUserListJob?.isActive == true) {
-            updateUserListJob?.cancel()
-        }
-        val role = _uiState.value.successDataOrNull()?.role ?: return
+        updateUserListJob?.cancel()
+        val role = _uiState.value.role ?: return
         updateUserListJob = launchInViewModel {
             getUserCreatedList(role)
                 .map { list ->

@@ -1,37 +1,59 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBarDefaults
+import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.HorizontalPagerWithTab
-import com.zhangke.framework.composable.LoadableState
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.framework.composable.utopiaPlaceholder
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.InstanceDetailScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreen
+import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
 import com.zhangke.utopia.activitypub.app.internal.screen.trending.TrendingStatusTab
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.ui.common.ContentToolbar
+import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
+import kotlinx.coroutines.launch
 
 class ActivityPubContentScreen(
     private val configId: Long,
+    private val isLatestContent: Boolean,
 ) : PagerTab {
 
     override val options: PagerTabOptions?
@@ -39,66 +61,116 @@ class ActivityPubContentScreen(
 
     @Composable
     override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+        val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubContentUi(
             uiState = uiState,
-            nestedScrollConnection = nestedScrollConnection,
+            onTitleClick = {
+                navigator.push(InstanceDetailScreen(PlatformDetailRoute.buildRoute(it.baseUrl)))
+            },
+            onPostBlogClick = {
+                navigator.push(PostStatusScreen(PostStatusScreenRoute.buildRoute(it.uri)))
+            },
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun Screen.ActivityPubContentUi(
-        uiState: LoadableState<ActivityPubContentUiState>,
-        nestedScrollConnection: NestedScrollConnection?,
+        uiState: ActivityPubContentUiState,
+        onTitleClick: (ContentConfig.ActivityPubContent) -> Unit,
+        onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
     ) {
-        when (uiState) {
-            is LoadableState.Failed -> {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Text(
-                        modifier = Modifier.align(Alignment.Center),
-                        text = uiState.exception.message.orEmpty(),
-                    )
-                }
-            }
-
-            is LoadableState.Idle, is LoadableState.Loading -> {
-                Column(modifier = Modifier.fillMaxSize()) {
-                    Box(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .height(60.dp)
-                            .utopiaPlaceholder(true),
-                    )
-                    Box(
-                        modifier = Modifier
-                            .padding(top = 16.dp)
-                            .fillMaxWidth()
-                            .weight(1F)
-                            .utopiaPlaceholder(true),
-                    )
-                }
-            }
-
-            is LoadableState.Success -> {
-                val tabList = remember(uiState) {
-                    createTabs(uiState.data)
-                }
-                HorizontalPagerWithTab(
-                    tabList = tabList,
-                    nestedScrollConnection = nestedScrollConnection,
+        val (role, config, account, errorMessage) = uiState
+        val coroutineScope = rememberCoroutineScope()
+        val mainTabConnection = LocalMainTabConnection.current
+        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
+        val snackbarHostState = rememberSnackbarHostState()
+        Scaffold(
+            topBar = {
+                ContentToolbar(
+                    title = config?.configName.orEmpty(),
+                    showNextIcon = !isLatestContent,
+                    scrollBehavior = scrollBehavior,
+                    onMenuClick = {
+                        coroutineScope.launch {
+                            mainTabConnection.openDrawer()
+                        }
+                    },
+                    onNextClick = {
+                        coroutineScope.launch {
+                            mainTabConnection.switchToNextTab()
+                        }
+                    },
+                    onTitleClick = {
+                        config?.let { onTitleClick(it) }
+                    },
                 )
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarHostState)
+            },
+            floatingActionButton = {
+                if (account != null) {
+                    val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
+                    AnimatedVisibility(
+                        visible = !inImmersiveMode,
+                    ) {
+                        FloatingActionButton(
+                            onClick = { onPostBlogClick(account) }
+                        ) {
+                            Icon(
+                                imageVector = Icons.Default.Edit,
+                                contentDescription = "Post Micro Blog",
+                            )
+                        }
+                    }
+                }
+            }
+        ) { paddings ->
+            Box(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(paddings)
+            ) {
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides snackbarHostState,
+                ) {
+                    if (role != null && config != null) {
+                        val tabList = remember(uiState) {
+                            createTabs(role, config)
+                        }
+                        HorizontalPagerWithTab(
+                            tabList = tabList,
+//                            nestedScrollConnection = scrollBehavior.nestedScrollConnection,
+                            nestedScrollConnection = scrollBehavior.nestedScrollConnection,
+                        )
+                    } else if (errorMessage.isNullOrBlank().not()) {
+                        Box(modifier = Modifier.fillMaxSize()) {
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 16.dp, top = 64.dp, end = 16.dp)
+                                    .fillMaxWidth()
+                                    .align(Alignment.TopCenter),
+                                text = errorMessage.orEmpty(),
+                                textAlign = TextAlign.Center,
+                            )
+                        }
+                    }
+                }
             }
         }
     }
 
     private fun createTabs(
-        uiState: ActivityPubContentUiState,
+        role: IdentityRole,
+        config: ContentConfig.ActivityPubContent,
     ): List<PagerTab> {
-        return uiState.config
+        return config
             .showingTabList
             .sortedBy { it.order }
-            .map { it.toPagerTab(uiState.role) }
+            .map { it.toPagerTab(role) }
     }
 
     private fun ContentConfig.ActivityPubContent.ContentTab.toPagerTab(

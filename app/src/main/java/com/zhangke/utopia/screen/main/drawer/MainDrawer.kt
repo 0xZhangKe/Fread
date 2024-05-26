@@ -24,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -37,10 +38,11 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.feeds.pages.home.EmptyContent
-import com.zhangke.utopia.feeds.pages.home.LocalHomeToFeedLinker
 import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.utopia.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.utopia.status.model.ContentConfig
+import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
+import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -53,12 +55,15 @@ fun Screen.MainDrawer(
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = getScreenModel<MainDrawerScreenModel>()
     val uiState by viewModel.uiState.collectAsState()
-    val homeToFeedsLinker = LocalHomeToFeedLinker.current
+    val mainTabConnection = LocalMainTabConnection.current
+    val coroutineScope = rememberCoroutineScope()
     MainDrawerContent(
         uiState = uiState,
         onContentConfigClick = {
             onDismissRequest()
-            homeToFeedsLinker?.scrollToContentTab(it)
+            coroutineScope.launch {
+                mainTabConnection.scrollToContentTab(it)
+            }
         },
         onAddContentClick = {
             onDismissRequest()

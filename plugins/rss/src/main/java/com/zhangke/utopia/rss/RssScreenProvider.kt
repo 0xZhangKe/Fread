@@ -32,7 +32,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
+    override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
         return null
     }
 

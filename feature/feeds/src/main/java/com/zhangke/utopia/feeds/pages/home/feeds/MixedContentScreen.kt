@@ -12,7 +12,10 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
 
-class MixedContentScreen(private val configId: Long) : PagerTab {
+class MixedContentScreen(
+    private val configId: Long,
+    private val isLatestTab: Boolean,
+) : PagerTab {
 
     override val options: PagerTabOptions?
         @Composable get() = null

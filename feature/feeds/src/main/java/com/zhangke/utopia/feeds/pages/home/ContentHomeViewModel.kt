@@ -1,20 +1,15 @@
 package com.zhangke.utopia.feeds.pages.home
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import com.zhangke.utopia.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.utopia.status.StatusProvider
-import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.model.ContentConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -26,12 +21,6 @@ class ContentHomeViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(ContentHomeUiState(0, emptyList(), emptyList()))
     val uiState: StateFlow<ContentHomeUiState> = _uiState
-
-    private val _openScreenFlow = MutableSharedFlow<Screen>()
-    val openScreenFlow = _openScreenFlow.asSharedFlow()
-
-    private val _openSelectAccountForPostFlow = MutableSharedFlow<List<LoggedAccount>>()
-    val openSelectAccountForPostFlow = _openSelectAccountForPostFlow.asSharedFlow()
 
     init {
         launchInViewModel {
@@ -56,9 +45,17 @@ class ContentHomeViewModel @Inject constructor(
         }
     }
 
-    fun getContentScreen(contentConfig: ContentConfig): PagerTab? {
-        if (contentConfig is ContentConfig.MixedContent) return MixedContentScreen(contentConfig.id)
-        return statusProvider.screenProvider.getContentScreen(contentConfig)
+    fun getContentScreen(
+        contentConfig: ContentConfig,
+        isLatestTab: Boolean,
+    ): PagerTab? {
+        if (contentConfig is ContentConfig.MixedContent) {
+            return MixedContentScreen(
+                configId = contentConfig.id,
+                isLatestTab = isLatestTab,
+            )
+        }
+        return statusProvider.screenProvider.getContentScreen(contentConfig, isLatestTab)
     }
 
     fun onCurrentPageChange(currentPage: Int) {
@@ -67,44 +64,5 @@ class ContentHomeViewModel @Inject constructor(
         _uiState.value = currentState.copy(
             currentPageIndex = currentPage,
         )
-    }
-
-    fun switchPageIndex(pageIndex: Int) {
-        val pageList = _uiState.value.contentConfigList
-        if (pageIndex !in pageList.indices) return
-        onCurrentPageChange(pageIndex)
-    }
-
-    fun onConfigTitleClick(config: ContentConfig) {
-        statusProvider.screenProvider
-            .getPlatformDetailScreenRoute(config)
-            ?.let { KRouter.route<Screen>(it) }
-            ?.let { route ->
-                launchInViewModel { _openScreenFlow.emit(route) }
-            }
-    }
-
-    fun onPostStatusClick() {
-        val accountList = _uiState.value.accountList
-        if (accountList.isEmpty()) return
-        if (accountList.size == 1) {
-            openPostStatusScreen(accountList.first())
-        } else {
-            launchInViewModel {
-                _openSelectAccountForPostFlow.emit(accountList)
-            }
-        }
-    }
-
-    fun onPostStatusAccountClick(account: LoggedAccount) {
-        openPostStatusScreen(account)
-    }
-
-    private fun openPostStatusScreen(account: LoggedAccount) {
-        statusProvider.screenProvider.getPostStatusScreen(
-            platform = account.platform,
-            accountUri = account.uri,
-        )?.let { KRouter.route<Screen>(it) }
-            ?.let { launchInViewModel { _openScreenFlow.emit(it) } }
     }
 }

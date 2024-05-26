@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
 import com.zhangke.utopia.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.utopia.common.status.repo.ContentConfigRepo
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -9,6 +10,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityPubContentViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
+    private val accountManager: ActivityPubAccountManager,
     private val getUserCreatedList: GetUserCreatedListUseCase,
 ) : ContainerViewModel<ActivityPubContentSubViewModel, ActivityPubContentViewModel.Params>() {
 
@@ -16,6 +18,7 @@ class ActivityPubContentViewModel @Inject constructor(
         return ActivityPubContentSubViewModel(
             contentConfigRepo = contentConfigRepo,
             getUserCreatedList = getUserCreatedList,
+            accountManager = accountManager,
             configId = params.configId,
         )
     }

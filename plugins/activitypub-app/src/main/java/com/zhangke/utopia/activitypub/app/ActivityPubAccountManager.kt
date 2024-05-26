@@ -59,4 +59,8 @@ class ActivityPubAccountManager @Inject constructor(
         loggedAccountProvider.removeAccount(uri)
         return true
     }
+
+    suspend fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount?{
+        return accountRepo.queryByBaseUrl(baseUrl)
+    }
 }

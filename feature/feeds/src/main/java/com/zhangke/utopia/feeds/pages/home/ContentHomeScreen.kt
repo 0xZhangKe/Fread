@@ -1,167 +1,73 @@
 package com.zhangke.utopia.feeds.pages.home
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowRightAlt
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Menu
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.FloatingActionButton
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
-import com.zhangke.framework.composable.LocalImmersiveViewModeManager
-import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsScreen
+import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
 
 class ContentHomeScreen : Screen {
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel: ContentHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        val homeToFeedsLinker = LocalHomeToFeedLinker.current
-        val immersiveViewModeManager = LocalImmersiveViewModeManager.current
-        LaunchedEffect(homeToFeedsLinker) {
-            homeToFeedsLinker?.onScrollToContentTab = {
-                viewModel.switchPageIndex(uiState.contentConfigList.indexOf(it))
+        if (uiState.contentConfigList.isEmpty()) {
+            EmptyContent(modifier = Modifier.fillMaxSize()) {
+                navigator.push(PreAddFeedsScreen())
             }
-        }
-        ConsumeFlow(viewModel.openScreenFlow) { route ->
-            navigator.push(route)
-        }
-        val scrollBehavior =
-            TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-        val snackbarHostState = rememberSnackbarHostState()
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
-            },
-            topBar = {
-                TopAppBar(
-                    modifier = Modifier,
-                    navigationIcon = {
-                        SimpleIconButton(
-                            onClick = {
-                                homeToFeedsLinker?.openDrawer()
-                            },
-                            imageVector = Icons.Default.Menu,
-                            contentDescription = "Menu",
-                        )
-                    },
-                    scrollBehavior = scrollBehavior,
-                    title = {
-                        Text(
-                            modifier = Modifier.clickable {
-                                uiState.currentConfig?.let(viewModel::onConfigTitleClick)
-                            },
-                            text = uiState.currentConfig?.configName.orEmpty(),
-                            fontSize = 18.sp,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    },
-                    actions = {
-                        if (uiState.contentConfigList.isNotEmpty()) {
-                            SimpleIconButton(
-                                onClick = {
-                                    viewModel.switchPageIndex(uiState.currentPageIndex + 1)
-                                },
-                                imageVector = Icons.AutoMirrored.Filled.ArrowRightAlt,
-                                contentDescription = "Next Content"
-                            )
-                        }
-                    },
-                )
-            },
-            floatingActionButton = {
-                if (uiState.accountList.isNotEmpty()) {
-                    val inImmersiveMode by immersiveViewModeManager.inImmersiveMode.collectAsState()
-                    AnimatedVisibility(
-                        visible = !inImmersiveMode,
-                    ) {
-                        FloatingActionButton(
-                            onClick = viewModel::onPostStatusClick,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Edit,
-                                contentDescription = "Post Micro Blog",
-                            )
-                        }
+        } else {
+            val mainTabConnection = LocalMainTabConnection.current
+            val pagerState = rememberPagerState(pageCount = { uiState.contentConfigList.size })
+            ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
+                if (pagerState.currentPage < pagerState.pageCount - 1) {
+                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                }
+            }
+            ConsumeFlow(mainTabConnection.scrollToContentTabFlow) {
+                val index = uiState.contentConfigList.indexOf(it)
+                if (index in 0 until pagerState.pageCount) {
+                    pagerState.animateScrollToPage(index)
+                }
+            }
+            val currentPage = pagerState.currentPage
+            LaunchedEffect(currentPage) {
+                viewModel.onCurrentPageChange(currentPage)
+            }
+            LaunchedEffect(uiState.currentPageIndex) {
+                pagerState.animateScrollToPage(uiState.currentPageIndex)
+            }
+            HorizontalPager(
+                state = pagerState,
+            ) { pageIndex ->
+                val currentScreen = remember(uiState.contentConfigList, pageIndex) {
+                    viewModel.getContentScreen(
+                        contentConfig = uiState.contentConfigList[pageIndex],
+                        isLatestTab = pageIndex == uiState.contentConfigList.lastIndex,
+                    )
+                }
+                if (currentScreen == null) {
+                    Text(text = "Error! can't find any tab fro this config!")
+                } else {
+                    with(currentScreen) {
+                        TabContent(null)
                     }
                 }
             }
-        ) { paddingValues ->
-            if (uiState.contentConfigList.isEmpty()) {
-                EmptyContent(modifier = Modifier.fillMaxSize()) {
-                    navigator.push(PreAddFeedsScreen())
-                }
-            } else {
-                val pagerState =
-                    rememberPagerState(pageCount = { uiState.contentConfigList.size })
-                val currentPage = pagerState.currentPage
-                LaunchedEffect(currentPage) {
-                    viewModel.onCurrentPageChange(currentPage)
-                }
-                LaunchedEffect(uiState.currentPageIndex) {
-                    pagerState.animateScrollToPage(uiState.currentPageIndex)
-                }
-                HorizontalPager(
-                    modifier = Modifier.padding(paddingValues),
-                    state = pagerState,
-                ) { pageIndex ->
-                    val currentScreen = remember(pageIndex) {
-                        viewModel.getContentScreen(uiState.contentConfigList[pageIndex])
-                    }
-                    CompositionLocalProvider(
-                        LocalSnackbarHostState provides snackbarHostState,
-                    ) {
-                        if (currentScreen == null) {
-                            Text(text = "Error! can't find any tab fro this config!")
-                        } else {
-                            with(currentScreen) {
-                                TabContent(scrollBehavior.nestedScrollConnection)
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        ConsumeFlow(viewModel.openSelectAccountForPostFlow) {
-            val screen = SelectAccountForPostStatusScreen(it) { account ->
-                viewModel.onPostStatusAccountClick(account)
-            }
-            bottomSheetNavigator.show(screen)
         }
     }
 }

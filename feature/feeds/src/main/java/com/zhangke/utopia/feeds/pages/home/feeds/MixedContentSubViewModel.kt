@@ -1,7 +1,9 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.krouter.KRouter
 import com.zhangke.utopia.common.feeds.model.RefreshResult
 import com.zhangke.utopia.common.feeds.repo.FeedsRepo
 import com.zhangke.utopia.common.status.StatusConfigurationDefault
@@ -15,7 +17,10 @@ import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.update
 
 class MixedContentSubViewModel(
     private val contentConfigRepo: ContentConfigRepo,
@@ -29,6 +34,9 @@ class MixedContentSubViewModel(
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {
+
+    private val _configUiState = MutableStateFlow(MixedContentUiState(null))
+    val configUiState = _configUiState.asStateFlow()
 
     private val config = StatusConfigurationDefault.config
     private var mixedContent: ContentConfig.MixedContent? = null
@@ -46,6 +54,9 @@ class MixedContentSubViewModel(
         )
         launchInViewModel {
             mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
+            _configUiState.update {
+                it.copy(config = mixedContent)
+            }
             initFeeds(true)
             startAutoFetchNewerFeeds()
         }
@@ -71,9 +82,22 @@ class MixedContentSubViewModel(
                 .collect {
                     delay(50)
                     mixedContent = it as? ContentConfig.MixedContent
+                    _configUiState.update { state ->
+                        state.copy(config = mixedContent)
+                    }
                     initFeeds(false)
                 }
         }
+    }
+
+    fun onContentTitleClick() {
+        val mixedContent = mixedContent ?: return
+        statusProvider.screenProvider
+            .getPlatformDetailScreenRoute(mixedContent)
+            ?.let { KRouter.route<Screen>(it) }
+            ?.let { screen ->
+                launchInViewModel { mutableOpenScreenFlow.emit(screen) }
+            }
     }
 
     private suspend fun loadFirstPageLocalFeeds(): Result<List<Status>> {

@@ -17,7 +17,6 @@ import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.utopia.common.daynight.DayNightHelper
-import com.zhangke.utopia.debug.screens.collapsable.CollapsableDemoScreen
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
@@ -41,8 +40,7 @@ class UtopiaActivity : AppCompatActivity() {
                         sheetShape = RoundedCornerShape(12.dp),
                     ) {
                         Navigator(
-//                            screen = UtopiaScreen(),
-                            screen = CollapsableDemoScreen(),
+                            screen = UtopiaScreen(),
                             key = ROOT_NAVIGATOR_KEY,
                         )
                     }

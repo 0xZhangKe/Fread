@@ -1,10 +1,14 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -30,12 +34,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.TopBarWithTabLayout
+import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
 import com.zhangke.utopia.activitypub.app.internal.screen.instance.InstanceDetailScreen
@@ -88,26 +92,6 @@ class ActivityPubContentScreen(
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
-            topBar = {
-                ContentToolbar(
-                    title = config?.configName.orEmpty(),
-                    showNextIcon = !isLatestContent,
-                    scrollBehavior = scrollBehavior,
-                    onMenuClick = {
-                        coroutineScope.launch {
-                            mainTabConnection.openDrawer()
-                        }
-                    },
-                    onNextClick = {
-                        coroutineScope.launch {
-                            mainTabConnection.switchToNextTab()
-                        }
-                    },
-                    onTitleClick = {
-                        config?.let { onTitleClick(it) }
-                    },
-                )
-            },
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
@@ -115,7 +99,10 @@ class ActivityPubContentScreen(
                 if (account != null) {
                     val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
                     AnimatedVisibility(
+                        modifier = Modifier.padding(bottom = 60.dp),
                         visible = !inImmersiveMode,
+                        enter = fadeIn(),
+                        exit = fadeOut(),
                     ) {
                         FloatingActionButton(
                             onClick = { onPostBlogClick(account) }
@@ -141,11 +128,58 @@ class ActivityPubContentScreen(
                         val tabList = remember(uiState) {
                             createTabs(role, config)
                         }
-                        HorizontalPagerWithTab(
-                            tabList = tabList,
-//                            nestedScrollConnection = scrollBehavior.nestedScrollConnection,
-                            nestedScrollConnection = scrollBehavior.nestedScrollConnection,
-                        )
+                        val pagerState = rememberPagerState(0) {
+                            tabList.size
+                        }
+                        TopBarWithTabLayout(
+                            topBarContent = {
+                                ContentToolbar(
+                                    title = config.configName,
+                                    showNextIcon = !isLatestContent,
+                                    scrollBehavior = scrollBehavior,
+                                    onMenuClick = {
+                                        coroutineScope.launch {
+                                            mainTabConnection.openDrawer()
+                                        }
+                                    },
+                                    onNextClick = {
+                                        coroutineScope.launch {
+                                            mainTabConnection.switchToNextTab()
+                                        }
+                                    },
+                                    onTitleClick = {
+                                        onTitleClick(config)
+                                    },
+                                )
+                            },
+                            tabContent = {
+                                UtopiaTabRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    selectedTabIndex = pagerState.currentPage,
+                                    tabCount = tabList.size,
+                                    tabContent = {
+                                        Text(
+                                            text = tabList[it].options?.title.orEmpty(),
+                                            maxLines = 1,
+                                        )
+                                    },
+                                    onTabClick = {
+                                        coroutineScope.launch {
+                                            pagerState.scrollToPage(it)
+                                        }
+                                    }
+                                )
+                            },
+                        ) {
+                            HorizontalPager(
+                                modifier = Modifier.fillMaxSize(),
+                                state = pagerState,
+                            ) { pageIndex ->
+                                with(tabList[pageIndex]) {
+                                    TabContent(null)
+                                }
+                            }
+                        }
                     } else if (errorMessage.isNullOrBlank().not()) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Text(

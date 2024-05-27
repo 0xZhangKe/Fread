@@ -2,6 +2,8 @@ package com.zhangke.utopia.screen.main
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
@@ -84,6 +86,8 @@ fun Screen.MainPage() {
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth(),
                         visible = !inImmersiveMode,
+                        enter = expandVertically(),
+                        exit = shrinkVertically(),
                     ) {
                         NavigationBar(
                             modifier = Modifier.height(60.dp),

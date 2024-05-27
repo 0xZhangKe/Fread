@@ -6,7 +6,6 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.collectAsState
@@ -31,14 +30,14 @@ class UtopiaActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            Box(modifier = Modifier.safeDrawingPadding()) {
+            Box(modifier = Modifier) {
                 val dayNightMode by DayNightHelper.dayNightModeFlow.collectAsState()
                 UtopiaTheme(
                     useDarkTheme = dayNightMode.isNight,
                 ) {
                     TransparentNavigator {
                         BottomSheetNavigator(
-                            modifier = Modifier.navigationBarsPadding(),
+                            modifier = Modifier,
                             sheetShape = RoundedCornerShape(12.dp),
                         ) {
                             Navigator(

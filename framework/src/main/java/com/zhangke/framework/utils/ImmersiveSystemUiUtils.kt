@@ -2,16 +2,25 @@ package com.zhangke.framework.utils
 
 import android.content.Context
 import android.graphics.Color
+import android.graphics.Rect
+import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.view.Window
+import android.view.WindowInsets
 import android.view.WindowManager
+import android.widget.FrameLayout
+import androidx.core.view.WindowInsetsCompat
+import com.zhangke.utopia.framework.R
 
 object ImmersiveSystemUiUtils {
 
     @Suppress("DEPRECATION")
     fun transparentStatusBar(window: Window, nightMode: Boolean) {
-        window.setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS)
+        window.setFlags(
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS,
+            WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS
+        )
 
 //        window.clearFlags(WindowManager.LayoutParams.FLAG_TRANSLUCENT_STATUS)
 //        window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS)
@@ -54,7 +63,8 @@ object ImmersiveSystemUiUtils {
         )
     }
 
-    private fun getStatusBarHeight(context: Context): Int {
+    fun getStatusBarHeight(context: Context): Int {
+        val rectangle = Rect()
         val resId = context.resources.getIdentifier(
             "status_bar_height", "dimen", "android"
         )

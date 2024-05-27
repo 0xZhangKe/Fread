@@ -9,6 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Layout
 import androidx.compose.ui.unit.Dp
@@ -27,9 +28,9 @@ fun TopBarWithTabLayout(
 ) {
     val topBarHeightPx = topBarHeight.toPx()
     val tabHeightPx = tabHeight.toPx()
-    val nestedScrollConnection = rememberTwoLineNestedScrollConnection(
+    val nestedScrollConnection = rememberCollapsableTopBarScrollConnection(
         minPx = 0F,
-        maxPx = 150.dp.toPx(),
+        maxPx = (topBarHeight + tabHeight).toPx(),
     )
     val process by rememberUpdatedState(newValue = nestedScrollConnection.progress)
     Box(
@@ -42,14 +43,15 @@ fun TopBarWithTabLayout(
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(topBarHeight),
+                        .height(topBarHeight)
+                        .invisibleByProcess(process),
                 ) {
                     topBarContent()
                 }
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(tabHeight),
+                        .invisibleByProcess(process),
                 ) {
                     tabContent()
                 }
@@ -71,9 +73,16 @@ fun TopBarWithTabLayout(
                     tabBarPlaceable.placeRelative(0, tabBarYOffset.toInt())
                     val topBarYOffset = -((processedOffset - tabHeightPx).coerceIn(0F, tabHeightPx))
                     topBarPlaceable.placeRelative(0, topBarYOffset.toInt())
-                    scrollableContentPlaceable.placeRelative(0, totalHeaderHeight.toInt() - processedOffset.toInt())
+                    scrollableContentPlaceable.placeRelative(
+                        0,
+                        totalHeaderHeight.toInt() - processedOffset.toInt()
+                    )
                 }
             },
         )
     }
+}
+
+private fun Modifier.invisibleByProcess(process: Float): Modifier {
+    return Modifier.alpha(1F - process) then this
 }

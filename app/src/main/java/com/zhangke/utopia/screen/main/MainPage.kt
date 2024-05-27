@@ -6,6 +6,7 @@ import androidx.compose.animation.expandVertically
 import androidx.compose.animation.shrinkVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -13,7 +14,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
@@ -31,6 +31,7 @@ import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.utopia.explore.ExploreTab
 import com.zhangke.utopia.feature.message.NotificationsTab
 import com.zhangke.utopia.feeds.FeedsHomeTab
@@ -90,6 +91,7 @@ fun Screen.MainPage() {
                         exit = shrinkVertically(),
                     ) {
                         NavigationBar(
+                            windowInsets = WindowInsets(0, 0, 0, 0),
                             modifier = Modifier.height(60.dp),
                         ) {
                             tabs.forEach { tab ->

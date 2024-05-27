@@ -10,7 +10,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 
 @Composable
-fun rememberTwoLineNestedScrollConnection(
+fun rememberCollapsableTopBarScrollConnection(
     maxPx: Float,
     minPx: Float,
 ): CollapsableTopBarScrollConnection {

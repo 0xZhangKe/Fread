@@ -2,15 +2,17 @@ package com.zhangke.utopia.screen
 
 import android.os.Bundle
 import androidx.activity.compose.setContent
+import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.core.view.WindowCompat
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import com.zhangke.framework.architect.theme.UtopiaTheme
@@ -25,24 +27,25 @@ class UtopiaActivity : AppCompatActivity() {
     @OptIn(ExperimentalMaterialApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         DayNightHelper.setActivityDayNightMode()
+        enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        WindowCompat.setDecorFitsSystemWindows(window, true)
-
         setContent {
-            val dayNightMode by DayNightHelper.dayNightModeFlow.collectAsState()
-            UtopiaTheme(
-                useDarkTheme = dayNightMode.isNight,
-            ) {
-                TransparentNavigator {
-                    BottomSheetNavigator(
-                        modifier = Modifier.navigationBarsPadding(),
-                        sheetShape = RoundedCornerShape(12.dp),
-                    ) {
-                        Navigator(
-                            screen = UtopiaScreen(),
-                            key = ROOT_NAVIGATOR_KEY,
-                        )
+            Box(modifier = Modifier.safeDrawingPadding()) {
+                val dayNightMode by DayNightHelper.dayNightModeFlow.collectAsState()
+                UtopiaTheme(
+                    useDarkTheme = dayNightMode.isNight,
+                ) {
+                    TransparentNavigator {
+                        BottomSheetNavigator(
+                            modifier = Modifier.navigationBarsPadding(),
+                            sheetShape = RoundedCornerShape(12.dp),
+                        ) {
+                            Navigator(
+                                screen = UtopiaScreen(),
+                                key = ROOT_NAVIGATOR_KEY,
+                            )
+                        }
                     }
                 }
             }

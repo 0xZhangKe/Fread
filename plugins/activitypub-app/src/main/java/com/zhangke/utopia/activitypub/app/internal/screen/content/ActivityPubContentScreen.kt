@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -98,7 +99,9 @@ class ActivityPubContentScreen(
                 if (account != null) {
                     val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
                     AnimatedVisibility(
-                        modifier = Modifier.padding(bottom = 60.dp),
+                        modifier = Modifier
+                            .navigationBarsPadding()
+                            .padding(bottom = 60.dp),
                         visible = !inImmersiveMode,
                         enter = fadeIn(),
                         exit = fadeOut(),

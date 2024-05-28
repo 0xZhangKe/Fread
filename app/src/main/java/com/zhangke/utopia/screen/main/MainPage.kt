@@ -92,7 +92,7 @@ fun Screen.MainPage() {
                     ) {
                         NavigationBar(
                             modifier = Modifier,
-                            height = 70.dp,
+                            height = 80.dp,
                         ) {
                             tabs.forEach { tab ->
                                 TabNavigationItem(tab)

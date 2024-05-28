@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
@@ -40,6 +41,7 @@ import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -54,7 +56,6 @@ fun FeedsContent(
     nestedScrollConnection: NestedScrollConnection?,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
-    val mainTabConnection = LocalMainTabConnection.current
     if (uiState.feeds.isEmpty()) {
         if (uiState.showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
@@ -69,15 +70,7 @@ fun FeedsContent(
                 onLoadMore = onLoadMore,
             )
             val lazyListState = state.lazyListState
-            val directional = rememberDirectionalLazyListState(lazyListState).scrollDirection
-            LaunchedEffect(directional) {
-                if (directional == ScrollDirection.Down) {
-                    mainTabConnection.openImmersiveMode()
-                } else if (directional == ScrollDirection.Up) {
-                    mainTabConnection.closeImmersiveMode()
-                }
-                Log.d("U_TEST", "directional: $directional")
-            }
+            ObserveToImmersive(lazyListState)
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -132,6 +125,21 @@ fun FeedsContent(
                     },
                 )
             }
+        }
+    }
+}
+
+@Composable
+private fun ObserveToImmersive(listState: LazyListState) {
+    val mainTabConnection = LocalMainTabConnection.current
+    val coroutineScope = rememberCoroutineScope()
+    val directional = rememberDirectionalLazyListState(listState).scrollDirection
+    LaunchedEffect(directional) {
+        Log.d("U_TEST", "directional: $directional")
+        if (directional == ScrollDirection.Down) {
+            mainTabConnection.openImmersiveMode(coroutineScope)
+        } else if (directional == ScrollDirection.Up) {
+            mainTabConnection.closeImmersiveMode(coroutineScope)
         }
     }
 }

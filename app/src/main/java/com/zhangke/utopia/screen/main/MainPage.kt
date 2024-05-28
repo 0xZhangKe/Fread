@@ -91,8 +91,8 @@ fun Screen.MainPage() {
                         exit = shrinkVertically(),
                     ) {
                         NavigationBar(
-                            windowInsets = WindowInsets(0, 0, 0, 0),
-                            modifier = Modifier.height(60.dp),
+                            modifier = Modifier,
+                            height = 70.dp,
                         ) {
                             tabs.forEach { tab ->
                                 TabNavigationItem(tab)

@@ -21,7 +21,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 fun ContentToolbar(
     title: String,
     showNextIcon: Boolean,
-    scrollBehavior: TopAppBarScrollBehavior,
+    scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     onMenuClick: () -> Unit,
     onNextClick: () -> Unit,

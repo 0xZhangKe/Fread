@@ -1,6 +1,5 @@
 package com.zhangke.utopia.feature.message.screens.home
 
-import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -13,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -60,7 +60,6 @@ class NotificationsHomeScreen : Screen {
         )
     }
 
-    @OptIn(ExperimentalFoundationApi::class)
     @Composable
     private fun NotificationsHomeScreenContent(
         uiState: NotificationsHomeUiState,
@@ -78,7 +77,11 @@ class NotificationsHomeScreen : Screen {
                         onAccountSelected = onAccountSelected,
                     )
                 } else {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    Spacer(
+                        modifier = Modifier
+                            .statusBarsPadding()
+                            .height(16.dp)
+                    )
                 }
             },
             snackbarHost = {
@@ -148,7 +151,9 @@ class NotificationsHomeScreen : Screen {
         onAccountSelected: (LoggedAccount) -> Unit,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .statusBarsPadding(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(

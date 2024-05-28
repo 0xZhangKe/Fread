@@ -1,5 +1,6 @@
 package com.zhangke.utopia.commonbiz.shared.composable
 
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -75,6 +76,7 @@ fun FeedsContent(
                 } else if (directional == ScrollDirection.Up) {
                     mainTabConnection.closeImmersiveMode()
                 }
+                Log.d("U_TEST", "directional: $directional")
             }
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier

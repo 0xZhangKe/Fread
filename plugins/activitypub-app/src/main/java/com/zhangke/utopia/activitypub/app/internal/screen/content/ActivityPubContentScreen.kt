@@ -18,8 +18,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBarDefaults
-import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -90,12 +88,12 @@ class ActivityPubContentScreen(
         val (role, config, account, errorMessage) = uiState
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalMainTabConnection.current
-        val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHostState)
             },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
             floatingActionButton = {
                 if (account != null) {
                     val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
@@ -133,11 +131,11 @@ class ActivityPubContentScreen(
                             tabList.size
                         }
                         TopBarWithTabLayout(
+                            topBarHeight = 42.dp,
                             topBarContent = {
                                 ContentToolbar(
                                     title = config.configName,
                                     showNextIcon = !isLatestContent,
-                                    scrollBehavior = scrollBehavior,
                                     windowInsets = WindowInsets(0, 0, 0, 0),
                                     onMenuClick = {
                                         coroutineScope.launch {

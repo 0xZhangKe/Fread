@@ -20,8 +20,8 @@ import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 
 private const val DB_VERSION = 1
-private const val DB_NAME = "activity_pub_status.db"
-private const val TABLE_NAME = "activity_pub_status"
+private const val DB_NAME = "expired_activity_pub_status.db"
+private const val TABLE_NAME = "expired_activity_pub_status"
 
 /**
  * 目前 Status 设计是进入页面后，先获取本地数据并显示，
@@ -29,7 +29,7 @@ private const val TABLE_NAME = "activity_pub_status"
  * 另外，本地数据库存储的列表都是连续的。
  */
 @Entity(tableName = TABLE_NAME, primaryKeys = ["id", "role"])
-data class ActivityPubStatusTableEntity(
+data class ExpiredActivityPubStatusTableEntity(
     val id: String,
     val role: IdentityRole,
     val type: ActivityPubStatusSourceType,
@@ -39,23 +39,23 @@ data class ActivityPubStatusTableEntity(
 )
 
 @Dao
-interface ActivityPubStatusDao {
+interface ExpiredActivityPubStatusDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role")
-    suspend fun query(role: IdentityRole, id: String): ActivityPubStatusTableEntity?
+    suspend fun query(role: IdentityRole, id: String): ExpiredActivityPubStatusTableEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun query(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int,
-    ): List<ActivityPubStatusTableEntity>
+    ): List<ExpiredActivityPubStatusTableEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT 1")
     suspend fun queryRecentStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-    ): ActivityPubStatusTableEntity?
+    ): ExpiredActivityPubStatusTableEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryListStatus(
@@ -63,20 +63,20 @@ interface ActivityPubStatusDao {
         type: ActivityPubStatusSourceType,
         listId: String,
         limit: Int,
-    ): List<ActivityPubStatusTableEntity>
+    ): List<ExpiredActivityPubStatusTableEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT 1")
     suspend fun queryRecentListStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String,
-    ): ActivityPubStatusTableEntity?
+    ): ExpiredActivityPubStatusTableEntity?
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entity: ActivityPubStatusTableEntity)
+    suspend fun insert(entity: ExpiredActivityPubStatusTableEntity)
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insert(entities: List<ActivityPubStatusTableEntity>)
+    suspend fun insert(entities: List<ExpiredActivityPubStatusTableEntity>)
 
     @Query("DELETE FROM $TABLE_NAME WHERE role=:role AND type=:type")
     suspend fun delete(role: IdentityRole, type: ActivityPubStatusSourceType)
@@ -100,21 +100,21 @@ interface ActivityPubStatusDao {
     IdentityRoleConverter::class,
 )
 @Database(
-    entities = [ActivityPubStatusTableEntity::class],
+    entities = [ExpiredActivityPubStatusTableEntity::class],
     version = DB_VERSION,
     exportSchema = false,
 )
-abstract class ActivityPubStatusDatabase : RoomDatabase() {
+abstract class ExpiredActivityPubStatusDatabase : RoomDatabase() {
 
-    abstract fun getDao(): ActivityPubStatusDao
+    abstract fun getDao(): ExpiredActivityPubStatusDao
 
     companion object {
 
-        private var instance: ActivityPubStatusDatabase? = null
+        private var instance: ExpiredActivityPubStatusDatabase? = null
 
-        fun getInstance(context: Context): ActivityPubStatusDatabase {
+        fun getInstance(context: Context): ExpiredActivityPubStatusDatabase {
             if (instance == null) {
-                synchronized(ActivityPubStatusDatabase::class.java) {
+                synchronized(ExpiredActivityPubStatusDatabase::class.java) {
                     if (instance == null) {
                         instance = createDatabase(context)
                     }
@@ -123,10 +123,10 @@ abstract class ActivityPubStatusDatabase : RoomDatabase() {
             return instance!!
         }
 
-        private fun createDatabase(context: Context): ActivityPubStatusDatabase {
+        private fun createDatabase(context: Context): ExpiredActivityPubStatusDatabase {
             return Room.databaseBuilder(
                 context,
-                ActivityPubStatusDatabase::class.java,
+                ExpiredActivityPubStatusDatabase::class.java,
                 DB_NAME
             ).build()
         }

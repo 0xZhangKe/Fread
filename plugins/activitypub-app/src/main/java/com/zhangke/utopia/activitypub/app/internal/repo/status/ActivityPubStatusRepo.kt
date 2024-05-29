@@ -1,135 +1,156 @@
 package com.zhangke.utopia.activitypub.app.internal.repo.status
 
-import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDao
-import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
+import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusTableEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.utopia.status.blog.BlogPoll
+import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
 class ActivityPubStatusRepo @Inject constructor(
-    private val statusDatabase: ActivityPubStatusDatabase,
+    private val userUriTransformer: UserUriTransformer,
+    private val activityPubStatusDatabases: ActivityPubStatusDatabases,
+    private val getUserStatus: GetUserStatusUseCase,
 ) {
 
-    private val statusDao: ActivityPubStatusDao get() = statusDatabase.getDao()
+    private val statusDao = activityPubStatusDatabases.getDao()
 
-    suspend fun query(role: IdentityRole, id: String): Status? {
-        return statusDao.query(role, id)?.status
-    }
-
-    suspend fun query(
+    suspend fun getStatusFromServer(
         role: IdentityRole,
+        uri: FormalUri,
         type: ActivityPubStatusSourceType,
-        listId: String?,
         limit: Int,
-    ): List<Status> {
-        return if (!listId.isNullOrEmpty() && type == ActivityPubStatusSourceType.LIST) {
-            statusDao.queryListStatus(role, ActivityPubStatusSourceType.LIST, listId, limit)
-        } else {
-            statusDao.query(role, type, limit)
-        }.map { it.status }
+        sinceId: String?,
+        maxId: String?,
+    ): Result<List<Status>> {
+        val insight = userUriTransformer.parse(uri)
+            ?: return Result.failure(IllegalArgumentException("Invalidate uri: $uri"))
+        return getUserStatus(role, insight, limit, sinceId, maxId)
     }
 
-    suspend fun insertOrReplace(
+    private suspend fun saveStatusToLocal(
         role: IdentityRole,
+        statusList: List<Status>,
         type: ActivityPubStatusSourceType,
         listId: String?,
-        status: Status,
+        /**
+         * 获取到该页数据的 max id，如果有，则表示可能会将该条数据标识为非断裂的。
+         */
+        maxId: String? = null,
+        /**
+         * 获取到该页数据的 since id，如果有，则表示本地数据可能是连续的。
+         */
+        sinceId: String? = null,
     ) {
-        statusDao.insert(
-            ActivityPubStatusTableEntity(
-                id = status.id,
+        if (statusList.isEmpty()) return
+        if (maxId.isNullOrEmpty().not()) {
+            // update max status not fracture
+            queryLocalStatus(
                 role = role,
                 type = type,
-                listId = listId,
-                status = status,
-                createTimestamp = status.datetime,
-            )
-        )
-    }
-
-    suspend fun deleteStatus(role: IdentityRole, type: ActivityPubStatusSourceType) {
-        statusDao.delete(role, type)
-    }
-
-    suspend fun deleteListStatus(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        listId: String,
-    ) {
-        statusDao.deleteListStatus(role, type, listId)
-    }
-
-    suspend fun insertOrReplace(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        listId: String?,
-        statuses: List<Status>,
-    ) {
-        statusDao.insert(
-            statuses.map {
-                ActivityPubStatusTableEntity(
-                    id = it.id,
+                statusId = maxId!!,
+                listId = listId
+            )?.let {
+                statusDao.insert(it.copy(fracture = false))
+            }
+        }
+        val sortedStatus = statusList.sortedByDescending { it.datetime }
+        val statusEntities = sortedStatus.mapIndexed { index, status ->
+            val fracture = if (index == sortedStatus.lastIndex) {
+                checkStatusIsFracture(
                     role = role,
                     type = type,
+                    status = status,
+                    sinceId = sinceId,
                     listId = listId,
-                    status = it,
-                    createTimestamp = it.datetime,
                 )
+            } else {
+                false
             }
-        )
-    }
-
-    suspend fun updateStatus(role: IdentityRole, status: Status) {
-        val originEntity = statusDao.query(role, status.id) ?: return
-        statusDao.insert(
-            ActivityPubStatusTableEntity(
-                id = status.id,
+            status.toDBEntity(
                 role = role,
-                type = originEntity.type,
-                listId = originEntity.listId,
-                status = status,
-                createTimestamp = status.datetime,
+                type = type,
+                fracture = fracture,
+                listId = listId,
             )
-        )
-    }
-
-    suspend fun updatePoll(role: IdentityRole, id: String, poll: BlogPoll) {
-        val originEntity = statusDao.query(role, id) ?: return
-        val newStatus = when (val status = originEntity.status) {
-            is Status.NewBlog -> {
-                status.copy(
-                    blog = status.blog.copy(poll = poll),
-                )
-            }
-
-            is Status.Reblog -> {
-                status.copy(
-                    reblog = status.reblog.copy(poll = poll),
-                )
-            }
         }
-        statusDao.insert(originEntity.copy(status = newStatus))
+        statusDao.insert(statusEntities)
     }
 
-    suspend fun queryRecentListStatus(
+    private suspend fun checkStatusIsFracture(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        status: Status,
+        sinceId: String? = null,
+        listId: String? = null,
+    ): Boolean {
+        val sinceStatus = sinceId?.let {
+            queryLocalStatus(role = role, type = type, statusId = it, listId = listId)
+        }
+        if (sinceStatus != null) return false
+        val allLocalStatus = queryLocalStatusList(
+            role = role,
+            type = type,
+            limit = Int.MAX_VALUE,
+            listId = listId,
+        )
+        val hasFresherStatus = allLocalStatus.any { it.status.datetime >= status.datetime }
+        return !hasFresherStatus
+    }
+
+    private suspend fun queryLocalStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String?,
-    ): Status? {
-        return if (listId == null) {
-            statusDao.queryRecentStatus(
-                role = role,
-                type = type,
-            )?.status
+        statusId: String,
+    ): ActivityPubStatusTableEntity? {
+        return if (type == ActivityPubStatusSourceType.LIST) {
+            statusDao.query(role, type, statusId)
         } else {
-            statusDao.queryRecentListStatus(
+            statusDao.queryStatusInList(
                 role = role,
                 type = type,
-                listId = listId,
-            )?.status
+                listId = listId!!,
+                id = statusId,
+            )
         }
+    }
+
+    private suspend fun queryLocalStatusList(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        limit: Int,
+        listId: String?,
+    ): List<ActivityPubStatusTableEntity> {
+        return if (type == ActivityPubStatusSourceType.LIST) {
+            statusDao.queryListStatus(
+                role = role,
+                type = type,
+                limit = limit,
+                listId = listId!!,
+            )
+        } else {
+            statusDao.queryTimelineStatus(role, type, limit)
+        }
+    }
+
+    private fun Status.toDBEntity(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        fracture: Boolean,
+        listId: String?,
+    ): ActivityPubStatusTableEntity {
+        return ActivityPubStatusTableEntity(
+            id = this.id,
+            role = role,
+            type = type,
+            createTimestamp = this.datetime,
+            listId = listId,
+            status = this,
+            fracture = fracture,
+        )
     }
 }

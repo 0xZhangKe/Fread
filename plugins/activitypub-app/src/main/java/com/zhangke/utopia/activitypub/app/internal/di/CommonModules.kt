@@ -3,7 +3,8 @@ package com.zhangke.utopia.activitypub.app.internal.di
 import android.content.Context
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.notifications.NotificationsDatabase
-import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabase
+import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabases
+import com.zhangke.utopia.activitypub.app.internal.db.status.ExpiredActivityPubStatusDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -20,12 +21,17 @@ internal class CommonModules {
     }
 
     @Provides
-    fun provideActivityPubStatusDatabase(@ApplicationContext context: Context): ActivityPubStatusDatabase {
-        return ActivityPubStatusDatabase.getInstance(context)
+    fun provideExpiredActivityPubStatusDatabase(@ApplicationContext context: Context): ExpiredActivityPubStatusDatabase {
+        return ExpiredActivityPubStatusDatabase.getInstance(context)
     }
 
     @Provides
     fun provideNotificationsDatabase(@ApplicationContext context: Context): NotificationsDatabase {
         return NotificationsDatabase.getInstance(context)
+    }
+
+    @Provides
+    fun provideActivityPubStatusDatabase(@ApplicationContext context: Context): ActivityPubStatusDatabases {
+        return ActivityPubStatusDatabases.getInstance(context)
     }
 }

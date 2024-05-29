@@ -11,7 +11,7 @@ import javax.inject.Inject
 
 class ListStatusRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    statusRepo: ActivityPubStatusRepo,
+    statusRepo: ExpiredActivityPubStatusRepo,
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
 ) : StatusRepo(statusRepo) {

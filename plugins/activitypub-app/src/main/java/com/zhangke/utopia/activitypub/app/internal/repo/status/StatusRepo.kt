@@ -8,7 +8,7 @@ import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 
 abstract class StatusRepo(
-    private val apStatusRepo: ActivityPubStatusRepo,
+    private val apStatusRepo: ExpiredActivityPubStatusRepo,
 ) {
 
     protected abstract suspend fun loadStatusFromServer(

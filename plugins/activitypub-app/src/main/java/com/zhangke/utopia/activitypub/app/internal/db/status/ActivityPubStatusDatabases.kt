@@ -72,6 +72,23 @@ interface ActivityPubStatusDao {
         listId: String,
     ): ActivityPubStatusTableEntity?
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND createTimestamp <= :datetime ORDER BY createTimestamp DESC LIMIT :limit")
+    suspend fun queryEarlierStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        limit: Int,
+        datetime: Long,
+    ): List<ActivityPubStatusTableEntity>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId AND createTimestamp <= :datetime ORDER BY createTimestamp DESC LIMIT :limit")
+    suspend fun queryEarlierListStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        listId: String,
+        limit: Int,
+        datetime: Long,
+    ): List<ActivityPubStatusTableEntity>
+
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insert(entity: ActivityPubStatusTableEntity)
 

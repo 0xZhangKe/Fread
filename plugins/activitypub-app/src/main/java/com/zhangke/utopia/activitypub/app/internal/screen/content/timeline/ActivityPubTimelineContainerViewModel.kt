@@ -15,16 +15,4 @@ class ActivityPubTimelineContainerViewModel (
     buildStatusUiState: BuildStatusUiStateUseCase,
     refactorToNewBlog: RefactorToNewBlogUseCase,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
-): SubViewModel(), IInteractiveHandler by InteractiveHandler(
-    statusProvider = statusProvider,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
-) {
-
-    private val _uiState = MutableStateFlow(ActivityPubTimelineUiState.default)
-    val uiState = _uiState.asStateFlow()
-
-    init {
-
-    }
-}
+)

@@ -3,32 +3,57 @@ package com.zhangke.utopia.activitypub.app.internal.repo.status
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusTableEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.utopia.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetUserStatusUseCase
+import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.FormalUri
 import javax.inject.Inject
 
-class ActivityPubStatusRepo @Inject constructor(
-    private val userUriTransformer: UserUriTransformer,
-    private val activityPubStatusDatabases: ActivityPubStatusDatabases,
-    private val getUserStatus: GetUserStatusUseCase,
+class ActivityPubTimelineStatusRepo @Inject constructor(
+    activityPubStatusDatabases: ActivityPubStatusDatabases,
+    private val getTimeline: GetTimelineStatusUseCase,
 ) {
 
     private val statusDao = activityPubStatusDatabases.getDao()
 
     suspend fun getStatusFromServer(
         role: IdentityRole,
-        uri: FormalUri,
         type: ActivityPubStatusSourceType,
-        limit: Int,
-        sinceId: String?,
-        maxId: String?,
+        limit: Int = 40,
+        sinceId: String? = null,
+        maxId: String? = null,
+        listId: String? = null,
     ): Result<List<Status>> {
-        val insight = userUriTransformer.parse(uri)
-            ?: return Result.failure(IllegalArgumentException("Invalidate uri: $uri"))
-        return getUserStatus(role, insight, limit, sinceId, maxId)
+        return getTimeline(
+            role = role,
+            type = type,
+            limit = limit,
+            maxId = maxId,
+            sinceId = sinceId,
+            listId = listId,
+        ).onSuccess {
+            saveStatusToLocal(
+                role = role,
+                type = type,
+                statusList = it,
+                listId = listId,
+                maxId = maxId,
+                sinceId = sinceId,
+            )
+        }
+    }
+
+    suspend fun getStatusFromLocal(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        limit: Int = 40,
+        listId: String? = null,
+    ): List<Status> {
+        return queryLocalStatusList(
+            role = role,
+            type = type,
+            limit = limit,
+            listId = listId,
+        ).map { it.status }
     }
 
     private suspend fun saveStatusToLocal(

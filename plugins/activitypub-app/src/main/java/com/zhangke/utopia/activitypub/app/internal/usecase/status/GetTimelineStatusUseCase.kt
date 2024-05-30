@@ -55,7 +55,8 @@ class GetTimelineStatusUseCase @Inject constructor(
             )
         }
         return entitiesResult.map { list ->
-            list.map { statusAdapter.toStatus(it, platform) }
+            list.filter { it.id != sinceId && it.id != maxId }
+                .map { statusAdapter.toStatus(it, platform) }
         }
     }
 }

@@ -4,6 +4,7 @@ import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDa
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusTableEntity
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.usecase.status.GetTimelineStatusUseCase
+import com.zhangke.utopia.common.status.StatusConfigurationDefault
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
 import javax.inject.Inject
@@ -18,11 +19,63 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     suspend fun getStatusFromServer(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-        limit: Int = 40,
+        limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
+        sinceId: String? = null,
+        listId: String? = null,
+    ): Result<List<Status>> {
+        return getStatusFromServerInternal(
+            role = role,
+            type = type,
+            limit = limit,
+            sinceId = sinceId,
+            listId = listId,
+        )
+    }
+
+    suspend fun getStatusFromLocal(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
+        listId: String? = null,
+    ): List<ActivityPubStatusTableEntity> {
+        return queryLocalStatusList(
+            role = role,
+            type = type,
+            limit = limit,
+            listId = listId,
+        )
+    }
+
+    suspend fun loadMore(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        maxId: String,
+        listId: String? = null,
+    ): Result<List<ActivityPubStatusTableEntity>> {
+        val localStatusList = loadMoreFromLocal(
+            role = role,
+            type = type,
+            maxId = maxId,
+            listId = listId,
+        )
+        if (localStatusList.isNotEmpty()) return Result.success(localStatusList)
+        val serverStatus = getStatusFromServerInternal(
+            role = role,
+            type = type,
+            maxId = maxId,
+            listId = listId,
+        )
+        return emptyList()
+    }
+
+    private suspend fun getStatusFromServerInternal(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
         sinceId: String? = null,
         maxId: String? = null,
         listId: String? = null,
-    ): Result<List<Status>> {
+    ): Result<List<ActivityPubStatusTableEntity>> {
         return getTimeline(
             role = role,
             type = type,
@@ -42,18 +95,25 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         }
     }
 
-    suspend fun getStatusFromLocal(
+    private suspend fun loadMoreFromLocal(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-        limit: Int = 40,
+        maxId: String,
         listId: String? = null,
-    ): List<Status> {
-        return queryLocalStatusList(
+    ): List<ActivityPubStatusTableEntity> {
+        val localStatus = queryLocalStatus(
             role = role,
             type = type,
-            limit = limit,
             listId = listId,
-        ).map { it.status }
+            statusId = maxId,
+        ) ?: return emptyList()
+        return queryEarlierStatus(
+            role = role,
+            type = type,
+            listId = listId,
+            datetime = localStatus.createTimestamp,
+            limit = StatusConfigurationDefault.config.loadFromLocalLimit,
+        ).filter { it.id != localStatus.id }
     }
 
     private suspend fun saveStatusToLocal(
@@ -159,6 +219,47 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             )
         } else {
             statusDao.queryTimelineStatus(role, type, limit)
+        }
+    }
+
+    private suspend fun queryEarlierStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        listId: String?,
+        datetime: Long,
+        limit: Int,
+    ): List<ActivityPubStatusTableEntity> {
+        return if (listId.isNullOrEmpty()) {
+            statusDao.queryEarlierStatus(
+                role = role,
+                type = type,
+                limit = limit,
+                datetime = datetime,
+            )
+        } else {
+            statusDao.queryEarlierListStatus(
+                role = role,
+                type = type,
+                limit = limit,
+                listId = listId,
+                datetime = datetime,
+            )
+        }
+    }
+
+    private fun List<Status>.toDBEntities(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        fracture: Boolean,
+        listId: String?,
+    ): List<ActivityPubStatusTableEntity> {
+        return this.map {
+            it.toDBEntity(
+                role = role,
+                type = type,
+                fracture = fracture,
+                listId = listId,
+            )
         }
     }
 

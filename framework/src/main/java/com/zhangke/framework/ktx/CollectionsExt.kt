@@ -2,6 +2,7 @@ package com.zhangke.framework.ktx
 
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastForEachIndexed
 
 fun <T> Collection<T>.isSingle(): Boolean = size == 1
 
@@ -31,4 +32,18 @@ fun Iterable<Dp>.sum(): Dp {
         sum += element
     }
     return sum
+}
+
+fun <T> List<T>.distinctByKey(getKey: (index: Int, item: T) -> String): List<T> {
+    if (this.size < 2) return this
+    val keySet = mutableSetOf<String>()
+    val newList = mutableListOf<T>()
+    this.fastForEachIndexed { index, item ->
+        val key = getKey(index, item)
+        if (!keySet.contains(key)) {
+            keySet += key
+            newList += item
+        }
+    }
+    return newList
 }

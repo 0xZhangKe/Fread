@@ -30,5 +30,28 @@ sealed interface ActivityPubTimelineItem {
         val status: StatusUiState,
     ) : ActivityPubTimelineItem
 
-    data object FractureItem : ActivityPubTimelineItem
+    data class FractureItem(val loadState: LoadState) : ActivityPubTimelineItem
 }
+
+fun List<ActivityPubTimelineItem>.getStatusIdOrNull(index: Int): String? {
+    return this.getOrNull(index)?.let {
+        if (it is ActivityPubTimelineItem.StatusItem) {
+            it.status.status.id
+        } else {
+            null
+        }
+    }
+}
+
+val List<ActivityPubTimelineItem>.tailFractureCount: Int
+    get() {
+        var count = 0
+        for (i in this.lastIndex downTo 0) {
+            if (this[i] is ActivityPubTimelineItem.FractureItem) {
+                count++
+            } else {
+                break
+            }
+        }
+        return count
+    }

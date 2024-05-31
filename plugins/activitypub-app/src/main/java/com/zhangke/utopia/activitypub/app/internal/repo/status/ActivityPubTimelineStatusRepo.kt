@@ -22,11 +22,25 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
         sinceId: String? = null,
         listId: String? = null,
-    ): Result<List<Status>> {
+    ): Result<List<ActivityPubStatusTableEntity>> {
         return getStatusFromServerInternal(
             role = role,
             type = type,
             limit = limit,
+            sinceId = sinceId,
+            listId = listId,
+        )
+    }
+
+    suspend fun loadPreviousPageStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        sinceId: String,
+        listId: String? = null,
+    ): Result<List<ActivityPubStatusTableEntity>> {
+        return getStatusFromServerInternal(
+            role = role,
+            type = type,
             sinceId = sinceId,
             listId = listId,
         )
@@ -59,13 +73,26 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             listId = listId,
         )
         if (localStatusList.isNotEmpty()) return Result.success(localStatusList)
-        val serverStatus = getStatusFromServerInternal(
+        return getStatusFromServerInternal(
             role = role,
             type = type,
             maxId = maxId,
             listId = listId,
         )
-        return emptyList()
+    }
+
+    suspend fun loadFracture(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        maxId: String,
+        listId: String? = null,
+    ): Result<List<ActivityPubStatusTableEntity>> {
+        return getStatusFromServerInternal(
+            role = role,
+            type = type,
+            maxId = maxId,
+            listId = listId,
+        )
     }
 
     private suspend fun getStatusFromServerInternal(
@@ -83,14 +110,21 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             maxId = maxId,
             sinceId = sinceId,
             listId = listId,
-        ).onSuccess {
+        ).map {
+            transformStatusToLocal(
+                role = role,
+                statusList = it,
+                type = type,
+                listId = listId,
+                sinceId = sinceId,
+            )
+        }.onSuccess {
             saveStatusToLocal(
                 role = role,
                 type = type,
                 statusList = it,
                 listId = listId,
                 maxId = maxId,
-                sinceId = sinceId,
             )
         }
     }
@@ -118,17 +152,13 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
 
     private suspend fun saveStatusToLocal(
         role: IdentityRole,
-        statusList: List<Status>,
+        statusList: List<ActivityPubStatusTableEntity>,
         type: ActivityPubStatusSourceType,
         listId: String?,
         /**
          * 获取到该页数据的 max id，如果有，则表示可能会将该条数据标识为非断裂的。
          */
         maxId: String? = null,
-        /**
-         * 获取到该页数据的 since id，如果有，则表示本地数据可能是连续的。
-         */
-        sinceId: String? = null,
     ) {
         if (statusList.isEmpty()) return
         if (maxId.isNullOrEmpty().not()) {
@@ -142,8 +172,22 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
                 statusDao.insert(it.copy(fracture = false))
             }
         }
+        statusDao.insert(statusList)
+    }
+
+    private suspend fun transformStatusToLocal(
+        role: IdentityRole,
+        statusList: List<Status>,
+        type: ActivityPubStatusSourceType,
+        listId: String? = null,
+        /**
+         * 获取到该页数据的 since id，如果有，则表示本地数据可能是连续的。
+         */
+        sinceId: String? = null,
+    ): List<ActivityPubStatusTableEntity> {
+        if (statusList.isEmpty()) return emptyList()
         val sortedStatus = statusList.sortedByDescending { it.datetime }
-        val statusEntities = sortedStatus.mapIndexed { index, status ->
+        return sortedStatus.mapIndexed { index, status ->
             val fracture = if (index == sortedStatus.lastIndex) {
                 checkStatusIsFracture(
                     role = role,
@@ -162,7 +206,6 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
                 listId = listId,
             )
         }
-        statusDao.insert(statusEntities)
     }
 
     private suspend fun checkStatusIsFracture(

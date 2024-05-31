@@ -24,6 +24,11 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
+// Auto delete expired status
+// Double top to scroll to top
+// pull to refresh to load previous page
+// 可能并不需要 fracture，因为可以下拉刷新成功后直接从最新的数据开始，上拉加载也是连续的页面，加载上一页也是连续的。
+//
 class ActivityPubTimelineViewModel(
     private val statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
@@ -104,6 +109,7 @@ class ActivityPubTimelineViewModel(
                     _uiState.update {
                         val newList = list.toMutableList()
                         newList.addAll(it.items)
+                        newList.dropLastFracture()
                         it.copy(
                             items = newList,
                             showPagingLoadingPlaceholder = false,
@@ -128,6 +134,7 @@ class ActivityPubTimelineViewModel(
                 }.onSuccess { list ->
                     val newList = list.toMutableList()
                     newList += _uiState.value.items
+                    newList.dropLastFracture()
                     _uiState.update {
                         it.copy(
                             items = newList,
@@ -254,6 +261,7 @@ class ActivityPubTimelineViewModel(
             }
         }
         newList.addAll(items)
+        newList.dropLastFracture()
         return newList
     }
 

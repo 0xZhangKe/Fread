@@ -55,3 +55,9 @@ val List<ActivityPubTimelineItem>.tailFractureCount: Int
         }
         return count
     }
+
+fun MutableList<ActivityPubTimelineItem>.dropLastFracture() {
+    if (lastOrNull() is ActivityPubTimelineItem.FractureItem) {
+        removeLast()
+    }
+}

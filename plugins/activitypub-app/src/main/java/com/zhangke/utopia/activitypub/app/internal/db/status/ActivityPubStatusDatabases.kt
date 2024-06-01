@@ -32,7 +32,6 @@ data class ActivityPubStatusTableEntity(
     val listId: String?,
     val status: Status,
     val createTimestamp: Long,
-    val fracture: Boolean,
 )
 
 @Dao
@@ -96,7 +95,10 @@ interface ActivityPubStatusDao {
     suspend fun insert(entities: List<ActivityPubStatusTableEntity>)
 
     @Query("DELETE FROM $TABLE_NAME WHERE role=:role AND type=:type")
-    suspend fun deleteStatus(role: IdentityRole, type: ActivityPubStatusSourceType)
+    suspend fun delete(role: IdentityRole, type: ActivityPubStatusSourceType)
+
+    @Query("DELETE FROM $TABLE_NAME WHERE role=:role AND type=:type AND listId=:listId")
+    suspend fun deleteListStatus(role: IdentityRole, type: ActivityPubStatusSourceType, listId: String)
 
     @Query("DELETE FROM $TABLE_NAME WHERE id=:id")
     suspend fun delete(id: String)

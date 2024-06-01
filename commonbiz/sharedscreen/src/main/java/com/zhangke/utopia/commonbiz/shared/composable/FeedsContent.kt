@@ -130,12 +130,11 @@ fun FeedsContent(
 }
 
 @Composable
-private fun ObserveToImmersive(listState: LazyListState) {
+fun ObserveToImmersive(listState: LazyListState) {
     val mainTabConnection = LocalMainTabConnection.current
     val coroutineScope = rememberCoroutineScope()
     val directional = rememberDirectionalLazyListState(listState).scrollDirection
     LaunchedEffect(directional) {
-        Log.d("U_TEST", "directional: $directional")
         if (directional == ScrollDirection.Down) {
             mainTabConnection.openImmersiveMode(coroutineScope)
         } else if (directional == ScrollDirection.Up) {
@@ -145,7 +144,7 @@ private fun ObserveToImmersive(listState: LazyListState) {
 }
 
 @Composable
-private fun InitErrorContent(errorMessage: TextString) {
+fun InitErrorContent(errorMessage: TextString) {
     Box(modifier = Modifier.fillMaxSize()) {
         Text(
             modifier = Modifier

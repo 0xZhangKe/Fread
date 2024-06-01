@@ -15,21 +15,51 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
 ) {
 
     private val statusDao = activityPubStatusDatabases.getDao()
+    private val statusConfig = StatusConfigurationDefault.config
 
-    suspend fun getStatusFromServer(
+    suspend fun getFresherStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-        limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
-        sinceId: String? = null,
         listId: String? = null,
-    ): Result<List<ActivityPubStatusTableEntity>> {
-        return getStatusFromServerInternal(
+        limit: Int = statusConfig.loadFromServerLimit,
+    ): Result<List<Status>> {
+        return getTimeline(
             role = role,
             type = type,
             limit = limit,
-            sinceId = sinceId,
             listId = listId,
+            maxId = null,
+            sinceId = null,
+        ).onSuccess {
+            saveFresherStatus(
+                role = role,
+                type = type,
+                listId = listId,
+                statusList = it,
+            )
+        }
+    }
+
+    private suspend fun saveFresherStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        listId: String?,
+        statusList: List<Status>,
+    ) {
+        if (statusList.isEmpty()) return
+        val earlierStatus = statusList.minBy { it.datetime }
+        val localEarlierStatus = queryEarlierStatus(
+            role = role,
+            type = type,
+            listId = listId,
+            datetime = earlierStatus.datetime,
+            limit = 1,
         )
+        if (localEarlierStatus.isEmpty()) {
+            // local data are expired
+            deleteStatus(role, type, listId)
+        }
+        statusList.insertToLocal(role, type, listId)
     }
 
     suspend fun loadPreviousPageStatus(
@@ -37,27 +67,32 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         type: ActivityPubStatusSourceType,
         sinceId: String,
         listId: String? = null,
-    ): Result<List<ActivityPubStatusTableEntity>> {
-        return getStatusFromServerInternal(
+        limit: Int = statusConfig.loadFromServerLimit,
+    ): Result<List<Status>> {
+        return getTimeline(
             role = role,
             type = type,
+            limit = limit,
+            maxId = null,
             sinceId = sinceId,
             listId = listId,
-        )
+        ).onSuccess {
+            it.insertToLocal(role, type, listId)
+        }
     }
 
     suspend fun getStatusFromLocal(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-        limit: Int = StatusConfigurationDefault.config.loadFromLocalLimit,
+        limit: Int = statusConfig.loadFromLocalLimit,
         listId: String? = null,
-    ): List<ActivityPubStatusTableEntity> {
+    ): List<Status> {
         return queryLocalStatusList(
             role = role,
             type = type,
             limit = limit,
             listId = listId,
-        )
+        ).map { it.status }
     }
 
     suspend fun loadMore(
@@ -65,7 +100,8 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         type: ActivityPubStatusSourceType,
         maxId: String,
         listId: String? = null,
-    ): Result<List<ActivityPubStatusTableEntity>> {
+        limit: Int = statusConfig.loadFromLocalLimit,
+    ): Result<List<Status>> {
         val localStatusList = loadMoreFromLocal(
             role = role,
             type = type,
@@ -73,59 +109,15 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             listId = listId,
         )
         if (localStatusList.isNotEmpty()) return Result.success(localStatusList)
-        return getStatusFromServerInternal(
-            role = role,
-            type = type,
-            maxId = maxId,
-            listId = listId,
-        )
-    }
-
-    suspend fun loadFracture(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        maxId: String,
-        listId: String? = null,
-    ): Result<List<ActivityPubStatusTableEntity>> {
-        return getStatusFromServerInternal(
-            role = role,
-            type = type,
-            maxId = maxId,
-            listId = listId,
-        )
-    }
-
-    private suspend fun getStatusFromServerInternal(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        limit: Int = StatusConfigurationDefault.config.loadFromServerLimit,
-        sinceId: String? = null,
-        maxId: String? = null,
-        listId: String? = null,
-    ): Result<List<ActivityPubStatusTableEntity>> {
         return getTimeline(
             role = role,
             type = type,
             limit = limit,
             maxId = maxId,
-            sinceId = sinceId,
+            sinceId = null,
             listId = listId,
-        ).map {
-            transformStatusToLocal(
-                role = role,
-                statusList = it,
-                type = type,
-                listId = listId,
-                sinceId = sinceId,
-            )
-        }.onSuccess {
-            saveStatusToLocal(
-                role = role,
-                type = type,
-                statusList = it,
-                listId = listId,
-                maxId = maxId,
-            )
+        ).onSuccess {
+            it.insertToLocal(role, type, listId)
         }
     }
 
@@ -134,7 +126,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         type: ActivityPubStatusSourceType,
         maxId: String,
         listId: String? = null,
-    ): List<ActivityPubStatusTableEntity> {
+    ): List<Status> {
         val localStatus = queryLocalStatus(
             role = role,
             type = type,
@@ -150,83 +142,12 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         ).filter { it.id != localStatus.id }
     }
 
-    private suspend fun saveStatusToLocal(
+    private suspend fun List<Status>.insertToLocal(
         role: IdentityRole,
-        statusList: List<ActivityPubStatusTableEntity>,
         type: ActivityPubStatusSourceType,
         listId: String?,
-        /**
-         * 获取到该页数据的 max id，如果有，则表示可能会将该条数据标识为非断裂的。
-         */
-        maxId: String? = null,
     ) {
-        if (statusList.isEmpty()) return
-        if (maxId.isNullOrEmpty().not()) {
-            // update max status not fracture
-            queryLocalStatus(
-                role = role,
-                type = type,
-                statusId = maxId!!,
-                listId = listId
-            )?.let {
-                statusDao.insert(it.copy(fracture = false))
-            }
-        }
-        statusDao.insert(statusList)
-    }
-
-    private suspend fun transformStatusToLocal(
-        role: IdentityRole,
-        statusList: List<Status>,
-        type: ActivityPubStatusSourceType,
-        listId: String? = null,
-        /**
-         * 获取到该页数据的 since id，如果有，则表示本地数据可能是连续的。
-         */
-        sinceId: String? = null,
-    ): List<ActivityPubStatusTableEntity> {
-        if (statusList.isEmpty()) return emptyList()
-        val sortedStatus = statusList.sortedByDescending { it.datetime }
-        return sortedStatus.mapIndexed { index, status ->
-            val fracture = if (index == sortedStatus.lastIndex) {
-                checkStatusIsFracture(
-                    role = role,
-                    type = type,
-                    status = status,
-                    sinceId = sinceId,
-                    listId = listId,
-                )
-            } else {
-                false
-            }
-            status.toDBEntity(
-                role = role,
-                type = type,
-                fracture = fracture,
-                listId = listId,
-            )
-        }
-    }
-
-    private suspend fun checkStatusIsFracture(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        status: Status,
-        sinceId: String? = null,
-        listId: String? = null,
-    ): Boolean {
-        val sinceStatus = sinceId?.let {
-            queryLocalStatus(role = role, type = type, statusId = it, listId = listId)
-        }
-        if (sinceStatus != null) return false
-        val allLocalStatus = queryLocalStatusList(
-            role = role,
-            type = type,
-            limit = Int.MAX_VALUE,
-            listId = listId,
-        )
-        val hasFresherStatus = allLocalStatus.any { it.status.datetime >= status.datetime }
-        return !hasFresherStatus
+        statusDao.insert(this.toDBEntities(role, type, listId))
     }
 
     private suspend fun queryLocalStatus(
@@ -271,14 +192,14 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         listId: String?,
         datetime: Long,
         limit: Int,
-    ): List<ActivityPubStatusTableEntity> {
+    ): List<Status> {
         return if (listId.isNullOrEmpty()) {
             statusDao.queryEarlierStatus(
                 role = role,
                 type = type,
                 limit = limit,
                 datetime = datetime,
-            )
+            ).map { it.status }
         } else {
             statusDao.queryEarlierListStatus(
                 role = role,
@@ -286,21 +207,31 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
                 limit = limit,
                 listId = listId,
                 datetime = datetime,
-            )
+            ).map { it.status }
+        }
+    }
+
+    private suspend fun deleteStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        listId: String?,
+    ) {
+        if (listId.isNullOrEmpty()) {
+            statusDao.delete(role, type)
+        } else {
+            statusDao.deleteListStatus(role, type, listId)
         }
     }
 
     private fun List<Status>.toDBEntities(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-        fracture: Boolean,
         listId: String?,
     ): List<ActivityPubStatusTableEntity> {
         return this.map {
             it.toDBEntity(
                 role = role,
                 type = type,
-                fracture = fracture,
                 listId = listId,
             )
         }
@@ -309,7 +240,6 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     private fun Status.toDBEntity(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-        fracture: Boolean,
         listId: String?,
     ): ActivityPubStatusTableEntity {
         return ActivityPubStatusTableEntity(
@@ -319,7 +249,6 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             createTimestamp = this.datetime,
             listId = listId,
             status = this,
-            fracture = fracture,
         )
     }
 }

@@ -41,13 +41,12 @@ import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.UtopiaTabRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubTimelineType
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
+import com.zhangke.utopia.activitypub.app.internal.screen.content.timeline.ActivityPubTimelineTab
 import com.zhangke.utopia.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.instance.PlatformDetailRoute
-import com.zhangke.utopia.activitypub.app.internal.screen.lists.ActivityPubListStatusTab
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
-import com.zhangke.utopia.activitypub.app.internal.screen.timeline.ActivityPubTimelineTab
 import com.zhangke.utopia.activitypub.app.internal.screen.trending.TrendingStatusTab
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.model.IdentityRole
@@ -217,21 +216,21 @@ class ActivityPubContentScreen(
             is ContentConfig.ActivityPubContent.ContentTab.HomeTimeline -> {
                 ActivityPubTimelineTab(
                     role = role,
-                    type = ActivityPubTimelineType.HOME,
+                    type = ActivityPubStatusSourceType.TIMELINE_HOME,
                 )
             }
 
             is ContentConfig.ActivityPubContent.ContentTab.LocalTimeline -> {
                 ActivityPubTimelineTab(
                     role = role,
-                    type = ActivityPubTimelineType.LOCAL,
+                    type = ActivityPubStatusSourceType.TIMELINE_LOCAL,
                 )
             }
 
             is ContentConfig.ActivityPubContent.ContentTab.PublicTimeline -> {
                 ActivityPubTimelineTab(
                     role = role,
-                    type = ActivityPubTimelineType.PUBLIC,
+                    type = ActivityPubStatusSourceType.TIMELINE_PUBLIC,
                 )
             }
 
@@ -242,8 +241,9 @@ class ActivityPubContentScreen(
             }
 
             is ContentConfig.ActivityPubContent.ContentTab.ListTimeline -> {
-                ActivityPubListStatusTab(
+                ActivityPubTimelineTab(
                     role = role,
+                    type = ActivityPubStatusSourceType.LIST,
                     listId = listId,
                     listTitle = name,
                 )

@@ -18,6 +18,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.sensitive.SensitiveLazyColumn
 import com.zhangke.framework.composable.sensitive.SensitiveLazyColumnState
+import com.zhangke.framework.composable.sensitive.transform
 
 @Composable
 fun InlineVideoLazyColumn(
@@ -30,9 +31,10 @@ fun InlineVideoLazyColumn(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
+    indexMapping: ((Int) -> Int) = { it },
     content: LazyListScope.() -> Unit,
 ) {
-    val sensitiveState = remember {
+    val sensitiveState = remember(state) {
         mutableStateOf(
             SensitiveLazyColumnState(
                 firstVisibleIndex = 0,
@@ -44,7 +46,7 @@ fun InlineVideoLazyColumn(
         )
     }
     val localSensitiveState by sensitiveState
-    val playableIndexRecorder = remember {
+    val playableIndexRecorder = remember(state) {
         PlayableIndexRecorder()
     }
     LaunchedEffect(localSensitiveState) {
@@ -56,7 +58,9 @@ fun InlineVideoLazyColumn(
         SensitiveLazyColumn(
             modifier = modifier,
             state = state,
-            sensitiveLazyColumnState = sensitiveState,
+            onSensitiveLayoutChanged = {
+                sensitiveState.value = it.transform(indexMapping)
+            },
             contentPadding = contentPadding,
             reverseLayout = reverseLayout,
             verticalArrangement = verticalArrangement,

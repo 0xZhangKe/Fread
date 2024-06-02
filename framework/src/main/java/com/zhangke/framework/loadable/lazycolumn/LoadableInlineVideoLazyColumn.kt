@@ -5,6 +5,7 @@ import androidx.compose.foundation.gestures.ScrollableDefaults
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.rememberLazyListState
@@ -15,8 +16,6 @@ import androidx.compose.material.pullrefresh.PullRefreshState
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,8 +25,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
-import com.zhangke.framework.composable.rememberDirectionalLazyListState
+import com.zhangke.framework.loadable.previous.LoadPreviousPageItem
+import com.zhangke.framework.loadable.previous.LoadPreviousPageUiState
+import com.zhangke.framework.loadable.previous.PreviousPageLoadingState
 import com.zhangke.framework.utils.LoadState
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -37,6 +39,7 @@ fun LoadableInlineVideoLazyColumn(
     state: LoadableLazyInlineVideoColumnState,
     refreshing: Boolean,
     loadState: LoadState,
+    loadPreviousPageState: LoadPreviousPageUiState? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
@@ -48,14 +51,20 @@ fun LoadableInlineVideoLazyColumn(
     content: LazyListScope.() -> Unit,
 ) {
     val lazyListState = state.lazyListState
-    val listLayoutInfo by remember { derivedStateOf { lazyListState.layoutInfo } }
     val loadMoreStateInternal by remember(loadState) {
         mutableStateOf(loadState)
     }
     val loadMoreFunction by rememberUpdatedState(newValue = state.loadMoreState.onLoadMore)
+    var previousPageLoadingState: PreviousPageLoadingState by remember {
+        mutableStateOf(PreviousPageLoadingState.Idle)
+    }
+    if (loadPreviousPageState != null) {
+        ConsumeFlow(loadPreviousPageState.loadingState) {
+            previousPageLoadingState = it
+        }
+    }
     Box(
-        modifier = modifier
-            .pullRefresh(state.pullRefreshState)
+        modifier = modifier.pullRefresh(state.pullRefreshState)
     ) {
         InlineVideoLazyColumn(
             contentPadding = contentPadding,
@@ -65,7 +74,20 @@ fun LoadableInlineVideoLazyColumn(
             horizontalAlignment = horizontalAlignment,
             flingBehavior = flingBehavior,
             userScrollEnabled = userScrollEnabled,
+            indexMapping = {
+                // + 1 for load previous item
+                it + 1
+            },
             content = {
+                item {
+                    LoadPreviousPageItem(
+                        modifier = Modifier.fillMaxWidth(),
+                        state = previousPageLoadingState,
+                        onLoadPreviousPage = {
+                            loadPreviousPageState?.onLoadPreviousPage?.invoke()
+                        },
+                    )
+                }
                 content()
                 item {
                     if (loadingContent != null) {
@@ -86,20 +108,18 @@ fun LoadableInlineVideoLazyColumn(
             scale = true,
         )
     }
-    var inLoadingMoreZone by remember {
-        mutableStateOf(false)
-    }
-    val currentLastVisibleIndex = listLayoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
-    val remainCount = listLayoutInfo.totalItemsCount - currentLastVisibleIndex - 1
-    inLoadingMoreZone = listLayoutInfo.totalItemsCount > 0 &&
-            remainCount <= state.loadMoreState.loadMoreRemainCountThreshold &&
-            listLayoutInfo.totalItemsCount > state.loadMoreState.loadMoreRemainCountThreshold
-    val directional = rememberDirectionalLazyListState(lazyListState).scrollDirection
-    LaunchedEffect(inLoadingMoreZone, directional) {
-        if (inLoadingMoreZone) {
-            state.loadMoreState.onLoadMore()
-        }
-    }
+    ObserveLazyListLoadEvent(
+        lazyListState = lazyListState,
+        loadPreviousPageRemainCountThreshold = loadPreviousPageState?.loadPreviousPageThreshold
+            ?: 3,
+        loadMoreRemainCountThreshold = state.loadMoreState.loadMoreRemainCountThreshold,
+        onLoadPrevious = {
+            if (loadPreviousPageState != null && previousPageLoadingState is PreviousPageLoadingState.Idle) {
+                loadPreviousPageState.onLoadPreviousPage()
+            }
+        },
+        onLoadMore = state.loadMoreState.onLoadMore,
+    )
 }
 
 @Composable

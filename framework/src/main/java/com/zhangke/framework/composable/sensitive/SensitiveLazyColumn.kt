@@ -24,7 +24,7 @@ import kotlin.math.max
 fun SensitiveLazyColumn(
     modifier: Modifier = Modifier,
     state: LazyListState = rememberLazyListState(),
-    sensitiveLazyColumnState: MutableState<SensitiveLazyColumnState>? = null,
+    onSensitiveLayoutChanged: (SensitiveLazyColumnState) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
@@ -34,30 +34,30 @@ fun SensitiveLazyColumn(
     userScrollEnabled: Boolean = true,
     content: LazyListScope.() -> Unit,
 ) {
-    if (sensitiveLazyColumnState != null) {
-        val layoutInfo by remember { derivedStateOf { state.layoutInfo } }
-        val visibleItemsInfo = layoutInfo.visibleItemsInfo
-        if (visibleItemsInfo.isNotEmpty()) {
-            val firstItemLayoutInfo = visibleItemsInfo.first()
-            val lastItemLayoutInfo = visibleItemsInfo.last()
-            val firstVisiblePercent = state.visibilityPercent(firstItemLayoutInfo)
-            val lastVisiblePercent = state.visibilityPercent(lastItemLayoutInfo)
-            val isScrollInProgress = state.isScrollInProgress
-            LaunchedEffect(
-                visibleItemsInfo,
-                isScrollInProgress,
-                firstVisiblePercent,
-                lastVisiblePercent,
-                isScrollInProgress,
-            ) {
-                sensitiveLazyColumnState.value = SensitiveLazyColumnState(
+    val layoutInfo by remember { derivedStateOf { state.layoutInfo } }
+    val visibleItemsInfo = layoutInfo.visibleItemsInfo
+    if (visibleItemsInfo.isNotEmpty()) {
+        val firstItemLayoutInfo = visibleItemsInfo.first()
+        val lastItemLayoutInfo = visibleItemsInfo.last()
+        val firstVisiblePercent = state.visibilityPercent(firstItemLayoutInfo)
+        val lastVisiblePercent = state.visibilityPercent(lastItemLayoutInfo)
+        val isScrollInProgress = state.isScrollInProgress
+        LaunchedEffect(
+            visibleItemsInfo,
+            isScrollInProgress,
+            firstVisiblePercent,
+            lastVisiblePercent,
+            isScrollInProgress,
+        ) {
+            onSensitiveLayoutChanged(
+                SensitiveLazyColumnState(
                     firstVisibleIndex = firstItemLayoutInfo.index,
                     firstVisiblePercent = firstVisiblePercent,
                     lastVisibleIndex = lastItemLayoutInfo.index,
                     lastVisiblePercent = lastVisiblePercent,
                     isScrollInProgress = isScrollInProgress,
                 )
-            }
+            )
         }
     }
     LazyColumn(

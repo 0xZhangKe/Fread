@@ -157,14 +157,14 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         statusId: String,
     ): ActivityPubStatusTableEntity? {
         return if (type == ActivityPubStatusSourceType.LIST) {
-            statusDao.query(role, type, statusId)
-        } else {
             statusDao.queryStatusInList(
                 role = role,
                 type = type,
                 listId = listId!!,
                 id = statusId,
             )
+        } else {
+            statusDao.query(role, type, statusId)
         }
     }
 
@@ -247,7 +247,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             role = role,
             type = type,
             createTimestamp = this.datetime,
-            listId = listId,
+            listId = listId.orEmpty(),
             status = this,
         )
     }

@@ -1,4 +1,4 @@
-package com.zhangke.utopia.commonbiz.shared.composable
+package com.zhangke.framework.loadable.previous
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,24 +14,73 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.TextString
-import com.zhangke.utopia.commonbiz.shared.screen.R
+import com.zhangke.utopia.framework.R
+import kotlinx.coroutines.flow.MutableStateFlow
 
-sealed interface LoadPreviousState {
+sealed interface PreviousPageLoadingState {
 
-    data object Idle : LoadPreviousState
+    data object Idle : PreviousPageLoadingState
 
-    data object Loading : LoadPreviousState
+    data object Loading : PreviousPageLoadingState
 
-    data class Failed(val errorMessage: TextString?) : LoadPreviousState
+    data class Failed(val errorMessage: TextString?) : PreviousPageLoadingState
+}
+
+data class LoadPreviousPageUiState(
+    val onLoadPreviousPage: () -> Unit,
+    val initialState: PreviousPageLoadingState,
+    val loadPreviousPageThreshold: Int,
+) {
+
+    internal val loadingState = MutableStateFlow(initialState)
+
+    fun update(state: PreviousPageLoadingState) {
+        loadingState.value = state
+    }
 }
 
 @Composable
-fun LoadingPreviousUi(
+fun rememberLoadPreviousPageUiState(
+    onLoadPreviousPage: () -> Unit,
+    initialState: PreviousPageLoadingState = PreviousPageLoadingState.Idle,
+    loadPreviousPageThreshold: Int = 3,
+): LoadPreviousPageUiState {
+    return remember(onLoadPreviousPage, loadPreviousPageThreshold) {
+        LoadPreviousPageUiState(
+            onLoadPreviousPage = onLoadPreviousPage,
+            initialState = initialState,
+            loadPreviousPageThreshold = loadPreviousPageThreshold,
+        )
+    }
+}
+
+@Composable
+fun LoadPreviousPageItem(
+    modifier: Modifier,
+    state: PreviousPageLoadingState,
+    onLoadPreviousPage: () -> Unit,
+) {
+    when (state) {
+        is PreviousPageLoadingState.Loading -> {
+            LoadingPreviousUi(modifier)
+        }
+
+        is PreviousPageLoadingState.Failed -> {
+            LoadPreviousFailedUi(modifier, onLoadPreviousPage)
+        }
+
+        else -> {}
+    }
+}
+
+@Composable
+private fun LoadingPreviousUi(
     modifier: Modifier = Modifier,
 ) {
     Row(
@@ -51,7 +100,7 @@ fun LoadingPreviousUi(
 }
 
 @Composable
-fun LoadPreviousFailedUi(
+private fun LoadPreviousFailedUi(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {

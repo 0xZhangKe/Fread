@@ -3,14 +3,14 @@ package com.zhangke.utopia.activitypub.app.internal.screen.content.timeline
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.utopia.commonbiz.shared.composable.LoadPreviousState
+import com.zhangke.framework.loadable.previous.PreviousPageLoadingState
 
 data class ActivityPubTimelineUiState(
     val items: List<ActivityPubTimelineItem>,
     val showPagingLoadingPlaceholder: Boolean,
     val pageErrorContent: TextString?,
     val refreshing: Boolean,
-    val loadPreviousState: LoadPreviousState,
+    val loadPreviousState: PreviousPageLoadingState,
     val loadMoreState: LoadState,
 ) {
 
@@ -21,7 +21,7 @@ data class ActivityPubTimelineUiState(
             showPagingLoadingPlaceholder = false,
             pageErrorContent = null,
             refreshing = false,
-            loadPreviousState = LoadPreviousState.Idle,
+            loadPreviousState = PreviousPageLoadingState.Idle,
             loadMoreState = LoadState.Idle,
         )
     }

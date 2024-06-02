@@ -28,4 +28,7 @@
     <string name="image_save_failed">Save failed</string>
 
     <string name="permission_write_external_permission_denied">Storage permission is denied, please open it in the settings.</string>
+
+    <string name="feeds_load_previous_page_label">Loading Previous Page Content</string>
+    <string name="feeds_load_previous_page_failed_label">Load Failed, Click to Retry</string>
 </resources>

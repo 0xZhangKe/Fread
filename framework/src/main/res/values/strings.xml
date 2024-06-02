@@ -28,4 +28,7 @@
     <string name="image_save_failed">保存失败</string>
 
     <string name="permission_write_external_permission_denied">存储权限被拒绝，请到设置中打开。</string>
+
+    <string name="feeds_load_previous_page_label">正在加载上一页内容</string>
+    <string name="feeds_load_previous_page_failed_label">加载失败，点击重试</string>
 </resources>

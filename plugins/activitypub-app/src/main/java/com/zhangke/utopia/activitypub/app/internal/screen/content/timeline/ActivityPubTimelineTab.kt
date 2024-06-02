@@ -1,37 +1,29 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content.timeline
 
-import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
-import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
-import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.loadable.previous.rememberLoadPreviousPageUiState
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
@@ -40,11 +32,6 @@ import com.zhangke.utopia.commonbiz.shared.composable.ObserveToImmersive
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
-import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.seconds
 
 class ActivityPubTimelineTab(
     private val role: IdentityRole,
@@ -104,6 +91,12 @@ class ActivityPubTimelineTab(
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
                 )
+                val loadPreviousPageUiState = rememberLoadPreviousPageUiState(
+                    onLoadPreviousPage = onLoadPrevious,
+                )
+                LaunchedEffect(uiState.loadPreviousState) {
+                    loadPreviousPageUiState.update(uiState.loadPreviousState)
+                }
                 val lazyListState = state.lazyListState
                 ObserveToImmersive(lazyListState)
                 LoadableInlineVideoLazyColumn(
@@ -111,6 +104,7 @@ class ActivityPubTimelineTab(
                         .fillMaxSize()
                         .applyNestedScrollConnection(nestedScrollConnection),
                     state = state,
+                    loadPreviousPageState = loadPreviousPageUiState,
                     refreshing = uiState.refreshing,
                     loadState = uiState.loadMoreState,
                     contentPadding = PaddingValues(

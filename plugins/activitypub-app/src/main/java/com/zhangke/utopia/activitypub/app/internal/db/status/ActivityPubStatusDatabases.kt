@@ -29,7 +29,7 @@ data class ActivityPubStatusTableEntity(
     val id: String,
     val role: IdentityRole,
     val type: ActivityPubStatusSourceType,
-    val listId: String?,
+    val listId: String,
     val status: Status,
     val createTimestamp: Long,
 )

@@ -15,3 +15,10 @@ data class SensitiveLazyColumnState(
         return 0F
     }
 }
+
+fun SensitiveLazyColumnState.transform(indexMapping: (Int) -> Int): SensitiveLazyColumnState{
+    return this.copy(
+        firstVisibleIndex = indexMapping(firstVisibleIndex),
+        lastVisibleIndex = indexMapping(lastVisibleIndex),
+    )
+}

@@ -1,9 +1,9 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content.timeline
 
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.loadable.previous.PreviousPageLoadingState
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.common.status.model.StatusUiState
-import com.zhangke.framework.loadable.previous.PreviousPageLoadingState
 
 data class ActivityPubTimelineUiState(
     val items: List<ActivityPubTimelineItem>,
@@ -32,6 +32,18 @@ sealed interface ActivityPubTimelineItem {
     data class StatusItem(
         val status: StatusUiState,
     ) : ActivityPubTimelineItem
+}
+
+fun List<ActivityPubTimelineItem>.updateStatus(
+    status: StatusUiState,
+): List<ActivityPubTimelineItem> {
+    return map {
+        if (it is ActivityPubTimelineItem.StatusItem && it.status.status.intrinsicBlog.id == status.status.intrinsicBlog.id) {
+            ActivityPubTimelineItem.StatusItem(status)
+        } else {
+            it
+        }
+    }
 }
 
 fun List<ActivityPubTimelineItem>.getStatusIdOrNull(index: Int): String? {

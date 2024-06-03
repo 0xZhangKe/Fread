@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.utils.LoadState
@@ -90,7 +91,7 @@ fun ObserveLazyListLoadEvent(
             currentFirstVisibleIndex <= loadPreviousPageRemainCountThreshold &&
             totalItemsCount > loadPreviousPageRemainCountThreshold
     LaunchedEffect(inLoadPreviousZone, directional) {
-        if (inLoadPreviousZone) {
+        if (inLoadPreviousZone && directional == ScrollDirection.Up) {
             onLoadPrevious()
         }
     }

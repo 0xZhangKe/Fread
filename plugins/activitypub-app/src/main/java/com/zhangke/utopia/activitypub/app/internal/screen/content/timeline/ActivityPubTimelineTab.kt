@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -23,7 +22,6 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.loadable.previous.rememberLoadPreviousPageUiState
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
@@ -91,12 +89,6 @@ class ActivityPubTimelineTab(
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
                 )
-                val loadPreviousPageUiState = rememberLoadPreviousPageUiState(
-                    onLoadPreviousPage = onLoadPrevious,
-                )
-                LaunchedEffect(uiState.loadPreviousState) {
-                    loadPreviousPageUiState.update(uiState.loadPreviousState)
-                }
                 val lazyListState = state.lazyListState
                 ObserveToImmersive(lazyListState)
                 LoadableInlineVideoLazyColumn(
@@ -104,7 +96,9 @@ class ActivityPubTimelineTab(
                         .fillMaxSize()
                         .applyNestedScrollConnection(nestedScrollConnection),
                     state = state,
-                    loadPreviousPageState = loadPreviousPageUiState,
+                    onLoadPrevious = {
+                        onLoadPrevious()
+                    },
                     refreshing = uiState.refreshing,
                     loadState = uiState.loadMoreState,
                     contentPadding = PaddingValues(

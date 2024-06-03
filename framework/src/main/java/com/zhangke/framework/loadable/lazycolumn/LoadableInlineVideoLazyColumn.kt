@@ -39,7 +39,6 @@ fun LoadableInlineVideoLazyColumn(
     state: LoadableLazyInlineVideoColumnState,
     refreshing: Boolean,
     loadState: LoadState,
-    loadPreviousPageState: LoadPreviousPageUiState? = null,
     contentPadding: PaddingValues = PaddingValues(0.dp),
     reverseLayout: Boolean = false,
     verticalArrangement: Arrangement.Vertical =
@@ -47,6 +46,7 @@ fun LoadableInlineVideoLazyColumn(
     horizontalAlignment: Alignment.Horizontal = Alignment.Start,
     flingBehavior: FlingBehavior = ScrollableDefaults.flingBehavior(),
     userScrollEnabled: Boolean = true,
+    onLoadPrevious: (() -> Unit)? = null,
     loadingContent: (@Composable () -> Unit)? = null,
     content: LazyListScope.() -> Unit,
 ) {
@@ -55,14 +55,6 @@ fun LoadableInlineVideoLazyColumn(
         mutableStateOf(loadState)
     }
     val loadMoreFunction by rememberUpdatedState(newValue = state.loadMoreState.onLoadMore)
-    var previousPageLoadingState: PreviousPageLoadingState by remember {
-        mutableStateOf(PreviousPageLoadingState.Idle)
-    }
-    if (loadPreviousPageState != null) {
-        ConsumeFlow(loadPreviousPageState.loadingState) {
-            previousPageLoadingState = it
-        }
-    }
     Box(
         modifier = modifier.pullRefresh(state.pullRefreshState)
     ) {
@@ -74,20 +66,7 @@ fun LoadableInlineVideoLazyColumn(
             horizontalAlignment = horizontalAlignment,
             flingBehavior = flingBehavior,
             userScrollEnabled = userScrollEnabled,
-            indexMapping = {
-                // + 1 for load previous item
-                it + 1
-            },
             content = {
-                item {
-                    LoadPreviousPageItem(
-                        modifier = Modifier.fillMaxWidth(),
-                        state = previousPageLoadingState,
-                        onLoadPreviousPage = {
-                            loadPreviousPageState?.onLoadPreviousPage?.invoke()
-                        },
-                    )
-                }
                 content()
                 item {
                     if (loadingContent != null) {
@@ -110,13 +89,10 @@ fun LoadableInlineVideoLazyColumn(
     }
     ObserveLazyListLoadEvent(
         lazyListState = lazyListState,
-        loadPreviousPageRemainCountThreshold = loadPreviousPageState?.loadPreviousPageThreshold
-            ?: 3,
         loadMoreRemainCountThreshold = state.loadMoreState.loadMoreRemainCountThreshold,
+        loadPreviousPageRemainCountThreshold = 3,
         onLoadPrevious = {
-            if (loadPreviousPageState != null && previousPageLoadingState is PreviousPageLoadingState.Idle) {
-                loadPreviousPageState.onLoadPreviousPage()
-            }
+            onLoadPrevious?.invoke()
         },
         onLoadMore = state.loadMoreState.onLoadMore,
     )

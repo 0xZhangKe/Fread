@@ -10,7 +10,6 @@ data class ActivityPubTimelineUiState(
     val showPagingLoadingPlaceholder: Boolean,
     val pageErrorContent: TextString?,
     val refreshing: Boolean,
-    val loadPreviousState: PreviousPageLoadingState,
     val loadMoreState: LoadState,
 ) {
 
@@ -21,7 +20,6 @@ data class ActivityPubTimelineUiState(
             showPagingLoadingPlaceholder = false,
             pageErrorContent = null,
             refreshing = false,
-            loadPreviousState = PreviousPageLoadingState.Idle,
             loadMoreState = LoadState.Idle,
         )
     }

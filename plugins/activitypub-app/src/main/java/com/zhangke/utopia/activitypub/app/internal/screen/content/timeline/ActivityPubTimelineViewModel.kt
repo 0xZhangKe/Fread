@@ -4,8 +4,8 @@ import android.util.Log
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.coroutines.invokeOnCancel
+import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.framework.loadable.previous.PreviousPageLoadingState
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
@@ -64,7 +64,7 @@ class ActivityPubTimelineViewModel(
         // 2. load previous page of this local page data from server
         // 3. position item of latest read item, if can't position, move to top.
         initFeedsJob?.cancel()
-        initFeedsJob = launch {
+        initFeedsJob = launchInViewModel {
             _uiState.update { it.copy(showPagingLoadingPlaceholder = true) }
             val localStatus = timelineRepo.getStatusFromLocal(
                 role = role,
@@ -114,7 +114,6 @@ class ActivityPubTimelineViewModel(
                         mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
                     }
                 }.onSuccess { list ->
-                    Log.d("U_TEST", "TimelineVM: initFeeds onSuccess: ${list.size}")
                     list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
                         .let {
                             Log.d("U_TEST", "TimelineVM: initFeeds onSuccess: $it")
@@ -140,7 +139,7 @@ class ActivityPubTimelineViewModel(
         loadPreviousJob?.cancel()
         loadMoreJob?.cancel()
         refreshJob?.cancel()
-        refreshJob = launch {
+        refreshJob = launchInViewModel {
             _uiState.update { it.copy(refreshing = true) }
             timelineRepo.getFresherStatus(
                 role = role,
@@ -152,7 +151,6 @@ class ActivityPubTimelineViewModel(
                     _uiState.update { it.copy(refreshing = false) }
                     mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
                 }.onSuccess { list ->
-                    Log.d("U_TEST", "TimelineVM: onRefresh onSuccess: ${list.size}")
                     list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
                         .let {
                             Log.d("U_TEST", "TimelineVM: onRefresh onSuccess: $it")
@@ -174,13 +172,12 @@ class ActivityPubTimelineViewModel(
     fun onLoadPreviousPage() {
         if (refreshJob?.isActive == true) return
         if (initFeedsJob?.isActive == true) return
+        if (loadPreviousJob?.isActive == true) return
         val sinceId = uiState.value
             .items
             .getStatusIdOrNull(0) ?: return
-        Log.d("U_TEST", "TimelineVM: onLoadPreviousPage")
-        loadPreviousJob?.cancel()
-        loadPreviousJob = launch {
-            _uiState.update { it.copy(loadPreviousState = PreviousPageLoadingState.Loading) }
+        Log.d("U_TEST", "TimelineVM: onLoadPreviousPage($sinceId)")
+        loadPreviousJob = launchInViewModel {
             timelineRepo.loadPreviousPageStatus(
                 role = role,
                 type = type,
@@ -188,30 +185,22 @@ class ActivityPubTimelineViewModel(
                 listId = listId,
             ).map { it.toTimelineItems() }
                 .onFailure { t ->
-                    Log.d("U_TEST", "TimelineVM: onLoadPreviousPage onFailure: $t")
-                    _uiState.update { it.copy(loadPreviousState = PreviousPageLoadingState.Failed(t.toTextStringOrNull())) }
+                    Log.d("U_TEST", "TimelineVM: onLoadPreviousPage($sinceId) onFailure: $t")
                 }.onSuccess { list ->
-                    Log.d("U_TEST", "TimelineVM: onLoadPreviousPage onSuccess: ${list.size}")
                     list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
                         .let {
-                            Log.d("U_TEST", "TimelineVM: onLoadPreviousPage onSuccess: $it")
+                            Log.d("U_TEST", "TimelineVM: onLoadPreviousPage($sinceId) onSuccess: $it")
                         }
                     _uiState.update {
                         it.copy(
                             items = list.appendItems(it.items),
-                            loadPreviousState = PreviousPageLoadingState.Idle,
                         )
                     }
                 }
         }
-        loadPreviousJob!!.invokeOnCancel { t ->
-            Log.d("U_TEST", "TimelineVM: onLoadPreviousPage invokeOnCompletion: $t")
-            _uiState.update { it.copy(loadPreviousState = PreviousPageLoadingState.Idle) }
-        }
     }
 
     fun onLoadMore() {
-        Log.d("U_TEST", "TimelineVM: onLoadMore")
         val maxId = uiState.value
             .items
             .lastOrNull { it is ActivityPubTimelineItem.StatusItem }
@@ -219,8 +208,9 @@ class ActivityPubTimelineViewModel(
             ?.status
             ?.status
             ?.id ?: return
+        Log.d("U_TEST", "TimelineVM: onLoadMore($maxId)")
         loadMoreJob?.cancel()
-        loadMoreJob = launch {
+        loadMoreJob = launchInViewModel {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
             timelineRepo.loadMore(
                 role = role,
@@ -229,13 +219,12 @@ class ActivityPubTimelineViewModel(
                 listId = listId,
             ).map { it.toTimelineItems() }
                 .onFailure { t ->
-                    Log.d("U_TEST", "TimelineVM: onLoadMore onFailure: $t")
+                    Log.d("U_TEST", "TimelineVM: onLoadMore($maxId) onFailure: $t")
                     _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
                 }.onSuccess { list ->
-                    Log.d("U_TEST", "TimelineVM: onLoadMore onSuccess: ${list.size}")
                     list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
                         .let {
-                            Log.d("U_TEST", "TimelineVM: onRefresh onSuccess: $it")
+                            Log.d("U_TEST", "TimelineVM: onLoadMore($maxId) onSuccess: $it")
                         }
                     _uiState.update {
                         it.copy(
@@ -246,7 +235,7 @@ class ActivityPubTimelineViewModel(
                 }
         }
         loadMoreJob!!.invokeOnCancel { t ->
-            Log.d("U_TEST", "TimelineVM: LoadMore invokeOnCompletion: $t")
+            Log.d("U_TEST", "TimelineVM: LoadMore($maxId) invokeOnCompletion: $t")
             _uiState.update { it.copy(loadMoreState = LoadState.Idle) }
         }
     }

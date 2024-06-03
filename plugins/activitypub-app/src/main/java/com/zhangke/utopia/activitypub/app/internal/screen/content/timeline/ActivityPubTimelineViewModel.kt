@@ -3,7 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.content.timeline
 import android.util.Log
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
-import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.loadable.previous.PreviousPageLoadingState
 import com.zhangke.framework.utils.LoadState
@@ -11,14 +11,12 @@ import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSource
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.status.model.Status
-import kotlinx.coroutines.CoroutineExceptionHandler
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,6 +49,12 @@ class ActivityPubTimelineViewModel(
     private var loadPreviousJob: Job? = null
 
     init {
+        initInteractiveHandler(
+            coroutineScope = viewModelScope,
+            onInteractiveHandleResult = { result ->
+                result.handle()
+            }
+        )
         initFeeds()
     }
 
@@ -60,11 +64,7 @@ class ActivityPubTimelineViewModel(
         // 2. load previous page of this local page data from server
         // 3. position item of latest read item, if can't position, move to top.
         initFeedsJob?.cancel()
-        val exceptionHandler = CoroutineExceptionHandler { _, t ->
-            Log.d("U_TEST", "TimelineVM: initFeeds exceptionHandler: $t")
-            _uiState.update { it.copy(showPagingLoadingPlaceholder = false) }
-        }
-        initFeedsJob = createScope(exceptionHandler).launch {
+        initFeedsJob = launch {
             _uiState.update { it.copy(showPagingLoadingPlaceholder = true) }
             val localStatus = timelineRepo.getStatusFromLocal(
                 role = role,
@@ -127,6 +127,12 @@ class ActivityPubTimelineViewModel(
                     }
                 }
         }
+        initFeedsJob!!.invokeOnCancel { t ->
+            Log.d("U_TEST", "TimelineVM: initFeeds invokeOnCompletion: $t")
+            _uiState.update {
+                it.copy(showPagingLoadingPlaceholder = false)
+            }
+        }
     }
 
     fun onRefresh() {
@@ -134,11 +140,7 @@ class ActivityPubTimelineViewModel(
         loadPreviousJob?.cancel()
         loadMoreJob?.cancel()
         refreshJob?.cancel()
-        val exceptionHandler = CoroutineExceptionHandler { _, t ->
-            Log.d("U_TEST", "TimelineVM: onRefresh exceptionHandler: $t")
-            _uiState.update { it.copy(refreshing = false) }
-        }
-        refreshJob = createScope(exceptionHandler).launch {
+        refreshJob = launch {
             _uiState.update { it.copy(refreshing = true) }
             timelineRepo.getFresherStatus(
                 role = role,
@@ -163,21 +165,21 @@ class ActivityPubTimelineViewModel(
                     }
                 }
         }
+        refreshJob?.invokeOnCancel {
+            Log.d("U_TEST", "TimelineVM: onRefresh invokeOnCompletion: $it")
+            _uiState.update { it.copy(refreshing = false) }
+        }
     }
 
     fun onLoadPreviousPage() {
-        Log.d("U_TEST", "TimelineVM: onLoadPreviousPage")
         if (refreshJob?.isActive == true) return
         if (initFeedsJob?.isActive == true) return
         val sinceId = uiState.value
             .items
             .getStatusIdOrNull(0) ?: return
+        Log.d("U_TEST", "TimelineVM: onLoadPreviousPage")
         loadPreviousJob?.cancel()
-        val exceptionHandler = CoroutineExceptionHandler { _, t ->
-            Log.d("U_TEST", "TimelineVM: onLoadPreviousPage exceptionHandler: $t")
-            _uiState.update { it.copy(loadPreviousState = PreviousPageLoadingState.Failed(t.toTextStringOrNull())) }
-        }
-        loadPreviousJob = createScope(exceptionHandler).launch {
+        loadPreviousJob = launch {
             _uiState.update { it.copy(loadPreviousState = PreviousPageLoadingState.Loading) }
             timelineRepo.loadPreviousPageStatus(
                 role = role,
@@ -192,7 +194,7 @@ class ActivityPubTimelineViewModel(
                     Log.d("U_TEST", "TimelineVM: onLoadPreviousPage onSuccess: ${list.size}")
                     list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
                         .let {
-                            Log.d("U_TEST", "TimelineVM: onRefresh onSuccess: $it")
+                            Log.d("U_TEST", "TimelineVM: onLoadPreviousPage onSuccess: $it")
                         }
                     _uiState.update {
                         it.copy(
@@ -201,6 +203,10 @@ class ActivityPubTimelineViewModel(
                         )
                     }
                 }
+        }
+        loadPreviousJob!!.invokeOnCancel { t ->
+            Log.d("U_TEST", "TimelineVM: onLoadPreviousPage invokeOnCompletion: $t")
+            _uiState.update { it.copy(loadPreviousState = PreviousPageLoadingState.Idle) }
         }
     }
 
@@ -214,11 +220,7 @@ class ActivityPubTimelineViewModel(
             ?.status
             ?.id ?: return
         loadMoreJob?.cancel()
-        val exceptionHandler = CoroutineExceptionHandler { _, t ->
-            Log.d("U_TEST", "TimelineVM: onLoadMore exceptionHandler: $t")
-            _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
-        }
-        loadMoreJob = createScope(exceptionHandler).launch {
+        loadMoreJob = launch {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
             timelineRepo.loadMore(
                 role = role,
@@ -243,10 +245,22 @@ class ActivityPubTimelineViewModel(
                     }
                 }
         }
+        loadMoreJob!!.invokeOnCancel { t ->
+            Log.d("U_TEST", "TimelineVM: LoadMore invokeOnCompletion: $t")
+            _uiState.update { it.copy(loadMoreState = LoadState.Idle) }
+        }
     }
 
-    private fun createScope(handler: CoroutineExceptionHandler): CoroutineScope {
-        return CoroutineScope(Dispatchers.Main + handler)
+    private fun InteractiveHandleResult.handle() {
+        when (this) {
+            is InteractiveHandleResult.UpdateStatus -> {
+                _uiState.update { state ->
+                    state.copy(items = state.items.updateStatus(this.status))
+                }
+            }
+
+            is InteractiveHandleResult.UpdateFollowState -> {}
+        }
     }
 
     private fun List<ActivityPubTimelineItem>.appendItems(

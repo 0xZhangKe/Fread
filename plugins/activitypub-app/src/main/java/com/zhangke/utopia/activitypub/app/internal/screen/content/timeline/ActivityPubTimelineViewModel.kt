@@ -8,6 +8,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
+import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
@@ -21,7 +22,6 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.coroutines.launch
 
 // Auto delete expired status
 // Double top to scroll to top
@@ -31,6 +31,7 @@ class ActivityPubTimelineViewModel(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     refactorToNewBlog: RefactorToNewBlogUseCase,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
+    private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
     private val role: IdentityRole,
     private val type: ActivityPubStatusSourceType,
     private val listId: String?,
@@ -73,13 +74,15 @@ class ActivityPubTimelineViewModel(
             )
             Log.d("U_TEST", "TimelineVM: initFeeds localStatus: ${localStatus.size}")
             if (localStatus.isNotEmpty()) {
-                Log.d("U_TEST", "TimelineVM: initFeeds localStatus: ${localStatus.size}")
-                localStatus.joinToString { it.id }?.let {
-                    Log.d("U_TEST", "TimelineVM: initFeeds localStatus: ${it}")
+                val latestReadStatus = statusReadStateRepo.getLatestReadId(role, type, listId)
+                localStatus.joinToString { it.id }.let {
+                    Log.d("U_TEST", "TimelineVM: initFeeds localStatus($latestReadStatus): ${it}")
                 }
+                val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
                 _uiState.update {
                     it.copy(
                         items = localStatus.toTimelineItems(),
+                        initialShowIndex = if (initialIndex in localStatus.indices) initialIndex else 0,
                         showPagingLoadingPlaceholder = false,
                     )
                 }
@@ -189,7 +192,10 @@ class ActivityPubTimelineViewModel(
                 }.onSuccess { list ->
                     list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
                         .let {
-                            Log.d("U_TEST", "TimelineVM: onLoadPreviousPage($sinceId) onSuccess: $it")
+                            Log.d(
+                                "U_TEST",
+                                "TimelineVM: onLoadPreviousPage($sinceId) onSuccess: $it"
+                            )
                         }
                     _uiState.update {
                         it.copy(
@@ -237,6 +243,19 @@ class ActivityPubTimelineViewModel(
         loadMoreJob!!.invokeOnCancel { t ->
             Log.d("U_TEST", "TimelineVM: LoadMore($maxId) invokeOnCompletion: $t")
             _uiState.update { it.copy(loadMoreState = LoadState.Idle) }
+        }
+    }
+
+    fun updateMaxReadStatus(item: ActivityPubTimelineItem) {
+        Log.d("U_TEST", "TimelineVM: updateMaxReadStatus: ${(item as ActivityPubTimelineItem.StatusItem).status.status.id}")
+        val statusId = (item as ActivityPubTimelineItem.StatusItem).status.status.id
+        launchInViewModel {
+            statusReadStateRepo.updateLatestReadId(
+                role = role,
+                type = type,
+                listId = listId,
+                latestReadId = statusId,
+            )
         }
     }
 

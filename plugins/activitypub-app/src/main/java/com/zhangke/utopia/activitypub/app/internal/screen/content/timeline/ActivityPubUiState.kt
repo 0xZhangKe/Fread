@@ -1,7 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content.timeline
 
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.loadable.previous.PreviousPageLoadingState
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.utopia.common.status.model.StatusUiState
 
@@ -9,6 +8,7 @@ data class ActivityPubTimelineUiState(
     val items: List<ActivityPubTimelineItem>,
     val showPagingLoadingPlaceholder: Boolean,
     val pageErrorContent: TextString?,
+    val initialShowIndex: Int,
     val refreshing: Boolean,
     val loadMoreState: LoadState,
 ) {
@@ -17,6 +17,7 @@ data class ActivityPubTimelineUiState(
 
         val default = ActivityPubTimelineUiState(
             items = emptyList(),
+            initialShowIndex = 0,
             showPagingLoadingPlaceholder = false,
             pageErrorContent = null,
             refreshing = false,

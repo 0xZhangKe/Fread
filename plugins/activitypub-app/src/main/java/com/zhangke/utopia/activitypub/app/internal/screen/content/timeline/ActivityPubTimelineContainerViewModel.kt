@@ -2,6 +2,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.content.timeline
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
+import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -16,6 +17,7 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
+    private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
 ) : ContainerViewModel<ActivityPubTimelineViewModel, ActivityPubTimelineContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubTimelineViewModel {
@@ -23,6 +25,7 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
             statusProvider = statusProvider,
             buildStatusUiState = buildStatusUiState,
             refactorToNewBlog = refactorToNewBlog,
+            statusReadStateRepo = statusReadStateRepo,
             timelineRepo = timelineRepo,
             role = params.role,
             type = params.type,

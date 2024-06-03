@@ -4,6 +4,7 @@ import android.content.Context
 import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.notifications.NotificationsDatabase
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabases
+import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.status.ExpiredActivityPubStatusDatabase
 import dagger.Module
 import dagger.Provides
@@ -33,5 +34,12 @@ internal class CommonModules {
     @Provides
     fun provideActivityPubStatusDatabase(@ApplicationContext context: Context): ActivityPubStatusDatabases {
         return ActivityPubStatusDatabases.getInstance(context)
+    }
+
+    @Provides
+    fun provideActivityPubStatusReadStateDatabases(
+        @ApplicationContext context: Context,
+    ): ActivityPubStatusReadStateDatabases {
+        return ActivityPubStatusReadStateDatabases.getInstance(context)
     }
 }

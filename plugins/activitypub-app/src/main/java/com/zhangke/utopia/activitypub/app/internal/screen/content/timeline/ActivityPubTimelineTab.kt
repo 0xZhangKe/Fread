@@ -5,10 +5,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
@@ -30,6 +34,7 @@ import com.zhangke.utopia.commonbiz.shared.composable.ObserveToImmersive
 import com.zhangke.utopia.status.model.IdentityRole
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
+import com.zhangke.utopia.status.ui.common.ObserveMinReadItem
 
 class ActivityPubTimelineTab(
     private val role: IdentityRole,
@@ -61,6 +66,7 @@ class ActivityPubTimelineTab(
             onLoadPrevious = viewModel::onLoadPreviousPage,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
+            onReadMinIndex = viewModel::updateMaxReadStatus,
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
@@ -75,6 +81,7 @@ class ActivityPubTimelineTab(
         onLoadPrevious: () -> Unit,
         onLoadMore: () -> Unit,
         onRefresh: () -> Unit,
+        onReadMinIndex: (ActivityPubTimelineItem) -> Unit,
     ) {
         if (uiState.items.isEmpty()) {
             if (uiState.showPagingLoadingPlaceholder) {
@@ -88,8 +95,16 @@ class ActivityPubTimelineTab(
                     refreshing = uiState.refreshing,
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
+                    initialFirstVisibleItemIndex = uiState.initialShowIndex,
                 )
+                rememberLazyListState()
                 val lazyListState = state.lazyListState
+                ObserveMinReadItem(lazyListState) {
+                    uiState.items.getOrNull(it)?.let {
+                        onReadMinIndex(it)
+                    }
+                }
+
                 ObserveToImmersive(lazyListState)
                 LoadableInlineVideoLazyColumn(
                     modifier = Modifier

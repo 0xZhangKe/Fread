@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -70,21 +69,18 @@ fun UtopiaDialog(
     UtopiaDialog(
         onDismissRequest = onDismissRequest,
         properties = properties,
-        header = if (title.isNullOrEmpty()) {
-            null
-        } else {
-            {
-                Box(
-                    modifier = Modifier
-                        .fillMaxWidth(),
-                    contentAlignment = Alignment.Center,
-                ) {
-                    val textStyle = MaterialTheme.typography.titleLarge
-                    Text(
-                        text = title,
-                        style = textStyle,
-                    )
-                }
+        header =
+        {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center,
+            ) {
+                val textStyle = MaterialTheme.typography.titleLarge
+                Text(
+                    text = title.ifNullOrEmpty { stringResource(R.string.alert) },
+                    style = textStyle,
+                )
             }
         },
         content = content,
@@ -118,7 +114,6 @@ fun UtopiaDialog(
     negativeButton: (@Composable () -> Unit)? = null,
     positiveButton: (@Composable () -> Unit)? = null,
 ) {
-    AlertDialog(onDismissRequest = { /*TODO*/ }, confirmButton = { /*TODO*/ })
     Dialog(
         onDismissRequest = onDismissRequest,
         properties = properties,

@@ -17,7 +17,6 @@ import com.zhangke.utopia.status.search.SearchContentResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -28,13 +27,7 @@ class PreAddFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ScreenModel {
 
-    private val _uiState = MutableStateFlow(
-        PreAddFeedsUiState(
-            query = "",
-            allSearchedResult = emptyList(),
-            loading = false,
-        )
-    )
+    private val _uiState = MutableStateFlow(PreAddFeedsUiState.default)
     val uiState = _uiState.asStateFlow()
 
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
@@ -43,18 +36,14 @@ class PreAddFeedsViewModel @Inject constructor(
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
-    private val _showNotifyToLoginDialog = MutableSharedFlow<BlogPlatform>()
-    val showNotifyToLoginDialog = _showNotifyToLoginDialog.asSharedFlow()
-
     private val _exitScreenFlow = MutableSharedFlow<Unit>()
     val exitScreenFlow = _exitScreenFlow.asSharedFlow()
-
-    private val _addContentSuccessFlow = MutableSharedFlow<Unit>()
-    val addContentSuccessFlow: SharedFlow<Unit> get() = _addContentSuccessFlow
 
     private var searchJob: Job? = null
     private var addContentJob: Job? = null
     private var pendingLoginPlatform: BlogPlatform? = null
+
+    private var selectedContentPlatform: BlogPlatform? = null
 
     init {
         launchInScreenModel {
@@ -132,6 +121,19 @@ class PreAddFeedsViewModel @Inject constructor(
         _uiState.update { it.copy(loading = false) }
     }
 
+    fun onLoginDialogDismissRequest() {
+        _uiState.update { it.copy(showLoginDialog = false) }
+    }
+
+    fun onLoginClick() {
+        val platform = selectedContentPlatform ?: return
+        launchInScreenModel {
+            statusProvider.accountManager
+                .launchAuthBySource(platform.baseUrl)
+            _exitScreenFlow.emit(Unit)
+        }
+    }
+
     private suspend fun onAddActivityPubContent(platform: BlogPlatform) {
         val existsConfig = contentConfigRepo.getAllConfig()
             .filterIsInstance<ContentConfig.ActivityPubContent>()
@@ -140,7 +142,7 @@ class PreAddFeedsViewModel @Inject constructor(
             _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
             return
         }
-        performAddActivityPubContent(platform)
+        contentConfigRepo.insertActivityPubContent(platform)
         statusProvider.accountManager
             .checkPlatformLogged(platform)
             .onFailure {
@@ -149,14 +151,12 @@ class PreAddFeedsViewModel @Inject constructor(
                 if (it) {
                     _exitScreenFlow.emit(Unit)
                 } else {
-                    _showNotifyToLoginDialog.emit(platform)
+                    selectedContentPlatform = platform
+                    _uiState.update { state ->
+                        state.copy(showLoginDialog = true)
+                    }
                 }
             }
-    }
-
-    private suspend fun performAddActivityPubContent(platform: BlogPlatform) {
-        contentConfigRepo.insertActivityPubContent(platform)
-        _addContentSuccessFlow.emit(Unit)
     }
 
     private suspend fun getSuggestedPlatformSnapshots(): List<SearchContentResult.ActivityPubPlatformSnapshot> {

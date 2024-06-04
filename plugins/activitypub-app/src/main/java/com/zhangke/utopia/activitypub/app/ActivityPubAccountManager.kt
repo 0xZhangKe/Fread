@@ -14,7 +14,9 @@ import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
 import javax.inject.Inject
+import javax.inject.Singleton
 
+@Singleton
 class ActivityPubAccountManager @Inject constructor(
     private val oAuthor: ActivityPubOAuthor,
     private val loggedAccountProvider: LoggedAccountProvider,
@@ -41,6 +43,10 @@ class ActivityPubAccountManager @Inject constructor(
         return accountRepo.getAllAccountFlow()
     }
 
+    fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccount?> {
+        return accountRepo.observeAccount(baseUrl)
+    }
+
     override suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>? {
         if (platform.protocol.notActivityPub) return null
         val account = getAllLoggedAccount().firstOrNull {
@@ -60,7 +66,7 @@ class ActivityPubAccountManager @Inject constructor(
         return true
     }
 
-    suspend fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount?{
+    suspend fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
         return accountRepo.queryByBaseUrl(baseUrl)
     }
 }

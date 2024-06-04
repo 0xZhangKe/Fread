@@ -24,6 +24,12 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         }
     }
 
+    fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccount?> {
+        return accountDao.observeAccount(baseUrl).map {
+            it?.let(adapter::adapt)
+        }
+    }
+
     suspend fun queryAll(): List<ActivityPubLoggedAccount> =
         accountDao.queryAll().map(adapter::adapt)
 

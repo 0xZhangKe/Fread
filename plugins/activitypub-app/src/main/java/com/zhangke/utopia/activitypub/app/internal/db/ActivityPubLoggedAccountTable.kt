@@ -50,6 +50,9 @@ interface ActivityPubLoggerAccountDao {
     @Query("SELECT * FROM $TABLE_NAME")
     fun queryAllFlow(): Flow<List<ActivityPubLoggedAccountEntity>>
 
+    @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl")
+    fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccountEntity?>
+
     @Query("SELECT * FROM $TABLE_NAME")
     suspend fun queryAll(): List<ActivityPubLoggedAccountEntity>
 

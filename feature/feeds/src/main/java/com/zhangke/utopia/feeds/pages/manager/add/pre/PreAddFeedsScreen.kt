@@ -24,7 +24,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
@@ -38,10 +37,10 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.utopia.commonbiz.shared.screen.login.target.LoginToTargetPlatformScreen
 import com.zhangke.utopia.feeds.R
-import com.zhangke.utopia.feeds.pages.manager.add.showAddContentSuccessToast
 import com.zhangke.utopia.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.utopia.status.search.SearchContentResult
 import com.zhangke.utopia.status.ui.source.BlogPlatformSnapshotUi
@@ -55,7 +54,6 @@ class PreAddFeedsScreen : Screen {
 
     @Composable
     override fun Content() {
-        val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getScreenModel<PreAddFeedsViewModel>()
@@ -72,12 +70,14 @@ class PreAddFeedsScreen : Screen {
             onImportClick = {
                 navigator.push(ImportFeedsScreen())
             },
+            onLoginDialogDismissRequest = viewModel::onLoginDialogDismissRequest,
+            onCancelLoginDialogClick = {
+                navigator.pop()
+            },
+            onLoginClick = viewModel::onLoginClick,
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.replace(it)
-        }
-        ConsumeFlow(viewModel.addContentSuccessFlow) {
-            showAddContentSuccessToast(context)
         }
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
         val bottomSheetIsVisible = bottomSheetNavigator.isVisible
@@ -86,9 +86,6 @@ class PreAddFeedsScreen : Screen {
         }
         if (bottomSheetIsVisible) {
             loginPageShown = true
-        }
-        ConsumeFlow(viewModel.showNotifyToLoginDialog) {
-            bottomSheetNavigator.show(LoginToTargetPlatformScreen(it))
         }
         if (loginPageShown && !bottomSheetIsVisible) {
             LaunchedEffect(Unit) {
@@ -110,6 +107,9 @@ class PreAddFeedsScreen : Screen {
         onSearchClick: () -> Unit,
         onContentClick: (SearchContentResult) -> Unit,
         onLoadingDismissRequest: () -> Unit,
+        onLoginDialogDismissRequest: () -> Unit,
+        onCancelLoginDialogClick: () -> Unit,
+        onLoginClick: () -> Unit,
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -171,6 +171,21 @@ class PreAddFeedsScreen : Screen {
             LoadingDialog(
                 loading = uiState.loading,
                 onDismissRequest = onLoadingDismissRequest,
+            )
+        }
+
+        if (uiState.showLoginDialog) {
+            UtopiaDialog(
+                onDismissRequest = onLoginDialogDismissRequest,
+                contentText = stringResource(R.string.feeds_pre_add_login_dialog_content),
+                onPositiveClick = {
+                    onLoginDialogDismissRequest()
+                    onLoginClick()
+                },
+                onNegativeClick = {
+                    onLoginDialogDismissRequest()
+                    onCancelLoginDialogClick()
+                },
             )
         }
     }

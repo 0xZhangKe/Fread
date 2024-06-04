@@ -5,7 +5,6 @@ import com.zhangke.utopia.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.notifications.NotificationsDatabase
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.utopia.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
-import com.zhangke.utopia.activitypub.app.internal.db.status.ExpiredActivityPubStatusDatabase
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -19,11 +18,6 @@ internal class CommonModules {
     @Provides
     fun provideActivityPubDatabases(@ApplicationContext context: Context): ActivityPubDatabases {
         return ActivityPubDatabases.getInstance(context)
-    }
-
-    @Provides
-    fun provideExpiredActivityPubStatusDatabase(@ApplicationContext context: Context): ExpiredActivityPubStatusDatabase {
-        return ExpiredActivityPubStatusDatabase.getInstance(context)
     }
 
     @Provides

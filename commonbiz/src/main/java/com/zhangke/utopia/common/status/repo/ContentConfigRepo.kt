@@ -32,17 +32,17 @@ class ContentConfigRepo @Inject constructor(
             }
     }
 
-    fun getConfigFlow(id: Long): Flow<ContentConfig> {
+    fun getConfigFlow(id: Long): Flow<ContentConfig?> {
         return contentConfigDao.getContentConfigFlow(id)
-            .map { it.toContentConfig() }
+            .map { it?.toContentConfig() }
     }
 
     suspend fun getConfigById(id: Long): ContentConfig? {
         return contentConfigDao.queryById(id)?.toContentConfig()
     }
 
-    fun getConfigFlowById(id: Long): Flow<ContentConfig> {
-        return contentConfigDao.queryFlowById(id).map { it.toContentConfig() }
+    fun getConfigFlowById(id: Long): Flow<ContentConfig?> {
+        return contentConfigDao.queryFlowById(id).map { it?.toContentConfig() }
     }
 
     suspend fun insertActivityPubContent(platform: BlogPlatform) {

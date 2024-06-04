@@ -7,6 +7,8 @@ import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
@@ -32,6 +34,7 @@ class ActivityPubTimelineViewModel(
     refactorToNewBlog: RefactorToNewBlogUseCase,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
     private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
+    private val accountManager: ActivityPubAccountManager,
     private val role: IdentityRole,
     private val type: ActivityPubStatusSourceType,
     private val listId: String?,
@@ -49,6 +52,8 @@ class ActivityPubTimelineViewModel(
     private var loadMoreJob: Job? = null
     private var loadPreviousJob: Job? = null
 
+    private var latestAccount: ActivityPubLoggedAccount? = null
+
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
@@ -57,6 +62,19 @@ class ActivityPubTimelineViewModel(
             }
         )
         initFeeds()
+        launchInViewModel {
+            val baseUrl = role.baseUrl
+            if (baseUrl != null) {
+                accountManager.observeAccount(baseUrl)
+                    .collect {
+                        if (latestAccount != null && latestAccount?.uri == it?.uri) {
+                            return@collect
+                        }
+                        latestAccount = it
+                        initFeeds()
+                    }
+            }
+        }
     }
 
     private fun initFeeds() {
@@ -66,7 +84,12 @@ class ActivityPubTimelineViewModel(
         // 3. position item of latest read item, if can't position, move to top.
         initFeedsJob?.cancel()
         initFeedsJob = launchInViewModel {
-            _uiState.update { it.copy(showPagingLoadingPlaceholder = true) }
+            _uiState.update {
+                it.copy(
+                    items = emptyList(),
+                    showPagingLoadingPlaceholder = true,
+                )
+            }
             val localStatus = timelineRepo.getStatusFromLocal(
                 role = role,
                 type = type,
@@ -247,7 +270,10 @@ class ActivityPubTimelineViewModel(
     }
 
     fun updateMaxReadStatus(item: ActivityPubTimelineItem) {
-        Log.d("U_TEST", "TimelineVM: updateMaxReadStatus: ${(item as ActivityPubTimelineItem.StatusItem).status.status.id}")
+        Log.d(
+            "U_TEST",
+            "TimelineVM: updateMaxReadStatus: ${(item as ActivityPubTimelineItem.StatusItem).status.status.id}"
+        )
         val statusId = (item as ActivityPubTimelineItem.StatusItem).status.status.id
         launchInViewModel {
             statusReadStateRepo.updateLatestReadId(

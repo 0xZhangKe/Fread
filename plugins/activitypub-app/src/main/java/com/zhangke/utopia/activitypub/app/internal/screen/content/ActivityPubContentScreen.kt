@@ -3,6 +3,10 @@ package com.zhangke.utopia.activitypub.app.internal.screen.content
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
@@ -102,8 +106,12 @@ class ActivityPubContentScreen(
                             .navigationBarsPadding()
                             .padding(bottom = 60.dp),
                         visible = !inImmersiveMode,
-                        enter = fadeIn(),
-                        exit = fadeOut(),
+                        enter = scaleIn() + slideInVertically(
+                            initialOffsetY = { it },
+                        ),
+                        exit = scaleOut() + slideOutVertically(
+                            targetOffsetY = { it },
+                        ),
                     ) {
                         FloatingActionButton(
                             onClick = { onPostBlogClick(account) }

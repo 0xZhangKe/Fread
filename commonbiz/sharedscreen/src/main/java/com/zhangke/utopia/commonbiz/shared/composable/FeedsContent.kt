@@ -1,6 +1,5 @@
 package com.zhangke.utopia.commonbiz.shared.composable
 
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -13,6 +12,8 @@ import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.MutableState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -41,7 +42,6 @@ import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.seconds
 
 @OptIn(ExperimentalMaterialApi::class)
@@ -54,6 +54,7 @@ fun FeedsContent(
     onLoadMore: () -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
     nestedScrollConnection: NestedScrollConnection?,
+    contentCanScrollBackward: MutableState<Boolean>? = null,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
     if (uiState.feeds.isEmpty()) {
@@ -70,6 +71,14 @@ fun FeedsContent(
                 onLoadMore = onLoadMore,
             )
             val lazyListState = state.lazyListState
+            if (contentCanScrollBackward != null) {
+                val canScrollBackward by remember {
+                    derivedStateOf {
+                        lazyListState.firstVisibleItemIndex != 0 || lazyListState.firstVisibleItemScrollOffset != 0
+                    }
+                }
+                contentCanScrollBackward.value = canScrollBackward
+            }
             ObserveToImmersive(lazyListState)
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier

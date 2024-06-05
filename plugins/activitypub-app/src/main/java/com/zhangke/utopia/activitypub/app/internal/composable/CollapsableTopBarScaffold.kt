@@ -44,7 +44,6 @@ import com.zhangke.utopia.activitypub.app.R
  * - 头像
  * - header 内容
  */
-@OptIn(ExperimentalMotionApi::class)
 @Composable
 fun CollapsableTopBarScaffold(
     modifier: Modifier,

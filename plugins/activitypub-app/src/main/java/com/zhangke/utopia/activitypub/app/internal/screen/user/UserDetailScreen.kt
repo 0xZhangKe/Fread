@@ -5,8 +5,10 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -15,10 +17,13 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -47,6 +52,7 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.utopiaPlaceholder
 import com.zhangke.framework.voyager.LocalTransparentNavigator
@@ -54,6 +60,7 @@ import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
+import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffoldNew
 import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.utopia.activitypub.app.internal.screen.user.follow.FollowScreen
@@ -137,6 +144,7 @@ data class UserDetailScreen(
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun UserDetailContent(
         uiState: UserDetailUiState,
@@ -166,13 +174,32 @@ data class UserDetailScreen(
             snackbarHost = {
                 SnackbarHost(hostState = snackbarHost)
             },
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            topBar = {
+                TopAppBar(
+                    title = { Text(text = "Title") },
+                    navigationIcon = {
+                        Toolbar.BackButton(onBackClick = onBackClick)
+                    },
+                    windowInsets = WindowInsets.statusBars,
+                    actions = {
+                        ToolbarActions(
+                            uiState = uiState,
+                            color = MaterialTheme.colorScheme.onSurface,
+                            onBlockClick = onBlockClick,
+                            onBlockDomainClick = onBlockDomainClick,
+                            onUnblockDomainClick = onUnblockDomainClick,
+                            onOpenInBrowserClick = onOpenInBrowserClick,
+                            onEditClick = onEditClick,
+                        )
+                    },
+                )
+            },
         ) { paddings ->
             val accountUiState = uiState.accountUiState
             val account = accountUiState?.account
-            CollapsableTopBarScaffold(
-                modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(paddings),
+            CollapsableTopBarScaffoldNew(
+                modifier = Modifier.padding(paddings),
                 title = account?.displayName,
                 banner = account?.header,
                 avatar = account?.avatar,

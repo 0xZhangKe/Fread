@@ -4,14 +4,16 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
@@ -29,12 +31,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeFlow
@@ -45,7 +45,9 @@ import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
+import com.zhangke.utopia.activitypub.app.internal.composable.ScrollUpTopBarLayout
+import com.zhangke.utopia.activitypub.app.internal.screen.user.DetailHeaderContent
+import com.zhangke.utopia.activitypub.app.internal.screen.user.DetailTopBar
 import kotlinx.coroutines.launch
 
 @Destination(PlatformDetailRoute.ROUTE)
@@ -56,7 +58,6 @@ class InstanceDetailScreen(
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val bottomSheetDialogNavigator = LocalBottomSheetNavigator.current
         val navigationResult = navigator.navigationResult
         val viewModel: InstanceDetailViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
@@ -78,6 +79,7 @@ class InstanceDetailScreen(
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,
@@ -87,25 +89,28 @@ class InstanceDetailScreen(
             mutableStateOf(false)
         }
         val instance = uiState.instance
-        Scaffold { paddings ->
-            CollapsableTopBarScaffold(
+        Scaffold(
+            contentWindowInsets = WindowInsets(0, 0, 0, 0),
+        ) { innerPaddings ->
+            ScrollUpTopBarLayout(
                 modifier = Modifier
-                    .statusBarsPadding()
-                    .padding(paddings),
-                title = instance?.title,
-                banner = uiState.instance?.thumbnail?.url,
-                avatar = instance?.thumbnail?.url,
+                    .fillMaxSize()
+                    .padding(innerPaddings),
+                topBarContent = { progress ->
+                    DetailTopBar(
+                        progress = progress,
+                        title = instance?.title.orEmpty(),
+                        onBackClick = onBackClick,
+                        actions = {},
+                    )
+                },
+                headerContent = { progress ->
+                    AppBarContent(
+                        progress = progress,
+                        uiState = uiState,
+                    )
+                },
                 contentCanScrollBackward = contentCanScrollBackward,
-                onBackClick = onBackClick,
-                onAvatarClick = {
-
-                },
-                toolbarAction = { _ ->
-                },
-                headerAction = { },
-                headerContent = {
-                    AppBarContent(uiState)
-                },
             ) {
                 if (instance != null) {
                     val coroutineScope = rememberCoroutineScope()
@@ -164,85 +169,95 @@ class InstanceDetailScreen(
 
     @Composable
     private fun AppBarContent(
+        progress: Float,
         uiState: InstanceDetailUiState,
     ) {
         val loading = uiState.loading
         val instance = uiState.instance
-        Column(modifier = Modifier.fillMaxWidth()) {
-            Text(
-                modifier = Modifier
-                    .utopiaPlaceholder(visible = loading),
-                text = uiState.baseUrl.toString(),
-                style = MaterialTheme.typography.labelMedium,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .utopiaPlaceholder(visible = loading),
-                text = instance?.description.orEmpty(),
-                maxLines = 4,
-                overflow = TextOverflow.Ellipsis,
-            )
-            val languageString =
-                instance?.languages?.joinToString(", ").orEmpty()
-            Text(
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .utopiaPlaceholder(visible = loading),
-                text = stringResource(
-                    R.string.activity_pub_instance_detail_language_label,
-                    languageString
-                ),
-                maxLines = 3,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(top = 4.dp)
-                    .utopiaPlaceholder(visible = loading),
-                text = stringResource(
-                    R.string.activity_pub_instance_detail_active_month_label,
-                    instance?.usage?.users?.activeMonth.toString()
-                ),
-            )
+        DetailHeaderContent(
+            progress = progress,
+            loading = loading,
+            banner = instance?.thumbnail?.url,
+            avatar = instance?.thumbnail?.url,
+            title = instance?.title,
+            description = instance?.description,
+            acctLine = {
+                Text(
+                    text = uiState.baseUrl.toString(),
+                    style = MaterialTheme.typography.labelMedium,
+                )
+            },
+            followInfo = {
+                Column {
 
-            if (instance?.contact != null) {
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .utopiaPlaceholder(visible = loading),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
+                    val languageString =
+                        instance?.languages?.joinToString(", ").orEmpty()
                     Text(
                         modifier = Modifier
-                            .background(
-                                Color(0x6644429F),
-                                RoundedCornerShape(3.dp),
+                            .padding(top = 4.dp)
+                            .utopiaPlaceholder(visible = loading),
+                        text = stringResource(
+                            R.string.activity_pub_instance_detail_language_label,
+                            languageString
+                        ),
+                        maxLines = 3,
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 4.dp)
+                            .utopiaPlaceholder(visible = loading),
+                        text = stringResource(
+                            R.string.activity_pub_instance_detail_active_month_label,
+                            instance?.usage?.users?.activeMonth.toString()
+                        ),
+                    )
+
+                    if (instance?.contact != null) {
+                        Row(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .utopiaPlaceholder(visible = loading),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            Text(
+                                modifier = Modifier
+                                    .background(
+                                        Color(0x6644429F),
+                                        RoundedCornerShape(3.dp),
+                                    )
+                                    .padding(vertical = 2.dp, horizontal = 4.dp),
+                                text = "MOD",
+                                fontWeight = FontWeight.Bold,
                             )
-                            .padding(vertical = 2.dp, horizontal = 4.dp),
-                        text = "MOD",
-                        fontWeight = FontWeight.Bold,
-                    )
 
-                    AsyncImage(
-                        modifier = Modifier
-                            .padding(start = 6.dp)
-                            .size(18.dp)
-                            .clip(CircleShape),
-                        model = instance.contact.account.avatar,
-                        contentDescription = "Mod avatar",
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 4.dp),
-                        text = instance.contact.account.displayName,
-                    )
-                    Text(
-                        modifier = Modifier
-                            .padding(start = 4.dp),
-                        text = instance.contact.email,
-                    )
+                            AsyncImage(
+                                modifier = Modifier
+                                    .padding(start = 6.dp)
+                                    .size(18.dp)
+                                    .clip(CircleShape),
+                                model = instance.contact.account.avatar,
+                                contentDescription = "Mod avatar",
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 4.dp),
+                                text = instance.contact.account.displayName,
+                            )
+                            Text(
+                                modifier = Modifier
+                                    .padding(start = 4.dp),
+                                text = instance.contact.email,
+                            )
+                        }
+                    }
                 }
-            }
-        }
+            },
+            onBannerClick = {
+
+            },
+            onAvatarClick = {
+
+            },
+        )
     }
 }

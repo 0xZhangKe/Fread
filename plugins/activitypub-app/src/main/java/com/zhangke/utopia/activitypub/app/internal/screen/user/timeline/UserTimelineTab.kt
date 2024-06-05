@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -17,6 +18,7 @@ import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
 import com.zhangke.utopia.status.model.IdentityRole
 
 class UserTimelineTab(
+    private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
     private val userWebFinger: WebFinger,
 ) : PagerTab {
@@ -39,6 +41,7 @@ class UserTimelineTab(
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             nestedScrollConnection = nestedScrollConnection,
+            contentCanScrollBackward = contentCanScrollBackward,
         )
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

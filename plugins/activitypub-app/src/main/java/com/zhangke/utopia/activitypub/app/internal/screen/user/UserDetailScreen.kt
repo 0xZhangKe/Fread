@@ -3,13 +3,11 @@ package com.zhangke.utopia.activitypub.app.internal.screen.user
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBars
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -33,7 +31,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -54,19 +51,17 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.composable.utopiaPlaceholder
+import com.zhangke.framework.utils.BlendColorUtil
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
-import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffold
-import com.zhangke.utopia.activitypub.app.internal.composable.CollapsableTopBarScaffoldNew
+import com.zhangke.utopia.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.utopia.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.utopia.status.ui.richtext.UtopiaRichText
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(UserDetailRoute.ROUTE)
@@ -89,8 +84,8 @@ data class UserDetailScreen(
             uiState = uiState,
             messageFlow = viewModel.messageFlow,
             onBackClick = navigator::pop,
-            onFollowClick = viewModel::onFollowClick,
-            onUnfollowClick = viewModel::onUnfollowClick,
+            onFollowAccountClick = viewModel::onFollowClick,
+            onUnfollowAccountClick = viewModel::onUnfollowClick,
             onAcceptClick = viewModel::onAcceptClick,
             onRejectClick = viewModel::onRejectClick,
             onCancelFollowRequestClick = viewModel::onCancelFollowRequestClick,
@@ -102,6 +97,18 @@ data class UserDetailScreen(
                 uiState.accountUiState
                     ?.account
                     ?.avatar
+                    ?.let {
+                        val screen = ImageViewerScreen(
+                            selectedIndex = 0,
+                            imageList = listOf(ImageViewerScreen.Image(url = it)),
+                        )
+                        transparentNavigator.push(screen)
+                    }
+            },
+            onBannerClick = {
+                uiState.accountUiState
+                    ?.account
+                    ?.header
                     ?.let {
                         val screen = ImageViewerScreen(
                             selectedIndex = 0,
@@ -150,10 +157,11 @@ data class UserDetailScreen(
         uiState: UserDetailUiState,
         messageFlow: SharedFlow<TextString>,
         onBackClick: () -> Unit,
+        onBannerClick: () -> Unit,
         onAvatarClick: () -> Unit,
         onUnblockClick: () -> Unit,
-        onFollowClick: () -> Unit,
-        onUnfollowClick: () -> Unit,
+        onFollowAccountClick: () -> Unit,
+        onUnfollowAccountClick: () -> Unit,
         onCancelFollowRequestClick: () -> Unit,
         onAcceptClick: () -> Unit,
         onRejectClick: () -> Unit,
@@ -175,152 +183,85 @@ data class UserDetailScreen(
                 SnackbarHost(hostState = snackbarHost)
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            topBar = {
-                TopAppBar(
-                    title = { Text(text = "Title") },
-                    navigationIcon = {
-                        Toolbar.BackButton(onBackClick = onBackClick)
-                    },
-                    windowInsets = WindowInsets.statusBars,
-                    actions = {
-                        ToolbarActions(
-                            uiState = uiState,
-                            color = MaterialTheme.colorScheme.onSurface,
-                            onBlockClick = onBlockClick,
-                            onBlockDomainClick = onBlockDomainClick,
-                            onUnblockDomainClick = onUnblockDomainClick,
-                            onOpenInBrowserClick = onOpenInBrowserClick,
-                            onEditClick = onEditClick,
-                        )
-                    },
-                )
-            },
-        ) { paddings ->
+        ) { innerPaddings ->
             val accountUiState = uiState.accountUiState
             val account = accountUiState?.account
-            CollapsableTopBarScaffoldNew(
-                modifier = Modifier.padding(paddings),
-                title = account?.displayName,
-                banner = account?.header,
-                avatar = account?.avatar,
-                contentCanScrollBackward = contentCanScrollBackward,
-                onBackClick = onBackClick,
-                onAvatarClick = onAvatarClick,
-                toolbarAction = {
-                    ToolbarActions(
-                        uiState = uiState,
-                        color = it,
-                        onBlockClick = onBlockClick,
-                        onBlockDomainClick = onBlockDomainClick,
-                        onUnblockDomainClick = onUnblockDomainClick,
-                        onOpenInBrowserClick = onOpenInBrowserClick,
-                        onEditClick = onEditClick,
+            ScrollUpTopBarLayout(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(innerPaddings),
+                topBarContent = { progress ->
+                    DetailTopBar(
+                        title = account?.displayName.orEmpty(),
+                        progress = progress,
+                        onBackClick = onBackClick,
+                        actions = {
+                            ToolbarActions(
+                                uiState = uiState,
+                                onBlockClick = onBlockClick,
+                                onBlockDomainClick = onBlockDomainClick,
+                                onUnblockDomainClick = onUnblockDomainClick,
+                                onOpenInBrowserClick = onOpenInBrowserClick,
+                                onEditClick = onEditClick,
+                            )
+                        },
                     )
                 },
-                headerAction = {
-                    if (!uiState.isAccountOwner) {
-                        RelationshipStateButton(
-                            modifier = Modifier,
-                            relationship = uiState.relationship.toUiState(),
-                            onFollowClick = onFollowClick,
-                            onUnfollowClick = onUnfollowClick,
-                            onAcceptClick = onAcceptClick,
-                            onRejectClick = onRejectClick,
-                            onCancelFollowRequestClick = onCancelFollowRequestClick,
-                            onUnblockClick = onUnblockClick,
-                        )
-                    }
-                },
-                headerContent = {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        // acct and follows you
-                        Row(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .utopiaPlaceholder(uiState.loading),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                modifier = Modifier,
-                                text = account?.prettyAcct.orEmpty(),
-                                maxLines = 1,
-                                overflow = TextOverflow.Ellipsis,
-                                style = MaterialTheme.typography.labelMedium,
-                            )
-                            if (uiState.relationship?.followedBy == true) {
+                headerContent = { progress ->
+                    DetailHeaderContent(
+                        progress = progress,
+                        loading = uiState.loading,
+                        banner = account?.header,
+                        avatar = account?.avatar,
+                        title = account?.displayName,
+                        description = account?.note,
+                        acctLine = {
+                            Row(
+                                verticalAlignment = Alignment.CenterVertically,
+                            ) {
                                 Text(
-                                    modifier = Modifier
-                                        .padding(start = 4.dp)
-                                        .background(
-                                            color = MaterialTheme.colorScheme.surfaceContainer,
-                                            shape = RoundedCornerShape(2.dp),
-                                        )
-                                        .padding(horizontal = 4.dp),
-                                    text = stringResource(R.string.activity_pub_user_detail_follows_you),
-                                    style = MaterialTheme.typography.bodySmall,
+                                    modifier = Modifier,
+                                    text = account?.prettyAcct.orEmpty(),
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
+                                    style = MaterialTheme.typography.labelMedium,
                                 )
+                                if (uiState.relationship?.followedBy == true) {
+                                    Text(
+                                        modifier = Modifier
+                                            .padding(start = 4.dp)
+                                            .background(
+                                                color = MaterialTheme.colorScheme.surfaceContainer,
+                                                shape = RoundedCornerShape(2.dp),
+                                            )
+                                            .padding(horizontal = 4.dp),
+                                        text = stringResource(R.string.activity_pub_user_detail_follows_you),
+                                        style = MaterialTheme.typography.bodySmall,
+                                    )
+                                }
                             }
-                        }
-
-                        // description
-                        UtopiaRichText(
-                            modifier = Modifier
-                                .padding(top = 4.dp)
-                                .utopiaPlaceholder(uiState.loading)
-                                .fillMaxWidth(),
-                            content = account?.note.orEmpty(),
-                            onMentionClick = {},
-                            onHashtagClick = {},
-                            mentions = emptyList(),
-                            emojis = accountUiState?.emojis.orEmpty(),
-                            tags = emptyList(),
-                        )
-
-                        Row(
-                            modifier = Modifier
-                                .padding(top = 4.dp)
-                                .utopiaPlaceholder(uiState.loading),
-                            verticalAlignment = Alignment.CenterVertically,
-                        ) {
-                            Text(
-                                modifier = Modifier.clickable(account != null) {
-                                    onFollowerClick()
-                                },
-                                text = if (account == null) {
-                                    "     "
-                                } else {
-                                    stringResource(
-                                        R.string.activity_pub_user_detail_follower_info,
-                                        account.followersCount
-                                    )
-                                },
-                                style = MaterialTheme.typography.bodySmall,
+                        },
+                        followInfo = {
+                            FollowInfoLine(
+                                modifier = Modifier,
+                                account = account,
+                                onFollowerClick = onFollowerClick,
+                                onFollowingClick = onFollowingClick,
                             )
-
-                            Text(
-                                modifier = Modifier
-                                    .padding(horizontal = 4.dp),
-                                text = "·",
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-
-                            Text(
-                                modifier = Modifier.clickable(account != null) {
-                                    onFollowingClick()
-                                },
-                                text = if (account == null) {
-                                    "     "
-                                } else {
-                                    stringResource(
-                                        R.string.activity_pub_user_detail_following_info,
-                                        account.followingCount
-                                    )
-                                },
-                                style = MaterialTheme.typography.bodySmall,
-                            )
-                        }
-                    }
+                        },
+                        relationship = uiState.relationship?.toUiState(),
+                        emojis = uiState.accountUiState?.emojis,
+                        onBannerClick = onBannerClick,
+                        onAvatarClick = onAvatarClick,
+                        onUnblockClick = onUnblockClick,
+                        onCancelFollowRequestClick = onCancelFollowRequestClick,
+                        onAcceptClick = onAcceptClick,
+                        onRejectClick = onRejectClick,
+                        onFollowAccountClick = onFollowAccountClick,
+                        onUnfollowAccountClick = onUnfollowAccountClick,
+                    )
                 },
+                contentCanScrollBackward = contentCanScrollBackward,
             ) {
                 if (uiState.userInsight != null) {
                     val tabs: List<PagerTab> = remember(uiState) {
@@ -328,6 +269,7 @@ data class UserDetailScreen(
                             UserTimelineTab(
                                 role = uiState.role,
                                 userWebFinger = uiState.userInsight.webFinger,
+                                contentCanScrollBackward = contentCanScrollBackward,
                             ),
                             UserAboutTab(
                                 contentCanScrollBackward = contentCanScrollBackward,
@@ -347,9 +289,58 @@ data class UserDetailScreen(
     }
 
     @Composable
+    private fun FollowInfoLine(
+        modifier: Modifier,
+        account: ActivityPubAccountEntity?,
+        onFollowerClick: () -> Unit,
+        onFollowingClick: () -> Unit,
+    ) {
+        Row(
+            modifier = modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier.clickable(account != null) {
+                    onFollowerClick()
+                },
+                text = if (account == null) {
+                    "     "
+                } else {
+                    stringResource(
+                        R.string.activity_pub_user_detail_follower_info,
+                        account.followersCount
+                    )
+                },
+                style = MaterialTheme.typography.bodySmall,
+            )
+
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 4.dp),
+                text = "·",
+                style = MaterialTheme.typography.bodySmall,
+            )
+
+            Text(
+                modifier = Modifier.clickable(account != null) {
+                    onFollowingClick()
+                },
+                text = if (account == null) {
+                    "     "
+                } else {
+                    stringResource(
+                        R.string.activity_pub_user_detail_following_info,
+                        account.followingCount
+                    )
+                },
+                style = MaterialTheme.typography.bodySmall,
+            )
+        }
+    }
+
+    @Composable
     private fun ToolbarActions(
         uiState: UserDetailUiState,
-        color: Color,
         onBlockClick: () -> Unit,
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
@@ -361,7 +352,6 @@ data class UserDetailScreen(
         if (uiState.isAccountOwner) {
             SimpleIconButton(
                 onClick = onEditClick,
-                tint = color,
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Edit Profile",
             )
@@ -372,7 +362,6 @@ data class UserDetailScreen(
         }
         SimpleIconButton(
             onClick = { showMorePopup = true },
-            tint = color,
             imageVector = Icons.Default.MoreVert,
             contentDescription = "More Options"
         )

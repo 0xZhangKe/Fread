@@ -1,6 +1,7 @@
 package com.zhangke.utopia.screen.main
 
 import android.annotation.SuppressLint
+import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -18,18 +19,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.utopia.explore.ExploreTab
 import com.zhangke.utopia.feature.message.NotificationsTab
@@ -48,16 +50,21 @@ fun Screen.MainPage() {
     val mainTabConnection = remember {
         MainTabConnection()
     }
-    val navigator = LocalNavigator.currentOrThrow
-//    val pageVisibleInNavigation = navigator.lastItem == this
-//    ConsumeFlow(mainTabConnection.openDrawerFlow) {
-//        drawerState.open()
-//    }
+    var inFeedsTab by remember {
+        mutableStateOf(false)
+    }
+    Log.d("U_TEST", "MainPage: inFeedsTab = $inFeedsTab")
+    ConsumeFlow(mainTabConnection.openDrawerFlow) {
+        if (inFeedsTab) {
+            drawerState.open()
+        }
+    }
     CompositionLocalProvider(
         LocalMainTabConnection provides mainTabConnection,
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
+            gesturesEnabled = inFeedsTab,
             drawerContent = {
                 ModalDrawerSheet {
                     MainDrawer(
@@ -76,6 +83,8 @@ fun Screen.MainPage() {
             TabNavigator(
                 tab = tabs.first(),
             ) {
+                val tabNavigator = LocalTabNavigator.current
+                inFeedsTab = tabNavigator.current.key == tabs.first().key
                 Box(modifier = Modifier.fillMaxSize()) {
                     Box(
                         modifier = Modifier.fillMaxSize()
@@ -87,7 +96,6 @@ fun Screen.MainPage() {
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth(),
-//                        visible = !pageVisibleInNavigation || !inImmersiveMode,
                         visible = !inImmersiveMode,
                         enter = slideInVertically(
                             initialOffsetY = { it },

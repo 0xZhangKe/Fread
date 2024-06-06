@@ -1,6 +1,5 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content.timeline
 
-import android.util.Log
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.coroutines.invokeOnCancel
@@ -78,7 +77,6 @@ class ActivityPubTimelineViewModel(
     }
 
     private fun initFeeds() {
-        Log.d("U_TEST", "TimelineVM: initFeeds")
         // 1. load local first page(100 item) data
         // 2. load previous page of this local page data from server
         // 3. position item of latest read item, if can't position, move to top.
@@ -95,12 +93,8 @@ class ActivityPubTimelineViewModel(
                 type = type,
                 listId = listId,
             )
-            Log.d("U_TEST", "TimelineVM: initFeeds localStatus: ${localStatus.size}")
             if (localStatus.isNotEmpty()) {
                 val latestReadStatus = statusReadStateRepo.getLatestReadId(role, type, listId)
-                localStatus.joinToString { it.id }.let {
-                    Log.d("U_TEST", "TimelineVM: initFeeds localStatus($latestReadStatus): ${it}")
-                }
                 val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
                 _uiState.update {
                     it.copy(
@@ -112,14 +106,12 @@ class ActivityPubTimelineViewModel(
             }
             val sinceId = localStatus.firstOrNull()?.id
             if (sinceId.isNullOrEmpty()) {
-                Log.d("U_TEST", "TimelineVM: initFeeds getFresherStatus")
                 timelineRepo.getFresherStatus(
                     role = role,
                     type = type,
                     listId = listId,
                 )
             } else {
-                Log.d("U_TEST", "TimelineVM: initFeeds loadPreviousPageStatus: $sinceId")
                 timelineRepo.loadPreviousPageStatus(
                     role = role,
                     type = type,
@@ -128,7 +120,6 @@ class ActivityPubTimelineViewModel(
                 )
             }.map { it.toTimelineItems() }
                 .onFailure { t ->
-                    Log.d("U_TEST", "TimelineVM: initFeeds onFailure: $t")
                     if (_uiState.value.items.isEmpty()) {
                         _uiState.update {
                             it.copy(
@@ -140,10 +131,6 @@ class ActivityPubTimelineViewModel(
                         mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
                     }
                 }.onSuccess { list ->
-                    list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
-                        .let {
-                            Log.d("U_TEST", "TimelineVM: initFeeds onSuccess: $it")
-                        }
                     _uiState.update {
                         it.copy(
                             items = list.appendItems(it.items),
@@ -153,7 +140,6 @@ class ActivityPubTimelineViewModel(
                 }
         }
         initFeedsJob!!.invokeOnCancel { t ->
-            Log.d("U_TEST", "TimelineVM: initFeeds invokeOnCompletion: $t")
             _uiState.update {
                 it.copy(showPagingLoadingPlaceholder = false)
             }
@@ -161,7 +147,6 @@ class ActivityPubTimelineViewModel(
     }
 
     fun onRefresh() {
-        Log.d("U_TEST", "TimelineVM: onRefresh")
         loadPreviousJob?.cancel()
         loadMoreJob?.cancel()
         refreshJob?.cancel()
@@ -173,14 +158,9 @@ class ActivityPubTimelineViewModel(
                 listId = listId,
             ).map { it.toTimelineItems() }
                 .onFailure { t ->
-                    Log.d("U_TEST", "TimelineVM: onRefresh onFailure: $t")
                     _uiState.update { it.copy(refreshing = false) }
                     mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
                 }.onSuccess { list ->
-                    list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
-                        .let {
-                            Log.d("U_TEST", "TimelineVM: onRefresh onSuccess: $it")
-                        }
                     _uiState.update {
                         it.copy(
                             items = list,
@@ -190,7 +170,6 @@ class ActivityPubTimelineViewModel(
                 }
         }
         refreshJob?.invokeOnCancel {
-            Log.d("U_TEST", "TimelineVM: onRefresh invokeOnCompletion: $it")
             _uiState.update { it.copy(refreshing = false) }
         }
     }
@@ -202,7 +181,6 @@ class ActivityPubTimelineViewModel(
         val sinceId = uiState.value
             .items
             .getStatusIdOrNull(0) ?: return
-        Log.d("U_TEST", "TimelineVM: onLoadPreviousPage($sinceId)")
         loadPreviousJob = launchInViewModel {
             timelineRepo.loadPreviousPageStatus(
                 role = role,
@@ -210,16 +188,7 @@ class ActivityPubTimelineViewModel(
                 sinceId = sinceId,
                 listId = listId,
             ).map { it.toTimelineItems() }
-                .onFailure { t ->
-                    Log.d("U_TEST", "TimelineVM: onLoadPreviousPage($sinceId) onFailure: $t")
-                }.onSuccess { list ->
-                    list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
-                        .let {
-                            Log.d(
-                                "U_TEST",
-                                "TimelineVM: onLoadPreviousPage($sinceId) onSuccess: $it"
-                            )
-                        }
+                .onSuccess { list ->
                     _uiState.update {
                         it.copy(
                             items = list.appendItems(it.items),
@@ -237,7 +206,6 @@ class ActivityPubTimelineViewModel(
             ?.status
             ?.status
             ?.id ?: return
-        Log.d("U_TEST", "TimelineVM: onLoadMore($maxId)")
         loadMoreJob?.cancel()
         loadMoreJob = launchInViewModel {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
@@ -248,13 +216,8 @@ class ActivityPubTimelineViewModel(
                 listId = listId,
             ).map { it.toTimelineItems() }
                 .onFailure { t ->
-                    Log.d("U_TEST", "TimelineVM: onLoadMore($maxId) onFailure: $t")
                     _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
                 }.onSuccess { list ->
-                    list.joinToString { (it as ActivityPubTimelineItem.StatusItem).status.status.id }
-                        .let {
-                            Log.d("U_TEST", "TimelineVM: onLoadMore($maxId) onSuccess: $it")
-                        }
                     _uiState.update {
                         it.copy(
                             items = it.items.appendItems(list),
@@ -264,16 +227,11 @@ class ActivityPubTimelineViewModel(
                 }
         }
         loadMoreJob!!.invokeOnCancel { t ->
-            Log.d("U_TEST", "TimelineVM: LoadMore($maxId) invokeOnCompletion: $t")
             _uiState.update { it.copy(loadMoreState = LoadState.Idle) }
         }
     }
 
     fun updateMaxReadStatus(item: ActivityPubTimelineItem) {
-        Log.d(
-            "U_TEST",
-            "TimelineVM: updateMaxReadStatus: ${(item as ActivityPubTimelineItem.StatusItem).status.status.id}"
-        )
         val statusId = (item as ActivityPubTimelineItem.StatusItem).status.status.id
         launchInViewModel {
             statusReadStateRepo.updateLatestReadId(

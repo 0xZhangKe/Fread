@@ -14,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
@@ -22,6 +22,7 @@ import com.zhangke.utopia.common.status.model.StatusUiInteraction
 @Composable
 fun StatusBottomInteractionPanel(
     modifier: Modifier = Modifier,
+    iconAlpha: Float,
     interactions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
 ) {
@@ -45,7 +46,9 @@ fun StatusBottomInteractionPanel(
                     else -> Alignment.Center
                 }
                 StatusActionIcon(
-                    modifier = Modifier.align(alignment),
+                    modifier = Modifier
+                        .align(alignment)
+                        .alpha(iconAlpha),
                     imageVector = interaction.logo,
                     enabled = interaction.enabled,
                     contentDescription = interaction.actionName,

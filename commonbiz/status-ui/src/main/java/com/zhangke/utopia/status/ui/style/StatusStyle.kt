@@ -11,6 +11,7 @@ data class StatusStyle(
     val iconEndPadding: Dp,
     val statusInfoStyle: StatusInfoStyle,
     val blogStyle: BlogStyle,
+    val iconAlpha: Float,
 )
 
 object StatusStyleDefaults {
@@ -26,6 +27,8 @@ object StatusStyleDefaults {
     val iconStartPadding = 8.dp
 
     val iconEndPadding = 8.dp
+
+    const val ICON_ALPHA = 0.7F
 }
 
 @Composable
@@ -40,10 +43,12 @@ fun defaultStatusStyle(
     iconEndPadding: Dp = StatusStyleDefaults.iconEndPadding,
     statusInfoStyle: StatusInfoStyle = defaultStatusInfoStyle(),
     blogStyle: BlogStyle = defaultBlogStyle(),
+    iconAlpha: Float = StatusStyleDefaults.ICON_ALPHA,
 ) = StatusStyle(
     containerPaddings = containerPaddings,
     iconStartPadding = iconStartPadding,
     iconEndPadding = iconEndPadding,
     statusInfoStyle = statusInfoStyle,
     blogStyle = blogStyle,
+    iconAlpha = iconAlpha,
 )

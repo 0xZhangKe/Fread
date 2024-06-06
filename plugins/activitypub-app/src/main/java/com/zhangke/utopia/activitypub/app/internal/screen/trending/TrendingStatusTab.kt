@@ -3,6 +3,7 @@ package com.zhangke.utopia.activitypub.app.internal.screen.trending
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -13,6 +14,7 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.utopia.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsContent
 import com.zhangke.utopia.status.model.IdentityRole
+import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
 
 class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
 
@@ -26,6 +28,8 @@ class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = getViewModel<TrendingStatusViewModel>().getSubViewModel(role)
         val uiState by viewModel.uiState.collectAsState()
+        val mainTabConnection = LocalMainTabConnection.current
+        val coroutineScope = rememberCoroutineScope()
         FeedsContent(
             uiState = uiState,
             openScreenFlow = viewModel.openScreenFlow,
@@ -34,6 +38,13 @@ class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             nestedScrollConnection = nestedScrollConnection,
+            onImmersiveEvent = {
+                if (it) {
+                    mainTabConnection.openImmersiveMode(coroutineScope)
+                } else {
+                    mainTabConnection.closeImmersiveMode(coroutineScope)
+                }
+            },
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }

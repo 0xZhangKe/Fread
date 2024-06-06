@@ -102,6 +102,13 @@ class MixedContentScreen(
                     onLoadMore = onLoadMore,
                     composedStatusInteraction = composedStatusInteraction,
                     nestedScrollConnection = scrollBehavior.nestedScrollConnection,
+                    onImmersiveEvent = {
+                        if (it) {
+                            mainTabConnection.openImmersiveMode(coroutineScope)
+                        } else {
+                            mainTabConnection.closeImmersiveMode(coroutineScope)
+                        }
+                    },
                 )
             }
         }

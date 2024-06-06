@@ -5,6 +5,7 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -24,47 +25,51 @@ class ContentHomeScreen : Screen {
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        val viewModel: ContentHomeViewModel = getViewModel()
-        val uiState by viewModel.uiState.collectAsState()
-        if (uiState.contentConfigList.isEmpty()) {
-            EmptyContent(modifier = Modifier.fillMaxSize()) {
-                navigator.push(PreAddFeedsScreen())
-            }
-        } else {
-            val mainTabConnection = LocalMainTabConnection.current
-            val pagerState = rememberPagerState(pageCount = { uiState.contentConfigList.size })
-            ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
-                if (pagerState.currentPage < pagerState.pageCount - 1) {
-                    pagerState.animateScrollToPage(pagerState.currentPage + 1)
+        CompositionLocalProvider(
+            LocalNavigator provides navigator
+        ) {
+            val viewModel: ContentHomeViewModel = getViewModel()
+            val uiState by viewModel.uiState.collectAsState()
+            if (uiState.contentConfigList.isEmpty()) {
+                EmptyContent(modifier = Modifier.fillMaxSize()) {
+                    navigator.push(PreAddFeedsScreen())
                 }
-            }
-            ConsumeFlow(mainTabConnection.scrollToContentTabFlow) {
-                val index = uiState.contentConfigList.indexOf(it)
-                if (index in 0 until pagerState.pageCount) {
-                    pagerState.animateScrollToPage(index)
+            } else {
+                val mainTabConnection = LocalMainTabConnection.current
+                val pagerState = rememberPagerState(pageCount = { uiState.contentConfigList.size })
+                ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
+                    if (pagerState.currentPage < pagerState.pageCount - 1) {
+                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                    }
                 }
-            }
-            val currentPage = pagerState.currentPage
-            LaunchedEffect(currentPage) {
-                viewModel.onCurrentPageChange(currentPage)
-            }
-            LaunchedEffect(uiState.currentPageIndex) {
-                pagerState.animateScrollToPage(uiState.currentPageIndex)
-            }
-            HorizontalPager(
-                state = pagerState,
-            ) { pageIndex ->
-                val currentScreen = remember(uiState.contentConfigList, pageIndex) {
-                    viewModel.getContentScreen(
-                        contentConfig = uiState.contentConfigList[pageIndex],
-                        isLatestTab = pageIndex == uiState.contentConfigList.lastIndex,
-                    )
+                ConsumeFlow(mainTabConnection.scrollToContentTabFlow) {
+                    val index = uiState.contentConfigList.indexOf(it)
+                    if (index in 0 until pagerState.pageCount) {
+                        pagerState.animateScrollToPage(index)
+                    }
                 }
-                if (currentScreen == null) {
-                    Text(text = "Error! can't find any tab fro this config!")
-                } else {
-                    with(currentScreen) {
-                        TabContent(null)
+                val currentPage = pagerState.currentPage
+                LaunchedEffect(currentPage) {
+                    viewModel.onCurrentPageChange(currentPage)
+                }
+                LaunchedEffect(uiState.currentPageIndex) {
+                    pagerState.animateScrollToPage(uiState.currentPageIndex)
+                }
+                HorizontalPager(
+                    state = pagerState,
+                ) { pageIndex ->
+                    val currentScreen = remember(uiState.contentConfigList, pageIndex) {
+                        viewModel.getContentScreen(
+                            contentConfig = uiState.contentConfigList[pageIndex],
+                            isLatestTab = pageIndex == uiState.contentConfigList.lastIndex,
+                        )
+                    }
+                    if (currentScreen == null) {
+                        Text(text = "Error! can't find any tab fro this config!")
+                    } else {
+                        with(currentScreen) {
+                            TabContent(null)
+                        }
                     }
                 }
             }

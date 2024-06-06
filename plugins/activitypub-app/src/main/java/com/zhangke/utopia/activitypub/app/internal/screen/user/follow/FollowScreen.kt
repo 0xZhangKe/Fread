@@ -99,7 +99,7 @@ class FollowScreen(
             }
         ) { paddings ->
             if (uiState.initializing) {
-                InitializingUi()
+                InitializingUi(Modifier.padding(paddings))
             } else {
                 if (uiState.list.isEmpty()) {
                     Box(modifier = Modifier.fillMaxSize()) {
@@ -135,8 +135,8 @@ class FollowScreen(
     }
 
     @Composable
-    private fun InitializingUi() {
-        Column(modifier = Modifier.fillMaxSize()) {
+    private fun InitializingUi(modifier: Modifier) {
+        Column(modifier = modifier.fillMaxSize()) {
             repeat(20) {
                 FollowAccountUi(null, {})
             }

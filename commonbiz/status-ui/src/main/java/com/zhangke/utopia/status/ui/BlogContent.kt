@@ -144,7 +144,11 @@ private fun BlogTextContentSection(
                 textSelectable = textSelectable,
             )
         }
-        if (blog.title.isNullOrEmpty() && blog.description.isNullOrEmpty()) {
+        if (
+            blog.title.isNullOrEmpty() &&
+            blog.description.isNullOrEmpty() &&
+            blog.content.isNotEmpty()
+        ) {
             UtopiaRichText(
                 modifier = Modifier
                     .fillMaxWidth()

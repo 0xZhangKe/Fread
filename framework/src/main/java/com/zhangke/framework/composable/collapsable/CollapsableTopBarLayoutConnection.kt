@@ -16,17 +16,33 @@ fun rememberCollapsableTopBarLayoutConnection(
     contentCanScrollBackward: State<Boolean>,
     maxPx: Float,
     minPx: Float,
-): CollapsableTopBarLayoutConnection {
-    return remember(contentCanScrollBackward, maxPx, minPx) {
-        CollapsableTopBarLayoutConnection(contentCanScrollBackward, maxPx, minPx)
+): ICollapsableTopBarLayoutConnection {
+    return if (maxPx <= 0F) {
+        remember {
+            StaticTopBarLayoutConnection()
+        }
+    } else {
+        remember(contentCanScrollBackward, maxPx, minPx) {
+            CollapsableTopBarLayoutConnection(contentCanScrollBackward, maxPx, minPx)
+        }
     }
+}
+
+interface ICollapsableTopBarLayoutConnection : NestedScrollConnection {
+
+    val progress: Float
+}
+
+class StaticTopBarLayoutConnection : NestedScrollConnection, ICollapsableTopBarLayoutConnection {
+
+    override val progress: Float = 0F
 }
 
 class CollapsableTopBarLayoutConnection(
     private val contentCanScrollBackward: State<Boolean>,
     private val maxPx: Float,
     private val minPx: Float,
-) : NestedScrollConnection {
+) : NestedScrollConnection, ICollapsableTopBarLayoutConnection {
 
     private var topBarHeight: Float = maxPx
         set(value) {
@@ -34,7 +50,7 @@ class CollapsableTopBarLayoutConnection(
             progress = 1 - (topBarHeight - minPx) / (maxPx - minPx)
         }
 
-    var progress: Float by mutableFloatStateOf(0F)
+    override var progress: Float by mutableFloatStateOf(0F)
         private set
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {

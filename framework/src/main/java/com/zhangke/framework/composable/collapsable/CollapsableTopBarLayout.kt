@@ -34,22 +34,14 @@ fun CollapsableTopBarLayout(
     var progress: Float by remember {
         mutableFloatStateOf(0F)
     }
+    val connection = rememberCollapsableTopBarLayoutConnection(
+        contentCanScrollBackward = contentCanScrollBackward,
+        maxPx = maxTopBarHeightPx ?: 0F,
+        minPx = minTopBarHeightPx,
+    )
+    progress = connection.progress
 
-    val finalModifier = if (maxTopBarHeightPx == null) {
-        Modifier.then(modifier)
-    } else {
-        val connection = rememberCollapsableTopBarLayoutConnection(
-            contentCanScrollBackward = contentCanScrollBackward,
-            maxPx = maxTopBarHeightPx!!,
-            minPx = minTopBarHeightPx,
-        )
-        progress = connection.progress
-        Modifier
-            .then(modifier)
-            .nestedScroll(connection)
-    }
-
-    Column(modifier = finalModifier) {
+    Column(modifier = modifier.nestedScroll(connection)) {
         Box(
             modifier = Modifier
                 .scrollable(rememberScrollState(), Orientation.Vertical)

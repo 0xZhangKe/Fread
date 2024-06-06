@@ -1,18 +1,23 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawWithContent
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -56,7 +61,7 @@ fun DetailHeaderContent(
     ) {
         val (bannerRef, avatarRef, relationBtnRef, nameRef) = createRefs()
         val (acctRef, noteRef, followRef) = createRefs()
-        AsyncImage(
+        Banner(
             modifier = Modifier
                 .clickable { onBannerClick() }
                 .constrainAs(bannerRef) {
@@ -66,11 +71,7 @@ fun DetailHeaderContent(
                     width = Dimension.fillToConstraints
                     height = Dimension.value(bannerHeight)
                 },
-            model = banner,
-            contentScale = ContentScale.Crop,
-            error = painterResource(R.drawable.detail_page_banner_background),
-            placeholder = painterResource(R.drawable.detail_page_banner_background),
-            contentDescription = "banner",
+            url = banner,
         )
 
         // avatar
@@ -105,7 +106,7 @@ fun DetailHeaderContent(
         } else {
             RelationshipStateButton(
                 modifier = Modifier.constrainAs(relationBtnRef) {
-                    top.linkTo(bannerRef.bottom, 16.dp)
+                    top.linkTo(bannerRef.bottom, 8.dp)
                     end.linkTo(parent.end, 16.dp)
                 },
                 relationship = relationship,
@@ -182,5 +183,39 @@ fun DetailHeaderContent(
         ) {
             followInfo()
         }
+    }
+}
+
+@Composable
+private fun Banner(
+    modifier: Modifier,
+    url: String?,
+) {
+    Box(modifier = modifier) {
+        Image(
+            modifier = Modifier.fillMaxSize(),
+            painter = painterResource(R.drawable.detail_page_banner_background),
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+        )
+        val maskColor = MaterialTheme.colorScheme.inverseSurface
+        AsyncImage(
+            modifier = Modifier
+                .fillMaxSize()
+                .drawWithContent {
+                    drawContent()
+                    drawRect(
+                        brush = Brush.verticalGradient(
+                            colors = listOf(
+                                maskColor.copy(alpha = 0.3F),
+                                maskColor.copy(alpha = 0F),
+                            ),
+                        ),
+                    )
+                },
+            model = url,
+            contentScale = ContentScale.Crop,
+            contentDescription = "banner",
+        )
     }
 }

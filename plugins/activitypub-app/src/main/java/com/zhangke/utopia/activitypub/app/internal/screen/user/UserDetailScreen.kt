@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -15,13 +14,10 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
-import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
@@ -49,9 +45,7 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.utils.BlendColorUtil
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
@@ -151,7 +145,6 @@ data class UserDetailScreen(
         )
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun UserDetailContent(
         uiState: UserDetailUiState,
@@ -249,7 +242,7 @@ data class UserDetailScreen(
                                 onFollowingClick = onFollowingClick,
                             )
                         },
-                        relationship = uiState.relationship?.toUiState(),
+                        relationship = if (uiState.isAccountOwner) null else uiState.relationship?.toUiState(),
                         emojis = uiState.accountUiState?.emojis,
                         onBannerClick = onBannerClick,
                         onAvatarClick = onAvatarClick,

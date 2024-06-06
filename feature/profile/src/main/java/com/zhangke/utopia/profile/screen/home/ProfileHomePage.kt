@@ -29,6 +29,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -62,23 +63,28 @@ class ProfileHomePage : Screen {
 
     @Composable
     override fun Content() {
-        val navigator = LocalNavigator.currentOrThrow.rootNavigator
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
-        ProfileHomePageContent(
-            uiState = uiState,
-            onAddAccountClick = {
-                bottomSheetNavigator.show(LoginBottomSheetScreen())
-            },
-            onSettingClick = {
-                navigator.push(SettingScreen())
-            },
-            onLogoutClick = viewModel::onLogoutClick,
-            onAccountClick = viewModel::onAccountClick,
-        )
-        ConsumeFlow(viewModel.openPageFlow) {
-            navigator.push(it)
+        val rootNavigator = LocalNavigator.currentOrThrow.rootNavigator
+        CompositionLocalProvider(
+            LocalNavigator provides rootNavigator
+        ) {
+            val navigator = LocalNavigator.currentOrThrow
+            ProfileHomePageContent(
+                uiState = uiState,
+                onAddAccountClick = {
+                    bottomSheetNavigator.show(LoginBottomSheetScreen())
+                },
+                onSettingClick = {
+                    navigator.push(SettingScreen())
+                },
+                onLogoutClick = viewModel::onLogoutClick,
+                onAccountClick = viewModel::onAccountClick,
+            )
+            ConsumeFlow(viewModel.openPageFlow) {
+                navigator.push(it)
+            }
         }
     }
 

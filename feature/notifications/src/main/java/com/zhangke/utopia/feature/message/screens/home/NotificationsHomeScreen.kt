@@ -41,9 +41,12 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.utopia.feature.notifications.R
 import com.zhangke.utopia.status.account.LoggedAccount
 import com.zhangke.utopia.status.ui.BlogAuthorAvatar
@@ -54,10 +57,15 @@ class NotificationsHomeScreen : Screen {
     override fun Content() {
         val viewModel: NotificationsHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
-        NotificationsHomeScreenContent(
-            uiState = uiState,
-            onAccountSelected = viewModel::onAccountSelected,
-        )
+        val navigator = LocalNavigator.currentOrThrow.rootNavigator
+        CompositionLocalProvider(
+            LocalNavigator provides navigator
+        ) {
+            NotificationsHomeScreenContent(
+                uiState = uiState,
+                onAccountSelected = viewModel::onAccountSelected,
+            )
+        }
     }
 
     @Composable

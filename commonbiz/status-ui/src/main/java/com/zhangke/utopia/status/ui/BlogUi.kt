@@ -71,6 +71,7 @@ fun BlogUi(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(start = style.iconStartPadding, end = style.iconEndPadding),
+            iconAlpha = style.iconAlpha,
             interactions = bottomPanelInteractions,
             onInteractive = {
                 if (it is StatusUiInteraction.Share) {

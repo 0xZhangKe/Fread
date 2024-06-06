@@ -136,6 +136,7 @@ fun AncestorBlogUi(
                     end.linkTo(parent.end, style.iconEndPadding)
                     top.linkTo(name.top)
                 },
+                iconAlpha = style.iconAlpha,
                 moreActionList = status.moreInteractions,
                 onActionClick = {
                     composedStatusInteraction.onStatusInteractive(status, it)
@@ -173,6 +174,7 @@ fun AncestorBlogUi(
                         top.linkTo(blogContent.bottom)
                         width = Dimension.fillToConstraints
                     },
+                iconAlpha = style.iconAlpha,
                 interactions = status.bottomInteractions,
                 onInteractive = {
                     composedStatusInteraction.onStatusInteractive(status, it)

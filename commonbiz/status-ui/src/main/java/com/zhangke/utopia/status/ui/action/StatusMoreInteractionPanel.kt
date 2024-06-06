@@ -13,12 +13,14 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.common.status.model.StatusUiInteraction
 
 @Composable
 fun StatusMoreInteractionIcon(
     modifier: Modifier,
+    iconAlpha: Float,
     moreActionList: List<StatusUiInteraction>,
     onActionClick: (StatusUiInteraction) -> Unit,
 ) {
@@ -28,6 +30,7 @@ fun StatusMoreInteractionIcon(
     Box(modifier = modifier) {
         if (moreActionList.isNotEmpty()) {
             SimpleIconButton(
+                modifier = Modifier.alpha(iconAlpha),
                 onClick = {
                     showMorePopup = !showMorePopup
                 },

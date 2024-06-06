@@ -167,6 +167,7 @@ fun StatusInfoLine(
                 end.linkTo(parent.end, style.iconEndPadding)
                 top.linkTo(parent.top)
             },
+            iconAlpha = style.iconAlpha,
             moreActionList = moreInteractions,
             onActionClick = onInteractive,
         )

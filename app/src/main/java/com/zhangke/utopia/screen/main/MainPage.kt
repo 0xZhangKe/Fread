@@ -2,16 +2,12 @@ package com.zhangke.utopia.screen.main
 
 import android.annotation.SuppressLint
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandVertically
-import androidx.compose.animation.shrinkVertically
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -28,11 +24,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
-import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.utopia.explore.ExploreTab
 import com.zhangke.utopia.feature.message.NotificationsTab
@@ -51,9 +48,11 @@ fun Screen.MainPage() {
     val mainTabConnection = remember {
         MainTabConnection()
     }
-    ConsumeFlow(mainTabConnection.openDrawerFlow) {
-        drawerState.open()
-    }
+    val navigator = LocalNavigator.currentOrThrow
+//    val pageVisibleInNavigation = navigator.lastItem == this
+//    ConsumeFlow(mainTabConnection.openDrawerFlow) {
+//        drawerState.open()
+//    }
     CompositionLocalProvider(
         LocalMainTabConnection provides mainTabConnection,
     ) {
@@ -88,6 +87,7 @@ fun Screen.MainPage() {
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth(),
+//                        visible = !pageVisibleInNavigation || !inImmersiveMode,
                         visible = !inImmersiveMode,
                         enter = slideInVertically(
                             initialOffsetY = { it },

@@ -104,7 +104,6 @@ class ActivityPubTimelineTab(
                         onReadMinIndex(it)
                     }
                 }
-
                 ObserveToImmersive(lazyListState)
                 LoadableInlineVideoLazyColumn(
                     modifier = Modifier

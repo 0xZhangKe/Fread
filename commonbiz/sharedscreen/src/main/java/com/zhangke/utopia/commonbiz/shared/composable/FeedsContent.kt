@@ -55,7 +55,9 @@ fun FeedsContent(
     composedStatusInteraction: ComposedStatusInteraction,
     nestedScrollConnection: NestedScrollConnection?,
     contentCanScrollBackward: MutableState<Boolean>? = null,
+    onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
 ) {
+    val coroutineScope = rememberCoroutineScope()
     ConsumeOpenScreenFlow(openScreenFlow)
     if (uiState.feeds.isEmpty()) {
         if (uiState.showPagingLoadingPlaceholder) {
@@ -79,7 +81,12 @@ fun FeedsContent(
                 }
                 contentCanScrollBackward.value = canScrollBackward
             }
-            ObserveToImmersive(lazyListState)
+            if (onImmersiveEvent != null) {
+                ObserveToImmersive(
+                    listState = lazyListState,
+                    onImmersiveEvent = onImmersiveEvent,
+                )
+            }
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier
                     .fillMaxSize()
@@ -134,20 +141,6 @@ fun FeedsContent(
                     },
                 )
             }
-        }
-    }
-}
-
-@Composable
-fun ObserveToImmersive(listState: LazyListState) {
-    val mainTabConnection = LocalMainTabConnection.current
-    val coroutineScope = rememberCoroutineScope()
-    val directional = rememberDirectionalLazyListState(listState).scrollDirection
-    LaunchedEffect(directional) {
-        if (directional == ScrollDirection.Down) {
-            mainTabConnection.openImmersiveMode(coroutineScope)
-        } else if (directional == ScrollDirection.Up) {
-            mainTabConnection.closeImmersiveMode(coroutineScope)
         }
     }
 }

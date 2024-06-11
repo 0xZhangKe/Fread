@@ -33,9 +33,18 @@ data class SimpleUri(
             val path = formalUri.path
             val queries = mutableMapOf<String, String>()
             formalUri.rawQuery?.let { query ->
-                query.split("&").forEach { pair ->
-                    val (key, value) = pair.split("=")
-                    queries[key] = value
+                val queryGroups = if (query.contains("&")) {
+                    query.split("&")
+                } else {
+                    listOf(query)
+                }
+                queryGroups.forEach { pair ->
+                    pair.split("=")
+                        .takeIf { it.size == 2 }
+                        ?.let {
+                            val (key, value) = it
+                            queries[key] = value
+                        }
                 }
             }
             return SimpleUri(scheme, host, path, queries)

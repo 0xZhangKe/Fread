@@ -6,12 +6,10 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -27,17 +25,14 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
-import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.applyNestedScrollConnection
-import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.utopia.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.utopia.status.ui.ComposedStatusInteraction
 import com.zhangke.utopia.status.ui.StatusListPlaceholder
-import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
 import com.zhangke.utopia.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
@@ -57,7 +52,6 @@ fun FeedsContent(
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
 ) {
-    val coroutineScope = rememberCoroutineScope()
     ConsumeOpenScreenFlow(openScreenFlow)
     if (uiState.feeds.isEmpty()) {
         if (uiState.showPagingLoadingPlaceholder) {

@@ -30,14 +30,7 @@ class ImportFeedsViewModel @Inject constructor(
     private val configRepo: ContentConfigRepo,
 ) : ScreenModel {
 
-    private val _uiState = MutableStateFlow(
-        ImportFeedsUiState(
-            selectedFileUri = null,
-            importing = false,
-            parsedContent = emptyList(),
-            outputInfoList = emptyList(),
-        )
-    )
+    private val _uiState = MutableStateFlow(ImportFeedsUiState.default)
     val uiState = _uiState.asStateFlow()
 
     private val _saveSuccessFlow = MutableSharedFlow<Unit>()
@@ -50,19 +43,10 @@ class ImportFeedsViewModel @Inject constructor(
     }
 
     fun onImportClick(context: Context) {
-        _uiState.update { it.copy(importing = true) }
-        val exceptionHandler = CoroutineExceptionHandler { _, throwable ->
-            _uiState.update {
-                it.copy(
-                    outputInfoList = it.outputInfoList + ImportOutputLog(
-                        log = throwable.message ?: "Unknown error",
-                        type = ImportOutputLog.Type.ERROR,
-                    ),
-                    importing = false,
-                )
-            }
+        _uiState.update {
+            it.copy(importType = ImportType.IMPORTING)
         }
-        importingJob = launchInScreenModel(exceptionHandler) {
+        importingJob = launchInScreenModel {
             appendOutputLog("Start parsing outlines...")
             val list = parseOpml(context, uiState.value.selectedFileUri!!)
             appendOutputLog("Parsed ${list.size} outlines.")
@@ -70,14 +54,31 @@ class ImportFeedsViewModel @Inject constructor(
                 parseOutlineToContent(it)
             }
             appendOutputLog("All outlines parsed.")
-            _uiState.update { it.copy(importing = false) }
+            _uiState.update { it.copy(importType = ImportType.SUCCESS) }
+        }
+        importingJob?.invokeOnCompletion { t ->
+            t?.let {
+                _uiState.update {
+                    it.copy(
+                        outputInfoList = it.outputInfoList + ImportOutputLog(
+                            log = t.message ?: "Unknown error",
+                            type = ImportOutputLog.Type.ERROR,
+                        ),
+                        importType = ImportType.FAILED,
+                    )
+                }
+            }
         }
     }
 
     fun onImportCancelClick() {
         importingJob?.cancel()
         appendOutputLog("Cancelled.")
-        _uiState.update { it.copy(importing = false) }
+        _uiState.update { it.copy(importType = ImportType.IDLE) }
+    }
+
+    fun onImportDialogConfirmClick() {
+        _uiState.update { it.copy(importType = ImportType.IDLE) }
     }
 
     fun onContentConfigDelete(contentConfig: ContentConfig) {
@@ -97,20 +98,26 @@ class ImportFeedsViewModel @Inject constructor(
 
     private suspend fun parseOutlineToContent(outline: OpmlOutline) {
         appendOutputLog("Start parsing ${outline.title}...")
+        if (configRepo.checkNameExist(outline.title)){
+            appendOutputLog("${outline.title} exist, ignore!")
+            return
+        }
         val sourceUriList = mutableListOf<FormalUri>()
-        outline.children.map { item ->
-            screenModelScope.async {
-                appendOutputLog("fetching:${item.xmlUrl}")
-                statusProvider.statusSourceResolver
-                    .resolveRssSource(item.xmlUrl)
-                    .onSuccess {
-                        sourceUriList += it.uri
-                        appendOutputLog("checkout success: ${item.xmlUrl}")
-                    }.onFailure {
-                        appendOutputLog("checkout ${item.xmlUrl} failed: ${it.message}.")
-                    }
-            }
-        }.awaitAll()
+        outline.children
+            .distinctBy { it.xmlUrl }
+            .map { item ->
+                screenModelScope.async {
+                    appendOutputLog("fetching:${item.xmlUrl}")
+                    statusProvider.statusSourceResolver
+                        .resolveRssSource(item.xmlUrl)
+                        .onSuccess {
+                            sourceUriList += it.uri
+                            appendOutputLog("checkout success: ${item.xmlUrl}")
+                        }.onFailure {
+                            appendOutputLog("checkout ${item.xmlUrl} failed: ${it.message}.")
+                        }
+                }
+            }.awaitAll()
         val contentConfig = ContentConfig.MixedContent(
             id = 0,
             order = configRepo.generateNextOrder(),

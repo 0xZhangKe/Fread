@@ -1,5 +1,6 @@
 package com.zhangke.utopia.feeds.pages.home.feeds
 
+import android.util.Log
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
@@ -113,7 +114,13 @@ class MixedContentSubViewModel(
         return feedsRepo.refresh(
             sourceUriList = mixedContent!!.sourceUriList,
             limit = config.loadFromServerLimit,
-        )
+        ).also {
+            it.getOrNull()?.let {
+                it.newStatus.joinToString { it.id }.let {
+                    Log.d("U_TEST", "loadNewFromServer: ${it}")
+                }
+            }
+        }
     }
 
     private suspend fun loadMore(maxId: String): Result<List<Status>> {

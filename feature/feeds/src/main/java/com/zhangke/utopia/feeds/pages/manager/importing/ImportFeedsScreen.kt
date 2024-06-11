@@ -100,6 +100,7 @@ class ImportFeedsScreen : Screen {
                 viewModel.onImportClick(context)
             },
             onImportCancelClick = viewModel::onImportCancelClick,
+            onImportDialogConfirmClick = viewModel::onImportDialogConfirmClick,
             onContentConfigDelete = viewModel::onContentConfigDelete,
             onSaveClick = viewModel::onSaveClick,
         )
@@ -116,6 +117,7 @@ class ImportFeedsScreen : Screen {
         onBackClick: () -> Unit,
         onImportClick: () -> Unit,
         onImportCancelClick: () -> Unit,
+        onImportDialogConfirmClick: () -> Unit,
         onContentConfigDelete: (ContentConfig) -> Unit,
         onSaveClick: () -> Unit,
     ) {
@@ -244,15 +246,31 @@ class ImportFeedsScreen : Screen {
         uiState: ImportFeedsUiState,
         onCancelClick: () -> Unit,
     ) {
-        if (uiState.importing) {
+        if (uiState.importType != ImportType.IDLE) {
+            val importType = uiState.importType
+            val title = when (importType) {
+                ImportType.IMPORTING -> "Importing..."
+                ImportType.SUCCESS -> "Import Success"
+                ImportType.FAILED -> "Failure!"
+                else -> ""
+            }
             UtopiaDialog(
-                title = "Importing...",
+                title = title,
                 properties = DialogProperties(
                     dismissOnBackPress = false,
                     dismissOnClickOutside = false,
                 ),
                 onDismissRequest = {},
-                onNegativeClick = onCancelClick,
+                onNegativeClick = {
+                    if (importType == ImportType.IMPORTING) {
+                        onCancelClick()
+                    }
+                },
+                onPositiveClick = {
+                    if (importType == ImportType.SUCCESS || importType == ImportType.FAILED) {
+                        onCancelClick()
+                    }
+                },
                 content = {
                     val lazyListState = rememberLazyListState()
                     val configuration = LocalConfiguration.current

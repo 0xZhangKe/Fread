@@ -8,6 +8,8 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -21,21 +23,20 @@ class MainTabConnection {
 
     companion object {
 
-
         private val IMMERSIVE_MODE_DELAY = 500.milliseconds
     }
 
     private val _switchToNextTabFlow = MutableSharedFlow<Unit>()
-    val switchToNextTabFlow = _switchToNextTabFlow.asSharedFlow()
+    val switchToNextTabFlow: SharedFlow<Unit> get() = _switchToNextTabFlow.asSharedFlow()
 
     private val _openDrawerFlow = MutableSharedFlow<Unit>()
-    val openDrawerFlow = _openDrawerFlow.asSharedFlow()
+    val openDrawerFlow: SharedFlow<Unit> get() = _openDrawerFlow.asSharedFlow()
 
     private val _inImmersiveFlow = MutableStateFlow(false)
-    val inImmersiveFlow = _inImmersiveFlow.asStateFlow()
+    val inImmersiveFlow: StateFlow<Boolean> get() = _inImmersiveFlow.asStateFlow()
 
     private val _scrollToContentTabFlow = MutableSharedFlow<ContentConfig>()
-    val scrollToContentTabFlow = _scrollToContentTabFlow.asSharedFlow()
+    val scrollToContentTabFlow: SharedFlow<ContentConfig> get() = _scrollToContentTabFlow.asSharedFlow()
 
     private var toggleImmersiveJob: Job? = null
 

@@ -40,7 +40,7 @@ internal class RefreshStatusUseCase @Inject constructor(
                 deletedStatusList.addAll(it.deletedStatus)
             }
         val result = RefreshResult(
-            newStatus = newStatusList.sortedByDescending { it.datetime },
+            newStatus = newStatusList.distinctBy { it.id }.sortedByDescending { it.datetime },
             deletedStatus = deletedStatusList,
         )
         return Result.success(result)

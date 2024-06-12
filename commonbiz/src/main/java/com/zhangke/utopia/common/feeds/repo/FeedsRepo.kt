@@ -48,6 +48,7 @@ class FeedsRepo @Inject internal constructor(
     ): List<Status> {
         return statusContentRepo.query(sourceUriList, limit)
             .map { statusContentEntityAdapter.toStatus(it) }
+            .distinctBy { it.id }
     }
 
     suspend fun getStatus(
@@ -63,7 +64,7 @@ class FeedsRepo @Inject internal constructor(
             sourceUriList = sourceUriList,
             limit = limit,
             maxStatus = maxStatus,
-        )
+        ).map { list -> list.distinctBy { it.id } }
     }
 
     suspend fun refresh(

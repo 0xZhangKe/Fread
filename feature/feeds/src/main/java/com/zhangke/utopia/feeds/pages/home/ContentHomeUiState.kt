@@ -7,7 +7,4 @@ data class ContentHomeUiState(
     val currentPageIndex: Int,
     val contentConfigList: List<ContentConfig>,
     val accountList: List<LoggedAccount>,
-) {
-
-    val currentConfig: ContentConfig? get() = contentConfigList.getOrNull(currentPageIndex)
-}
+)

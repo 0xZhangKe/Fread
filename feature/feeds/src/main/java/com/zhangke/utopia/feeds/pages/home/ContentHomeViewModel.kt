@@ -10,6 +10,7 @@ import com.zhangke.utopia.status.model.ContentConfig
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
 import javax.inject.Inject
 
@@ -24,7 +25,17 @@ class ContentHomeViewModel @Inject constructor(
 
     init {
         launchInViewModel {
+            val allConfig = contentConfigRepo.getAllConfig()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    currentPageIndex = 0,
+                    contentConfigList = allConfig,
+                )
+            }
+        }
+        launchInViewModel {
             contentConfigRepo.getAllConfigFlow()
+                .drop(1)
                 .collect {
                     _uiState.update { currentState ->
                         currentState.copy(

@@ -1,7 +1,6 @@
 package com.zhangke.utopia.screen.main
 
 import android.annotation.SuppressLint
-import android.util.Log
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -53,7 +52,6 @@ fun Screen.MainPage() {
     var inFeedsTab by remember {
         mutableStateOf(false)
     }
-    Log.d("U_TEST", "MainPage: inFeedsTab = $inFeedsTab")
     ConsumeFlow(mainTabConnection.openDrawerFlow) {
         if (inFeedsTab) {
             drawerState.open()

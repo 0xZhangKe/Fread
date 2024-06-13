@@ -31,33 +31,33 @@ fun TopBarWithTabLayout(
     topBarContent: @Composable BoxScope.() -> Unit,
     tabContent: @Composable BoxScope.() -> Unit,
     modifier: Modifier = Modifier,
-    topBarHeight: Dp = 64.dp,
     tabHeight: Dp = 42.dp,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     colors: TopAppBarColors = TopAppBarDefaults.topAppBarColors(),
     scrollableContent: @Composable BoxScope.() -> Unit,
 ) {
-    val topBarHeightPx = topBarHeight.toPx()
+    val density = LocalDensity.current
+    val statusBarHeight = windowInsets.getTop(density).pxToDp(density)
+    val realTopBarHeight = 64.dp + statusBarHeight
+    val topBarHeightPx = realTopBarHeight.toPx()
     val tabHeightPx = tabHeight.toPx()
     val nestedScrollConnection = rememberCollapsableTopBarScrollConnection(
         minPx = 0F,
-        maxPx = (topBarHeight + tabHeight).toPx(),
+        maxPx = (realTopBarHeight + tabHeight).toPx(),
     )
     val process by rememberUpdatedState(newValue = nestedScrollConnection.progress)
-    val density = LocalDensity.current
-    val statusBarHeight = windowInsets.getTop(density).pxToDp(density)
     Box(
         modifier = modifier
             .fillMaxSize()
             .nestedScroll(nestedScrollConnection)
     ) {
         Layout(
-            modifier = Modifier.padding(top = statusBarHeight),
+            modifier = Modifier,
             content = {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .height(topBarHeight),
+                        .height(realTopBarHeight),
                 ) {
                     topBarContent()
                 }

@@ -1,8 +1,6 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.content
 
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.fadeIn
-import androidx.compose.animation.fadeOut
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.animation.slideInVertically
@@ -141,12 +139,10 @@ class ActivityPubContentScreen(
                             tabList.size
                         }
                         TopBarWithTabLayout(
-                            topBarHeight = 42.dp,
                             topBarContent = {
                                 ContentToolbar(
                                     title = config.configName,
                                     showNextIcon = !isLatestContent,
-                                    windowInsets = WindowInsets(0, 0, 0, 0),
                                     onMenuClick = {
                                         coroutineScope.launch {
                                             mainTabConnection.openDrawer()

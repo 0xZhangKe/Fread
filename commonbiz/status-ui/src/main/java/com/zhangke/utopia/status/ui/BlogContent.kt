@@ -1,13 +1,15 @@
 package com.zhangke.utopia.status.ui
 
-import androidx.compose.foundation.clickable
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.material3.Card
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -15,9 +17,19 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.CornerRadius
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.geometry.Rect
+import androidx.compose.ui.geometry.RoundRect
+import androidx.compose.ui.geometry.Size
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.utils.toPx
 import com.zhangke.utopia.status.blog.Blog
 import com.zhangke.utopia.status.blog.BlogPoll
 import com.zhangke.utopia.status.model.HashtagInStatus
@@ -98,24 +110,30 @@ private fun BlogTextContentSection(
         }
         SpoilerText(
             hideContent = hideContent,
-            spoilerText = blog.humanizedSpoilerText,
+            spoilerText = RichText(spoilerText, emptyList(), emptyList(), emptyList()),
             onShowContent = { hideContent = false },
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
         )
-        if (blog.content.isNotEmpty() && !hideContent) {
-            UtopiaRichText(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(top = 4.dp),
-                richText = blog.humanizedContent,
-                maxLines = contentMaxLine,
-                onMentionClick = onMentionClick,
-                onHashtagClick = onHashtagInStatusClick,
-                textSelectable = textSelectable,
-            )
+        if (blog.content.isNotEmpty()) {
+            AnimatedVisibility(
+                visible = !hideContent,
+                enter = expandVertically(),
+                exit = shrinkVertically(),
+            ) {
+                UtopiaRichText(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentHeight()
+                        .padding(top = 4.dp),
+                    richText = blog.humanizedContent,
+                    maxLines = contentMaxLine,
+                    onMentionClick = onMentionClick,
+                    onHashtagClick = onHashtagInStatusClick,
+                    textSelectable = textSelectable,
+                )
+            }
         }
     } else {
         if (!blog.title.isNullOrEmpty()) {
@@ -174,12 +192,13 @@ private fun SpoilerText(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
 ) {
-    Card(
+    Box(
         modifier = Modifier
             .padding(top = 8.dp)
             .fillMaxWidth()
             .wrapContentHeight()
-            .clickable {
+            .drawSpoilerBackground()
+            .noRippleClick {
                 if (hideContent) {
                     onShowContent()
                 } else {
@@ -190,11 +209,66 @@ private fun SpoilerText(
         UtopiaRichText(
             modifier = Modifier
                 .fillMaxWidth()
-                .wrapContentHeight(),
+                .wrapContentHeight()
+                .padding(start = 16.dp, top = 22.dp, end = 16.dp, bottom = 6.dp),
             richText = spoilerText,
             onMentionClick = onMentionClick,
             onHashtagClick = onHashtagInStatusClick,
             textSelectable = textSelectable,
         )
+    }
+}
+
+@Composable
+private fun Modifier.drawSpoilerBackground(): Modifier {
+    val edgeColor = Color(0xFFFFB84D)
+    val backgroundColor = Color(0xFFFFEED3)
+    val edgeWidth = 8.dp.toPx()
+    val cornerRadiiPx = 6.dp.toPx()
+    val cornerRadius = CornerRadius(cornerRadiiPx, cornerRadiiPx)
+    return this.drawBehind {
+        val canvasWidth = size.width
+        val canvasHeight = size.height
+        val startEdge = Path().apply {
+            addRoundRect(
+                RoundRect(
+                    rect = Rect(
+                        offset = Offset.Zero,
+                        Size(width = edgeWidth, height = canvasHeight),
+                    ),
+                    topLeft = cornerRadius,
+                    bottomLeft = cornerRadius,
+                )
+            )
+        }
+        val endEdge = Path().apply {
+            addRoundRect(
+                RoundRect(
+                    rect = Rect(
+                        offset = Offset(x = canvasWidth - edgeWidth, y = 0F),
+                        Size(width = edgeWidth, height = canvasHeight),
+                    ),
+                    topRight = cornerRadius,
+                    bottomRight = cornerRadius,
+                )
+            )
+        }
+        drawPath(startEdge, edgeColor)
+        drawPath(endEdge, edgeColor)
+        drawRect(
+            color = backgroundColor,
+            topLeft = Offset(x = edgeWidth, y = 0F),
+            size = size.copy(width = canvasWidth - edgeWidth * 2),
+        )
+        var pointStartOffset = 18.dp.toPx()
+        val pointRadii = 1.5.dp.toPx()
+        repeat(3) {
+            drawCircle(
+                color = Color.Black.copy(alpha = 0.8F),
+                radius = pointRadii,
+                center = Offset(x = pointStartOffset, y = 14.dp.toPx())
+            )
+            pointStartOffset += pointRadii + 6.dp.toPx()
+        }
     }
 }

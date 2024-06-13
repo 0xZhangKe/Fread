@@ -1,6 +1,5 @@
 package com.zhangke.utopia.status.ui.common
 
-import android.util.Log
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.utopia.status.model.ContentConfig
 import kotlinx.coroutines.CoroutineScope
@@ -53,7 +52,6 @@ class MainTabConnection {
         toggleImmersiveJob = coroutineScope.launch {
             delay(IMMERSIVE_MODE_DELAY)
             _inImmersiveFlow.emit(true)
-            Log.d("U_TEST", "openImmersiveMode")
         }
     }
 
@@ -62,7 +60,6 @@ class MainTabConnection {
         toggleImmersiveJob = coroutineScope.launch {
             delay(IMMERSIVE_MODE_DELAY)
             _inImmersiveFlow.emit(false)
-            Log.d("U_TEST", "closeImmersiveMode")
         }
     }
 

@@ -48,9 +48,9 @@ class ContentHomeScreen : Screen {
                         viewModel.onCurrentPageChange(index)
                     }
                 }
-                val currentPage = pagerState.currentPage
-                LaunchedEffect(currentPage) {
-                    viewModel.onCurrentPageChange(currentPage)
+                val targetPage = pagerState.targetPage
+                LaunchedEffect(targetPage) {
+                    viewModel.onCurrentPageChange(targetPage)
                 }
                 LaunchedEffect(uiState.currentPageIndex) {
                     pagerState.animateScrollToPage(uiState.currentPageIndex)

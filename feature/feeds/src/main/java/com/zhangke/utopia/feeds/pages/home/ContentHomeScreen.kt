@@ -39,7 +39,7 @@ class ContentHomeScreen : Screen {
                 val pagerState = rememberPagerState(pageCount = { uiState.contentConfigList.size })
                 ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
                     if (pagerState.currentPage < pagerState.pageCount - 1) {
-                        pagerState.animateScrollToPage(pagerState.currentPage + 1)
+                        viewModel.onCurrentPageChange(pagerState.currentPage + 1)
                     }
                 }
                 ConsumeFlow(mainTabConnection.scrollToContentTabFlow) {

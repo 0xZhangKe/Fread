@@ -19,6 +19,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ContentToolbar(
+    modifier: Modifier = Modifier,
     title: String,
     showNextIcon: Boolean,
     scrollBehavior: TopAppBarScrollBehavior? = null,
@@ -28,7 +29,7 @@ fun ContentToolbar(
     onTitleClick: () -> Unit,
 ) {
     TopAppBar(
-        modifier = Modifier,
+        modifier = modifier,
         windowInsets = windowInsets,
         navigationIcon = {
             SimpleIconButton(

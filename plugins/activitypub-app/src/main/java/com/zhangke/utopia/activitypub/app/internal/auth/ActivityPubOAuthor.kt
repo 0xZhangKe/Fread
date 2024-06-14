@@ -13,9 +13,9 @@ import com.zhangke.utopia.activitypub.app.internal.repo.account.ActivityPubLogge
 import com.zhangke.utopia.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
 import com.zhangke.utopia.status.model.IdentityRole
 import dagger.hilt.android.qualifiers.ApplicationContext
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.launch
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -35,42 +35,39 @@ class ActivityPubOAuthor @Inject constructor(
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
 
-    suspend fun startOauth(baseUrl: FormalBaseUrl): Result<Boolean> {
-        val oauthDeferred = ApplicationScope.async {
-            val app =
-                applicationRepo.getApplicationByBaseUrl(baseUrl) ?: return@async Result.failure(
-                    IllegalStateException("Can not get application info by $baseUrl")
-                )
-            val client = clientManager.getClient(IdentityRole(null, baseUrl))
-            val oauthUrl = client.oauthRepo.buildOAuthUrl(
-                baseUrl = baseUrl.toString(),
-                clientId = app.clientId,
-                redirectUri = app.redirectUri,
-            )
-            openOauthPage(oauthUrl)
-            val code = oauthCodeFlow.first()
-            val account = try {
-                val instance = client.instanceRepo.getInstanceInformation().getOrThrow()
-                activityPubDatabases.getPlatformDao()
-                    .insert(platformEntityAdapter.toEntity(baseUrl, instance))
-                val token = client.oauthRepo.getToken(
-                    code = code,
-                    clientId = app.clientId,
-                    clientSecret = app.clientSecret,
-                    redirectUri = app.redirectUri,
-                    scopeList = ActivityPubScope.ALL,
-                ).getOrThrow()
-                val accountEntity =
-                    client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
-                accountAdapter.createFromAccount(instance, accountEntity, token)
-            } catch (e: Exception) {
-                toast(e.message)
-                return@async Result.failure(e)
-            }
-            repo.insert(account)
-            return@async Result.success(true)
+    fun startOauth(baseUrl: FormalBaseUrl) = ApplicationScope.launch {
+        val app = applicationRepo.getApplicationByBaseUrl(baseUrl)
+        if (app == null) {
+            toast("Application not registered")
+            return@launch
         }
-        return oauthDeferred.await()
+        val client = clientManager.getClient(IdentityRole(null, baseUrl))
+        val oauthUrl = client.oauthRepo.buildOAuthUrl(
+            baseUrl = baseUrl.toString(),
+            clientId = app.clientId,
+            redirectUri = app.redirectUri,
+        )
+        openOauthPage(oauthUrl)
+        val code = oauthCodeFlow.first()
+        val account = try {
+            val instance = client.instanceRepo.getInstanceInformation().getOrThrow()
+            activityPubDatabases.getPlatformDao()
+                .insert(platformEntityAdapter.toEntity(baseUrl, instance))
+            val token = client.oauthRepo.getToken(
+                code = code,
+                clientId = app.clientId,
+                clientSecret = app.clientSecret,
+                redirectUri = app.redirectUri,
+                scopeList = ActivityPubScope.ALL,
+            ).getOrThrow()
+            val accountEntity =
+                client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
+            accountAdapter.createFromAccount(instance, accountEntity, token)
+        } catch (e: Exception) {
+            toast(e.message)
+            return@launch
+        }
+        repo.insert(account)
     }
 
     internal suspend fun onOauthSuccess(code: String) {

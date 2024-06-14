@@ -129,7 +129,7 @@ class PreAddFeedsViewModel @Inject constructor(
         val platform = selectedContentPlatform ?: return
         launchInScreenModel {
             statusProvider.accountManager
-                .launchAuthBySource(platform.baseUrl)
+                .triggerAuthBySource(platform.baseUrl)
             _exitScreenFlow.emit(Unit)
         }
     }

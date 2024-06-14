@@ -89,7 +89,7 @@ class LoginViewModel @Inject constructor(
                 }.onSuccess {
                     _uiState.update { state -> state.copy(loading = false) }
                     _hideScreenFlow.emit(Unit)
-                    statusProvider.accountManager.launchAuthBySource(it.baseUrl)
+                    statusProvider.accountManager.triggerAuthBySource(it.baseUrl)
                 }
         }
     }
@@ -97,7 +97,7 @@ class LoginViewModel @Inject constructor(
     fun onPlatformClick(platform: BlogPlatform) {
         launchInViewModel {
             _hideScreenFlow.emit(Unit)
-            statusProvider.accountManager.launchAuthBySource(platform.baseUrl)
+            statusProvider.accountManager.triggerAuthBySource(platform.baseUrl)
         }
     }
 

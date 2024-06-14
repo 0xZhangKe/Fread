@@ -1,6 +1,9 @@
 package com.zhangke.utopia.screen.main
 
 import android.annotation.SuppressLint
+import android.content.Context
+import android.content.Intent
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.slideInVertically
 import androidx.compose.animation.slideOutVertically
@@ -24,6 +27,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.tab.CurrentTab
@@ -32,6 +36,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
+import com.zhangke.framework.utils.extractActivity
 import com.zhangke.utopia.explore.ExploreTab
 import com.zhangke.utopia.feature.message.NotificationsTab
 import com.zhangke.utopia.feeds.FeedsHomeTab
@@ -44,6 +49,7 @@ import kotlinx.coroutines.launch
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
 @Composable
 fun Screen.MainPage() {
+    val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val mainTabConnection = remember {
@@ -83,6 +89,14 @@ fun Screen.MainPage() {
             ) {
                 val tabNavigator = LocalTabNavigator.current
                 inFeedsTab = tabNavigator.current.key == tabs.first().key
+                tabNavigator.current
+                BackHandler {
+                    if (inFeedsTab) {
+                        goHome(context)
+                    } else {
+                        tabNavigator.current = tabs.first()
+                    }
+                }
                 Box(modifier = Modifier.fillMaxSize()) {
                     Box(
                         modifier = Modifier.fillMaxSize()
@@ -135,4 +149,12 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
         alwaysShowLabel = false,
         icon = { Icon(painter = tab.options.icon!!, contentDescription = tab.options.title) },
     )
+}
+
+private fun goHome(context: Context){
+    val intent = Intent(Intent.ACTION_MAIN).apply {
+        setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        addCategory(Intent.CATEGORY_HOME)
+    }
+    context.extractActivity()?.startActivity(intent)
 }

@@ -26,8 +26,8 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         return null
     }
 
-    override suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>? {
-        return null
+    override fun triggerLaunchAuth(baseUrl: FormalBaseUrl) {
+        // no-op
     }
 
     override suspend fun logout(uri: FormalUri): Boolean {

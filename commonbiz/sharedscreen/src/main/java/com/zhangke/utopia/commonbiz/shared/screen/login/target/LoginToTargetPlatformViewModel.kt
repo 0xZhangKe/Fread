@@ -3,7 +3,6 @@ package com.zhangke.utopia.commonbiz.shared.screen.login.target
 import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.assisted.Assisted
@@ -26,7 +25,7 @@ class LoginToTargetPlatformViewModel @AssistedInject constructor(
     fun onServerHostConfirmClick() {
         launchInViewModel {
             statusProvider.accountManager
-                .launchAuthBySource(platform.baseUrl)
+                .triggerAuthBySource(platform.baseUrl)
         }
     }
 }

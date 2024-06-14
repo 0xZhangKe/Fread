@@ -55,8 +55,8 @@ class ActivityPubAccountManager @Inject constructor(
         return Result.success(account != null)
     }
 
-    override suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean> {
-        return oAuthor.startOauth(baseUrl)
+    override fun triggerLaunchAuth(baseUrl: FormalBaseUrl) {
+        oAuthor.startOauth(baseUrl)
     }
 
     override suspend fun logout(uri: FormalUri): Boolean {

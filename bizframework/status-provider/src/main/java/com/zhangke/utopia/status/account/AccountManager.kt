@@ -2,7 +2,6 @@ package com.zhangke.utopia.status.account
 
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.utopia.status.author.BlogAuthor
 import com.zhangke.utopia.status.platform.BlogPlatform
 import com.zhangke.utopia.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -31,16 +30,10 @@ class AccountManager(
         }
     }
 
-    suspend fun launchAuthBySource(baseUrl: FormalBaseUrl): Result<Boolean> {
-        var result: Result<Boolean> = Result.failure(RuntimeException("Can't auth!"))
+    fun triggerAuthBySource(baseUrl: FormalBaseUrl) {
         for (manager in accountManagerList) {
-            val launchResult = manager.launchAuth(baseUrl)
-            if (launchResult != null) {
-                result = launchResult
-                if (result.getOrNull() == true) break
-            }
+            manager.triggerLaunchAuth(baseUrl)
         }
-        return result
     }
 
     suspend fun logout(uri: FormalUri) {
@@ -58,7 +51,7 @@ interface IAccountManager {
 
     suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>?
 
-    suspend fun launchAuth(baseUrl: FormalBaseUrl): Result<Boolean>?
+    fun triggerLaunchAuth(baseUrl: FormalBaseUrl)
 
     suspend fun logout(uri: FormalUri): Boolean
 }

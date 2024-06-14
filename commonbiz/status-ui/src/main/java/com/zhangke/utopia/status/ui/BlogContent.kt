@@ -220,7 +220,7 @@ private fun SpoilerText(
 }
 
 @Composable
-private fun Modifier.drawSpoilerBackground(): Modifier {
+fun Modifier.drawSpoilerBackground(): Modifier {
     val edgeColor = Color(0xFFFFB84D)
     val backgroundColor = Color(0xFFFFEED3)
     val edgeWidth = 8.dp.toPx()

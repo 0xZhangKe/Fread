@@ -4,6 +4,7 @@ import android.annotation.SuppressLint
 import android.webkit.WebResourceRequest
 import android.webkit.WebView
 import android.webkit.WebViewClient
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -20,6 +21,7 @@ fun WebViewPreviewer(
     modifier: Modifier = Modifier,
 ) {
     val density = LocalDensity.current
+    val fontColor = LocalContentColor.current.toArgb()
     AndroidView(
         modifier = modifier,
         factory = {
@@ -42,7 +44,29 @@ fun WebViewPreviewer(
             }
         },
         update = {
-            it.loadDataWithBaseURL("", html, "text/html", "UTF-8", null)
+            val finalHtml = warpBlogContentHtml(html, fontColor)
+            it.loadDataWithBaseURL("", finalHtml, "text/html", "UTF-8", null)
         },
     )
+}
+
+private fun warpBlogContentHtml(
+    html: String,
+    fontColor: Int,
+): String {
+    val colorString = String.format("#%06X", 0xFFFFFF and fontColor)
+    return """
+        <html>
+        <head>
+        <style>
+        body {
+            color: ${colorString};
+        }
+        </style>
+        </head>
+        <body>
+        $html
+        </body>
+        </html>
+    """.trimIndent()
 }

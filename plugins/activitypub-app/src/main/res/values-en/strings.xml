@@ -49,6 +49,8 @@
     <string name="post_status_scope_follower_only">Followers only</string>
     <string name="post_status_scope_mentioned_only">Only people mentioned</string>
     <string name="post_status_failed">Post failed</string>
+    <string name="post_status_exit_dialog_content">Unsaved changes will be lost. Are you sure you want to exit?</string>
+
     <string name="activity_pub_user_detail_tab_about_joined">Joined on %s</string>
     <string name="activity_pub_user_detail_menu_block">Block %s</string>
     <string name="activity_pub_user_detail_menu_block_domain">Block %s</string>

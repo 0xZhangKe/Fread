@@ -1,6 +1,7 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.status.post
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.calculateEndPadding
@@ -44,6 +45,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -57,12 +59,14 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.utils.TextFieldUtils
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable.PostStatusImageAttachment
@@ -93,6 +97,21 @@ class PostStatusScreen(
         }
         val loadableUiState by viewModel.uiState.collectAsState()
         val postStatus by viewModel.postState.collectAsState(initial = LoadableState.idle())
+        var showExitDialog by remember {
+            mutableStateOf(false)
+        }
+
+        fun onBack() {
+            if (loadableUiState !is LoadableState.Success) {
+                navigator.pop()
+                return
+            }
+            if (loadableUiState.requireSuccessData().hasInputtedData()) {
+                showExitDialog = true
+                return
+            }
+            navigator.pop()
+        }
         LoadableLayout(
             modifier = Modifier.fillMaxSize(),
             state = loadableUiState,
@@ -102,7 +121,9 @@ class PostStatusScreen(
                 postStatus = postStatus,
                 onSwitchAccount = viewModel::onSwitchAccountClick,
                 onContentChanged = viewModel::onContentChanged,
-                onCloseClick = navigator::pop,
+                onCloseClick = {
+                    onBack()
+                },
                 onPostClick = viewModel::onPostClick,
                 onSensitiveClick = viewModel::onSensitiveClick,
                 onMediaSelected = viewModel::onMediaSelected,
@@ -120,7 +141,6 @@ class PostStatusScreen(
                 onWarningContentChanged = viewModel::onWarningContentChanged,
                 onVisibilityChanged = viewModel::onVisibilityChanged,
                 onDurationSelect = viewModel::onDurationSelect,
-                onEmojiPick = viewModel::onCustomEmojiPick,
                 onDeleteEmojiClick = viewModel::onEmojiDeleteClick,
             )
         }
@@ -128,6 +148,24 @@ class PostStatusScreen(
             LaunchedEffect(Unit) {
                 navigator.pop()
             }
+        }
+        BackHandler {
+            onBack()
+        }
+        if (showExitDialog) {
+            UtopiaDialog(
+                onDismissRequest = { showExitDialog = false },
+                content = {
+                    Text(text = stringResource(R.string.post_status_exit_dialog_content))
+                },
+                onNegativeClick = {
+                    showExitDialog = false
+                },
+                onPositiveClick = {
+                    showExitDialog = false
+                    navigator.pop()
+                },
+            )
         }
     }
 
@@ -156,7 +194,6 @@ class PostStatusScreen(
         onWarningContentChanged: (String) -> Unit,
         onVisibilityChanged: (PostStatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
-        onEmojiPick: (CustomEmoji) -> Unit,
         onDeleteEmojiClick: () -> Unit,
     ) {
         val bottomBarHeight = 48.dp
@@ -169,6 +206,9 @@ class PostStatusScreen(
             LaunchedEffect(errorMessage) {
                 snackbarHostState.showSnackbar(errorMessage)
             }
+        }
+        var textFieldValue by remember {
+            mutableStateOf(TextFieldValue(""))
         }
         Scaffold(
             modifier = Modifier.navigationBarsPadding(),
@@ -219,7 +259,13 @@ class PostStatusScreen(
                     onMediaSelected = onMediaSelected,
                     onLanguageSelected = onLanguageSelected,
                     onPollClicked = onPollClicked,
-                    onEmojiPick = onEmojiPick,
+                    onEmojiPick = {
+                        textFieldValue = TextFieldUtils.insertText(
+                            value = textFieldValue,
+                            insertText = " :${it.shortcode}: ",
+                        )
+                        onContentChanged(textFieldValue.text)
+                    },
                     onDeleteEmojiClick = onDeleteEmojiClick,
                 )
             }
@@ -375,7 +421,7 @@ class PostStatusScreen(
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     },
-                    value = uiState.content,
+                    value = textFieldValue,
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
                         unfocusedIndicatorColor = Color.Transparent,
@@ -383,7 +429,10 @@ class PostStatusScreen(
                         errorIndicatorColor = Color.Transparent,
                     ),
                     textStyle = MaterialTheme.typography.bodyMedium,
-                    onValueChange = onContentChanged,
+                    onValueChange = {
+                        textFieldValue = it
+                        onContentChanged(it.text)
+                    },
                 )
                 StatusAttachment(
                     modifier = Modifier

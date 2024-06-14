@@ -148,14 +148,14 @@ internal fun PostStatusBottomBar(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = "Hide keyboard",
                         )
-                        SimpleIconButton(
-                            modifier = Modifier
-                                .padding(end = 16.dp)
-                                .align(Alignment.CenterEnd),
-                            onClick = onDeleteEmojiClick,
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Delete emoji",
-                        )
+//                        SimpleIconButton(
+//                            modifier = Modifier
+//                                .padding(end = 16.dp)
+//                                .align(Alignment.CenterEnd),
+//                            onClick = onDeleteEmojiClick,
+//                            imageVector = Icons.Default.Close,
+//                            contentDescription = "Delete emoji",
+//                        )
                     }
                 }
             }

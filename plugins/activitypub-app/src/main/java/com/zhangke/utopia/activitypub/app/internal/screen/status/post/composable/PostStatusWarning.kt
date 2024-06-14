@@ -1,9 +1,8 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.status.post.composable
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
@@ -14,6 +13,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.status.ui.drawSpoilerBackground
 
 @Composable
 fun PostStatusWarning(
@@ -22,14 +22,12 @@ fun PostStatusWarning(
     onValueChanged: (String) -> Unit,
 ) {
     Box(
-        modifier = modifier.border(
-            width = 1.dp,
-            color = MaterialTheme.colorScheme.error,
-            shape = RoundedCornerShape(4.dp),
-        )
+        modifier = modifier.drawSpoilerBackground()
     ) {
         TextField(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .padding(top = 8.dp)
+                .fillMaxSize(),
             value = warning.orEmpty(),
             onValueChange = onValueChanged,
             placeholder = {
@@ -43,6 +41,10 @@ fun PostStatusWarning(
                 unfocusedIndicatorColor = Color.Transparent,
                 disabledIndicatorColor = Color.Transparent,
                 errorIndicatorColor = Color.Transparent,
+                disabledContainerColor = Color.Transparent,
+                focusedContainerColor = Color.Transparent,
+                errorContainerColor = Color.Transparent,
+                unfocusedContainerColor = Color.Transparent,
             ),
             textStyle = MaterialTheme.typography.bodyMedium,
         )

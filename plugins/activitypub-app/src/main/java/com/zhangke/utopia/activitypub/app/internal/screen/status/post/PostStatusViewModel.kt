@@ -323,10 +323,6 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
-    fun onCustomEmojiPick(emoji: CustomEmoji) {
-        onContentChanged(":${emoji.shortcode}:")
-    }
-
     fun onEmojiDeleteClick() {
 //        _uiState.updateOnSuccess { state ->
 //            state.copy(

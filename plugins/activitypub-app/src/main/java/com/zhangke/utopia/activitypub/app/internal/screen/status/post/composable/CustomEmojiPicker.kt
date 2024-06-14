@@ -70,6 +70,7 @@ private fun EmojiLineUi(
                     .size(20.dp)
                     .noRippleClick { onEmojiClick(emoji) },
                 model = emoji.url,
+
                 contentDescription = emoji.shortcode,
             )
             Box(modifier = Modifier.weight(1F))

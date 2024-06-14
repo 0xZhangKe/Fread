@@ -29,6 +29,13 @@ data class PostStatusUiState(
         }
 
     val allowedInputCount: Int get() = maxContent - content.length
+
+    fun hasInputtedData(): Boolean {
+        if (content.isNotEmpty()) return true
+        if (attachment != null) return true
+        if (sensitive && warningContent.isNotEmpty()) return true
+        return false
+    }
 }
 
 sealed interface PostStatusAttachment {

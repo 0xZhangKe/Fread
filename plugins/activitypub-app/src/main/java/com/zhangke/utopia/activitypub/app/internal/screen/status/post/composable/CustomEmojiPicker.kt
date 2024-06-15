@@ -7,13 +7,16 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.icons.Tofu
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 
@@ -70,7 +73,8 @@ private fun EmojiLineUi(
                     .size(20.dp)
                     .noRippleClick { onEmojiClick(emoji) },
                 model = emoji.url,
-
+                error = rememberVectorPainter(Icons.Default.Tofu),
+                placeholder = rememberVectorPainter(Icons.Default.Tofu),
                 contentDescription = emoji.shortcode,
             )
             Box(modifier = Modifier.weight(1F))

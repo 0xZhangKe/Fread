@@ -69,6 +69,7 @@ internal fun PostStatusPoll(
                         onPollContentChanged(index, it)
                     },
                     maxLines = 1,
+                    singleLine = true,
                     placeholder = {
                         Text(
                             text = stringResource(R.string.post_status_poll_item_hint, index + 1),
@@ -81,6 +82,8 @@ internal fun PostStatusPoll(
                         unfocusedIndicatorColor = Color.Transparent,
                         disabledIndicatorColor = Color.Transparent,
                         errorIndicatorColor = Color.Transparent,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent,
                     ),
                 )
                 if (index == poll.optionList.lastIndex) {

@@ -7,17 +7,21 @@ import com.zhangke.framework.collections.remove
 import com.zhangke.framework.collections.removeIndex
 import com.zhangke.framework.collections.updateIndex
 import com.zhangke.framework.composable.LoadableState
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitInViewModel
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.successDataOrNull
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.utopia.activitypub.app.ActivityPubAccountManager
+import com.zhangke.utopia.activitypub.app.R
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.utopia.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.utopia.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
 import com.zhangke.utopia.activitypub.app.internal.uri.PlatformUriTransformer
@@ -67,6 +71,9 @@ class PostStatusViewModel @Inject constructor(
     private val _postState = MutableSharedFlow<LoadableState<Unit>>()
     val postState: SharedFlow<LoadableState<Unit>> = _postState.asSharedFlow()
 
+    private val _snackMessage = MutableSharedFlow<TextString>()
+    val snackMessage: SharedFlow<TextString> get() = _snackMessage
+
     fun onPrepared() {
         launchInViewModel {
             val allLoggedAccount = accountManager.getAllLoggedAccount()
@@ -97,10 +104,10 @@ class PostStatusViewModel @Inject constructor(
                 )
             }
         }
-        configCustomEmoji()
+        loadCustomEmoji()
     }
 
-    private fun configCustomEmoji() {
+    private fun loadCustomEmoji() {
         launchInViewModel {
             _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
                 .distinctUntilChanged()
@@ -335,22 +342,38 @@ class PostStatusViewModel @Inject constructor(
         val currentUiState = _uiState.value.requireSuccessData()
         val account = currentUiState.account
         val attachment = currentUiState.attachment
-
+        if (currentUiState.content.isEmpty() && currentUiState.attachment == null) {
+            _snackMessage.emitInViewModel(textOf(R.string.post_status_content_is_empty))
+            return
+        }
         when (attachment) {
             is PostStatusAttachment.ImageAttachment -> {
                 val allSuccess = attachment.imageList
                     .map { it.uploadJob.uploadState.value }
                     .all { it is UploadMediaJob.UploadState.Success }
-                if (!allSuccess) return
+                if (!allSuccess) {
+                    _snackMessage.emitInViewModel(textOf(R.string.post_status_media_is_not_upload))
+                    return
+                }
             }
 
             is PostStatusAttachment.VideoAttachment -> {
-                if (attachment.video.uploadJob.uploadState.value !is UploadMediaJob.UploadState.Success) return
+                if (attachment.video.uploadJob.uploadState.value !is UploadMediaJob.UploadState.Success) {
+                    _snackMessage.emitInViewModel(textOf(R.string.post_status_media_is_not_upload))
+                    return
+                }
             }
 
             is PostStatusAttachment.Poll -> {
+                if (currentUiState.content.isEmpty()) {
+                    _snackMessage.emitInViewModel(textOf(R.string.post_status_content_is_empty))
+                    return
+                }
                 for (option in attachment.optionList) {
-                    if (option.isEmpty()) return
+                    if (option.isEmpty()) {
+                        _snackMessage.emitInViewModel(textOf(R.string.post_status_poll_is_empty))
+                        return
+                    }
                 }
             }
 
@@ -373,7 +396,12 @@ class PostStatusViewModel @Inject constructor(
             ).onSuccess {
                 _postState.emit(LoadableState.success(Unit))
             }.onFailure {
-                _postState.emit(LoadableState.failed(it))
+                _postState.emit(LoadableState.idle())
+                val errorMessage = textOf(
+                    R.string.post_status_failed,
+                    it.localizedMessage.ifNullOrEmpty { "unknown error" },
+                )
+                _snackMessage.emit(errorMessage)
             }
         }
     }

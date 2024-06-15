@@ -25,6 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.PopupProperties
 import com.zhangke.utopia.activitypub.app.internal.model.PostStatusVisibility
 
 @Composable
@@ -67,9 +68,10 @@ internal fun PostStatusVisibilityUi(
         }
         DropdownMenu(
             expanded = showSelector,
-            onDismissRequest = { },
+            onDismissRequest = { showSelector = false },
+            properties = PopupProperties(),
         ) {
-            PostStatusVisibility.values().forEach {
+            PostStatusVisibility.entries.forEach {
                 DropdownMenuItem(
                     text = {
                         Text(text = stringResource(it.describeStringId))

@@ -28,6 +28,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
@@ -56,12 +57,14 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.UtopiaDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.TextFieldUtils
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
@@ -101,6 +104,8 @@ class PostStatusScreen(
             mutableStateOf(false)
         }
 
+        val snackMessageState = rememberSnackbarHostState()
+
         fun onBack() {
             if (loadableUiState !is LoadableState.Success) {
                 navigator.pop()
@@ -119,6 +124,7 @@ class PostStatusScreen(
             PostStatusScreenContent(
                 uiState = uiState,
                 postStatus = postStatus,
+                snackMessageState = snackMessageState,
                 onSwitchAccount = viewModel::onSwitchAccountClick,
                 onContentChanged = viewModel::onContentChanged,
                 onCloseClick = {
@@ -145,7 +151,9 @@ class PostStatusScreen(
             )
         }
         if (postStatus is LoadableState.Success) {
+            val successMessage = stringResource(R.string.post_status_success)
             LaunchedEffect(Unit) {
+                toast(successMessage)
                 navigator.pop()
             }
         }
@@ -167,6 +175,7 @@ class PostStatusScreen(
                 },
             )
         }
+        ConsumeSnackbarFlow(snackMessageState, viewModel.snackMessage)
     }
 
     @OptIn(ExperimentalMaterial3Api::class)
@@ -174,6 +183,7 @@ class PostStatusScreen(
     private fun PostStatusScreenContent(
         uiState: PostStatusUiState,
         postStatus: LoadableState<Unit>,
+        snackMessageState: SnackbarHostState,
         onSwitchAccount: (ActivityPubLoggedAccount) -> Unit,
         onContentChanged: (String) -> Unit,
         onCloseClick: () -> Unit,
@@ -197,14 +207,13 @@ class PostStatusScreen(
         onDeleteEmojiClick: () -> Unit,
     ) {
         val bottomBarHeight = 48.dp
-        val snackbarHostState = rememberSnackbarHostState()
         if (postStatus is LoadableState.Failed) {
             var errorMessage = stringResource(R.string.post_status_failed)
             if (postStatus.exception.message.isNullOrEmpty().not()) {
                 errorMessage += ": ${postStatus.exception.message}"
             }
             LaunchedEffect(errorMessage) {
-                snackbarHostState.showSnackbar(errorMessage)
+                snackMessageState.showSnackbar(errorMessage)
             }
         }
         var textFieldValue by remember {
@@ -213,7 +222,7 @@ class PostStatusScreen(
         Scaffold(
             modifier = Modifier.navigationBarsPadding(),
             snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
+                SnackbarHost(hostState = snackMessageState)
             },
             topBar = {
                 TopAppBar(

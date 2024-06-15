@@ -29,7 +29,8 @@ class PostStatusUseCase @Inject constructor(
         val statusRepo = clientManager.getClient(role).statusRepo
         val mediaIds = when (attachment) {
             is PostStatusAttachment.VideoAttachment -> {
-                val videoMediaId = (attachment.video.uploadJob.uploadState.value as? UploadMediaJob.UploadState.Success)?.id
+                val videoMediaId =
+                    (attachment.video.uploadJob.uploadState.value as? UploadMediaJob.UploadState.Success)?.id
                 if (videoMediaId.isNullOrEmpty()) null else listOf(videoMediaId)
             }
 
@@ -43,7 +44,7 @@ class PostStatusUseCase @Inject constructor(
             else -> null
         }
 
-        statusRepo.postStatus(
+        return statusRepo.postStatus(
             status = content,
             mediaIds = mediaIds,
             poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
@@ -52,7 +53,6 @@ class PostStatusUseCase @Inject constructor(
             spoilerText = spoilerText,
             visibility = visibility?.toEntity(),
             language = language?.isO3Language,
-        )
-        return Result.success(Unit)
+        ).map { }
     }
 }

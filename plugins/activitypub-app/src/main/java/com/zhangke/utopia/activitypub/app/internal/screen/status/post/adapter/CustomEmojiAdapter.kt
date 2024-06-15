@@ -10,7 +10,9 @@ class CustomEmojiAdapter @Inject constructor() {
         rowCount: Int,
         customEmojiList: List<CustomEmoji>
     ): List<CustomEmojiCell> {
-        return customEmojiList.groupBy { it.category }
+        return customEmojiList
+            .filter { it.visibleInPicker }
+            .groupBy { it.category }
             .flatMap {
                 val list = mutableListOf<CustomEmojiCell>()
                 list += CustomEmojiCell.Title(it.key)

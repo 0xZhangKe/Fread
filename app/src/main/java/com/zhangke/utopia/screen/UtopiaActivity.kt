@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
+import cafe.adriel.voyager.transitions.SlideTransition
 import com.zhangke.framework.architect.theme.UtopiaTheme
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
@@ -40,7 +41,9 @@ class UtopiaActivity : AppCompatActivity() {
                         Navigator(
                             screen = UtopiaScreen(),
                             key = ROOT_NAVIGATOR_KEY,
-                        )
+                        ) {
+                            SlideTransition(it)
+                        }
                     }
                 }
             }

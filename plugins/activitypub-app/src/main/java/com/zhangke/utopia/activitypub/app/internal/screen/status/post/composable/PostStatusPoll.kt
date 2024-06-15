@@ -52,7 +52,7 @@ internal fun PostStatusPoll(
     onPollStyleSelect: (multiple: Boolean) -> Unit,
     onDurationSelect: (Duration) -> Unit,
 ) {
-    Column(modifier = modifier.padding(start = 16.dp, end = 16.dp)) {
+    Column(modifier = modifier.padding(start = 16.dp, end = 8.dp)) {
         poll.optionList.forEachIndexed { index, option ->
             Row(modifier = Modifier.fillMaxWidth()) {
                 TextField(

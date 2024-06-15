@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.width
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -27,6 +28,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -70,7 +72,10 @@ fun Screen.MainPage() {
             drawerState = drawerState,
             gesturesEnabled = inFeedsTab,
             drawerContent = {
-                ModalDrawerSheet {
+                val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+                ModalDrawerSheet(
+                    modifier = Modifier.width(screenWidth * 0.8F),
+                ) {
                     MainDrawer(
                         onDismissRequest = {
                             coroutineScope.launch {
@@ -151,7 +156,7 @@ private fun RowScope.TabNavigationItem(tab: Tab) {
     )
 }
 
-private fun goHome(context: Context){
+private fun goHome(context: Context) {
     val intent = Intent(Intent.ACTION_MAIN).apply {
         setFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         addCategory(Intent.CATEGORY_HOME)

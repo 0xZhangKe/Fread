@@ -20,16 +20,18 @@ class ContentHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ContentHomeUiState(0, emptyList(), emptyList()))
+    private val _uiState = MutableStateFlow(ContentHomeUiState.default)
     val uiState: StateFlow<ContentHomeUiState> = _uiState
 
     init {
         launchInViewModel {
+            _uiState.update { it.copy(loading = true) }
             val allConfig = contentConfigRepo.getAllConfig()
             _uiState.update { currentState ->
                 currentState.copy(
                     currentPageIndex = 0,
                     contentConfigList = allConfig,
+                    loading = false,
                 )
             }
         }

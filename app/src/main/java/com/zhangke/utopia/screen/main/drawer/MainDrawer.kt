@@ -1,5 +1,6 @@
 package com.zhangke.utopia.screen.main.drawer
 
+import android.content.Context
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,11 +15,17 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -30,7 +37,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -39,6 +48,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.utopia.R
 import com.zhangke.utopia.feeds.pages.home.EmptyContent
 import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.utopia.feeds.pages.manager.importing.ImportFeedsScreen
@@ -84,6 +94,7 @@ fun Screen.MainDrawer(
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)
 }
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 private fun MainDrawerContent(
     uiState: MainDrawerUiState,
@@ -101,6 +112,27 @@ private fun MainDrawerContent(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
+                TopAppBar(
+                    title = {
+                        Text(text = stringResource(R.string.main_drawer_title))
+                    },
+                    actions = {
+
+                        SimpleIconButton(
+                            onClick = onImportClick,
+                            imageVector = Icons.Default.ImportExport,
+                            contentDescription = "Add Content",
+                        )
+
+                        SimpleIconButton(
+                            onClick = onAddContentClick,
+                            imageVector = Icons.Default.Add,
+                            contentDescription = "Add Content",
+                        )
+                    }
+                )
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                Spacer(modifier = Modifier.height(16.dp))
                 var configListInUi by remember(contentConfigList) {
                     mutableStateOf(contentConfigList)
                 }
@@ -143,27 +175,6 @@ private fun MainDrawerContent(
                         }
                     }
                 }
-
-                Row(
-                    modifier = Modifier
-                        .padding(vertical = 16.dp)
-                        .fillMaxWidth(),
-                    horizontalArrangement = Arrangement.Center,
-                ) {
-                    Button(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        onClick = onImportClick,
-                    ) {
-                        Text(text = "import")
-                    }
-
-                    Button(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        onClick = onAddContentClick,
-                    ) {
-                        Text(text = "Add")
-                    }
-                }
             }
         }
     }
@@ -178,18 +189,35 @@ private fun ContentConfigItem(
 ) {
     Row(
         modifier = modifier
-            .height(48.dp)
             .clickable { onClick() }
-            .padding(horizontal = 16.dp)
+            .padding(horizontal = 16.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
-        Text(
-            modifier = Modifier.align(Alignment.CenterVertically),
-            text = contentConfig.configName,
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
-        Spacer(modifier = Modifier.weight(1F))
+        Column(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .weight(1F)
+                .padding(top = 6.dp, bottom = 6.dp, end = 4.dp),
+        ) {
+            Text(
+                modifier = Modifier,
+                text = contentConfig.configName,
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            val context = LocalContext.current
+            val subtitle = remember(contentConfig) {
+                buildSubtitle(context, contentConfig)
+            }
+            Text(
+                modifier = Modifier.padding(top = 4.dp),
+                text = subtitle,
+                style = MaterialTheme.typography.labelMedium,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+        }
         SimpleIconButton(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
@@ -198,7 +226,7 @@ private fun ContentConfigItem(
             painter = painterResource(com.zhangke.utopia.statusui.R.drawable.ic_mode_edit),
             contentDescription = "Edit Content Config",
         )
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(8.dp))
         Icon(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
@@ -206,5 +234,23 @@ private fun ContentConfigItem(
             painter = painterResource(com.zhangke.utopia.statusui.R.drawable.ic_drag_indicator),
             contentDescription = "Edit Content Config",
         )
+    }
+}
+
+private fun buildSubtitle(context: Context, config: ContentConfig): String {
+    return when (config) {
+        is ContentConfig.MixedContent -> {
+            context.getString(
+                R.string.main_drawer_mixed_item_subtitle,
+                config.sourceUriList.size.toString(),
+            )
+        }
+
+        is ContentConfig.ActivityPubContent -> {
+            context.getString(
+                R.string.main_drawer_mastodon_subtitle,
+                config.baseUrl.host,
+            )
+        }
     }
 }

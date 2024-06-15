@@ -4,11 +4,8 @@ import android.net.Uri
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.calculateEndPadding
-import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -44,7 +41,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -220,7 +216,7 @@ class PostStatusScreen(
             mutableStateOf(TextFieldValue(""))
         }
         Scaffold(
-            modifier = Modifier.navigationBarsPadding(),
+//            modifier = Modifier.navigationBarsPadding(),
             snackbarHost = {
                 SnackbarHost(hostState = snackMessageState)
             },
@@ -279,15 +275,9 @@ class PostStatusScreen(
                 )
             }
         ) { paddingValues ->
-            val layoutDirection = LocalLayoutDirection.current
             ConstraintLayout(
                 modifier = Modifier
-                    .padding(
-                        start = paddingValues.calculateStartPadding(layoutDirection),
-                        top = paddingValues.calculateTopPadding(),
-                        end = paddingValues.calculateEndPadding(layoutDirection),
-                        bottom = bottomBarHeight,
-                    )
+                    .padding(paddingValues)
                     .fillMaxSize()
                     .verticalScroll(rememberScrollState())
             ) {

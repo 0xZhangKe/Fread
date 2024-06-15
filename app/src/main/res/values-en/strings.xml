@@ -5,4 +5,10 @@
 
     <string name="authentication_page_failed_title">Login status is invalid, please login again.</string>
 
+    <string name="main_drawer_title">Content List</string>
+
+    <string name="main_drawer_mixed_item_subtitle">Mixed Content · %s Sources</string>
+
+    <string name="main_drawer_mastodon_subtitle">Mastodon: %s</string>
+
 </resources>

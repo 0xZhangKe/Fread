@@ -30,7 +30,7 @@ class ContentHomeScreen : Screen {
         ) {
             val viewModel: ContentHomeViewModel = getViewModel()
             val uiState by viewModel.uiState.collectAsState()
-            if (uiState.contentConfigList.isEmpty()) {
+            if (uiState.loading && uiState.contentConfigList.isEmpty()) {
                 EmptyContent(modifier = Modifier.fillMaxSize()) {
                     navigator.push(PreAddFeedsScreen())
                 }

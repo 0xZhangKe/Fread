@@ -5,4 +5,9 @@
 
     <string name="authentication_page_failed_title">登录状态失效，请重新登录。</string>
 
+    <string name="main_drawer_title">内容列表</string>
+
+    <string name="main_drawer_mixed_item_subtitle">混合内容 · %s 条订阅源</string>
+
+    <string name="main_drawer_mastodon_subtitle">长毛象：%s</string>
 </resources>

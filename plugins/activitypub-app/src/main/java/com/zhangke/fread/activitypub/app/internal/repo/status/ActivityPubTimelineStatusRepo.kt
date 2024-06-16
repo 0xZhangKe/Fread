@@ -121,6 +121,19 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         }
     }
 
+    suspend fun updateStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        status: Status,
+        listId: String? = null,
+    ) {
+        statusDao.insert(status.toDBEntity(role, type, listId))
+    }
+
+    suspend fun deleteStatus(statusId: String) {
+        statusDao.delete(statusId)
+    }
+
     private suspend fun loadMoreFromLocal(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,

@@ -323,6 +323,13 @@ class FeedsViewModelController(
                     currentUiState.copy(feeds = currentUiState.feeds.updateStatus(newUiState))
                 }
             },
+            deleteStatus = { deletedStatusId ->
+                mutableUiState.update { currentUiState ->
+                    currentUiState.copy(
+                        feeds = currentUiState.feeds.filter { it.status.id != deletedStatusId }
+                    )
+                }
+            },
             followStateUpdater = { _, _ ->
 
             }

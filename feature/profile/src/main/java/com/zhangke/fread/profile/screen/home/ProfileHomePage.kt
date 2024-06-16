@@ -170,7 +170,6 @@ class ProfileHomePage : Screen {
                     modifier = Modifier.padding(16.dp),
                     text = platform.name,
                     style = MaterialTheme.typography.titleLarge,
-                    color = MaterialTheme.colorScheme.onSurface,
                 )
                 accountList.forEach { account ->
                     LoggedAccountSection(
@@ -200,7 +199,7 @@ class ProfileHomePage : Screen {
             val (avatar, content, moreIcon) = createRefs()
             AsyncImage(
                 modifier = Modifier
-                    .size(40.dp)
+                    .size(48.dp)
                     .clip(CircleShape)
                     .constrainAs(avatar) {
                         start.linkTo(parent.start, 16.dp)
@@ -217,34 +216,26 @@ class ProfileHomePage : Screen {
                     .wrapContentHeight()
                     .constrainAs(content) {
                         start.linkTo(avatar.end, 16.dp)
-                        top.linkTo(parent.top, 12.dp)
+                        top.linkTo(parent.top, 8.dp)
                         end.linkTo(moreIcon.start)
                         bottom.linkTo(parent.bottom, 12.dp)
                         width = Dimension.fillToConstraints
                     },
                 horizontalAlignment = Alignment.Start,
             ) {
-                Row {
-                    Text(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        maxLines = 1,
-                        text = account.userName,
-                        color = MaterialTheme.colorScheme.onSurface,
-                        style = MaterialTheme.typography.bodyLarge,
-                    )
-                }
-                if (account.description.isNullOrEmpty().not()) {
-                    FreadRichText(
-                        modifier = Modifier.padding(top = 2.dp),
-                        maxLines = 3,
-                        content = account.description!!,
-                        mentions = emptyList(),
-                        tags = emptyList(),
-                        emojis = account.emojis,
-                        onMentionClick = {},
-                        onHashtagClick = {},
-                    )
-                }
+                FreadRichText(
+                    modifier = Modifier,
+                    maxLines = 1,
+                    content = account.userName,
+                    emojis = account.emojis,
+                    fontSizeSp = 22F,
+                )
+                FreadRichText(
+                    modifier = Modifier.padding(top = 2.dp),
+                    maxLines = 3,
+                    content = account.description.orEmpty(),
+                    emojis = account.emojis,
+                )
             }
             var showMorePopup by remember {
                 mutableStateOf(false)

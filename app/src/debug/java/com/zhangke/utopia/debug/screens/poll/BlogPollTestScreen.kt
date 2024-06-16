@@ -77,7 +77,6 @@ class BlogPollTestScreen : Screen {
                         .padding(top = 6.dp),
                     poll = mockPoll(poll1),
                     onVoted = {
-                        Log.d("U_TEST", "onVote:$it")
                     }
                 )
 

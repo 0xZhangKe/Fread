@@ -49,6 +49,10 @@ class StatusContextSubViewModel(
                         updateStatus(it.status)
                     }
 
+                    is InteractiveHandleResult.DeleteStatus -> {
+                        deleteStatus(it.statusId)
+                    }
+
                     is InteractiveHandleResult.UpdateFollowState -> {
                         // no-op
                     }
@@ -121,6 +125,14 @@ class StatusContextSubViewModel(
                 )
             }
             state.copy(contextStatus = contextStatus)
+        }
+    }
+
+    private fun deleteStatus(statusId: String) {
+        _uiState.update { state ->
+            state.copy(
+                contextStatus = state.contextStatus.filter { it.status.status.id != statusId }
+            )
         }
     }
 }

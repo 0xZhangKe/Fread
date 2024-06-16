@@ -4,11 +4,9 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
-import com.zhangke.krouter.KRouter
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
@@ -21,6 +19,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
@@ -102,13 +101,18 @@ class InteractiveHandler(
             val interaction = uiInteraction.statusInteraction ?: return@launch
             val result = statusProvider.statusResolver
                 .interactive(status.role, status.status, interaction)
-                .map { buildStatusUiState(status.role, it) }
+                .map { s -> s?.let { buildStatusUiState(status.role, it) } }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch
             }
-            val interactiveResult = InteractiveHandleResult.UpdateStatus(result.getOrThrow())
-            onInteractiveHandleResult(interactiveResult)
+            val statusUiState = result.getOrNull()
+            if (statusUiState == null) {
+                onInteractiveHandleResult(InteractiveHandleResult.DeleteStatus(status.status.id))
+            } else {
+                val interactiveResult = InteractiveHandleResult.UpdateStatus(statusUiState)
+                onInteractiveHandleResult(interactiveResult)
+            }
         }
     }
 

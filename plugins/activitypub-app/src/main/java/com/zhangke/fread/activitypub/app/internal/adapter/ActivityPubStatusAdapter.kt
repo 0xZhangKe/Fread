@@ -72,7 +72,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             author = activityPubAccountEntityAdapter.toAuthor(account),
             title = null,
             description = null,
-            content = content,
+            content = content.orEmpty(),
             sensitive = sensitive,
             spoilerText = spoilerText,
             date = formatDatetimeToDate(createdAt),

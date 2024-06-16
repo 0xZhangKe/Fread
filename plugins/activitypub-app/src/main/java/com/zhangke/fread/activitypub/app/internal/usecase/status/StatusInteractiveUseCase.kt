@@ -16,7 +16,7 @@ class StatusInteractiveUseCase @Inject constructor(
         role: IdentityRole,
         status: Status,
         interaction: StatusInteraction,
-    ): Result<Status> {
+    ): Result<Status?> {
         val statusId = if (status is Status.Reblog) {
             status.reblog.id
         } else {
@@ -56,6 +56,9 @@ class StatusInteractiveUseCase @Inject constructor(
         }
         if (interactionResult.isFailure) {
             return Result.failure(interactionResult.exceptionOrNull()!!)
+        }
+        if (interaction is StatusInteraction.Delete) {
+            return Result.success(null)
         }
         val resultNewStatusEntity = interactionResult.getOrThrow()
         val newStatus = activityPubStatusAdapter.toStatus(

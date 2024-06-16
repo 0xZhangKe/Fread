@@ -106,6 +106,21 @@ class SearchBarViewModel @Inject constructor(
                     )
                 }
             },
+            deleteStatus = { statusId ->
+                _uiState.update { state ->
+                    state.copy(
+                        resultList = state.resultList.filter {
+                            when (it) {
+                                is SearchResultUiState.SearchedStatus -> {
+                                    it.status.status.id != statusId
+                                }
+
+                                else -> true
+                            }
+                        }
+                    )
+                }
+            },
             followStateUpdater = { _, _ ->
 
             }

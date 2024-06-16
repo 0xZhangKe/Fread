@@ -34,10 +34,10 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.voyager.navigationResult
@@ -89,7 +89,7 @@ class EditMixedContentScreen(private val configId: Long) : Screen {
         onDeleteClick: () -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
-        val errorMessage = uiState.successDataOrNull()?.errorMessage
+        val errorMessage = uiState.successDataOrNull()?.errorMessage?.take(180)
         if (errorMessage.isNullOrEmpty().not()) {
             LaunchedEffect(errorMessage) {
                 snackbarHostState.showSnackbar(errorMessage.orEmpty())

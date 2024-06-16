@@ -70,6 +70,10 @@ class ActivityPubNotificationsSubViewModel(
                         updateStatus(interactiveResult.status)
                     }
 
+                    is InteractiveHandleResult.DeleteStatus -> {
+                        deleteStatus(interactiveResult.statusId)
+                    }
+
                     is InteractiveHandleResult.UpdateFollowState -> {
                         // no-op
                     }
@@ -173,6 +177,16 @@ class ActivityPubNotificationsSubViewModel(
             accountOwnershipUri = userUriInsights.uri,
             status = newStatus.status
         )
+    }
+
+    private fun deleteStatus(statusId: String) {
+        _uiState.update { current ->
+            current.copy(
+                dataList = current.dataList.filter {
+                    it.status?.status?.id != statusId
+                }
+            )
+        }
     }
 
     fun onRejectClick(notification: NotificationUiState) {

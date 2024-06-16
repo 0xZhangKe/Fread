@@ -46,7 +46,7 @@ fun ConsumeSnackbarFlow(
     hostState ?: return
     val context = LocalContext.current
     ConsumeFlow(messageTextFlow) {
-        val message = it.getString(context)
+        val message = it.getString(context).take(180)
         if (message.isNotEmpty()) {
             hostState.showSnackbar(message, actionLabel, duration = duration)
         }

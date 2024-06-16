@@ -40,7 +40,7 @@ class StatusResolver(
         role: IdentityRole,
         status: Status,
         interaction: StatusInteraction,
-    ): Result<Status> {
+    ): Result<Status?> {
         return resolverList.mapFirst { it.interactive(role, status, interaction) }
     }
 
@@ -108,7 +108,7 @@ interface IStatusResolver {
         role: IdentityRole,
         status: Status,
         interaction: StatusInteraction,
-    ): Result<Status>?
+    ): Result<Status?>?
 
     suspend fun votePoll(
         role: IdentityRole,

@@ -14,8 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.res.stringResource
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.common.status.model.StatusUiInteraction
+import com.zhangke.fread.statusui.R
 
 @Composable
 fun StatusMoreInteractionIcon(
@@ -42,24 +45,62 @@ fun StatusMoreInteractionIcon(
                 expanded = showMorePopup,
                 onDismissRequest = { showMorePopup = false },
             ) {
-                moreActionList.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = it.actionName)
-                        },
-                        leadingIcon = {
-                            Icon(
-                                imageVector = it.logo,
-                                contentDescription = it.actionName,
-                            )
-                        },
-                        onClick = {
-                            onActionClick(it)
-                            showMorePopup = false
-                        },
+                moreActionList.forEach { interaction ->
+                    InteractionItem(
+                        interaction = interaction,
+                        onDismissRequest = { showMorePopup = false },
+                        onActionClick = onActionClick,
                     )
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun InteractionItem(
+    interaction: StatusUiInteraction,
+    onDismissRequest: () -> Unit,
+    onActionClick: (StatusUiInteraction) -> Unit,
+) {
+    var showDeleteConfirmDialog by remember(interaction) {
+        mutableStateOf(false)
+    }
+    DropdownMenuItem(
+        text = {
+            Text(text = interaction.actionName)
+        },
+        leadingIcon = {
+            Icon(
+                imageVector = interaction.logo,
+                contentDescription = interaction.actionName,
+            )
+        },
+        onClick = {
+            if (interaction is StatusUiInteraction.Delete) {
+                showDeleteConfirmDialog = true
+            } else {
+                onDismissRequest()
+                onActionClick(interaction)
+            }
+        },
+    )
+    if (showDeleteConfirmDialog) {
+        FreadDialog(
+            onDismissRequest = {
+                onDismissRequest()
+                showDeleteConfirmDialog = false
+            },
+            contentText = stringResource(R.string.status_ui_delete_status_confirm),
+            onNegativeClick = {
+                onDismissRequest()
+                showDeleteConfirmDialog = false
+            },
+            onPositiveClick = {
+                onDismissRequest()
+                showDeleteConfirmDialog = false
+                onActionClick(interaction)
+            },
+        )
     }
 }

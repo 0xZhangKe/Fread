@@ -62,7 +62,7 @@ class ActivityPubStatusResolver @Inject constructor(
         role: IdentityRole,
         status: Status,
         interaction: StatusInteraction,
-    ): Result<Status>? {
+    ): Result<Status?>? {
         if (status.notThisPlatform()) return null
         return statusInteractive(role, status, interaction)
     }

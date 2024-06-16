@@ -59,6 +59,9 @@ class UserTimelineViewModel @AssistedInject constructor(
                     uiStatusUpdater = {
                         updateStatus(it)
                     },
+                    deleteStatus = { deletedStatusId ->
+                        deleteStatus(deletedStatusId)
+                    },
                     followStateUpdater = { _, _ -> }
                 )
             },
@@ -171,6 +174,7 @@ class UserTimelineViewModel @AssistedInject constructor(
         return accountRepo.getStatuses(
             id = accountId,
             pinned = false,
+            maxId = maxId,
             excludeReplies = tabType != UserTimelineTabType.REPLIES,
             onlyMedia = tabType == UserTimelineTabType.MEDIA,
         ).map {
@@ -198,6 +202,14 @@ class UserTimelineViewModel @AssistedInject constructor(
                 }
             }
             state.copy(feeds = feeds)
+        }
+    }
+
+    private fun deleteStatus(statusId: String) {
+        _uiState.update { state ->
+            state.copy(
+                feeds = state.feeds.filter { it.status.status.intrinsicBlog.id != statusId }
+            )
         }
     }
 }

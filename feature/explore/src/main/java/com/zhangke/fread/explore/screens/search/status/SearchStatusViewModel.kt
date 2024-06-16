@@ -58,6 +58,14 @@ class SearchStatusViewModel @AssistedInject constructor(
                         }
                     }
 
+                    is InteractiveHandleResult.DeleteStatus -> {
+                        loadStatusController.mutableUiState.update { state ->
+                            state.copy(
+                                dataList = state.dataList.filter { it.status.id != result.statusId },
+                            )
+                        }
+                    }
+
                     is InteractiveHandleResult.UpdateFollowState -> {
                         // no-op
                     }

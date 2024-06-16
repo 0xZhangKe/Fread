@@ -206,7 +206,7 @@ class PostStatusScreen(
         if (postStatus is LoadableState.Failed) {
             var errorMessage = stringResource(R.string.post_status_failed)
             if (postStatus.exception.message.isNullOrEmpty().not()) {
-                errorMessage += ": ${postStatus.exception.message}"
+                errorMessage += ": ${postStatus.exception.message?.take(180)}"
             }
             LaunchedEffect(errorMessage) {
                 snackMessageState.showSnackbar(errorMessage)

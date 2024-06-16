@@ -30,9 +30,10 @@ class ExplorerFeedsViewModel(
     refactorToNewBlog = refactorToNewBlog,
 ) {
 
-    private val loadController = CommonLoadableController<com.zhangke.fread.explore.model.ExplorerItem>(viewModelScope)
+    private val loadController =
+        CommonLoadableController<ExplorerItem>(viewModelScope)
 
-    val uiState: StateFlow<CommonLoadableUiState<com.zhangke.fread.explore.model.ExplorerItem>> get() = loadController.uiState
+    val uiState: StateFlow<CommonLoadableUiState<ExplorerItem>> get() = loadController.uiState
 
     init {
         initInteractiveHandler(
@@ -46,11 +47,25 @@ class ExplorerFeedsViewModel(
                         }
                     }
 
+                    is InteractiveHandleResult.DeleteStatus -> {
+                        loadController.mutableUiState.update { state ->
+                            state.copy(
+                                dataList = state.dataList.filter {
+                                    if (it is ExplorerItem.ExplorerStatus) {
+                                        it.id != interactiveResult.statusId
+                                    } else {
+                                        true
+                                    }
+                                }
+                            )
+                        }
+                    }
+
                     is InteractiveHandleResult.UpdateFollowState -> {
                         val authorUri = interactiveResult.userUri
                         loadController.mutableUiState.update { state ->
                             val dataList = state.dataList.map {
-                                if (it is com.zhangke.fread.explore.model.ExplorerItem.ExplorerUser && it.user.uri == authorUri) {
+                                if (it is ExplorerItem.ExplorerUser && it.user.uri == authorUri) {
                                     it.copy(following = interactiveResult.following)
                                 } else {
                                     it
@@ -89,9 +104,9 @@ class ExplorerFeedsViewModel(
         }
     }
 
-    private fun List<com.zhangke.fread.explore.model.ExplorerItem>.updateStatus(newStatus: StatusUiState): List<com.zhangke.fread.explore.model.ExplorerItem> {
+    private fun List<ExplorerItem>.updateStatus(newStatus: StatusUiState): List<ExplorerItem> {
         return map { item ->
-            if (item is com.zhangke.fread.explore.model.ExplorerItem.ExplorerStatus && item.status.status.intrinsicBlog.id == newStatus.status.intrinsicBlog.id) {
+            if (item is ExplorerItem.ExplorerStatus && item.status.status.intrinsicBlog.id == newStatus.status.intrinsicBlog.id) {
                 item.copy(status = newStatus)
             } else {
                 item

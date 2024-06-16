@@ -13,6 +13,8 @@
 
     <string name="status_ui_new_status">New Content</string>
 
+    <string name="status_ui_delete_status_confirm">Are you sure you want to delete this content?</string>
+
     <string name="status_ui_image_sensitive_label">Media hidden</string>
     <string name="status_ui_image_content_show_hidden_label">Show more</string>
     <string name="status_ui_image_content_hide_hidden_label">Hide content</string>

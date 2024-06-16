@@ -52,7 +52,7 @@ class RssStatusResolver @Inject constructor(
         role: IdentityRole,
         status: Status,
         interaction: StatusInteraction
-    ): Result<Status>? {
+    ): Result<Status?>? {
         return null
     }
 

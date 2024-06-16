@@ -9,19 +9,19 @@ sealed interface ExplorerItem {
     val id: String
 
     data class ExplorerStatus(val status: StatusUiState) :
-        com.zhangke.fread.explore.model.ExplorerItem {
+        ExplorerItem {
         override val id: String
             get() = status.status.id
     }
 
     data class ExplorerHashtag(val hashtag: Hashtag) :
-        com.zhangke.fread.explore.model.ExplorerItem {
+        ExplorerItem {
         override val id: String
             get() = hashtag.name
     }
 
     data class ExplorerUser(val user: BlogAuthor, val following: Boolean) :
-        com.zhangke.fread.explore.model.ExplorerItem {
+        ExplorerItem {
         override val id: String
             get() = user.uri.toString()
     }

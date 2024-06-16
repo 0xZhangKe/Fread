@@ -11,6 +11,8 @@ sealed interface InteractiveHandleResult {
 
     data class UpdateStatus(val status: StatusUiState) : InteractiveHandleResult
 
+    data class DeleteStatus(val statusId: String) : InteractiveHandleResult
+
     data class UpdateFollowState(
         val userUri: FormalUri,
         val following: Boolean,
@@ -19,6 +21,7 @@ sealed interface InteractiveHandleResult {
 
 suspend fun InteractiveHandleResult.handle(
     uiStatusUpdater: suspend (StatusUiState) -> Unit,
+    deleteStatus: (statusId: String) -> Unit,
     followStateUpdater: suspend (FormalUri, Boolean) -> Unit,
 ) {
     when (this) {
@@ -29,6 +32,10 @@ suspend fun InteractiveHandleResult.handle(
         is InteractiveHandleResult.UpdateFollowState -> {
             val (userUri, following) = this
             followStateUpdater(userUri, following)
+        }
+
+        is InteractiveHandleResult.DeleteStatus -> {
+            deleteStatus(this.statusId)
         }
     }
 }
@@ -42,6 +49,14 @@ suspend fun InteractiveHandleResult.handle(
             mutableUiState.update {
                 it.copyObject(
                     dataList = it.dataList.updateStatus(newStatus)
+                )
+            }
+        },
+        deleteStatus = { deletedStatusId ->
+            mutableUiState.update { uiState ->
+                uiState.copyObject(
+                    dataList = uiState.dataList
+                        .filter { status -> status.status.id != deletedStatusId }
                 )
             }
         },

@@ -255,12 +255,31 @@ class ActivityPubTimelineViewModel(
         }
     }
 
-    private fun InteractiveHandleResult.handle() {
+    private suspend fun InteractiveHandleResult.handle() {
         when (this) {
             is InteractiveHandleResult.UpdateStatus -> {
                 _uiState.update { state ->
                     state.copy(items = state.items.updateStatus(this.status))
                 }
+                timelineRepo.updateStatus(
+                    role = role,
+                    type = type,
+                    status = this.status.status,
+                    listId = listId,
+                )
+            }
+
+            is InteractiveHandleResult.DeleteStatus -> {
+                _uiState.update { state ->
+                    state.copy(
+                        items = state.items.filter {
+                            when (it) {
+                                is ActivityPubTimelineItem.StatusItem -> it.status.status.id != this.statusId
+                            }
+                        }
+                    )
+                }
+                timelineRepo.deleteStatus(statusId)
             }
 
             is InteractiveHandleResult.UpdateFollowState -> {}

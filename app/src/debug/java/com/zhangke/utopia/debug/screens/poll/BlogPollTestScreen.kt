@@ -1,4 +1,4 @@
-package com.zhangke.utopia.debug.screens.poll
+package com.zhangke.fread.debug.screens.poll
 
 import android.util.Log
 import androidx.compose.foundation.layout.Arrangement
@@ -20,8 +20,8 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.ui.poll.BlogPoll
+import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.ui.poll.BlogPoll
 
 class BlogPollTestScreen : Screen {
 

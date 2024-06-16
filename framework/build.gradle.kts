@@ -1,13 +1,13 @@
 plugins {
-    id("utopia.android.library")
-    id("utopia.android.compose")
+    id("fread.android.library")
+    id("fread.android.compose")
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
 android {
-    namespace = "com.zhangke.utopia.framework"
+    namespace = "com.zhangke.fread.framework"
 
     buildTypes {
         release {

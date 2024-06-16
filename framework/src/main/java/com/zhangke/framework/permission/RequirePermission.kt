@@ -16,9 +16,9 @@ import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
 import com.google.accompanist.permissions.shouldShowRationale
-import com.zhangke.framework.composable.UtopiaDialog
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.utils.extractActivity
-import com.zhangke.utopia.framework.R
+import com.zhangke.fread.framework.R
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalPermissionsApi::class)
@@ -55,7 +55,7 @@ fun RequirePermission(
                 mutableStateOf(true)
             }
             if (showDeniedDialog) {
-                UtopiaDialog(
+                FreadDialog(
                     title = stringResource(R.string.alert),
                     onDismissRequest = {
                         showDeniedDialog = false

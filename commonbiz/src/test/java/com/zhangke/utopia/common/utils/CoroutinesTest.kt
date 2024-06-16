@@ -1,4 +1,4 @@
-package com.zhangke.utopia.common.utils
+package com.zhangke.fread.common.utils
 
 import kotlinx.coroutines.asCoroutineDispatcher
 import java.util.concurrent.Executors

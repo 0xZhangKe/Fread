@@ -16,7 +16,7 @@
 
 import com.android.build.api.dsl.ApplicationExtension
 import com.android.build.gradle.LibraryExtension
-import com.zhangke.utopia.configureAndroidCompose
+import com.zhangke.fread.configureAndroidCompose
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.getByType

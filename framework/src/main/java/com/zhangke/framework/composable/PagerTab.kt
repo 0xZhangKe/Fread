@@ -46,7 +46,7 @@ fun Screen.HorizontalPagerWithTab(
                 onPageChanged(pagerState.currentPage)
             }
         }
-        UtopiaTabRow(
+        FreadTabRow(
             modifier = Modifier.fillMaxWidth(),
             selectedTabIndex = pagerState.currentPage,
             tabCount = tabList.size,

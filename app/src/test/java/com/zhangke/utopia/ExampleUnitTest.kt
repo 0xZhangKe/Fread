@@ -1,4 +1,4 @@
-package com.zhangke.utopia
+package com.zhangke.fread
 
 import org.junit.Test
 

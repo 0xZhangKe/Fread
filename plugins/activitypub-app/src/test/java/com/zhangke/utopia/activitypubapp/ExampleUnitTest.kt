@@ -1,4 +1,4 @@
-package com.zhangke.utopia.activitypubapp
+package com.zhangke.fread.activitypubapp
 
 import org.junit.Test
 

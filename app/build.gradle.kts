@@ -2,7 +2,7 @@ import java.io.FileInputStream
 import java.util.Properties
 
 plugins {
-    id("utopia.android.application")
+    id("fread.android.application")
     id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
@@ -14,7 +14,7 @@ val keystoreProperties = Properties()
 keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
-    namespace = "com.zhangke.utopia"
+    namespace = "com.zhangke.fread"
 
     buildFeatures {
         buildConfig = true
@@ -39,7 +39,7 @@ android {
 //        configurations.all {
 //            resolutionStrategy { force support.'core-ktx' }
 //        }
-        applicationId = "com.zhangke.utopia"
+        applicationId = "com.zhangke.fread"
         versionCode = 100000
         versionName = "1.0.0"
 

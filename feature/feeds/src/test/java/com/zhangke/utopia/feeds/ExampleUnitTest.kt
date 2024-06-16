@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feeds
+package com.zhangke.fread.feeds
 
 import org.junit.Test
 

@@ -20,7 +20,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.TextString
-import com.zhangke.utopia.framework.R
+import com.zhangke.fread.framework.R
 import kotlinx.coroutines.flow.MutableStateFlow
 
 sealed interface PreviousPageLoadingState {

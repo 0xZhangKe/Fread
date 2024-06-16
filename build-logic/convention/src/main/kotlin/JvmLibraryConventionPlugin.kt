@@ -14,7 +14,7 @@
  *   limitations under the License.
  */
 
-import com.zhangke.utopia.configureKotlinJvm
+import com.zhangke.fread.configureKotlinJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 

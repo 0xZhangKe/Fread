@@ -1,6 +1,6 @@
-package com.zhangke.utopia.common.utils
+package com.zhangke.fread.common.utils
 
-import com.zhangke.utopia.status.uri.FormalUri
+import com.zhangke.fread.status.uri.FormalUri
 
 const val ACTIVITY_PUB_HOST = "activitypub.com"
 

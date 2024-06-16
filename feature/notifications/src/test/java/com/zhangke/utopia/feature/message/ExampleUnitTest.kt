@@ -1,4 +1,4 @@
-package com.zhangke.utopia.feature.message
+package com.zhangke.fread.feature.message
 
 import org.junit.Test
 

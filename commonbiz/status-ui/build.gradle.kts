@@ -1,13 +1,13 @@
 plugins {
-    id("utopia.android.library")
-    id("utopia.android.compose")
+    id("fread.android.library")
+    id("fread.android.compose")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.zhangke.utopia.statusui"
+    namespace = "com.zhangke.fread.statusui"
 
     // Allow references to generated code
     kapt {

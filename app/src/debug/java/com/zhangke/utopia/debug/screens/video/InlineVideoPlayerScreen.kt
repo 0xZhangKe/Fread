@@ -1,4 +1,4 @@
-package com.zhangke.utopia.debug.screens.video
+package com.zhangke.fread.debug.screens.video
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -23,7 +23,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
-import com.zhangke.utopia.status.ui.video.inline.InlineVideo
+import com.zhangke.fread.status.ui.video.inline.InlineVideo
 
 class InlineVideoPlayerScreen : Screen {
 

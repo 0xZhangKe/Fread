@@ -1,4 +1,4 @@
-package com.zhangke.utopia.status.ui.image
+package com.zhangke.fread.status.ui.image
 
 import org.junit.Assert
 import org.junit.Test

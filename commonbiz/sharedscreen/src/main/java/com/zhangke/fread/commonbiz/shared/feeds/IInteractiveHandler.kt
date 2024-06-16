@@ -1,0 +1,51 @@
+package com.zhangke.fread.commonbiz.shared.feeds
+
+import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.composable.TextString
+import com.zhangke.fread.common.status.model.StatusUiInteraction
+import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.model.Hashtag
+import com.zhangke.fread.status.model.HashtagInStatus
+import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.status.model.Status
+import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
+
+interface IInteractiveHandler {
+
+    val mutableErrorMessageFlow: MutableSharedFlow<TextString>
+    val errorMessageFlow: SharedFlow<TextString> get() = mutableErrorMessageFlow
+
+    val mutableOpenScreenFlow: MutableSharedFlow<Screen>
+    val openScreenFlow: SharedFlow<Screen> get() = mutableOpenScreenFlow
+
+    val composedStatusInteraction: ComposedStatusInteraction
+
+    fun initInteractiveHandler(
+        coroutineScope: CoroutineScope,
+        onInteractiveHandleResult: suspend (InteractiveHandleResult) -> Unit,
+    )
+
+    fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction)
+
+    fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor)
+
+    fun onStatusClick(status: StatusUiState)
+
+    fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>)
+
+    fun onFollowClick(role: IdentityRole, target: BlogAuthor)
+
+    fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
+
+    fun onMentionClick(role: IdentityRole, mention: Mention)
+
+    fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus)
+
+    fun onHashtagClick(role: IdentityRole, tag: Hashtag)
+}

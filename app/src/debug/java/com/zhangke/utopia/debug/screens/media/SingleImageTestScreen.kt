@@ -1,4 +1,4 @@
-package com.zhangke.utopia.debug.screens.media
+package com.zhangke.fread.debug.screens.media
 
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,8 +14,8 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.utopia.status.blog.BlogMedia
-import com.zhangke.utopia.status.ui.media.BlogMedias
+import com.zhangke.fread.status.blog.BlogMedia
+import com.zhangke.fread.status.ui.media.BlogMedias
 
 class SingleImageTestScreen : Screen {
 

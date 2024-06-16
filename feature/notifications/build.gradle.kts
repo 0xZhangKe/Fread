@@ -1,12 +1,12 @@
 plugins {
-    id("utopia.android.feature")
+    id("fread.android.feature")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.zhangke.utopia.feature.notifications"
+    namespace = "com.zhangke.fread.feature.notifications"
 
     // Allow references to generated code
     kapt {

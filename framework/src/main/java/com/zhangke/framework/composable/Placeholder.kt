@@ -14,7 +14,7 @@ import com.google.accompanist.placeholder.material.fade
 import com.google.accompanist.placeholder.material.placeholder
 
 @Composable
-fun Modifier.utopiaPlaceholder(
+fun Modifier.freadPlaceholder(
     visible: Boolean,
     color: Color = Color.Unspecified,
     shape: Shape = RectangleShape,

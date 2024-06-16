@@ -26,7 +26,7 @@ object DateTimeFormatter {
         if (inWholeDays > 3) {
             return dateFormat.format(Date(datetime))
         }
-        return "${formatDuration(config, duration)} ${config.ago}"
+        return "${formatDuration(config, duration)}${config.ago}"
     }
 
     private fun formatDuration(config: DatetimeFormatConfig, duration: Duration): String {

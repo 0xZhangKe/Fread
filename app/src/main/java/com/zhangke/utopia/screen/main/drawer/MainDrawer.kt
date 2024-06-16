@@ -3,7 +3,6 @@ package com.zhangke.utopia.screen.main.drawer
 import android.content.Context
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,8 +16,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ImportExport
-import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -51,7 +48,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.utopia.R
 import com.zhangke.utopia.feeds.pages.home.EmptyContent
 import com.zhangke.utopia.feeds.pages.manager.add.pre.PreAddFeedsScreen
-import com.zhangke.utopia.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.utopia.status.model.ContentConfig
 import com.zhangke.utopia.status.ui.common.LocalMainTabConnection
 import kotlinx.coroutines.launch
@@ -86,10 +82,6 @@ fun Screen.MainDrawer(
             onDismissRequest()
             viewModel.onContentConfigEditClick(it)
         },
-        onImportClick = {
-            onDismissRequest()
-            navigator.push(ImportFeedsScreen())
-        },
     )
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)
 }
@@ -99,7 +91,6 @@ fun Screen.MainDrawer(
 private fun MainDrawerContent(
     uiState: MainDrawerUiState,
     onContentConfigClick: (ContentConfig) -> Unit,
-    onImportClick: () -> Unit,
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
     onEditClick: (ContentConfig) -> Unit,
@@ -117,13 +108,6 @@ private fun MainDrawerContent(
                         Text(text = stringResource(R.string.main_drawer_title))
                     },
                     actions = {
-
-                        SimpleIconButton(
-                            onClick = onImportClick,
-                            imageVector = Icons.Default.ImportExport,
-                            contentDescription = "Add Content",
-                        )
-
                         SimpleIconButton(
                             onClick = onAddContentClick,
                             imageVector = Icons.Default.Add,

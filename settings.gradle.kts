@@ -17,7 +17,7 @@ dependencyResolutionManagement {
         maven { setUrl("https://plugins.gradle.org/m2/") }
     }
 }
-rootProject.name = "Utopia"
+rootProject.name = "Fread"
 include(":app")
 include(":framework")
 include(":ActivityPub-Kotlin")

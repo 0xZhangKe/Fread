@@ -21,7 +21,7 @@ import com.sd.lib.compose.wheel_picker.FVerticalWheelPicker
 import com.sd.lib.compose.wheel_picker.FWheelPickerState
 import com.sd.lib.compose.wheel_picker.rememberFWheelPickerState
 import com.zhangke.framework.utils.format
-import com.zhangke.utopia.framework.R
+import com.zhangke.fread.framework.R
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
@@ -37,7 +37,7 @@ fun DurationSelector(
     var currentDuration by remember {
         mutableStateOf(defaultDuration)
     }
-    UtopiaDialog(
+    FreadDialog(
         onDismissRequest = onDismissRequest,
         title = stringResource(R.string.duration_selector_title),
         onNegativeClick = {

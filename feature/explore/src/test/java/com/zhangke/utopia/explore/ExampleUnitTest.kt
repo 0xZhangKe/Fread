@@ -1,4 +1,4 @@
-package com.zhangke.utopia.explore
+package com.zhangke.fread.explore
 
 import org.junit.Test
 

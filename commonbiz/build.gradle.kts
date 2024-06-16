@@ -1,5 +1,5 @@
 plugins {
-    id("utopia.android.library")
+    id("fread.android.library")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
@@ -7,7 +7,7 @@ plugins {
 }
 
 android {
-    namespace = "com.zhangke.utopia.commonbiz"
+    namespace = "com.zhangke.fread.commonbiz"
 }
 
 dependencies {

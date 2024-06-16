@@ -1,4 +1,4 @@
-package com.zhangke.utopia.profile
+package com.zhangke.fread.profile
 
 import org.junit.Test
 

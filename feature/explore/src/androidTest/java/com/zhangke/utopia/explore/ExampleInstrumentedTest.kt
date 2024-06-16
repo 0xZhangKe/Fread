@@ -1,4 +1,4 @@
-package com.zhangke.utopia.explore
+package com.zhangke.fread.explore
 
 import androidx.test.platform.app.InstrumentationRegistry
 import androidx.test.ext.junit.runners.AndroidJUnit4
@@ -19,6 +19,6 @@ class ExampleInstrumentedTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("com.zhangke.utopia.explore.test", appContext.packageName)
+        assertEquals("com.zhangke.fread.explore.test", appContext.packageName)
     }
 }

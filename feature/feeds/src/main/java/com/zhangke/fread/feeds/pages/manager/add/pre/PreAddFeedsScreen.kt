@@ -1,0 +1,222 @@
+package com.zhangke.fread.feeds.pages.manager.add.pre
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.ImportExport
+import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LoadingDialog
+import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.fread.feeds.R
+import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsScreen
+import com.zhangke.fread.status.search.SearchContentResult
+import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
+import com.zhangke.fread.status.ui.source.BlogPlatformUi
+import com.zhangke.fread.status.ui.source.StatusSourceUi
+
+/**
+ * 添加 Feeds 预先搜索页，用于输入内容，判断类型添加内容。
+ */
+class PreAddFeedsScreen : Screen {
+
+    @Composable
+    override fun Content() {
+        val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
+        val viewModel = getScreenModel<PreAddFeedsViewModel>()
+        val uiState by viewModel.uiState.collectAsState()
+        val snackbarHostState = rememberSnackbarHostState()
+        PreAddFeedsContent(
+            uiState = uiState,
+            snackbarHostState = snackbarHostState,
+            onBackClick = navigator::pop,
+            onQueryChanged = viewModel::onQueryChanged,
+            onSearchClick = viewModel::onSearchClick,
+            onContentClick = viewModel::onContentClick,
+            onLoadingDismissRequest = viewModel::onLoadingDismissRequest,
+            onImportClick = {
+                navigator.push(ImportFeedsScreen())
+            },
+            onLoginDialogDismissRequest = viewModel::onLoginDialogDismissRequest,
+            onCancelLoginDialogClick = {
+                navigator.pop()
+            },
+            onLoginClick = viewModel::onLoginClick,
+        )
+        ConsumeFlow(viewModel.openScreenFlow) {
+            navigator.replace(it)
+        }
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
+        val bottomSheetIsVisible = bottomSheetNavigator.isVisible
+        var loginPageShown by remember {
+            mutableStateOf(false)
+        }
+        if (bottomSheetIsVisible) {
+            loginPageShown = true
+        }
+        if (loginPageShown && !bottomSheetIsVisible) {
+            LaunchedEffect(Unit) {
+                navigator.pop()
+            }
+        }
+        ConsumeFlow(viewModel.exitScreenFlow) {
+            navigator.pop()
+        }
+    }
+
+    @Composable
+    private fun PreAddFeedsContent(
+        uiState: PreAddFeedsUiState,
+        snackbarHostState: SnackbarHostState,
+        onBackClick: () -> Unit,
+        onImportClick: () -> Unit,
+        onQueryChanged: (String) -> Unit,
+        onSearchClick: () -> Unit,
+        onContentClick: (SearchContentResult) -> Unit,
+        onLoadingDismissRequest: () -> Unit,
+        onLoginDialogDismissRequest: () -> Unit,
+        onCancelLoginDialogClick: () -> Unit,
+        onLoginClick: () -> Unit,
+    ) {
+        Scaffold(
+            modifier = Modifier.fillMaxSize(),
+            topBar = {
+                Toolbar(
+                    title = stringResource(id = R.string.add_feeds_page_title),
+                    onBackClick = onBackClick,
+                    actions = {
+                        SimpleIconButton(
+                            onClick = onImportClick,
+                            imageVector = Icons.Default.ImportExport,
+                            contentDescription = "Import",
+                        )
+                    },
+                )
+            },
+            snackbarHost = {
+                SnackbarHost(snackbarHostState)
+            }
+        ) { innerPaddings ->
+            Column(
+                modifier = Modifier
+                    .padding(innerPaddings)
+                    .fillMaxSize()
+            ) {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 22.dp, top = 36.dp, end = 22.dp),
+                    value = uiState.query,
+                    onValueChange = onQueryChanged,
+                    maxLines = 1,
+                    keyboardOptions = KeyboardOptions.Default.copy(
+                        imeAction = ImeAction.Search
+                    ),
+                    keyboardActions = KeyboardActions(
+                        onSearch = {
+                            onSearchClick()
+                        }
+                    ),
+                    trailingIcon = {
+                        SimpleIconButton(
+                            onClick = onSearchClick,
+                            imageVector = Icons.Default.Search,
+                            contentDescription = "Search",
+                        )
+                    }
+                )
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(top = 16.dp),
+                ) {
+                    items(uiState.allSearchedResult) { content ->
+                        SearchContentResultUi(content, onContentClick)
+                    }
+                }
+            }
+            LoadingDialog(
+                loading = uiState.loading,
+                onDismissRequest = onLoadingDismissRequest,
+            )
+        }
+
+        if (uiState.showLoginDialog) {
+            FreadDialog(
+                onDismissRequest = onLoginDialogDismissRequest,
+                contentText = stringResource(R.string.feeds_pre_add_login_dialog_content),
+                onPositiveClick = {
+                    onLoginDialogDismissRequest()
+                    onLoginClick()
+                },
+                onNegativeClick = {
+                    onLoginDialogDismissRequest()
+                    onCancelLoginDialogClick()
+                },
+            )
+        }
+    }
+
+    @Composable
+    private fun SearchContentResultUi(
+        content: SearchContentResult,
+        onContentClick: (SearchContentResult) -> Unit,
+    ) {
+        when (content) {
+            is SearchContentResult.Source -> StatusSourceUi(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onContentClick(content)
+                    },
+                source = content.source,
+            )
+
+            is SearchContentResult.ActivityPubPlatform -> BlogPlatformUi(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onContentClick(content) },
+                platform = content.platform,
+            )
+
+            is SearchContentResult.ActivityPubPlatformSnapshot -> BlogPlatformSnapshotUi(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .clickable { onContentClick(content) },
+                platform = content.platform,
+            )
+        }
+    }
+}

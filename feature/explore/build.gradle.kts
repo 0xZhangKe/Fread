@@ -1,12 +1,12 @@
 plugins {
-    id("utopia.android.feature")
+    id("fread.android.feature")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
 }
 
 android {
-    namespace = "com.zhangke.utopia.explore"
+    namespace = "com.zhangke.fread.explore"
 
     // Allow references to generated code
     kapt {

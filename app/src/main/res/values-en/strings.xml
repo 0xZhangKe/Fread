@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Utopia</string>
+    <string name="app_name">Fread</string>
 
     <string name="authentication_page_normal_title">This function requires login to use</string>
 

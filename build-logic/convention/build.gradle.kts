@@ -20,7 +20,7 @@ plugins {
     `kotlin-dsl`
 }
 
-group = "com.zhangke.utopia.buildlogic"
+group = "com.zhangke.fread.buildlogic"
 
 // Configure the build-logic plugins to target JDK 17
 // This matches the JDK used to build the project, and is not related to what is running on device.
@@ -43,23 +43,23 @@ dependencies {
 gradlePlugin {
     plugins {
         register("androidCompose") {
-            id = "utopia.android.compose"
+            id = "fread.android.compose"
             implementationClass = "AndroidComposeConventionPlugin"
         }
         register("androidApplication") {
-            id = "utopia.android.application"
+            id = "fread.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
         }
         register("androidLibrary") {
-            id = "utopia.android.library"
+            id = "fread.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
         register("androidFeature") {
-            id = "utopia.android.feature"
+            id = "fread.android.feature"
             implementationClass = "AndroidFeatureConventionPlugin"
         }
         register("jvmLibrary") {
-            id = "utopia.jvm.library"
+            id = "fread.jvm.library"
             implementationClass = "JvmLibraryConventionPlugin"
         }
     }

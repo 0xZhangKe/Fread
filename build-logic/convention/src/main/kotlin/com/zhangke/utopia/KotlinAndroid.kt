@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.zhangke.utopia
+package com.zhangke.fread
 
 import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion

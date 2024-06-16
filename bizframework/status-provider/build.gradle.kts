@@ -1,12 +1,12 @@
 plugins {
-    id("utopia.android.library")
+    id("fread.android.library")
     id("com.google.devtools.ksp")
     id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
 android {
-    namespace = "com.zhangke.utopia.commonbiz.status.provider"
+    namespace = "com.zhangke.fread.commonbiz.status.provider"
 }
 
 dependencies {

@@ -25,7 +25,7 @@ import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.utopia.framework.R
+import com.zhangke.fread.framework.R
 
 @Composable
 fun LoadMoreUi(

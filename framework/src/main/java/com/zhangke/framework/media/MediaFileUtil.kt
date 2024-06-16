@@ -22,7 +22,7 @@ object MediaFileUtil {
             put(MediaStore.MediaColumns.DISPLAY_NAME, "${System.currentTimeMillis()}.jpg")
             put(MediaStore.MediaColumns.MIME_TYPE, "image/jpeg")
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.Q) {
-                put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/Utopia")
+                put(MediaStore.Images.Media.RELATIVE_PATH, "${Environment.DIRECTORY_PICTURES}/Fread")
             }
         }
         val uri = context.contentResolver

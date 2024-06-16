@@ -3,7 +3,7 @@ package com.zhangke.framework.toast
 import android.os.Build
 import android.widget.Toast
 import com.zhangke.framework.utils.appContext
-import com.zhangke.utopia.framework.R
+import com.zhangke.fread.framework.R
 
 fun toast(
     message: String?,

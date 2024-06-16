@@ -1,4 +1,4 @@
-package com.zhangke.utopia.debug.screens.collapsable
+package com.zhangke.fread.debug.screens.collapsable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box

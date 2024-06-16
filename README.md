@@ -1,4 +1,4 @@
-# Utopia
+# Fread
 
 Mastodon android client
 
@@ -27,7 +27,7 @@ alias: key0
 
 The Uri associated with status-provider is denoted by `StatusProviderUri`.
 
-- scheme: utopiaapp
+- scheme: freadapp
 - host: protocol identification host, no need for ten actual hosts, e.g:
   activitypub.com/rss.com/atom.com
 - path: function identification
@@ -35,7 +35,7 @@ The Uri associated with status-provider is denoted by `StatusProviderUri`.
 
 ## ActivityPub uri
 
-scheme always is utopiaapp
+scheme always is freadapp
 
 host always is activitypub.com
 

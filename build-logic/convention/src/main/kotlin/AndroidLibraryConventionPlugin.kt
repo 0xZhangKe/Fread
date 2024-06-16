@@ -16,8 +16,8 @@
 
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
-import com.zhangke.utopia.configureKotlinAndroid
-import com.zhangke.utopia.configurePrintApksTask
+import com.zhangke.fread.configureKotlinAndroid
+import com.zhangke.fread.configurePrintApksTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure

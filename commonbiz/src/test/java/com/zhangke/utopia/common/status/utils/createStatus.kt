@@ -1,16 +1,16 @@
-package com.zhangke.utopia.common.status.utils
+package com.zhangke.fread.common.status.utils
 
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.utopia.common.utils.createActivityPubUserUri
-import com.zhangke.utopia.status.author.BlogAuthor
-import com.zhangke.utopia.status.blog.Blog
-import com.zhangke.utopia.status.blog.BlogMedia
-import com.zhangke.utopia.status.blog.BlogPoll
-import com.zhangke.utopia.status.model.StatusProviderProtocol
-import com.zhangke.utopia.status.platform.BlogPlatform
-import com.zhangke.utopia.status.status.model.Status
-import com.zhangke.utopia.status.uri.FormalUri
+import com.zhangke.fread.common.utils.createActivityPubUserUri
+import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.blog.BlogMedia
+import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.status.model.Status
+import com.zhangke.fread.status.uri.FormalUri
 import java.util.Date
 
 fun createStatus(

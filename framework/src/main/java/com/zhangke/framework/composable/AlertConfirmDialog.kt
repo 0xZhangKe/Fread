@@ -2,7 +2,7 @@ package com.zhangke.framework.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
-import com.zhangke.utopia.framework.R
+import com.zhangke.fread.framework.R
 
 @Composable
 fun AlertConfirmDialog(
@@ -10,7 +10,7 @@ fun AlertConfirmDialog(
     onConfirm: () -> Unit,
     onDismissRequest: () -> Unit,
 ) {
-    UtopiaDialog(
+    FreadDialog(
         onDismissRequest = onDismissRequest,
         title = stringResource(R.string.alert),
         contentText = content,

@@ -4,7 +4,7 @@
     <application>
 
         <activity
-            android:name="com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubOAuthRedirectActivity"
+            android:name="com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthRedirectActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
@@ -13,8 +13,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="oauth.utopia"
-                    android:scheme="utopia" />
+                    android:host="oauth.fread"
+                    android:scheme="fread" />
             </intent-filter>
         </activity>
     </application>

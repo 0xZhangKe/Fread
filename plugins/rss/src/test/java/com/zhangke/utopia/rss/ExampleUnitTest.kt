@@ -1,4 +1,4 @@
-package com.zhangke.utopia.rss
+package com.zhangke.fread.rss
 
 import org.junit.Test
 

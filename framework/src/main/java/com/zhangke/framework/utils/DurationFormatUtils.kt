@@ -4,7 +4,7 @@ import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import com.zhangke.utopia.framework.R
+import com.zhangke.fread.framework.R
 
 fun Duration.formattedString(): String {
     val context = appContext

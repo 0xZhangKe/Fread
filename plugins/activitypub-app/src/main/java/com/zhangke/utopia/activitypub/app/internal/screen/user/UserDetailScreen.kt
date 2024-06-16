@@ -32,6 +32,8 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -55,6 +57,7 @@ import com.zhangke.utopia.activitypub.app.internal.screen.account.EditAccountInf
 import com.zhangke.utopia.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.utopia.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTab
+import com.zhangke.utopia.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.utopia.commonbiz.shared.screen.ImageViewerScreen
 import kotlinx.coroutines.flow.SharedFlow
 
@@ -62,6 +65,9 @@ import kotlinx.coroutines.flow.SharedFlow
 data class UserDetailScreen(
     @Router val route: String = "",
 ) : Screen {
+
+    override val key: ScreenKey
+        get() = uniqueScreenKey
 
     @Composable
     override fun Content() {
@@ -260,6 +266,19 @@ data class UserDetailScreen(
                     val tabs: List<PagerTab> = remember(uiState) {
                         listOf(
                             UserTimelineTab(
+                                tabType = UserTimelineTabType.POSTS,
+                                role = uiState.role,
+                                userWebFinger = uiState.userInsight.webFinger,
+                                contentCanScrollBackward = contentCanScrollBackward,
+                            ),
+                            UserTimelineTab(
+                                tabType = UserTimelineTabType.REPLIES,
+                                role = uiState.role,
+                                userWebFinger = uiState.userInsight.webFinger,
+                                contentCanScrollBackward = contentCanScrollBackward,
+                            ),
+                            UserTimelineTab(
+                                tabType = UserTimelineTabType.MEDIA,
                                 role = uiState.role,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 contentCanScrollBackward = contentCanScrollBackward,

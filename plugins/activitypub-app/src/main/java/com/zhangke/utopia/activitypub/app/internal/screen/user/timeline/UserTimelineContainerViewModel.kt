@@ -33,26 +33,29 @@ class UserTimelineContainerViewModel @Inject constructor(
             statusAdapter = statusAdapter,
             clientManager = clientManager,
             refactorToNewBlog = refactorToNewBlog,
+            tabType = params.tabType,
             role = params.role,
             webFinger = params.webFinger,
         )
     }
 
     fun getSubViewModel(
+        tabType: UserTimelineTabType,
         role: IdentityRole,
         webFinger: WebFinger,
     ): UserTimelineViewModel {
         return obtainSubViewModel(
-            Params(role, webFinger)
+            Params(tabType, role, webFinger)
         )
     }
 
     class Params(
+        val tabType: UserTimelineTabType,
         val role: IdentityRole,
         val webFinger: WebFinger,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + webFinger
+            get() = tabType.toString() + role.toString() + webFinger
     }
 }

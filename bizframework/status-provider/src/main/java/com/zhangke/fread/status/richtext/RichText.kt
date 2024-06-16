@@ -11,7 +11,7 @@ class RichText(
     private val mentions: List<Mention>,
     private val hashTags: List<HashtagInStatus>,
     private val emojis: List<Emoji>,
-): java.io.Serializable {
+) : java.io.Serializable {
 
     @Transient
     private var charSequence: CharSequence? = null
@@ -24,5 +24,10 @@ class RichText(
             mentions = mentions,
             hashTag = hashTags,
         ).also { charSequence = it }
+    }
+
+    companion object {
+
+        val empty = buildRichText("")
     }
 }

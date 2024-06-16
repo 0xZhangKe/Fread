@@ -110,7 +110,7 @@ private fun BlogTextContentSection(
         }
         SpoilerText(
             hideContent = hideContent,
-            spoilerText = RichText(spoilerText, emptyList(), emptyList(), emptyList()),
+            spoilerText = blog.humanizedSpoilerText,
             onShowContent = { hideContent = false },
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,

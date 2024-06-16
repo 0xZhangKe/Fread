@@ -15,6 +15,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -209,9 +210,17 @@ class UserDetailViewModel(
     }
 
     private fun ActivityPubAccountEntity.toAccountUiState(): UserDetailAccountUiState {
+        val customEmojis = emojis.map(emojiEntityAdapter::toEmoji)
         return UserDetailAccountUiState(
             account = this,
-            emojis = emojis.map(emojiEntityAdapter::toEmoji),
+            userName = buildRichText(
+                document = displayName,
+                emojis = customEmojis,
+            ),
+            description = buildRichText(
+                document = note,
+                emojis = customEmojis,
+            ),
         )
     }
 }

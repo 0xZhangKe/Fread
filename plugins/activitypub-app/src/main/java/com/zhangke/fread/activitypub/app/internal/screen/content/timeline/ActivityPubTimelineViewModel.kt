@@ -18,6 +18,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.richtext.preParseRichText
 import com.zhangke.fread.status.status.model.Status
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -92,7 +93,10 @@ class ActivityPubTimelineViewModel(
                 role = role,
                 type = type,
                 listId = listId,
-            )
+            ).map {
+                it.preParseRichText()
+                it
+            }
             if (localStatus.isNotEmpty()) {
                 val latestReadStatus = statusReadStateRepo.getLatestReadId(role, type, listId)
                 val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
@@ -118,26 +122,28 @@ class ActivityPubTimelineViewModel(
                     sinceId = sinceId,
                     listId = listId,
                 )
-            }.map { it.toTimelineItems() }
-                .onFailure { t ->
-                    if (_uiState.value.items.isEmpty()) {
-                        _uiState.update {
-                            it.copy(
-                                showPagingLoadingPlaceholder = false,
-                                pageErrorContent = t.toTextStringOrNull(),
-                            )
-                        }
-                    } else {
-                        mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
-                    }
-                }.onSuccess { list ->
+            }.map {
+                it.preParseRichText()
+                it.toTimelineItems()
+            }.onFailure { t ->
+                if (_uiState.value.items.isEmpty()) {
                     _uiState.update {
                         it.copy(
-                            items = list.appendItems(it.items),
                             showPagingLoadingPlaceholder = false,
+                            pageErrorContent = t.toTextStringOrNull(),
                         )
                     }
+                } else {
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
                 }
+            }.onSuccess { list ->
+                _uiState.update {
+                    it.copy(
+                        items = list.appendItems(it.items),
+                        showPagingLoadingPlaceholder = false,
+                    )
+                }
+            }
         }
         initFeedsJob!!.invokeOnCancel { t ->
             _uiState.update {
@@ -156,18 +162,20 @@ class ActivityPubTimelineViewModel(
                 role = role,
                 type = type,
                 listId = listId,
-            ).map { it.toTimelineItems() }
-                .onFailure { t ->
-                    _uiState.update { it.copy(refreshing = false) }
-                    mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
-                }.onSuccess { list ->
-                    _uiState.update {
-                        it.copy(
-                            items = list,
-                            refreshing = false,
-                        )
-                    }
+            ).map {
+                it.preParseRichText()
+                it.toTimelineItems()
+            }.onFailure { t ->
+                _uiState.update { it.copy(refreshing = false) }
+                mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
+            }.onSuccess { list ->
+                _uiState.update {
+                    it.copy(
+                        items = list,
+                        refreshing = false,
+                    )
                 }
+            }
         }
         refreshJob?.invokeOnCancel {
             _uiState.update { it.copy(refreshing = false) }
@@ -187,14 +195,16 @@ class ActivityPubTimelineViewModel(
                 type = type,
                 sinceId = sinceId,
                 listId = listId,
-            ).map { it.toTimelineItems() }
-                .onSuccess { list ->
-                    _uiState.update {
-                        it.copy(
-                            items = list.appendItems(it.items),
-                        )
-                    }
+            ).map {
+                it.preParseRichText()
+                it.toTimelineItems()
+            }.onSuccess { list ->
+                _uiState.update {
+                    it.copy(
+                        items = list.appendItems(it.items),
+                    )
                 }
+            }
         }
     }
 
@@ -214,17 +224,19 @@ class ActivityPubTimelineViewModel(
                 type = type,
                 maxId = maxId,
                 listId = listId,
-            ).map { it.toTimelineItems() }
-                .onFailure { t ->
-                    _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
-                }.onSuccess { list ->
-                    _uiState.update {
-                        it.copy(
-                            items = it.items.appendItems(list),
-                            loadMoreState = LoadState.Idle,
-                        )
-                    }
+            ).map {
+                it.preParseRichText()
+                it.toTimelineItems()
+            }.onFailure { t ->
+                _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
+            }.onSuccess { list ->
+                _uiState.update {
+                    it.copy(
+                        items = it.items.appendItems(list),
+                        loadMoreState = LoadState.Idle,
+                    )
                 }
+            }
         }
         loadMoreJob!!.invokeOnCancel { t ->
             _uiState.update { it.copy(loadMoreState = LoadState.Idle) }

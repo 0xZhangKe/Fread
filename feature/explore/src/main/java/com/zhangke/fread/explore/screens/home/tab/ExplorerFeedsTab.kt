@@ -81,7 +81,7 @@ class ExplorerFeedsTab(
     @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun ExplorerFeedsTabContent(
-        uiState: CommonLoadableUiState<com.zhangke.fread.explore.model.ExplorerItem>,
+        uiState: CommonLoadableUiState<ExplorerItem>,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         composedStatusInteraction: ComposedStatusInteraction,
@@ -151,13 +151,13 @@ class ExplorerFeedsTab(
     @Composable
     private fun ExplorerItemUi(
         modifier: Modifier,
-        item: com.zhangke.fread.explore.model.ExplorerItem,
+        item: ExplorerItem,
         role: IdentityRole,
         indexInList: Int,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
         when (item) {
-            is com.zhangke.fread.explore.model.ExplorerItem.ExplorerStatus -> {
+            is ExplorerItem.ExplorerStatus -> {
                 FeedsStatusNode(
                     modifier = modifier,
                     status = item.status,
@@ -166,7 +166,7 @@ class ExplorerFeedsTab(
                 )
             }
 
-            is com.zhangke.fread.explore.model.ExplorerItem.ExplorerUser -> {
+            is ExplorerItem.ExplorerUser -> {
                 RecommendAuthorUi(
                     modifier = modifier,
                     role = role,
@@ -176,7 +176,7 @@ class ExplorerFeedsTab(
                 )
             }
 
-            is com.zhangke.fread.explore.model.ExplorerItem.ExplorerHashtag -> {
+            is ExplorerItem.ExplorerHashtag -> {
                 HashtagUi(
                     modifier = modifier,
                     tag = item.hashtag,

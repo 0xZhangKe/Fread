@@ -19,12 +19,13 @@ import com.zhangke.fread.status.ui.richtext.android.AndroidRichText
 fun FreadRichText(
     modifier: Modifier,
     richText: RichText,
-    onMentionClick: (Mention) -> Unit,
-    onHashtagClick: (HashtagInStatus) -> Unit,
+    onMentionClick: (Mention) -> Unit = {},
+    onHashtagClick: (HashtagInStatus) -> Unit = {},
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
     textSelectable: Boolean = false,
+    fontSizeSp: Float = 14F,
 ) {
     AndroidRichText(
         modifier = modifier,
@@ -32,6 +33,7 @@ fun FreadRichText(
         layoutDirection = layoutDirection,
         overflow = overflow,
         maxLines = maxLines,
+        fontSp = fontSizeSp,
         textSelectable = textSelectable,
         onLinkTargetClick = { context, linkTarget ->
             when (linkTarget) {
@@ -55,14 +57,15 @@ fun FreadRichText(
 fun FreadRichText(
     modifier: Modifier,
     content: String,
-    mentions: List<Mention>,
-    emojis: List<Emoji>,
-    tags: List<HashtagInStatus>,
-    onMentionClick: (Mention) -> Unit,
-    onHashtagClick: (HashtagInStatus) -> Unit,
+    mentions: List<Mention> = emptyList(),
+    emojis: List<Emoji> = emptyList(),
+    tags: List<HashtagInStatus> = emptyList(),
+    onMentionClick: (Mention) -> Unit = {},
+    onHashtagClick: (HashtagInStatus) -> Unit = {},
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
+    fontSizeSp: Float = 14F,
 ) {
     val richText = remember(content, mentions) {
         buildRichText(
@@ -80,5 +83,6 @@ fun FreadRichText(
         maxLines = maxLines,
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick,
+        fontSizeSp = fontSizeSp,
     )
 }

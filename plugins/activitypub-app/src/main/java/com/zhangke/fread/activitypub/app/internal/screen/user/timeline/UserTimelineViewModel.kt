@@ -20,6 +20,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.richtext.preParseRichText
 import dagger.assisted.AssistedInject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -179,6 +180,7 @@ class UserTimelineViewModel @AssistedInject constructor(
 
     private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): UserTimelineStatus {
         val status = statusAdapter.toStatus(this, platform)
+        status.preParseRichText()
         val statusUiState = buildStatusUiState(role, status)
         return UserTimelineStatus(
             status = statusUiState,

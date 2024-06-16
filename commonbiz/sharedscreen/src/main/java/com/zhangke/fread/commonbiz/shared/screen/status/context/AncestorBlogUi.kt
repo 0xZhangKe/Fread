@@ -1,13 +1,10 @@
 package com.zhangke.fread.commonbiz.shared.screen.status.context
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -24,6 +21,7 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.defaultStatusStyle
 import com.zhangke.fread.status.ui.threads.StatusThread
@@ -106,13 +104,13 @@ fun AncestorBlogUi(
                     }
             )
 
-            Text(
+            FreadRichText(
                 modifier = Modifier.constrainAs(name) {
                     start.linkTo(avatar.end, margin = statusInfoStyle.avatarToNamePadding)
                     bottom.linkTo(guideline.top)
                 },
-                text = blog.author.name,
-                style = MaterialTheme.typography.titleMedium,
+                richText = blog.author.humanizedName,
+                fontSizeSp = 16F,
             )
             Text(
                 modifier = Modifier.constrainAs(dateTime) {

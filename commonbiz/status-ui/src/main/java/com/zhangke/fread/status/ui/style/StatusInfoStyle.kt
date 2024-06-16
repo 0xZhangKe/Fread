@@ -11,7 +11,6 @@ data class StatusInfoStyle(
     val avatarToNamePadding: Dp,
     val nameToTimePadding: Dp,
     val timeToIdPadding: Dp,
-    val nameStyle: TextStyle,
     val descStyle: TextStyle,
 )
 
@@ -25,8 +24,6 @@ object StatusInfoStyleDefaults {
 
     val timeToIdPadding = 2.dp
 
-    val nameStyle: TextStyle @Composable get() = MaterialTheme.typography.titleMedium
-
     val descStyle: TextStyle @Composable get() = MaterialTheme.typography.bodySmall
 }
 
@@ -36,6 +33,5 @@ fun defaultStatusInfoStyle() = StatusInfoStyle(
     avatarToNamePadding = StatusInfoStyleDefaults.avatarToNamePadding,
     nameToTimePadding = StatusInfoStyleDefaults.nameToTimePadding,
     timeToIdPadding = StatusInfoStyleDefaults.timeToIdPadding,
-    nameStyle = StatusInfoStyleDefaults.nameStyle,
     descStyle = StatusInfoStyleDefaults.descStyle,
 )

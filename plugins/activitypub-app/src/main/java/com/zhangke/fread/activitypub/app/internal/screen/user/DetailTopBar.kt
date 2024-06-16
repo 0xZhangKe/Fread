@@ -35,6 +35,7 @@ fun DetailTopBar(
                     modifier = Modifier,
                     richText = title,
                     fontSizeSp = 22F,
+                    maxLines = 1,
                 )
             }
         },

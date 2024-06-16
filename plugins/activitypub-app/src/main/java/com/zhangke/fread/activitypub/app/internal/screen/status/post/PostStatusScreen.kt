@@ -216,7 +216,6 @@ class PostStatusScreen(
             mutableStateOf(TextFieldValue(""))
         }
         Scaffold(
-//            modifier = Modifier.navigationBarsPadding(),
             snackbarHost = {
                 SnackbarHost(hostState = snackMessageState)
             },

@@ -15,8 +15,6 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AddAlert
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -31,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -98,7 +97,7 @@ internal fun PostStatusBottomBar(
                         .align(Alignment.CenterVertically)
                         .padding(start = 16.dp),
                     onClick = onSensitiveClick,
-                    imageVector = Icons.Default.AddAlert,
+                    painter = painterResource(com.zhangke.fread.statusui.R.drawable.ic_post_status_spoiler),
                     contentDescription = "Sensitive content",
                 )
                 SelectLanguageIconButton(

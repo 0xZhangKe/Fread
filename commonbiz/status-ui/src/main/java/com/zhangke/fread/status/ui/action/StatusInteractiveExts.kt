@@ -29,7 +29,7 @@ val StatusUiInteraction.logo: ImageVector
     @Composable get() = when (this) {
         is StatusUiInteraction.Like -> if (interaction.liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder
         is StatusUiInteraction.Forward -> Icons.Default.SwapHoriz
-        is StatusUiInteraction.Comment -> Icons.Default.ChatBubbleOutline
+        is StatusUiInteraction.Comment -> ImageVector.vectorResource(R.drawable.ic_status_comment)
         is StatusUiInteraction.Bookmark -> if (interaction.bookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder
         is StatusUiInteraction.Delete -> Icons.Default.Delete
         is StatusUiInteraction.Share -> ImageVector.vectorResource(R.drawable.ic_share)

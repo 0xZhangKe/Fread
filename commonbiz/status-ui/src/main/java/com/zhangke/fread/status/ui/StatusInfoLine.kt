@@ -136,8 +136,6 @@ fun StatusInfoLine(
             overflow = TextOverflow.Ellipsis,
             richText = blogAuthor.humanizedName,
             fontSizeSp = 16F,
-            onMentionClick = {},
-            onHashtagClick = {},
         )
         Text(
             modifier = Modifier.constrainAs(dateTime) {

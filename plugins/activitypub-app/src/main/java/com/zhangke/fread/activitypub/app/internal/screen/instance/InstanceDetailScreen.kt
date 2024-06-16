@@ -39,15 +39,16 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadTabRow
-import com.zhangke.framework.composable.textString
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.composable.textString
 import com.zhangke.framework.voyager.navigationResult
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
+import com.zhangke.fread.status.richtext.buildRichText
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import kotlinx.coroutines.launch
 
 @Destination(PlatformDetailRoute.ROUTE)
@@ -99,7 +100,7 @@ class InstanceDetailScreen(
                 topBarContent = { progress ->
                     DetailTopBar(
                         progress = progress,
-                        title = instance?.title.orEmpty(),
+                        title = buildRichText(instance?.title.orEmpty()),
                         onBackClick = onBackClick,
                         actions = {},
                     )
@@ -179,8 +180,8 @@ class InstanceDetailScreen(
             loading = loading,
             banner = instance?.thumbnail?.url,
             avatar = instance?.thumbnail?.url,
-            title = instance?.title,
-            description = instance?.description,
+            title = buildRichText(instance?.title.orEmpty()),
+            description = buildRichText(instance?.description.orEmpty()),
             acctLine = {
                 Text(
                     text = uiState.baseUrl.toString(),

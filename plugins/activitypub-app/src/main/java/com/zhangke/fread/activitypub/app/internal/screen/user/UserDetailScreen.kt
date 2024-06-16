@@ -49,8 +49,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
@@ -59,6 +57,9 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScree
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import kotlinx.coroutines.flow.SharedFlow
 
 @Destination(UserDetailRoute.ROUTE)
@@ -191,7 +192,7 @@ data class UserDetailScreen(
                     .padding(innerPaddings),
                 topBarContent = { progress ->
                     DetailTopBar(
-                        title = account?.displayName.orEmpty(),
+                        title = accountUiState?.userName ?: RichText.empty,
                         progress = progress,
                         onBackClick = onBackClick,
                         actions = {
@@ -212,8 +213,8 @@ data class UserDetailScreen(
                         loading = uiState.loading,
                         banner = account?.header,
                         avatar = account?.avatar,
-                        title = account?.displayName,
-                        description = account?.note,
+                        title = accountUiState?.userName,
+                        description = accountUiState?.description,
                         acctLine = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
@@ -249,7 +250,6 @@ data class UserDetailScreen(
                             )
                         },
                         relationship = if (uiState.isAccountOwner) null else uiState.relationship?.toUiState(),
-                        emojis = uiState.accountUiState?.emojis,
                         onBannerClick = onBannerClick,
                         onAvatarClick = onAvatarClick,
                         onUnblockClick = onUnblockClick,

@@ -22,6 +22,7 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.R
 
@@ -52,11 +53,13 @@ fun ReblogUi(
                 imageVector = Icons.Default.SwapHoriz,
                 contentDescription = null,
             )
-            Text(
+            FreadRichText(
                 modifier = Modifier.padding(start = 6.dp),
-                text = reblog.author.name,
+                richText = reblog.author.humanizedName,
                 maxLines = 1,
-                style = MaterialTheme.typography.bodySmall,
+                onHashtagClick = {},
+                onMentionClick = {},
+                fontSizeSp = 12F,
             )
             Text(
                 modifier = Modifier.padding(start = 4.dp),

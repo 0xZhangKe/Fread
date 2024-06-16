@@ -1,5 +1,6 @@
 package com.zhangke.fread.feeds.pages.home
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
@@ -30,9 +31,13 @@ class ContentHomeScreen : Screen {
         ) {
             val viewModel: ContentHomeViewModel = getViewModel()
             val uiState by viewModel.uiState.collectAsState()
-            if (uiState.loading && uiState.contentConfigList.isEmpty()) {
-                EmptyContent(modifier = Modifier.fillMaxSize()) {
-                    navigator.push(PreAddFeedsScreen())
+            if (uiState.contentConfigList.isEmpty()) {
+                if (uiState.loading) {
+                    Box(modifier = Modifier.fillMaxSize())
+                } else {
+                    EmptyContent(modifier = Modifier.fillMaxSize()) {
+                        navigator.push(PreAddFeedsScreen())
+                    }
                 }
             } else {
                 val mainTabConnection = LocalMainTabConnection.current

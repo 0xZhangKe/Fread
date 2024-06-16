@@ -10,9 +10,9 @@ import moe.tlaster.ktml.dom.Node
 
 fun buildRichText(
     document: String,
-    mentions: List<Mention>,
-    hashTags: List<HashtagInStatus>,
-    emojis: List<Emoji>,
+    mentions: List<Mention> = emptyList(),
+    hashTags: List<HashtagInStatus> = emptyList(),
+    emojis: List<Emoji> = emptyList(),
 ): RichText {
     return RichText(
         document = document,
@@ -59,11 +59,19 @@ private fun buildMentionUrl(
 }
 
 fun Blog.preParseRichText() {
+    author.humanizedName.parse()
     humanizedContent.parse()
     humanizedSpoilerText.parse()
     humanizedDescription.parse()
 }
 
+fun Status.preParseRichText(){
+    triggerAuthor.humanizedName.parse()
+    intrinsicBlog.preParseRichText()
+}
+
 fun List<Status>.preParseRichText() {
-    forEach { it.intrinsicBlog.preParseRichText() }
+    forEach {
+        it.preParseRichText()
+    }
 }

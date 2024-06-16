@@ -47,18 +47,17 @@ fun BlogAuthorUi(
                     },
                 imageUrl = author.avatar,
             )
-            Text(
+            FreadRichText(
                 modifier = Modifier.constrainAs(nameRef) {
                     start.linkTo(avatarRef.end, 8.dp)
                     top.linkTo(avatarRef.top)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-                textAlign = TextAlign.Start,
-                text = author.name,
+                richText = author.humanizedName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
+                fontSizeSp = 16F,
             )
             Text(
                 modifier = Modifier.constrainAs(webFingerRef) {
@@ -117,18 +116,17 @@ fun RecommendAuthorUi(
                 },
             imageUrl = author.avatar,
         )
-        Text(
+        FreadRichText(
             modifier = Modifier.constrainAs(nameRef) {
                 start.linkTo(avatarRef.end, 8.dp)
                 top.linkTo(avatarRef.top)
                 end.linkTo(followBtn.start, 8.dp)
                 width = Dimension.fillToConstraints
             },
-            textAlign = TextAlign.Start,
-            text = author.name,
+            richText = author.humanizedName,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            style = MaterialTheme.typography.titleMedium,
+            fontSizeSp = 16F,
         )
         Text(
             modifier = Modifier.constrainAs(webFingerRef) {

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -21,16 +20,14 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.activitypub.app.R
-import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
@@ -39,14 +36,13 @@ fun DetailHeaderContent(
     loading: Boolean,
     banner: String?,
     avatar: String?,
-    title: String?,
-    description: String?,
+    title: RichText?,
+    description: RichText?,
     acctLine: @Composable () -> Unit,
     followInfo: @Composable () -> Unit,
     onBannerClick: () -> Unit,
     onAvatarClick: () -> Unit,
     relationship: RelationshipUiState? = null,
-    emojis: List<Emoji>? = null,
     onUnblockClick: (() -> Unit)? = null,
     onCancelFollowRequestClick: (() -> Unit)? = null,
     onAcceptClick: (() -> Unit)? = null,
@@ -120,7 +116,7 @@ fun DetailHeaderContent(
         }
 
         // title
-        Text(
+        FreadRichText(
             modifier = Modifier
                 .freadPlaceholder(loading)
                 .constrainAs(nameRef) {
@@ -129,11 +125,10 @@ fun DetailHeaderContent(
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-            textAlign = TextAlign.Start,
-            text = title.orEmpty(),
+            richText = title ?: RichText.empty,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
-            fontSize = 18.sp,
+            fontSizeSp = 18F,
         )
 
         // acct line
@@ -162,12 +157,7 @@ fun DetailHeaderContent(
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-            content = description.orEmpty(),
-            onMentionClick = {},
-            onHashtagClick = {},
-            mentions = emptyList(),
-            emojis = emojis.orEmpty(),
-            tags = emptyList(),
+            richText = description ?: RichText.empty,
         )
 
         // follow info line

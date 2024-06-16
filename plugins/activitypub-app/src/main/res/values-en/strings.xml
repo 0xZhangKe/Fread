@@ -21,7 +21,9 @@
     <string name="activity_pub_user_detail_request_by_tip">They are requesting to follow you</string>
     <string name="activity_pub_user_detail_follower_info">%s Followers</string>
     <string name="activity_pub_user_detail_following_info">%s Following</string>
-    <string name="activity_pub_user_detail_tab_timeline">Timeline</string>
+    <string name="activity_pub_user_detail_tab_post">Posts</string>
+    <string name="activity_pub_user_detail_tab_replies">Replies</string>
+    <string name="activity_pub_user_detail_tab_media">Media</string>
     <string name="activity_pub_user_detail_tab_about">About</string>
 
     <string name="activity_pub_about">About</string>
@@ -107,4 +109,5 @@
     <string name="activity_pub_user_following_list_title">Following</string>
 
     <string name="activity_pub_user_detail_follows_you">Follows you</string>
+    <string name="activity_pub_user_pinned_post">Pinned</string>
 </resources>

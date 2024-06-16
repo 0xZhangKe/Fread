@@ -15,6 +15,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
@@ -105,7 +106,7 @@ private fun BlogTextContentSection(
     }
     val spoilerText = blog.spoilerText
     if (spoilerText.isNotEmpty()) {
-        var hideContent by remember(spoilerText) {
+        var hideContent by rememberSaveable(spoilerText) {
             mutableStateOf(true)
         }
         SpoilerText(

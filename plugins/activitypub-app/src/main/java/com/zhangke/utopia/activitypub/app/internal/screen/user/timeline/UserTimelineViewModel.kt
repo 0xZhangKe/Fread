@@ -1,63 +1,134 @@
 package com.zhangke.utopia.activitypub.app.internal.screen.user.timeline
 
+import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.toTextStringOrNull
+import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.framework.utils.LoadState
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.utopia.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.utopia.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.utopia.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.utopia.common.feeds.model.RefreshResult
+import com.zhangke.utopia.common.status.model.StatusUiState
 import com.zhangke.utopia.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.utopia.commonbiz.shared.feeds.FeedsViewModelController
-import com.zhangke.utopia.commonbiz.shared.feeds.IFeedsViewModelController
+import com.zhangke.utopia.commonbiz.shared.feeds.IInteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.utopia.commonbiz.shared.feeds.handle
 import com.zhangke.utopia.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.utopia.status.StatusProvider
 import com.zhangke.utopia.status.model.IdentityRole
-import com.zhangke.utopia.status.status.model.Status
+import com.zhangke.utopia.status.platform.BlogPlatform
 import dagger.assisted.AssistedInject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.update
 
 class UserTimelineViewModel @AssistedInject constructor(
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val statusProvider: StatusProvider,
-    buildStatusUiState: BuildStatusUiStateUseCase,
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    val tabType: UserTimelineTabType,
     val role: IdentityRole,
     val webFinger: WebFinger,
-) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
+) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {
 
+    private val _uiState = MutableStateFlow(UserTimelineUiState.default)
+    val uiState: StateFlow<UserTimelineUiState> = _uiState
+
+    private var iniJob: Job? = null
+    private var refreshJob: Job? = null
+    private var loadMoreJob: Job? = null
+
     init {
-        initController(
+        initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = { role },
-            loadFirstPageLocalFeeds = { Result.success(emptyList()) },
-            loadNewFromServerFunction = ::loadNewFromServer,
-            loadMoreFunction = ::loadMore,
-            onStatusUpdate = {},
+            onInteractiveHandleResult = { result ->
+                result.handle(
+                    uiStatusUpdater = {
+                        updateStatus(it)
+                    },
+                    followStateUpdater = { _, _ -> }
+                )
+            },
         )
-        initFeeds(false)
+        initFeeds()
     }
 
-    private suspend fun loadNewFromServer(): Result<RefreshResult> {
-        return loadUserTimeline().map {
-            RefreshResult(
-                newStatus = it,
-                deletedStatus = emptyList(),
-            )
+    private fun initFeeds() {
+        iniJob = launchInViewModel {
+            _uiState.update { it.copy(showPagingLoadingPlaceholder = true) }
+            loadUserTimeline()
+                .onSuccess { data ->
+                    _uiState.update {
+                        it.copy(
+                            showPagingLoadingPlaceholder = false,
+                            feeds = data,
+                        )
+                    }
+                }.onFailure { t ->
+                    _uiState.update {
+                        it.copy(
+                            showPagingLoadingPlaceholder = false,
+                            pageErrorContent = t.toTextStringOrNull(),
+                        )
+                    }
+                }
         }
     }
 
-    private suspend fun loadMore(maxId: String?): Result<List<Status>> {
-        return loadUserTimeline(maxId)
+    fun onRefresh() {
+        if (iniJob?.isActive == true) return
+        refreshJob?.cancel()
+        refreshJob = launchInViewModel {
+            _uiState.update { it.copy(refreshing = true) }
+            loadUserTimeline()
+                .onFailure {
+                    _uiState.update { it.copy(refreshing = false) }
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
+                }.onSuccess { data ->
+                    _uiState.update {
+                        it.copy(
+                            refreshing = false,
+                            feeds = data,
+                        )
+                    }
+                }
+        }
     }
 
-    private suspend fun loadUserTimeline(maxId: String? = null): Result<List<Status>> {
+    fun onLoadMore() {
+        if (iniJob?.isActive == true) return
+        if (refreshJob?.isActive == true) return
+        val maxId = uiState.value.feeds.lastOrNull()?.status?.status?.id ?: return
+        loadMoreJob?.cancel()
+        loadMoreJob = launchInViewModel {
+            _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
+            loadUserTimeline(maxId)
+                .onFailure { t ->
+                    _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
+                }.onSuccess { data ->
+                    _uiState.update {
+                        it.copy(
+                            loadMoreState = LoadState.Idle,
+                            feeds = it.feeds + data,
+                        )
+                    }
+                }
+        }
+    }
+
+    private suspend fun loadUserTimeline(maxId: String? = null): Result<List<UserTimelineStatus>> {
         val accountIdResult =
             webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
         if (accountIdResult.isFailure) {
@@ -68,11 +139,63 @@ class UserTimelineViewModel @AssistedInject constructor(
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        return clientManager.getClient(role)
-            .accountRepo
-            .getStatuses(
-                id = accountIdResult.getOrThrow(),
-                maxId = maxId,
-            ).map { it.map { item -> statusAdapter.toStatus(item, platform) } }
+        return fetchStatus(
+            accountId = accountIdResult.getOrThrow(),
+            maxId = maxId,
+        ).map { data ->
+            data.filter { it.id != maxId }.map { item -> item.toUiState(platform) }
+        }
+    }
+
+    private suspend fun fetchStatus(
+        accountId: String,
+        maxId: String?,
+    ): Result<List<ActivityPubStatusEntity>> {
+        val showPinned = tabType == UserTimelineTabType.POSTS
+        val pinnedStatus = mutableListOf<ActivityPubStatusEntity>()
+        val accountRepo = clientManager.getClient(role).accountRepo
+        if (showPinned && maxId == null) {
+            // first page
+            val pinnedStatusResult = accountRepo.getStatuses(
+                id = accountId,
+                pinned = true,
+                excludeReplies = true,
+                onlyMedia = false,
+            )
+            if (pinnedStatusResult.isFailure) {
+                return Result.failure(pinnedStatusResult.exceptionOrNull()!!)
+            }
+            pinnedStatus += pinnedStatusResult.getOrThrow().map { it.copy(pinned = true) }
+        }
+        return accountRepo.getStatuses(
+            id = accountId,
+            pinned = false,
+            excludeReplies = tabType != UserTimelineTabType.REPLIES,
+            onlyMedia = tabType == UserTimelineTabType.MEDIA,
+        ).map {
+            pinnedStatus + it
+        }
+    }
+
+    private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): UserTimelineStatus {
+        val status = statusAdapter.toStatus(this, platform)
+        val statusUiState = buildStatusUiState(role, status)
+        return UserTimelineStatus(
+            status = statusUiState,
+            pinned = pinned == true,
+        )
+    }
+
+    private fun updateStatus(status: StatusUiState) {
+        _uiState.update { state ->
+            val feeds = state.feeds.map {
+                if (it.status.status.intrinsicBlog.id == status.status.intrinsicBlog.id) {
+                    it.copy(status = status)
+                } else {
+                    it
+                }
+            }
+            state.copy(feeds = feeds)
+        }
     }
 }

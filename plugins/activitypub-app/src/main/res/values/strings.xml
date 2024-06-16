@@ -21,7 +21,9 @@
     <string name="activity_pub_user_detail_request_by_tip">对方正在请求关注你</string>
     <string name="activity_pub_user_detail_follower_info">%s 关注者</string>
     <string name="activity_pub_user_detail_following_info">%s 正在关注</string>
-    <string name="activity_pub_user_detail_tab_timeline">时间线</string>
+    <string name="activity_pub_user_detail_tab_post">帖子</string>
+    <string name="activity_pub_user_detail_tab_replies">回复</string>
+    <string name="activity_pub_user_detail_tab_media">媒体</string>
     <string name="activity_pub_user_detail_tab_about">关于</string>
     <string name="activity_pub_user_detail_tab_about_joined">%s 加入</string>
     <string name="activity_pub_user_detail_menu_block">屏蔽 %s</string>
@@ -105,4 +107,5 @@
     <string name="activity_pub_user_following_list_title">已关注</string>
 
     <string name="activity_pub_user_detail_follows_you">关注了你</string>
+    <string name="activity_pub_user_pinned_post">置顶</string>
 </resources>

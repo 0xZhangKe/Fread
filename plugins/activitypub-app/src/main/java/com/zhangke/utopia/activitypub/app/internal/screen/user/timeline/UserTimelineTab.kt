@@ -36,6 +36,7 @@ import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.utopia.activitypub.app.R
+import com.zhangke.utopia.commonbiz.shared.composable.EmptyListContent
 import com.zhangke.utopia.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.utopia.commonbiz.shared.composable.InitErrorContent
 import com.zhangke.utopia.status.model.IdentityRole
@@ -95,6 +96,8 @@ class UserTimelineTab(
                 StatusListPlaceholder()
             } else if (uiState.pageErrorContent != null) {
                 InitErrorContent(uiState.pageErrorContent)
+            } else {
+                EmptyListContent()
             }
         } else {
             Box(modifier = Modifier.fillMaxSize()) {

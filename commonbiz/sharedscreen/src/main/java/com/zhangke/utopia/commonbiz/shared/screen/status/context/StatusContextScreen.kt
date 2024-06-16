@@ -16,6 +16,8 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -38,6 +40,9 @@ data class StatusContextScreen(
     val role: IdentityRole,
     val status: Status,
 ) : Screen {
+
+    override val key: ScreenKey
+        get() = uniqueScreenKey
 
     @Composable
     override fun Content() {

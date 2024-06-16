@@ -33,6 +33,8 @@ import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.Dimension
 import androidx.constraintlayout.compose.MotionScene
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.core.screen.ScreenKey
+import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -57,6 +59,9 @@ import kotlinx.coroutines.flow.SharedFlow
 data class HashtagTimelineScreen(
     @Router private val route: String = "",
 ) : Screen {
+
+    override val key: ScreenKey
+        get() = uniqueScreenKey
 
     @Composable
     override fun Content() {

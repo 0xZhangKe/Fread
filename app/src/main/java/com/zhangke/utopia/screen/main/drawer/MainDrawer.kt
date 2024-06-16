@@ -33,7 +33,6 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -145,16 +144,23 @@ private fun MainDrawerContent(
                             key = { _, item -> item.hashCode() }
                         ) { _, contentConfig ->
                             ReorderableItem(state, contentConfig.hashCode()) { dragging ->
-                                val elevation =
-                                    animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
-                                ContentConfigItem(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .shadow(elevation.value),
-                                    contentConfig = contentConfig,
-                                    onClick = { onContentConfigClick(contentConfig) },
-                                    onEditClick = onEditClick,
+                                val elevation by animateDpAsState(
+                                    targetValue = if (dragging) 16.dp else 0.dp,
+                                    label = "MainDrawerItemElevation",
                                 )
+                                Surface(
+                                    modifier = Modifier
+                                        .fillMaxWidth(),
+                                    shadowElevation = elevation,
+                                ) {
+                                    ContentConfigItem(
+                                        modifier = Modifier
+                                            .fillMaxWidth(),
+                                        contentConfig = contentConfig,
+                                        onClick = { onContentConfigClick(contentConfig) },
+                                        onEditClick = onEditClick,
+                                    )
+                                }
                             }
                         }
                     }

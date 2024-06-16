@@ -13,4 +13,5 @@
 
     <string name="profile_description">Utopia supports adding multiple accounts. The added accounts can be used to post, like, forward, comment, etc. You can also view the list created by the added accounts.</string>
 
+    <string name="list_content_empty_placeholder">No content available</string>
 </resources>

@@ -2,9 +2,11 @@ package com.zhangke.fread.common.status.usecase.previous
 
 import com.zhangke.fread.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.fread.common.status.repo.db.StatusContentEntity
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.supervisorScope
 import javax.inject.Inject
 
 internal class GetPreviousStatusUseCase @Inject constructor(
@@ -18,21 +20,32 @@ internal class GetPreviousStatusUseCase @Inject constructor(
         maxStatus: StatusContentEntity,
     ): Result<List<Status>> {
         val maxCreateTime = maxStatus.createTimestamp
-        val resultList = sourceUriList.map { sourceUri ->
-            getSingleSourcePreviousStatus(
-                sourceUri = sourceUri,
-                limit = limit,
-                maxCreateTime = maxCreateTime,
-            )
+        val allDeferred = supervisorScope {
+            sourceUriList.map { sourceUri ->
+                async {
+                    getSingleSourcePreviousStatus(
+                        sourceUri = sourceUri,
+                        limit = limit,
+                        maxCreateTime = maxCreateTime,
+                    )
+                }
+            }
+        }
+        val resultList = try {
+            allDeferred.awaitAll()
+        } catch (e: Throwable) {
+            return Result.failure(e)
         }
         if (resultList.all { it.isFailure }) {
             return Result.failure(resultList.first().exceptionOrNull()!!)
         }
-        val statusList = resultList.flatMap { it.getOrNull() ?: emptyList() }
+        val statusList = resultList.asSequence()
+            .flatMap { it.getOrNull() ?: emptyList() }
             .filter { it.id != maxStatus.id }
             .sortedByDescending { it.createTimestamp }
             .take(limit)
             .map(statusContentEntityAdapter::toStatus)
+            .toList()
         return Result.success(statusList)
     }
 }

@@ -47,6 +47,7 @@ fun BlogUi(
                 .fillMaxWidth(),
             blogAuthor = blog.author,
             displayTime = displayTime,
+            blogUrl = blog.url,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,
             onUserInfoClick = onUserInfoClick,

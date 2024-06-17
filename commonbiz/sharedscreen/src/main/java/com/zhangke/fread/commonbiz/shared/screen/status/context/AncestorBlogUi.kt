@@ -134,6 +134,7 @@ fun AncestorBlogUi(
                     end.linkTo(parent.end, style.iconEndPadding)
                     top.linkTo(name.top)
                 },
+                blogUrl = status.status.intrinsicBlog.url,
                 iconAlpha = style.iconAlpha,
                 moreActionList = status.moreInteractions,
                 onActionClick = {

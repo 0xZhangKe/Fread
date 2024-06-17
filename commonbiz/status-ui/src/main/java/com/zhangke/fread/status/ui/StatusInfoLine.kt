@@ -43,6 +43,7 @@ import com.zhangke.fread.status.ui.threads.StatusThread
 fun StatusInfoLine(
     modifier: Modifier,
     blogAuthor: BlogAuthor,
+    blogUrl: String,
     displayTime: String,
     style: StatusStyle,
     showUpThread: Boolean = false,
@@ -166,6 +167,7 @@ fun StatusInfoLine(
                 end.linkTo(parent.end, style.iconEndPadding)
                 top.linkTo(parent.top)
             },
+            blogUrl = blogUrl,
             iconAlpha = style.iconAlpha,
             moreActionList = moreInteractions,
             onActionClick = onInteractive,

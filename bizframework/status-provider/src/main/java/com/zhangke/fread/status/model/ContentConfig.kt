@@ -95,3 +95,15 @@ sealed interface ContentConfig {
         }
     }
 }
+
+fun List<ContentConfig.ActivityPubContent.ContentTab>.dropNotExistListTab(
+    allListId: Set<String>
+): List<ContentConfig.ActivityPubContent.ContentTab>{
+    return this.filter {
+        if (it is ContentConfig.ActivityPubContent.ContentTab.ListTimeline) {
+            it.listId in allListId
+        } else {
+            true
+        }
+    }
+}

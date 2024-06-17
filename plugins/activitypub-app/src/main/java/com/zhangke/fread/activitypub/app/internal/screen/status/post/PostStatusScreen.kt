@@ -48,22 +48,21 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.TextFieldUtils
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.PostStatusVisibility
@@ -74,6 +73,8 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import java.util.Locale
 import kotlin.time.Duration
 import com.zhangke.fread.statusui.R as StatusUiR
@@ -83,16 +84,13 @@ class PostStatusScreen(
     @Router private val route: String = "",
 ) : Screen {
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<PostStatusViewModel>()
-        LaunchedEffect(route) {
+        val viewModel = getViewModel<PostStatusViewModel, PostStatusViewModel.Factory> {
             val (accountUri, replyToId, replyToName) = PostStatusScreenRoute.parse(route)
-            viewModel.accountUri = accountUri
-            viewModel.replyToId = replyToId
-            viewModel.replyToName = replyToName
-            viewModel.onPrepared()
+            it.create(accountUri, replyToId, replyToName)
         }
         val loadableUiState by viewModel.uiState.collectAsState()
         val postStatus by viewModel.postState.collectAsState(initial = LoadableState.idle())

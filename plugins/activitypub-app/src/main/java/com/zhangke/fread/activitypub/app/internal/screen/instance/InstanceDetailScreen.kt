@@ -13,13 +13,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -32,12 +30,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
-import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.textString
@@ -56,17 +54,16 @@ class InstanceDetailScreen(
     @Router private val route: String = "",
 ) : Screen {
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val navigationResult = navigator.navigationResult
-        val viewModel: InstanceDetailViewModel = getViewModel()
-        val uiState by viewModel.uiState.collectAsState()
-        LaunchedEffect(route) {
+        val viewModel = getViewModel<InstanceDetailViewModel, InstanceDetailViewModel.Factory>() {
             val baseUrl = PlatformDetailRoute.parseParams(route)
-            viewModel.serverBaseUrl = baseUrl
-            viewModel.onPrepared()
+            it.create(baseUrl)
         }
+        val uiState by viewModel.uiState.collectAsState()
         InstanceDetailContent(
             uiState = uiState,
             onBackClick = {
@@ -75,12 +72,8 @@ class InstanceDetailScreen(
                 }
             },
         )
-        ConsumeFlow(viewModel.contentConfigFlow) {
-            navigationResult.popWithResult(true)
-        }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,

@@ -7,6 +7,7 @@ import com.zhangke.fread.common.status.repo.db.ContentConfigEntity
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentConfig.ActivityPubContent
 import com.zhangke.fread.status.model.ContentConfig.ActivityPubContent.ContentTab
+import com.zhangke.fread.status.model.dropNotExistListTab
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
@@ -119,29 +120,17 @@ class ContentConfigRepo @Inject constructor(
             throw IllegalArgumentException("$id of config is not ActivityPubContent")
         }
         val allListIdSet = allUserCreatedList.map { it.listId }.toSet()
-        val newShowingList = config.showingTabList.filter {
-            if (it !is ContentTab.ListTimeline) {
-                true
-            } else {
-                it.listId in allListIdSet
-            }
-        }
-        val newHiddenList = mutableListOf<ContentTab>()
-        config.hiddenTabList.forEach {
-            if (it !is ContentTab.ListTimeline) {
-                newHiddenList.add(it)
-            } else if (it.listId in allListIdSet) {
-                newHiddenList.add(it)
-            }
-        }
-        val allAddedIdSet = mutableSetOf<String>().apply {
-            this += newShowingList.filterIsInstance<ContentTab.ListTimeline>().map { it.listId }
-            this += newHiddenList.filterIsInstance<ContentTab.ListTimeline>().map { it.listId }
-        }
-        var maxOrder = newHiddenList.maxByOrNull { it.order }?.order ?: 0
-        allUserCreatedList.filter { it.listId !in allAddedIdSet }
+        val localListIdSet = config.showingTabList
+            .plus(config.hiddenTabList)
+            .filterIsInstance<ContentTab.ListTimeline>()
+            .map { it.listId }
+            .toSet()
+        val newShowingList = config.showingTabList.dropNotExistListTab(allListIdSet).toMutableList()
+        val newHiddenList = config.hiddenTabList.dropNotExistListTab(allListIdSet)
+        var maxOrder = config.showingTabList.maxByOrNull { it.order }?.order ?: 0
+        allUserCreatedList.filter { it.listId !in localListIdSet }
             .map { ContentTab.ListTimeline(it.listId, it.name, maxOrder++) }
-            .let { newHiddenList += it }
+            .let { newShowingList.addAll(it) }
         if (config.showingTabList.sortedBy { it.order } == newShowingList.sortedBy { it.order } &&
             config.hiddenTabList.sortedBy { it.order } == newHiddenList.sortedBy { it.order }) {
             return

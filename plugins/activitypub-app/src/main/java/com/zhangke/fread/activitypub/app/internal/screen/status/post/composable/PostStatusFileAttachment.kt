@@ -47,8 +47,10 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.getThumbnail
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.InputMediaDescriptionScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusFile
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -191,14 +193,14 @@ private fun MediaFileContent(
             ) {
                 val uploadState by file.uploadJob.uploadState.collectAsState()
                 when (uploadState) {
-                    is com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Uploading -> {
+                    is UploadMediaJob.UploadState.Uploading -> {
                         ImageAttachmentBottomLoading(
-                            uploadState = uploadState as com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Uploading,
+                            uploadState = uploadState as UploadMediaJob.UploadState.Uploading,
                             onCancelUploadClick = onCancelUploadClick,
                         )
                     }
 
-                    is com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Failed -> {
+                    is UploadMediaJob.UploadState.Failed -> {
                         ImageAttachmentBottomFailed(
                             onRetryClick = onRetryClick,
                         )
@@ -219,7 +221,7 @@ private fun MediaFileContent(
 
 @Composable
 private fun BoxScope.ImageAttachmentBottomLoading(
-    uploadState: com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob.UploadState.Uploading,
+    uploadState: UploadMediaJob.UploadState.Uploading,
     onCancelUploadClick: () -> Unit,
 ) {
     Row(
@@ -284,7 +286,7 @@ private fun BoxScope.ImageAttachmentBottomSuccess(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
             onClick = {
-                navigator.push(com.zhangke.fread.activitypub.app.internal.screen.status.post.InputMediaDescriptionScreen(file, onDescriptionInputted))
+                navigator.push(InputMediaDescriptionScreen(file, onDescriptionInputted))
             },
             imageVector = Icons.Default.Edit,
             contentDescription = "Edit",

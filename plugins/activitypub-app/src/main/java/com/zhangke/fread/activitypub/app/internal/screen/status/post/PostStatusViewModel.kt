@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.status.post
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.collections.remove
 import com.zhangke.framework.collections.removeIndex
 import com.zhangke.framework.collections.updateIndex
@@ -30,6 +31,9 @@ import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttac
 import com.zhangke.fread.activitypub.app.internal.usecase.status.PostStatusUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -41,12 +45,11 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import java.util.Locale
-import javax.inject.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
-@HiltViewModel
-class PostStatusViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = PostStatusViewModel.Factory::class)
+class PostStatusViewModel @AssistedInject constructor(
     private val getCustomEmoji: GetCustomEmojiUseCase,
     private val emojiAdapter: CustomEmojiAdapter,
     private val accountManager: ActivityPubAccountManager,
@@ -54,6 +57,9 @@ class PostStatusViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val postNoAttachmentStatus: PostStatusUseCase,
     private val platformUriTransformer: PlatformUriTransformer,
+    @Assisted private val accountUri: FormalUri?,
+    @Assisted("replyToId") private val replyToId: String?,
+    @Assisted("replyToName") private val replyToName: String?,
 ) : ViewModel() {
 
     companion object {
@@ -61,9 +67,15 @@ class PostStatusViewModel @Inject constructor(
         const val MAX_CONTENT = 1000
     }
 
-    var accountUri: FormalUri? = null
-    var replyToId: String? = null
-    var replyToName: String? = null
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+
+        fun create(
+            accountUri: FormalUri?,
+            @Assisted("replyToId") replyToId: String?,
+            @Assisted("replyToName") replyToName: String?,
+        ): PostStatusViewModel
+    }
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
     val uiState: StateFlow<LoadableState<PostStatusUiState>> = _uiState.asStateFlow()
@@ -74,7 +86,7 @@ class PostStatusViewModel @Inject constructor(
     private val _snackMessage = MutableSharedFlow<TextString>()
     val snackMessage: SharedFlow<TextString> get() = _snackMessage
 
-    fun onPrepared() {
+    init {
         launchInViewModel {
             val allLoggedAccount = accountManager.getAllLoggedAccount()
             val defaultAccount = if (accountUri != null) {

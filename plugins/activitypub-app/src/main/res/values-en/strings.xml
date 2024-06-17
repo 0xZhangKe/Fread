@@ -104,6 +104,7 @@
 
     <string name="activity_pub_edit_content_config_showing_list_title">Feeds on the Home Page</string>
     <string name="activity_pub_edit_content_config_hidden_list_title">Feeds Can Add to the Home Page</string>
+    <string name="activity_pub_edit_content_delete_dialog_content">Confirm to delete this content?</string>
 
     <string name="activity_pub_user_follower_list_title">Followers</string>
     <string name="activity_pub_user_following_list_title">Following</string>

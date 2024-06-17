@@ -1,22 +1,28 @@
 package com.zhangke.fread.activitypub.app.internal.screen.instance
 
 import androidx.lifecycle.ViewModel
+import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import dagger.assisted.Assisted
+import dagger.assisted.AssistedFactory
+import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
-@HiltViewModel
-class InstanceDetailViewModel @Inject constructor(
+@HiltViewModel(assistedFactory = InstanceDetailViewModel.Factory::class)
+class InstanceDetailViewModel @AssistedInject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
+    @Assisted private val serverBaseUrl: FormalBaseUrl,
 ) : ViewModel() {
 
-    lateinit var serverBaseUrl: FormalBaseUrl
+    @AssistedFactory
+    interface Factory : ScreenModelFactory {
+
+        fun create(serverBaseUrl: FormalBaseUrl): InstanceDetailViewModel
+    }
 
     private val _uiState = MutableStateFlow(
         InstanceDetailUiState(
@@ -27,10 +33,7 @@ class InstanceDetailViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val _contentConfigFlow = MutableSharedFlow<Unit>()
-    val contentConfigFlow: SharedFlow<Unit> get() = _contentConfigFlow
-
-    fun onPrepared() {
+    init {
         _uiState.value = _uiState.value.copy(
             loading = true,
             baseUrl = serverBaseUrl
@@ -42,9 +45,5 @@ class InstanceDetailViewModel @Inject constructor(
                 instance = platform,
             )
         }
-    }
-
-    private suspend fun emitCurrentContentConfigFlow() {
-        _contentConfigFlow.emit(Unit)
     }
 }

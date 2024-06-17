@@ -42,16 +42,17 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.freadPlaceholder
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
 import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import kotlinx.coroutines.flow.Flow
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -108,17 +109,35 @@ class EditContentConfigScreen(
                 SnackbarHost(snackbarHostState)
             },
             topBar = {
+                var showDeleteConfirmDialog by remember {
+                    mutableStateOf(false)
+                }
                 Toolbar(
                     title = uiState?.config?.configName.orEmpty(),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
-                            onClick = onDeleteClick,
+                            onClick = {
+                                showDeleteConfirmDialog = true
+                            },
                             imageVector = Icons.Default.Delete,
                             contentDescription = "Delete content",
                         )
                     }
                 )
+                if (showDeleteConfirmDialog) {
+                    FreadDialog(
+                        onDismissRequest = { showDeleteConfirmDialog = false },
+                        contentText = stringResource(R.string.activity_pub_edit_content_delete_dialog_content),
+                        onNegativeClick = {
+                            showDeleteConfirmDialog = false
+                        },
+                        onPositiveClick = {
+                            showDeleteConfirmDialog = false
+                            onDeleteClick()
+                        },
+                    )
+                }
             }
         ) { innerPaddings ->
             Column(

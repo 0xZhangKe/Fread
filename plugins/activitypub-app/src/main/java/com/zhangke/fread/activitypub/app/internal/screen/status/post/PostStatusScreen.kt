@@ -89,8 +89,7 @@ class PostStatusScreen(
     override fun Content() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PostStatusViewModel, PostStatusViewModel.Factory> {
-            val (accountUri, replyToId, replyToName) = PostStatusScreenRoute.parse(route)
-            it.create(accountUri, replyToId, replyToName)
+            it.create(PostStatusScreenRoute.parse(route))
         }
         val loadableUiState by viewModel.uiState.collectAsState()
         val postStatus by viewModel.postState.collectAsState(initial = LoadableState.idle())
@@ -211,7 +210,7 @@ class PostStatusScreen(
             }
         }
         var textFieldValue by remember {
-            mutableStateOf(TextFieldValue(""))
+            mutableStateOf(TextFieldValue(uiState.initialContent.orEmpty()))
         }
         Scaffold(
             snackbarHost = {
@@ -288,7 +287,7 @@ class PostStatusScreen(
                     inputRef,
                     statusAttachmentRef,
                 ) = createRefs()
-                if (uiState.replyToAuthorName.isNullOrEmpty().not()) {
+                if (uiState.replyToAuthorInfo != null) {
                     Row(
                         modifier = Modifier.constrainAs(replayToBlogRef) {
                             top.linkTo(parent.top, 8.dp)
@@ -306,7 +305,7 @@ class PostStatusScreen(
                         val replyLabel = stringResource(StatusUiR.string.status_ui_reply)
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
-                            text = "$replyLabel ${uiState.replyToAuthorName}",
+                            text = "$replyLabel ${uiState.replyToAuthorInfo.replyAuthorName}",
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     }

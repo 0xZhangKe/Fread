@@ -57,9 +57,7 @@ class PostStatusViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     private val postNoAttachmentStatus: PostStatusUseCase,
     private val platformUriTransformer: PlatformUriTransformer,
-    @Assisted private val accountUri: FormalUri?,
-    @Assisted("replyToId") private val replyToId: String?,
-    @Assisted("replyToName") private val replyToName: String?,
+    @Assisted private val screenParams: PostStatusScreenParams,
 ) : ViewModel() {
 
     companion object {
@@ -70,11 +68,7 @@ class PostStatusViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory : ScreenModelFactory {
 
-        fun create(
-            accountUri: FormalUri?,
-            @Assisted("replyToId") replyToId: String?,
-            @Assisted("replyToName") replyToName: String?,
-        ): PostStatusViewModel
+        fun create(screenParams: PostStatusScreenParams): PostStatusViewModel
     }
 
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
@@ -89,8 +83,8 @@ class PostStatusViewModel @AssistedInject constructor(
     init {
         launchInViewModel {
             val allLoggedAccount = accountManager.getAllLoggedAccount()
-            val defaultAccount = if (accountUri != null) {
-                allLoggedAccount.firstOrNull { it.uri == accountUri }
+            val defaultAccount = if (screenParams.accountUri != null) {
+                allLoggedAccount.firstOrNull { it.uri == screenParams.accountUri }
                     ?: allLoggedAccount.firstOrNull()
             } else {
                 allLoggedAccount.firstOrNull()
@@ -103,12 +97,13 @@ class PostStatusViewModel @AssistedInject constructor(
                         account = defaultAccount,
                         availableAccountList = allLoggedAccount,
                         content = "",
+                        initialContent = buildInitialContent(defaultAccount),
                         attachment = null,
                         maxMediaCount = 4,
                         visibility = PostStatusVisibility.PUBLIC,
                         sensitive = false,
                         maxContent = MAX_CONTENT,
-                        replyToAuthorName = replyToName,
+                        replyToAuthorInfo = screenParams as? PostStatusScreenParams.ReplyStatusParams,
                         warningContent = "",
                         emojiList = emptyList(),
                         language = Locale.ROOT,
@@ -117,6 +112,13 @@ class PostStatusViewModel @AssistedInject constructor(
             }
         }
         loadCustomEmoji()
+    }
+
+    private fun buildInitialContent(account: ActivityPubLoggedAccount): String? {
+        val replyWebFinger = (screenParams as? PostStatusScreenParams.ReplyStatusParams)?.replyToBlogWebFinger ?: return null
+        val currentPlatformHost = account.platform.baseUrl.host
+        if (currentPlatformHost == replyWebFinger.host) return "@${replyWebFinger.name} "
+        return "$replyWebFinger "
     }
 
     private fun loadCustomEmoji() {
@@ -401,7 +403,7 @@ class PostStatusViewModel @AssistedInject constructor(
                 content = currentUiState.content,
                 attachment = attachment,
                 sensitive = currentUiState.sensitive,
-                replyToId = replyToId,
+                replyToId = (screenParams as? PostStatusScreenParams.ReplyStatusParams)?.replyToBlogId,
                 spoilerText = currentUiState.warningContent,
                 visibility = currentUiState.visibility,
                 language = currentUiState.language,

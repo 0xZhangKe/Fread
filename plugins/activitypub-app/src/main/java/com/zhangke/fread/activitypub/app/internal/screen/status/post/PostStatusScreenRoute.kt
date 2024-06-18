@@ -1,7 +1,9 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
 import com.zhangke.framework.network.SimpleUri
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.decodeAsUri
+import com.zhangke.framework.utils.encodeToUrlString
 import com.zhangke.fread.activitypub.app.internal.route.ActivityPubRoutes
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.status.uri.encode
@@ -13,6 +15,7 @@ object PostStatusScreenRoute {
     const val ROUTE = "${ActivityPubRoutes.ROOT}/status/post"
 
     private const val PARAM_ACCOUNT_URI = "accountUri"
+    private const val PARAM_REPLY_TO_BLOG_ACCT = "replyToBlogAcct"
     private const val PARAM_REPLY_TO_BLOG_ID = "replyToBlogId"
     private const val PARAM_REPLY_TO_AUTHOR_NAME = "replyAuthorName"
 
@@ -22,12 +25,14 @@ object PostStatusScreenRoute {
 
     fun buildRoute(
         accountUri: FormalUri,
+        replyToBlogWebFinger: WebFinger,
         replyToBlogId: String,
         replyAuthorName: String,
     ): String {
         val encodedName = URLEncoder.encode(replyAuthorName, Charsets.UTF_8.name())
         return buildString {
             append("$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}")
+            append("&$PARAM_REPLY_TO_BLOG_ACCT=${replyToBlogWebFinger.encodeToUrlString()}")
             append("&$PARAM_REPLY_TO_BLOG_ID=$replyToBlogId")
             append("&$PARAM_REPLY_TO_AUTHOR_NAME=$encodedName")
         }
@@ -36,13 +41,37 @@ object PostStatusScreenRoute {
     /**
      * @return first: accountUri, second: replyToBlogId, third: replyAuthorName
      */
-    fun parse(route: String): Triple<FormalUri?, String?, String?> {
+    fun parse(route: String): PostStatusScreenParams {
         val queries = SimpleUri.parse(route)!!.queries
         val accountUri = queries[PARAM_ACCOUNT_URI]?.decodeAsUri()?.let { FormalUri.from(it) }
+        val replyWebFinger = queries[PARAM_REPLY_TO_BLOG_ACCT]?.let { WebFinger.decodeFromUrlString(it) }
         val replyToBlogId = queries[PARAM_REPLY_TO_BLOG_ID]
         val replyAuthorName = queries[PARAM_REPLY_TO_AUTHOR_NAME]?.let {
             URLDecoder.decode(it, Charsets.UTF_8.name())
         }
-        return Triple(accountUri, replyToBlogId, replyAuthorName)
+        if (replyWebFinger == null || replyToBlogId == null || replyAuthorName == null) {
+            return PostStatusScreenParams.PostStatusParams(accountUri)
+        } else {
+            return PostStatusScreenParams.ReplyStatusParams(
+                accountUri = accountUri,
+                replyToBlogWebFinger = replyWebFinger,
+                replyToBlogId = replyToBlogId,
+                replyAuthorName = replyAuthorName,
+            )
+        }
     }
+}
+
+sealed interface PostStatusScreenParams {
+
+    val accountUri: FormalUri?
+
+    data class PostStatusParams(override val accountUri: FormalUri?) : PostStatusScreenParams
+
+    data class ReplyStatusParams(
+        override val accountUri: FormalUri?,
+        val replyToBlogWebFinger: WebFinger,
+        val replyToBlogId: String,
+        val replyAuthorName: String,
+    ) : PostStatusScreenParams
 }

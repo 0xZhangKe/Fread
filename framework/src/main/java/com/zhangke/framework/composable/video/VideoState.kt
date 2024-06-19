@@ -1,4 +1,4 @@
-package com.zhangke.fread.status.ui.video.inline
+package com.zhangke.framework.composable.video
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.Stable
@@ -12,27 +12,28 @@ import androidx.compose.runtime.setValue
 import androidx.media3.common.Player
 
 @Composable
-fun rememberInlineVideoState(
+fun rememberVideoPlayerState(
     initialPlayerProgress: Long = 0L,
-): InlineVideoState {
-    return rememberSaveable(saver = InlineVideoState.Saver) {
-        InlineVideoState(
+): VideoState {
+    return rememberSaveable(saver = VideoState.Saver) {
+        VideoState(
             initialPlayerProgress = initialPlayerProgress,
         )
     }
 }
 
 @Stable
-class InlineVideoState(
+class VideoState(
     initialPlayerProgress: Long,
 ) {
-    var playing by mutableStateOf(false)
+
+    internal var playing by mutableStateOf(false)
         private set
     var playbackEnded by mutableStateOf(false)
         private set
     var playerVolume by mutableFloatStateOf(0F)
         private set
-    var playerPosition by mutableLongStateOf(initialPlayerProgress)
+    internal var playerPosition by mutableLongStateOf(initialPlayerProgress)
         private set
 
     fun onPlaybackStateChanged(playbackState: Int) {
@@ -51,16 +52,36 @@ class InlineVideoState(
         playerPosition = progress
     }
 
+    fun mute() {
+        playerVolume = 0F
+    }
+
+    fun unmute() {
+        playerVolume = 1F
+    }
+
+    fun seekTo(position: Long) {
+        playerPosition = position
+    }
+
+    fun play() {
+        playing = true
+    }
+
+    fun stop() {
+        playing = false
+    }
+
     companion object {
 
-        val Saver: Saver<InlineVideoState, *> = Saver(
+        val Saver: Saver<VideoState, *> = Saver(
             save = { state ->
                 arrayOf(
                     state.playerPosition,
                 )
             },
             restore = { array ->
-                InlineVideoState(
+                VideoState(
                     array[0] as Long,
                 )
             },

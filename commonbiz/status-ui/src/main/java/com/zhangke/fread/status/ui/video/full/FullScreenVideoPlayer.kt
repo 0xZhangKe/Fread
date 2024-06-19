@@ -4,7 +4,6 @@ import android.net.Uri
 import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
@@ -39,6 +38,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
@@ -49,7 +49,8 @@ import androidx.media3.common.Player
 import androidx.media3.exoplayer.ExoPlayer
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.fread.status.ui.utils.toMediaSource
+import com.zhangke.framework.composable.video.LocalFullscreenExoPlayerManager
+import com.zhangke.framework.utils.toMediaSource
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
 import kotlinx.coroutines.delay
 
@@ -76,18 +77,19 @@ fun FullScreenVideoPlayer(
             mutableStateOf(true)
         }
 
+        val lifecycle = LocalLifecycleOwner.current
+        val playerManager = LocalFullscreenExoPlayerManager.current
+
         val exoPlayer = remember(uri) {
-            ExoPlayer.Builder(context)
-                .build()
-                .apply {
-                    setMediaSource(uri.toMediaSource())
-                    prepare()
-                    seekTo(playerPosition)
-                    this.playWhenReady = true
-                    volume = 1F
-                    videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
-                    repeatMode = Player.REPEAT_MODE_ALL
-                }
+            playerManager.obtainPlayer(context, uri, lifecycle.lifecycle).apply {
+//                videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
+                videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
+                this.playWhenReady = true
+                repeatMode = Player.REPEAT_MODE_ALL
+                setMediaSource(uri.toMediaSource())
+                prepare()
+                seekTo(playerPosition)
+            }
         }
         LaunchedEffect(playWhenReady) {
             exoPlayer.playWhenReady = playWhenReady

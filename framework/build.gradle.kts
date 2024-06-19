@@ -71,6 +71,7 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.bundles.voyager)
+    implementation(libs.bundles.androidx.media3)
     implementation(libs.krouter.core)
     api(libs.compose.wheel.picker)
 

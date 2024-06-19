@@ -1,13 +1,15 @@
 package com.zhangke.fread.status.ui.video.full
 
 import android.net.Uri
-import android.view.SurfaceView
 import android.widget.FrameLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -18,6 +20,8 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
+import androidx.compose.material.icons.filled.VolumeOff
+import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -42,11 +46,9 @@ import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.viewinterop.AndroidView
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import androidx.media3.common.C
 import androidx.media3.common.Player
-import androidx.media3.exoplayer.ExoPlayer
+import androidx.media3.ui.PlayerView
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.LocalFullscreenExoPlayerManager
@@ -62,6 +64,9 @@ fun FullScreenVideoPlayer(
     onBackClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    var mute by remember {
+        mutableStateOf(false)
+    }
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -73,16 +78,11 @@ fun FullScreenVideoPlayer(
             mutableLongStateOf(0L)
         }
 
-        var playWhenReady by remember {
-            mutableStateOf(true)
-        }
-
         val lifecycle = LocalLifecycleOwner.current
         val playerManager = LocalFullscreenExoPlayerManager.current
 
         val exoPlayer = remember(uri) {
             playerManager.obtainPlayer(context, uri, lifecycle.lifecycle).apply {
-//                videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT_WITH_CROPPING
                 videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
                 this.playWhenReady = true
                 repeatMode = Player.REPEAT_MODE_ALL
@@ -90,12 +90,6 @@ fun FullScreenVideoPlayer(
                 prepare()
                 seekTo(playerPosition)
             }
-        }
-        LaunchedEffect(playWhenReady) {
-            exoPlayer.playWhenReady = playWhenReady
-        }
-        LaunchedEffect(playWhenReady) {
-            exoPlayer.playWhenReady = playWhenReady
         }
         LaunchedEffect(uri) {
             while (true) {
@@ -113,15 +107,27 @@ fun FullScreenVideoPlayer(
                     panelVisible = !panelVisible
                 },
             factory = {
-                SurfaceView(it).apply {
+                PlayerView(it).apply {
+                    useController = false
                     layoutParams = FrameLayout.LayoutParams(
                         FrameLayout.LayoutParams.MATCH_PARENT,
                         FrameLayout.LayoutParams.MATCH_PARENT,
                     )
-                    exoPlayer.setVideoSurfaceView(this)
                 }
             },
+            update = {
+                it.player = exoPlayer
+            },
         )
+
+        LaunchedEffect(mute) {
+            if (mute) {
+                exoPlayer.volume = 0F
+            } else {
+                exoPlayer.volume = 1F
+            }
+        }
+
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = panelVisible,
@@ -131,17 +137,26 @@ fun FullScreenVideoPlayer(
             Box(modifier = Modifier.fillMaxSize()) {
                 FullScreenVideoPlayerPanel(
                     modifier = Modifier.align(Alignment.BottomCenter),
-                    playWhenReady = playWhenReady,
+                    playing = exoPlayer.isPlaying,
+                    mute = mute,
                     onPlayClick = {
-                        playWhenReady = true
+                        if (exoPlayer.isPlaying) return@FullScreenVideoPlayerPanel
+                        exoPlayer.play()
                     },
                     onPauseClick = {
-                        playWhenReady = false
+                        if (!exoPlayer.isPlaying) return@FullScreenVideoPlayerPanel
+                        exoPlayer.pause()
                     },
                     playerPosition = playerPosition,
                     duration = exoPlayer.duration,
                     onPositionChangeRequest = {
                         exoPlayer.seekTo(it)
+                    },
+                    onMuteClick = {
+                        mute = true
+                    },
+                    onUnmuteClick = {
+                        mute = false
                     },
                 )
                 FullScreenPlayerToolBar(onBackClick)
@@ -176,86 +191,101 @@ private fun FullScreenPlayerToolBar(
 @Composable
 private fun FullScreenVideoPlayerPanel(
     modifier: Modifier = Modifier,
-    playWhenReady: Boolean,
+    playing: Boolean,
     playerPosition: Long,
     duration: Long,
+    mute: Boolean,
     onPauseClick: () -> Unit,
     onPlayClick: () -> Unit,
     onPositionChangeRequest: (position: Long) -> Unit,
+    onMuteClick: () -> Unit,
+    onUnmuteClick: () -> Unit,
 ) {
     val progress = playerPosition / duration.toFloat()
-    ConstraintLayout(
+    Column(
         modifier = modifier
             .fillMaxWidth()
             .background(Brush.verticalGradient(listOf(Color(0x05000000), Color(0xF9000000))))
-            .padding(bottom = 16.dp)
-            .height(40.dp),
+            .padding(bottom = 16.dp),
     ) {
-        val (controlBtnRef, progressRef, timeRef) = createRefs()
-        PlayPauseIconButton(
-            modifier = Modifier.constrainAs(controlBtnRef) {
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-                start.linkTo(parent.start, 8.dp)
-                width = Dimension.wrapContent
-            },
-            playWhenReady = playWhenReady,
-            onPauseClick = onPauseClick,
-            onPlayClick = onPlayClick,
-        )
         PlayerProgress(
             modifier = Modifier
-                .constrainAs(progressRef) {
-                    top.linkTo(parent.top)
-                    bottom.linkTo(timeRef.top)
-                    start.linkTo(controlBtnRef.end)
-                    end.linkTo(parent.end, 4.dp)
-                    width = Dimension.fillToConstraints
-                    height = Dimension.wrapContent
-                },
+                .fillMaxWidth()
+                .padding(horizontal = 8.dp),
             progress = progress,
             onProgressChange = { progress ->
                 onPositionChangeRequest((duration * progress).toLong())
             },
         )
-        Text(
-            modifier = Modifier.constrainAs(timeRef) {
-                top.linkTo(progressRef.bottom)
-                bottom.linkTo(parent.bottom)
-                end.linkTo(parent.end, 12.dp)
-            },
-            fontSize = 12.sp,
-            text = VideoDurationFormatter.formatVideoProgressDesc(playerPosition, duration),
-            color = Color.White,
-        )
+        Row(
+            modifier = Modifier
+                .fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            PlayPauseIconButton(
+                modifier = Modifier.padding(start = 4.dp),
+                playing = playing,
+                onPauseClick = onPauseClick,
+                onPlayClick = onPlayClick,
+            )
+            Spacer(modifier = Modifier.weight(1F))
+            Text(
+                modifier = Modifier.padding(end = 4.dp),
+                fontSize = 12.sp,
+                text = VideoDurationFormatter.formatVideoProgressDesc(playerPosition, duration),
+                color = Color.White,
+            )
+            IconButton(
+                modifier = Modifier
+                    .padding(end = 8.dp),
+                onClick = {
+                    if (mute) {
+                        onUnmuteClick()
+                    } else {
+                        onMuteClick()
+                    }
+                },
+            ) {
+                val icon = if (mute) {
+                    Icons.Default.VolumeOff
+                } else {
+                    Icons.Default.VolumeUp
+                }
+                Icon(
+                    imageVector = icon,
+                    contentDescription = if (mute) "unmute" else "mute",
+                    tint = Color.White,
+                )
+            }
+        }
     }
 }
 
 @Composable
 private fun PlayPauseIconButton(
     modifier: Modifier,
-    playWhenReady: Boolean,
+    playing: Boolean,
     onPauseClick: () -> Unit,
     onPlayClick: () -> Unit,
 ) {
     IconButton(
         modifier = modifier,
         onClick = {
-            if (playWhenReady) {
+            if (playing) {
                 onPauseClick()
             } else {
                 onPlayClick()
             }
         },
     ) {
-        val icon = if (playWhenReady) {
+        val icon = if (playing) {
             Icons.Default.Pause
         } else {
             Icons.Default.PlayArrow
         }
         Icon(
             painter = rememberVectorPainter(icon),
-            contentDescription = if (playWhenReady) "pause" else "play",
+            contentDescription = if (playing) "pause" else "play",
             tint = Color.White,
         )
     }

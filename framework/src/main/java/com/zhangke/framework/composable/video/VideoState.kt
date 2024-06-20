@@ -27,13 +27,16 @@ class VideoState(
     initialPlayerProgress: Long,
 ) {
 
-    internal var playing by mutableStateOf(false)
+    var playing by mutableStateOf(false)
         private set
     var playbackEnded by mutableStateOf(false)
         private set
     var playerVolume by mutableFloatStateOf(0F)
         private set
-    internal var playerPosition by mutableLongStateOf(initialPlayerProgress)
+    var playerPosition by mutableLongStateOf(initialPlayerProgress)
+        private set
+
+    var duration by mutableLongStateOf(0L)
         private set
 
     fun onPlaybackStateChanged(playbackState: Int) {
@@ -68,8 +71,12 @@ class VideoState(
         playing = true
     }
 
-    fun stop() {
+    fun pause() {
         playing = false
+    }
+
+    fun updateDuration(duration: Long) {
+        this.duration = duration
     }
 
     companion object {

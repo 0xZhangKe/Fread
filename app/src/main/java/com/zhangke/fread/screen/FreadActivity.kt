@@ -18,8 +18,7 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
-import com.zhangke.framework.composable.video.LocalFullscreenExoPlayerManager
-import com.zhangke.framework.composable.video.LocalInlineExoPlayerManager
+import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.daynight.DayNightHelper
@@ -39,21 +38,16 @@ class FreadActivity : AppCompatActivity() {
             FreadTheme(
                 darkTheme = dayNightMode.isNight,
             ) {
-                val inlineVideoPlayerManager = remember {
+                val videoPlayerManager = remember {
                     ExoPlayerManager()
                 }
-                val fullScreenPlayerManager = remember {
-                    ExoPlayerManager()
-                }
-                DisposableEffect(inlineVideoPlayerManager, fullScreenPlayerManager) {
+                DisposableEffect(videoPlayerManager) {
                     onDispose {
-                        inlineVideoPlayerManager.recycler()
-                        fullScreenPlayerManager.recycler()
+                        videoPlayerManager.recycler()
                     }
                 }
                 CompositionLocalProvider(
-                    LocalInlineExoPlayerManager provides inlineVideoPlayerManager,
-                    LocalFullscreenExoPlayerManager provides fullScreenPlayerManager,
+                    LocalExoPlayerManager provides videoPlayerManager,
                 ) {
                     TransparentNavigator {
                         BottomSheetNavigator(

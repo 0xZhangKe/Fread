@@ -13,9 +13,7 @@ import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
 import com.zhangke.framework.utils.toMediaSource
 
-val LocalInlineExoPlayerManager = staticCompositionLocalOf { ExoPlayerManager() }
-
-val LocalFullscreenExoPlayerManager = staticCompositionLocalOf { ExoPlayerManager() }
+val LocalExoPlayerManager = staticCompositionLocalOf { ExoPlayerManager() }
 
 class ExoPlayerManager {
 

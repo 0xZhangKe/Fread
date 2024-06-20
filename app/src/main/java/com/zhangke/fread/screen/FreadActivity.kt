@@ -13,6 +13,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
@@ -27,7 +28,7 @@ import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class FreadActivity : AppCompatActivity() {
 
-    @OptIn(ExperimentalMaterialApi::class)
+    @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         DayNightHelper.setActivityDayNightMode()
         enableEdgeToEdge()
@@ -58,7 +59,10 @@ class FreadActivity : AppCompatActivity() {
                                 screen = FreadScreen(),
                                 key = ROOT_NAVIGATOR_KEY,
                             ) {
-                                SlideTransition(it)
+                                SlideTransition(
+                                    navigator = it,
+                                    disposeScreenAfterTransitionEnd = false,
+                                )
                             }
                         }
                     }

@@ -35,6 +35,7 @@ import kotlin.math.abs
 @OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun VideoPlayer(
+    modifier: Modifier = Modifier,
     uri: Uri,
     playWhenReady: Boolean,
     state: VideoState = rememberVideoPlayerState(),
@@ -48,6 +49,11 @@ fun VideoPlayer(
     }
     val playerListener = remember(uri) {
         object : Player.Listener {
+
+            override fun onEvents(player: Player, events: Player.Events) {
+                super.onEvents(player, events)
+                state.updateDuration(player.duration)
+            }
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
@@ -83,7 +89,7 @@ fun VideoPlayer(
         }
     }
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val playerManager = LocalInlineExoPlayerManager.current
+    val playerManager = LocalExoPlayerManager.current
     val exoPlayer = remember(uri) {
         playerManager.obtainPlayer(context, uri, lifecycle).apply {
             addListener(playerListener)
@@ -96,10 +102,9 @@ fun VideoPlayer(
             seekTo(state.playerPosition)
         }
     }
-    Box(modifier = Modifier.fillMaxSize()) {
+    Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
-            modifier = Modifier
-                .fillMaxSize(),
+            modifier = Modifier.fillMaxSize(),
             factory = {
                 PlayerView(it).apply {
                     useController = false

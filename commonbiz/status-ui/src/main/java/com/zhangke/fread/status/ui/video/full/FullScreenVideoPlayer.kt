@@ -1,11 +1,11 @@
 package com.zhangke.fread.status.ui.video.full
 
 import android.net.Uri
-import android.widget.FrameLayout
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -17,6 +17,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
@@ -28,33 +30,25 @@ import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.media3.common.C
-import androidx.media3.common.Player
-import androidx.media3.ui.PlayerView
+import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.composable.video.LocalFullscreenExoPlayerManager
-import com.zhangke.framework.utils.toMediaSource
+import com.zhangke.framework.composable.video.VideoPlayer
+import com.zhangke.framework.composable.video.rememberVideoPlayerState
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
-import kotlinx.coroutines.delay
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
@@ -63,71 +57,24 @@ fun FullScreenVideoPlayer(
     uri: Uri,
     onBackClick: () -> Unit,
 ) {
-    val context = LocalContext.current
-    var mute by remember {
-        mutableStateOf(false)
+    var panelVisible by remember {
+        mutableStateOf(true)
     }
     Box(
         modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
+            .noRippleClick {
+                panelVisible = !panelVisible
+            }
             .background(color = Color.Black)
     ) {
-        var playerPosition by rememberSaveable {
-            mutableLongStateOf(0L)
-        }
-
-        val lifecycle = LocalLifecycleOwner.current
-        val playerManager = LocalFullscreenExoPlayerManager.current
-
-        val exoPlayer = remember(uri) {
-            playerManager.obtainPlayer(context, uri, lifecycle.lifecycle).apply {
-                videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
-                this.playWhenReady = true
-                repeatMode = Player.REPEAT_MODE_ALL
-                setMediaSource(uri.toMediaSource())
-                prepare()
-                seekTo(playerPosition)
-            }
-        }
-        LaunchedEffect(uri) {
-            while (true) {
-                delay(60)
-                playerPosition = exoPlayer.currentPosition
-            }
-        }
-        var panelVisible by remember {
-            mutableStateOf(true)
-        }
-        AndroidView(
-            modifier = Modifier
-                .fillMaxSize()
-                .noRippleClick {
-                    panelVisible = !panelVisible
-                },
-            factory = {
-                PlayerView(it).apply {
-                    useController = false
-                    layoutParams = FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                    )
-                }
-            },
-            update = {
-                it.player = exoPlayer
-            },
+        val videoState = rememberVideoPlayerState()
+        VideoPlayer(
+            modifier = Modifier,
+            uri = uri,
+            playWhenReady = true,
+            state = videoState,
         )
-
-        LaunchedEffect(mute) {
-            if (mute) {
-                exoPlayer.volume = 0F
-            } else {
-                exoPlayer.volume = 1F
-            }
-        }
-
         AnimatedVisibility(
             modifier = Modifier.fillMaxSize(),
             visible = panelVisible,
@@ -136,30 +83,31 @@ fun FullScreenVideoPlayer(
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 FullScreenVideoPlayerPanel(
-                    modifier = Modifier.align(Alignment.BottomCenter),
-                    playing = exoPlayer.isPlaying,
-                    mute = mute,
+                    modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding(),
+                    playing = videoState.playing,
+                    mute = videoState.playerVolume <= 0F,
                     onPlayClick = {
-                        if (exoPlayer.isPlaying) return@FullScreenVideoPlayerPanel
-                        exoPlayer.play()
+                        videoState.play()
                     },
                     onPauseClick = {
-                        if (!exoPlayer.isPlaying) return@FullScreenVideoPlayerPanel
-                        exoPlayer.pause()
+                        videoState.pause()
                     },
-                    playerPosition = playerPosition,
-                    duration = exoPlayer.duration,
+                    playerPosition = videoState.playerPosition,
+                    duration = videoState.duration,
                     onPositionChangeRequest = {
-                        exoPlayer.seekTo(it)
+                        videoState.seekTo(it)
                     },
                     onMuteClick = {
-                        mute = true
+                        videoState.mute()
                     },
                     onUnmuteClick = {
-                        mute = false
+                        videoState.unmute()
                     },
                 )
-                FullScreenPlayerToolBar(onBackClick)
+                FullScreenPlayerToolBar(
+                    modifier = Modifier.align(Alignment.TopStart),
+                    onBackClick = onBackClick,
+                )
             }
         }
     }
@@ -167,24 +115,20 @@ fun FullScreenVideoPlayer(
 
 @Composable
 private fun FullScreenPlayerToolBar(
+    modifier: Modifier,
     onBackClick: () -> Unit,
 ) {
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
-            .height(ToolbarTokens.ContainerHeight)
+            .statusBarsPadding()
             .padding(horizontal = ToolbarTokens.TopAppBarHorizontalPadding)
+            .height(ToolbarTokens.ContainerHeight)
     ) {
-        IconButton(
-            modifier = Modifier.align(Alignment.CenterStart),
-            onClick = { onBackClick() },
-        ) {
-            Icon(
-                painter = rememberVectorPainter(image = Icons.Filled.ArrowBack),
-                "back",
-                tint = Color.White,
-            )
-        }
+        Toolbar.BackButton(
+            onBackClick = onBackClick,
+            tint = Color.White,
+        )
     }
 }
 
@@ -205,13 +149,10 @@ private fun FullScreenVideoPlayerPanel(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(Brush.verticalGradient(listOf(Color(0x05000000), Color(0xF9000000))))
             .padding(bottom = 16.dp),
     ) {
         PlayerProgress(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 8.dp),
+            modifier = Modifier.fillMaxWidth(),
             progress = progress,
             onProgressChange = { progress ->
                 onPositionChangeRequest((duration * progress).toLong())
@@ -235,9 +176,12 @@ private fun FullScreenVideoPlayerPanel(
                 text = VideoDurationFormatter.formatVideoProgressDesc(playerPosition, duration),
                 color = Color.White,
             )
-            IconButton(
-                modifier = Modifier
-                    .padding(end = 8.dp),
+            val icon = if (mute) {
+                Icons.AutoMirrored.Filled.VolumeOff
+            } else {
+                Icons.AutoMirrored.Filled.VolumeUp
+            }
+            SimpleIconButton(
                 onClick = {
                     if (mute) {
                         onUnmuteClick()
@@ -245,18 +189,9 @@ private fun FullScreenVideoPlayerPanel(
                         onMuteClick()
                     }
                 },
-            ) {
-                val icon = if (mute) {
-                    Icons.Default.VolumeOff
-                } else {
-                    Icons.Default.VolumeUp
-                }
-                Icon(
-                    imageVector = icon,
-                    contentDescription = if (mute) "unmute" else "mute",
-                    tint = Color.White,
-                )
-            }
+                imageVector = icon,
+                contentDescription = if (mute) "unmute" else "mute",
+            )
         }
     }
 }
@@ -306,11 +241,15 @@ private fun PlayerProgress(
     val displayProgress = if (sliding) {
         progressInChanging
     } else {
-        progress
+        if (progress.isNaN()) {
+            0F
+        } else {
+            progress
+        }
     }
     Slider(
         modifier = modifier,
-        value = displayProgress,
+        value = displayProgress.coerceAtLeast(0F).coerceAtMost(1F),
         onValueChange = {
             progressInChanging = it
             sliding = true

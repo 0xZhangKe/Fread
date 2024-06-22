@@ -27,7 +27,7 @@ import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.composable.InitErrorContent
-import com.zhangke.fread.commonbiz.shared.composable.ObserveToImmersive
+import com.zhangke.fread.commonbiz.shared.composable.ObserveForFeedsConnection
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
@@ -97,11 +97,11 @@ class ActivityPubTimelineTab(
                 rememberLazyListState()
                 val lazyListState = state.lazyListState
                 ObserveMinReadItem(lazyListState) {
-                    uiState.items.getOrNull(it)?.let {
-                        onReadMinIndex(it)
+                    uiState.items.getOrNull(it)?.let {item ->
+                        onReadMinIndex(item)
                     }
                 }
-                ObserveToImmersive(lazyListState)
+                ObserveForFeedsConnection(lazyListState)
                 LoadableInlineVideoLazyColumn(
                     modifier = Modifier
                         .fillMaxSize()

@@ -156,6 +156,11 @@ class ActivityPubContentScreen(
                                     onTitleClick = {
                                         onTitleClick(config)
                                     },
+                                    onDoubleClick = {
+                                        coroutineScope.launch {
+                                            mainTabConnection.scrollToTop()
+                                        }
+                                    },
                                 )
                             },
                             tabContent = {

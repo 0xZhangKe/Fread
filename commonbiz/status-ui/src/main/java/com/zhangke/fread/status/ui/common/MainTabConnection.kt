@@ -37,6 +37,9 @@ class MainTabConnection {
     private val _scrollToContentTabFlow = MutableSharedFlow<ContentConfig>()
     val scrollToContentTabFlow: SharedFlow<ContentConfig> get() = _scrollToContentTabFlow.asSharedFlow()
 
+    private val _scrollToTopFlow = MutableSharedFlow<Unit>()
+    val scrollToTopFlow: SharedFlow<Unit> get() = _scrollToTopFlow.asSharedFlow()
+
     private var toggleImmersiveJob: Job? = null
 
     suspend fun switchToNextTab() {
@@ -65,5 +68,9 @@ class MainTabConnection {
 
     suspend fun scrollToContentTab(contentConfig: ContentConfig) {
         _scrollToContentTabFlow.emit(contentConfig)
+    }
+
+    suspend fun scrollToTop(){
+        _scrollToTopFlow.emit(Unit)
     }
 }

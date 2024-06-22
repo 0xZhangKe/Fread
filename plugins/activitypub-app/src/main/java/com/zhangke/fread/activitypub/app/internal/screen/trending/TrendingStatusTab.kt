@@ -37,6 +37,7 @@ class TrendingStatusTab(private val role: IdentityRole) : PagerTab {
             composedStatusInteraction = viewModel.composedStatusInteraction,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
+            observeScrollToTopEvent = true,
             nestedScrollConnection = nestedScrollConnection,
             onImmersiveEvent = {
                 if (it) {

@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -37,9 +38,11 @@ import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
+import com.zhangke.fread.status.ui.common.LocalMainTabConnection
 import com.zhangke.fread.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
@@ -53,6 +56,7 @@ fun FeedsContent(
     onLoadMore: () -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
     nestedScrollConnection: NestedScrollConnection?,
+    observeScrollToTopEvent: Boolean = false,
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
 ) {
@@ -62,7 +66,7 @@ fun FeedsContent(
             StatusListPlaceholder()
         } else if (uiState.pageErrorContent != null) {
             InitErrorContent(uiState.pageErrorContent)
-        }else{
+        } else {
             EmptyListContent()
         }
     } else {
@@ -82,10 +86,20 @@ fun FeedsContent(
                 contentCanScrollBackward.value = canScrollBackward
             }
             if (onImmersiveEvent != null) {
-                ObserveToImmersive(
+                ObserveForImmersive(
                     listState = lazyListState,
                     onImmersiveEvent = onImmersiveEvent,
                 )
+            }
+            val feedsConnection = LocalMainTabConnection.current
+            if (observeScrollToTopEvent) {
+                LaunchedEffect(feedsConnection, lazyListState) {
+                    feedsConnection.scrollToTopFlow.collect {
+                        if (lazyListState.layoutInfo.totalItemsCount > 0) {
+                            lazyListState.animateScrollToItem(0)
+                        }
+                    }
+                }
             }
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier

@@ -9,10 +9,18 @@ import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.fread.status.ui.common.LocalMainTabConnection
 
 @Composable
-fun ObserveToImmersive(listState: LazyListState) {
+fun ObserveForFeedsConnection(listState: LazyListState) {
     val mainTabConnection = LocalMainTabConnection.current
     val coroutineScope = rememberCoroutineScope()
-    ObserveToImmersive(
+    LaunchedEffect(listState, mainTabConnection.scrollToTopFlow) {
+        mainTabConnection.scrollToTopFlow
+            .collect {
+                if (listState.layoutInfo.totalItemsCount > 0) {
+                    listState.animateScrollToItem(0)
+                }
+            }
+    }
+    ObserveForImmersive(
         listState = listState,
         onImmersiveEvent = {
             if (it) {
@@ -25,7 +33,7 @@ fun ObserveToImmersive(listState: LazyListState) {
 }
 
 @Composable
-fun ObserveToImmersive(
+fun ObserveForImmersive(
     listState: LazyListState,
     onImmersiveEvent: (immersive: Boolean) -> Unit,
 ) {

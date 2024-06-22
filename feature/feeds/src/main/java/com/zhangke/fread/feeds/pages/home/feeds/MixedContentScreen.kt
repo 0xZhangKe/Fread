@@ -86,6 +86,11 @@ class MixedContentScreen(
                         }
                     },
                     onTitleClick = onTitleClick,
+                    onDoubleClick = {
+                        coroutineScope.launch {
+                            mainTabConnection.scrollToTop()
+                        }
+                    }
                 )
             },
         ) { paddings ->
@@ -101,6 +106,7 @@ class MixedContentScreen(
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
                     composedStatusInteraction = composedStatusInteraction,
+                    observeScrollToTopEvent = true,
                     nestedScrollConnection = scrollBehavior.nestedScrollConnection,
                     onImmersiveEvent = {
                         if (it) {

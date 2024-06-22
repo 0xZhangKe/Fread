@@ -29,8 +29,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.core.screen.uniqueScreenKey
@@ -311,18 +315,32 @@ data class UserDetailScreen(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val followDescSuffix = stringResource(R.string.activity_pub_user_detail_follower_info)
+            val followerDesc = remember(account) {
+                if (account == null) {
+                    buildAnnotatedString { append("    ") }
+                } else {
+                    buildAnnotatedString {
+                        val followCount = account.followersCount.toString()
+                        append(followCount)
+                        addStyle(
+                            style = SpanStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            start = 0,
+                            end = followCount.length,
+                        )
+                        append(" ")
+                        append(followDescSuffix)
+                    }
+                }
+            }
             Text(
                 modifier = Modifier.clickable(account != null) {
                     onFollowerClick()
                 },
-                text = if (account == null) {
-                    "     "
-                } else {
-                    stringResource(
-                        R.string.activity_pub_user_detail_follower_info,
-                        account.followersCount
-                    )
-                },
+                text = followerDesc,
                 style = MaterialTheme.typography.bodySmall,
             )
 
@@ -333,18 +351,33 @@ data class UserDetailScreen(
                 style = MaterialTheme.typography.bodySmall,
             )
 
+            val followingDescSuffix =
+                stringResource(R.string.activity_pub_user_detail_following_info)
+            val followingDesc = remember(account) {
+                if (account == null) {
+                    buildAnnotatedString { append("    ") }
+                } else {
+                    buildAnnotatedString {
+                        val followingCount = account.followingCount.toString()
+                        append(followingCount)
+                        addStyle(
+                            style = SpanStyle(
+                                fontSize = 16.sp,
+                                fontWeight = FontWeight.Medium,
+                            ),
+                            start = 0,
+                            end = followingCount.length,
+                        )
+                        append(" ")
+                        append(followingDescSuffix)
+                    }
+                }
+            }
             Text(
                 modifier = Modifier.clickable(account != null) {
                     onFollowingClick()
                 },
-                text = if (account == null) {
-                    "     "
-                } else {
-                    stringResource(
-                        R.string.activity_pub_user_detail_following_info,
-                        account.followingCount
-                    )
-                },
+                text = followingDesc,
                 style = MaterialTheme.typography.bodySmall,
             )
         }

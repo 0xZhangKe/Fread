@@ -19,8 +19,8 @@
     <string name="activity_pub_user_detail_relationship_not_follow">关注</string>
     <string name="activity_pub_user_detail_relationship_requested">请求中</string>
     <string name="activity_pub_user_detail_request_by_tip">对方正在请求关注你</string>
-    <string name="activity_pub_user_detail_follower_info">%s 关注者</string>
-    <string name="activity_pub_user_detail_following_info">%s 正在关注</string>
+    <string name="activity_pub_user_detail_follower_info">关注者</string>
+    <string name="activity_pub_user_detail_following_info">正在关注</string>
     <string name="activity_pub_user_detail_tab_post">帖子</string>
     <string name="activity_pub_user_detail_tab_replies">回复</string>
     <string name="activity_pub_user_detail_tab_media">媒体</string>

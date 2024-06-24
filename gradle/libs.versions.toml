@@ -69,6 +69,10 @@ halilibo-richtext = "0.20.0"
 
 jsoup = "1.15.3"
 
+google-service-version = "4.4.2"
+firebaseBom = "33.1.1"
+firebaseCrashlyticsPlugin = "3.0.2"
+
 [bundles]
 androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]
 androidx-compose-foundation = ["androidx.compose.foundation", "androidx.compose.foundation.layout"]
@@ -141,6 +145,10 @@ androidx-media3-common = { group = "androidx.media3", name = "media3-common", ve
 
 accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist.placeholder.material"}
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist.permissions" }
+
+firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
+firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
+firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin.coroutine" }
@@ -217,3 +225,5 @@ kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+google-service = { id = "com.google.gms.google-services",  version.ref = "google.service.version"}
+firebase-crashlytics = { id = "com.google.firebase.crashlytics",  version.ref = "firebaseCrashlyticsPlugin"}

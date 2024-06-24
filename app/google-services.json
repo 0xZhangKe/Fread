@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "1083712488538",
+    "project_id": "fread-515c4",
+    "storage_bucket": "fread-515c4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:1083712488538:android:cb9f6416eca908c29d4463",
+        "android_client_info": {
+          "package_name": "com.zhangke.fread"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyACtgkI3voWglLXE5DI68EBCGy-ZAKNg6c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -52,6 +52,7 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.fread.profile.R
 import com.zhangke.fread.profile.screen.setting.SettingScreen
@@ -59,10 +60,11 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
-class ProfileHomePage : Screen {
+class ProfileHomePage : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()

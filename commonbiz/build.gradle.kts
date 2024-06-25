@@ -1,5 +1,6 @@
 plugins {
     id("fread.android.library")
+    id("fread.android.compose")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
     id("kotlin-kapt")
@@ -26,12 +27,20 @@ dependencies {
     implementation(libs.bundles.androidx.preference)
     implementation(libs.bundles.androidx.datastore)
 
+    val composeBom = platform(libs.androidx.compose.bom)
+    implementation(composeBom)
+    implementation(libs.bundles.androidx.compose.ui)
+    implementation(libs.bundles.androidx.compose.foundation)
+    implementation(libs.bundles.androidx.compose.material)
+    implementation(libs.androidx.compose.runtime)
+
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     kapt(libs.androidx.room.compiler)
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
     implementation(libs.gson)
+    implementation(libs.bundles.voyager)
 
     implementation(libs.filt.annotaions)
     ksp(libs.filt.compiler)

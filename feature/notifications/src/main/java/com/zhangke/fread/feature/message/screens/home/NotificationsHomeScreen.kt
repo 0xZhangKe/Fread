@@ -47,14 +47,16 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feature.notifications.R
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 
-class NotificationsHomeScreen : Screen {
+class NotificationsHomeScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val viewModel: NotificationsHomeViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow.rootNavigator

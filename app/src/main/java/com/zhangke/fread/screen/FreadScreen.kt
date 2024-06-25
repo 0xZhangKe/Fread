@@ -27,6 +27,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.loadable.lazycolumn.LoadMoreUi
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.screen.main.MainPage
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -38,7 +39,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.launch
 
-class FreadScreen : Screen {
+class FreadScreen : BaseScreen() {
 
     private val richText1 = """
         <p><a href="https://m.cmx.im/tags/%E6%BC%82%E4%BA%AE%E7%9A%84%E5%B0%8F%E7%8E%A9%E6%84%8F" class="mention hashtag" rel="tag">#<span>漂亮的小玩意</span></a><br />前几天网上看到个很复古的老式面包机，完全长在我审美上了，搜了半天找到个专门卖复古面包机的网站，但貌似只能发货到美国 :awesome: ，但真的好喜欢这个小玩意。<br /><a href="https://www.toastercentral.com/index.htm" target="_blank" rel="nofollow noopener noreferrer" translate="no"><span class="invisible">https://www.</span><span class="">toastercentral.com/index.htm</span><span class="invisible"></span></a></p>
@@ -178,6 +179,7 @@ class FreadScreen : Screen {
     @OptIn(ExperimentalMaterial3Api::class, ExperimentalFoundationApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         MainPage()
 
 //        LoadingPage(loadMoreState = LoadState.Idle)

@@ -56,6 +56,7 @@ import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.media.MediaFileHelper
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.aspectRatio
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
 import kotlinx.coroutines.delay
@@ -65,12 +66,13 @@ class ImageViewerScreen(
     private val selectedIndex: Int,
     private val imageList: List<Image>,
     @Transient private val coordinatesList: List<LayoutCoordinates?> = emptyList(),
-) : Screen {
+) : BaseScreen() {
 
     private val backgroundCommonAlpha = 0.95F
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val coroutineScope = rememberCoroutineScope()
         var backgroundColorAlpha by remember {

@@ -50,15 +50,17 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.media.MediaFileUtil
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.pages.manager.add.showAddContentSuccessToast
 import com.zhangke.fread.status.model.ContentConfig
 import kotlinx.coroutines.delay
 
-class ImportFeedsScreen : Screen {
+class ImportFeedsScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getScreenModel<ImportFeedsViewModel>()
         val uiState by viewModel.uiState.collectAsState()

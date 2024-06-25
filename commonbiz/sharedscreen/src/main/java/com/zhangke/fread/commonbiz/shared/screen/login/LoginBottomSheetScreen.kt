@@ -36,16 +36,18 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
 
-class LoginBottomSheetScreen : Screen {
+class LoginBottomSheetScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<LoginViewModel>()
         val uiState by viewModel.uiState.collectAsState()

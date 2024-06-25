@@ -24,6 +24,6 @@ class ExploreTab(private val tabIndex: UShort) : Tab {
 
     @Composable
     override fun Content() {
-        Navigator(com.zhangke.fread.explore.screens.home.ExplorerHomeScreen())
+        Navigator(ExplorerHomeScreen())
     }
 }

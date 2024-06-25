@@ -44,6 +44,7 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
@@ -52,11 +53,12 @@ import kotlinx.coroutines.launch
 @Destination(PlatformDetailRoute.ROUTE)
 class InstanceDetailScreen(
     @Router private val route: String = "",
-) : Screen {
+) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val navigationResult = navigator.navigationResult
         val viewModel = getViewModel<InstanceDetailViewModel, InstanceDetailViewModel.Factory>() {

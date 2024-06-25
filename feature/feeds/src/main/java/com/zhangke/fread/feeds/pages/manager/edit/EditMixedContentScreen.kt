@@ -41,17 +41,19 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.voyager.navigationResult
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.fread.status.uri.FormalUri
 
-class EditMixedContentScreen(private val configId: Long) : Screen {
+class EditMixedContentScreen(private val configId: Long) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<EditMixedContentViewModel, EditMixedContentViewModel.Factory> {
             it.create(configId)

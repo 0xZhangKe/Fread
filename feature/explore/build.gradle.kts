@@ -24,6 +24,7 @@ dependencies {
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":commonbiz:sharedscreen"))
+    implementation(project(":commonbiz:analytics"))
     implementation(project(path = ":bizframework:status-provider"))
 
     implementation(libs.bundles.kotlin)

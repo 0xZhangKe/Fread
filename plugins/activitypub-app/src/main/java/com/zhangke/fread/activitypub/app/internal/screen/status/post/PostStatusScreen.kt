@@ -73,6 +73,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import java.util.Locale
@@ -82,11 +83,12 @@ import com.zhangke.fread.statusui.R as StatusUiR
 @Destination(PostStatusScreenRoute.ROUTE)
 class PostStatusScreen(
     @Router private val route: String = "",
-) : Screen {
+) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PostStatusViewModel, PostStatusViewModel.Factory> {
             it.create(PostStatusScreenRoute.parse(route))

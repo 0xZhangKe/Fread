@@ -60,6 +60,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.krouter.Destination
@@ -69,13 +70,14 @@ import kotlinx.coroutines.flow.SharedFlow
 @Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
     @Router val route: String = "",
-) : Screen {
+) : BaseScreen() {
 
     override val key: ScreenKey
         get() = uniqueScreenKey
 
     @Composable
     override fun Content() {
+        super.Content()
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current

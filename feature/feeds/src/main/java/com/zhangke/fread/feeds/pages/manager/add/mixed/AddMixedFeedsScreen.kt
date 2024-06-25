@@ -42,6 +42,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.framework.voyager.navigationResult
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
@@ -55,11 +56,12 @@ import com.zhangke.fread.status.uri.FormalUri
  */
 internal class AddMixedFeedsScreen(
     private val statusSource: StatusSource? = null
-) : Screen {
+) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<AddMixedFeedsViewModel, AddMixedFeedsViewModel.Factory> {

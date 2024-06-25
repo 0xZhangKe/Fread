@@ -19,16 +19,18 @@ import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTab
 import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTabType
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
 import com.zhangke.fread.status.account.LoggedAccount
 
-class ExplorerHomeScreen : Screen {
+class ExplorerHomeScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
-        val viewModel = getViewModel<com.zhangke.fread.explore.screens.home.ExplorerHomeViewModel>()
+        super.Content()
+        val viewModel = getViewModel<ExplorerHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         CompositionLocalProvider(

@@ -13,6 +13,7 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.voyager.pushDestination
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,10 +22,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import javax.inject.Inject
 
-class PostStatusIntermediaryScreen : Screen {
+class PostStatusIntermediaryScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel: PostStatusIntermediaryViewModel = getViewModel()
         val loadableState by viewModel.platform.collectAsState()

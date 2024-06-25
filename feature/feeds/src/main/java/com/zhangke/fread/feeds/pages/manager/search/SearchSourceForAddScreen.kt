@@ -21,11 +21,12 @@ import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SearchToolbar
 import com.zhangke.framework.voyager.navigationResult
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.composable.StatusSourceNode
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 
-internal class SearchSourceForAddScreen : Screen {
+internal class SearchSourceForAddScreen : BaseScreen() {
 
     companion object {
 
@@ -38,6 +39,7 @@ internal class SearchSourceForAddScreen : Screen {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val resultNavigator = navigator.navigationResult
         val viewModel: SearchSourceForAddViewModel = getViewModel()

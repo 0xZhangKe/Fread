@@ -42,6 +42,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.fread.rss.R
@@ -52,11 +53,12 @@ import kotlinx.coroutines.flow.Flow
 @Destination(RssSourceScreenRoute.ROUTE)
 class RssSourceScreen(
     @Router private val route: String = "",
-) : Screen {
+) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<RssSourceViewModel, RssSourceViewModel.Factory> {
             it.create(RssSourceScreenRoute.parseRoute(route))

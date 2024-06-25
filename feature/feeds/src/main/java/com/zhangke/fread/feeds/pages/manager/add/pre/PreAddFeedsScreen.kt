@@ -39,6 +39,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsScreen
 import com.zhangke.fread.status.search.SearchContentResult
@@ -49,10 +50,11 @@ import com.zhangke.fread.status.ui.source.StatusSourceUi
 /**
  * 添加 Feeds 预先搜索页，用于输入内容，判断类型添加内容。
  */
-class PreAddFeedsScreen : Screen {
+class PreAddFeedsScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getScreenModel<PreAddFeedsViewModel>()

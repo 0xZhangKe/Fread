@@ -14,15 +14,17 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
 
-class LoginToTargetPlatformScreen(val platform: BlogPlatform) : Screen {
+class LoginToTargetPlatformScreen(val platform: BlogPlatform) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<LoginToTargetPlatformViewModel, LoginToTargetPlatformViewModel.Factory> {

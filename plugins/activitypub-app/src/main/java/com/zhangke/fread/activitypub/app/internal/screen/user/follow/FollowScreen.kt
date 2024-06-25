@@ -38,6 +38,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -48,11 +49,12 @@ class FollowScreen(
     private val role: IdentityRole,
     private val userUri: FormalUri,
     private val isFollowing: Boolean,
-) : Screen {
+) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<FollowViewModel, FollowViewModel.Factory> {
             it.create(role, userUri, isFollowing)

@@ -18,13 +18,15 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.status.ui.common.LocalMainTabConnection
 
-class ContentHomeScreen : Screen {
+class ContentHomeScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
         CompositionLocalProvider(
             LocalNavigator provides navigator

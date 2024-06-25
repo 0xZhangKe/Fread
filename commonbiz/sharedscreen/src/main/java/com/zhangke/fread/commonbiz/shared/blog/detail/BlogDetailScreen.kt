@@ -30,6 +30,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.web.WebViewPreviewer
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.DateTimeFormatter
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.blog.Blog
@@ -38,10 +39,11 @@ import com.zhangke.fread.status.ui.style.defaultStatusStyle
 
 class BlogDetailScreen(
     private val blog: Blog,
-) : Screen {
+) : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val context = LocalContext.current
         val viewModel = getScreenModel<com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailViewModel>()

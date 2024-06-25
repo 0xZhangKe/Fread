@@ -51,6 +51,9 @@ dependencies {
     implementation(libs.accompanist.placeholder.material)
     implementation(libs.gson)
 
+    implementation(libs.auto.service.annotations)
+    kapt(libs.auto.service)
+
     implementation(libs.hilt)
     kapt(libs.hilt.compiler)
 

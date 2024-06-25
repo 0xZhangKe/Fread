@@ -50,6 +50,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
@@ -62,7 +63,7 @@ import org.burnoutcrew.reorderable.reorderable
 @Destination(EditContentConfigRoute.ROUTE)
 class EditContentConfigScreen(
     @Router private val route: String = ""
-) : Screen {
+) : BaseScreen() {
 
     companion object {
 
@@ -72,6 +73,7 @@ class EditContentConfigScreen(
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
             getViewModel<EditContentConfigViewModel, EditContentConfigViewModel.Factory> {

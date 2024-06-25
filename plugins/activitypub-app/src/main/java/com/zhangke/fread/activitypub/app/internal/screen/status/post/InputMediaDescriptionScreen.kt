@@ -37,14 +37,16 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.page.BaseScreen
 
 class InputMediaDescriptionScreen(
     private val file: PostStatusFile,
     @Transient private val onDescriptionInputted: (String) -> Unit,
-) : Screen {
+) : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         var inputtedText by remember {
             mutableStateOf(file.description.orEmpty())

@@ -23,12 +23,14 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.video.inline.InlineVideo
 
-class InlineVideoPlayerScreen : Screen {
+class InlineVideoPlayerScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.current!!
         Scaffold(
             topBar = {

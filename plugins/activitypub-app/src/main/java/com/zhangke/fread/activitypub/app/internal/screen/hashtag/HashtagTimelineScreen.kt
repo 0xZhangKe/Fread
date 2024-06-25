@@ -50,6 +50,7 @@ import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -58,13 +59,14 @@ import kotlinx.coroutines.flow.SharedFlow
 @Destination(HashtagTimelineRoute.ROUTE)
 data class HashtagTimelineScreen(
     @Router private val route: String = "",
-) : Screen {
+) : BaseScreen() {
 
     override val key: ScreenKey
         get() = uniqueScreenKey
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val (role, hashtag) = remember(route) {
             HashtagTimelineRoute.parseRoute(route)

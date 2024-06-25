@@ -22,7 +22,6 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.analytics.ObserveScreenForAnalytics
 import com.zhangke.fread.common.daynight.DayNightHelper
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -60,7 +59,6 @@ class FreadActivity : AppCompatActivity() {
                                 screen = FreadScreen(),
                                 key = ROOT_NAVIGATOR_KEY,
                             ) {
-                                ObserveScreenForAnalytics(it)
                                 SlideTransition(
                                     navigator = it,
                                     disposeScreenAfterTransitionEnd = false,

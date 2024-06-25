@@ -58,16 +58,18 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.utils.buildPickVisualImageRequest
 import com.zhangke.framework.utils.rememberSinglePickVisualMediaLauncher
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.SharedFlow
 
 class EditAccountInfoScreen(
     private val accountUri: FormalUri,
-) : Screen {
+) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<EditAccountInfoViewModel, EditAccountInfoViewModel.Factory>() {
             it.create(accountUri)

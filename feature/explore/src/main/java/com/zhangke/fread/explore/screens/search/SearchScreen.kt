@@ -18,6 +18,7 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.explore.screens.search.author.SearchedAuthorTab
 import com.zhangke.fread.explore.screens.search.hashtag.SearchedHashtagTab
 import com.zhangke.fread.explore.screens.search.platform.SearchedPlatformTab
@@ -27,10 +28,11 @@ import com.zhangke.fread.status.model.IdentityRole
 class SearchScreen(
     private val role: IdentityRole,
     private val query: String,
-) : Screen {
+) : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         SearchScreenContent(
             onBackClick = navigator::pop,

@@ -32,22 +32,23 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageSettingType
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.profile.R
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
-class SettingScreen : Screen {
+class SettingScreen : BaseScreen() {
 
     @Composable
     override fun Content() {
+        super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getScreenModel<SettingScreenModel>()
         val uiState by viewModel.uiState.collectAsState()

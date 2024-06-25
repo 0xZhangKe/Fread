@@ -22,6 +22,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -29,7 +30,7 @@ import com.zhangke.fread.status.ui.BlogAuthorAvatar
 class SelectAccountForPostStatusScreen(
     private val accountList: List<LoggedAccount>,
     private val onAccountSelected: (LoggedAccount) -> Unit,
-) : Screen {
+) : BaseScreen() {
 
     companion object {
 
@@ -42,6 +43,7 @@ class SelectAccountForPostStatusScreen(
 
     @Composable
     override fun Content() {
+        super.Content()
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         Column(modifier = Modifier.fillMaxWidth()) {
             Toolbar(

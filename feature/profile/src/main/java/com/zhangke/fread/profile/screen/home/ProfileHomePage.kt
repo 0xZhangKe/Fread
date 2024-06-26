@@ -30,6 +30,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -43,7 +44,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
@@ -52,6 +52,9 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.analytics.ProfileElements
+import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.analytics.reportPageShow
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.fread.profile.R
@@ -69,6 +72,11 @@ class ProfileHomePage : BaseScreen() {
         val viewModel = getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val rootNavigator = LocalNavigator.currentOrThrow.rootNavigator
+        LaunchedEffect(uiState.accountDataList) {
+            reportPageShow("ProfileHomePage") {
+                put("accountCount", uiState.accountDataList.size.toString())
+            }
+        }
         CompositionLocalProvider(
             LocalNavigator provides rootNavigator
         ) {
@@ -76,13 +84,21 @@ class ProfileHomePage : BaseScreen() {
             ProfileHomePageContent(
                 uiState = uiState,
                 onAddAccountClick = {
+                    reportClick(ProfileElements.ADD_ACCOUNT)
                     bottomSheetNavigator.show(LoginBottomSheetScreen())
                 },
                 onSettingClick = {
+                    reportClick(ProfileElements.SETTING)
                     navigator.push(SettingScreen())
                 },
-                onLogoutClick = viewModel::onLogoutClick,
-                onAccountClick = viewModel::onAccountClick,
+                onLogoutClick = {
+                    reportClick(ProfileElements.LOGOUT)
+                    viewModel.onLogoutClick(it)
+                },
+                onAccountClick = {
+                    reportClick(ProfileElements.ACCOUNT)
+                    viewModel.onAccountClick(it)
+                },
             )
             ConsumeFlow(viewModel.openPageFlow) {
                 navigator.push(it)

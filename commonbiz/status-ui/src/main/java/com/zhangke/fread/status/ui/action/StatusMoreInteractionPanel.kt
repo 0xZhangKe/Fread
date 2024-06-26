@@ -20,7 +20,10 @@ import androidx.compose.ui.res.stringResource
 import com.zhangke.framework.browser.BrowserLauncher
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.status.model.StatusUiInteraction
+import com.zhangke.fread.status.ui.StatusDataElements
+import com.zhangke.fread.status.ui.reportStatusInteractionClickEvent
 import com.zhangke.fread.statusui.R
 
 @Composable
@@ -39,6 +42,7 @@ fun StatusMoreInteractionIcon(
             SimpleIconButton(
                 modifier = Modifier.alpha(iconAlpha),
                 onClick = {
+                    reportClick(StatusDataElements.MORE)
                     showMorePopup = !showMorePopup
                 },
                 imageVector = Icons.Default.MoreVert,
@@ -82,6 +86,7 @@ private fun InteractionItem(
             )
         },
         onClick = {
+            reportStatusInteractionClickEvent(interaction)
             if (interaction is StatusUiInteraction.Delete) {
                 showDeleteConfirmDialog = true
             } else {

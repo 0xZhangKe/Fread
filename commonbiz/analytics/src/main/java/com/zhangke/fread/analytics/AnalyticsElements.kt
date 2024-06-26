@@ -1,0 +1,42 @@
+package com.zhangke.fread.analytics
+
+object PreAddContentElements {
+    const val IMPORT = "preAddContentImport"
+    const val SEARCH = "preAddContentSearch"
+    const val ITEM = "preAddContentItem"
+    const val LOGIN = "preAddContentLogin"
+}
+
+object AddMixedFeedsElements {
+    const val ADD_SOURCE = "addMixedFeedsAddSource"
+    const val CONFIRM = "addMixedFeedsConfirm"
+    const val DELETE = "addMixedFeedsDelete"
+}
+
+object MainDrawerElements {
+    const val ADD_CONTENT = "drawerAddContent"
+    const val ITEM_EDIT = "drawerListItemEdit"
+    const val CONTENT = "drawerContent"
+}
+
+object HomeTabElements {
+    const val NEXT = "homeTabNext"
+    const val SHOW_DRAWER = "homeTabShowDrawer"
+    const val TITLE = "homeTabTitle"
+    const val TITLE_DOUBLE_CLICK = "homeTabTitleDoubleClick"
+    const val POST_STATUS = "postStatus"
+}
+
+object ProfileElements {
+    const val ADD_ACCOUNT = "profileAddAccount"
+    const val LOGOUT = "profileLogout"
+    const val SETTING = "profileSetting"
+    const val ACCOUNT = "profileAccount"
+}
+
+object SettingElements {
+    const val DARK_MODE = "settingDarkMode"
+    const val LANGUAGE = "settingLanguage"
+    const val OPEN_SOURCE = "settingOpenSource"
+}
+

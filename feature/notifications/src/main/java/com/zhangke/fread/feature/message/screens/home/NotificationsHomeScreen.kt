@@ -47,7 +47,9 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.feature.message.NotificationElements
 import com.zhangke.fread.feature.notifications.R
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -65,7 +67,12 @@ class NotificationsHomeScreen : BaseScreen() {
         ) {
             NotificationsHomeScreenContent(
                 uiState = uiState,
-                onAccountSelected = viewModel::onAccountSelected,
+                onAccountSelected = {
+                    reportClick(NotificationElements.SWITCH_ACCOUNT){
+                        put("accountCount", "${uiState.accountList.size}")
+                    }
+                    viewModel.onAccountSelected(it)
+                },
             )
         }
     }

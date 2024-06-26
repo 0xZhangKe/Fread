@@ -36,6 +36,8 @@ import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.fread.analytics.SettingElements
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.page.BaseScreen
@@ -57,10 +59,19 @@ class SettingScreen : BaseScreen() {
             uiState = uiState,
             onBackClick = navigator::pop,
             onOpenSourceClick = {
+                reportClick(SettingElements.OPEN_SOURCE)
                 navigator.push(OpenSourceScreen())
             },
-            onDayNightModeClick = viewModel::onChangeDayNightMode,
+            onDayNightModeClick = {
+                reportClick(SettingElements.DARK_MODE) {
+                    put("mode", it.name)
+                }
+                viewModel.onChangeDayNightMode(it)
+            },
             onLanguageClick = {
+                reportClick(SettingElements.LANGUAGE) {
+                    put("language", it.name)
+                }
                 viewModel.onLanguageClick(context, it)
             },
         )

@@ -75,6 +75,7 @@ fun BlogUi(
             iconAlpha = style.iconAlpha,
             interactions = bottomPanelInteractions,
             onInteractive = {
+                reportStatusInteractionClickEvent(it)
                 if (it is StatusUiInteraction.Share) {
                     ShareHelper.shareUrl(context, blog.url, blog.content)
                     return@StatusBottomInteractionPanel

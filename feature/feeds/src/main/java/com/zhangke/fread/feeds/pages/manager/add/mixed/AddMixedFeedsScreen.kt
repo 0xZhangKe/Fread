@@ -29,7 +29,6 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -42,6 +41,8 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
 import com.zhangke.framework.voyager.navigationResult
+import com.zhangke.fread.analytics.AddMixedFeedsElements
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
@@ -73,11 +74,18 @@ internal class AddMixedFeedsScreen(
             snackbarHostState = snackbarHostState,
             onBackClick = navigator::pop,
             onAddSourceClick = {
+                reportClick(AddMixedFeedsElements.ADD_SOURCE)
                 navigator.push(SearchSourceForAddScreen())
             },
-            onConfirmClick = viewModel::onConfirmClick,
+            onConfirmClick = {
+                reportClick(AddMixedFeedsElements.CONFIRM)
+                viewModel.onConfirmClick()
+            },
             onNameInputValueChanged = viewModel::onSourceNameInput,
-            onRemoveSourceClick = viewModel::onRemoveSource,
+            onRemoveSourceClick = {
+                reportClick(AddMixedFeedsElements.DELETE)
+                viewModel.onRemoveSource(it)
+            },
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.addContentSuccessFlow) {

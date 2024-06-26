@@ -11,7 +11,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -19,7 +18,9 @@ import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.explore.ExplorerElements
 import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTab
 import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTabType
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
@@ -38,14 +39,19 @@ class ExplorerHomeScreen : BaseScreen() {
         ) {
             ExplorerHomeContent(
                 uiState = uiState,
-                onAccountSelected = viewModel::onAccountSelected,
+                onAccountSelected = {
+                    reportClick(ExplorerElements.SWITCH_ACCOUNT) {
+                        put("accountCount", uiState.loggedAccountsList.size.toString())
+                    }
+                    viewModel.onAccountSelected(it)
+                },
             )
         }
     }
 
     @Composable
     private fun ExplorerHomeContent(
-        uiState: com.zhangke.fread.explore.screens.home.ExplorerHomeUiState,
+        uiState: ExplorerHomeUiState,
         onAccountSelected: (LoggedAccount) -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()

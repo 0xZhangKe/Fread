@@ -27,18 +27,19 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.fread.analytics.PreAddContentElements
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.pages.manager.importing.ImportFeedsScreen
@@ -65,17 +66,27 @@ class PreAddFeedsScreen : BaseScreen() {
             snackbarHostState = snackbarHostState,
             onBackClick = navigator::pop,
             onQueryChanged = viewModel::onQueryChanged,
-            onSearchClick = viewModel::onSearchClick,
-            onContentClick = viewModel::onContentClick,
+            onSearchClick = {
+                reportClick(PreAddContentElements.SEARCH)
+                viewModel.onSearchClick()
+            },
+            onContentClick = {
+                reportClick(PreAddContentElements.ITEM)
+                viewModel.onContentClick(it)
+            },
             onLoadingDismissRequest = viewModel::onLoadingDismissRequest,
             onImportClick = {
+                reportClick(PreAddContentElements.IMPORT)
                 navigator.push(ImportFeedsScreen())
             },
             onLoginDialogDismissRequest = viewModel::onLoginDialogDismissRequest,
             onCancelLoginDialogClick = {
                 navigator.pop()
             },
-            onLoginClick = viewModel::onLoginClick,
+            onLoginClick = {
+                reportClick(PreAddContentElements.LOGIN)
+                viewModel.onLoginClick()
+            },
         )
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.replace(it)

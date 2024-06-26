@@ -1,55 +1,39 @@
 package com.zhangke.fread.analytics
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.saveable.rememberSaveable
-import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 
-//@Composable
-//fun ObserveNavigatorForAnalytics(navigator: Navigator) {
-//    val exposedPageIdSet = remember(navigator) {
-//        mutableSetOf<String>()
-//    }
-//    val lastItem = navigator.lastItemOrNull
-//    if (lastItem != null) {
-//        val eventId = lastItem.generateEventId()
-//        Log.d("DataTracking", "last item is $eventId")
-//        if (!exposedPageIdSet.contains(eventId)) {
-//            LaunchedEffect(lastItem) {
-//                exposedPageIdSet.add(eventId)
-//                onPageShow(lastItem)
-//            }
-//        }
-//    }
-//}
+private val screenShownIdSet = mutableSetOf<String>()
+private val tabShownIdSet = mutableSetOf<String>()
 
 @Composable
 fun Screen.TrackingScreenEvent(paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {}) {
-    var pageShown by rememberSaveable {
-        mutableStateOf(false)
-    }
-    if (!pageShown) {
+    val eventId = this.generateEventId()
+    if (!screenShownIdSet.contains(eventId)) {
+        screenShownIdSet.add(eventId)
         LaunchedEffect(this) {
             onPageShow(this@TrackingScreenEvent, paramsBuilder)
         }
-        pageShown = true
+    }
+    DisposableEffect(this) {
+        onDispose { screenShownIdSet.remove(eventId) }
     }
 }
 
 @Composable
 fun PagerTab.TrackingTabEvent(paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {}) {
-    var pageShown by rememberSaveable {
-        mutableStateOf(false)
-    }
-    if (!pageShown) {
+    val eventId = this.generateEventId()
+    if (!tabShownIdSet.contains(eventId)) {
+        tabShownIdSet.add(eventId)
         LaunchedEffect(this) {
             onTabShow(this@TrackingTabEvent, paramsBuilder)
         }
-        pageShown = true
+    }
+    DisposableEffect(this) {
+        onDispose { tabShownIdSet.remove(eventId) }
     }
 }
 
@@ -74,6 +58,11 @@ private val PagerTab.pageEventName: String
     get() = this::class.java.simpleName
 
 private fun Screen?.generateEventId(): String {
+    if (this == null) return "unknownPage"
+    return "${this.javaClass.simpleName}@${this.hashCode()}"
+}
+
+private fun PagerTab?.generateEventId(): String {
     if (this == null) return "unknownPage"
     return "${this.javaClass.simpleName}@${this.hashCode()}"
 }

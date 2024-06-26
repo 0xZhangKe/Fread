@@ -25,6 +25,7 @@ import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.composable.InitErrorContent
 import com.zhangke.fread.commonbiz.shared.composable.ObserveForFeedsConnection
@@ -38,7 +39,7 @@ class ActivityPubTimelineTab(
     private val type: ActivityPubStatusSourceType,
     private val listId: String? = null,
     private val listTitle: String? = null,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -51,9 +52,9 @@ class ActivityPubTimelineTab(
         )
 
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
-        val viewModel = getViewModel<ActivityPubTimelineContainerViewModel>()
-            .getSubViewModel(role, type, listId)
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
+        val viewModel = screen.getViewModel<ActivityPubTimelineContainerViewModel>().getSubViewModel(role, type, listId)
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current
         ActivityPubTimelineContent(
@@ -97,7 +98,7 @@ class ActivityPubTimelineTab(
                 rememberLazyListState()
                 val lazyListState = state.lazyListState
                 ObserveMinReadItem(lazyListState) {
-                    uiState.items.getOrNull(it)?.let {item ->
+                    uiState.items.getOrNull(it)?.let { item ->
                         onReadMinIndex(item)
                     }
                 }

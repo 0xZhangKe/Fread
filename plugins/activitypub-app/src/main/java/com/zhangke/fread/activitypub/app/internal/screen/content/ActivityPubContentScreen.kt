@@ -36,11 +36,11 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
-import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
@@ -50,6 +50,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetail
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusTab
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
@@ -59,17 +60,19 @@ import kotlinx.coroutines.launch
 class ActivityPubContentScreen(
     private val configId: Long,
     private val isLatestContent: Boolean,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions?
         @Composable get() = null
 
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
+        val viewModel = screen.getViewModel<ActivityPubContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubContentUi(
+            screen = screen,
             uiState = uiState,
             onTitleClick = {
                 navigator.push(InstanceDetailScreen(PlatformDetailRoute.buildRoute(it.baseUrl)))
@@ -82,7 +85,8 @@ class ActivityPubContentScreen(
 
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
-    private fun Screen.ActivityPubContentUi(
+    private fun ActivityPubContentUi(
+        screen: Screen,
         uiState: ActivityPubContentUiState,
         onTitleClick: (ContentConfig.ActivityPubContent) -> Unit,
         onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
@@ -186,9 +190,7 @@ class ActivityPubContentScreen(
                                 modifier = Modifier.fillMaxSize(),
                                 state = pagerState,
                             ) { pageIndex ->
-                                with(tabList[pageIndex]) {
-                                    TabContent(null)
-                                }
+                                tabList[pageIndex].TabContent(screen, null)
                             }
                         }
                     } else if (errorMessage.isNullOrBlank().not()) {

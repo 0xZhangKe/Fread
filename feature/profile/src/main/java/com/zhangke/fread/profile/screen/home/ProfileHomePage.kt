@@ -30,7 +30,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -54,7 +53,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.ProfileElements
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.analytics.reportPageShow
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.fread.profile.R
@@ -72,11 +70,6 @@ class ProfileHomePage : BaseScreen() {
         val viewModel = getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val rootNavigator = LocalNavigator.currentOrThrow.rootNavigator
-        LaunchedEffect(uiState.accountDataList) {
-            reportPageShow("ProfileHomePage") {
-                put("accountCount", uiState.accountDataList.size.toString())
-            }
-        }
         CompositionLocalProvider(
             LocalNavigator provides rootNavigator
         ) {

@@ -26,6 +26,8 @@ object StatusDataElements {
     const val HASHTAG = "statusHashtag"
     const val MENTION = "statusMention"
     const val CONTENT = "statusContent"
+
+    const val OPEN_IN_BROWSER = "statusOpenInBrowser"
 }
 
 fun reportStatusInteractionClickEvent(interaction: StatusUiInteraction) {

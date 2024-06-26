@@ -50,7 +50,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetail
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusTab
-import com.zhangke.fread.analytics.AnalyticsElements
 import com.zhangke.fread.analytics.HomeTabElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab

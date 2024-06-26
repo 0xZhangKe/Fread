@@ -17,8 +17,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -30,15 +30,16 @@ import kotlinx.coroutines.launch
 class MixedContentScreen(
     private val configId: Long,
     private val isLatestTab: Boolean,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions?
         @Composable get() = null
 
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
         val snackbarHostState = LocalSnackbarHostState.current
-        val viewModel = getViewModel<MixedContentViewModel>().getSubViewModel(configId)
+        val viewModel = screen.getViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         val configUiState by viewModel.configUiState.collectAsState()
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

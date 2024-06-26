@@ -36,6 +36,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.pxToDp
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.explore.R
 import com.zhangke.fread.explore.model.ExplorerItem
@@ -48,7 +49,7 @@ import com.zhangke.fread.status.ui.hashtag.HashtagUi
 class ExplorerFeedsTab(
     private val type: ExplorerFeedsTabType,
     private val role: IdentityRole,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -60,10 +61,12 @@ class ExplorerFeedsTab(
         )
 
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel =
+        val viewModel = with(screen) {
             getViewModel<ExplorerFeedsContainerViewModel>().getSubViewModel(type, role)
+        }
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

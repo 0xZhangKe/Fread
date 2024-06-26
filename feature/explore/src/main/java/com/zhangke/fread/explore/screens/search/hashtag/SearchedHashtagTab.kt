@@ -24,12 +24,13 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.explore.R
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 
-class SearchedHashtagTab(private val role: IdentityRole, private val query: String) : PagerTab {
+class SearchedHashtagTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -38,10 +39,13 @@ class SearchedHashtagTab(private val role: IdentityRole, private val query: Stri
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<SearchHashtagViewModel, SearchHashtagViewModel.Factory> {
-            it.create(role)
+        val viewModel = with(screen) {
+            getViewModel<SearchHashtagViewModel, SearchHashtagViewModel.Factory> {
+                it.create(role)
+            }
         }
         val uiState by viewModel.uiState.collectAsState()
 

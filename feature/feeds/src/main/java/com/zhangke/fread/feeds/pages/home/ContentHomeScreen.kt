@@ -75,7 +75,7 @@ class ContentHomeScreen : BaseScreen() {
                         Text(text = "Error! can't find any tab fro this config!")
                     } else {
                         with(currentScreen) {
-                            TabContent(null)
+                            TabContent(this@ContentHomeScreen, null)
                         }
                     }
                 }

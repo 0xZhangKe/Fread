@@ -7,6 +7,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.composable.PagerTab
 
 //@Composable
 //fun ObserveNavigatorForAnalytics(navigator: Navigator) {
@@ -39,6 +40,19 @@ fun Screen.TrackingScreenEvent(paramsBuilder: (TrackingEventDataBuilder.() -> Un
     }
 }
 
+@Composable
+fun PagerTab.TrackingTabEvent(paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {}) {
+    var pageShown by rememberSaveable {
+        mutableStateOf(false)
+    }
+    if (!pageShown) {
+        LaunchedEffect(this) {
+            onTabShow(this@TrackingTabEvent, paramsBuilder)
+        }
+        pageShown = true
+    }
+}
+
 private fun onPageShow(
     screen: Screen,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit),
@@ -46,7 +60,17 @@ private fun onPageShow(
     reportPageShow(screen.pageEventName, paramsBuilder)
 }
 
+private fun onTabShow(
+    tab: PagerTab,
+    paramsBuilder: (TrackingEventDataBuilder.() -> Unit),
+) {
+    reportPageShow(tab.pageEventName, paramsBuilder)
+}
+
 private val Screen.pageEventName: String
+    get() = this::class.java.simpleName
+
+private val PagerTab.pageEventName: String
     get() = this::class.java.simpleName
 
 private fun Screen?.generateEventId(): String {

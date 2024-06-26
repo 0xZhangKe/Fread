@@ -26,6 +26,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
@@ -33,7 +34,7 @@ import com.zhangke.fread.explore.R
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 
-class SearchedStatusTab(private val role: IdentityRole, private val query: String) : PagerTab {
+class SearchedStatusTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -42,9 +43,10 @@ class SearchedStatusTab(private val role: IdentityRole, private val query: Strin
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        val viewModel = getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {
+        val viewModel = screen.getViewModel<SearchStatusViewModel, SearchStatusViewModel.Factory> {
             it.create(role)
         }
         val uiState by viewModel.uiState.collectAsState()

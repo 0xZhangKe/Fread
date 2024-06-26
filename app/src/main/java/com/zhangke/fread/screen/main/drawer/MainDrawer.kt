@@ -2,6 +2,7 @@ package com.zhangke.fread.screen.main.drawer
 
 import android.content.Context
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -33,11 +34,18 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -192,7 +200,7 @@ private fun ContentConfigItem(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1F)
-                .padding(top = 6.dp, bottom = 6.dp, end = 4.dp),
+                .padding(top = 16.dp, bottom = 6.dp, end = 4.dp),
         ) {
             Text(
                 modifier = Modifier,
@@ -201,51 +209,80 @@ private fun ContentConfigItem(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
+            Spacer(modifier = Modifier.height(4.dp))
             val context = LocalContext.current
-            val subtitle = remember(contentConfig) {
-                buildSubtitle(context, contentConfig)
+            when (contentConfig) {
+                is ContentConfig.ActivityPubContent -> {
+                    Row (verticalAlignment = Alignment.CenterVertically){
+                        Image(
+                            modifier = Modifier.size(14.dp),
+                            painter = painterResource(com.zhangke.fread.commonbiz.R.drawable.mastodon_logo),
+                            contentDescription = null,
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                                .align(Alignment.Bottom),
+                            text = contentConfig.baseUrl.host,
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+
+                is ContentConfig.MixedContent -> {
+                    Text(
+                        modifier = Modifier,
+                        text = buildSubtitle(context, contentConfig),
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
-            Text(
-                modifier = Modifier.padding(top = 4.dp),
-                text = subtitle,
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
         }
         SimpleIconButton(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .size(24.dp),
+                .size(24.dp)
+                .alpha(0.7F)
+                .padding(2.dp),
             onClick = { onEditClick(contentConfig) },
             painter = painterResource(com.zhangke.fread.statusui.R.drawable.ic_mode_edit),
             contentDescription = "Edit Content Config",
         )
-        Spacer(modifier = Modifier.width(8.dp))
+        Spacer(modifier = Modifier.width(16.dp))
         Icon(
             modifier = Modifier
                 .align(Alignment.CenterVertically)
-                .size(24.dp),
+                .size(24.dp)
+                .alpha(0.7F)
+                .padding(2.dp),
             painter = painterResource(com.zhangke.fread.statusui.R.drawable.ic_drag_indicator),
             contentDescription = "Edit Content Config",
         )
     }
 }
 
-private fun buildSubtitle(context: Context, config: ContentConfig): String {
-    return when (config) {
-        is ContentConfig.MixedContent -> {
-            context.getString(
-                R.string.main_drawer_mixed_item_subtitle,
-                config.sourceUriList.size.toString(),
-            )
-        }
-
-        is ContentConfig.ActivityPubContent -> {
-            context.getString(
-                R.string.main_drawer_mastodon_subtitle,
-                config.baseUrl.host,
-            )
-        }
+private fun buildSubtitle(
+    context: Context,
+    config: ContentConfig.MixedContent,
+): AnnotatedString {
+    return buildAnnotatedString {
+        val prefix = context.getString(R.string.main_drawer_mixed_item_subtitle_1)
+        val suffix = context.getString(R.string.main_drawer_mixed_item_subtitle_2)
+        append(prefix)
+        val sizeString = " " + config.sourceUriList.size.toString() + " "
+        append(sizeString)
+        addStyle(
+            style = SpanStyle(
+                fontSize = 14.sp,
+                fontWeight = FontWeight.Medium,
+            ),
+            start = prefix.length,
+            end = prefix.length + sizeString.length,
+        )
+        append(suffix)
     }
 }

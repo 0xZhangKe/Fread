@@ -150,7 +150,7 @@ class PreAddFeedsScreen : BaseScreen() {
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 22.dp, top = 36.dp, end = 22.dp),
+                        .padding(start = 22.dp, top = 24.dp, end = 22.dp),
                     value = uiState.query,
                     onValueChange = onQueryChanged,
                     maxLines = 1,

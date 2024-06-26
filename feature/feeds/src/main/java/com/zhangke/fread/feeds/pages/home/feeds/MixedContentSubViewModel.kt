@@ -1,11 +1,10 @@
 package com.zhangke.fread.feeds.pages.home.feeds
 
-import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.krouter.KRouter
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -16,6 +15,7 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
+import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -94,7 +94,7 @@ class MixedContentSubViewModel(
         val mixedContent = mixedContent ?: return
         statusProvider.screenProvider
             .getPlatformDetailScreenRoute(mixedContent)
-            ?.let { KRouter.route<Screen>(it) }
+            ?.let { KRouter.routeScreen(it) }
             ?.let { screen ->
                 launchInViewModel { mutableOpenScreenFlow.emit(screen) }
             }

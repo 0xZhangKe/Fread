@@ -23,8 +23,7 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.voyager.tryPush
+import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.explore.R
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole

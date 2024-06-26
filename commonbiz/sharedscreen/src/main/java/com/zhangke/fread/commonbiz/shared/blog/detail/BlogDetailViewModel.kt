@@ -3,6 +3,7 @@ package com.zhangke.fread.commonbiz.shared.blog.detail
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInScreenModel
+import com.zhangke.fread.common.routeScreen
 import com.zhangke.krouter.KRouter
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
@@ -22,7 +23,7 @@ class BlogDetailViewModel @Inject constructor(
         launchInScreenModel {
             statusProvider.screenProvider
                 .getUserDetailRoute(IdentityRole.nonIdentityRole, author.uri)
-                ?.let { KRouter.route<Screen>(it) }
+                ?.let { KRouter.routeScreen(it) }
                 ?.let { _openScreenFlow.emit(it) }
         }
     }

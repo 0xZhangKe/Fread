@@ -3,6 +3,7 @@ package com.zhangke.fread.screen.main.drawer
 import cafe.adriel.voyager.core.model.ScreenModel
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInScreenModel
+import com.zhangke.fread.common.routeScreen
 import com.zhangke.krouter.KRouter
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
@@ -52,7 +53,7 @@ class MainDrawerScreenModel @Inject constructor(
 
                 is ContentConfig.ActivityPubContent -> {
                     statusProvider.screenProvider.getEditContentConfigScreenRoute(contentConfig)
-                        ?.let { KRouter.route<Screen>(it) }
+                        ?.let { KRouter.routeScreen(it) }
                         ?.let { _openScreenFlow.emit(it) }
                 }
             }

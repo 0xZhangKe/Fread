@@ -42,6 +42,11 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.bundles.voyager)
 
+    implementation(libs.bundles.voyager)
+
+    implementation(libs.krouter.core)
+    ksp(libs.krouter.compiler)
+
     implementation(libs.filt.annotaions)
     ksp(libs.filt.compiler)
 

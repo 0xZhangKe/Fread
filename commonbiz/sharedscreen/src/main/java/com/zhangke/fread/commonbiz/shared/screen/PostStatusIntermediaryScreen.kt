@@ -5,14 +5,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.voyager.pushDestination
+import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.platform.BlogPlatform

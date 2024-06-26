@@ -26,7 +26,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.framework.voyager.tryPush
+import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.explore.R

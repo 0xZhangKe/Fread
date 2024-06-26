@@ -7,6 +7,7 @@ import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.routeScreen
 import com.zhangke.krouter.KRouter
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.Hashtag
@@ -60,7 +61,7 @@ open class SearchHashtagViewModel @AssistedInject constructor(
         launchInViewModel {
             val route = statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag.name, hashtag.protocol)
                 ?: return@launchInViewModel
-            KRouter.route<Screen>(route)?.let {
+            KRouter.routeScreen(route)?.let {
                 _openScreenFlow.emit(it)
             }
         }

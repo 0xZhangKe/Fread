@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -224,7 +225,7 @@ class InteractiveHandler(
     }
 
     private fun tryOpenScreenByRoute(route: String) = coroutineScope.launch {
-        KRouter.route<Screen>(route)
+        KRouter.routeScreen(route)
             ?.let { mutableOpenScreenFlow.emit(it) }
     }
 }

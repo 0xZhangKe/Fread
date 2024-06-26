@@ -5,12 +5,13 @@ import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.krouter.KRouter
+import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.krouter.KRouter
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -81,7 +82,7 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
-                ?.let { KRouter.route<Screen>(it) }
+                ?.let { KRouter.routeScreen(it) }
                 ?.let { _openPageFlow.emit(it) }
         }
     }

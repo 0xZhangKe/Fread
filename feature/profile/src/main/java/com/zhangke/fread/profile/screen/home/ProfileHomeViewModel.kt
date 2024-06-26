@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.analytics.reportInfo
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.StatusProvider
@@ -60,6 +61,9 @@ class ProfileHomeViewModel @Inject constructor(
                         }
                     }
                     latestAccountList = newAccountList
+                    reportInfo {
+                        put("accountCount", newAccountList.size.toString())
+                    }
                 }
         }
     }

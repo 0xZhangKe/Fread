@@ -9,7 +9,7 @@ class TrackingEventDataBuilder : MutableMap<String, String> by mutableMapOf() {
     }
 
     fun putPageName(pageName: String) {
-        put(EventNames.pageShow, pageName)
+        put(EventNames.PAGE_SHOW, pageName)
     }
 
     fun build(): Map<String, String> = this

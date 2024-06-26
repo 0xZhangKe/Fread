@@ -4,20 +4,21 @@ import android.os.Bundle
 
 object EventNames {
 
-    const val pageShow = "page_show"
-    const val click = "click"
+    const val PAGE_SHOW = "page_show"
+    const val CLICK = "click"
+    const val INFO = "info"
 }
 
 object EventParamsName {
 
-    const val pageName = "page_name"
-    const val element = "element"
+    const val PAGE_NAME = "page_name"
+    const val ELEMENT = "element"
 }
 
 fun Bundle.putPageName(pageName: String) {
-    putString(EventParamsName.pageName, pageName)
+    putString(EventParamsName.PAGE_NAME, pageName)
 }
 
 fun Bundle.putElement(element: String) {
-    putString(EventParamsName.element, element)
+    putString(EventParamsName.ELEMENT, element)
 }

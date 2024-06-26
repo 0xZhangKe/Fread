@@ -60,7 +60,10 @@ fun StatusMoreInteractionIcon(
                         onActionClick = onActionClick,
                     )
                 }
-                AdditionalMoreOptions(blogUrl)
+                AdditionalMoreOptions(
+                    blogUrl = blogUrl,
+                    onDismissRequest = { showMorePopup = false },
+                )
             }
         }
     }
@@ -116,7 +119,10 @@ private fun InteractionItem(
 }
 
 @Composable
-private fun AdditionalMoreOptions(blogUrl: String) {
+private fun AdditionalMoreOptions(
+    blogUrl: String,
+    onDismissRequest: () -> Unit,
+) {
     val context = LocalContext.current
     DropdownMenuItem(
         text = {
@@ -129,6 +135,7 @@ private fun AdditionalMoreOptions(blogUrl: String) {
             )
         },
         onClick = {
+            reportClick(StatusDataElements.OPEN_IN_BROWSER)
             BrowserLauncher.launchWebTabInApp(context, blogUrl)
         },
     )

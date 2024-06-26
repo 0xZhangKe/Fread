@@ -7,8 +7,6 @@
 
     <string name="main_drawer_title">Content List</string>
 
-    <string name="main_drawer_mixed_item_subtitle">Mixed Content · %s Sources</string>
-
-    <string name="main_drawer_mastodon_subtitle">Mastodon: %s</string>
-
+    <string name="main_drawer_mixed_item_subtitle_1">Mixed Content ·</string>
+    <string name="main_drawer_mixed_item_subtitle_2">Sources</string>
 </resources>

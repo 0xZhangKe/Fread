@@ -38,33 +38,31 @@ fun StatusMoreInteractionIcon(
         mutableStateOf(false)
     }
     Box(modifier = modifier) {
-        if (moreActionList.isNotEmpty()) {
-            SimpleIconButton(
-                modifier = Modifier.alpha(iconAlpha),
-                onClick = {
-                    reportClick(StatusDataElements.MORE)
-                    showMorePopup = !showMorePopup
-                },
-                imageVector = Icons.Default.MoreVert,
-                contentDescription = "More",
-            )
+        SimpleIconButton(
+            modifier = Modifier.alpha(iconAlpha),
+            onClick = {
+                reportClick(StatusDataElements.MORE)
+                showMorePopup = !showMorePopup
+            },
+            imageVector = Icons.Default.MoreVert,
+            contentDescription = "More",
+        )
 
-            DropdownMenu(
-                expanded = showMorePopup,
-                onDismissRequest = { showMorePopup = false },
-            ) {
-                moreActionList.forEach { interaction ->
-                    InteractionItem(
-                        interaction = interaction,
-                        onDismissRequest = { showMorePopup = false },
-                        onActionClick = onActionClick,
-                    )
-                }
-                AdditionalMoreOptions(
-                    blogUrl = blogUrl,
+        DropdownMenu(
+            expanded = showMorePopup,
+            onDismissRequest = { showMorePopup = false },
+        ) {
+            moreActionList.forEach { interaction ->
+                InteractionItem(
+                    interaction = interaction,
                     onDismissRequest = { showMorePopup = false },
+                    onActionClick = onActionClick,
                 )
             }
+            AdditionalMoreOptions(
+                blogUrl = blogUrl,
+                onDismissRequest = { showMorePopup = false },
+            )
         }
     }
 }
@@ -136,6 +134,7 @@ private fun AdditionalMoreOptions(
         },
         onClick = {
             reportClick(StatusDataElements.OPEN_IN_BROWSER)
+            onDismissRequest()
             BrowserLauncher.launchWebTabInApp(context, blogUrl)
         },
     )

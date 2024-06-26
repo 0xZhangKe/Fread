@@ -7,7 +7,6 @@
 
     <string name="main_drawer_title">内容列表</string>
 
-    <string name="main_drawer_mixed_item_subtitle">混合内容 · %s 条订阅源</string>
-
-    <string name="main_drawer_mastodon_subtitle">长毛象：%s</string>
+    <string name="main_drawer_mixed_item_subtitle_1">混合内容 ·</string>
+    <string name="main_drawer_mixed_item_subtitle_2">条订阅源</string>
 </resources>

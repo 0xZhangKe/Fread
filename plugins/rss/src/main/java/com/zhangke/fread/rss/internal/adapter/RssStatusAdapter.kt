@@ -29,11 +29,11 @@ class RssStatusAdapter @Inject constructor(
             blog = rssItem.toBlog(uriInsight, source),
             supportInteraction = listOf(
                 // TODO support book mark
-                StatusInteraction.Bookmark(
-                    bookmarkCount = null,
-                    bookmarked = false,
-                    enable = true,
-                ),
+//                StatusInteraction.Bookmark(
+//                    bookmarkCount = null,
+//                    bookmarked = false,
+//                    enable = true,
+//                ),
             ),
         )
     }

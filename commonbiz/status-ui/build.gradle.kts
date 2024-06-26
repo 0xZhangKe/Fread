@@ -23,6 +23,7 @@ dependencies {
 
     implementation(project(path = ":framework"))
     implementation(project(path = ":commonbiz"))
+    implementation(project(":commonbiz:analytics"))
     implementation(project(path = ":bizframework:status-provider"))
 
     implementation(libs.bundles.kotlin)

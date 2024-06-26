@@ -16,6 +16,17 @@ fun reportPageShow(
     reportToFireBase(EventNames.pageShow, bundle)
 }
 
+fun reportClick(
+    element: String,
+    paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {},
+) {
+    val builder = TrackingEventDataBuilder()
+    builder.paramsBuilder()
+    val bundle = builder.toBundle()
+    bundle.putElement(element)
+    reportToFireBase(EventNames.click, bundle)
+}
+
 fun report(eventName: String, paramsBuilder: Bundle.() -> Unit) {
     val bundle = Bundle()
     bundle.paramsBuilder()

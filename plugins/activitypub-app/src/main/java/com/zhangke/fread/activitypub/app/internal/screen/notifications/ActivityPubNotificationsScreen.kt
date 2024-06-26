@@ -35,8 +35,10 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.internal.ApNotificationElements
 import com.zhangke.fread.activitypub.app.internal.composable.notifications.StatusNotificationUi
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
@@ -57,7 +59,14 @@ class ActivityPubNotificationsScreen(
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubNotificationsContent(
             uiState = uiState,
-            onTabCheckedChange = viewModel::onTabCheckedChange,
+            onTabCheckedChange = {
+                if (it) {
+                    reportClick(ApNotificationElements.MENTION)
+                } else {
+                    reportClick(ApNotificationElements.ALL)
+                }
+                viewModel.onTabCheckedChange(it)
+            },
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onRejectClick = viewModel::onRejectClick,

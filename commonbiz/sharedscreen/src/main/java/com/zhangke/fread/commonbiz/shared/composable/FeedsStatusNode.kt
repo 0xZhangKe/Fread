@@ -6,8 +6,10 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.status.ui.StatusDataElements
 import com.zhangke.fread.status.ui.StatusUi
 
 @Composable
@@ -21,6 +23,7 @@ fun FeedsStatusNode(
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
+            reportClick(StatusDataElements.CONTENT)
             composedStatusInteraction.onStatusClick(status)
         },
         status = status,

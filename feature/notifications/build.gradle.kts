@@ -26,6 +26,7 @@ dependencies {
     implementation(project(":commonbiz:analytics"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":commonbiz:sharedscreen"))
+    implementation(project(":commonbiz:analytics"))
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)

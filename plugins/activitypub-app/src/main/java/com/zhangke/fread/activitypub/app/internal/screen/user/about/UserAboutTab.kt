@@ -20,11 +20,11 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubField
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -33,7 +33,7 @@ class UserAboutTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
     private val userWebFinger: WebFinger,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -41,9 +41,9 @@ class UserAboutTab(
         )
 
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
-        val viewModel =
-            getViewModel<UserAboutContainerViewModel>().getViewModel(role, userWebFinger)
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
+        val viewModel = screen.getViewModel<UserAboutContainerViewModel>().getViewModel(role, userWebFinger)
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(
             uiState = uiState,

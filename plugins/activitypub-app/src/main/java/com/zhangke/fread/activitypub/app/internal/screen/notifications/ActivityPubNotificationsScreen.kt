@@ -30,7 +30,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
@@ -38,22 +37,23 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.notifications.StatusNotificationUi
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 
 class ActivityPubNotificationsScreen(
     private val userUriInsights: UserUriInsights,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions?
         @Composable get() = null
 
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = LocalSnackbarHostState.current
-        val viewModel = getViewModel<ActivityPubNotificationsViewModel>()
-            .getSubViewModel(userUriInsights)
+        val viewModel = screen.getViewModel<ActivityPubNotificationsViewModel>().getSubViewModel(userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubNotificationsContent(
             uiState = uiState,

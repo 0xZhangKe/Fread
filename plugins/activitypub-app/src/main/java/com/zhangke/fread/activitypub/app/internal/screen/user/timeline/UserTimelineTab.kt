@@ -29,13 +29,13 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.EmptyListContent
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
 import com.zhangke.fread.commonbiz.shared.composable.InitErrorContent
@@ -48,7 +48,7 @@ class UserTimelineTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
     private val userWebFinger: WebFinger,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() {
@@ -61,8 +61,9 @@ class UserTimelineTab(
         }
 
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
-        val viewModel = getViewModel<UserTimelineContainerViewModel>().getSubViewModel(
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
+        val viewModel = screen.getViewModel<UserTimelineContainerViewModel>().getSubViewModel(
             tabType = tabType,
             role = role,
             webFinger = userWebFinger,

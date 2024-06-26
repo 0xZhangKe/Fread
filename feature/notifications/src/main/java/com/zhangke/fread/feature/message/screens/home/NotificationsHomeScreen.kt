@@ -145,7 +145,7 @@ class NotificationsHomeScreen : BaseScreen() {
                             userScrollEnabled = false,
                         ) { pageIndex ->
                             with(accountToTabList[pageIndex].second) {
-                                TabContent(null)
+                                TabContent(this@NotificationsHomeScreen, null)
                             }
                         }
                     }

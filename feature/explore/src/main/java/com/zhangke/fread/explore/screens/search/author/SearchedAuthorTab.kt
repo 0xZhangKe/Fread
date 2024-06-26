@@ -23,6 +23,7 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.explore.R
 import com.zhangke.fread.status.author.BlogAuthor
@@ -32,7 +33,7 @@ import com.zhangke.fread.status.ui.BlogAuthorUi
 class SearchedAuthorTab(
     private val role: IdentityRole,
     private val query: String,
-) : PagerTab {
+) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
@@ -41,9 +42,10 @@ class SearchedAuthorTab(
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
-    override fun Screen.TabContent(nestedScrollConnection: NestedScrollConnection?) {
+    override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
+        super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<SearchAuthorViewModel, SearchAuthorViewModel.Factory> {
+        val viewModel = screen.getViewModel<SearchAuthorViewModel, SearchAuthorViewModel.Factory> {
             it.create(role)
         }
         val uiState by viewModel.uiState.collectAsState()

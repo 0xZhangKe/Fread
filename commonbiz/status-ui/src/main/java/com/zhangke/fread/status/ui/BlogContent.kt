@@ -29,15 +29,16 @@ import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
@@ -65,8 +66,14 @@ fun BlogContent(
         BlogTextContentSection(
             blog = blog,
             style = style,
-            onHashtagInStatusClick = onHashtagInStatusClick,
-            onMentionClick = onMentionClick,
+            onHashtagInStatusClick = {
+                reportClick(StatusDataElements.HASHTAG)
+                onHashtagInStatusClick(it)
+            },
+            onMentionClick = {
+                reportClick(StatusDataElements.MENTION)
+                onMentionClick(it)
+            },
             textSelectable = textSelectable,
         )
         val sensitive = blog.sensitive
@@ -78,7 +85,16 @@ fun BlogContent(
                 mediaList = blog.mediaList,
                 indexInList = indexOfFeeds,
                 sensitive = sensitive,
-                onMediaClick = onMediaClick,
+                onMediaClick = {
+                    reportClick(StatusDataElements.MEDIA) {
+                        val mediaType = when (it) {
+                            is BlogMediaClickEvent.BlogImageClickEvent -> "image"
+                            is BlogMediaClickEvent.BlogVideoClickEvent -> "video"
+                        }
+                        put("mediaType", mediaType)
+                    }
+                    onMediaClick(it)
+                },
             )
         }
         if (blog.poll != null) {
@@ -86,7 +102,10 @@ fun BlogContent(
             BlogPoll(
                 modifier = Modifier.fillMaxWidth(),
                 poll = blog.poll!!,
-                onVoted = onVoted,
+                onVoted = {
+                    reportClick(StatusDataElements.VOTE)
+                    onVoted(it)
+                },
             )
         }
     }

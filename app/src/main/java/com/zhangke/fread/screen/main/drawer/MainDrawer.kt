@@ -45,6 +45,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.R
+import com.zhangke.fread.analytics.MainDrawerElements
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.status.model.ContentConfig
@@ -68,17 +70,20 @@ fun Screen.MainDrawer(
         uiState = uiState,
         onContentConfigClick = {
             onDismissRequest()
+            reportClick(MainDrawerElements.CONTENT)
             coroutineScope.launch {
                 mainTabConnection.scrollToContentTab(it)
             }
         },
         onAddContentClick = {
             onDismissRequest()
+            reportClick(MainDrawerElements.ADD_CONTENT)
             navigator.push(PreAddFeedsScreen())
         },
         onMove = viewModel::onContentConfigMove,
         onEditClick = {
             onDismissRequest()
+            reportClick(MainDrawerElements.ITEM_EDIT)
             viewModel.onContentConfigEditClick(it)
         },
     )

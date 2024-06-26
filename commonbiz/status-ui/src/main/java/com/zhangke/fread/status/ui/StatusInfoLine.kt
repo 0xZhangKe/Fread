@@ -28,6 +28,7 @@ import coil.compose.AsyncImagePainter
 import coil.imageLoader
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.startPadding
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
@@ -55,7 +56,10 @@ fun StatusInfoLine(
 ) {
     val infoStyle = style.statusInfoStyle
     ConstraintLayout(modifier = modifier
-        .clickable { onUserInfoClick(blogAuthor) }
+        .clickable {
+            reportClick(StatusDataElements.USER_INFO)
+            onUserInfoClick(blogAuthor)
+        }
         .startPadding(style.containerPaddings)) {
         val (
             avatar,
@@ -93,6 +97,7 @@ fun StatusInfoLine(
                     start.linkTo(parent.start)
                 },
             onClick = {
+                reportClick(StatusDataElements.USER_INFO)
                 onUserInfoClick(blogAuthor)
             },
             reblogAvatar = reblogAuthor?.avatar,

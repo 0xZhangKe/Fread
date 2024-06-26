@@ -18,6 +18,9 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.fread.analytics.AnalyticsElements
+import com.zhangke.fread.analytics.HomeTabElements
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
@@ -77,17 +80,23 @@ class MixedContentScreen(
                     showNextIcon = !isLatestTab,
                     scrollBehavior = scrollBehavior,
                     onMenuClick = {
+                        reportClick(HomeTabElements.SHOW_DRAWER)
                         coroutineScope.launch {
                             mainTabConnection.openDrawer()
                         }
                     },
                     onNextClick = {
+                        reportClick(HomeTabElements.NEXT)
                         coroutineScope.launch {
                             mainTabConnection.switchToNextTab()
                         }
                     },
-                    onTitleClick = onTitleClick,
+                    onTitleClick = {
+                        reportClick(HomeTabElements.TITLE)
+                        onTitleClick()
+                    },
                     onDoubleClick = {
+                        reportClick(HomeTabElements.TITLE_DOUBLE_CLICK)
                         coroutineScope.launch {
                             mainTabConnection.scrollToTop()
                         }

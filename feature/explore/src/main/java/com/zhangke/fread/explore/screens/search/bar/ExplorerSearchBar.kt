@@ -53,7 +53,9 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
+import com.zhangke.fread.explore.ExplorerElements
 import com.zhangke.fread.explore.R
 import com.zhangke.fread.explore.screens.search.SearchScreen
 import com.zhangke.fread.status.account.LoggedAccount
@@ -134,6 +136,9 @@ fun Screen.ExplorerSearchBar(
         active = active,
         onActiveChange = {
             active = it
+            reportClick(ExplorerElements.SEARCH) {
+                put("active", "$it")
+            }
         },
     ) {
         if (active) {

@@ -27,6 +27,7 @@ dependencies {
     implementation(project(path = ":bizframework:status-provider"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":commonbiz:sharedscreen"))
+    implementation(project(":commonbiz:analytics"))
     api(project(path = ":ActivityPub-Kotlin"))
 
     implementation(libs.bundles.kotlin)

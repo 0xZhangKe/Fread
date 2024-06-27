@@ -18,10 +18,10 @@ Mastodon android client
 ```
 
 # Build
-
-temporal release key: app-key
-password: 123456
-alias: key0
+release-key: save in onedrive
+password and alias in 1password
+name is fread/zhangke-keystore.jks
+same with NotionLight
 
 # StatusProviderUri
 

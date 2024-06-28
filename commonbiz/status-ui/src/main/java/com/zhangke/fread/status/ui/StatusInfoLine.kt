@@ -173,7 +173,6 @@ fun StatusInfoLine(
                 top.linkTo(parent.top)
             },
             blogUrl = blogUrl,
-            iconAlpha = style.iconAlpha,
             moreActionList = moreInteractions,
             onActionClick = onInteractive,
         )

@@ -22,7 +22,6 @@ import com.zhangke.fread.common.status.model.StatusUiInteraction
 @Composable
 fun StatusBottomInteractionPanel(
     modifier: Modifier = Modifier,
-    iconAlpha: Float,
     interactions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
 ) {
@@ -46,9 +45,7 @@ fun StatusBottomInteractionPanel(
                     else -> Alignment.Center
                 }
                 StatusActionIcon(
-                    modifier = Modifier
-                        .align(alignment)
-                        .alpha(iconAlpha),
+                    modifier = Modifier.align(alignment),
                     imageVector = interaction.logo,
                     enabled = interaction.enabled,
                     contentDescription = interaction.actionName,
@@ -81,21 +78,23 @@ private fun StatusActionIcon(
         Row(
             verticalAlignment = Alignment.CenterVertically,
         ) {
+            val contentColor = if (highLight) {
+                MaterialTheme.colorScheme.tertiary
+            } else {
+                LocalContentColor.current
+            }
             Icon(
                 modifier = Modifier.size(18.dp),
                 imageVector = imageVector,
                 contentDescription = contentDescription,
-                tint = if (highLight) {
-                    MaterialTheme.colorScheme.primary
-                } else {
-                    LocalContentColor.current
-                },
+                tint = contentColor,
             )
             if (text != null) {
                 Text(
                     modifier = Modifier.padding(start = 2.dp),
                     text = text,
                     maxLines = 1,
+                    color = contentColor,
                     style = MaterialTheme.typography.labelMedium,
                 )
             }

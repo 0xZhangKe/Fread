@@ -30,7 +30,6 @@ import com.zhangke.fread.statusui.R
 fun StatusMoreInteractionIcon(
     modifier: Modifier,
     blogUrl: String,
-    iconAlpha: Float,
     moreActionList: List<StatusUiInteraction>,
     onActionClick: (StatusUiInteraction) -> Unit,
 ) {
@@ -39,7 +38,7 @@ fun StatusMoreInteractionIcon(
     }
     Box(modifier = modifier) {
         SimpleIconButton(
-            modifier = Modifier.alpha(iconAlpha),
+            modifier = Modifier,
             onClick = {
                 reportClick(StatusDataElements.MORE)
                 showMorePopup = !showMorePopup

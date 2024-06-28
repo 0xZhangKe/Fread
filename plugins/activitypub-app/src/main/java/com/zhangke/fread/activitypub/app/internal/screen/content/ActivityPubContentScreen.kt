@@ -13,7 +13,9 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -121,10 +123,11 @@ class ActivityPubContentScreen(
                             onClick = {
                                 reportClick(HomeTabElements.POST_STATUS)
                                 onPostBlogClick(account)
-                            }
+                            },
+                            shape = CircleShape,
                         ) {
                             Icon(
-                                imageVector = Icons.Default.Edit,
+                                imageVector = Icons.Default.Add,
                                 contentDescription = "Post Micro Blog",
                             )
                         }

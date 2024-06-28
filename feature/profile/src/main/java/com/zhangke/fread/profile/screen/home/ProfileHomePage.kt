@@ -152,9 +152,6 @@ class ProfileHomePage : BaseScreen() {
                     .fillMaxWidth()
                     .height(56.dp),
                 onClick = onAddAccountClick,
-                colors = ButtonDefaults.textButtonColors(
-                    containerColor = MaterialTheme.colorScheme.primaryContainer,
-                ),
             ) {
                 Icon(
                     imageVector = Icons.Default.Add,

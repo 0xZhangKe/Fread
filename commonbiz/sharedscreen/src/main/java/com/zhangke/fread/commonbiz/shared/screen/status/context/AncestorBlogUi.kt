@@ -9,6 +9,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
@@ -110,6 +111,8 @@ fun AncestorBlogUi(
                     bottom.linkTo(guideline.top)
                 },
                 richText = blog.author.humanizedName,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 fontSizeSp = 16F,
             )
             Text(
@@ -118,6 +121,8 @@ fun AncestorBlogUi(
                     top.linkTo(name.bottom, statusInfoStyle.nameToTimePadding)
                 },
                 text = displayTime,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
                 style = statusInfoStyle.descStyle,
             )
 
@@ -128,6 +133,8 @@ fun AncestorBlogUi(
                 },
                 text = blog.author.webFinger.toString(),
                 style = statusInfoStyle.descStyle,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
             StatusMoreInteractionIcon(
                 modifier = Modifier.constrainAs(moreOptions) {

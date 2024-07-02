@@ -138,8 +138,8 @@ fun Screen.MainPage() {
 
 private fun createMainTabs(): List<Tab> {
     return listOf(
-        com.zhangke.fread.feeds.FeedsHomeTab(0u),
-        com.zhangke.fread.explore.ExploreTab(1u),
+        FeedsHomeTab(0u),
+        ExploreTab(1u),
         NotificationsTab(2u),
         ProfileTab(3u),
     )

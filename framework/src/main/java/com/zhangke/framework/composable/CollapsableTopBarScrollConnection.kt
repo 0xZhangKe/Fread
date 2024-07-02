@@ -34,6 +34,8 @@ class CollapsableTopBarScrollConnection(
         private set
 
     override fun onPreScroll(available: Offset, source: NestedScrollSource): Offset {
+        if (available.y <= 0 && topBarHeight <= minPx) return Offset.Zero
+        if (available.y >= 0 && topBarHeight >= maxPx) return Offset.Zero
         val height = topBarHeight
 
         if (height == minPx) {

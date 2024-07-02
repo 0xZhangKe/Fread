@@ -10,7 +10,6 @@ import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
 import com.zhangke.fread.status.platform.BlogPlatform
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -19,7 +18,6 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val userUriTransformer: UserUriTransformer,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    private val mapCustomEmoji: MapCustomEmojiUseCase,
     @ApplicationContext private val context: Context,
 ) {
 

@@ -12,7 +12,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -20,7 +19,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 
 class ContentHomeScreen : BaseScreen() {
 
@@ -42,7 +41,7 @@ class ContentHomeScreen : BaseScreen() {
                     }
                 }
             } else {
-                val mainTabConnection = LocalMainTabConnection.current
+                val mainTabConnection = LocalNestedTabConnection.current
                 val pagerState = rememberPagerState(pageCount = { uiState.contentConfigList.size })
                 ConsumeFlow(mainTabConnection.switchToNextTabFlow) {
                     if (pagerState.currentPage < pagerState.pageCount - 1) {

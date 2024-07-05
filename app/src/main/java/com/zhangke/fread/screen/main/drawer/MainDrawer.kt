@@ -35,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -58,7 +57,7 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.status.model.ContentConfig
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -72,7 +71,7 @@ fun Screen.MainDrawer(
     val navigator = LocalNavigator.currentOrThrow
     val viewModel = getScreenModel<MainDrawerScreenModel>()
     val uiState by viewModel.uiState.collectAsState()
-    val mainTabConnection = LocalMainTabConnection.current
+    val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()
     MainDrawerContent(
         uiState = uiState,

@@ -6,11 +6,11 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.rememberCoroutineScope
 import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.rememberDirectionalLazyListState
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 
 @Composable
 fun ObserveForFeedsConnection(listState: LazyListState) {
-    val mainTabConnection = LocalMainTabConnection.current
+    val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(listState, mainTabConnection.scrollToTopFlow) {
         mainTabConnection.scrollToTopFlow

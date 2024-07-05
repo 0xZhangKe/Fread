@@ -20,6 +20,9 @@ fun ObserveForFeedsConnection(listState: LazyListState) {
                 }
             }
     }
+    LaunchedEffect(listState.isScrollInProgress) {
+        mainTabConnection.updateContentScrollInProgress(listState.isScrollInProgress)
+    }
     ObserveForImmersive(
         listState = listState,
         onImmersiveEvent = {

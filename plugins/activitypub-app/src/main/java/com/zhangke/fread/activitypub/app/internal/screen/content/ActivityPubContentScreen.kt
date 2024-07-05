@@ -198,9 +198,11 @@ class ActivityPubContentScreen(
                                 )
                             },
                         ) {
+                            val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
                             HorizontalPager(
                                 modifier = Modifier.fillMaxSize(),
                                 state = pagerState,
+                                userScrollEnabled = !contentScrollInProgress,
                             ) { pageIndex ->
                                 tabList[pageIndex].TabContent(screen, null)
                             }

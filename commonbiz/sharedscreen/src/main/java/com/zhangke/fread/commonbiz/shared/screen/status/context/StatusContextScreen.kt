@@ -43,7 +43,7 @@ data class StatusContextScreen(
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = uniqueScreenKey
+        get() = role.toString() + status.id
 
     @Composable
     override fun Content() {

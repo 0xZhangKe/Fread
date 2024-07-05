@@ -29,7 +29,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.controller.CommonLoadableUiState
@@ -44,6 +43,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.RecommendAuthorUi
 import com.zhangke.fread.status.ui.StatusListPlaceholder
+import com.zhangke.fread.status.ui.common.ObserveScrollInProgressForConnection
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 
 class ExplorerFeedsTab(
@@ -102,6 +102,7 @@ class ExplorerFeedsTab(
                 onRefresh = onRefresh,
                 onLoadMore = onLoadMore,
             )
+            ObserveScrollInProgressForConnection(state.lazyListState)
             LoadableInlineVideoLazyColumn(
                 modifier = Modifier
                     .fillMaxSize()

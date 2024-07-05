@@ -38,11 +38,10 @@ import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NewStatusNotifyBar
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.collect
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.seconds
 
@@ -59,6 +58,7 @@ fun FeedsContent(
     observeScrollToTopEvent: Boolean = false,
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
+    onScrollInProgress: ((Boolean) -> Unit)? = null,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
     if (uiState.feeds.isEmpty()) {
@@ -91,7 +91,12 @@ fun FeedsContent(
                     onImmersiveEvent = onImmersiveEvent,
                 )
             }
-            val feedsConnection = LocalMainTabConnection.current
+            if (onScrollInProgress != null) {
+                LaunchedEffect(lazyListState.isScrollInProgress) {
+                    onScrollInProgress(lazyListState.isScrollInProgress)
+                }
+            }
+            val feedsConnection = LocalNestedTabConnection.current
             if (observeScrollToTopEvent) {
                 LaunchedEffect(feedsConnection, lazyListState) {
                     feedsConnection.scrollToTopFlow.collect {

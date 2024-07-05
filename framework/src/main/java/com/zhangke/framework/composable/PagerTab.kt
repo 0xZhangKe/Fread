@@ -33,6 +33,7 @@ data class PagerTabOptions(
 fun Screen.HorizontalPagerWithTab(
     tabList: List<PagerTab>,
     initialPage: Int = 0,
+    pagerUserScrollEnabled: Boolean = true,
     onPageChanged: ((Int) -> Unit)? = null,
     nestedScrollConnection: NestedScrollConnection? = null,
 ) {
@@ -65,6 +66,7 @@ fun Screen.HorizontalPagerWithTab(
         HorizontalPager(
             modifier = Modifier.fillMaxSize(),
             state = pagerState,
+            userScrollEnabled = pagerUserScrollEnabled,
         ) { pageIndex ->
             with(tabList[pageIndex]) {
                 TabContent(this@HorizontalPagerWithTab, nestedScrollConnection)

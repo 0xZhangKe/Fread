@@ -1,6 +1,8 @@
 package com.zhangke.fread.status.ui.common
 
-import android.util.Log
+import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.fread.status.model.ContentConfig
 import kotlinx.coroutines.CoroutineScope
@@ -15,11 +17,11 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlin.time.Duration.Companion.milliseconds
 
-val LocalMainTabConnection = staticCompositionLocalOf {
-    MainTabConnection()
+val LocalNestedTabConnection = staticCompositionLocalOf {
+    NestedTabConnection()
 }
 
-class MainTabConnection {
+class NestedTabConnection {
 
     companion object {
 
@@ -71,7 +73,6 @@ class MainTabConnection {
     }
 
     fun updateContentScrollInProgress(scrollInProgress: Boolean) {
-        Log.d("F_TEST", "updateContentScrollInProgress: $scrollInProgress")
         _contentScrollInpProgress.value = scrollInProgress
     }
 
@@ -81,5 +82,13 @@ class MainTabConnection {
 
     suspend fun scrollToTop() {
         _scrollToTopFlow.emit(Unit)
+    }
+}
+
+@Composable
+fun ObserveScrollInProgressForConnection(lazyListState: LazyListState){
+    val nestedTabConnection = LocalNestedTabConnection.current
+    LaunchedEffect(lazyListState.isScrollInProgress) {
+        nestedTabConnection.updateContentScrollInProgress(lazyListState.isScrollInProgress)
     }
 }

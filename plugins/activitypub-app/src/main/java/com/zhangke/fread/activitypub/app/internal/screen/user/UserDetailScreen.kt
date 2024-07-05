@@ -63,6 +63,8 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimel
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import kotlinx.coroutines.flow.SharedFlow
@@ -296,10 +298,18 @@ data class UserDetailScreen(
                             ),
                         )
                     }
+                    val nestedTabConnection = remember {
+                        NestedTabConnection()
+                    }
                     CompositionLocalProvider(
-                        LocalSnackbarHostState provides snackbarHost
+                        LocalSnackbarHostState provides snackbarHost,
+                        LocalNestedTabConnection provides nestedTabConnection,
                     ) {
-                        HorizontalPagerWithTab(tabList = tabs)
+                        val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
+                        HorizontalPagerWithTab(
+                            tabList = tabs,
+                            pagerUserScrollEnabled = !contentScrollInProgress,
+                        )
                     }
                 }
             }

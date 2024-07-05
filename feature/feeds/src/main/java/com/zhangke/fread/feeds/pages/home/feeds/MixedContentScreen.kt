@@ -25,7 +25,7 @@ import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.common.ContentToolbar
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
@@ -70,7 +70,7 @@ class MixedContentScreen(
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
         val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior(rememberTopAppBarState())
-        val mainTabConnection = LocalMainTabConnection.current
+        val mainTabConnection = LocalNestedTabConnection.current
         val coroutineScope = rememberCoroutineScope()
         Scaffold(
             topBar = {
@@ -108,6 +108,7 @@ class MixedContentScreen(
                     .fillMaxSize()
                     .padding(paddings)
             ) {
+                val nestedTabConnection = LocalNestedTabConnection.current
                 FeedsContent(
                     uiState = uiState,
                     openScreenFlow = openScreenFlow,
@@ -123,6 +124,9 @@ class MixedContentScreen(
                         } else {
                             mainTabConnection.closeImmersiveMode(coroutineScope)
                         }
+                    },
+                    onScrollInProgress = {
+                        nestedTabConnection.updateContentScrollInProgress(it)
                     },
                 )
             }

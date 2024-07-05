@@ -44,8 +44,8 @@ import com.zhangke.fread.feature.message.NotificationsTab
 import com.zhangke.fread.feeds.FeedsHomeTab
 import com.zhangke.fread.profile.ProfileTab
 import com.zhangke.fread.screen.main.drawer.MainDrawer
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
-import com.zhangke.fread.status.ui.common.MainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.common.NestedTabConnection
 import kotlinx.coroutines.launch
 
 @SuppressLint("UnusedMaterial3ScaffoldPaddingParameter")
@@ -54,19 +54,19 @@ fun Screen.MainPage() {
     val context = LocalContext.current
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
-    val mainTabConnection = remember {
-        MainTabConnection()
+    val nestedTabConnection = remember {
+        NestedTabConnection()
     }
     var inFeedsTab by remember {
         mutableStateOf(false)
     }
-    ConsumeFlow(mainTabConnection.openDrawerFlow) {
+    ConsumeFlow(nestedTabConnection.openDrawerFlow) {
         if (inFeedsTab) {
             drawerState.open()
         }
     }
     CompositionLocalProvider(
-        LocalMainTabConnection provides mainTabConnection,
+        LocalNestedTabConnection provides nestedTabConnection,
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
@@ -108,7 +108,7 @@ fun Screen.MainPage() {
                     ) {
                         CurrentTab()
                     }
-                    val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
+                    val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
                     AnimatedVisibility(
                         modifier = Modifier
                             .align(Alignment.BottomCenter)

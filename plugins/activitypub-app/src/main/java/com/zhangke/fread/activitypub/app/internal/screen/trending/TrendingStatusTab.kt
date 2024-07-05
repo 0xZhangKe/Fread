@@ -9,13 +9,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.activitypub.app.internal.composable.ActivityPubTabNames
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 
 class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab() {
 
@@ -30,7 +29,7 @@ class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab() {
         val snackbarHostState = LocalSnackbarHostState.current
         val viewModel = screen.getViewModel<TrendingStatusViewModel>().getSubViewModel(role)
         val uiState by viewModel.uiState.collectAsState()
-        val mainTabConnection = LocalMainTabConnection.current
+        val mainTabConnection = LocalNestedTabConnection.current
         val coroutineScope = rememberCoroutineScope()
         FeedsContent(
             uiState = uiState,
@@ -47,6 +46,9 @@ class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab() {
                 } else {
                     mainTabConnection.closeImmersiveMode(coroutineScope)
                 }
+            },
+            onScrollInProgress = {
+                mainTabConnection.updateContentScrollInProgress(it)
             },
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)

@@ -16,7 +16,6 @@ import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -58,7 +57,7 @@ import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
-import com.zhangke.fread.status.ui.common.LocalMainTabConnection
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
 
 class ActivityPubContentScreen(
@@ -97,7 +96,7 @@ class ActivityPubContentScreen(
     ) {
         val (role, config, account, errorMessage) = uiState
         val coroutineScope = rememberCoroutineScope()
-        val mainTabConnection = LocalMainTabConnection.current
+        val mainTabConnection = LocalNestedTabConnection.current
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
             snackbarHost = {

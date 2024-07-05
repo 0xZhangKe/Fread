@@ -25,6 +25,8 @@ import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTab
 import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTabType
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.common.NestedTabConnection
 
 class ExplorerHomeScreen : BaseScreen() {
 
@@ -72,8 +74,12 @@ class ExplorerHomeScreen : BaseScreen() {
                     onAccountSelected = onAccountSelected,
                 )
                 if (uiState.selectedAccount != null) {
+                    val nestedTabConnection = remember {
+                        NestedTabConnection()
+                    }
                     CompositionLocalProvider(
-                        LocalSnackbarHostState provides snackbarHostState
+                        LocalSnackbarHostState provides snackbarHostState,
+                        LocalNestedTabConnection provides nestedTabConnection,
                     ) {
                         val tabs = remember(selectedAccount) {
                             listOf(
@@ -91,8 +97,10 @@ class ExplorerHomeScreen : BaseScreen() {
                                 ),
                             )
                         }
+                        val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
                         HorizontalPagerWithTab(
                             tabList = tabs,
+                            pagerUserScrollEnabled = !contentScrollInProgress,
                         )
                     }
                 }

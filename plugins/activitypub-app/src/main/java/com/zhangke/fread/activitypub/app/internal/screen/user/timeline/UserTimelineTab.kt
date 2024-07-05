@@ -13,6 +13,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
@@ -42,6 +43,8 @@ import com.zhangke.fread.commonbiz.shared.composable.InitErrorContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.common.ObserveScrollInProgressForConnection
 
 class UserTimelineTab(
     private val tabType: UserTimelineTabType,
@@ -116,6 +119,7 @@ class UserTimelineTab(
                     }
                     contentCanScrollBackward.value = canScrollBackward
                 }
+                ObserveScrollInProgressForConnection(lazyListState)
                 LoadableInlineVideoLazyColumn(
                     modifier = Modifier
                         .fillMaxSize()

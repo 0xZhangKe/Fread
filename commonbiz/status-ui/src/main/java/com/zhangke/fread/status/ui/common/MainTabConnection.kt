@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.ui.common
 
+import android.util.Log
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.fread.status.model.ContentConfig
 import kotlinx.coroutines.CoroutineScope
@@ -40,6 +41,9 @@ class MainTabConnection {
     private val _scrollToTopFlow = MutableSharedFlow<Unit>()
     val scrollToTopFlow: SharedFlow<Unit> get() = _scrollToTopFlow.asSharedFlow()
 
+    private val _contentScrollInpProgress = MutableStateFlow(false)
+    val contentScrollInpProgress: StateFlow<Boolean> get() = _contentScrollInpProgress.asStateFlow()
+
     private var toggleImmersiveJob: Job? = null
 
     suspend fun switchToNextTab() {
@@ -66,11 +70,16 @@ class MainTabConnection {
         }
     }
 
+    fun updateContentScrollInProgress(scrollInProgress: Boolean) {
+        Log.d("F_TEST", "updateContentScrollInProgress: $scrollInProgress")
+        _contentScrollInpProgress.value = scrollInProgress
+    }
+
     suspend fun scrollToContentTab(contentConfig: ContentConfig) {
         _scrollToContentTabFlow.emit(contentConfig)
     }
 
-    suspend fun scrollToTop(){
+    suspend fun scrollToTop() {
         _scrollToTopFlow.emit(Unit)
     }
 }

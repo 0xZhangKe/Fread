@@ -109,7 +109,7 @@ fun FeedsContent(
                 refreshing = uiState.refreshing,
                 loadState = uiState.loadMoreState,
                 contentPadding = PaddingValues(
-                    bottom = 20.dp,
+                    bottom = 80.dp,
                 )
             ) {
                 itemsIndexed(

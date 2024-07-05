@@ -70,7 +70,7 @@ fun Screen.MainPage() {
     ) {
         ModalNavigationDrawer(
             drawerState = drawerState,
-            gesturesEnabled = inFeedsTab,
+            gesturesEnabled = false,
             drawerContent = {
                 val screenWidth = LocalConfiguration.current.screenWidthDp.dp
                 ModalDrawerSheet(

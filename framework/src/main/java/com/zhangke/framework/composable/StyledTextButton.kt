@@ -1,5 +1,6 @@
 package com.zhangke.framework.composable
 
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
@@ -14,6 +15,7 @@ fun StyledTextButton(
     text: String,
     style: TextButtonStyle,
     onClick: () -> Unit,
+    contentPadding: PaddingValues = ButtonDefaults.TextButtonContentPadding,
 ) {
     val containerColor: Color
     val textColor: Color
@@ -46,6 +48,7 @@ fun StyledTextButton(
         ),
         enabled = style != TextButtonStyle.DISABLE,
         onClick = onClick,
+        contentPadding = contentPadding,
     ) {
         Text(
             text = text,

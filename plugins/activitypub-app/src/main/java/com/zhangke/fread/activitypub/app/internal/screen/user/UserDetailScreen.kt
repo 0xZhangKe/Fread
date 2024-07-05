@@ -75,7 +75,7 @@ data class UserDetailScreen(
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = uniqueScreenKey
+        get() = route
 
     @Composable
     override fun Content() {

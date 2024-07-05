@@ -34,10 +34,14 @@ fun LoadMoreUi(
 ) {
     when (loadState) {
         is LoadState.Loading -> {
-            Box(modifier = Modifier.fillMaxWidth()) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 24.dp)
+            ) {
                 CircularProgressIndicator(
                     modifier = Modifier
-                        .size(30.dp)
+                        .size(18.dp)
                         .align(Alignment.Center)
                 )
             }

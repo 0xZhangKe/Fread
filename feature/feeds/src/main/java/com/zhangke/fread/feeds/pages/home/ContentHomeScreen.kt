@@ -62,8 +62,11 @@ class ContentHomeScreen : BaseScreen() {
                 LaunchedEffect(uiState.currentPageIndex) {
                     pagerState.animateScrollToPage(uiState.currentPageIndex)
                 }
+                val contentScrollInProgress by
+                    mainTabConnection.contentScrollInpProgress.collectAsState()
                 HorizontalPager(
                     state = pagerState,
+                    userScrollEnabled = !contentScrollInProgress,
                 ) { pageIndex ->
                     val currentScreen = remember(uiState.contentConfigList, pageIndex) {
                         viewModel.getContentScreen(

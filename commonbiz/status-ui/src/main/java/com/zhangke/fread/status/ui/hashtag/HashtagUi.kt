@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -62,7 +63,7 @@ fun HashtagUi(
             minPoint = tag.history.min,
             maxPoint = tag.history.max,
             style = BezierCurveStyle.StrokeAndFill(
-                fillBrush = SolidColor(Color.Green),
+                fillBrush = SolidColor(MaterialTheme.colorScheme.primary),
                 strokeBrush = SolidColor(Color.White),
                 stroke = Stroke(width = 1.dp.toPx()),
             )

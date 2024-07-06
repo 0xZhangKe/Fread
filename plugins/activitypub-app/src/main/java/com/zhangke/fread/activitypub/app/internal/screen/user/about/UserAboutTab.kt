@@ -67,7 +67,7 @@ class UserAboutTab(
                 .fillMaxSize()
                 .verticalScroll(scrollState)
                 .applyNestedScrollConnection(nestedScrollConnection)
-                .padding(16.dp)
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 100.dp)
         ) {
             if (!uiState.joinedDatetime.isNullOrEmpty()) {
                 Text(

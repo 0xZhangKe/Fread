@@ -26,6 +26,7 @@ internal class RefreshStatusUseCase @Inject constructor(
         sourceUriList: List<FormalUri>,
         limit: Int,
     ): Result<RefreshResult> {
+        if (sourceUriList.isEmpty()) return Result.success(RefreshResult(emptyList(), emptyList()))
         val resultList = sourceUriList.map {
             getStatus(it, limit)
         }

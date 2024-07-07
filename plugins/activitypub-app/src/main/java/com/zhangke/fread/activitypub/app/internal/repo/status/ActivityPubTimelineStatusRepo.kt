@@ -17,6 +17,9 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     private val statusDao = activityPubStatusDatabases.getDao()
     private val statusConfig = StatusConfigurationDefault.config
 
+    /**
+     * 获取最新的帖子列表
+     */
     suspend fun getFresherStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
@@ -48,14 +51,13 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     ) {
         if (statusList.isEmpty()) return
         val earlierStatus = statusList.minBy { it.datetime }
-        val localEarlierStatus = queryEarlierStatus(
+        val localEarlierStatus = queryLocalStatus(
             role = role,
             type = type,
             listId = listId,
-            datetime = earlierStatus.datetime,
-            limit = 1,
+            statusId = earlierStatus.id,
         )
-        if (localEarlierStatus.isEmpty()) {
+        if (localEarlierStatus == null) {
             // local data are expired
             deleteStatus(role, type, listId)
         }
@@ -102,13 +104,6 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         listId: String? = null,
         limit: Int = statusConfig.loadFromLocalLimit,
     ): Result<List<Status>> {
-        val localStatusList = loadMoreFromLocal(
-            role = role,
-            type = type,
-            maxId = maxId,
-            listId = listId,
-        )
-        if (localStatusList.isNotEmpty()) return Result.success(localStatusList)
         return getTimeline(
             role = role,
             type = type,
@@ -132,27 +127,6 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
 
     suspend fun deleteStatus(statusId: String) {
         statusDao.delete(statusId)
-    }
-
-    private suspend fun loadMoreFromLocal(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        maxId: String,
-        listId: String? = null,
-    ): List<Status> {
-        val localStatus = queryLocalStatus(
-            role = role,
-            type = type,
-            listId = listId,
-            statusId = maxId,
-        ) ?: return emptyList()
-        return queryEarlierStatus(
-            role = role,
-            type = type,
-            listId = listId,
-            datetime = localStatus.createTimestamp,
-            limit = StatusConfigurationDefault.config.loadFromLocalLimit,
-        ).filter { it.id != localStatus.id }
     }
 
     private suspend fun List<Status>.insertToLocal(
@@ -196,31 +170,6 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             )
         } else {
             statusDao.queryTimelineStatus(role, type, limit)
-        }
-    }
-
-    private suspend fun queryEarlierStatus(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        listId: String?,
-        datetime: Long,
-        limit: Int,
-    ): List<Status> {
-        return if (listId.isNullOrEmpty()) {
-            statusDao.queryEarlierStatus(
-                role = role,
-                type = type,
-                limit = limit,
-                datetime = datetime,
-            ).map { it.status }
-        } else {
-            statusDao.queryEarlierListStatus(
-                role = role,
-                type = type,
-                limit = limit,
-                listId = listId,
-                datetime = datetime,
-            ).map { it.status }
         }
     }
 

@@ -145,7 +145,7 @@ class ActivityPubTimelineViewModel(
                 }
             }
         }
-        initFeedsJob!!.invokeOnCancel { t ->
+        initFeedsJob!!.invokeOnCancel {
             _uiState.update {
                 it.copy(showPagingLoadingPlaceholder = false)
             }
@@ -238,7 +238,7 @@ class ActivityPubTimelineViewModel(
                 }
             }
         }
-        loadMoreJob!!.invokeOnCancel { t ->
+        loadMoreJob!!.invokeOnCancel {
             _uiState.update { it.copy(loadMoreState = LoadState.Idle) }
         }
     }

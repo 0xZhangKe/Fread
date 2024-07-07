@@ -43,49 +43,19 @@ interface ActivityPubStatusDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role AND type = :type AND listId = :listId")
     suspend fun queryStatusInList(role: IdentityRole, type: ActivityPubStatusSourceType, listId: String, id: String): ActivityPubStatusTableEntity?
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT :limit")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type LIMIT :limit")
     suspend fun queryTimelineStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int,
     ): List<ActivityPubStatusTableEntity>
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT 1")
-    suspend fun queryRecentStatus(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType
-    ): ActivityPubStatusTableEntity?
-
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT :limit")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId LIMIT :limit")
     suspend fun queryListStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         listId: String,
         limit: Int
-    ): List<ActivityPubStatusTableEntity>
-
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT 1")
-    suspend fun queryRecentListStatus(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        listId: String,
-    ): ActivityPubStatusTableEntity?
-
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND createTimestamp <= :datetime ORDER BY createTimestamp DESC LIMIT :limit")
-    suspend fun queryEarlierStatus(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        limit: Int,
-        datetime: Long,
-    ): List<ActivityPubStatusTableEntity>
-
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId AND createTimestamp <= :datetime ORDER BY createTimestamp DESC LIMIT :limit")
-    suspend fun queryEarlierListStatus(
-        role: IdentityRole,
-        type: ActivityPubStatusSourceType,
-        listId: String,
-        limit: Int,
-        datetime: Long,
     ): List<ActivityPubStatusTableEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

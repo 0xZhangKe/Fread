@@ -47,4 +47,6 @@
     <string name="feeds_mixed_config_not_found">状态异常，未找到配置</string>
 
     <string name="feeds_import_back_dialog_message">确定要退出吗？</string>
+
+    <string name="feeds_delete_confirm_content">确定要删除吗？</string>
 </resources>

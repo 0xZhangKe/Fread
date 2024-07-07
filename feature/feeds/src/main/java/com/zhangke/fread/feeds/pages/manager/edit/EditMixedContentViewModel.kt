@@ -70,7 +70,6 @@ internal class EditMixedContentViewModel @AssistedInject constructor(
     fun onAddSource(uri: FormalUri) {
         launchInViewModel {
             val sourceList = _uiState.value.requireSuccessData().sourceList.toMutableList()
-            sourceList.map { it.uri }
             if (sourceList.any { it.uri == uri }) return@launchInViewModel
             statusProvider.statusSourceResolver.resolveSourceByUri(null, uri)
                 .onSuccess { source ->

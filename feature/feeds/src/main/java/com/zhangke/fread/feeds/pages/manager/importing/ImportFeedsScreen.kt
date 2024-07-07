@@ -9,23 +9,27 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material.icons.filled.Save
 import androidx.compose.material3.Button
 import androidx.compose.material3.Card
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -33,28 +37,23 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalConfiguration
+import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.window.DialogProperties
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.media.MediaFileUtil
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.pages.manager.add.showAddContentSuccessToast
-import com.zhangke.fread.status.model.ContentConfig
-import kotlinx.coroutines.delay
 
 class ImportFeedsScreen : BaseScreen() {
 
@@ -70,7 +69,7 @@ class ImportFeedsScreen : BaseScreen() {
         }
 
         fun onBackRequest() {
-            if (uiState.selectedFileUri != null || uiState.parsedContent.isNotEmpty()) {
+            if (uiState.selectedFileUri != null || uiState.sourceList.isNotEmpty()) {
                 showBackDialog = true
             } else {
                 navigator.pop()
@@ -101,10 +100,10 @@ class ImportFeedsScreen : BaseScreen() {
             onImportClick = {
                 viewModel.onImportClick(context)
             },
-            onImportCancelClick = viewModel::onImportCancelClick,
-            onImportDialogConfirmClick = viewModel::onImportDialogConfirmClick,
-            onContentConfigDelete = viewModel::onContentConfigDelete,
+            onGroupDelete = viewModel::onGroupDelete,
+            onSourceDelete = viewModel::onSourceDelete,
             onSaveClick = viewModel::onSaveClick,
+            retryImportClick = viewModel::retryImportClick,
         )
         ConsumeFlow(viewModel.saveSuccessFlow) {
             showAddContentSuccessToast(context)
@@ -118,9 +117,9 @@ class ImportFeedsScreen : BaseScreen() {
         onFileSelected: (Uri) -> Unit,
         onBackClick: () -> Unit,
         onImportClick: () -> Unit,
-        onImportCancelClick: () -> Unit,
-        onImportDialogConfirmClick: () -> Unit,
-        onContentConfigDelete: (ContentConfig) -> Unit,
+        onGroupDelete: (ImportSourceGroup) -> Unit,
+        onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
+        retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
         onSaveClick: () -> Unit,
     ) {
         val context = LocalContext.current
@@ -175,7 +174,8 @@ class ImportFeedsScreen : BaseScreen() {
                             }
                             Text(
                                 modifier = Modifier.align(Alignment.Center),
-                                text = prettyFileUri ?: stringResource(R.string.feeds_import_page_hint),
+                                text = prettyFileUri
+                                    ?: stringResource(R.string.feeds_import_page_hint),
                                 overflow = TextOverflow.Clip,
                                 maxLines = 1,
                                 fontSize = 12.sp,
@@ -193,120 +193,176 @@ class ImportFeedsScreen : BaseScreen() {
                     }
                 }
 
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1F)
-                        .padding(top = 16.dp, bottom = 16.dp),
-                ) {
-                    items(uiState.parsedContent) { contentConfig ->
-                        Surface(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp, horizontal = 16.dp),
-                        ) {
-                            Row(
-                                modifier = Modifier
-                                    .fillMaxWidth()
-                                    .padding(horizontal = 8.dp),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                Text(
-                                    modifier = Modifier
-                                        .alignByBaseline(),
-                                    text = contentConfig.configName,
-                                    style = MaterialTheme.typography.titleMedium,
-                                )
-                                val desc = "${(contentConfig as ContentConfig.MixedContent).sourceUriList.size} items"
-                                Text(
-                                    modifier = Modifier
-                                        .padding(start = 8.dp)
-                                        .alignByBaseline(),
-                                    text = desc,
-                                    style = MaterialTheme.typography.bodySmall,
-                                )
-                                Spacer(modifier = Modifier.weight(1F))
-                                SimpleIconButton(
-                                    onClick = { onContentConfigDelete(contentConfig) },
-                                    imageVector = Icons.Default.Delete,
-                                    contentDescription = "Delete content",
-                                )
-                            }
-                        }
-                    }
-                }
+                ImportGroupList(
+                    itemList = uiState.importingUiItems,
+                    onGroupDelete = onGroupDelete,
+                    onSourceDelete = onSourceDelete,
+                    retryImportClick = retryImportClick,
+                )
             }
-            ImportingState(
-                uiState = uiState,
-                onCancelClick = onImportCancelClick,
-            )
         }
     }
 
     @Composable
-    private fun ImportingState(
-        uiState: ImportFeedsUiState,
-        onCancelClick: () -> Unit,
+    private fun ImportGroupList(
+        itemList: List<ImportingUiItem>,
+        onGroupDelete: (ImportSourceGroup) -> Unit,
+        onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
+        retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
     ) {
-        if (uiState.importType != ImportType.IDLE) {
-            val importType = uiState.importType
-            val title = when (importType) {
-                ImportType.IMPORTING -> "Importing..."
-                ImportType.SUCCESS -> "Import Success"
-                ImportType.FAILED -> "Failure!"
-                else -> ""
-            }
-            FreadDialog(
-                title = title,
-                properties = DialogProperties(
-                    dismissOnBackPress = false,
-                    dismissOnClickOutside = false,
-                ),
-                onDismissRequest = {},
-                onNegativeClick = {
-                    if (importType == ImportType.IMPORTING) {
-                        onCancelClick()
+        val lazyListState = rememberLazyListState()
+        LazyColumn(
+            modifier = Modifier.fillMaxSize(),
+            state = lazyListState,
+        ) {
+            items(itemList) { item ->
+                when (item) {
+                    is ImportingUiItem.Group -> {
+                        ImportGroupItem(
+                            group = item.group,
+                            onGroupDelete = onGroupDelete,
+                        )
                     }
-                },
-                onPositiveClick = {
-                    if (importType == ImportType.SUCCESS || importType == ImportType.FAILED) {
-                        onCancelClick()
-                    }
-                },
-                content = {
-                    val lazyListState = rememberLazyListState()
-                    val configuration = LocalConfiguration.current
-                    val screenHeight = configuration.screenHeightDp.dp * 0.7F
-                    LaunchedEffect(uiState.outputInfoList) {
-                        // delay for LazyColumn items layout
-                        delay(50)
-                        lazyListState.animateScrollToItem(uiState.outputInfoList.lastIndex)
-                    }
-                    LazyColumn(
-                        modifier = Modifier.heightIn(max = screenHeight),
-                        state = lazyListState,
-                    ) {
-                        items(uiState.outputInfoList) { log ->
-                            OutputLog(log = log)
-                        }
+
+                    is ImportingUiItem.Source -> {
+                        ImportSourceItem(
+                            group = item.group,
+                            source = item.source,
+                            onSourceDelete = onSourceDelete,
+                            retryImportClick = retryImportClick,
+                        )
                     }
                 }
-            )
+            }
         }
     }
 
     @Composable
-    private fun OutputLog(log: ImportOutputLog) {
-        val fontColor = when (log.type) {
-            ImportOutputLog.Type.NORMAL -> MaterialTheme.colorScheme.onSurface
-            ImportOutputLog.Type.WARNING -> Color.Yellow.copy(alpha = 0.7F)
-            ImportOutputLog.Type.ERROR -> MaterialTheme.colorScheme.error
+    private fun ImportGroupItem(
+        group: ImportSourceGroup,
+        onGroupDelete: (ImportSourceGroup) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 16.dp, bottom = 8.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                modifier = Modifier,
+                text = group.title,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.weight(1F))
+            var showDeleteDialog by remember {
+                mutableStateOf(false)
+            }
+            Text(
+                text = "${group.children.size} sources",
+                style = MaterialTheme.typography.labelMedium,
+            )
+            Spacer(modifier = Modifier.width(8.dp))
+            SimpleIconButton(
+                onClick = { showDeleteDialog = true },
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete group",
+            )
+            if (showDeleteDialog) {
+                FreadDialog(
+                    onDismissRequest = { showDeleteDialog = false },
+                    contentText = stringResource(R.string.feeds_delete_confirm_content),
+                    onNegativeClick = { showDeleteDialog = false },
+                    onPositiveClick = {
+                        showDeleteDialog = false
+                        onGroupDelete(group)
+                    },
+                )
+            }
         }
-        Text(
-            modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp, bottom = 2.dp),
-            text = log.log,
-            color = fontColor,
-            fontSize = 10.sp,
-        )
+    }
+
+    @Composable
+    private fun ImportSourceItem(
+        group: ImportSourceGroup,
+        source: ImportingSource,
+        onSourceDelete: (ImportSourceGroup, ImportingSource) -> Unit,
+        retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 32.dp, top = 4.dp, bottom = 4.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Column(
+                modifier = Modifier.weight(1F),
+            ) {
+                Text(
+                    modifier = Modifier,
+                    text = source.title,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                if (source is ImportingSource.Failure) {
+                    Text(
+                        text = source.errorMessage,
+                        color = MaterialTheme.colorScheme.error,
+                        style = MaterialTheme.typography.labelSmall,
+                        maxLines = 1,
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(6.dp))
+            when (source) {
+                is ImportingSource.Importing -> {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(16.dp)
+                    )
+                }
+
+                is ImportingSource.Success -> {
+                    Icon(
+                        imageVector = Icons.Default.Check,
+                        tint = MaterialTheme.colorScheme.primary,
+                        contentDescription = null,
+                    )
+                }
+
+                is ImportingSource.Pending -> {
+                    Text(text = "waiting...")
+                }
+
+                is ImportingSource.Failure -> {
+                    Icon(
+                        modifier = Modifier.clickable { retryImportClick(group, source) },
+                        painter = rememberVectorPainter(image = Icons.Default.Refresh),
+                        contentDescription = "Retry",
+                    )
+                }
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            var showDeleteDialog by remember {
+                mutableStateOf(false)
+            }
+            SimpleIconButton(
+                onClick = { showDeleteDialog = true },
+                imageVector = Icons.Default.Delete,
+                contentDescription = "Delete source",
+            )
+            if (showDeleteDialog) {
+                FreadDialog(
+                    onDismissRequest = { showDeleteDialog = false },
+                    contentText = stringResource(R.string.feeds_delete_confirm_content),
+                    onNegativeClick = { showDeleteDialog = false },
+                    onPositiveClick = {
+                        showDeleteDialog = false
+                        onSourceDelete(group, source)
+                    },
+                )
+            }
+        }
     }
 }

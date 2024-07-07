@@ -8,9 +8,16 @@ import androidx.compose.material.icons.rounded.AddCircleOutline
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.fread.feeds.R
 import com.zhangke.fread.status.ui.utils.CardInfoSection
 import com.zhangke.fread.status.uri.FormalUri
 
@@ -64,14 +71,30 @@ internal fun StatusSourceNode(
                 }
             }
             if (source.removeEnabled) {
+                var showDeleteConfirmDialog by remember {
+                    mutableStateOf(false)
+                }
                 IconButton(
                     modifier = Modifier.size(24.dp),
-                    onClick = { onRemoveClick?.invoke() },
+                    onClick = { showDeleteConfirmDialog = true },
                     enabled = onRemoveClick != null,
                 ) {
                     Icon(
                         painter = rememberVectorPainter(image = Icons.Default.Delete),
                         contentDescription = "Remove",
+                    )
+                }
+                if (showDeleteConfirmDialog) {
+                    FreadDialog(
+                        onDismissRequest = { showDeleteConfirmDialog = false },
+                        contentText = stringResource(id = R.string.feeds_delete_confirm_content),
+                        onNegativeClick = {
+                            showDeleteConfirmDialog = false
+                        },
+                        onPositiveClick = {
+                            showDeleteConfirmDialog = false
+                            onRemoveClick?.invoke()
+                        },
                     )
                 }
             }

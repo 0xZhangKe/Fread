@@ -46,4 +46,6 @@
     <string name="feeds_mixed_config_not_found">Abnormal status, configuration not found.</string>
 
     <string name="feeds_import_back_dialog_message">Are you sure you want to exit?</string>
+
+    <string name="feeds_delete_confirm_content">Are you sure you want to delete?</string>
 </resources>

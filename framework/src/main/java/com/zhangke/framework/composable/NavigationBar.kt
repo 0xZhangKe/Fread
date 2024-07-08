@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable
 
-import android.util.Log
 import androidx.compose.animation.animateColorAsState
 import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.animation.core.tween
@@ -68,8 +67,6 @@ fun NavigationBar(
     windowInsets: WindowInsets = NavigationBarDefaults.windowInsets,
     content: @Composable RowScope.() -> Unit
 ) {
-    Log.d("F_TEST", "getBottom ${windowInsets.getBottom(LocalDensity.current)}")
-    Log.d("F_TEST", "getTop ${windowInsets.getTop(LocalDensity.current)}")
     Surface(
         color = containerColor,
         contentColor = contentColor,
@@ -80,7 +77,7 @@ fun NavigationBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .windowInsetsPadding(windowInsets)
-                .padding(vertical = 16.dp)
+                .padding(top = 16.dp, bottom = 8.dp)
                 .selectableGroup(),
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,

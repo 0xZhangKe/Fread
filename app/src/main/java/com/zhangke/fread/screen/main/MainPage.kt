@@ -16,7 +16,6 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
-import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -38,6 +37,7 @@ import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
+import com.zhangke.framework.composable.NavigationBarItem
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.explore.ExploreTab
 import com.zhangke.fread.feature.message.NotificationsTab
@@ -123,7 +123,6 @@ fun Screen.MainPage() {
                     ) {
                         NavigationBar(
                             modifier = Modifier,
-                            height = 80.dp,
                         ) {
                             tabs.forEach { tab ->
                                 TabNavigationItem(tab)

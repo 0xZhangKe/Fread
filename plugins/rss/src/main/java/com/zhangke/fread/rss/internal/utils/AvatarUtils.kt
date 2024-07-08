@@ -1,6 +1,7 @@
 package com.zhangke.fread.rss.internal.utils
 
 import android.content.Context
+import androidx.compose.ui.graphics.Color
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.security.Md5
@@ -15,10 +16,20 @@ object AvatarUtils {
     private const val AVATAR_HEIGHT = 100
     private const val AVATAR_DIR = "avatars"
 
+    private val colors = listOf(
+        Color(0xFF3880F2),
+        Color(0xFF75A5F1),
+        Color(0xFFBED7FF),
+        Color(0xFFAC82B0),
+        Color(0xFFAAB082),
+        Color(0xFF82B097),
+    )
+
     fun makeSourceAvatar(
         source: RssSource,
     ): String? {
         val text = source.displayName.ifNullOrEmpty { source.title }.take(2).uppercase()
+        val backgroundColor = colors.random()
         val bitmap = BitmapUtils.buildBitmapWithText(
             width = AVATAR_WIDTH,
             height = AVATAR_HEIGHT,

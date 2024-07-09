@@ -51,6 +51,7 @@ class TrendingStatusSubViewModel(
             RefreshResult(
                 newStatus = it,
                 deletedStatus = emptyList(),
+                useOldData = false,
             )
         }
     }

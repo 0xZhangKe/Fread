@@ -50,6 +50,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
@@ -60,6 +61,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimel
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
@@ -70,6 +72,8 @@ import kotlinx.coroutines.flow.SharedFlow
 @Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
     @Router val route: String = "",
+    private val role: IdentityRole? = null,
+    private val webFinger: WebFinger? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
@@ -81,8 +85,12 @@ data class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val (role, userUri, webFinger) = remember(route) {
-            UserDetailRoute.parseRoute(route)
+        val (role, userUri, webFinger) = remember(route, role, webFinger) {
+            if (role != null && webFinger != null) {
+                Triple(role, null, webFinger)
+            } else {
+                UserDetailRoute.parseRoute(route)
+            }
         }
         val viewModel = getViewModel<UserDetailContainerViewModel>()
             .getViewModel(role, userUri, webFinger)

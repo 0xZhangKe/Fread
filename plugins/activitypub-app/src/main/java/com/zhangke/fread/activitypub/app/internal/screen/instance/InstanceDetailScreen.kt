@@ -39,6 +39,7 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.textString
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
@@ -53,6 +54,7 @@ import kotlinx.coroutines.launch
 @Destination(PlatformDetailRoute.ROUTE)
 class InstanceDetailScreen(
     @Router private val route: String = "",
+    private val baseUrl: FormalBaseUrl? = null,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
@@ -61,9 +63,13 @@ class InstanceDetailScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val navigationResult = navigator.navigationResult
-        val viewModel = getViewModel<InstanceDetailViewModel, InstanceDetailViewModel.Factory>() {
-            val baseUrl = PlatformDetailRoute.parseParams(route)
-            it.create(baseUrl)
+        val viewModel = getViewModel<InstanceDetailViewModel, InstanceDetailViewModel.Factory> {
+            if (baseUrl != null) {
+                it.create(baseUrl)
+            } else {
+                val baseUrl = PlatformDetailRoute.parseParams(route)
+                it.create(baseUrl)
+            }
         }
         val uiState by viewModel.uiState.collectAsState()
         InstanceDetailContent(

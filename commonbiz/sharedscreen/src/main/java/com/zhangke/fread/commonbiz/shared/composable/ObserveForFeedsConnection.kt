@@ -7,6 +7,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import kotlinx.coroutines.launch
 
 @Composable
 fun ObserveForFeedsConnection(listState: LazyListState) {
@@ -16,7 +17,9 @@ fun ObserveForFeedsConnection(listState: LazyListState) {
         mainTabConnection.scrollToTopFlow
             .collect {
                 if (listState.layoutInfo.totalItemsCount > 0) {
-                    listState.animateScrollToItem(0)
+                    coroutineScope.launch {
+                        listState.animateScrollToItem(0)
+                    }
                 }
             }
     }

@@ -40,17 +40,17 @@ interface ActivityPubStatusDao {
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role AND type = :type")
     suspend fun query(role: IdentityRole, type: ActivityPubStatusSourceType, id: String): ActivityPubStatusTableEntity?
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role AND type = :type AND listId = :listId")
+    @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC")
     suspend fun queryStatusInList(role: IdentityRole, type: ActivityPubStatusSourceType, listId: String, id: String): ActivityPubStatusTableEntity?
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type LIMIT :limit")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryTimelineStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         limit: Int,
     ): List<ActivityPubStatusTableEntity>
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId LIMIT :limit")
+    @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryListStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,

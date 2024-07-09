@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.auth
 import android.content.Context
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.framework.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
@@ -75,6 +75,6 @@ class ActivityPubOAuthor @Inject constructor(
     }
 
     private fun openOauthPage(oauthUrl: String) {
-        BrowserLauncher.launchWebTabInApp(context, oauthUrl)
+        BrowserLauncher.launchWebTabInApp(context, oauthUrl, false)
     }
 }

@@ -1,4 +1,4 @@
-package com.zhangke.framework.composable.web
+package com.zhangke.fread.commonbiz.shared.composable
 
 import android.annotation.SuppressLint
 import android.webkit.WebResourceRequest
@@ -12,8 +12,8 @@ import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.zhangke.framework.browser.BrowserLauncher
 import com.zhangke.framework.utils.dpToPx
+import com.zhangke.fread.common.browser.BrowserLauncher
 
 @Composable
 fun WebViewPreviewer(

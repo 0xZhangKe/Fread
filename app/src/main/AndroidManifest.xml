@@ -14,7 +14,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.Fread"
+        android:theme="@style/Fread"
         tools:replace="android:allowBackup">
 
         <activity

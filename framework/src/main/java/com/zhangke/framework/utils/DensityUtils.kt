@@ -1,5 +1,7 @@
 package com.zhangke.framework.utils
 
+import android.content.Context
+import android.util.TypedValue
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Density
@@ -30,4 +32,10 @@ fun Int.pxToDp(density: Density): Dp {
 fun Float.pxToDp(density: Density): Dp {
     val pxValue = this
     return with(density) { pxValue.toDp() }
+}
+
+context(Context)
+fun Int.dpToPx(): Int {
+    return TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, this.toFloat(), resources.displayMetrics)
+        .toInt()
 }

@@ -21,11 +21,11 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.web.WebViewPreviewer
+import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.DateTimeFormatter
@@ -53,7 +53,7 @@ class BlogDetailScreen(
                     actions = {
                         SimpleIconButton(
                             onClick = {
-                                BrowserLauncher.launchWebTabInApp(context, blog.url)
+                                BrowserLauncher.launchWebTabInApp(context, blog.url, false)
                             },
                             imageVector = Icons.Default.OpenInBrowser,
                             contentDescription = "Open In Browser",

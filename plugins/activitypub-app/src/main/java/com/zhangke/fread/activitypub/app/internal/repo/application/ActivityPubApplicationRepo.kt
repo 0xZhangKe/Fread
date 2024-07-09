@@ -31,7 +31,7 @@ class ActivityPubApplicationRepo @Inject constructor(
                 clientName = FreadApplicationRegisterInfo.CLIENT_NAME,
                 redirectUris = FreadApplicationRegisterInfo.redirectUris,
                 scopes = FreadApplicationRegisterInfo.scopes,
-                website = FreadApplicationRegisterInfo.website,
+                website = FreadApplicationRegisterInfo.WEBSITE,
             ).map { registerApplicationEntryAdapter.toApplication(it, baseUrl) }
             .getOrNull() ?: return null
         insert(application)

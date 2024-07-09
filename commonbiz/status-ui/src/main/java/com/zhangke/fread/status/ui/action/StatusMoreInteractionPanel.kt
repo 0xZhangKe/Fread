@@ -14,10 +14,9 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import com.zhangke.framework.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.analytics.reportClick
@@ -134,7 +133,7 @@ private fun AdditionalMoreOptions(
         onClick = {
             reportClick(StatusDataElements.OPEN_IN_BROWSER)
             onDismissRequest()
-            BrowserLauncher.launchWebTabInApp(context, blogUrl)
+            BrowserLauncher.launchWebTabInApp(context, blogUrl, false)
         },
     )
 }

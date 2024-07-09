@@ -13,8 +13,8 @@
                 <category android:name="android.intent.category.BROWSABLE" />
 
                 <data
-                    android:host="oauth.fread"
-                    android:scheme="fread" />
+                    android:host="fread.xyz"
+                    android:scheme="https" />
             </intent-filter>
         </activity>
     </application>

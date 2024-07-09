@@ -27,12 +27,15 @@ dependencies {
     implementation(libs.bundles.androidx.preference)
     implementation(libs.bundles.androidx.datastore)
 
+    implementation(libs.androidx.browser)
+
     val composeBom = platform(libs.androidx.compose.bom)
     implementation(composeBom)
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.androidx.compose.foundation)
     implementation(libs.bundles.androidx.compose.material)
     implementation(libs.androidx.compose.runtime)
+    implementation(libs.bundles.androidx.activity)
 
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)

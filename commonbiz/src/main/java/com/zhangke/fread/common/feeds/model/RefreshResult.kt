@@ -5,6 +5,7 @@ import com.zhangke.fread.status.status.model.Status
 data class RefreshResult(
     val newStatus: List<Status>,
     val deletedStatus: List<Status>,
+    val useOldData: Boolean = true,
 ) {
 
     companion object {

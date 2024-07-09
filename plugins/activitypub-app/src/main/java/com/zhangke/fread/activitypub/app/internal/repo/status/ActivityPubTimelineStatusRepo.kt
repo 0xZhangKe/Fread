@@ -123,6 +123,17 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         listId: String? = null,
     ) {
         statusDao.insert(status.toDBEntity(role, type, listId))
+        val leftTypes = ActivityPubStatusSourceType.entries.filter { it != type }
+        leftTypes.mapNotNull {
+            queryLocalStatus(
+                role = role,
+                type = it,
+                listId = listId,
+                statusId = status.id,
+            )
+        }.forEach {
+            statusDao.insert(status.toDBEntity(role, it.type, it.listId))
+        }
     }
 
     suspend fun deleteStatus(statusId: String) {
@@ -143,11 +154,11 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         listId: String?,
         statusId: String,
     ): ActivityPubStatusTableEntity? {
-        return if (type == ActivityPubStatusSourceType.LIST) {
+        return if (type == ActivityPubStatusSourceType.LIST && listId != null) {
             statusDao.queryStatusInList(
                 role = role,
                 type = type,
-                listId = listId!!,
+                listId = listId,
                 id = statusId,
             )
         } else {

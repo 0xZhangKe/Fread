@@ -291,17 +291,19 @@ class FeedsViewModelController(
     private fun List<StatusUiState>.applyRefreshResult(
         refreshResult: RefreshResult,
     ): List<StatusUiState> {
-        val deletedIdsSet = refreshResult.deletedStatus
-            .map { it.id }
-            .toSet()
-        val finalList = this.filter {
-            !deletedIdsSet.contains(it.status.id)
-        }.toMutableList()
-        val items = refreshResult.newStatus.map { statusItem ->
-            statusItem.toUiState()
+        if (refreshResult.useOldData) {
+            val deletedIdsSet = refreshResult.deletedStatus
+                .map { it.id }
+                .toSet()
+            val oldList = this.filter { !deletedIdsSet.contains(it.status.id) }
+            val addedNewList = refreshResult.newStatus
+                .map { statusItem -> statusItem.toUiState() }
+                .toMutableList()
+            addedNewList.addAllIgnoreDuplicate(oldList)
+            return addedNewList
+        } else {
+            return refreshResult.newStatus.map { statusItem -> statusItem.toUiState() }
         }
-        finalList.addAllIgnoreDuplicate(items)
-        return finalList.sortedByDescending { it.status.datetime }
     }
 
     private fun MutableList<StatusUiState>.addAllIgnoreDuplicate(

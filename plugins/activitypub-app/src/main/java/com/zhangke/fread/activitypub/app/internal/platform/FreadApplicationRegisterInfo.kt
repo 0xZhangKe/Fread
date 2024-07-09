@@ -5,7 +5,7 @@ import com.zhangke.activitypub.api.AppsRepo
 object FreadApplicationRegisterInfo {
 
     const val CLIENT_NAME = "Fread"
-    val redirectUris = listOf("fread://oauth.fread")
+    val redirectUris = listOf("https://fread.xyz")
     val scopes = AppsRepo.AppScopes.ALL
-    const val website = "https://0xzhangke.github.io/"
+    const val WEBSITE = "https://fread.xyz"
 }

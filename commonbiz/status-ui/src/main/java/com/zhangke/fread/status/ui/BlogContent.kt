@@ -57,6 +57,7 @@ fun BlogContent(
     onMediaClick: OnBlogMediaClick,
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     textSelectable: Boolean = false,
 ) {
@@ -75,6 +76,7 @@ fun BlogContent(
                 onMentionClick(it)
             },
             textSelectable = textSelectable,
+            onUrlClick = onUrlClick,
         )
         val sensitive = blog.sensitive
         if (blog.mediaList.isNotEmpty()) {
@@ -117,6 +119,7 @@ private fun BlogTextContentSection(
     style: BlogStyle,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onUrlClick: (url: String) -> Unit,
     textSelectable: Boolean = false,
 ) {
     val contentMaxLine = if (blog.platform.protocol.isRss) {
@@ -136,6 +139,7 @@ private fun BlogTextContentSection(
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
+            onUrlClick = onUrlClick,
         )
         if (blog.content.isNotEmpty()) {
             AnimatedVisibility(
@@ -153,6 +157,7 @@ private fun BlogTextContentSection(
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagInStatusClick,
                     textSelectable = textSelectable,
+                    onUrlClick = onUrlClick,
                 )
             }
         }
@@ -181,6 +186,7 @@ private fun BlogTextContentSection(
                 maxLines = contentMaxLine,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
+                onUrlClick = onUrlClick,
                 textSelectable = textSelectable,
             )
         }
@@ -199,6 +205,7 @@ private fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
                 textSelectable = textSelectable,
+                onUrlClick = onUrlClick,
             )
         }
     }
@@ -211,6 +218,7 @@ private fun SpoilerText(
     textSelectable: Boolean = false,
     onShowContent: () -> Unit,
     onHideContent: () -> Unit,
+    onUrlClick: (url: String) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
 ) {
@@ -236,6 +244,7 @@ private fun SpoilerText(
             richText = spoilerText,
             onMentionClick = onMentionClick,
             onHashtagClick = onHashtagInStatusClick,
+            onUrlClick = onUrlClick,
             textSelectable = textSelectable,
         )
     }

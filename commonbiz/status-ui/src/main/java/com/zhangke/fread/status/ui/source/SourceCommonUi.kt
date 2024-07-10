@@ -17,6 +17,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -25,6 +26,7 @@ import androidx.constraintlayout.compose.Dimension
 import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
@@ -37,6 +39,7 @@ fun SourceCommonUi(
     modifier: Modifier = Modifier,
     showDivider: Boolean = true,
 ) {
+    val context = LocalContext.current
     Column(modifier = modifier) {
         ConstraintLayout(
             modifier = Modifier
@@ -127,6 +130,9 @@ fun SourceCommonUi(
                 tags = emptyList(),
                 onMentionClick = {},
                 onHashtagClick = {},
+                onUrlClick = {
+                    BrowserLauncher.launchWebTabInApp(context, it)
+                },
             )
         }
         if (showDivider) {

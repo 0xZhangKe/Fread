@@ -18,6 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -38,6 +39,7 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
@@ -199,6 +201,7 @@ class FollowScreen(
                 overflow = TextOverflow.Ellipsis,
                 style = MaterialTheme.typography.labelMedium,
             )
+            val context = LocalContext.current
             FreadRichText(
                 modifier = Modifier
                     .freadPlaceholder(account == null)
@@ -216,6 +219,9 @@ class FollowScreen(
                 mentions = emptyList(),
                 tags = emptyList(),
                 emojis = account?.emojis.orEmpty(),
+                onUrlClick = {
+                    BrowserLauncher.launchWebTabInApp(context, it, role)
+                },
             )
             HorizontalDivider(
                 modifier = Modifier.constrainAs(dividerRef) {

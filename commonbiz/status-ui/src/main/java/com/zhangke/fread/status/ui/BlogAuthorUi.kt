@@ -10,6 +10,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -18,6 +19,7 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -29,6 +31,7 @@ fun BlogAuthorUi(
     modifier: Modifier,
     author: BlogAuthor,
     onClick: (BlogAuthor) -> Unit,
+    onUrlClick: (String) -> Unit,
 ) {
     Column(modifier = modifier) {
         ConstraintLayout(
@@ -58,6 +61,7 @@ fun BlogAuthorUi(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontSizeSp = 16F,
+                onUrlClick = onUrlClick,
             )
             Text(
                 modifier = Modifier.constrainAs(webFingerRef) {
@@ -86,6 +90,7 @@ fun BlogAuthorUi(
                 onHashtagClick = {},
                 onMentionClick = {},
                 maxLines = 1,
+                onUrlClick = onUrlClick,
             )
         }
         HorizontalDivider()
@@ -100,6 +105,7 @@ fun RecommendAuthorUi(
     following: Boolean,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
+    val context = LocalContext.current
     ConstraintLayout(
         modifier = modifier
             .fillMaxWidth()
@@ -127,6 +133,9 @@ fun RecommendAuthorUi(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             fontSizeSp = 16F,
+            onUrlClick = {
+                BrowserLauncher.launchWebTabInApp(context, it, role)
+            },
         )
         Text(
             modifier = Modifier.constrainAs(webFingerRef) {
@@ -160,6 +169,9 @@ fun RecommendAuthorUi(
             },
             overflow = TextOverflow.Ellipsis,
             maxLines = 3,
+            onUrlClick = {
+                BrowserLauncher.launchWebTabInApp(context, it, role)
+            },
         )
         StyledTextButton(
             modifier = Modifier.constrainAs(followBtn) {

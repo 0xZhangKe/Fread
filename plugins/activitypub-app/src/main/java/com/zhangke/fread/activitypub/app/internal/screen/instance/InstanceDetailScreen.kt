@@ -27,11 +27,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -45,7 +45,9 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
@@ -174,6 +176,7 @@ class InstanceDetailScreen(
         progress: Float,
         uiState: InstanceDetailUiState,
     ) {
+        val context = LocalContext.current
         val loading = uiState.loading
         val instance = uiState.instance
         DetailHeaderContent(
@@ -259,6 +262,14 @@ class InstanceDetailScreen(
             },
             onAvatarClick = {
 
+            },
+            onUrlClick = {
+                val role = if (uiState.baseUrl != null) {
+                    IdentityRole(null, baseUrl = uiState.baseUrl)
+                } else {
+                    null
+                }
+                BrowserLauncher.launchWebTabInApp(context, it, role)
             },
         )
     }

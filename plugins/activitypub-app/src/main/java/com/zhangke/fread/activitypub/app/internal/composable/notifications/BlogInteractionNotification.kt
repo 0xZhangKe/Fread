@@ -10,7 +10,9 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -29,6 +31,7 @@ fun BlogInteractionNotification(
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
+    val context = LocalContext.current
     Column(
         modifier = Modifier
             .fillMaxWidth()
@@ -62,6 +65,9 @@ fun BlogInteractionNotification(
             },
             onMentionClick = {
                 composedStatusInteraction.onMentionClick(statusUiState.role, it)
+            },
+            onUrlClick = {
+                BrowserLauncher.launchWebTabInApp(context, it, statusUiState.role)
             },
         )
     }

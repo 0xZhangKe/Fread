@@ -20,7 +20,6 @@ import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -38,6 +37,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -53,11 +53,13 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.ProfileElements
 import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.fread.profile.R
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
@@ -198,6 +200,7 @@ class ProfileHomePage : BaseScreen() {
         onLogoutClick: () -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
     ) {
+        val context = LocalContext.current
         ConstraintLayout(
             modifier = Modifier
                 .clickable { onAccountClick(account) }
@@ -237,12 +240,18 @@ class ProfileHomePage : BaseScreen() {
                     content = account.userName,
                     emojis = account.emojis,
                     fontSizeSp = 22F,
+                    onUrlClick = {
+                        BrowserLauncher.launchWebTabInApp(context, it, account.role)
+                    },
                 )
                 FreadRichText(
                     modifier = Modifier.padding(top = 2.dp),
                     maxLines = 3,
                     content = account.description.orEmpty(),
                     emojis = account.emojis,
+                    onUrlClick = {
+                        BrowserLauncher.launchWebTabInApp(context, it, account.role)
+                    }
                 )
             }
             var showMorePopup by remember {
@@ -280,4 +289,7 @@ class ProfileHomePage : BaseScreen() {
             }
         }
     }
+
+    private val LoggedAccount.role: IdentityRole
+        get() = IdentityRole(accountUri = uri, baseUrl = platform.baseUrl)
 }

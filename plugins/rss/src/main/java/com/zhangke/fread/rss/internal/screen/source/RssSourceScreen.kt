@@ -33,20 +33,20 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.FreadDialog
-import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
 import com.zhangke.fread.rss.R
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 import kotlinx.coroutines.flow.Flow
 
 @Destination(RssSourceScreenRoute.ROUTE)
@@ -122,6 +122,9 @@ class RssSourceScreen(
                     tags = emptyList(),
                     onHashtagClick = {},
                     onMentionClick = {},
+                    onUrlClick = {
+                        BrowserLauncher.launchWebTabInApp(context, it)
+                    },
                 )
 
                 Spacer(modifier = Modifier.height(22.dp))

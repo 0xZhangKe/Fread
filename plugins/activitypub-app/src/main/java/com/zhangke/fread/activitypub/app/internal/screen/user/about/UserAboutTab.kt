@@ -13,6 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -24,6 +25,7 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.IdentityRole
@@ -43,7 +45,8 @@ class UserAboutTab(
     @Composable
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
-        val viewModel = screen.getViewModel<UserAboutContainerViewModel>().getViewModel(role, userWebFinger)
+        val viewModel =
+            screen.getViewModel<UserAboutContainerViewModel>().getViewModel(role, userWebFinger)
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(
             uiState = uiState,
@@ -98,6 +101,7 @@ class UserAboutTab(
                 .fillMaxWidth(),
             text = field.name,
         )
+        val context = LocalContext.current
         FreadRichText(
             modifier = Modifier
                 .padding(top = 4.dp)
@@ -108,6 +112,9 @@ class UserAboutTab(
             onMentionClick = {},
             onHashtagClick = {},
             emojis = emojis,
+            onUrlClick = {
+                BrowserLauncher.launchWebTabInApp(context, it, role)
+            },
         )
     }
 }

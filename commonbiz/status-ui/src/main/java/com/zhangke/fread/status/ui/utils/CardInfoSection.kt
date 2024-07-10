@@ -30,6 +30,7 @@ fun CardInfoSection(
     avatar: String?,
     title: String,
     description: String?,
+    onUrlClick: (String) -> Unit,
     actions: (@Composable RowScope.() -> Unit)? = null
 ) {
     Card(
@@ -81,6 +82,7 @@ fun CardInfoSection(
                         tags = emptyList(),
                         onHashtagClick = {},
                         onMentionClick = {},
+                        onUrlClick = onUrlClick,
                         maxLines = 3,
                     )
                 }

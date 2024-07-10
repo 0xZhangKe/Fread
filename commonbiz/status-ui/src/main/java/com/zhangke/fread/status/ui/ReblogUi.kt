@@ -41,6 +41,7 @@ fun ReblogUi(
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onUrlClick: (url: String) -> Unit,
 ) {
     Column(modifier = modifier) {
         Row(
@@ -59,6 +60,7 @@ fun ReblogUi(
                 maxLines = 1,
                 onHashtagClick = {},
                 onMentionClick = {},
+                onUrlClick = onUrlClick,
                 fontSizeSp = 12F,
             )
             Text(
@@ -83,6 +85,7 @@ fun ReblogUi(
             onVoted = onVoted,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
+            onUrlClick = onUrlClick,
         )
     }
 }

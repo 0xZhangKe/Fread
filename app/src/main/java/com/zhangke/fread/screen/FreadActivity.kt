@@ -8,6 +8,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -23,7 +24,9 @@ import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.daynight.DayNightHelper
+import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.collect
 
 @AndroidEntryPoint
 class FreadActivity : AppCompatActivity() {
@@ -63,6 +66,11 @@ class FreadActivity : AppCompatActivity() {
                                     navigator = it,
                                     disposeScreenAfterTransitionEnd = false,
                                 )
+                                LaunchedEffect(Unit) {
+                                    GlobalScreenNavigation.openScreenFlow.collect { screen ->
+                                        it.push(screen)
+                                    }
+                                }
                             }
                         }
                     }

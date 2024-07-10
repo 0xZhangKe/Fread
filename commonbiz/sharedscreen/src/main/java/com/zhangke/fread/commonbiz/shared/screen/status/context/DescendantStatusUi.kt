@@ -3,6 +3,8 @@ package com.zhangke.fread.commonbiz.shared.screen.status.context
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
@@ -24,6 +26,7 @@ fun DescendantStatusUi(
     composedStatusInteraction: ComposedStatusInteraction,
     onMediaClick: OnBlogMediaClick,
 ) {
+    val context = LocalContext.current
     val blog = status.status.intrinsicBlog
     Surface(
         modifier = modifier,
@@ -51,6 +54,9 @@ fun DescendantStatusUi(
             },
             onMentionClick = {
                 composedStatusInteraction.onMentionClick(status.role, it)
+            },
+            onUrlClick = {
+                BrowserLauncher.launchWebTabInApp(context, it, status.role)
             },
             showDivider = true,
         )

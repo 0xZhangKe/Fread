@@ -222,6 +222,7 @@ data class UserDetailScreen(
                     )
                 },
                 headerContent = { progress ->
+                    val context = LocalContext.current
                     DetailHeaderContent(
                         progress = progress,
                         loading = uiState.loading,
@@ -272,6 +273,9 @@ data class UserDetailScreen(
                         onRejectClick = onRejectClick,
                         onFollowAccountClick = onFollowAccountClick,
                         onUnfollowAccountClick = onUnfollowAccountClick,
+                        onUrlClick = {
+                            BrowserLauncher.launchWebTabInApp(context, it, role)
+                        }
                     )
                 },
                 contentCanScrollBackward = contentCanScrollBackward,

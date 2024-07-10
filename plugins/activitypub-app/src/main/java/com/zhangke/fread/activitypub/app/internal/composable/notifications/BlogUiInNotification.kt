@@ -4,9 +4,11 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.status.blog.BlogPoll
@@ -24,6 +26,7 @@ fun OnlyBlogContentUi(
     style: NotificationStyle,
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onUrlClick: (String) -> Unit,
     onMentionClick: (Mention) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
@@ -45,6 +48,7 @@ fun OnlyBlogContentUi(
             onVoted = onVoted,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
+            onUrlClick = onUrlClick,
         )
     }
 }
@@ -58,6 +62,7 @@ fun WholeBlogUi(
     showDivider: Boolean = true,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
+    val context = LocalContext.current
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     val blog = statusUiState.status.intrinsicBlog
@@ -92,6 +97,9 @@ fun WholeBlogUi(
             },
             onMentionClick = {
                 composedStatusInteraction.onMentionClick(statusUiState.role, it)
+            },
+            onUrlClick = {
+                BrowserLauncher.launchWebTabInApp(context, it, statusUiState.role)
             },
         )
     }

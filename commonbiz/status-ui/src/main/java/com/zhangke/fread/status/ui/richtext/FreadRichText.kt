@@ -6,7 +6,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.LayoutDirection
-import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
@@ -21,6 +20,7 @@ fun FreadRichText(
     richText: RichText,
     onMentionClick: (Mention) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
+    onUrlClick: (url: String) -> Unit,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
@@ -35,10 +35,10 @@ fun FreadRichText(
         maxLines = maxLines,
         fontSp = fontSizeSp,
         textSelectable = textSelectable,
-        onLinkTargetClick = { context, linkTarget ->
+        onLinkTargetClick = { _, linkTarget ->
             when (linkTarget) {
                 is LinkSpan.LinkTarget.UrlTarget -> {
-                    BrowserLauncher.launchWebTabInApp(context, linkTarget.url)
+                    onUrlClick(linkTarget.url)
                 }
 
                 is LinkSpan.LinkTarget.HashtagTarget -> {
@@ -62,6 +62,7 @@ fun FreadRichText(
     tags: List<HashtagInStatus> = emptyList(),
     onMentionClick: (Mention) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
+    onUrlClick: (url: String) -> Unit,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
@@ -84,5 +85,6 @@ fun FreadRichText(
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick,
         fontSizeSp = fontSizeSp,
+        onUrlClick = onUrlClick,
     )
 }

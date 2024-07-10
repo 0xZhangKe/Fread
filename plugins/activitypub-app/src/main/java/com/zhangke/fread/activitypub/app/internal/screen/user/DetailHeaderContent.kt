@@ -42,6 +42,7 @@ fun DetailHeaderContent(
     followInfo: @Composable () -> Unit,
     onBannerClick: () -> Unit,
     onAvatarClick: () -> Unit,
+    onUrlClick: (String) -> Unit,
     relationship: RelationshipUiState? = null,
     onUnblockClick: (() -> Unit)? = null,
     onCancelFollowRequestClick: (() -> Unit)? = null,
@@ -129,6 +130,7 @@ fun DetailHeaderContent(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             fontSizeSp = 18F,
+            onUrlClick = onUrlClick,
         )
 
         // acct line
@@ -158,6 +160,7 @@ fun DetailHeaderContent(
                     width = Dimension.fillToConstraints
                 },
             richText = description ?: RichText.empty,
+            onUrlClick = onUrlClick,
         )
 
         // follow info line

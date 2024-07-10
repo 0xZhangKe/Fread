@@ -21,14 +21,14 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.DateTimeFormatter
+import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.ui.StatusInfoLine
@@ -53,7 +53,11 @@ class BlogDetailScreen(
                     actions = {
                         SimpleIconButton(
                             onClick = {
-                                BrowserLauncher.launchWebTabInApp(context, blog.url, false)
+                                BrowserLauncher.launchWebTabInApp(
+                                    context,
+                                    blog.url,
+                                    checkAppSupportPage = false
+                                )
                             },
                             imageVector = Icons.Default.OpenInBrowser,
                             contentDescription = "Open In Browser",
@@ -79,6 +83,9 @@ class BlogDetailScreen(
                     moreInteractions = emptyList(),
                     onInteractive = {},
                     onUserInfoClick = viewModel::onUserInfoClick,
+                    onUrlClick = {
+                        BrowserLauncher.launchWebTabInApp(context, it)
+                    },
                 )
                 WebViewPreviewer(
                     modifier = Modifier

@@ -52,6 +52,7 @@ fun StatusInfoLine(
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
     onUserInfoClick: (BlogAuthor) -> Unit,
+    onUrlClick: (url: String) -> Unit,
     reblogAuthor: BlogAuthor? = null,
 ) {
     val infoStyle = style.statusInfoStyle
@@ -141,6 +142,7 @@ fun StatusInfoLine(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             richText = blogAuthor.humanizedName,
+            onUrlClick = onUrlClick,
             fontSizeSp = 16F,
         )
         Text(

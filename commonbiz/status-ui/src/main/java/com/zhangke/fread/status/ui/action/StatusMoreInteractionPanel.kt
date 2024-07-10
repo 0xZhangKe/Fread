@@ -133,7 +133,7 @@ private fun AdditionalMoreOptions(
         onClick = {
             reportClick(StatusDataElements.OPEN_IN_BROWSER)
             onDismissRequest()
-            BrowserLauncher.launchWebTabInApp(context, blogUrl, false)
+            BrowserLauncher.launchWebTabInApp(context, blogUrl, checkAppSupportPage = false)
         },
     )
 }

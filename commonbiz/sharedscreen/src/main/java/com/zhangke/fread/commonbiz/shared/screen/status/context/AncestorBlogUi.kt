@@ -9,12 +9,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.endPadding
 import com.zhangke.framework.composable.startPadding
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.BlogContent
@@ -38,6 +40,7 @@ fun AncestorBlogUi(
     composedStatusInteraction: ComposedStatusInteraction,
     onMediaClick: OnBlogMediaClick,
 ) {
+    val context = LocalContext.current
     val blog = status.status.intrinsicBlog
     Surface(modifier = modifier) {
         ConstraintLayout(
@@ -114,6 +117,9 @@ fun AncestorBlogUi(
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 fontSizeSp = 16F,
+                onUrlClick = {
+                    BrowserLauncher.launchWebTabInApp(context, it, status.role)
+                },
             )
             Text(
                 modifier = Modifier.constrainAs(dateTime) {
@@ -169,6 +175,9 @@ fun AncestorBlogUi(
                 },
                 onMentionClick = {
                     composedStatusInteraction.onMentionClick(status.role, it)
+                },
+                onUrlClick = {
+                    BrowserLauncher.launchWebTabInApp(context, it, status.role)
                 },
             )
             StatusBottomInteractionPanel(

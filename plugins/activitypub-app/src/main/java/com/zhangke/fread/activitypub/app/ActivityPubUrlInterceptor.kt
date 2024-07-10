@@ -12,6 +12,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
+import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
@@ -24,6 +25,7 @@ import javax.inject.Inject
 class ActivityPubUrlInterceptor @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val clientManager: ActivityPubClientManager,
+    private val resolveBaseUrl: ResolveBaseUrlUseCase,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : BrowserInterceptor {
@@ -55,8 +57,10 @@ class ActivityPubUrlInterceptor @Inject constructor(
         if (uri.queries.isNotEmpty()) return null
         if (path.contains("?") || path.contains("/")) return null
         if (!path.startsWith("@")) return null
+        val baseUrl = FormalBaseUrl.parse(uri.toString()) ?: return null
+        val acct = "$path@${baseUrl.host}"
         val accountRepo = clientManager.getClient(role).accountRepo
-        val account = accountRepo.lookup(path).getOrNull() ?: return null
+        val account = accountRepo.lookup(acct).getOrNull() ?: return null
         return accountEntityAdapter.toWebFinger(account)
     }
 
@@ -69,10 +73,24 @@ class ActivityPubUrlInterceptor @Inject constructor(
         val acct = array[0]
         val statusId = array[1]
         if (!acct.startsWith("@")) return null
-        val statusRepo = clientManager.getClient(role).statusRepo
+        val client = clientManager.getClient(role)
+        val statusRepo = client.statusRepo
         val platform = platformRepo.getPlatform(baseUrl).getOrNull() ?: return null
-        val statusEntity = statusRepo.getStatuses(statusId).getOrNull() ?: return null
-        return activityPubStatusAdapter.toStatus(statusEntity, platform)
+        val baseUrlOfGivenRole = resolveBaseUrl(role)
+        if (baseUrlOfGivenRole != baseUrl) {
+            // other platform, by search
+            val searchRepo = client.searchRepo
+            val searchedStatusResult =
+                searchRepo.queryStatus(uri.toString(), resolve = true).getOrNull() ?: return null
+            if (searchedStatusResult.size != 1) return null
+            return searchedStatusResult.first()
+                .let { activityPubStatusAdapter.toStatus(it, platform) }
+        } else {
+            // same platform
+            return statusRepo.getStatuses(statusId)
+                .getOrNull()
+                ?.let { activityPubStatusAdapter.toStatus(it, platform) }
+        }
     }
 
     private suspend fun parsePlatform(uri: SimpleUri): BlogPlatform? {

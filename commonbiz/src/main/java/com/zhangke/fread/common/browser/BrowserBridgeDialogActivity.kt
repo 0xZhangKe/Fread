@@ -22,6 +22,7 @@ import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.common.daynight.DayNightHelper
+import com.zhangke.fread.commonbiz.R
 import com.zhangke.fread.status.model.IdentityRole
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
@@ -54,6 +55,8 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
         @Suppress("DEPRECATION")
         val role = intent.getParcelableExtra<IdentityRole>(PARAMS_ROLE)
         val url = intent.getStringExtra(PARAMS_URL)
@@ -106,5 +109,11 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
             }
         }
         return false
+    }
+
+    override fun finish() {
+        super.finish()
+        @Suppress("DEPRECATION")
+        overridePendingTransition(R.anim.fade_in, R.anim.fade_out)
     }
 }

@@ -9,6 +9,7 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.isRss
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
@@ -20,6 +21,14 @@ class RssStatusResolver @Inject constructor(
     private val uriTransformer: RssUriTransformer,
     private val rssStatusRepo: RssStatusRepo,
 ) : IStatusResolver {
+
+    override suspend fun getStatus(
+        role: IdentityRole,
+        statusId: String,
+        platform: BlogPlatform
+    ): Result<Status>? {
+        return null
+    }
 
     override suspend fun getStatusList(
         role: IdentityRole,

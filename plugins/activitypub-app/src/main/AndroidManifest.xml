@@ -14,7 +14,7 @@
 
                 <data
                     android:host="fread.xyz"
-                    android:scheme="https" />
+                    android:scheme="freadapp" />
             </intent-filter>
         </activity>
     </application>

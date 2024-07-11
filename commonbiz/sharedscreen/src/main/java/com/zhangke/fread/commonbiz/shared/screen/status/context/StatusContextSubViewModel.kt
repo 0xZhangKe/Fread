@@ -84,6 +84,11 @@ class StatusContextSubViewModel(
                         )
                     }
                 }
+            statusProvider.statusResolver
+                .getStatus(role, anchorStatus.id, anchorStatus.platform)
+                .onSuccess {
+                    updateStatus(buildStatusUiState(role, it))
+                }
         }
     }
 

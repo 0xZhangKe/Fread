@@ -29,6 +29,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -41,7 +42,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
-import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.HorizontalPagerWithTab
@@ -51,6 +51,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.utils.formatAsCount
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
@@ -59,6 +60,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.model.IdentityRole
@@ -337,71 +339,72 @@ data class UserDetailScreen(
             modifier = modifier,
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            val followDescSuffix = stringResource(R.string.activity_pub_user_detail_follower_info)
-            val followerDesc = remember(account) {
-                if (account == null) {
-                    buildAnnotatedString { append("    ") }
-                } else {
-                    buildAnnotatedString {
-                        val followCount = account.followersCount.toString()
-                        append(followCount)
-                        addStyle(
-                            style = SpanStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                            ),
-                            start = 0,
-                            end = followCount.length,
-                        )
-                        append(" ")
-                        append(followDescSuffix)
-                    }
-                }
-            }
-            Text(
-                modifier = Modifier.clickable(account != null) {
-                    onFollowerClick()
-                },
-                text = followerDesc,
-                style = MaterialTheme.typography.bodySmall,
+            CountInfoItem(
+                count = account?.followersCount,
+                descId = R.string.activity_pub_user_detail_follower_info,
+                onClick = onFollowerClick,
             )
-
             Text(
                 modifier = Modifier
                     .padding(horizontal = 4.dp),
                 text = "·",
                 style = MaterialTheme.typography.bodySmall,
             )
-
-            val followingDescSuffix =
-                stringResource(R.string.activity_pub_user_detail_following_info)
-            val followingDesc = remember(account) {
-                if (account == null) {
-                    buildAnnotatedString { append("    ") }
-                } else {
-                    buildAnnotatedString {
-                        val followingCount = account.followingCount.toString()
-                        append(followingCount)
-                        addStyle(
-                            style = SpanStyle(
-                                fontSize = 16.sp,
-                                fontWeight = FontWeight.Medium,
-                            ),
-                            start = 0,
-                            end = followingCount.length,
-                        )
-                        append(" ")
-                        append(followingDescSuffix)
-                    }
-                }
-            }
+            CountInfoItem(
+                count = account?.followingCount,
+                descId = R.string.activity_pub_user_detail_following_info,
+                onClick = onFollowingClick,
+            )
             Text(
-                modifier = Modifier.clickable(account != null) {
-                    onFollowingClick()
-                },
-                text = followingDesc,
+                modifier = Modifier
+                    .padding(horizontal = 4.dp),
+                text = "·",
                 style = MaterialTheme.typography.bodySmall,
             )
+            CountInfoItem(
+                count = account?.statusesCount,
+                descId = R.string.activity_pub_user_detail_posts,
+            )
+        }
+    }
+
+    @Composable
+    private fun CountInfoItem(
+        count: Int?,
+        descId: Int,
+        onClick: (() -> Unit)? = null,
+    ) {
+        val descSuffix = stringResource(descId)
+        val info = remember(count) {
+            if (count == null) {
+                buildAnnotatedString { append("    ") }
+            } else {
+                buildCountedDesc(count, descSuffix)
+            }
+        }
+        Text(
+            modifier = Modifier.clickable(count != null && onClick != null) {
+                onClick?.invoke()
+            },
+            text = info,
+            style = MaterialTheme.typography.bodySmall,
+        )
+    }
+
+    private fun buildCountedDesc(count: Int, desc: String): AnnotatedString {
+        val formattedCount = count.formatAsCount()
+        return buildAnnotatedString {
+            append(formattedCount)
+            addStyle(
+                style = SpanStyle(
+                    fontSize = 16.sp,
+                    fontWeight = FontWeight.Medium,
+                ),
+                start = 0,
+                end = formattedCount.length,
+            )
+            append(" ")
+            append(desc)
         }
     }
 

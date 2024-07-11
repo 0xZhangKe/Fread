@@ -17,6 +17,7 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.notActivityPub
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
@@ -37,6 +38,20 @@ class ActivityPubStatusResolver @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
 ) : IStatusResolver {
+
+    override suspend fun getStatus(
+        role: IdentityRole,
+        statusId: String,
+        platform: BlogPlatform
+    ): Result<Status>? {
+        if (platform.protocol.notActivityPub) return null
+        val statusRepo = clientManager.getClient(role).statusRepo
+        return statusRepo.getStatuses(statusId)
+            .mapCatching { entity ->
+                if (entity == null) throw RuntimeException("Can't find status(${statusId})")
+                activityPubStatusAdapter.toStatus(entity, platform)
+            }
+    }
 
     override suspend fun getStatusList(
         role: IdentityRole,

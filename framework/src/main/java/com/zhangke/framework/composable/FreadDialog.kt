@@ -6,18 +6,22 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Card
+import androidx.compose.material3.LocalContentColor
+import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -40,13 +44,7 @@ fun FreadDialog(
         properties = properties,
         title = title,
         content = {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-                Text(text = contentText, style = MaterialTheme.typography.headlineSmall)
-            }
+            Text(text = contentText)
         },
         negativeButtonText = negativeButtonText,
         positiveButtonText = positiveButtonText,
@@ -69,19 +67,10 @@ fun FreadDialog(
     FreadDialog(
         onDismissRequest = onDismissRequest,
         properties = properties,
-        header =
-        {
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center,
-            ) {
-                val textStyle = MaterialTheme.typography.titleLarge
-                Text(
-                    text = title.ifNullOrEmpty { stringResource(R.string.alert) },
-                    style = textStyle,
-                )
-            }
+        header = {
+            Text(
+                text = title.ifNullOrEmpty { stringResource(R.string.alert) },
+            )
         },
         content = content,
         negativeButton = if (negativeButtonText.isNullOrEmpty() && onNegativeClick == null) {
@@ -111,6 +100,8 @@ fun FreadDialog(
     properties: DialogProperties = DialogProperties(),
     header: (@Composable () -> Unit)? = null,
     content: (@Composable () -> Unit)? = null,
+    titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
+    textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
     negativeButton: (@Composable () -> Unit)? = null,
     positiveButton: (@Composable () -> Unit)? = null,
 ) {
@@ -122,34 +113,73 @@ fun FreadDialog(
             modifier = Modifier
                 .fillMaxWidth()
                 .wrapContentHeight(),
+            shape = MaterialTheme.shapes.extraLarge,
         ) {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
+                    .padding(start = 24.dp, top = 24.dp, end = 20.dp, bottom = 12.dp)
             ) {
                 if (header != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    ProvideContentColorTextStyle(
+                        contentColor = titleContentColor,
+                        textStyle = MaterialTheme.typography.headlineSmall,
+                    ) {
+                        Box(
+                            Modifier
+                                .align(Alignment.CenterHorizontally)
+                                .fillMaxWidth(),
+                            contentAlignment = Alignment.CenterStart,
+                        ) {
+                            header()
+                        }
+                    }
                 }
-                header?.invoke()
                 if (content != null) {
-                    Spacer(modifier = Modifier.height(16.dp))
+                    val textStyle = MaterialTheme.typography.bodyMedium
+                    ProvideContentColorTextStyle(
+                        contentColor = textContentColor,
+                        textStyle = textStyle
+                    ) {
+                        Box(
+                            Modifier
+                                .fillMaxWidth()
+                                .padding(top = 16.dp)
+                                .align(Alignment.Start),
+                            contentAlignment = Alignment.CenterStart,
+                        ) {
+                            content()
+                        }
+                    }
                 }
-                content?.invoke()
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(end = 16.dp),
+                        .fillMaxWidth(),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     negativeButton?.invoke()
                     if (positiveButton != null) {
-                        Box(modifier = Modifier.size(width = 10.dp, height = 1.dp))
+                        Spacer(modifier = Modifier.size(width = 8.dp, height = 1.dp))
                         positiveButton()
                     }
                 }
             }
         }
     }
+}
+
+@Composable
+private fun ProvideContentColorTextStyle(
+    contentColor: Color,
+    textStyle: TextStyle,
+    content: @Composable () -> Unit
+) {
+    val mergedStyle = LocalTextStyle.current.merge(textStyle)
+    CompositionLocalProvider(
+        LocalContentColor provides contentColor,
+        LocalTextStyle provides mergedStyle,
+        content = content
+    )
 }

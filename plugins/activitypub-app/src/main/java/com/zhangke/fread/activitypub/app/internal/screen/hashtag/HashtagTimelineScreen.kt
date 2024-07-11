@@ -62,7 +62,7 @@ data class HashtagTimelineScreen(
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = uniqueScreenKey
+        get() = route
 
     @Composable
     override fun Content() {

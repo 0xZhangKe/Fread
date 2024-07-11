@@ -1,12 +1,11 @@
 package com.zhangke.fread.status.status
 
 import com.zhangke.framework.collections.mapFirst
-import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import com.zhangke.fread.status.status.model.StatusInteraction
@@ -15,6 +14,14 @@ import com.zhangke.fread.status.uri.FormalUri
 class StatusResolver(
     private val resolverList: List<IStatusResolver>,
 ) {
+
+    suspend fun getStatus(
+        role: IdentityRole,
+        statusId: String,
+        platform: BlogPlatform,
+    ): Result<Status> {
+        return resolverList.mapFirst { it.getStatus(role, statusId, platform) }
+    }
 
     suspend fun getStatusList(
         role: IdentityRole,
@@ -92,6 +99,12 @@ class StatusResolver(
 }
 
 interface IStatusResolver {
+
+    suspend fun getStatus(
+        role: IdentityRole,
+        statusId: String,
+        platform: BlogPlatform,
+    ): Result<Status>?
 
     /**
      * @return null if un-support

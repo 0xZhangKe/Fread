@@ -30,6 +30,10 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         // no-op
     }
 
+    override suspend fun refreshAllAccountInfo(): Result<Unit> {
+        return Result.success(Unit)
+    }
+
     override suspend fun logout(uri: FormalUri): Boolean {
         return false
     }

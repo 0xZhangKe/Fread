@@ -67,7 +67,7 @@ class ActivityPubOAuthor @Inject constructor(
             toast(e.message)
             return@launch
         }
-        repo.insert(account)
+        repo.insert(account, System.currentTimeMillis())
     }
 
     internal suspend fun onOauthSuccess(code: String) {

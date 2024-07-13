@@ -8,6 +8,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import okhttp3.internal.userAgent
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountRepo @Inject constructor(
@@ -40,11 +41,16 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         return accountDao.queryByBaseUrl(baseUrl).firstOrNull()?.let(adapter::adapt)
     }
 
-    suspend fun insert(entry: ActivityPubLoggedAccount) =
-        accountDao.insert(adapter.recovery(entry))
+    suspend fun insert(
+        entry: ActivityPubLoggedAccount,
+        addedTimestamp: Long,
+    ) = accountDao.insert(adapter.recovery(entry, addedTimestamp))
 
-    suspend fun insert(entries: List<ActivityPubLoggedAccount>) =
-        accountDao.insert(entries.map(adapter::recovery))
+    suspend fun update(account: ActivityPubLoggedAccount){
+        val entity = accountDao.queryByUri(account.uri.toString())
+        val addedTimestamp = entity?.addedTimestamp ?: System.currentTimeMillis()
+        accountDao.insert(adapter.recovery(account, addedTimestamp))
+    }
 
     suspend fun deleteByUri(uri: FormalUri) = accountDao.deleteByUri(uri.toString())
 

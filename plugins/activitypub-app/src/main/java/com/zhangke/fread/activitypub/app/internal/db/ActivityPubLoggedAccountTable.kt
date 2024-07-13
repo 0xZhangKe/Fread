@@ -33,6 +33,7 @@ data class ActivityPubLoggedAccountEntity(
     val url: String,
     val token: ActivityPubTokenEntity,
     val emojis: List<Emoji>,
+    val addedTimestamp: Long,
 ) {
 
     data class BlogPlatformEntity(
@@ -47,19 +48,19 @@ data class ActivityPubLoggedAccountEntity(
 @Dao
 interface ActivityPubLoggerAccountDao {
 
-    @Query("SELECT * FROM $TABLE_NAME")
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY addedTimestamp")
     fun queryAllFlow(): Flow<List<ActivityPubLoggedAccountEntity>>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl")
     fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccountEntity?>
 
-    @Query("SELECT * FROM $TABLE_NAME")
+    @Query("SELECT * FROM $TABLE_NAME ORDER BY addedTimestamp")
     suspend fun queryAll(): List<ActivityPubLoggedAccountEntity>
 
     @Query("SELECT * FROM $TABLE_NAME WHERE uri=:uri")
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccountEntity?
 
-    @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl")
+    @Query("SELECT * FROM $TABLE_NAME WHERE baseUrl=:baseUrl ORDER BY addedTimestamp")
     suspend fun queryByBaseUrl(baseUrl: FormalBaseUrl): List<ActivityPubLoggedAccountEntity>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)

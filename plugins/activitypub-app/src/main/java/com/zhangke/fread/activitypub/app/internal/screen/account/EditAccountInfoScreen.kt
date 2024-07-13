@@ -35,6 +35,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -42,7 +43,6 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -53,8 +53,8 @@ import com.zhangke.framework.composable.IconButtonStyle
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledIconButton
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.buildPickVisualImageRequest
 import com.zhangke.framework.utils.rememberSinglePickVisualMediaLauncher
 import com.zhangke.fread.activitypub.app.R
@@ -171,24 +171,34 @@ class EditAccountInfoScreen(
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .fillMaxWidth()
-                        .freadPlaceholder(uiState.name.isEmpty()),
+                        .fillMaxWidth(),
                     value = uiState.name,
                     onValueChange = onUserNameChanged,
+                    placeholder = {
+                        Text(
+                            modifier = Modifier.alpha(0.7F),
+                            text = stringResource(id = R.string.activity_pub_edit_account_info_input_name_hint)
+                        )
+                    },
                     label = {
                         Text(text = stringResource(R.string.activity_pub_edit_account_info_label_name))
-                    }
+                    },
                 )
                 OutlinedTextField(
                     modifier = Modifier
                         .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                        .fillMaxWidth()
-                        .freadPlaceholder(uiState.description.isEmpty()),
+                        .fillMaxWidth(),
                     value = uiState.description,
                     onValueChange = onBioChanged,
+                    placeholder = {
+                        Text(
+                            modifier = Modifier.alpha(0.7F),
+                            text = stringResource(id = R.string.activity_pub_edit_account_info_input_note_hint),
+                        )
+                    },
                     label = {
                         Text(text = stringResource(R.string.activity_pub_edit_account_info_label_note))
-                    }
+                    },
                 )
                 AccountFieldListUi(
                     uiState = uiState,
@@ -243,7 +253,13 @@ class EditAccountInfoScreen(
                     OutlinedTextField(
                         modifier = Modifier.fillMaxWidth(),
                         value = fieldUiState.name,
-                        onValueChange = { onFieldChanged(fieldUiState.idForUi, it, fieldUiState.value) },
+                        onValueChange = {
+                            onFieldChanged(
+                                fieldUiState.idForUi,
+                                it,
+                                fieldUiState.value
+                            )
+                        },
                     )
 
                     OutlinedTextField(
@@ -251,7 +267,13 @@ class EditAccountInfoScreen(
                             .fillMaxWidth()
                             .padding(top = 6.dp),
                         value = fieldUiState.value,
-                        onValueChange = { onFieldChanged(fieldUiState.idForUi, fieldUiState.name, it) },
+                        onValueChange = {
+                            onFieldChanged(
+                                fieldUiState.idForUi,
+                                fieldUiState.name,
+                                it
+                            )
+                        },
                     )
                 }
 

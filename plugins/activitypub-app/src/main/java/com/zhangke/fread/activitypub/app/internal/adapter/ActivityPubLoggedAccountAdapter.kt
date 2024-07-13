@@ -41,6 +41,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
 
     fun recovery(
         user: ActivityPubLoggedAccount,
+        addedTimestamp: Long,
     ): ActivityPubLoggedAccountEntity {
         return ActivityPubLoggedAccountEntity(
             userId = user.userId,
@@ -54,11 +55,25 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             url = user.url,
             token = user.token,
             emojis = user.emojis,
+            addedTimestamp = addedTimestamp,
         )
     }
 
     fun createFromAccount(
         instance: ActivityPubInstanceEntity,
+        account: ActivityPubAccountEntity,
+        token: ActivityPubTokenEntity,
+    ): ActivityPubLoggedAccount {
+        val baseUrl = FormalBaseUrl.parse(account.url)!!
+        return createFromAccount(
+            platform = instanceAdapter.toPlatform(baseUrl, instance),
+            account = account,
+            token = token,
+        )
+    }
+
+    fun createFromAccount(
+        platform: BlogPlatform,
         account: ActivityPubAccountEntity,
         token: ActivityPubTokenEntity,
     ): ActivityPubLoggedAccount {
@@ -68,7 +83,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             userId = account.id,
             uri = userUriTransformer.build(webFinger, baseUrl),
             webFinger = webFinger,
-            platform = instanceAdapter.toPlatform(baseUrl, instance),
+            platform = platform,
             baseUrl = baseUrl,
             name = account.displayName,
             description = account.note,

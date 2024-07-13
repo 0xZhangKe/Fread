@@ -230,7 +230,7 @@ class InstanceDetailScreen(
                                         Color(0x6644429F),
                                         RoundedCornerShape(3.dp),
                                     )
-                                    .padding(vertical = 2.dp, horizontal = 4.dp),
+                                    .padding(vertical = 1.dp, horizontal = 4.dp),
                                 text = "MOD",
                                 fontWeight = FontWeight.Bold,
                             )

@@ -2,5 +2,5 @@
 <resources>
 
     <string name="notification_tab_title">通知</string>
-    <string name="notifications_account_empty_tip">当前没有已登陆账号</string>
+    <string name="notifications_account_empty_tip">当前没有已登录账号</string>
 </resources>

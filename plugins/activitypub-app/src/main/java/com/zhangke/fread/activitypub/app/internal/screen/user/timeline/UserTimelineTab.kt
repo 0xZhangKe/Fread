@@ -133,9 +133,6 @@ class UserTimelineTab(
                 ) {
                     itemsIndexed(
                         items = uiState.feeds,
-                        key = { _, item ->
-                            item.status.status.id
-                        },
                     ) { index, item ->
                         UserTimelineItem(
                             item = item,

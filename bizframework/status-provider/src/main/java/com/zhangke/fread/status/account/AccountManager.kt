@@ -36,6 +36,17 @@ class AccountManager(
         }
     }
 
+    suspend fun refreshAllAccountInfo(): Result<Unit> {
+        val resultList = accountManagerList.map {
+            it.refreshAllAccountInfo()
+        }
+        val successResult = resultList.firstOrNull { it.isSuccess }
+        if (successResult == null) {
+            return resultList.first()
+        }
+        return successResult
+    }
+
     suspend fun logout(uri: FormalUri) {
         accountManagerList.forEach {
             if (it.logout(uri)) return@forEach
@@ -52,6 +63,8 @@ interface IAccountManager {
     suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>?
 
     fun triggerLaunchAuth(baseUrl: FormalBaseUrl)
+
+    suspend fun refreshAllAccountInfo(): Result<Unit>
 
     suspend fun logout(uri: FormalUri): Boolean
 }

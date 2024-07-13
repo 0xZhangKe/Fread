@@ -14,6 +14,7 @@ import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.krouter.KRouter
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -35,6 +36,8 @@ class ProfileHomeViewModel @Inject constructor(
 
     private val _openPageFlow = MutableSharedFlow<Screen>()
     val openPageFlow = _openPageFlow.asSharedFlow()
+
+    private var refreshAccountJob: Job? = null
 
     init {
         observeAccountFlow()
@@ -65,6 +68,13 @@ class ProfileHomeViewModel @Inject constructor(
                         put("accountCount", newAccountList.size.toString())
                     }
                 }
+        }
+    }
+
+    fun refreshAccountInfo() {
+        if (refreshAccountJob?.isActive == true) return
+        refreshAccountJob = launchInViewModel {
+            statusProvider.accountManager.refreshAllAccountInfo()
         }
     }
 

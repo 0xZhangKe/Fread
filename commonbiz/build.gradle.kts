@@ -34,6 +34,7 @@ dependencies {
     implementation(libs.bundles.androidx.compose.ui)
     implementation(libs.bundles.androidx.compose.foundation)
     implementation(libs.bundles.androidx.compose.material)
+    implementation(libs.androidx.compose.material3)
     implementation(libs.androidx.compose.runtime)
     implementation(libs.bundles.androidx.activity)
 

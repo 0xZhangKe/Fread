@@ -98,6 +98,8 @@
     <string name="activity_pub_edit_account_info_label_name">名字</string>
     <string name="activity_pub_edit_account_info_label_note">简介</string>
     <string name="activity_pub_edit_account_info_label_about">关于</string>
+    <string name="activity_pub_edit_account_info_input_name_hint">请输入用户名</string>
+    <string name="activity_pub_edit_account_info_input_note_hint">"请输入简介"</string>
 
     <string name="activity_pub_edit_content_screen_config_not_found">配置未找到</string>
 

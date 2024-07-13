@@ -96,16 +96,15 @@
     <string name="activity_pub_hashtag_unfollow_dialog_message">Are you sure you want to unfollow this hashtag?</string>
 
     <string name="activity_pub_edit_account_info_name_empty">Please enter your username</string>
-
     <string name="activity_pub_edit_account_info_label_name">Name</string>
     <string name="activity_pub_edit_account_info_label_note">Bio</string>
     <string name="activity_pub_edit_account_info_label_about">About</string>
-
     <string name="activity_pub_edit_content_screen_config_not_found">Config Not Found</string>
-
     <string name="activity_pub_edit_content_config_showing_list_title">Feeds on the Home Page</string>
     <string name="activity_pub_edit_content_config_hidden_list_title">Feeds Can Add to the Home Page</string>
     <string name="activity_pub_edit_content_delete_dialog_content">Confirm to delete this content?</string>
+    <string name="activity_pub_edit_account_info_input_name_hint">"Please enter your username"</string>
+    <string name="activity_pub_edit_account_info_input_note_hint">"Please enter bio"</string>
 
     <string name="activity_pub_user_follower_list_title">Followers</string>
     <string name="activity_pub_user_following_list_title">Following</string>

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
@@ -30,12 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.utils.SystemPageUtils
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.daynight.DayNightMode
@@ -43,6 +46,7 @@ import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.profile.R
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
+import com.zhangke.fread.profile.screen.setting.about.AboutScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
@@ -74,6 +78,14 @@ class SettingScreen : BaseScreen() {
                 }
                 viewModel.onLanguageClick(context, it)
             },
+            onRatingClick = {
+                reportClick(SettingElements.RATTING)
+                SystemPageUtils.openAppMarket(context)
+            },
+            onAboutClick = {
+                reportClick(SettingElements.ABOUT)
+                navigator.push(AboutScreen())
+            },
         )
     }
 
@@ -84,6 +96,8 @@ class SettingScreen : BaseScreen() {
         onOpenSourceClick: () -> Unit,
         onDayNightModeClick: (DayNightMode) -> Unit,
         onLanguageClick: (LanguageSettingType) -> Unit,
+        onRatingClick: () -> Unit,
+        onAboutClick: () -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -111,10 +125,24 @@ class SettingScreen : BaseScreen() {
                     onClick = onOpenSourceClick,
                 )
                 SettingItem(
+                    icon = {
+                        Icon(
+                            modifier = Modifier
+                                .size(24.dp)
+                                .padding(2.dp),
+                            imageVector = ImageVector.vectorResource(R.drawable.ic_ratting),
+                            contentDescription = stringResource(R.string.profile_setting_ratting),
+                        )
+                    },
+                    title = stringResource(R.string.profile_setting_ratting),
+                    subtitle = stringResource(R.string.profile_setting_ratting_desc),
+                    onClick = onRatingClick,
+                )
+                SettingItem(
                     icon = Icons.Default.LogoDev,
                     title = stringResource(R.string.profile_setting_about_title),
                     subtitle = uiState.settingInfo,
-                    onClick = {},
+                    onClick = onAboutClick,
                 )
             }
         }
@@ -201,6 +229,28 @@ class SettingScreen : BaseScreen() {
         subtitle: String,
         onClick: () -> Unit,
     ) {
+        SettingItem(
+            icon = {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = icon,
+                    contentDescription = title,
+                )
+            },
+            title = title,
+            subtitle = subtitle,
+            onClick = onClick,
+        )
+    }
+
+    @Composable
+    private fun SettingItem(
+        icon: @Composable () -> Unit,
+        title: String,
+        subtitle: String,
+        onClick: () -> Unit,
+    ) {
+
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -212,10 +262,7 @@ class SettingScreen : BaseScreen() {
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Icon(
-                    imageVector = icon,
-                    contentDescription = title,
-                )
+                icon()
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
                     Text(

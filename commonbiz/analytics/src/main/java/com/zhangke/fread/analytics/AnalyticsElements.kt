@@ -38,5 +38,6 @@ object SettingElements {
     const val DARK_MODE = "settingDarkMode"
     const val LANGUAGE = "settingLanguage"
     const val OPEN_SOURCE = "settingOpenSource"
+    const val RATTING = "settingRatting"
+    const val ABOUT = "settingAbout"
 }
-

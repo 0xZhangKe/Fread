@@ -17,7 +17,7 @@ class LinkedTextView(
             clickableLinksDelegate.setOnLinkSpanClick { value?.invoke(it) }
         }
 
-    private val clickableLinksDelegate = _root_ide_package_.com.zhangke.fread.status.ui.richtext.android.ClickableLinksDelegate(
+    private val clickableLinksDelegate = ClickableLinksDelegate(
         this
     ).apply {
         if (onLinkSpanClick != null) {

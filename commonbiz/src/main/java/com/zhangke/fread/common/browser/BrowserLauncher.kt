@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.status.model.IdentityRole
 
 object BrowserLauncher {
@@ -46,5 +47,13 @@ object BrowserLauncher {
         val intent = Intent(Intent.ACTION_VIEW, uri)
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
+    }
+
+    fun launchFreadLandingPage(context: Context) {
+        launchWebTabInApp(context, AppCommonConfig.WEBSITE)
+    }
+
+    fun launchAuthorWebsite(context: Context) {
+        launchWebTabInApp(context, AppCommonConfig.AUTHOR_WEBSITE)
     }
 }

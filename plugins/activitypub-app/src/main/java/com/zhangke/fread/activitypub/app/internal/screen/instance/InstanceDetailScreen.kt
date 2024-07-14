@@ -227,12 +227,11 @@ class InstanceDetailScreen(
                             Text(
                                 modifier = Modifier
                                     .background(
-                                        Color(0x6644429F),
-                                        RoundedCornerShape(3.dp),
+                                        MaterialTheme.colorScheme.primary,
+                                        RoundedCornerShape(4.dp),
                                     )
                                     .padding(vertical = 1.dp, horizontal = 4.dp),
                                 text = "MOD",
-                                fontWeight = FontWeight.Bold,
                             )
 
                             AsyncImage(

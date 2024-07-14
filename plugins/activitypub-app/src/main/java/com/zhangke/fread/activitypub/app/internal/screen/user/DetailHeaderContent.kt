@@ -160,6 +160,7 @@ fun DetailHeaderContent(
                     width = Dimension.fillToConstraints
                 },
             richText = description ?: RichText.empty,
+            textSelectable = true,
             onUrlClick = onUrlClick,
         )
 

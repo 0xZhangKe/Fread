@@ -1,15 +1,17 @@
 package com.zhangke.fread.activitypub.app.internal.screen.instance.about
 
-import android.widget.TextView
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -18,18 +20,20 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.viewinterop.AndroidView
-import androidx.core.text.HtmlCompat
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
 internal fun Screen.ServerAboutPage(
@@ -47,6 +51,7 @@ internal fun Screen.ServerAboutPage(
     ServerAboutPageContent(
         uiState = uiState,
         contentCanScrollBackward = contentCanScrollBackward,
+        baseUrl = baseUrl,
     )
 }
 
@@ -54,6 +59,7 @@ internal fun Screen.ServerAboutPage(
 private fun ServerAboutPageContent(
     uiState: ServerAboutUiState,
     contentCanScrollBackward: MutableState<Boolean>,
+    baseUrl: FormalBaseUrl,
 ) {
     val scrollState = rememberScrollState()
     contentCanScrollBackward.value = scrollState.value > 0
@@ -66,15 +72,16 @@ private fun ServerAboutPageContent(
             ServerAboutAnnouncementSection(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, top = 15.dp, end = 10.dp, bottom = 10.dp),
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp),
                 announcementList = uiState.announcement,
+                baseUrl = baseUrl,
             )
         }
         if (uiState.rules.isNotEmpty()) {
             ServerAboutRulesSection(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 10.dp, top = 5.dp, end = 10.dp, bottom = 10.dp),
+                    .padding(start = 16.dp, top = 6.dp, end = 16.dp, bottom = 36.dp),
                 ruleList = uiState.rules,
             )
         }
@@ -85,12 +92,14 @@ private fun ServerAboutPageContent(
 private fun ServerAboutAnnouncementSection(
     modifier: Modifier = Modifier,
     announcementList: List<ActivityPubAnnouncementEntity>,
+    baseUrl: FormalBaseUrl,
 ) {
     Column(modifier = modifier) {
         announcementList.forEach {
             ServerAboutAnnouncement(
                 modifier = Modifier.fillMaxWidth(),
                 entity = it,
+                baseUrl = baseUrl,
             )
         }
     }
@@ -100,13 +109,17 @@ private fun ServerAboutAnnouncementSection(
 private fun ServerAboutAnnouncement(
     modifier: Modifier = Modifier,
     entity: ActivityPubAnnouncementEntity,
+    baseUrl: FormalBaseUrl,
 ) {
-    AndroidView(
+    val context = LocalContext.current
+    FreadRichText(
         modifier = modifier,
-        factory = { TextView(it) },
-        update = {
-            it.text = HtmlCompat.fromHtml(entity.content, HtmlCompat.FROM_HTML_MODE_COMPACT)
-        }
+        content = entity.content,
+        textSelectable = true,
+        onUrlClick = {
+            val role = IdentityRole(null, baseUrl = baseUrl)
+            BrowserLauncher.launchWebTabInApp(context, it, role)
+        },
     )
 }
 
@@ -115,19 +128,30 @@ private fun ServerAboutRulesSection(
     modifier: Modifier = Modifier,
     ruleList: List<ActivityPubInstanceEntity.Rule>,
 ) {
-    Text(
-        modifier = modifier,
-        text = stringResource(R.string.activity_pub_about_rule_title),
-        fontWeight = FontWeight.Bold,
-        fontSize = 18.sp,
-        color = Color.Black,
-    )
-    ruleList.forEachIndexed { index, rule ->
-        ServerAboutRule(
-            modifier = Modifier.padding(start = 15.dp, end = 15.dp),
-            rule = rule,
-            showDivider = index != ruleList.lastIndex,
-        )
+    Column(modifier = modifier) {
+        SelectionContainer {
+            Text(
+                modifier = Modifier,
+                text = stringResource(R.string.activity_pub_about_rule_title),
+                fontWeight = FontWeight.Bold,
+                style = MaterialTheme.typography.titleLarge,
+            )
+            Spacer(modifier = Modifier.height(4.dp))
+            HorizontalDivider()
+            Spacer(modifier = Modifier.height(4.dp))
+            ruleList.forEachIndexed { index, rule ->
+                ServerAboutRule(
+                    modifier = Modifier,
+                    rule = rule,
+                )
+                Spacer(modifier = Modifier.height(4.dp))
+                if (index != ruleList.lastIndex) {
+                    HorizontalDivider()
+                    Spacer(modifier = Modifier.height(4.dp))
+                }
+            }
+            Spacer(modifier = Modifier.height(80.dp))
+        }
     }
 }
 
@@ -135,30 +159,21 @@ private fun ServerAboutRulesSection(
 private fun ServerAboutRule(
     modifier: Modifier = Modifier,
     rule: ActivityPubInstanceEntity.Rule,
-    showDivider: Boolean = true,
 ) {
-    Box(
-        modifier = modifier
-            .padding(top = 5.dp)
-    ) {
-        Row(modifier = Modifier.padding(end = 2.dp, bottom = 10.dp)) {
-            Text(
-                text = "${rule.id}.",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.Black,
-            )
+    Row(modifier = modifier) {
+        Text(
+            text = "${rule.id}.",
+            fontSize = 18.sp,
+            fontWeight = FontWeight.Bold,
+            color = Color.Black,
+        )
 
-            Text(
-                modifier = Modifier.padding(start = 6.dp),
-                text = rule.text,
-                fontSize = 14.sp,
-            )
-        }
-        if (showDivider) {
-            HorizontalDivider(
-                thickness = 1.dp,
-            )
-        }
+//        SelectionContainer {
+        Text(
+            modifier = Modifier.padding(start = 6.dp),
+            text = rule.text,
+            fontSize = 14.sp,
+        )
+//        }
     }
 }

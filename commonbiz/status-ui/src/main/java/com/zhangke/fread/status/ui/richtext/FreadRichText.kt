@@ -66,6 +66,7 @@ fun FreadRichText(
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
+    textSelectable: Boolean = false,
     fontSizeSp: Float = 14F,
 ) {
     val richText = remember(content, mentions) {
@@ -86,5 +87,6 @@ fun FreadRichText(
         onHashtagClick = onHashtagClick,
         fontSizeSp = fontSizeSp,
         onUrlClick = onUrlClick,
+        textSelectable = textSelectable,
     )
 }

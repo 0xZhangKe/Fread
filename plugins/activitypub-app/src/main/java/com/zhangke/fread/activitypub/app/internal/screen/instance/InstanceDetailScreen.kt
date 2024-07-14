@@ -26,11 +26,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -232,6 +231,8 @@ class InstanceDetailScreen(
                                     )
                                     .padding(vertical = 1.dp, horizontal = 4.dp),
                                 text = "MOD",
+                                fontSize = 12.sp,
+                                color = MaterialTheme.colorScheme.onPrimary,
                             )
 
                             AsyncImage(

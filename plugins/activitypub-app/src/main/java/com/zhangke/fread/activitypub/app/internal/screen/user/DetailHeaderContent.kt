@@ -9,7 +9,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,6 +22,9 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -43,6 +48,7 @@ fun DetailHeaderContent(
     onBannerClick: () -> Unit,
     onAvatarClick: () -> Unit,
     onUrlClick: (String) -> Unit,
+    privateNote: String? = null,
     relationship: RelationshipUiState? = null,
     onUnblockClick: (() -> Unit)? = null,
     onCancelFollowRequestClick: (() -> Unit)? = null,
@@ -57,7 +63,7 @@ fun DetailHeaderContent(
         modifier = Modifier.fillMaxWidth(),
     ) {
         val (bannerRef, avatarRef, relationBtnRef, nameRef) = createRefs()
-        val (acctRef, noteRef, followRef) = createRefs()
+        val (acctRef, privateNoteRef, noteRef, followRef) = createRefs()
         Banner(
             modifier = Modifier
                 .clickable { onBannerClick() }
@@ -128,6 +134,7 @@ fun DetailHeaderContent(
                 },
             richText = title ?: RichText.empty,
             maxLines = 1,
+            textSelectable = true,
             overflow = TextOverflow.Ellipsis,
             fontSizeSp = 18F,
             onUrlClick = onUrlClick,
@@ -148,13 +155,52 @@ fun DetailHeaderContent(
             acctLine()
         }
 
+        // private note
+        if (privateNote.isNullOrEmpty()) {
+            Box(modifier = Modifier.constrainAs(privateNoteRef) {
+                top.linkTo(acctRef.bottom)
+                start.linkTo(nameRef.start)
+            })
+        } else {
+            Box(
+                modifier = Modifier
+                    .constrainAs(privateNoteRef) {
+                        top.linkTo(acctRef.bottom, 6.dp)
+                        start.linkTo(nameRef.start)
+                        end.linkTo(parent.end, 16.dp)
+                        width = Dimension.fillToConstraints
+                    },
+            ) {
+                val privateNoteStr = buildAnnotatedString {
+                    val prefix = "NOTE: "
+                    append(prefix)
+//                    addStyle(
+//                        style = SpanStyle(
+//                            color = MaterialTheme.colorScheme.tertiary
+//                        ),
+//                        start = 0,
+//                        end = prefix.length,
+//                    )
+                    append(privateNote)
+                }
+                SelectionContainer {
+                    Text(
+                        modifier = Modifier.fillMaxWidth(),
+                        textAlign = TextAlign.Start,
+                        text = privateNoteStr,
+                        style = MaterialTheme.typography.labelLarge,
+                    )
+                }
+            }
+        }
+
         // description
         FreadRichText(
             modifier = Modifier
                 .freadPlaceholder(loading)
                 .fillMaxWidth()
                 .constrainAs(noteRef) {
-                    top.linkTo(acctRef.bottom, 6.dp)
+                    top.linkTo(privateNoteRef.bottom, 6.dp)
                     start.linkTo(nameRef.start)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints

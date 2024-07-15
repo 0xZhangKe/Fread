@@ -5,7 +5,9 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.common.config.LocalConfigManager
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
@@ -14,8 +16,8 @@ object DayNightHelper {
 
     private const val DAY_NIGHT_SETTING = "day_night_setting"
 
-    private val _nightModeFlow: MutableStateFlow<DayNightMode>
-    val dayNightModeFlow: StateFlow<DayNightMode> get() = _nightModeFlow
+    private val _nightModeFlow = MutableSharedFlow<DayNightMode>()
+    val dayNightModeFlow: SharedFlow<DayNightMode> get() = _nightModeFlow
 
     var dayNightMode: DayNightMode
         private set
@@ -26,7 +28,9 @@ object DayNightHelper {
         }
         AppCompatDelegate.setDefaultNightMode(modeValue)
         dayNightMode = modeValue.toDayNightMode()
-        _nightModeFlow = MutableStateFlow(dayNightMode)
+        ApplicationScope.launch {
+            _nightModeFlow.emit(dayNightMode)
+        }
     }
 
     fun setActivityDayNightMode() {

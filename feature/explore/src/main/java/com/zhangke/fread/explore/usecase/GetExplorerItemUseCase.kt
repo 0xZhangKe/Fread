@@ -21,15 +21,15 @@ class GetExplorerItemUseCase @Inject constructor(
         role: IdentityRole,
         type: ExplorerFeedsTabType,
         offset: Int,
-        sinceId: String,
-    ): Result<List<com.zhangke.fread.explore.model.ExplorerItem>> {
+        maxId: String?,
+    ): Result<List<ExplorerItem>> {
         val statusResolver = statusProvider.statusResolver
         return when (type) {
             ExplorerFeedsTabType.USERS -> {
-                if (offset > 0 || sinceId.isNotEmpty()) return Result.success(emptyList())
+                if (offset > 0 || maxId.isNullOrEmpty()) return Result.success(emptyList())
                 statusResolver
                     .getSuggestionAccounts(role)
-                    .map { list -> list.map { com.zhangke.fread.explore.model.ExplorerItem.ExplorerUser(it, false) } }
+                    .map { list -> list.map { ExplorerItem.ExplorerUser(it, false) } }
             }
 
             ExplorerFeedsTabType.HASHTAG -> {
@@ -37,17 +37,17 @@ class GetExplorerItemUseCase @Inject constructor(
                     role = role,
                     limit = DEFAULT_LIMIT,
                     offset = offset,
-                ).map { list -> list.map { com.zhangke.fread.explore.model.ExplorerItem.ExplorerHashtag(it) } }
+                ).map { list -> list.map { ExplorerItem.ExplorerHashtag(it) } }
             }
 
             ExplorerFeedsTabType.STATUS -> {
                 statusResolver.getPublicTimeline(
                     role = role,
                     limit = DEFAULT_LIMIT,
-                    sinceId = sinceId,
+                    maxId = maxId,
                 ).map { list ->
                     list.map {
-                        com.zhangke.fread.explore.model.ExplorerItem.ExplorerStatus(
+                        ExplorerItem.ExplorerStatus(
                             buildStatusUiState(
                                 role = role,
                                 status = it,

@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.status
 
+import android.util.Log
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
@@ -7,6 +8,7 @@ import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatf
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import javax.inject.Inject
+import kotlin.math.sin
 
 class GetTimelineStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
@@ -18,7 +20,7 @@ class GetTimelineStatusUseCase @Inject constructor(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
         maxId: String?,
-        sinceId: String?,
+        minId: String?,
         limit: Int,
         listId: String? = null,
     ): Result<List<Status>> {
@@ -31,31 +33,31 @@ class GetTimelineStatusUseCase @Inject constructor(
         val entitiesResult = when (type) {
             ActivityPubStatusSourceType.TIMELINE_HOME -> timelineRepo.homeTimeline(
                 limit = limit,
-                sinceId = sinceId,
+                minId = minId,
                 maxId = maxId,
             )
 
             ActivityPubStatusSourceType.TIMELINE_LOCAL -> timelineRepo.localTimelines(
                 limit = limit,
-                sinceId = sinceId,
+                minId = minId,
                 maxId = maxId,
             )
 
             ActivityPubStatusSourceType.TIMELINE_PUBLIC -> timelineRepo.publicTimelines(
                 limit = limit,
-                sinceId = sinceId,
+                minId = minId,
                 maxId = maxId,
             )
 
             ActivityPubStatusSourceType.LIST -> timelineRepo.getTimelineList(
                 listId = listId!!,
                 limit = limit,
-                sinceId = sinceId,
+                minId = minId,
                 maxId = maxId,
             )
         }
         return entitiesResult.map { list ->
-            list.filter { it.id != sinceId && it.id != maxId }
+            list.filter { it.id != minId && it.id != maxId }
                 .map { statusAdapter.toStatus(it, platform) }
         }
     }

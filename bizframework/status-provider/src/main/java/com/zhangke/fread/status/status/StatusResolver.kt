@@ -27,7 +27,7 @@ class StatusResolver(
         role: IdentityRole,
         uri: FormalUri,
         limit: Int,
-        sinceId: String? = null,
+        minId: String? = null,
         maxId: String? = null,
     ): Result<List<Status>> {
         for (statusResolver in resolverList) {
@@ -35,7 +35,7 @@ class StatusResolver(
                 role = role,
                 uri = uri,
                 limit = limit,
-                sinceId = sinceId,
+                minId = minId,
                 maxId = maxId,
             )
             if (result != null) return result
@@ -90,10 +90,10 @@ class StatusResolver(
     suspend fun getPublicTimeline(
         role: IdentityRole,
         limit: Int,
-        sinceId: String?,
+        maxId: String?,
     ): Result<List<Status>> {
         return resolverList.mapFirst {
-            it.getPublicTimeline(role, limit, sinceId)
+            it.getPublicTimeline(role, limit, maxId)
         }
     }
 }
@@ -113,7 +113,7 @@ interface IStatusResolver {
         role: IdentityRole,
         uri: FormalUri,
         limit: Int,
-        sinceId: String?,
+        minId: String?,
         maxId: String?
     ): Result<List<Status>>?
 
@@ -138,7 +138,7 @@ interface IStatusResolver {
     suspend fun getPublicTimeline(
         role: IdentityRole,
         limit: Int,
-        sinceId: String?,
+        maxId: String?,
     ): Result<List<Status>>?
 
     suspend fun follow(

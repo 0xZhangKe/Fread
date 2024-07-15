@@ -32,7 +32,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             limit = limit,
             listId = listId,
             maxId = null,
-            sinceId = null,
+            minId = null,
         ).onSuccess {
             saveFresherStatus(
                 role = role,
@@ -67,7 +67,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
     suspend fun loadPreviousPageStatus(
         role: IdentityRole,
         type: ActivityPubStatusSourceType,
-        sinceId: String,
+        minId: String,
         listId: String? = null,
         limit: Int = statusConfig.loadFromServerLimit,
     ): Result<List<Status>> {
@@ -76,7 +76,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             type = type,
             limit = limit,
             maxId = null,
-            sinceId = sinceId,
+            minId = minId,
             listId = listId,
         ).onSuccess {
             it.insertToLocal(role, type, listId)
@@ -109,7 +109,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             type = type,
             limit = limit,
             maxId = maxId,
-            sinceId = null,
+            minId = null,
             listId = listId,
         ).onSuccess {
             it.insertToLocal(role, type, listId)

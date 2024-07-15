@@ -34,7 +34,7 @@ class RssStatusResolver @Inject constructor(
         role: IdentityRole,
         uri: FormalUri,
         limit: Int,
-        sinceId: String?,
+        minId: String?,
         maxId: String?,
     ): Result<List<Status>>? {
         if (!uri.isRssUri) return null
@@ -48,8 +48,8 @@ class RssStatusResolver @Inject constructor(
             return Result.failure(fetchResult.exceptionOrThrow())
         }
         var finalReturnItems = fetchResult.getOrThrow()
-        if (!sinceId.isNullOrEmpty()) {
-            val sinceIndex = finalReturnItems.indexOfFirst { it.id == sinceId }
+        if (!minId.isNullOrEmpty()) {
+            val sinceIndex = finalReturnItems.indexOfFirst { it.id == minId }
             if (sinceIndex >= 0) {
                 finalReturnItems = finalReturnItems.subList(0, sinceIndex)
             }
@@ -101,7 +101,7 @@ class RssStatusResolver @Inject constructor(
     override suspend fun getPublicTimeline(
         role: IdentityRole,
         limit: Int,
-        sinceId: String?
+        maxId: String?
     ): Result<List<Status>>? {
         return null
     }

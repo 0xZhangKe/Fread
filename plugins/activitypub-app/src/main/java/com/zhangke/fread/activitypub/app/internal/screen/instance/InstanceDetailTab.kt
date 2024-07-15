@@ -33,5 +33,4 @@ internal enum class InstanceDetailTab(
             ServerTrendsTagsPage(baseUrl, contentCanScrollBackward)
         },
     ),
-
 }

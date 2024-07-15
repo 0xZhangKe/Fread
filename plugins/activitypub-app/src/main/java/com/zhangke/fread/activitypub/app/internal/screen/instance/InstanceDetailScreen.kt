@@ -37,17 +37,21 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
+import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.buildRichText
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import kotlinx.coroutines.launch
@@ -80,6 +84,9 @@ class InstanceDetailScreen(
                     navigationResult.popWithResult(false)
                 }
             },
+            onUserClick = { role, webFinger ->
+                navigator.push(UserDetailScreen(role = role, webFinger = webFinger))
+            }
         )
     }
 
@@ -87,6 +94,7 @@ class InstanceDetailScreen(
     private fun InstanceDetailContent(
         uiState: InstanceDetailUiState,
         onBackClick: () -> Unit,
+        onUserClick: (IdentityRole, WebFinger) -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -111,6 +119,7 @@ class InstanceDetailScreen(
                     AppBarContent(
                         progress = progress,
                         uiState = uiState,
+                        onUserClick = onUserClick,
                     )
                 },
                 contentCanScrollBackward = contentCanScrollBackward,
@@ -174,6 +183,7 @@ class InstanceDetailScreen(
     private fun AppBarContent(
         progress: Float,
         uiState: InstanceDetailUiState,
+        onUserClick: (IdentityRole, WebFinger) -> Unit,
     ) {
         val context = LocalContext.current
         val loading = uiState.loading
@@ -219,38 +229,40 @@ class InstanceDetailScreen(
                         Row(
                             modifier = Modifier
                                 .fillMaxWidth()
-                                .freadPlaceholder(visible = loading),
+                                .freadPlaceholder(visible = loading)
+                                .noRippleClick {
+                                    val account = uiState.modAccount ?: return@noRippleClick
+                                    val role = IdentityRole(accountUri = account.uri, baseUrl)
+                                    onUserClick(role, account.webFinger)
+                                },
                             verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
                                 modifier = Modifier
                                     .background(
-                                        MaterialTheme.colorScheme.primary,
+                                        MaterialTheme.colorScheme.primaryContainer,
                                         RoundedCornerShape(4.dp),
                                     )
-                                    .padding(vertical = 1.dp, horizontal = 4.dp),
+                                    .padding(horizontal = 4.dp),
                                 text = "MOD",
-                                fontSize = 12.sp,
+                                fontSize = 10.sp,
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
 
                             AsyncImage(
                                 modifier = Modifier
                                     .padding(start = 6.dp)
-                                    .size(18.dp)
+                                    .size(22.dp)
                                     .clip(CircleShape),
                                 model = instance.contact.account.avatar,
                                 contentDescription = "Mod avatar",
                             )
-                            Text(
+                            FreadRichText(
                                 modifier = Modifier
                                     .padding(start = 4.dp),
-                                text = instance.contact.account.displayName,
-                            )
-                            Text(
-                                modifier = Modifier
-                                    .padding(start = 4.dp),
-                                text = instance.contact.email,
+                                content = instance.contact.account.displayName,
+                                emojis = uiState.modAccount?.emojis ?: emptyList(),
+                                onUrlClick = {},
                             )
                         }
                     }

@@ -128,8 +128,8 @@ private fun ServerAboutRulesSection(
     modifier: Modifier = Modifier,
     ruleList: List<ActivityPubInstanceEntity.Rule>,
 ) {
-    Column(modifier = modifier) {
-        SelectionContainer {
+    SelectionContainer {
+        Column(modifier = modifier) {
             Text(
                 modifier = Modifier,
                 text = stringResource(R.string.activity_pub_about_rule_title),
@@ -143,6 +143,7 @@ private fun ServerAboutRulesSection(
                 ServerAboutRule(
                     modifier = Modifier,
                     rule = rule,
+                    index = index,
                 )
                 Spacer(modifier = Modifier.height(4.dp))
                 if (index != ruleList.lastIndex) {
@@ -159,21 +160,20 @@ private fun ServerAboutRulesSection(
 private fun ServerAboutRule(
     modifier: Modifier = Modifier,
     rule: ActivityPubInstanceEntity.Rule,
+    index: Int,
 ) {
     Row(modifier = modifier) {
         Text(
-            text = "${rule.id}.",
+            text = "${index + 1}.",
             fontSize = 18.sp,
             fontWeight = FontWeight.Bold,
             color = Color.Black,
         )
 
-//        SelectionContainer {
         Text(
             modifier = Modifier.padding(start = 6.dp),
             text = rule.text,
             fontSize = 14.sp,
         )
-//        }
     }
 }

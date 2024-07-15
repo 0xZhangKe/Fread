@@ -62,7 +62,7 @@ fun FreadRichText(
     tags: List<HashtagInStatus> = emptyList(),
     onMentionClick: (Mention) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
-    onUrlClick: (url: String) -> Unit,
+    onUrlClick: (url: String) -> Unit = {},
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,

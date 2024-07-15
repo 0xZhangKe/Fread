@@ -4,6 +4,8 @@ import androidx.lifecycle.ViewModel
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
+import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -15,6 +17,7 @@ import kotlinx.coroutines.flow.asStateFlow
 @HiltViewModel(assistedFactory = InstanceDetailViewModel.Factory::class)
 class InstanceDetailViewModel @AssistedInject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
+    private val authorAdapter: ActivityPubAccountEntityAdapter,
     @Assisted private val serverBaseUrl: FormalBaseUrl,
 ) : ViewModel() {
 
@@ -29,6 +32,7 @@ class InstanceDetailViewModel @AssistedInject constructor(
             loading = false,
             baseUrl = null,
             instance = null,
+            modAccount = null,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -43,6 +47,7 @@ class InstanceDetailViewModel @AssistedInject constructor(
             _uiState.value = _uiState.value.copy(
                 loading = false,
                 instance = platform,
+                modAccount = platform?.contact?.account?.let { authorAdapter.toAuthor(it) }
             )
         }
     }

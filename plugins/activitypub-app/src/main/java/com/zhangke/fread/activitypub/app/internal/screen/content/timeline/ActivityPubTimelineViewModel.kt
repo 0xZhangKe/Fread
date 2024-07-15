@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.timeline
 
+import android.util.Log
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.coroutines.invokeOnCancel
@@ -108,8 +109,8 @@ class ActivityPubTimelineViewModel(
                     )
                 }
             }
-            val sinceId = localStatus.firstOrNull()?.id
-            if (sinceId.isNullOrEmpty()) {
+            val minId = localStatus.firstOrNull()?.id
+            if (minId.isNullOrEmpty()) {
                 timelineRepo.getFresherStatus(
                     role = role,
                     type = type,
@@ -119,7 +120,7 @@ class ActivityPubTimelineViewModel(
                 timelineRepo.loadPreviousPageStatus(
                     role = role,
                     type = type,
-                    sinceId = sinceId,
+                    minId = minId,
                     listId = listId,
                 )
             }.map {
@@ -186,14 +187,12 @@ class ActivityPubTimelineViewModel(
         if (refreshJob?.isActive == true) return
         if (initFeedsJob?.isActive == true) return
         if (loadPreviousJob?.isActive == true) return
-        val sinceId = uiState.value
-            .items
-            .getStatusIdOrNull(0) ?: return
+        val minId = uiState.value.items.getStatusIdOrNull(0) ?: return
         loadPreviousJob = launchInViewModel {
             timelineRepo.loadPreviousPageStatus(
                 role = role,
                 type = type,
-                sinceId = sinceId,
+                minId = minId,
                 listId = listId,
             ).map {
                 it.preParseRichText()

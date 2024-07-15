@@ -20,7 +20,7 @@ class GetUserStatusUseCase @Inject constructor(
         role: IdentityRole,
         userInsights: UserUriInsights,
         limit: Int,
-        sinceId: String?,
+        minId: String?,
         maxId: String?,
     ): Result<List<Status>> {
         val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsights.webFinger, role)
@@ -33,7 +33,7 @@ class GetUserStatusUseCase @Inject constructor(
             .accountRepo.getStatuses(
                 id = userId,
                 limit = limit,
-                sinceId = sinceId,
+                minId = minId,
                 maxId = maxId,
             ).map { list ->
                 list.map {

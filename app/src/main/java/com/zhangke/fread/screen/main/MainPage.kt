@@ -113,7 +113,7 @@ fun Screen.MainPage() {
                         modifier = Modifier
                             .align(Alignment.BottomCenter)
                             .fillMaxWidth(),
-                        visible = !inImmersiveMode,
+                        visible = !inImmersiveMode || !inFeedsTab,
                         enter = slideInVertically(
                             initialOffsetY = { it },
                         ),

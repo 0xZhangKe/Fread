@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
@@ -232,17 +233,20 @@ data class UserDetailScreen(
                         avatar = account?.avatar,
                         title = accountUiState?.userName,
                         description = accountUiState?.description,
+                        privateNote = uiState.relationship?.note,
                         acctLine = {
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
-                                Text(
-                                    modifier = Modifier,
-                                    text = account?.prettyAcct.orEmpty(),
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
+                                SelectionContainer {
+                                    Text(
+                                        modifier = Modifier,
+                                        text = account?.prettyAcct.orEmpty(),
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
+                                        style = MaterialTheme.typography.labelMedium,
+                                    )
+                                }
                                 if (uiState.relationship?.followedBy == true) {
                                     Text(
                                         modifier = Modifier

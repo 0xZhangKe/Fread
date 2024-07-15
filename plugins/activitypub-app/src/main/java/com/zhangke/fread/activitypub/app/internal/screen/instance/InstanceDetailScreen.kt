@@ -193,7 +193,6 @@ class InstanceDetailScreen(
             },
             followInfo = {
                 Column {
-
                     val languageString =
                         instance?.languages?.joinToString(", ").orEmpty()
                     Text(

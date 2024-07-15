@@ -4,6 +4,7 @@ import com.zhangke.activitypub.api.AccountsRepo
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
@@ -186,6 +187,21 @@ class UserDetailViewModel(
                     _uiState.update {
                         it.copy(domainBlocked = false)
                     }
+                }
+        }
+    }
+
+    fun onNewNoteSet(newNote: String) {
+        val privateNote = uiState.value.relationship?.note
+        if (newNote == privateNote) return
+        val accountId = uiState.value.accountUiState?.account?.id ?: return
+        launchInViewModel {
+            val accountRepo = clientManager.getClient(role).accountRepo
+            accountRepo.updateNote(accountId, newNote)
+                .onSuccess { relationship ->
+                    _uiState.update { it.copy(relationship = relationship) }
+                }.onFailure {
+                    _messageFlow.emitTextMessageFromThrowable(it)
                 }
         }
     }

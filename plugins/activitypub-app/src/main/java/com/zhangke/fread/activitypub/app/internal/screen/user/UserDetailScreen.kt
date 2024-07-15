@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -16,6 +17,7 @@ import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -45,6 +47,7 @@ import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipEntity
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
@@ -166,6 +169,7 @@ data class UserDetailScreen(
                     navigator.push(screen)
                 }
             },
+            onNewNoteSet = viewModel::onNewNoteSet,
         )
     }
 
@@ -189,6 +193,7 @@ data class UserDetailScreen(
         onEditClick: () -> Unit,
         onFollowerClick: () -> Unit,
         onFollowingClick: () -> Unit,
+        onNewNoteSet: (String) -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -220,6 +225,7 @@ data class UserDetailScreen(
                                 onUnblockDomainClick = onUnblockDomainClick,
                                 onOpenInBrowserClick = onOpenInBrowserClick,
                                 onEditClick = onEditClick,
+                                onNewNoteSet = onNewNoteSet,
                             )
                         },
                     )
@@ -420,6 +426,7 @@ data class UserDetailScreen(
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
         onEditClick: () -> Unit,
+        onNewNoteSet: (String) -> Unit,
     ) {
         val account = uiState.accountUiState?.account ?: return
         val userInsights = uiState.userInsight ?: return
@@ -481,6 +488,13 @@ data class UserDetailScreen(
                     }
                 )
             }
+            if (!uiState.isAccountOwner) {
+                EditPrivateNoteItem(
+                    note = uiState.relationship?.note.orEmpty(),
+                    onDismissRequest = { showMorePopup = false },
+                    onNewNoteSet = onNewNoteSet,
+                )
+            }
             SimpleDropdownMenuItem(
                 text = stringResource(R.string.activity_pub_user_detail_menu_open_in_browser),
                 onClick = {
@@ -507,6 +521,63 @@ data class UserDetailScreen(
                     onBlockDomainClick()
                 },
                 onDismissRequest = { showBlockDomainConfirmDialog = false },
+            )
+        }
+    }
+
+    @Composable
+    private fun EditPrivateNoteItem(
+        note: String,
+        onDismissRequest: () -> Unit,
+        onNewNoteSet: (String) -> Unit,
+    ) {
+        var showEditDialog by remember {
+            mutableStateOf(false)
+        }
+        SimpleDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note),
+            onClick = {
+                showEditDialog = true
+            }
+        )
+        if (showEditDialog) {
+            var inputtingNote by remember { mutableStateOf(note) }
+            FreadDialog(
+                onDismissRequest = {
+                    onDismissRequest()
+                    showEditDialog = false
+                },
+                title = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note),
+                content = {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
+                        value = inputtingNote,
+                        onValueChange = {
+                            inputtingNote = it
+                        },
+                        label = {
+                            Text(
+                                text = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note)
+                            )
+                        },
+                        placeholder = {
+                            Text(
+                                text = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note_dialog_hint)
+                            )
+                        },
+                    )
+                },
+                onNegativeClick = {
+                    onDismissRequest()
+                    showEditDialog = false
+                },
+                onPositiveClick = {
+                    onDismissRequest()
+                    showEditDialog = false
+                    onNewNoteSet(inputtingNote)
+                },
             )
         }
     }

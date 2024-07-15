@@ -57,7 +57,7 @@ class ActivityPubStatusResolver @Inject constructor(
         role: IdentityRole,
         uri: FormalUri,
         limit: Int,
-        sinceId: String?,
+        minId: String?,
         maxId: String?,
     ): Result<List<Status>>? {
         val userInsights = userUriTransformer.parse(uri)
@@ -66,7 +66,7 @@ class ActivityPubStatusResolver @Inject constructor(
                 role = role,
                 userInsights = userInsights,
                 limit = limit,
-                sinceId = sinceId,
+                minId = minId,
                 maxId = maxId,
             )
         }
@@ -124,14 +124,14 @@ class ActivityPubStatusResolver @Inject constructor(
     override suspend fun getPublicTimeline(
         role: IdentityRole,
         limit: Int,
-        sinceId: String?,
+        maxId: String?,
     ): Result<List<Status>> {
         val platformResult = platformRepo.getPlatform(role)
         if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
         val platform = platformResult.getOrThrow()
         return clientManager.getClient(role)
             .timelinesRepo
-            .publicTimelines(limit = limit, sinceId = sinceId)
+            .publicTimelines(limit = limit, maxId = maxId)
             .map { list -> list.map { activityPubStatusAdapter.toStatus(it, platform) } }
     }
 

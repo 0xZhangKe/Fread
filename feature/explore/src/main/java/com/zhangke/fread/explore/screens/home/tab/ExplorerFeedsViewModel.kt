@@ -99,7 +99,7 @@ class ExplorerFeedsViewModel(
                 role = role,
                 type = type,
                 offset = loadController.uiState.value.dataList.size,
-                sinceId = dataList.last().id,
+                maxId = dataList.last().id,
             )
         }
     }

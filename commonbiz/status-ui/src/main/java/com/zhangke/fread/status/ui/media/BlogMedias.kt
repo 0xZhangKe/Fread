@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.ui.media
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.ButtonDefaults
@@ -22,6 +23,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -71,7 +73,7 @@ fun BlogMedias(
                         hideContent = false
                     },
                     colors = ButtonDefaults.textButtonColors(
-                        containerColor = Color.Black.copy(alpha = 0.8F),
+                        containerColor = Color.Black.copy(alpha = 0.5F),
                         contentColor = Color.White,
                     ),
                 ) {
@@ -83,11 +85,12 @@ fun BlogMedias(
                         hideContent = true
                     },
                     colors = IconButtonDefaults.iconButtonColors(
-                        containerColor = Color.Black.copy(alpha = 0.8F),
+                        containerColor = Color.Black.copy(alpha = 0.3F),
                         contentColor = Color.White,
                     ),
                 ) {
                     Icon(
+                        modifier = Modifier.padding(2.dp),
                         imageVector = Icons.Default.VisibilityOff,
                         contentDescription = "Hide Content",
                         tint = Color.White,

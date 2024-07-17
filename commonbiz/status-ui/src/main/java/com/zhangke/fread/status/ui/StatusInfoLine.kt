@@ -56,12 +56,7 @@ fun StatusInfoLine(
     reblogAuthor: BlogAuthor? = null,
 ) {
     val infoStyle = style.statusInfoStyle
-    ConstraintLayout(modifier = modifier
-        .clickable {
-            reportClick(StatusDataElements.USER_INFO)
-            onUserInfoClick(blogAuthor)
-        }
-        .startPadding(style.containerPaddings)) {
+    ConstraintLayout(modifier = modifier.startPadding(style.containerPaddings)) {
         val (
             avatar,
             upThread,
@@ -92,6 +87,10 @@ fun StatusInfoLine(
 
         BlogAuthorAvatar(
             modifier = Modifier
+                .clickable {
+                    reportClick(StatusDataElements.USER_INFO)
+                    onUserInfoClick(blogAuthor)
+                }
                 .size(infoStyle.avatarSize)
                 .constrainAs(avatar) {
                     top.linkTo(upThread.bottom, 2.dp)
@@ -133,6 +132,10 @@ fun StatusInfoLine(
 
         FreadRichText(
             modifier = Modifier
+                .clickable {
+                    reportClick(StatusDataElements.USER_INFO)
+                    onUserInfoClick(blogAuthor)
+                }
                 .constrainAs(name) {
                     start.linkTo(avatar.end, infoStyle.avatarToNamePadding)
                     end.linkTo(moreOptions.start, 2.dp)

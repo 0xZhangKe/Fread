@@ -11,7 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
@@ -74,7 +74,7 @@ fun Screen.MainPage() {
             drawerContent = {
                 val screenWidth = LocalConfiguration.current.screenWidthDp.dp
                 ModalDrawerSheet(
-                    modifier = Modifier.width(screenWidth * 0.8F),
+                    modifier = Modifier.widthIn(max = screenWidth * 0.8F),
                 ) {
                     MainDrawer(
                         onDismissRequest = {

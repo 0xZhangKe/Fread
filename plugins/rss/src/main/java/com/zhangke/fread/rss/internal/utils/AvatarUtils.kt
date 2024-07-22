@@ -2,6 +2,7 @@ package com.zhangke.fread.rss.internal.utils
 
 import android.content.Context
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.security.Md5
@@ -29,12 +30,12 @@ object AvatarUtils {
         source: RssSource,
     ): String? {
         val text = source.displayName.ifNullOrEmpty { source.title }.take(2).uppercase()
-        val backgroundColor = colors.random()
+        val backgroundColor = colors.random().toArgb()
         val bitmap = BitmapUtils.buildBitmapWithText(
             width = AVATAR_WIDTH,
             height = AVATAR_HEIGHT,
             text = text,
-            backgroundColor = 0xFFFF00FF.toInt(),
+            backgroundColor = backgroundColor,
         )
         val avatarFile = getAvatarFile(source.url)
         return try {

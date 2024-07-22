@@ -11,13 +11,21 @@ import com.zhangke.fread.status.status.model.Status
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
 open class LoadableStatusController(
     protected val coroutineScope: CoroutineScope,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
 ) {
 
-    private val loadableController = CommonLoadableController<StatusUiState>(coroutineScope)
+    private val loadableController = CommonLoadableController<StatusUiState>(
+        coroutineScope,
+        onPostSnackMessage = {
+            coroutineScope.launch {
+                mutableErrorMessageFlow.emit(it)
+            }
+        },
+    )
 
     val mutableUiState = loadableController.mutableUiState
     val uiState = loadableController.uiState

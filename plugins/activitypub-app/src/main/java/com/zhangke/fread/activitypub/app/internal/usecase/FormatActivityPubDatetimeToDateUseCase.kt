@@ -7,6 +7,6 @@ import javax.inject.Inject
 class FormatActivityPubDatetimeToDateUseCase @Inject constructor() {
 
     operator fun invoke(datetime: String): Date {
-        return DateParser.parseISODate(datetime) ?: Date()
+        return DateParser.parseAll(datetime) ?: Date()
     }
 }

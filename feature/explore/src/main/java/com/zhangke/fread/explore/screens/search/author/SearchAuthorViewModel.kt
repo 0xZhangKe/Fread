@@ -3,6 +3,7 @@ package com.zhangke.fread.explore.screens.search.author
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
+import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
@@ -28,7 +29,16 @@ open class SearchAuthorViewModel @AssistedInject constructor(
         fun create(role: IdentityRole): SearchAuthorViewModel
     }
 
-    private val loadableController = CommonLoadableController<BlogAuthor>(viewModelScope)
+    private val _snackMessageFlow = MutableSharedFlow<TextString>()
+    val snackMessageFlow: SharedFlow<TextString> get() = _snackMessageFlow
+
+    private val loadableController = CommonLoadableController<BlogAuthor>(
+        viewModelScope,
+        onPostSnackMessage = {
+            launchInViewModel {
+                _snackMessageFlow.emit(it)
+            }
+        })
     val uiState: StateFlow<CommonLoadableUiState<BlogAuthor>> get() = loadableController.uiState
 
     private val _openScreenFlow = MutableSharedFlow<Any>()

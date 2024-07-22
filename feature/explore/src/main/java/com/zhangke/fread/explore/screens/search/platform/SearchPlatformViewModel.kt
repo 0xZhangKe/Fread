@@ -2,11 +2,15 @@ package com.zhangke.fread.explore.screens.search.platform
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.platform.BlogPlatform
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import javax.inject.Inject
 
@@ -15,7 +19,17 @@ open class SearchPlatformViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    private val loadableController = CommonLoadableController<BlogPlatform>(viewModelScope)
+    private val _snackMessageFlow = MutableSharedFlow<TextString>()
+    val snackMessageFlow: SharedFlow<TextString> get() = _snackMessageFlow
+
+    private val loadableController = CommonLoadableController<BlogPlatform>(
+        viewModelScope,
+        onPostSnackMessage = {
+            launchInViewModel {
+                _snackMessageFlow.emit(it)
+            }
+        },
+    )
 
     val uiState: StateFlow<CommonLoadableUiState<BlogPlatform>> get() = loadableController.uiState
 

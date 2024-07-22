@@ -43,6 +43,7 @@ interface LoadableUiState<DATA, IMPL : LoadableUiState<DATA, IMPL>> {
 open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
     private val coroutineScope: CoroutineScope,
     initialUiState: IMPL,
+    private val onPostSnackMessage: (TextString) -> Unit,
 ) {
 
     val mutableUiState: MutableStateFlow<IMPL> = MutableStateFlow(initialUiState)
@@ -109,12 +110,22 @@ open class LoadableController<DATA, IMPL : LoadableUiState<DATA, IMPL>>(
             }
         }.onFailure { e ->
             val errorMessage = e.message?.let { textOf(it) }
-            mutableUiState.update {
-                it.copyObject(
-                    errorMessage = errorMessage,
-                    refreshing = false,
-                    initializing = false,
-                )
+            if (uiState.value.dataList.isEmpty()) {
+                mutableUiState.update {
+                    it.copyObject(
+                        errorMessage = errorMessage,
+                        refreshing = false,
+                        initializing = false,
+                    )
+                }
+            } else {
+                errorMessage?.let(onPostSnackMessage)
+                mutableUiState.update {
+                    it.copyObject(
+                        refreshing = false,
+                        initializing = false,
+                    )
+                }
             }
         }
     }

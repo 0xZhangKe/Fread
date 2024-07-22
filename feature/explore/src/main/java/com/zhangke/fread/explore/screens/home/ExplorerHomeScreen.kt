@@ -11,6 +11,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -59,7 +60,10 @@ class ExplorerHomeScreen : BaseScreen() {
         val snackbarHostState = rememberSnackbarHostState()
         Scaffold(
             snackbarHost = {
-                SnackbarHost(snackbarHostState)
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.padding(bottom = 60.dp),
+                )
             }
         ) { paddingValues ->
             Column(

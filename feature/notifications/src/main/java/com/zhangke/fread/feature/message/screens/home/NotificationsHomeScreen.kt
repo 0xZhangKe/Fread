@@ -39,7 +39,6 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -68,7 +67,7 @@ class NotificationsHomeScreen : BaseScreen() {
             NotificationsHomeScreenContent(
                 uiState = uiState,
                 onAccountSelected = {
-                    reportClick(NotificationElements.SWITCH_ACCOUNT){
+                    reportClick(NotificationElements.SWITCH_ACCOUNT) {
                         put("accountCount", "${uiState.accountList.size}")
                     }
                     viewModel.onAccountSelected(it)
@@ -102,7 +101,10 @@ class NotificationsHomeScreen : BaseScreen() {
                 }
             },
             snackbarHost = {
-                SnackbarHost(snackbarHost)
+                SnackbarHost(
+                    hostState = snackbarHost,
+                    modifier = Modifier.padding(bottom = 60.dp),
+                )
             },
         ) { paddings ->
             if (accountToTabList.isEmpty()) {

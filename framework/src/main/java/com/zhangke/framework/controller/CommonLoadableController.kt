@@ -31,6 +31,7 @@ data class CommonLoadableUiState<T>(
 
 class CommonLoadableController<T>(
     coroutineScope: CoroutineScope,
+    onPostSnackMessage: (TextString) -> Unit,
 ) : LoadableController<T, CommonLoadableUiState<T>>(
     coroutineScope = coroutineScope,
     initialUiState = CommonLoadableUiState(
@@ -39,5 +40,6 @@ class CommonLoadableController<T>(
         refreshing = false,
         loadMoreState = LoadState.Idle,
         errorMessage = null,
-    )
+    ),
+    onPostSnackMessage = onPostSnackMessage,
 )

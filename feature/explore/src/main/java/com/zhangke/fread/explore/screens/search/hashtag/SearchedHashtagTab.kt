@@ -17,6 +17,8 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
@@ -49,6 +51,8 @@ class SearchedHashtagTab(private val role: IdentityRole, private val query: Stri
         }
         val uiState by viewModel.uiState.collectAsState()
 
+        val snackbarHostState = LocalSnackbarHostState.current
+
         LaunchedEffect(query) {
             viewModel.initQuery(query)
         }
@@ -67,6 +71,7 @@ class SearchedHashtagTab(private val role: IdentityRole, private val query: Stri
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
         }
+        ConsumeSnackbarFlow(hostState = snackbarHostState, messageTextFlow = viewModel.snackMessageFlow)
     }
 
     @OptIn(ExperimentalMaterialApi::class)

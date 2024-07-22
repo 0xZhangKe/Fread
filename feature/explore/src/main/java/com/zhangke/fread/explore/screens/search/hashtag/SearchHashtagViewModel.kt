@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.ScreenModelFactory
+import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
@@ -17,6 +18,7 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 
@@ -31,14 +33,24 @@ open class SearchHashtagViewModel @AssistedInject constructor(
         fun create(role: IdentityRole): SearchHashtagViewModel
     }
 
-    private val loadableController = CommonLoadableController<Hashtag>(viewModelScope)
+    private val _snackMessageFlow = MutableSharedFlow<TextString>()
+    val snackMessageFlow: SharedFlow<TextString> get() = _snackMessageFlow
+
+    private val loadableController = CommonLoadableController<Hashtag>(
+        viewModelScope,
+        onPostSnackMessage = {
+            launchInViewModel {
+                _snackMessageFlow.emit(it)
+            }
+        },
+    )
 
     val uiState: StateFlow<CommonLoadableUiState<Hashtag>> get() = loadableController.uiState
 
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
-    fun initQuery(query: String){
+    fun initQuery(query: String) {
         if (uiState.value.dataList.isNotEmpty()) return
         onRefresh(query)
     }
@@ -59,7 +71,11 @@ open class SearchHashtagViewModel @AssistedInject constructor(
 
     fun onHashtagClick(hashtag: Hashtag) {
         launchInViewModel {
-            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(role, hashtag.name, hashtag.protocol)
+            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(
+                role,
+                hashtag.name,
+                hashtag.protocol
+            )
                 ?: return@launchInViewModel
             KRouter.routeScreen(route)?.let {
                 _openScreenFlow.emit(it)

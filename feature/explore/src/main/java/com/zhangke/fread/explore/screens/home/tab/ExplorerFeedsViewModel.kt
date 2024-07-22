@@ -30,8 +30,14 @@ class ExplorerFeedsViewModel(
     refactorToNewBlog = refactorToNewBlog,
 ) {
 
-    private val loadController =
-        CommonLoadableController<ExplorerItem>(viewModelScope)
+    private val loadController = CommonLoadableController<ExplorerItem>(
+        viewModelScope,
+        onPostSnackMessage = {
+            launchInViewModel {
+                mutableErrorMessageFlow.emit(it)
+            }
+        },
+    )
 
     val uiState: StateFlow<CommonLoadableUiState<ExplorerItem>> get() = loadController.uiState
 

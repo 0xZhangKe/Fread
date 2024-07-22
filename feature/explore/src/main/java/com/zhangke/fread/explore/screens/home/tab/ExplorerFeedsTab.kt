@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
@@ -133,6 +134,7 @@ class ExplorerFeedsTab(
                     item {
                         Box(
                             modifier = Modifier
+                                .padding(horizontal = 16.dp)
                                 .run {
                                     if (containerHeight != null) {
                                         fillMaxWidth().height(containerHeight!!)

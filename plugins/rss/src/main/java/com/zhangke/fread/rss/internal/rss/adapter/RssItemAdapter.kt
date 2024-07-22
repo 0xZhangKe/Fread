@@ -35,5 +35,5 @@ private fun getRssItemId(rssItem: RssItem): String {
 
 internal fun formatRssDate(datetime: String?): Date {
     if (datetime.isNullOrEmpty()) return Date()
-    return DateParser.parseRfc822Date(datetime) ?: DateParser.parseRfc3339Date(datetime) ?: Date()
+    return DateParser.parseAll(datetime) ?: Date()
 }

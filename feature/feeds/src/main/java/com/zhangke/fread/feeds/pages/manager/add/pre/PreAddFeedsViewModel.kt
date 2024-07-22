@@ -5,6 +5,8 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.tryEmitException
+import com.zhangke.framework.coroutines.invokeOnCancel
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.R
@@ -68,24 +70,42 @@ class PreAddFeedsViewModel @Inject constructor(
     }
 
     fun onSearchClick() {
-        doSearch(true)
+        if (searchJob?.isActive == true) return
+        doSearch()
     }
 
-    private fun doSearch(showErrorMessage: Boolean = false) {
+    private fun doSearch() {
         searchJob?.cancel()
         searchJob = launchInScreenModel {
+            _uiState.update {
+                it.copy(
+                    searching = true,
+                    searchErrorMessage = null,
+                )
+            }
             statusProvider.searchEngine
                 .searchContent(IdentityRole.nonIdentityRole, _uiState.value.query)
                 .onSuccess { list ->
                     _uiState.update {
-                        it.copy(allSearchedResult = list)
+                        it.copy(
+                            allSearchedResult = list,
+                            searching = false,
+                            searchErrorMessage = null,
+                        )
                     }
                 }.onFailure { e ->
-                    if (showErrorMessage) {
-                        e.message?.let { textOf(it) }
-                            ?.let { _snackBarMessageFlow.emit(it) }
+                    _uiState.update {
+                        it.copy(
+                            searching = false,
+                            searchErrorMessage = e.localizedMessage.ifNullOrEmpty { e.message.orEmpty() },
+                        )
                     }
                 }
+        }
+        searchJob?.invokeOnCancel {
+            _uiState.update {
+                it.copy(searching = false)
+            }
         }
     }
 

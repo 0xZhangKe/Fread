@@ -115,7 +115,9 @@ class PostStatusViewModel @AssistedInject constructor(
     }
 
     private fun buildInitialContent(account: ActivityPubLoggedAccount): String? {
-        val replyWebFinger = (screenParams as? PostStatusScreenParams.ReplyStatusParams)?.replyToBlogWebFinger ?: return null
+        val replyWebFinger =
+            (screenParams as? PostStatusScreenParams.ReplyStatusParams)?.replyToBlogWebFinger
+                ?: return null
         val currentPlatformHost = account.platform.baseUrl.host
         if (currentPlatformHost == replyWebFinger.host) return "@${replyWebFinger.name} "
         return "$replyWebFinger "
@@ -209,14 +211,23 @@ class PostStatusViewModel @AssistedInject constructor(
     )
 
     fun onMediaDeleteClick(image: PostStatusFile) {
-        val imageAttachment = _uiState.value
+        val attachment = _uiState.value
             .requireSuccessData()
-            .attachment
-            ?.asImageAttachmentOrNull ?: return
-        _uiState.updateOnSuccess { state ->
-            state.copy(
-                attachment = PostStatusAttachment.ImageAttachment(imageAttachment.imageList.remove { it == image })
-            )
+            .attachment ?: return
+        val imageAttachment = attachment.asImageAttachmentOrNull
+        if (imageAttachment != null) {
+            _uiState.updateOnSuccess { state ->
+                state.copy(
+                    attachment = PostStatusAttachment.ImageAttachment(imageAttachment.imageList.remove { it == image })
+                )
+            }
+            return
+        }
+        val videoAttachment = attachment.asVideoAttachmentOrNull
+        if (videoAttachment != null) {
+            _uiState.updateOnSuccess { state ->
+                state.copy(attachment = null)
+            }
         }
     }
 

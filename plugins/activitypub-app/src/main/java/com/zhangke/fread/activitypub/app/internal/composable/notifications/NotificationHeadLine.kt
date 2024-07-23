@@ -10,6 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 
@@ -45,12 +46,16 @@ fun NotificationHeadLine(
             Text(
                 modifier = Modifier.padding(start = 6.dp),
                 text = accountName.take(style.nameMaxLength),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
             )
         }
 
         Text(
             modifier = Modifier.padding(start = 2.dp),
             text = interactionDesc,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
         )
     }
 }

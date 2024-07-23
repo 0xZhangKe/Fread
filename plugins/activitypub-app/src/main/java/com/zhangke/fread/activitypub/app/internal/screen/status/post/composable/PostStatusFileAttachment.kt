@@ -46,6 +46,7 @@ import coil.compose.AsyncImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.getThumbnail
+import com.zhangke.framework.utils.prettyString
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.InputMediaDescriptionScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
@@ -182,10 +183,9 @@ private fun MediaFileContent(
             }
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),
-                text = "%.2f KB / %s".format(file.file.size.KB, mediaType),
+                text = "${file.file.size.prettyString} / $mediaType",
                 style = MaterialTheme.typography.bodyMedium,
             )
-
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

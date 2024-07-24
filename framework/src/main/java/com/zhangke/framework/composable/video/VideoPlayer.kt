@@ -2,18 +2,21 @@ package com.zhangke.framework.composable.video
 
 import android.net.Uri
 import android.util.Log
+import android.view.ViewGroup
 import android.widget.FrameLayout
 import androidx.annotation.OptIn
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -27,6 +30,7 @@ import androidx.compose.ui.viewinterop.AndroidView
 import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
+import androidx.media3.common.VideoSize
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
 import com.zhangke.framework.utils.toMediaSource
@@ -42,11 +46,11 @@ fun VideoPlayer(
     state: VideoState = rememberVideoPlayerState(),
 ) {
     val context = LocalContext.current
-    var buffering by remember {
-        mutableStateOf(false)
-    }
     var playErrorInfo: String? by remember {
         mutableStateOf(null)
+    }
+    var aspectRatio by remember {
+        mutableFloatStateOf(1.778F)
     }
     val playerListener = remember(uri) {
         object : Player.Listener {
@@ -58,7 +62,6 @@ fun VideoPlayer(
 
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
-                buffering = playbackState == Player.STATE_BUFFERING
                 Log.d("PlayerManager", "onPlaybackStateChanged:$playbackState")
                 state.onPlaybackStateChanged(playbackState)
             }
@@ -75,6 +78,11 @@ fun VideoPlayer(
                 } else {
                     "Play error: ${error.errorCodeName}, ${error.errorCode}"
                 }
+            }
+
+            override fun onVideoSizeChanged(videoSize: VideoSize) {
+                super.onVideoSizeChanged(videoSize)
+                aspectRatio = videoSize.pixelWidthHeightRatio
             }
 
             override fun onVolumeChanged(volume: Float) {
@@ -105,14 +113,18 @@ fun VideoPlayer(
     }
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .align(Alignment.Center)
+                .fillMaxWidth()
+                .aspectRatio(aspectRatio),
             factory = {
                 PlayerView(it).apply {
                     useController = false
                     layoutParams = FrameLayout.LayoutParams(
-                        FrameLayout.LayoutParams.MATCH_PARENT,
-                        FrameLayout.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
+                        ViewGroup.LayoutParams.MATCH_PARENT,
                     )
+                    setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS)
                     resizeMode = AspectRatioFrameLayout.RESIZE_MODE_FIT
                 }
             },
@@ -120,14 +132,6 @@ fun VideoPlayer(
                 it.player = exoPlayer
             },
         )
-        if (buffering) {
-            CircularProgressIndicator(
-                modifier = Modifier
-                    .size(32.dp)
-                    .align(Alignment.Center),
-                strokeWidth = 2.dp,
-            )
-        }
         if (playErrorInfo.isNullOrBlank().not()) {
             Text(
                 modifier = Modifier
@@ -135,6 +139,7 @@ fun VideoPlayer(
                     .padding(horizontal = 16.dp),
                 text = playErrorInfo.orEmpty(),
                 color = Color.White,
+                style = MaterialTheme.typography.labelMedium,
             )
         }
     }

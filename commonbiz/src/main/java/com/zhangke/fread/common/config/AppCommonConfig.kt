@@ -11,4 +11,6 @@ object AppCommonConfig {
     const val AUTHOR_WEBSITE = "https://zhangke.space"
 
     const val AUTHOR_EMAIL = "kezhang404@gmail.com"
+
+    const val PRIVACY_POLICY = "https://fread.xyz/appprivacy.html"
 }

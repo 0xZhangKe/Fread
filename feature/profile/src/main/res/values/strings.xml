@@ -19,4 +19,5 @@
     <string name="profile_about_website">官网：</string>
     <string name="profile_about_developer">开发者：</string>
     <string name="profile_about_contract_us">联系我：</string>
+    <string name="profile_about_privacy_policy">隐私协议：</string>
 </resources>

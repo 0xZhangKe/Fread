@@ -10,9 +10,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.material.Text
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
@@ -31,7 +31,6 @@ import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.profile.R
-
 
 class AboutScreen : BaseScreen() {
 
@@ -124,6 +123,15 @@ class AboutScreen : BaseScreen() {
                     onClick = {
                         SystemUtils.copyText(context, AppCommonConfig.AUTHOR_EMAIL)
                         toast("Copied to clipboard")
+                    },
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                AboutClickableItem(
+                    title = stringResource(R.string.profile_about_privacy_policy),
+                    clickableText = AppCommonConfig.PRIVACY_POLICY,
+                    showUnderline = false,
+                    onClick = {
+                        BrowserLauncher.launchWebTabInApp(context, AppCommonConfig.PRIVACY_POLICY)
                     },
                 )
             }

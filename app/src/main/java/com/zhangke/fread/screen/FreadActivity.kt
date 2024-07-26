@@ -24,7 +24,6 @@ import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
-import com.zhangke.fread.debug.screens.video.FullVideoPlayDemoScreen
 import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
 

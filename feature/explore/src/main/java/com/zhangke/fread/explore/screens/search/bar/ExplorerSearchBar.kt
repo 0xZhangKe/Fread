@@ -2,7 +2,6 @@ package com.zhangke.fread.explore.screens.search.bar
 
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -51,6 +50,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.reportClick
@@ -209,12 +209,12 @@ private fun SearchBarTrailing(
             }
             Row(
                 modifier = Modifier
-                    .size(width = 80.dp, height = 40.dp)
+                    .padding(end = 8.dp)
                     .background(
                         color = MaterialTheme.colorScheme.secondaryContainer,
-                        shape = RoundedCornerShape(20.dp),
+                        shape = RoundedCornerShape(23.dp),
                     )
-                    .clickable { showSelectAccountPopup = true },
+                    .noRippleClick { showSelectAccountPopup = true },
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Spacer(modifier = Modifier.width(8.dp))
@@ -222,13 +222,12 @@ private fun SearchBarTrailing(
                     imageVector = Icons.Default.ArrowDropDown,
                     contentDescription = "Select Account",
                 )
-                Spacer(modifier = Modifier.weight(1F))
+                Spacer(modifier = Modifier.width(4.dp))
                 BlogAuthorAvatar(
                     modifier = Modifier.size(40.dp),
                     imageUrl = selectedAccount?.avatar,
                 )
             }
-
             DropdownMenu(
                 modifier = Modifier,
                 expanded = showSelectAccountPopup,
@@ -238,8 +237,7 @@ private fun SearchBarTrailing(
                     DropdownMenuItem(
                         text = {
                             Row(
-                                modifier = Modifier
-                                    .fillMaxWidth(),
+                                modifier = Modifier.fillMaxWidth(),
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
                                 BlogAuthorAvatar(
@@ -248,10 +246,13 @@ private fun SearchBarTrailing(
                                 )
                                 Spacer(modifier = Modifier.width(16.dp))
                                 Text(
+                                    modifier = Modifier.width(100.dp),
                                     text = account.userName,
                                     style = MaterialTheme.typography.bodyLarge,
+                                    maxLines = 1,
+                                    overflow = TextOverflow.Ellipsis,
                                 )
-                                Spacer(modifier = Modifier.weight(1F))
+                                Spacer(modifier = Modifier.width(4.dp))
                                 RadioButton(
                                     selected = selectedAccount == account,
                                     onClick = {
@@ -259,6 +260,7 @@ private fun SearchBarTrailing(
                                         showSelectAccountPopup = false
                                     },
                                 )
+                                Spacer(modifier = Modifier.width(6.dp))
                             }
                         },
                         onClick = {

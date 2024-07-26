@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -16,10 +15,9 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
 import androidx.compose.material3.Card
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -132,6 +130,11 @@ class ProfileHomePage : BaseScreen() {
                 )
                 Spacer(modifier = Modifier.weight(1F))
                 SimpleIconButton(
+                    onClick = onAddAccountClick,
+                    imageVector = Icons.Default.PersonAdd,
+                    contentDescription = "Add Account",
+                )
+                SimpleIconButton(
                     onClick = onSettingClick,
                     imageVector = Icons.Default.Settings,
                     contentDescription = "Settings",
@@ -151,18 +154,6 @@ class ProfileHomePage : BaseScreen() {
                         onAccountClick = onAccountClick,
                     )
                 }
-            }
-            Button(
-                modifier = Modifier
-                    .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                    .fillMaxWidth()
-                    .height(56.dp),
-                onClick = onAddAccountClick,
-            ) {
-                Icon(
-                    imageVector = Icons.Default.Add,
-                    contentDescription = "Add Account"
-                )
             }
         }
     }

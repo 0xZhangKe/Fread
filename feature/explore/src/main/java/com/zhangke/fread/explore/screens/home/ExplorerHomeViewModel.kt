@@ -26,12 +26,7 @@ class ExplorerHomeViewModel @Inject constructor(
         private const val LATEST_SELECTED_ACCOUNT = "explorer_tab_last_selected_account"
     }
 
-    private val _uiState = MutableStateFlow(
-        com.zhangke.fread.explore.screens.home.ExplorerHomeUiState(
-            null,
-            emptyList()
-        )
-    )
+    private val _uiState = MutableStateFlow(ExplorerHomeUiState(null, emptyList()))
     val uiState = _uiState.asStateFlow()
 
     init {
@@ -43,7 +38,8 @@ class ExplorerHomeViewModel @Inject constructor(
                     var selectedAccount = currentUiState.selectedAccount
                     if (selectedAccount == null) {
                         val latestSelectedAccount = getLastedSelectedAccount()
-                        selectedAccount = accountsList.firstOrNull { it.uri == latestSelectedAccount }
+                        selectedAccount =
+                            accountsList.firstOrNull { it.uri == latestSelectedAccount }
                     }
                     if (selectedAccount == null) {
                         selectedAccount = accountsList.firstOrNull()
@@ -65,7 +61,8 @@ class ExplorerHomeViewModel @Inject constructor(
     }
 
     private suspend fun getLastedSelectedAccount(): FormalUri? {
-        return LocalConfigManager.getString(context, LATEST_SELECTED_ACCOUNT)?.let { FormalUri.from(it) }
+        return LocalConfigManager.getString(context, LATEST_SELECTED_ACCOUNT)
+            ?.let { FormalUri.from(it) }
     }
 
     private suspend fun updateLatestSelectedAccount(accountUri: FormalUri) {

@@ -1,7 +1,6 @@
 package com.zhangke.fread.feature.message.screens.home
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -14,13 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -38,12 +40,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LocalSnackbarHostState
-import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.reportClick
@@ -185,9 +188,9 @@ class NotificationsHomeScreen : BaseScreen() {
             var selectAccountPopupExpanded by remember {
                 mutableStateOf(false)
             }
-            Box {
+            Box(modifier = Modifier.padding(end = 8.dp)) {
                 Row(
-                    modifier = Modifier.clickable {
+                    modifier = Modifier.noRippleClick {
                         selectAccountPopupExpanded = !selectAccountPopupExpanded
                     },
                     verticalAlignment = Alignment.CenterVertically,
@@ -196,16 +199,14 @@ class NotificationsHomeScreen : BaseScreen() {
                         modifier = Modifier.size(32.dp),
                         imageUrl = account.avatar,
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
+                    Spacer(modifier = Modifier.width(6.dp))
                     Text(
                         text = account.userName,
                         style = MaterialTheme.typography.bodyLarge,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    SimpleIconButton(
-                        onClick = {
-                            selectAccountPopupExpanded = !selectAccountPopupExpanded
-                        },
+                    Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "Select Account",
                     )
@@ -215,26 +216,39 @@ class NotificationsHomeScreen : BaseScreen() {
                     expanded = selectAccountPopupExpanded,
                     onDismissRequest = { selectAccountPopupExpanded = false },
                 ) {
-                    accountList.forEach {
+                    accountList.forEach { accountItem ->
                         DropdownMenuItem(
                             text = {
-                                Row {
-                                    Text(
-                                        modifier = Modifier.alignByBaseline(),
-                                        text = it.userName,
+                                Row(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    verticalAlignment = Alignment.CenterVertically,
+                                ) {
+                                    BlogAuthorAvatar(
+                                        modifier = Modifier.size(32.dp),
+                                        imageUrl = accountItem.avatar,
                                     )
+                                    Spacer(modifier = Modifier.width(16.dp))
                                     Text(
-                                        modifier = Modifier
-                                            .padding(start = 2.dp)
-                                            .alignByBaseline(),
-                                        text = "@${it.webFinger.host}",
-                                        style = MaterialTheme.typography.labelSmall,
+                                        modifier = Modifier.width(100.dp),
+                                        text = accountItem.userName,
+                                        style = MaterialTheme.typography.bodyLarge,
+                                        maxLines = 1,
+                                        overflow = TextOverflow.Ellipsis,
                                     )
+                                    Spacer(modifier = Modifier.width(4.dp))
+                                    RadioButton(
+                                        selected = accountItem == account,
+                                        onClick = {
+                                            onAccountSelected(accountItem)
+                                            selectAccountPopupExpanded = false
+                                        },
+                                    )
+                                    Spacer(modifier = Modifier.width(6.dp))
                                 }
                             },
                             onClick = {
                                 selectAccountPopupExpanded = false
-                                onAccountSelected(it)
+                                onAccountSelected(accountItem)
                             },
                         )
                     }

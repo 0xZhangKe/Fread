@@ -66,8 +66,8 @@ class AboutScreen : BaseScreen() {
                 Image(
                     modifier = Modifier
                         .align(Alignment.CenterHorizontally)
-                        .padding(top = 48.dp)
-                        .size(64.dp),
+                        .padding(top = 32.dp)
+                        .size(80.dp),
                     painter = painterResource(com.zhangke.fread.commonbiz.R.drawable.ic_fread_logo),
                     contentDescription = "Logo",
                 )

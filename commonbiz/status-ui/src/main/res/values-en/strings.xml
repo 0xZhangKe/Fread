@@ -23,4 +23,6 @@
     <string name="status_ui_poll_votes_finished_tip">%s votes · Closed</string>
 
     <string name="status_ui_interaction_open_in_browser">Open In Browser</string>
+    <string name="status_ui_interaction_copy_url">Copy Link</string>
+
 </resources>

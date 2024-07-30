@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
@@ -54,21 +55,27 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.formatAsCount
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
+import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
+import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.krouter.Destination
@@ -143,6 +150,11 @@ data class UserDetailScreen(
                     BrowserLauncher.launchWebTabInApp(context, it)
                 }
             },
+            onCopyLinkClick = {
+                uiState.accountUiState?.account?.url?.let {
+                    SystemUtils.copyText(context, it)
+                }
+            },
             onEditClick = {
                 uiState.userInsight
                     ?.let {
@@ -190,6 +202,7 @@ data class UserDetailScreen(
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
+        onCopyLinkClick: () -> Unit,
         onEditClick: () -> Unit,
         onFollowerClick: () -> Unit,
         onFollowingClick: () -> Unit,
@@ -226,6 +239,7 @@ data class UserDetailScreen(
                                 onOpenInBrowserClick = onOpenInBrowserClick,
                                 onEditClick = onEditClick,
                                 onNewNoteSet = onNewNoteSet,
+                                onCopyLinkClick = onCopyLinkClick,
                             )
                         },
                     )
@@ -425,6 +439,7 @@ data class UserDetailScreen(
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
+        onCopyLinkClick: () -> Unit,
         onEditClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
     ) {
@@ -456,12 +471,20 @@ data class UserDetailScreen(
             expanded = showMorePopup,
             onDismissRequest = { showMorePopup = false },
         ) {
+            if (!uiState.isAccountOwner) {
+                EditPrivateNoteItem(
+                    note = uiState.relationship?.note.orEmpty(),
+                    onDismissRequest = { showMorePopup = false },
+                    onNewNoteSet = onNewNoteSet,
+                )
+            }
             if (uiState.relationship?.blocking == false) {
-                SimpleDropdownMenuItem(
+                ModalDropdownMenuItem(
                     text = stringResource(
                         R.string.activity_pub_user_detail_menu_block,
                         account.displayName.take(10)
                     ),
+                    imageVector = Icons.Default.Block,
                     onClick = {
                         showMorePopup = false
                         showBlockUserConfirmDialog = true
@@ -476,8 +499,9 @@ data class UserDetailScreen(
                 } else {
                     stringResource(R.string.activity_pub_user_detail_menu_block_domain, host)
                 }
-                SimpleDropdownMenuItem(
+                ModalDropdownMenuItem(
                     text = blockDomainLabel,
+                    imageVector = Icons.Default.Block,
                     onClick = {
                         showMorePopup = false
                         if (domainBlocked) {
@@ -488,20 +512,16 @@ data class UserDetailScreen(
                     }
                 )
             }
-            if (!uiState.isAccountOwner) {
-                EditPrivateNoteItem(
-                    note = uiState.relationship?.note.orEmpty(),
-                    onDismissRequest = { showMorePopup = false },
-                    onNewNoteSet = onNewNoteSet,
-                )
+            DropDownOpenInBrowserItem {
+                reportClick(ActivityPubDataElements.USER_DETAIL_OPEN_IN_BROWSER)
+                showMorePopup = false
+                onOpenInBrowserClick()
             }
-            SimpleDropdownMenuItem(
-                text = stringResource(R.string.activity_pub_user_detail_menu_open_in_browser),
-                onClick = {
-                    showMorePopup = false
-                    onOpenInBrowserClick()
-                }
-            )
+            DropDownCopyLinkItem {
+                reportClick(ActivityPubDataElements.USER_DETAIL_COPY_LINK)
+                showMorePopup = false
+                onCopyLinkClick()
+            }
         }
         if (showBlockUserConfirmDialog) {
             AlertConfirmDialog(
@@ -534,11 +554,12 @@ data class UserDetailScreen(
         var showEditDialog by remember {
             mutableStateOf(false)
         }
-        SimpleDropdownMenuItem(
+        ModalDropdownMenuItem(
             text = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note),
+            imageVector = Icons.Default.Edit,
             onClick = {
                 showEditDialog = true
-            }
+            },
         )
         if (showEditDialog) {
             var inputtingNote by remember { mutableStateOf(note) }

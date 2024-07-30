@@ -12,7 +12,7 @@ class ActivityPubCustomEmojiEntityAdapter @Inject constructor() {
         url = entity.url,
         staticUrl = entity.staticUrl,
         visibleInPicker = entity.visibleInPicker,
-        category = entity.category,
+        category = entity.category ?: "Default",
     )
 
     fun toEmoji(entity: ActivityPubCustomEmojiEntity): Emoji {

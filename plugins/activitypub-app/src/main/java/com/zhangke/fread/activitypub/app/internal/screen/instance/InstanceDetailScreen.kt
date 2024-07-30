@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.instance
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
@@ -13,9 +12,11 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Tab
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -23,6 +24,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -36,21 +38,27 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import coil.compose.AsyncImage
 import com.zhangke.framework.composable.FreadTabRow
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
+import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.buildRichText
+import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
+import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
@@ -112,7 +120,12 @@ class InstanceDetailScreen(
                         progress = progress,
                         title = buildRichText(instance?.title.orEmpty()),
                         onBackClick = onBackClick,
-                        actions = {},
+                        actions = {
+                            val baseUrl = uiState.baseUrl
+                            if (baseUrl != null) {
+                                InstanceDetailActions(baseUrl)
+                            }
+                        },
                     )
                 },
                 headerContent = { progress ->
@@ -137,27 +150,17 @@ class InstanceDetailScreen(
                         FreadTabRow(
                             modifier = Modifier
                                 .fillMaxWidth(),
+                            tabCount = tabs.size,
                             selectedTabIndex = pagerState.currentPage,
-                        ) {
-                            tabs.forEachIndexed { index, item ->
-                                Tab(
-                                    selected = pagerState.currentPage == index,
-                                    onClick = {
-                                        coroutineScope.launch {
-                                            pagerState.scrollToPage(index)
-                                        }
-                                    },
-                                ) {
-                                    Box(
-                                        modifier = Modifier.padding(top = 8.dp, bottom = 8.dp),
-                                    ) {
-                                        Text(
-                                            text = textString(item.title),
-                                        )
-                                    }
+                            tabContent = { index ->
+                                Text(text = textString(tabs[index].title))
+                            },
+                            onTabClick = { index ->
+                                coroutineScope.launch {
+                                    pagerState.scrollToPage(index)
                                 }
-                            }
-                        }
+                            },
+                        )
                         HorizontalPager(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -283,5 +286,34 @@ class InstanceDetailScreen(
                 BrowserLauncher.launchWebTabInApp(context, it, role)
             },
         )
+    }
+
+    @Composable
+    private fun InstanceDetailActions(baseUrl: FormalBaseUrl) {
+        val context = LocalContext.current
+        var showMorePopup by remember {
+            mutableStateOf(false)
+        }
+        SimpleIconButton(
+            onClick = { showMorePopup = true },
+            imageVector = Icons.Default.MoreVert,
+            contentDescription = "More Options"
+        )
+        DropdownMenu(
+            expanded = showMorePopup,
+            onDismissRequest = { showMorePopup = false },
+        ) {
+            DropDownOpenInBrowserItem {
+                reportClick(ActivityPubDataElements.INSTANCE_DETAIL_OPEN_IN_BROWSER)
+                showMorePopup = false
+                BrowserLauncher.launchBySystemBrowser(context, baseUrl.toString())
+            }
+
+            DropDownCopyLinkItem {
+                reportClick(ActivityPubDataElements.INSTANCE_DETAIL_COPY_LINK)
+                showMorePopup = false
+                SystemUtils.copyText(context, baseUrl.toString())
+            }
+        }
     }
 }

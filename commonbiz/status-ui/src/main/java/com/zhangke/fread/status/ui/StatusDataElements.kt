@@ -28,6 +28,7 @@ object StatusDataElements {
     const val CONTENT = "statusContent"
 
     const val OPEN_IN_BROWSER = "statusOpenInBrowser"
+    const val COPY_BLOG_LINK = "statusCopyBlogLink"
 }
 
 fun reportStatusInteractionClickEvent(interaction: StatusUiInteraction) {

@@ -7,14 +7,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Tab
-import androidx.compose.material3.Divider
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ScrollableTabRow
+import androidx.compose.material3.Tab
 import androidx.compose.material3.TabPosition
 import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.primaryContainerColor
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateMapOf
@@ -36,71 +39,13 @@ import com.zhangke.framework.utils.pxToDp
 fun FreadTabRow(
     selectedTabIndex: Int,
     modifier: Modifier = Modifier,
-    containerColor: Color = TabRowDefaults.containerColor,
-    contentColor: Color = TabRowDefaults.contentColor,
-    indicator: @Composable (tabPositions: List<TabPosition>) -> Unit =
-        @Composable { tabPositions ->
-            TabRowDefaults.Indicator(
-                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
-            )
-        },
-    divider: @Composable () -> Unit = @Composable {
-        Divider()
-    },
-    tabs: @Composable () -> Unit
-) {
-    val density = LocalDensity.current
-    var tabContainerWidth: Dp? by rememberSaveable(saver = StateSaver.MutableNullableDpSaver) {
-        mutableStateOf(null)
-    }
-    var allTabSumWidth: Dp? by rememberSaveable(saver = StateSaver.MutableNullableDpSaver) {
-        mutableStateOf(null)
-    }
-    var tabEdgePadding by rememberSaveable(saver = StateSaver.MutableDpSaver) {
-        mutableStateOf(0.dp)
-    }
-    if (tabContainerWidth != null && allTabSumWidth != null) {
-        LaunchedEffect(tabContainerWidth, allTabSumWidth) {
-            tabEdgePadding = if (tabContainerWidth!! <= allTabSumWidth!!) {
-                0.dp
-            } else {
-                (tabContainerWidth!! - allTabSumWidth!!) / 2
-            }
-        }
-    }
-    ScrollableTabRow(
-        selectedTabIndex = selectedTabIndex,
-        modifier = modifier.onGloballyPositioned {
-            tabContainerWidth = it.size.width.pxToDp(density)
-        },
-        containerColor = containerColor,
-        contentColor = contentColor,
-        edgePadding = tabEdgePadding,
-        indicator = { tabPositions ->
-            var allWidth = 0.dp
-            for (position in tabPositions) {
-                allWidth += position.width
-            }
-            allTabSumWidth = allWidth
-            indicator(tabPositions)
-        },
-        divider = divider,
-        tabs = tabs,
-    )
-}
-
-@Composable
-fun FreadTabRow(
-    selectedTabIndex: Int,
-    modifier: Modifier = Modifier,
-    containerColor: Color = TabRowDefaults.containerColor,
-    contentColor: Color = TabRowDefaults.contentColor,
+    containerColor: Color = primaryContainerColor,
     indicatorContent: @Composable (tabPosition: TabPosition) -> Unit =
         @Composable {
             FreadTabRowDefault.Indicator()
         },
     divider: @Composable () -> Unit = @Composable {
-        Divider()
+        HorizontalDivider()
     },
     tabCount: Int,
     tabContent: @Composable (index: Int) -> Unit,
@@ -114,7 +59,6 @@ fun FreadTabRow(
         modifier = modifier,
         selectedTabIndex = selectedTabIndex,
         containerColor = containerColor,
-        contentColor = contentColor,
         indicator = { tabPositions ->
             val position = tabPositions[selectedTabIndex]
             Column(
@@ -143,11 +87,75 @@ fun FreadTabRow(
                             }
                             .padding(8.dp)
                     ) {
-                        tabContent(index)
+                        val contentColor = if (index == selectedTabIndex) {
+                            MaterialTheme.colorScheme.primary
+                        } else {
+                            MaterialTheme.colorScheme.onSurface
+                        }
+                        CompositionLocalProvider(
+                            LocalContentColor provides contentColor
+                        ) {
+                            tabContent(index)
+                        }
                     }
                 }
             }
         },
+    )
+}
+
+@Composable
+private fun FreadTabRow(
+    selectedTabIndex: Int,
+    modifier: Modifier = Modifier,
+    containerColor: Color = primaryContainerColor,
+    indicator: @Composable (tabPositions: List<TabPosition>) -> Unit =
+        @Composable { tabPositions ->
+            TabRowDefaults.Indicator(
+                Modifier.tabIndicatorOffset(tabPositions[selectedTabIndex])
+            )
+        },
+    divider: @Composable () -> Unit = @Composable {
+        HorizontalDivider()
+    },
+    tabs: @Composable () -> Unit
+) {
+    val density = LocalDensity.current
+    var tabContainerWidth: Dp? by rememberSaveable(saver = StateSaver.MutableNullableDpSaver) {
+        mutableStateOf(null)
+    }
+    var allTabSumWidth: Dp? by rememberSaveable(saver = StateSaver.MutableNullableDpSaver) {
+        mutableStateOf(null)
+    }
+    var tabEdgePadding by rememberSaveable(saver = StateSaver.MutableDpSaver) {
+        mutableStateOf(0.dp)
+    }
+    if (tabContainerWidth != null && allTabSumWidth != null) {
+        LaunchedEffect(tabContainerWidth, allTabSumWidth) {
+            tabEdgePadding = if (tabContainerWidth!! <= allTabSumWidth!!) {
+                0.dp
+            } else {
+                (tabContainerWidth!! - allTabSumWidth!!) / 2
+            }
+        }
+    }
+    ScrollableTabRow(
+        selectedTabIndex = selectedTabIndex,
+        modifier = modifier.onGloballyPositioned {
+            tabContainerWidth = it.size.width.pxToDp(density)
+        },
+        containerColor = containerColor,
+        edgePadding = tabEdgePadding,
+        indicator = { tabPositions ->
+            var allWidth = 0.dp
+            for (position in tabPositions) {
+                allWidth += position.width
+            }
+            allTabSumWidth = allWidth
+            indicator(tabPositions)
+        },
+        divider = divider,
+        tabs = tabs,
     )
 }
 
@@ -163,7 +171,8 @@ object FreadTabRowDefault {
         shape: Shape = RoundedCornerShape(3.dp),
     ) {
         Box(
-            modifier.fillMaxWidth()
+            modifier
+                .fillMaxWidth()
                 .height(height)
                 .background(color = color, shape = shape)
         )

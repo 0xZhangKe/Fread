@@ -62,9 +62,8 @@
     <string name="activity_pub_user_detail_menu_block">Block %s</string>
     <string name="activity_pub_user_detail_menu_block_domain">Block %s</string>
     <string name="activity_pub_user_detail_menu_unblock_domain">Unblock %s</string>
-    <string name="activity_pub_user_detail_menu_edit_private_note">Note</string>
+    <string name="activity_pub_user_detail_menu_edit_private_note">Edit Note</string>
     <string name="activity_pub_user_detail_menu_edit_private_note_dialog_hint">Enter Private Note</string>
-    <string name="activity_pub_user_detail_menu_open_in_browser">Open in browser</string>
     <string name="activity_pub_user_detail_dialog_content_block">Do you want to block this user?</string>
     <string name="activity_pub_user_detail_dialog_content_block_domain">Do you want to block this domain?</string>
 

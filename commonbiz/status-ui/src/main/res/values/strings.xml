@@ -23,4 +23,5 @@
     <string name="status_ui_poll_votes_finished_tip">%s 票 · 已关闭</string>
 
     <string name="status_ui_interaction_open_in_browser">在浏览器中打开</string>
+    <string name="status_ui_interaction_copy_url">复制链接</string>
 </resources>

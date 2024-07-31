@@ -5,7 +5,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -19,11 +18,8 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.automirrored.filled.VolumeUp
-import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Slider
@@ -37,7 +33,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
@@ -83,7 +78,9 @@ fun FullScreenVideoPlayer(
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 FullScreenVideoPlayerPanel(
-                    modifier = Modifier.align(Alignment.BottomCenter).navigationBarsPadding(),
+                    modifier = Modifier
+                        .align(Alignment.BottomCenter)
+                        .navigationBarsPadding(),
                     playing = videoState.playing,
                     mute = videoState.playerVolume <= 0F,
                     onPlayClick = {
@@ -152,7 +149,9 @@ private fun FullScreenVideoPlayerPanel(
             .padding(bottom = 16.dp),
     ) {
         PlayerProgress(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
             progress = progress,
             onProgressChange = { progress ->
                 onPositionChangeRequest((duration * progress).toLong())
@@ -189,6 +188,7 @@ private fun FullScreenVideoPlayerPanel(
                         onMuteClick()
                     }
                 },
+                tint = Color.White,
                 imageVector = icon,
                 contentDescription = if (mute) "unmute" else "mute",
             )

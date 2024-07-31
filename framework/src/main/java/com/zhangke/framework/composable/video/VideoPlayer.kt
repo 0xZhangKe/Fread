@@ -44,6 +44,7 @@ fun VideoPlayer(
     uri: Uri,
     playWhenReady: Boolean,
     state: VideoState = rememberVideoPlayerState(),
+    useController: Boolean = false,
 ) {
     val context = LocalContext.current
     var playErrorInfo: String? by remember {
@@ -119,7 +120,6 @@ fun VideoPlayer(
                 .aspectRatio(aspectRatio),
             factory = {
                 PlayerView(it).apply {
-                    useController = false
                     layoutParams = FrameLayout.LayoutParams(
                         ViewGroup.LayoutParams.MATCH_PARENT,
                         ViewGroup.LayoutParams.MATCH_PARENT,
@@ -130,6 +130,7 @@ fun VideoPlayer(
             },
             update = {
                 it.player = exoPlayer
+                it.useController = useController
             },
         )
         if (playErrorInfo.isNullOrBlank().not()) {

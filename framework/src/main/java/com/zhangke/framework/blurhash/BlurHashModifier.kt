@@ -21,10 +21,10 @@ import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 fun Modifier.blurhash(blurHash: String): Modifier = composed {
-    var size: Size? by remember {
+    var size: Size? by remember(blurHash) {
         mutableStateOf(null)
     }
-    var bitmap: Bitmap? by remember {
+    var bitmap: Bitmap? by remember(blurHash) {
         mutableStateOf(null)
     }
     val coroutineScope = rememberCoroutineScope()
@@ -38,6 +38,7 @@ fun Modifier.blurhash(blurHash: String): Modifier = composed {
                             blurHash = blurHash,
                             width = (size!!.width * 0.5F).roundToInt(),
                             height = (size!!.height * 0.5F).roundToInt(),
+                            useCache = false,
                         )
                     }
                 }

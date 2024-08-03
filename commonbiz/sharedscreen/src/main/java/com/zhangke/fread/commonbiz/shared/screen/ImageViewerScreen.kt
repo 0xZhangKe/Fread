@@ -61,6 +61,7 @@ import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.io.Serializable
 
 class ImageViewerScreen(
     private val selectedIndex: Int,
@@ -192,7 +193,7 @@ class ImageViewerScreen(
             }
         }
         if (aspectRatio != null) {
-            val viewerState = if (coordinates != null) {
+            val viewerState = if (coordinates != null && coordinates.isAttached) {
                 rememberImageViewerState(
                     aspectRatio = aspectRatio!!,
                     needAnimateIn = needAnimateIn,
@@ -300,7 +301,7 @@ class ImageViewerScreen(
         val description: String? = null,
         val blurhash: String? = null,
         val aspect: Float? = null,
-    )
+    ): Serializable
 }
 
 fun BlogMedia.toImage(): ImageViewerScreen.Image {

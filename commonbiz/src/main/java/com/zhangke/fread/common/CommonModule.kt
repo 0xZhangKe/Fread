@@ -1,7 +1,6 @@
 package com.zhangke.fread.common
 
 import android.content.Context
-import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import dagger.Module
@@ -13,11 +12,6 @@ import dagger.hilt.components.SingletonComponent
 @Module
 @InstallIn(SingletonComponent::class)
 class CommonModule {
-
-    @Provides
-    fun provideFreadConfigManager(): FreadConfigManager {
-        return FreadConfigManager()
-    }
 
     @Provides
     fun provideStatusDatabases(

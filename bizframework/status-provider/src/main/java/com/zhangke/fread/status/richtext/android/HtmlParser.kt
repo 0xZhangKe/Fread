@@ -24,6 +24,7 @@ object HtmlParser {
         emojis: List<Emoji>,
         mentions: List<Mention>,
         hashTag: List<HashtagInStatus>,
+        parsePossibleHashtag: Boolean = false,
     ): SpannableStringBuilder {
         val fixedHashTags = hashTag.map { it.copy(name = it.name.lowercase()) }
         val spanBuilder = SpannableStringBuilder()
@@ -43,6 +44,7 @@ object HtmlParser {
                             openSpans = openSpans,
                             mentions = mentions,
                             hashTags = fixedHashTags,
+                            parsePossibleHashtag = parsePossibleHashtag,
                         )
                     }
                 }
@@ -77,6 +79,7 @@ object HtmlParser {
         openSpans: MutableList<SpanInfo>,
         mentions: List<Mention>,
         hashTags: List<HashtagInStatus>,
+        parsePossibleHashtag: Boolean,
     ) {
         when (element.nodeName()) {
             "br" -> {
@@ -89,10 +92,14 @@ object HtmlParser {
                 if (element.hasClass("hashtag")) {
                     val text = element.text()
                     if (text.startsWith("#")) {
-                        val hashtagText = text.substring(1).lowercase()
-                        val hashTag = hashTags.firstOrNull { it.name == hashtagText }
-                        if (hashTag != null) {
-                            linkTarget = LinkSpan.LinkTarget.HashtagTarget(hashTag)
+                        if (parsePossibleHashtag) {
+                            linkTarget = LinkSpan.LinkTarget.MaybeHashtagTarget(text.substring(1))
+                        } else {
+                            val hashtagText = text.substring(1).lowercase()
+                            val hashTag = hashTags.firstOrNull { it.name == hashtagText }
+                            if (hashTag != null) {
+                                linkTarget = LinkSpan.LinkTarget.HashtagTarget(hashTag)
+                            }
                         }
                     } else {
                         if (href.isNotEmpty()) {

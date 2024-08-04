@@ -70,8 +70,6 @@ class HashtagTimelineViewModel @AssistedInject constructor(
                         following = it.following,
                         description = buildDescription(it),
                     )
-                }.onFailure { e ->
-                    mutableErrorMessageFlow.emitTextMessageFromThrowable(e)
                 }
         }
     }

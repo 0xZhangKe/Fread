@@ -59,37 +59,50 @@ class StatusContextSubViewModel(
                 }
             },
         )
+    }
+
+    fun onPageResume() {
         launchInViewModel {
-            val fixedAnchorStatus = refactorToNewBlog(anchorStatus)
-            _uiState.value = _uiState.value.copy(
-                loading = true,
-                contextStatus = buildContextStatus(fixedAnchorStatus),
-            )
-            statusProvider.statusResolver
-                .getStatusContext(role, fixedAnchorStatus)
-                .onSuccess { statusContext ->
-                    _uiState.update { state ->
-                        state.copy(
-                            contextStatus = buildContextStatus(fixedAnchorStatus, statusContext),
-                            loading = false,
-                            errorMessage = null,
-                        )
-                    }
-                }.onFailure {
-                    _uiState.update { state ->
-                        state.copy(
-                            contextStatus = buildContextStatus(fixedAnchorStatus),
-                            loading = false,
-                            errorMessage = it.toTextStringOrNull(),
-                        )
-                    }
-                }
-            statusProvider.statusResolver
-                .getStatus(role, anchorStatus.id, anchorStatus.platform)
-                .onSuccess {
-                    updateStatus(buildStatusUiState(role, it))
-                }
+            loadStatusContext()
         }
+        launchInViewModel {
+            loadStatus()
+        }
+    }
+
+    private suspend fun loadStatus() {
+        statusProvider.statusResolver
+            .getStatus(role, anchorStatus.id, anchorStatus.platform)
+            .onSuccess {
+                updateStatus(buildStatusUiState(role, it))
+            }
+    }
+
+    private suspend fun loadStatusContext() {
+        val fixedAnchorStatus = refactorToNewBlog(anchorStatus)
+        _uiState.value = _uiState.value.copy(
+            loading = true,
+            contextStatus = buildContextStatus(fixedAnchorStatus),
+        )
+        statusProvider.statusResolver
+            .getStatusContext(role, fixedAnchorStatus)
+            .onSuccess { statusContext ->
+                _uiState.update { state ->
+                    state.copy(
+                        contextStatus = buildContextStatus(fixedAnchorStatus, statusContext),
+                        loading = false,
+                        errorMessage = null,
+                    )
+                }
+            }.onFailure {
+                _uiState.update { state ->
+                    state.copy(
+                        contextStatus = buildContextStatus(fixedAnchorStatus),
+                        loading = false,
+                        errorMessage = it.toTextStringOrNull(),
+                    )
+                }
+            }
     }
 
     private fun buildContextStatus(

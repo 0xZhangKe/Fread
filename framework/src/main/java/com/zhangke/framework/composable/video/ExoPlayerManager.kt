@@ -11,7 +11,6 @@ import androidx.lifecycle.LifecycleObserver
 import androidx.lifecycle.LifecycleOwner
 import androidx.media3.common.util.UnstableApi
 import androidx.media3.exoplayer.ExoPlayer
-import com.zhangke.framework.utils.toMediaSource
 
 val LocalExoPlayerManager = staticCompositionLocalOf { ExoPlayerManager() }
 

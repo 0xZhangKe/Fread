@@ -236,6 +236,7 @@ class UserDetailViewModel(
             description = buildRichText(
                 document = note,
                 emojis = customEmojis,
+                parsePossibleHashtag = true,
             ),
         )
     }

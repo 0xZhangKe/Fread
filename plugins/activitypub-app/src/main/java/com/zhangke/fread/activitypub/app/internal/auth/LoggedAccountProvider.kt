@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.auth
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.status.uri.FormalUri
+import java.util.Collections
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,7 +14,8 @@ import javax.inject.Singleton
 @Singleton
 class LoggedAccountProvider @Inject constructor() {
 
-    private val accountSet = mutableSetOf<ActivityPubLoggedAccount>()
+    private val accountSet: MutableSet<ActivityPubLoggedAccount> =
+        Collections.synchronizedSet(HashSet())
 
     fun addAccount(account: ActivityPubLoggedAccount) {
         accountSet.add(account)

@@ -79,4 +79,13 @@ class EditContentConfigViewModel @AssistedInject constructor(
             _finishScreenFlow.emit(Unit)
         }
     }
+
+    fun onEditNameClick(contentName: String) {
+        launchInViewModel {
+            val newContent = contentConfigRepo.getConfigById(configId)
+                ?.let { it as? ContentConfig.ActivityPubContent }
+                ?.copy(name = contentName) ?: return@launchInViewModel
+            contentConfigRepo.insert(newContent)
+        }
+    }
 }

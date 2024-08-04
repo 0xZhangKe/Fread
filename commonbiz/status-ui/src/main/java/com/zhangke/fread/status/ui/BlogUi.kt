@@ -63,7 +63,7 @@ fun BlogUi(
                 .horizontalPadding(style.containerPaddings),
             blog = blog,
             indexOfFeeds = indexInList,
-            style = style.blogStyle,
+            style = style,
             onMediaClick = onMediaClick,
             onVoted = onVoted,
             onUrlClick = onUrlClick,

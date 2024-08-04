@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.VolumeOff
@@ -17,7 +17,6 @@ import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
@@ -29,6 +28,7 @@ import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.fread.common.config.FreadConfigManager
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -50,6 +50,7 @@ fun InlineVideo(
         InlineVideoPlayer(
             uri = uri,
             coverImage = coverImage,
+            autoPlay = FreadConfigManager.autoPlayInlineVideo,
             playWhenReady = playWhenReady,
             onClick = onClick,
             onPlayManually = {
@@ -70,7 +71,6 @@ private fun InlineVideoShell(
         .coerceAtMost(style.maxAspect)
     Box(
         modifier = Modifier
-            .clip(RoundedCornerShape(style.radius))
             .fillMaxWidth()
             .aspectRatio(fixedAspectRatio),
         content = {
@@ -84,6 +84,7 @@ private fun InlineVideoShell(
 private fun InlineVideoPlayer(
     uri: Uri,
     coverImage: String?,
+    autoPlay: Boolean,
     playWhenReady: Boolean,
     onClick: () -> Unit,
     onPlayManually: () -> Unit,
@@ -94,7 +95,7 @@ private fun InlineVideoPlayer(
             .fillMaxSize()
             .noRippleClick(onClick = onClick)
     ) {
-        if (playWhenReady) {
+        if (autoPlay && playWhenReady) {
             val videoState = rememberVideoPlayerState()
             VideoPlayer(
                 uri = uri,
@@ -128,9 +129,14 @@ private fun InlineVideoPlayer(
 
                 PlayVideoIconButton(
                     modifier = Modifier
+                        .size(32.dp)
                         .align(Alignment.Center),
                     onClick = {
-                        onPlayManually()
+                        if (autoPlay) {
+                            onPlayManually()
+                        } else {
+                            onClick()
+                        }
                     },
                 )
             }
@@ -149,6 +155,7 @@ private fun InlineVideoControlPanel(
         if (playEnded) {
             PlayVideoIconButton(
                 modifier = Modifier
+                    .size(32.dp)
                     .align(Alignment.Center),
                 onClick = onPlayClick,
             )
@@ -174,7 +181,7 @@ private fun InlineVideoControlPanel(
 }
 
 @Composable
-private fun PlayVideoIconButton(
+internal fun PlayVideoIconButton(
     modifier: Modifier,
     onClick: () -> Unit,
 ) {

@@ -20,6 +20,7 @@ fun FreadRichText(
     richText: RichText,
     onMentionClick: (Mention) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
+    onMaybeHashtagTarget: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit = {},
     onUrlClick: (url: String) -> Unit,
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
@@ -47,6 +48,10 @@ fun FreadRichText(
 
                 is LinkSpan.LinkTarget.MentionTarget -> {
                     onMentionClick(linkTarget.mention)
+                }
+
+                is LinkSpan.LinkTarget.MaybeHashtagTarget -> {
+                    onMaybeHashtagTarget.invoke(linkTarget)
                 }
             }
         },

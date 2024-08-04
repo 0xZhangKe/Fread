@@ -1,29 +1,39 @@
 package com.zhangke.fread.status.ui.image
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.PlayCircleOutline
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import coil.compose.AsyncImage
 import coil.imageLoader
 import coil.request.ImageRequest
 import com.zhangke.framework.blurhash.blurhash
+import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
+import com.zhangke.fread.status.blog.BlogMediaType
 
 typealias OnBlogMediaClick = (BlogMediaClickEvent) -> Unit
 
@@ -38,7 +48,7 @@ sealed interface BlogMediaClickEvent {
     data class BlogVideoClickEvent(
         val index: Int,
         val media: BlogMedia,
-    ): BlogMediaClickEvent
+    ) : BlogMediaClickEvent
 }
 
 /**
@@ -152,7 +162,7 @@ internal fun BlogImage(
 ) {
     val context = LocalContext.current
     if (hideContent) {
-        LaunchedEffect(Unit) {
+        LaunchedEffect(media) {
             ImageRequest.Builder(context)
                 .data(media.url)
                 .size(50, 50)
@@ -160,19 +170,61 @@ internal fun BlogImage(
                 .let { context.imageLoader.execute(it) }
         }
     }
-    AsyncImage(
-        modifier = modifier
-            .run {
-                if (media.blurhash.isNullOrEmpty().not()) {
-                    blurhash(media.blurhash!!)
-                } else {
-                    this
-                }
-            },
-        model = if (hideContent) null else media.url,
-        contentScale = ContentScale.Crop,
-        contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
-    )
+    val mediaModifier = modifier.run {
+        if (media.blurhash.isNullOrEmpty().not()) {
+            blurhash(media.blurhash!!)
+        } else {
+            this
+        }
+    }
+    if (media.type == BlogMediaType.GIFV) {
+        Box(modifier = mediaModifier) {
+            AsyncImage(
+                modifier = mediaModifier,
+                model = if (hideContent) null else media.url,
+                contentScale = ContentScale.Crop,
+                contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
+            )
+
+            Icon(
+                modifier = Modifier
+                    .size(32.dp)
+                    .align(Alignment.Center),
+                imageVector = Icons.Default.PlayCircleOutline,
+                tint = Color.White,
+                contentDescription = "Play",
+            )
+        }
+    } else {
+        AsyncImage(
+            modifier = mediaModifier,
+            model = if (hideContent) null else media.url,
+            contentScale = ContentScale.Crop,
+            contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
+        )
+    }
+}
+
+@Composable
+private fun BlogGifVideoMedia(
+    modifier: Modifier,
+    media: BlogMedia,
+    hideContent: Boolean,
+) {
+    val videoUri = remember(media) {
+        media.url.toUri()
+    }
+    Box(
+        modifier = modifier,
+    ) {
+        if (!hideContent) {
+            VideoPlayer(
+                modifier = Modifier.fillMaxSize(),
+                uri = videoUri,
+                playWhenReady = true,
+            )
+        }
+    }
 }
 
 @Composable

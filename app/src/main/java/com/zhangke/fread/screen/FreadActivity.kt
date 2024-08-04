@@ -53,7 +53,6 @@ class FreadActivity : AppCompatActivity() {
                 val videoPlayerManager = remember {
                     ExoPlayerManager()
                 }
-//                val contentSize by FreadConfigManager.statusContentSize.collectAsState()
                 DisposableEffect(videoPlayerManager) {
                     onDispose {
                         videoPlayerManager.recycler()
@@ -61,7 +60,6 @@ class FreadActivity : AppCompatActivity() {
                 }
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
-//                    LocalStatusContentSize provides contentSize,
                 ) {
                     TransparentNavigator {
                         BottomSheetNavigator(

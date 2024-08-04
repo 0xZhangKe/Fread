@@ -106,6 +106,9 @@
     <string name="activity_pub_edit_content_delete_dialog_content">Confirm to delete this content?</string>
     <string name="activity_pub_edit_account_info_input_name_hint">"Please enter your username"</string>
     <string name="activity_pub_edit_account_info_input_note_hint">"Please enter bio"</string>
+    <string name="activity_pub_edit_content_name_title">Edit Content Name</string>
+    <string name="activity_pub_edit_content_name_label">Edit Content Name</string>
+    <string name="activity_pub_edit_content_name_hint">Please enter the name of the content</string>
 
     <string name="activity_pub_user_follower_list_title">Followers</string>
     <string name="activity_pub_user_following_list_title">Following</string>

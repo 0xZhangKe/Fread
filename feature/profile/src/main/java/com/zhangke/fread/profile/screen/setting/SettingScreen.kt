@@ -6,18 +6,23 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.filled.Feedback
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.LogoDev
+import androidx.compose.material.icons.filled.PlayCircle
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -41,6 +46,9 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.utils.SystemPageUtils
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.common.config.AppFontSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.page.BaseScreen
@@ -51,6 +59,11 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 class SettingScreen : BaseScreen() {
+
+    companion object {
+
+        private val itemHeight = 82.dp
+    }
 
     @Composable
     override fun Content() {
@@ -65,6 +78,12 @@ class SettingScreen : BaseScreen() {
             onOpenSourceClick = {
                 reportClick(SettingElements.OPEN_SOURCE)
                 navigator.push(OpenSourceScreen())
+            },
+            onSwitchAutoPlayClick = {
+                reportClick(SettingElements.AUTO_PLAY_INLINE_VIDEO) {
+                    put("on", it.toString())
+                }
+                viewModel.onChangeAutoPlayInlineVideo(it)
             },
             onDayNightModeClick = {
                 reportClick(SettingElements.DARK_MODE) {
@@ -86,6 +105,17 @@ class SettingScreen : BaseScreen() {
                 reportClick(SettingElements.ABOUT)
                 navigator.push(AboutScreen())
             },
+            onFeedbackClick = {
+                reportClick(SettingElements.FEEDBACK)
+                BrowserLauncher.launchWebTabInApp(
+                    context = context,
+                    url = AppCommonConfig.FEEDBACK_URL,
+                )
+            },
+            onContentSizeChanged = {
+                reportClick(SettingElements.CONTENT_SIZE)
+                viewModel.onContentSizeChanged(it)
+            }
         )
     }
 
@@ -93,11 +123,14 @@ class SettingScreen : BaseScreen() {
     private fun SettingContent(
         uiState: SettingUiState,
         onBackClick: () -> Unit,
+        onSwitchAutoPlayClick: (on: Boolean) -> Unit,
         onOpenSourceClick: () -> Unit,
+        onFeedbackClick: () -> Unit,
         onDayNightModeClick: (DayNightMode) -> Unit,
         onLanguageClick: (LanguageSettingType) -> Unit,
         onRatingClick: () -> Unit,
         onAboutClick: () -> Unit,
+        onContentSizeChanged: (AppFontSize) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -110,6 +143,10 @@ class SettingScreen : BaseScreen() {
             Column(
                 modifier = Modifier.padding(innerPadding),
             ) {
+                AutoPlayInlineVideoItem(
+                    autoPlay = uiState.autoPlayInlineVideo,
+                    onSwitchClick = onSwitchAutoPlayClick,
+                )
                 DarNightItem(
                     uiState = uiState,
                     onDayNightModeClick = onDayNightModeClick,
@@ -117,6 +154,16 @@ class SettingScreen : BaseScreen() {
                 LanguageItem(
                     uiState = uiState,
                     onLanguageClick = onLanguageClick,
+                )
+                ContentSizeItem(
+                    contentSize = uiState.contentSize,
+                    onContentSizeChanged = onContentSizeChanged,
+                )
+                SettingItem(
+                    icon = Icons.Default.Feedback,
+                    title = stringResource(R.string.profile_setting_open_source_feedback),
+                    subtitle = stringResource(R.string.profile_setting_open_source_feedback_desc),
+                    onClick = onFeedbackClick,
                 )
                 SettingItem(
                     icon = Icons.Default.Code,
@@ -149,6 +196,40 @@ class SettingScreen : BaseScreen() {
     }
 
     @Composable
+    private fun AutoPlayInlineVideoItem(
+        autoPlay: Boolean,
+        onSwitchClick: (on: Boolean) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(itemHeight)
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                modifier = Modifier.size(24.dp),
+                imageVector = Icons.Default.PlayCircle,
+                contentDescription = "Auto play inline video",
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                text = stringResource(R.string.profile_setting_inline_video_auto_play),
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+            )
+            Spacer(modifier = Modifier.weight(1F))
+            Switch(
+                modifier = Modifier,
+                checked = autoPlay,
+                onCheckedChange = {
+                    onSwitchClick(it)
+                },
+            )
+        }
+    }
+
+    @Composable
     private fun DarNightItem(
         uiState: SettingUiState,
         onDayNightModeClick: (DayNightMode) -> Unit,
@@ -161,6 +242,22 @@ class SettingScreen : BaseScreen() {
             onItemClick = { index ->
                 onDayNightModeClick(DayNightMode.entries[index])
             },
+        )
+    }
+
+    @Composable
+    private fun ContentSizeItem(
+        contentSize: AppFontSize,
+        onContentSizeChanged: (AppFontSize) -> Unit,
+    ) {
+        SettingItemWithPopup(
+            icon = Icons.Default.Language,
+            title = stringResource(R.string.profile_setting_font_size),
+            subtitle = contentSize.sizeName,
+            dropDownItems = AppFontSize.entries.map { it.sizeName },
+            onItemClick = {
+                onContentSizeChanged(AppFontSize.entries[it])
+            }
         )
     }
 
@@ -250,7 +347,6 @@ class SettingScreen : BaseScreen() {
         subtitle: String,
         onClick: () -> Unit,
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -258,6 +354,7 @@ class SettingScreen : BaseScreen() {
         ) {
             Row(
                 modifier = Modifier
+                    .heightIn(min = itemHeight)
                     .padding(16.dp)
                     .fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically,
@@ -274,7 +371,6 @@ class SettingScreen : BaseScreen() {
                         modifier = Modifier.padding(top = 4.dp),
                         text = subtitle,
                         style = MaterialTheme.typography.bodyMedium,
-                        maxLines = 1,
                     )
                 }
             }
@@ -297,5 +393,13 @@ class SettingScreen : BaseScreen() {
                 DayNightMode.DAY -> stringResource(R.string.profile_setting_dark_mode_light)
                 DayNightMode.FOLLOW_SYSTEM -> stringResource(R.string.profile_setting_dark_mode_follow_system)
             }
+        }
+
+    private val AppFontSize.sizeName: String
+        @Composable get() = when (this) {
+            AppFontSize.SMALL -> stringResource(R.string.profile_setting_font_size_small)
+            AppFontSize.MEDIUM -> stringResource(R.string.profile_setting_font_size_medium)
+            AppFontSize.LARGE -> stringResource(R.string.profile_setting_font_size_large)
+            AppFontSize.EXTRA_LARGE -> stringResource(R.string.profile_setting_font_size_extra_large)
         }
 }

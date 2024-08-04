@@ -11,6 +11,7 @@ class RichText(
     private val mentions: List<Mention>,
     private val hashTags: List<HashtagInStatus>,
     private val emojis: List<Emoji>,
+    private val parsePossibleHashtag: Boolean = false,
 ) : java.io.Serializable {
 
     @Transient
@@ -23,6 +24,7 @@ class RichText(
             emojis = emojis,
             mentions = mentions,
             hashTag = hashTags,
+            parsePossibleHashtag = parsePossibleHashtag,
         ).also { charSequence = it }
     }
 

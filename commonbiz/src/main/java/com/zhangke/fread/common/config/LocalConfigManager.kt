@@ -3,6 +3,7 @@ package com.zhangke.fread.common.config
 import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.intPreferencesKey
 import androidx.datastore.preferences.core.stringPreferencesKey
@@ -30,6 +31,16 @@ object LocalConfigManager {
 
     suspend fun putInt(context: Context, key: String, value: Int) {
         val preferenceKey = intPreferencesKey(key)
+        putPreferenceValue(context, preferenceKey, value)
+    }
+
+    suspend fun getBoolean(context: Context, key: String): Boolean? {
+        val preferenceKey = booleanPreferencesKey(key)
+        return getPreferenceValue(context, preferenceKey)
+    }
+
+    suspend fun putBoolean(context: Context, key: String, value: Boolean) {
+        val preferenceKey = booleanPreferencesKey(key)
         putPreferenceValue(context, preferenceKey, value)
     }
 

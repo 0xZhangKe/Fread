@@ -15,11 +15,13 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
@@ -36,7 +38,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -88,6 +89,7 @@ class EditContentConfigScreen(
             onShowingTabMoveDown = viewModel::onShowingTabMoveDown,
             onHiddenTabMoveUp = viewModel::onHiddenTabMoveUp,
             onDeleteClick = viewModel::onDeleteClick,
+            onEditNameClick = viewModel::onEditNameClick,
         )
         ConsumeFlow(viewModel.finishScreenFlow) {
             navigator.pop()
@@ -102,6 +104,7 @@ class EditContentConfigScreen(
         onShowingTabMove: (from: Int, to: Int) -> Unit,
         onShowingTabMoveDown: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
         onHiddenTabMoveUp: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onEditNameClick: (String) -> Unit,
         onDeleteClick: () -> Unit,
     ) {
         val snackbarHostState = rememberSnackbarHostState()
@@ -114,10 +117,20 @@ class EditContentConfigScreen(
                 var showDeleteConfirmDialog by remember {
                     mutableStateOf(false)
                 }
+                var showEditNameDialog by remember {
+                    mutableStateOf(false)
+                }
                 Toolbar(
                     title = uiState?.config?.configName.orEmpty(),
                     onBackClick = onBackClick,
                     actions = {
+                        SimpleIconButton(
+                            onClick = {
+                                showEditNameDialog = true
+                            },
+                            imageVector = Icons.Default.Edit,
+                            contentDescription = "Edit content name",
+                        )
                         SimpleIconButton(
                             onClick = {
                                 showDeleteConfirmDialog = true
@@ -137,6 +150,15 @@ class EditContentConfigScreen(
                         onPositiveClick = {
                             showDeleteConfirmDialog = false
                             onDeleteClick()
+                        },
+                    )
+                }
+                if (showEditNameDialog && uiState != null) {
+                    EditContentNameDialog(
+                        name = uiState.config.name,
+                        onConfirmClick = onEditNameClick,
+                        onDismissRequest = {
+                            showEditNameDialog = false
                         },
                     )
                 }
@@ -276,5 +298,50 @@ class EditContentConfigScreen(
                 }
             }
         }
+    }
+
+    @Composable
+    private fun EditContentNameDialog(
+        name: String,
+        onConfirmClick: (String) -> Unit,
+        onDismissRequest: () -> Unit,
+    ) {
+        var inputtingNote by remember { mutableStateOf(name) }
+        FreadDialog(
+            onDismissRequest = {
+                onDismissRequest()
+            },
+            title = stringResource(R.string.activity_pub_edit_content_name_title),
+            content = {
+                OutlinedTextField(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
+                    value = inputtingNote,
+                    onValueChange = {
+                        inputtingNote = it
+                    },
+                    label = {
+                        Text(
+                            text = stringResource(R.string.activity_pub_edit_content_name_label)
+                        )
+                    },
+                    placeholder = {
+                        Text(
+                            text = stringResource(R.string.activity_pub_edit_content_name_hint)
+                        )
+                    },
+                )
+            },
+            onNegativeClick = {
+                onDismissRequest()
+            },
+            onPositiveClick = {
+                if (inputtingNote.isNotEmpty()) {
+                    onDismissRequest()
+                    onConfirmClick(inputtingNote)
+                }
+            },
+        )
     }
 }

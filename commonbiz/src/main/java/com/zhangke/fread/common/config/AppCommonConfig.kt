@@ -13,4 +13,6 @@ object AppCommonConfig {
     const val AUTHOR_EMAIL = "kezhang404@gmail.com"
 
     const val PRIVACY_POLICY = "https://fread.xyz/appprivacy.html"
+
+    const val FEEDBACK_URL = "https://github.com/0xZhangKe/FreadIssueTracker/issues/new"
 }

@@ -11,7 +11,6 @@ import com.zhangke.fread.status.ui.BlogUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.status.ui.style.defaultBlogStyle
 import com.zhangke.fread.status.ui.style.defaultStatusStyle
 
 @Composable
@@ -22,9 +21,7 @@ fun AnchorBlogUi(
     indexInList: Int,
     showUpThread: Boolean,
     style: StatusStyle = defaultStatusStyle(
-        blogStyle = defaultBlogStyle(
-            contentMaxLine = Int.MAX_VALUE,
-        ),
+        contentMaxLine = Int.MAX_VALUE,
     ),
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,

@@ -285,6 +285,7 @@ class InstanceDetailScreen(
                 }
                 BrowserLauncher.launchWebTabInApp(context, it, role)
             },
+            onMaybeHashtagTargetClick = {},
         )
     }
 

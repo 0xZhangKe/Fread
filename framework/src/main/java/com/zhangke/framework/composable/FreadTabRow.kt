@@ -60,17 +60,19 @@ fun FreadTabRow(
         selectedTabIndex = selectedTabIndex,
         containerColor = containerColor,
         indicator = { tabPositions ->
-            val position = tabPositions[selectedTabIndex]
-            Column(
-                modifier = Modifier
-                    .ownTabIndicatorOffset(
-                        currentTabPosition = position,
-                        currentTabWidth = tabContentWidth[selectedTabIndex] ?: 0.dp,
-                    ),
-                horizontalAlignment = Alignment.CenterHorizontally,
-            ) {
-                indicatorContent(position)
-                Box(modifier = Modifier.height(1.5.dp))
+            val position = tabPositions.getOrNull(selectedTabIndex)
+            if (position != null) {
+                Column(
+                    modifier = Modifier
+                        .ownTabIndicatorOffset(
+                            currentTabPosition = position,
+                            currentTabWidth = tabContentWidth[selectedTabIndex] ?: 0.dp,
+                        ),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    indicatorContent(position)
+                    Box(modifier = Modifier.height(1.5.dp))
+                }
             }
         },
         divider = divider,

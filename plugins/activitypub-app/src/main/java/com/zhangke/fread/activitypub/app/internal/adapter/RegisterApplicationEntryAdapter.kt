@@ -14,10 +14,10 @@ class RegisterApplicationEntryAdapter @Inject constructor() {
         baseUrl = baseUrl,
         id = entity.id,
         name = entity.name,
-        clientId = entity.clientId,
-        clientSecret = entity.clientSecret,
+        clientId = entity.clientId.orEmpty(),
+        clientSecret = entity.clientSecret.orEmpty(),
         redirectUri = entity.redirectUri,
-        vapidKey = entity.vapidKey,
-        website = entity.website,
+        vapidKey = entity.vapidKey.orEmpty(),
+        website = entity.website.orEmpty(),
     )
 }

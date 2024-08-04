@@ -24,6 +24,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -111,48 +112,50 @@ class ProfileHomePage : BaseScreen() {
         onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
     ) {
-        Column(
+        Surface(
             modifier = Modifier
                 .fillMaxSize()
                 .statusBarsPadding()
         ) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp, top = 32.dp, end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                Text(
-                    modifier = Modifier,
-                    text = stringResource(R.string.profile_page_title),
-                    style = MaterialTheme.typography.displayMedium,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                Spacer(modifier = Modifier.weight(1F))
-                SimpleIconButton(
-                    onClick = onAddAccountClick,
-                    imageVector = Icons.Default.PersonAdd,
-                    contentDescription = "Add Account",
-                )
-                SimpleIconButton(
-                    onClick = onSettingClick,
-                    imageVector = Icons.Default.Settings,
-                    contentDescription = "Settings",
-                )
-            }
-
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 16.dp)
-            ) {
-                items(uiState.accountDataList) { item ->
-                    AccountGroupItem(
-                        platform = item.first,
-                        accountList = item.second,
-                        onLogoutClick = onLogoutClick,
-                        onAccountClick = onAccountClick,
+            Column {
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp, top = 32.dp, end = 16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        modifier = Modifier,
+                        text = stringResource(R.string.profile_page_title),
+                        style = MaterialTheme.typography.displayMedium,
+                        color = MaterialTheme.colorScheme.onBackground,
                     )
+                    Spacer(modifier = Modifier.weight(1F))
+                    SimpleIconButton(
+                        onClick = onAddAccountClick,
+                        imageVector = Icons.Default.PersonAdd,
+                        contentDescription = "Add Account",
+                    )
+                    SimpleIconButton(
+                        onClick = onSettingClick,
+                        imageVector = Icons.Default.Settings,
+                        contentDescription = "Settings",
+                    )
+                }
+
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 16.dp)
+                ) {
+                    items(uiState.accountDataList) { item ->
+                        AccountGroupItem(
+                            platform = item.first,
+                            accountList = item.second,
+                            onLogoutClick = onLogoutClick,
+                            onAccountClick = onAccountClick,
+                        )
+                    }
                 }
             }
         }

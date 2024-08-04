@@ -22,9 +22,11 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import dagger.hilt.android.AndroidEntryPoint
+import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -35,6 +37,8 @@ class FreadActivity : AppCompatActivity() {
         DayNightHelper.setActivityDayNightMode()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        setupFontSize()
 
         lifecycleScope.launch {
             DayNightHelper.dayNightModeFlow.collect {
@@ -49,6 +53,7 @@ class FreadActivity : AppCompatActivity() {
                 val videoPlayerManager = remember {
                     ExoPlayerManager()
                 }
+//                val contentSize by FreadConfigManager.statusContentSize.collectAsState()
                 DisposableEffect(videoPlayerManager) {
                     onDispose {
                         videoPlayerManager.recycler()
@@ -56,6 +61,7 @@ class FreadActivity : AppCompatActivity() {
                 }
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
+//                    LocalStatusContentSize provides contentSize,
                 ) {
                     TransparentNavigator {
                         BottomSheetNavigator(
@@ -80,6 +86,25 @@ class FreadActivity : AppCompatActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun setupFontSize() {
+        lifecycleScope.launch {
+            val localScale = FreadConfigManager.getAppFontSize(this@FreadActivity).fontScale
+            val currentScale = resources.configuration.fontScale
+            if (localScale != currentScale) {
+                resources.configuration.fontScale = localScale
+                recreate()
+            }
+        }
+        lifecycleScope.launch {
+            FreadConfigManager.appFontSizeFlow
+                .distinctUntilChangedBy { it.fontScale }
+                .collect {
+                    resources.configuration.fontScale = it.fontScale
+                    recreate()
+                }
         }
     }
 

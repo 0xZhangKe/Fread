@@ -33,7 +33,10 @@ class VideoState(
         private set
     var playerVolume by mutableFloatStateOf(0F)
         private set
-    var playerPosition by mutableLongStateOf(initialPlayerProgress)
+    var playerPosition by mutableLongStateOf(0L)
+        private set
+
+    var targetSeekTo by mutableLongStateOf(initialPlayerProgress)
         private set
 
     var duration by mutableLongStateOf(0L)
@@ -64,7 +67,7 @@ class VideoState(
     }
 
     fun seekTo(position: Long) {
-        playerPosition = position
+        targetSeekTo = position
     }
 
     fun play() {

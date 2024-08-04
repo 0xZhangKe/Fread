@@ -7,6 +7,7 @@ import coil.Coil
 import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
+import coil.decode.VideoFrameDecoder
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.utils.initApplication
@@ -44,6 +45,7 @@ class FreadApplication : Application() {
                 } else {
                     add(GifDecoder.Factory())
                 }
+                add(VideoFrameDecoder.Factory())
             }
             .build()
         Coil.setImageLoader(imageLoader)

@@ -128,6 +128,7 @@ dependencies {
     implementation(libs.coil)
     implementation(libs.coil.compose)
     implementation(libs.coil.gif)
+    implementation(libs.coil.video)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
     implementation(libs.retrofit2)

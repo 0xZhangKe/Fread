@@ -13,27 +13,15 @@ fun buildRichText(
     mentions: List<Mention> = emptyList(),
     hashTags: List<HashtagInStatus> = emptyList(),
     emojis: List<Emoji> = emptyList(),
+    parsePossibleHashtag: Boolean = false,
 ): RichText {
     return RichText(
         document = document,
         mentions = mentions,
         hashTags = hashTags,
         emojis = emojis,
+        parsePossibleHashtag = parsePossibleHashtag,
     )
-//    return RichText(
-//        document = document,
-//        postProcess = { element ->
-//            if (baseUrl == null) {
-//                return@RichText element
-//            }
-//            replaceMentionAndHashtag(
-//                mentions = mentions,
-//                node = element,
-//                host = baseUrl.host,
-//            )
-//            element
-//        }
-//    )
 }
 
 private fun replaceMentionAndHashtag(
@@ -65,7 +53,7 @@ fun Blog.preParseRichText() {
     humanizedDescription.parse()
 }
 
-fun Status.preParseRichText(){
+fun Status.preParseRichText() {
     triggerAuthor.humanizedName.parse()
     intrinsicBlog.preParseRichText()
 }

@@ -12,6 +12,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -110,7 +111,10 @@ class EditMixedContentScreen(private val configId: Long) : BaseScreen() {
                 SnackbarHost(hostState = snackbarHostState)
             },
             floatingActionButton = {
-                FloatingActionButton(onClick = onAddSourceClick) {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    onClick = onAddSourceClick,
+                ) {
                     Icon(
                         painter = rememberVectorPainter(image = Icons.Default.Add),
                         contentDescription = "Add Source",

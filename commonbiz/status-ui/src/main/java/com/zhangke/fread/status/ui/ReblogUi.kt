@@ -61,13 +61,14 @@ fun ReblogUi(
                 onHashtagClick = {},
                 onMentionClick = {},
                 onUrlClick = onUrlClick,
-                fontSizeSp = 12F,
+                fontSizeSp = style.contentSize.topLabelSize.value,
             )
             Text(
                 modifier = Modifier.padding(start = 4.dp),
                 text = stringResource(R.string.status_ui_forward),
                 maxLines = 1,
                 style = MaterialTheme.typography.bodySmall,
+                fontSize = style.contentSize.topLabelSize,
             )
         }
         BlogUi(

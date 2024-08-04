@@ -63,6 +63,8 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
+import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
+import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
@@ -73,6 +75,7 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.richtext.android.span.LinkSpan
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
@@ -182,6 +185,16 @@ data class UserDetailScreen(
                 }
             },
             onNewNoteSet = viewModel::onNewNoteSet,
+            onMaybeHashtagTargetClick = {
+                navigator.push(
+                    HashtagTimelineScreen(
+                        HashtagTimelineRoute.buildRoute(
+                            role = uiState.role,
+                            hashtag = it.hashtag
+                        )
+                    )
+                )
+            },
         )
     }
 
@@ -207,6 +220,7 @@ data class UserDetailScreen(
         onFollowerClick: () -> Unit,
         onFollowingClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
+        onMaybeHashtagTargetClick: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -301,7 +315,8 @@ data class UserDetailScreen(
                         onUnfollowAccountClick = onUnfollowAccountClick,
                         onUrlClick = {
                             BrowserLauncher.launchWebTabInApp(context, it, role)
-                        }
+                        },
+                        onMaybeHashtagTargetClick = onMaybeHashtagTargetClick,
                     )
                 },
                 contentCanScrollBackward = contentCanScrollBackward,
@@ -478,7 +493,7 @@ data class UserDetailScreen(
                     onNewNoteSet = onNewNoteSet,
                 )
             }
-            if (uiState.relationship?.blocking == false) {
+            if (!uiState.isAccountOwner && uiState.relationship?.blocking == false) {
                 ModalDropdownMenuItem(
                     text = stringResource(
                         R.string.activity_pub_user_detail_menu_block,
@@ -488,7 +503,7 @@ data class UserDetailScreen(
                     onClick = {
                         showMorePopup = false
                         showBlockUserConfirmDialog = true
-                    }
+                    },
                 )
             }
             val domainBlocked = uiState.domainBlocked

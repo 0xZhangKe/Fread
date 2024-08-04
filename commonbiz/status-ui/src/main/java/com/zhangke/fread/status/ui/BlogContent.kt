@@ -28,6 +28,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
@@ -43,7 +44,7 @@ import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import com.zhangke.fread.status.ui.style.BlogStyle
+import com.zhangke.fread.status.ui.style.StatusStyle
 
 /**
  * 博客正文部分，仅包含内容，投票，媒体。
@@ -52,7 +53,7 @@ import com.zhangke.fread.status.ui.style.BlogStyle
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
-    style: BlogStyle,
+    style: StatusStyle,
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
     onVoted: (List<BlogPoll.Option>) -> Unit,
@@ -116,7 +117,7 @@ fun BlogContent(
 @Composable
 private fun BlogTextContentSection(
     blog: Blog,
-    style: BlogStyle,
+    style: StatusStyle,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onUrlClick: (url: String) -> Unit,
@@ -135,6 +136,7 @@ private fun BlogTextContentSection(
         SpoilerText(
             hideContent = hideContent,
             spoilerText = blog.humanizedSpoilerText,
+            fontSize = style.contentSize.bogContentSize,
             onShowContent = { hideContent = false },
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,
@@ -158,6 +160,7 @@ private fun BlogTextContentSection(
                     onHashtagClick = onHashtagInStatusClick,
                     textSelectable = textSelectable,
                     onUrlClick = onUrlClick,
+                    fontSizeSp = style.contentSize.bogContentSize.value,
                 )
             }
         }
@@ -168,6 +171,7 @@ private fun BlogTextContentSection(
                     .padding(top = 8.dp),
                 text = blog.title!!,
                 fontWeight = FontWeight.Bold,
+                fontSize = style.contentSize.blogTitleSize,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleMedium,
@@ -187,6 +191,7 @@ private fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
+                fontSizeSp = style.contentSize.blogTitleSize.value,
                 textSelectable = textSelectable,
             )
         }
@@ -205,6 +210,7 @@ private fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
                 textSelectable = textSelectable,
+                fontSizeSp = style.contentSize.bogContentSize.value,
                 onUrlClick = onUrlClick,
             )
         }
@@ -215,6 +221,7 @@ private fun BlogTextContentSection(
 private fun SpoilerText(
     hideContent: Boolean,
     spoilerText: RichText,
+    fontSize: TextUnit,
     textSelectable: Boolean = false,
     onShowContent: () -> Unit,
     onHideContent: () -> Unit,
@@ -246,6 +253,7 @@ private fun SpoilerText(
             onHashtagClick = onHashtagInStatusClick,
             onUrlClick = onUrlClick,
             textSelectable = textSelectable,
+            fontSizeSp = fontSize.value,
         )
     }
 }

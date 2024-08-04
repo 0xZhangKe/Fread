@@ -20,6 +20,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -110,7 +111,7 @@ class ActivityPubContentScreen(
                     AnimatedVisibility(
                         modifier = Modifier
                             .navigationBarsPadding()
-                            .padding(bottom = 60.dp),
+                            .padding(bottom = 100.dp),
                         visible = !inImmersiveMode,
                         enter = scaleIn() + slideInVertically(
                             initialOffsetY = { it },
@@ -124,6 +125,8 @@ class ActivityPubContentScreen(
                                 reportClick(HomeTabElements.POST_STATUS)
                                 onPostBlogClick(account)
                             },
+                            containerColor = MaterialTheme.colorScheme.surface,
+                            contentColor = MaterialTheme.colorScheme.primary,
                             shape = CircleShape,
                         ) {
                             Icon(

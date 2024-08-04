@@ -24,9 +24,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.media3.common.C
 import androidx.media3.common.PlaybackException
 import androidx.media3.common.Player
@@ -105,12 +105,15 @@ fun VideoPlayer(
             addListener(playerListener)
             this.playWhenReady = true
             volume = state.playerVolume
-            repeatMode = Player.REPEAT_MODE_OFF
+            repeatMode = Player.REPEAT_MODE_ALL
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
             setMediaSource(uri.toMediaSource())
             prepare()
-            seekTo(state.playerPosition)
+            seekTo(state.targetSeekTo)
         }
+    }
+    LaunchedEffect(state.targetSeekTo) {
+        exoPlayer.seekTo(state.targetSeekTo)
     }
     Box(modifier = modifier.fillMaxSize()) {
         AndroidView(

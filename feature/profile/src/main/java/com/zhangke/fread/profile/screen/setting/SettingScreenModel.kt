@@ -4,6 +4,8 @@ import android.content.Context
 import android.content.pm.PackageManager
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.zhangke.framework.ktx.launchInScreenModel
+import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.config.AppFontSize
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageHelper
@@ -19,9 +21,11 @@ class SettingScreenModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(
         SettingUiState(
+            autoPlayInlineVideo = FreadConfigManager.autoPlayInlineVideo,
             dayNightMode = DayNightHelper.dayNightMode,
             languageSettingType = LanguageHelper.currentType,
             settingInfo = getAppVersionInfo(),
+            contentSize = AppFontSize.MEDIUM,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -35,6 +39,23 @@ class SettingScreenModel @Inject constructor(
         launchInScreenModel {
             LanguageHelper.systemLocale
         }
+        launchInScreenModel {
+            FreadConfigManager.getAppFontSize(appContext)
+                .let {
+                    _uiState.value = _uiState.value.copy(contentSize = it)
+                }
+            FreadConfigManager.appFontSizeFlow
+                .collect {
+                    _uiState.value = _uiState.value.copy(contentSize = it)
+                }
+        }
+    }
+
+    fun onChangeAutoPlayInlineVideo(on: Boolean) {
+        launchInScreenModel {
+            FreadConfigManager.updateAutoPlayInlineVideo(on)
+            _uiState.value = _uiState.value.copy(autoPlayInlineVideo = on)
+        }
     }
 
     fun onChangeDayNightMode(mode: DayNightMode) {
@@ -44,6 +65,12 @@ class SettingScreenModel @Inject constructor(
 
     fun onLanguageClick(context: Context, type: LanguageSettingType) {
         LanguageHelper.setLanguage(context, type)
+    }
+
+    fun onContentSizeChanged(contentSize: AppFontSize) {
+        launchInScreenModel {
+            FreadConfigManager.updateAppFontSize(contentSize)
+        }
     }
 
     private fun getAppVersionInfo(): String {

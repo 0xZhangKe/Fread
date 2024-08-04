@@ -15,9 +15,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
-import cafe.adriel.voyager.core.screen.uniqueScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -66,6 +64,9 @@ data class StatusContextScreen(
             onBackClick = navigator::pop,
             composedStatusInteraction = viewModel.composedStatusInteraction,
         )
+        LaunchedEffect(Unit) {
+            viewModel.onPageResume()
+        }
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }

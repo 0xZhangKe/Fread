@@ -1,7 +1,7 @@
 package com.zhangke.fread.status.ui.action
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -14,7 +14,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.status.model.StatusUiInteraction
@@ -33,28 +32,19 @@ fun StatusBottomInteractionPanel(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         interactions.forEachIndexed { index, interaction ->
-            val weight = when (index) {
-                0 -> 1F
-                interactions.lastIndex -> 1F
-                else -> 2F
-            }
-            Box(modifier = Modifier.weight(weight)) {
-                val alignment = when (index) {
-                    0 -> Alignment.CenterStart
-                    interactions.lastIndex -> Alignment.CenterEnd
-                    else -> Alignment.Center
-                }
-                StatusActionIcon(
-                    modifier = Modifier.align(alignment),
-                    imageVector = interaction.logo,
-                    enabled = interaction.enabled,
-                    contentDescription = interaction.actionName,
-                    text = interaction.label,
-                    highLight = interaction.highLight,
-                    onClick = {
-                        onInteractive(interaction)
-                    },
-                )
+            StatusActionIcon(
+                modifier = Modifier,
+                imageVector = interaction.logo,
+                enabled = interaction.enabled,
+                contentDescription = interaction.actionName,
+                text = interaction.label,
+                highLight = interaction.highLight,
+                onClick = {
+                    onInteractive(interaction)
+                },
+            )
+            if (index != interactions.lastIndex) {
+                Spacer(modifier = Modifier.weight(1F))
             }
         }
     }

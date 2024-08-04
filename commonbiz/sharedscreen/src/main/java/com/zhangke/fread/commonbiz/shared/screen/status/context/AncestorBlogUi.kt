@@ -116,7 +116,7 @@ fun AncestorBlogUi(
                 richText = blog.author.humanizedName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
-                fontSizeSp = 16F,
+                fontSizeSp = style.contentSize.userNameSize.value,
                 onUrlClick = {
                     BrowserLauncher.launchWebTabInApp(context, it, status.role)
                 },
@@ -127,6 +127,7 @@ fun AncestorBlogUi(
                     top.linkTo(name.bottom, statusInfoStyle.nameToTimePadding)
                 },
                 text = displayTime,
+                fontSize = style.contentSize.infoSize,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
                 style = statusInfoStyle.descStyle,
@@ -139,6 +140,7 @@ fun AncestorBlogUi(
                 },
                 text = blog.author.webFinger.toString(),
                 style = statusInfoStyle.descStyle,
+                fontSize = style.contentSize.infoSize,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -164,7 +166,7 @@ fun AncestorBlogUi(
                         width = Dimension.fillToConstraints
                     },
                 blog = blog,
-                style = style.blogStyle,
+                style = style,
                 indexOfFeeds = indexInList,
                 onMediaClick = onMediaClick,
                 onVoted = {

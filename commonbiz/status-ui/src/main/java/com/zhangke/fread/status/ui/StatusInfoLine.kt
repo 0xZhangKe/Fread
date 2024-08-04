@@ -146,7 +146,7 @@ fun StatusInfoLine(
             overflow = TextOverflow.Ellipsis,
             richText = blogAuthor.humanizedName,
             onUrlClick = onUrlClick,
-            fontSizeSp = 16F,
+            fontSizeSp = style.contentSize.userNameSize.value,
         )
         Text(
             modifier = Modifier.constrainAs(dateTime) {
@@ -157,6 +157,7 @@ fun StatusInfoLine(
             style = infoStyle.descStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            fontSize = style.contentSize.infoSize,
         )
 
         Text(
@@ -171,6 +172,7 @@ fun StatusInfoLine(
             style = infoStyle.descStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
+            fontSize = style.contentSize.infoSize,
         )
         StatusMoreInteractionIcon(
             modifier = Modifier.constrainAs(moreOptions) {

@@ -37,7 +37,7 @@ fun OnlyBlogContentUi(
             modifier = Modifier.fillMaxWidth(),
             blog = blog,
             indexOfFeeds = indexInList,
-            style = style.statusStyle.blogStyle,
+            style = style.statusStyle,
             onMediaClick = { event ->
                 onStatusMediaClick(
                     transparentNavigator = transparentNavigator,

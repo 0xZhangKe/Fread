@@ -3,8 +3,11 @@ package com.zhangke.fread.status.ui.video
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.fread.status.blog.BlogMedia
@@ -36,7 +39,7 @@ private fun SingleBlogInlineVideo(
     indexInList: Int,
     onMediaClick: OnBlogMediaClick,
 ) {
-    var modifier = Modifier.fillMaxWidth()
+    var modifier = Modifier.clip(RoundedCornerShape(8.dp)).fillMaxWidth()
     if (videoMedia.blurhash.isNullOrEmpty().not()) {
         modifier = modifier.blurhash(videoMedia.blurhash!!)
     }

@@ -35,7 +35,7 @@ retrofit2 = "2.9.0"
 
 gson = "2.10.1"
 
-coil = "2.4.0"
+coil = "2.7.0"
 
 joda-time = "2.12.1"
 
@@ -89,7 +89,7 @@ androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okht
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
-coil = ["coil", "coil.compose", "coil.compose.base", "coil.gif"]
+coil = ["coil", "coil.compose", "coil.compose.base", "coil.gif", "coil.video"]
 
 voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.screenModel", "voyager.hilt"]
 
@@ -114,7 +114,7 @@ androidx-datastore = { group = "androidx.datastore", name = "datastore", version
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidx.datastore.preferences" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidx.browser" }
 androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx.compose.bom" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3" }
+androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version = "1.3.0-beta05" }
 androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
 androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
 androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
@@ -173,6 +173,7 @@ coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
 coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
 coil-compose-base = { group = "io.coil-kt", name = "coil-compose-base", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
+coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
 joda-time = { group = "joda-time", name = "joda-time", version.ref = "joda.time" }
 

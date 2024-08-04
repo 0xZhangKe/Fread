@@ -8,7 +8,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
-import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
@@ -33,7 +32,6 @@ import kotlinx.coroutines.flow.update
 internal class AddMixedFeedsViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
-    private val configManager: FreadConfigManager,
     private val contentConfigRepo: ContentConfigRepo,
     private val configRepo: ContentConfigRepo,
     @Assisted private val statusSource: StatusSource? = null
@@ -146,7 +144,7 @@ internal class AddMixedFeedsViewModel @AssistedInject constructor(
         return AddMixedFeedsUiState(
             sourceList = sourceList.map { it.toUiState() },
             sourceName = sourceName,
-            maxNameLength = configManager.contentTitleMaxLength,
+            maxNameLength = 8,
         )
     }
 

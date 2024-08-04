@@ -26,5 +26,7 @@ class LinkSpan(
         data class MentionTarget(val mention: Mention) : LinkTarget
 
         data class HashtagTarget(val hashtag: HashtagInStatus) : LinkTarget
+
+        data class MaybeHashtagTarget(val hashtag: String) : LinkTarget
     }
 }

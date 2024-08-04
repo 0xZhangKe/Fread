@@ -18,6 +18,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,7 +29,6 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.ConsumeFlow
@@ -87,82 +87,84 @@ class LoginBottomSheetScreen : BaseScreen() {
     ) {
         val configuration = LocalConfiguration.current
         val screenHeight = configuration.screenHeightDp.dp * 0.9F
-        Box(
+        Surface(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(screenHeight)
         ) {
-            Column(modifier = Modifier.fillMaxSize()) {
-                Text(
-                    modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                    text = stringResource(R.string.login_dialog_target_title),
-                    style = MaterialTheme.typography.titleMedium,
-                )
-                Text(
-                    modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
-                    text = stringResource(R.string.profile_description),
-                    style = MaterialTheme.typography.bodySmall,
-                    color = MaterialTheme.colorScheme.onBackground,
-                )
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                    value = uiState.query,
-                    onValueChange = onQueryChanged,
-                    maxLines = 1,
-                    keyboardOptions = KeyboardOptions.Default.copy(
-                        imeAction = ImeAction.Search
-                    ),
-                    placeholder = {
-                        Text(text = stringResource(R.string.login_dialog_input_hint))
-                    },
-                    keyboardActions = KeyboardActions(
-                        onSearch = {
-                            onSearchClick()
-                        }
-                    ),
-                    trailingIcon = {
-                        SimpleIconButton(
-                            onClick = onSearchClick,
-                            imageVector = Icons.Default.Search,
-                            contentDescription = "Search",
-                        )
-                    }
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                LazyColumn(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(1F),
-                ) {
-                    items(uiState.platformList) { platform ->
-                        when (platform) {
-                            is SearchPlatformForLogin.Snapshot -> {
-                                BlogPlatformSnapshotUi(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { onSnapshotClick(platform.snapshot) },
-                                    platform = platform.snapshot,
-                                )
+            Box(modifier = Modifier.fillMaxWidth()) {
+                Column(modifier = Modifier.fillMaxSize()) {
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp),
+                        text = stringResource(R.string.login_dialog_target_title),
+                        style = MaterialTheme.typography.titleMedium,
+                    )
+                    Text(
+                        modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
+                        text = stringResource(R.string.profile_description),
+                        style = MaterialTheme.typography.bodySmall,
+                        color = MaterialTheme.colorScheme.onBackground,
+                    )
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        value = uiState.query,
+                        onValueChange = onQueryChanged,
+                        maxLines = 1,
+                        keyboardOptions = KeyboardOptions.Default.copy(
+                            imeAction = ImeAction.Search
+                        ),
+                        placeholder = {
+                            Text(text = stringResource(R.string.login_dialog_input_hint))
+                        },
+                        keyboardActions = KeyboardActions(
+                            onSearch = {
+                                onSearchClick()
                             }
+                        ),
+                        trailingIcon = {
+                            SimpleIconButton(
+                                onClick = onSearchClick,
+                                imageVector = Icons.Default.Search,
+                                contentDescription = "Search",
+                            )
+                        }
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    LazyColumn(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .weight(1F),
+                    ) {
+                        items(uiState.platformList) { platform ->
+                            when (platform) {
+                                is SearchPlatformForLogin.Snapshot -> {
+                                    BlogPlatformSnapshotUi(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { onSnapshotClick(platform.snapshot) },
+                                        platform = platform.snapshot,
+                                    )
+                                }
 
-                            is SearchPlatformForLogin.Platform -> {
-                                BlogPlatformUi(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .clickable { onPlatformClick(platform.platform) },
-                                    platform = platform.platform,
-                                )
+                                is SearchPlatformForLogin.Platform -> {
+                                    BlogPlatformUi(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .clickable { onPlatformClick(platform.platform) },
+                                        platform = platform.platform,
+                                    )
+                                }
                             }
                         }
                     }
                 }
+                SnackbarHost(
+                    hostState = snackbarHostState,
+                    modifier = Modifier.align(Alignment.Center),
+                )
             }
-            SnackbarHost(
-                hostState = snackbarHostState,
-                modifier = Modifier.align(Alignment.Center),
-            )
         }
     }
 }

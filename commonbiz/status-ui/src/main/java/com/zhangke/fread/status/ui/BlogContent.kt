@@ -30,6 +30,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.analytics.reportClick
@@ -249,6 +250,7 @@ private fun SpoilerText(
                 .wrapContentHeight()
                 .padding(start = 16.dp, top = 22.dp, end = 16.dp, bottom = 6.dp),
             richText = spoilerText,
+            color = inverseOnSurfaceDark,
             onMentionClick = onMentionClick,
             onHashtagClick = onHashtagInStatusClick,
             onUrlClick = onUrlClick,

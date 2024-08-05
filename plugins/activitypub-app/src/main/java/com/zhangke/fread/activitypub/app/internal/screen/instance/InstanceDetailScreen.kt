@@ -33,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -69,6 +70,9 @@ class InstanceDetailScreen(
     @Router private val route: String = "",
     private val baseUrl: FormalBaseUrl? = null,
 ) : BaseScreen() {
+
+    override val key: ScreenKey
+        get() = route + baseUrl
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable

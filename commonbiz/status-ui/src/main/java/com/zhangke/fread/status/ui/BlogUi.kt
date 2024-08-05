@@ -74,7 +74,11 @@ fun BlogUi(
         StatusBottomInteractionPanel(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = style.iconStartPadding, end = style.iconEndPadding),
+                .padding(
+                    start = style.bottomPanelStartPadding,
+                    top = style.bottomPanelTopPadding,
+                    end = style.iconEndPadding,
+                ),
             interactions = bottomPanelInteractions,
             onInteractive = {
                 reportStatusInteractionClickEvent(it)

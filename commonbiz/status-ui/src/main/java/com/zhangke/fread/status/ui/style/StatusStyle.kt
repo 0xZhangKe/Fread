@@ -9,8 +9,9 @@ import androidx.compose.ui.unit.sp
 
 data class StatusStyle(
     val containerPaddings: PaddingValues,
-    val iconStartPadding: Dp,
+    val bottomPanelStartPadding: Dp,
     val iconEndPadding: Dp,
+    val bottomPanelTopPadding: Dp,
     val statusInfoStyle: StatusInfoStyle,
     val contentMaxLine: Int = 10,
     val contentSize: StatusContentSize = StatusContentSize.default(),
@@ -24,13 +25,15 @@ object StatusStyleDefaults {
 
     val endPadding = 16.dp
 
-    val bottomPadding = 14.dp
+    val bottomPadding = 4.dp
 
-    val iconStartPadding = 8.dp
+    val bottomPanelStartPadding = 8.dp
 
     val iconEndPadding = 8.dp
 
-    val contentMaxLine = 10
+    val bottomPanelTopPadding = 4.dp
+
+    const val contentMaxLine = 10
 }
 
 @Composable
@@ -42,14 +45,16 @@ fun defaultStatusStyle(
         bottom = StatusStyleDefaults.bottomPadding,
     ),
     contentMaxLine: Int = StatusStyleDefaults.contentMaxLine,
-    iconStartPadding: Dp = StatusStyleDefaults.iconStartPadding,
+    bottomPanelStartPadding: Dp = StatusStyleDefaults.bottomPanelStartPadding,
     iconEndPadding: Dp = StatusStyleDefaults.iconEndPadding,
+    bottomPanelTopPadding: Dp = StatusStyleDefaults.bottomPanelTopPadding,
     statusInfoStyle: StatusInfoStyle = defaultStatusInfoStyle(),
 ) = StatusStyle(
     containerPaddings = containerPaddings,
-    iconStartPadding = iconStartPadding,
+    bottomPanelStartPadding = bottomPanelStartPadding,
     iconEndPadding = iconEndPadding,
     statusInfoStyle = statusInfoStyle,
+    bottomPanelTopPadding = bottomPanelTopPadding,
     contentMaxLine = contentMaxLine,
 )
 

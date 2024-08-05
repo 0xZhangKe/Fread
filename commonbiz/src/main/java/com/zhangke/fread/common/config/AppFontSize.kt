@@ -5,13 +5,13 @@ enum class AppFontSize(
 ) {
 
     SMALL(
-        fontScale = 0.8F,
+        fontScale = 0.9F,
     ),
     MEDIUM(
         fontScale = 1F,
     ),
     LARGE(
-        fontScale = 1.2F,
+        fontScale = 1.1F,
     ),
     EXTRA_LARGE(
         fontScale = 1.7F,

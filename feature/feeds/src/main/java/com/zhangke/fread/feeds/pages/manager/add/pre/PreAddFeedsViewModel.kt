@@ -111,7 +111,7 @@ class PreAddFeedsViewModel @Inject constructor(
 
     fun onContentClick(result: SearchContentResult) {
         pendingLoginPlatform = null
-        if (addContentJob?.isActive == true) return
+        addContentJob?.cancel()
         addContentJob = launchInScreenModel {
             when (result) {
                 is SearchContentResult.Source -> {

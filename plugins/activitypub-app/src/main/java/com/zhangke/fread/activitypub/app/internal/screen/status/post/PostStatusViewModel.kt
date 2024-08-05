@@ -23,13 +23,13 @@ import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.PostStatusUseCase
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
@@ -92,6 +92,11 @@ class PostStatusViewModel @AssistedInject constructor(
             if (defaultAccount == null) {
                 _uiState.updateToFailed(IllegalStateException("Not login!"))
             } else {
+                val visibility = if (screenParams is PostStatusScreenParams.ReplyStatusParams) {
+                    screenParams.replyVisibility
+                } else {
+                    StatusVisibility.PUBLIC
+                }
                 _uiState.value = LoadableState.success(
                     PostStatusUiState(
                         account = defaultAccount,
@@ -100,7 +105,7 @@ class PostStatusViewModel @AssistedInject constructor(
                         initialContent = buildInitialContent(defaultAccount),
                         attachment = null,
                         maxMediaCount = 4,
-                        visibility = PostStatusVisibility.PUBLIC,
+                        visibility = visibility,
                         sensitive = false,
                         maxContent = MAX_CONTENT,
                         replyToAuthorInfo = screenParams as? PostStatusScreenParams.ReplyStatusParams,
@@ -340,7 +345,7 @@ class PostStatusViewModel @AssistedInject constructor(
         }
     }
 
-    fun onVisibilityChanged(visibility: PostStatusVisibility) {
+    fun onVisibilityChanged(visibility: StatusVisibility) {
         _uiState.updateOnSuccess {
             it.copy(visibility = visibility)
         }

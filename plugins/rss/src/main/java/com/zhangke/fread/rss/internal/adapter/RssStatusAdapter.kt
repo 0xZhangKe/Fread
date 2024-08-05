@@ -6,8 +6,8 @@ import com.zhangke.fread.rss.internal.model.RssSource
 import com.zhangke.fread.rss.internal.platform.RssPlatformTransformer
 import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.status.model.Status
-import com.zhangke.fread.status.status.model.StatusInteraction
 import javax.inject.Inject
 
 class RssStatusAdapter @Inject constructor(
@@ -58,6 +58,7 @@ class RssStatusAdapter @Inject constructor(
             emojis = emptyList(),
             mentions = emptyList(),
             tags = emptyList(),
+            visibility = StatusVisibility.PUBLIC,
         )
     }
 

@@ -26,13 +26,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import com.zhangke.fread.activitypub.app.internal.model.PostStatusVisibility
+import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.status.model.StatusVisibility
 
 @Composable
 internal fun PostStatusVisibilityUi(
     modifier: Modifier,
-    visibility: PostStatusVisibility,
-    onVisibilitySelect: (PostStatusVisibility) -> Unit,
+    visibility: StatusVisibility,
+    onVisibilitySelect: (StatusVisibility) -> Unit,
 ) {
     var showSelector by remember {
         mutableStateOf(false)
@@ -71,7 +72,7 @@ internal fun PostStatusVisibilityUi(
             onDismissRequest = { showSelector = false },
             properties = PopupProperties(),
         ) {
-            PostStatusVisibility.entries.forEach {
+            StatusVisibility.entries.forEach {
                 DropdownMenuItem(
                     text = {
                         Text(text = stringResource(it.describeStringId))
@@ -85,3 +86,11 @@ internal fun PostStatusVisibilityUi(
         }
     }
 }
+
+private val StatusVisibility.describeStringId: Int
+    get() = when (this) {
+        StatusVisibility.PUBLIC -> R.string.post_status_scope_public
+        StatusVisibility.UNLISTED -> R.string.post_status_scope_unlisted
+        StatusVisibility.PRIVATE -> R.string.post_status_scope_follower_only
+        StatusVisibility.DIRECT -> R.string.post_status_scope_mentioned_only
+    }

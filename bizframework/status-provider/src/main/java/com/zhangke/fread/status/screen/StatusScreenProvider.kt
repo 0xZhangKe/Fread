@@ -15,21 +15,6 @@ class StatusScreenProvider(
     private val providerList: List<IStatusScreenProvider>
 ) {
 
-    fun getPlatformDetailScreenRoute(config: ContentConfig): String? {
-        return providerList.mapFirstOrNull {
-            it.getServerDetailScreenRoute(config)
-        }
-    }
-
-    fun getPostStatusScreen(
-        platform: BlogPlatform,
-        accountUri: FormalUri? = null,
-    ): String? {
-        return providerList.mapFirstOrNull {
-            it.getPostStatusScreen(platform, accountUri)
-        }
-    }
-
     suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         return providerList.mapFirstOrNull {
             it.getReplyBlogScreen(role, blog)
@@ -76,13 +61,6 @@ class StatusScreenProvider(
 }
 
 interface IStatusScreenProvider {
-
-    fun getServerDetailScreenRoute(config: ContentConfig): String?
-
-    fun getPostStatusScreen(
-        platform: BlogPlatform,
-        accountUri: FormalUri? = null,
-    ): String?
 
     suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String?
 

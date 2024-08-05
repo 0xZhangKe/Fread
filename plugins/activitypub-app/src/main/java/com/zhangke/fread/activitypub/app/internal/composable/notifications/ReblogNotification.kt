@@ -3,7 +3,9 @@ package com.zhangke.fread.activitypub.app.internal.composable.notifications
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.status.blog.BlogPoll
@@ -27,7 +29,7 @@ fun ReblogNotification(
     BlogInteractionNotification(
         statusUiState = status,
         author = notification.author,
-        icon = Icons.Default.Star,
+        icon = ImageVector.vectorResource(com.zhangke.fread.statusui.R.drawable.ic_status_forward),
         interactionDesc = stringResource(R.string.activity_pub_notification_reblog_desc),
         indexInList = indexInList,
         style = style,

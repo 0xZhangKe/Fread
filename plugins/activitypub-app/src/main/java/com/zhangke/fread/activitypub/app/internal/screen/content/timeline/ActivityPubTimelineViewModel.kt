@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.timeline
 
-import android.util.Log
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.coroutines.invokeOnCancel

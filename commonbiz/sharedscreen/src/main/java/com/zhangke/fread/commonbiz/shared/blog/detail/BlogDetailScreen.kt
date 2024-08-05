@@ -78,6 +78,7 @@ class BlogDetailScreen(
                     modifier = Modifier.fillMaxWidth(),
                     blogAuthor = blog.author,
                     blogUrl = blog.url,
+                    visibility = blog.visibility,
                     displayTime = DateTimeFormatter.format(context, blog.date.time),
                     style = defaultStatusStyle(),
                     moreInteractions = emptyList(),

@@ -49,7 +49,6 @@ import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -65,7 +64,6 @@ import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.TextFieldUtils
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusImageAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
@@ -74,6 +72,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import java.util.Locale
@@ -197,7 +196,7 @@ class PostStatusScreen(
         onAddPollItemClick: () -> Unit,
         onPollStyleSelect: (multiple: Boolean) -> Unit,
         onWarningContentChanged: (String) -> Unit,
-        onVisibilityChanged: (PostStatusVisibility) -> Unit,
+        onVisibilityChanged: (StatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
         onDeleteEmojiClick: () -> Unit,
     ) {

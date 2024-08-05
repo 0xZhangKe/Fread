@@ -19,6 +19,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.status.ui.visibility.StatusVisibilityUi
 
 @Composable
 fun BlogUi(
@@ -29,6 +30,7 @@ fun BlogUi(
     style: StatusStyle,
     bottomPanelInteractions: List<StatusUiInteraction>,
     moreInteractions: List<StatusUiInteraction>,
+    topLabel: (@Composable () -> Unit)? = null,
     reblogAuthor: BlogAuthor? = null,
     onInteractive: (StatusUiInteraction) -> Unit,
     onMediaClick: OnBlogMediaClick,
@@ -43,11 +45,17 @@ fun BlogUi(
 ) {
     val context = LocalContext.current
     Column(modifier = modifier.fillMaxWidth()) {
+        topLabel?.invoke()
+        StatusVisibilityUi(
+            visibility = blog.visibility,
+            style = style,
+        )
         StatusInfoLine(
             modifier = Modifier
                 .fillMaxWidth(),
             blogAuthor = blog.author,
             displayTime = displayTime,
+            visibility = blog.visibility,
             blogUrl = blog.url,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,

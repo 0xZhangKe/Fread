@@ -12,8 +12,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
@@ -25,7 +23,6 @@ fun SeveredRelationshipsNotification(
     style: NotificationStyle,
     onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
-    val navigator = LocalNavigator.currentOrThrow
     Column(
         modifier = Modifier
             .fillMaxWidth()

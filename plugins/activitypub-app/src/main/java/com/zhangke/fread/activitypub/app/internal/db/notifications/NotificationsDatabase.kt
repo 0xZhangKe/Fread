@@ -11,20 +11,20 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubAccountEntityConverter
-import com.zhangke.fread.activitypub.app.internal.db.converter.BlogAuthorConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.FormalUriConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.RelationshipSeveranceEventConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.StatusNotificationTypeConverter
 import com.zhangke.fread.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.fread.common.status.repo.db.converts.StatusConverter
-import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 
-private const val DB_VERSION = 1
+private const val DB_VERSION = 2
 private const val DB_NAME = "notifications.db"
 
 private const val TABLE_NAME = "notifications"
@@ -94,7 +94,14 @@ abstract class NotificationsDatabase : RoomDatabase() {
                 context,
                 NotificationsDatabase::class.java,
                 DB_NAME
-            ).build()
+            ).addMigrations(Notification1to2Migration()).build()
         }
+    }
+}
+
+private class Notification1to2Migration : Migration(1, 2) {
+
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("DELETE FROM $TABLE_NAME")
     }
 }

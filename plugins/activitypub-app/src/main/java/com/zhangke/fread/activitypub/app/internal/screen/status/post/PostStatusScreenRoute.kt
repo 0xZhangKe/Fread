@@ -5,6 +5,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.decodeAsUri
 import com.zhangke.framework.utils.encodeToUrlString
 import com.zhangke.fread.activitypub.app.internal.route.ActivityPubRoutes
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.status.uri.encode
 import java.net.URLDecoder
@@ -18,6 +19,7 @@ object PostStatusScreenRoute {
     private const val PARAM_REPLY_TO_BLOG_ACCT = "replyToBlogAcct"
     private const val PARAM_REPLY_TO_BLOG_ID = "replyToBlogId"
     private const val PARAM_REPLY_TO_AUTHOR_NAME = "replyAuthorName"
+    private const val PARAMS_REPLY_VISIBILITY = "replyVisibility"
 
     fun buildRoute(accountUri: FormalUri): String {
         return "$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}"
@@ -28,6 +30,7 @@ object PostStatusScreenRoute {
         replyToBlogWebFinger: WebFinger,
         replyToBlogId: String,
         replyAuthorName: String,
+        replyVisibility: StatusVisibility = StatusVisibility.PUBLIC,
     ): String {
         val encodedName = URLEncoder.encode(replyAuthorName, Charsets.UTF_8.name())
         return buildString {
@@ -35,6 +38,7 @@ object PostStatusScreenRoute {
             append("&$PARAM_REPLY_TO_BLOG_ACCT=${replyToBlogWebFinger.encodeToUrlString()}")
             append("&$PARAM_REPLY_TO_BLOG_ID=$replyToBlogId")
             append("&$PARAM_REPLY_TO_AUTHOR_NAME=$encodedName")
+            append("&$PARAMS_REPLY_VISIBILITY=${replyVisibility.name}")
         }
     }
 
@@ -44,19 +48,24 @@ object PostStatusScreenRoute {
     fun parse(route: String): PostStatusScreenParams {
         val queries = SimpleUri.parse(route)!!.queries
         val accountUri = queries[PARAM_ACCOUNT_URI]?.decodeAsUri()?.let { FormalUri.from(it) }
-        val replyWebFinger = queries[PARAM_REPLY_TO_BLOG_ACCT]?.let { WebFinger.decodeFromUrlString(it) }
+        val replyWebFinger =
+            queries[PARAM_REPLY_TO_BLOG_ACCT]?.let { WebFinger.decodeFromUrlString(it) }
         val replyToBlogId = queries[PARAM_REPLY_TO_BLOG_ID]
         val replyAuthorName = queries[PARAM_REPLY_TO_AUTHOR_NAME]?.let {
             URLDecoder.decode(it, Charsets.UTF_8.name())
         }
-        if (replyWebFinger == null || replyToBlogId == null || replyAuthorName == null) {
-            return PostStatusScreenParams.PostStatusParams(accountUri)
+        val replyVisibility = queries[PARAMS_REPLY_VISIBILITY]?.let {
+            StatusVisibility.valueOf(it)
+        } ?: StatusVisibility.PUBLIC
+        return if (replyWebFinger == null || replyToBlogId == null || replyAuthorName == null) {
+            PostStatusScreenParams.PostStatusParams(accountUri)
         } else {
-            return PostStatusScreenParams.ReplyStatusParams(
+            PostStatusScreenParams.ReplyStatusParams(
                 accountUri = accountUri,
                 replyToBlogWebFinger = replyWebFinger,
                 replyToBlogId = replyToBlogId,
                 replyAuthorName = replyAuthorName,
+                replyVisibility = replyVisibility,
             )
         }
     }
@@ -73,5 +82,6 @@ sealed interface PostStatusScreenParams {
         val replyToBlogWebFinger: WebFinger,
         val replyToBlogId: String,
         val replyAuthorName: String,
+        val replyVisibility: StatusVisibility = StatusVisibility.PUBLIC,
     ) : PostStatusScreenParams
 }

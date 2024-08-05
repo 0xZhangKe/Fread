@@ -9,6 +9,10 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Lock
+import androidx.compose.material.icons.filled.LockOpen
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +35,7 @@ import com.zhangke.framework.composable.startPadding
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -47,6 +52,7 @@ fun StatusInfoLine(
     blogUrl: String,
     displayTime: String,
     style: StatusStyle,
+    visibility: StatusVisibility,
     showUpThread: Boolean = false,
     showDownThread: Boolean = false,
     moreInteractions: List<StatusUiInteraction>,
@@ -63,6 +69,7 @@ fun StatusInfoLine(
             downThread,
             name,
             guideline,
+            visibilityIconRef,
             dateTime,
             userId,
             moreOptions,
@@ -148,9 +155,35 @@ fun StatusInfoLine(
             onUrlClick = onUrlClick,
             fontSizeSp = style.contentSize.userNameSize.value,
         )
+
+        Box(
+            modifier = Modifier.constrainAs(visibilityIconRef) {
+                start.linkTo(name.start)
+                top.linkTo(dateTime.top)
+                bottom.linkTo(dateTime.bottom)
+            },
+        ) {
+            if (visibility == StatusVisibility.PRIVATE ||
+                visibility == StatusVisibility.UNLISTED ||
+                visibility == StatusVisibility.DIRECT
+            ) {
+                Icon(
+                    modifier = Modifier
+                        .padding(end = 4.dp)
+                        .size(14.dp),
+                    imageVector = if (visibility == StatusVisibility.UNLISTED) {
+                        Icons.Default.LockOpen
+                    } else {
+                        Icons.Default.Lock
+                    },
+                    contentDescription = null,
+                )
+            }
+        }
+
         Text(
             modifier = Modifier.constrainAs(dateTime) {
-                start.linkTo(name.start)
+                start.linkTo(visibilityIconRef.end)
                 top.linkTo(name.bottom, infoStyle.nameToTimePadding)
             },
             text = displayTime,

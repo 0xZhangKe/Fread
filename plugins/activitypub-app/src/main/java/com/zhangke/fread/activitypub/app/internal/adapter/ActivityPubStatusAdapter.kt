@@ -13,6 +13,7 @@ import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
@@ -61,10 +62,6 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    fun entityToBlog(entity: ActivityPubStatusEntity, platform: BlogPlatform): Blog {
-        return entity.toBlog(platform)
-    }
-
     private fun ActivityPubStatusEntity.toBlog(platform: BlogPlatform): Blog {
         val emojis = this.emojis.map(emojiEntityAdapter::toEmoji)
         return Blog(
@@ -86,7 +83,18 @@ class ActivityPubStatusAdapter @Inject constructor(
             emojis = emojis,
             mentions = this.mentions.mapNotNull { it.toMention() },
             tags = tags.map { it.toTag() },
+            visibility = visibility.convertActivityPubVisibility(),
         )
+    }
+
+    private fun String.convertActivityPubVisibility(): StatusVisibility {
+        return when (this) {
+            ActivityPubStatusEntity.VISIBILITY_PUBLIC -> StatusVisibility.PUBLIC
+            ActivityPubStatusEntity.VISIBILITY_UNLISTED -> StatusVisibility.UNLISTED
+            ActivityPubStatusEntity.VISIBILITY_PRIVATE -> StatusVisibility.PRIVATE
+            ActivityPubStatusEntity.VISIBILITY_DIRECT -> StatusVisibility.DIRECT
+            else -> StatusVisibility.PUBLIC
+        }
     }
 
     private fun ActivityPubMediaAttachmentEntity.toBlogMedia(): BlogMedia {

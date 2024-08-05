@@ -28,72 +28,50 @@ fun StatusUi(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val context = LocalContext.current
-    Surface(
-        modifier = modifier,
-    ) {
-        when (val rawStatus = status.status) {
-            is Status.Reblog -> {
-                ReblogUi(
-                    modifier = Modifier,
-                    reblog = rawStatus,
-                    displayTime = status.displayTime,
-                    indexInList = indexInList,
-                    bottomPanelInteractions = status.bottomInteractions,
-                    moreInteractions = status.moreInteractions,
+    Surface(modifier = modifier) {
+        val rawStatus = status.status
+        val topLabel: (@Composable () -> Unit)? = if (rawStatus is Status.Reblog) {
+            {
+                ReblogTopLabel(
+                    author = rawStatus.author,
                     style = style,
-                    onInteractive = {
-                        composedStatusInteraction.onStatusInteractive(status, it)
-                    },
-                    onMediaClick = onMediaClick,
-                    onUserInfoClick = {
+                    onAuthorClick = {
                         composedStatusInteraction.onUserInfoClick(status.role, it)
-                    },
-                    onVoted = { options ->
-                        composedStatusInteraction.onVoted(status, options)
-                    },
-                    onHashtagInStatusClick = {
-                        composedStatusInteraction.onHashtagInStatusClick(status.role, it)
-                    },
-                    onMentionClick = {
-                        composedStatusInteraction.onMentionClick(status.role, it)
-                    },
-                    onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it, status.role)
                     },
                 )
             }
-
-            is Status.NewBlog -> {
-                BlogUi(
-                    modifier = Modifier,
-                    blog = rawStatus.blog,
-                    displayTime = status.displayTime,
-                    bottomPanelInteractions = status.bottomInteractions,
-                    moreInteractions = status.moreInteractions,
-                    indexInList = indexInList,
-                    style = style,
-                    onInteractive = {
-                        composedStatusInteraction.onStatusInteractive(status, it)
-                    },
-                    onMediaClick = onMediaClick,
-                    onUserInfoClick = {
-                        composedStatusInteraction.onUserInfoClick(status.role, it)
-                    },
-                    onVoted = { options ->
-                        composedStatusInteraction.onVoted(status, options)
-                    },
-                    onHashtagInStatusClick = {
-                        composedStatusInteraction.onHashtagInStatusClick(status.role, it)
-                    },
-                    onMentionClick = {
-                        composedStatusInteraction.onMentionClick(status.role, it)
-                    },
-                    onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it, status.role)
-                    },
-                )
-            }
+        } else {
+            null
         }
+        BlogUi(
+            modifier = Modifier,
+            blog = rawStatus.intrinsicBlog,
+            topLabel = topLabel,
+            displayTime = status.displayTime,
+            bottomPanelInteractions = status.bottomInteractions,
+            moreInteractions = status.moreInteractions,
+            indexInList = indexInList,
+            style = style,
+            onInteractive = {
+                composedStatusInteraction.onStatusInteractive(status, it)
+            },
+            onMediaClick = onMediaClick,
+            onUserInfoClick = {
+                composedStatusInteraction.onUserInfoClick(status.role, it)
+            },
+            onVoted = { options ->
+                composedStatusInteraction.onVoted(status, options)
+            },
+            onHashtagInStatusClick = {
+                composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+            },
+            onMentionClick = {
+                composedStatusInteraction.onMentionClick(status.role, it)
+            },
+            onUrlClick = {
+                BrowserLauncher.launchWebTabInApp(context, it, status.role)
+            },
+        )
     }
 }
 

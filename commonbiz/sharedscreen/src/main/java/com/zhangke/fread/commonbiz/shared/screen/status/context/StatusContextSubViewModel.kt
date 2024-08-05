@@ -80,10 +80,12 @@ class StatusContextSubViewModel(
 
     private suspend fun loadStatusContext() {
         val fixedAnchorStatus = refactorToNewBlog(anchorStatus)
-        _uiState.value = _uiState.value.copy(
-            loading = true,
-            contextStatus = buildContextStatus(fixedAnchorStatus),
-        )
+        if (_uiState.value.contextStatus.isEmpty()) {
+            _uiState.value = _uiState.value.copy(
+                loading = true,
+                contextStatus = buildContextStatus(fixedAnchorStatus),
+            )
+        }
         statusProvider.statusResolver
             .getStatusContext(role, fixedAnchorStatus)
             .onSuccess { statusContext ->

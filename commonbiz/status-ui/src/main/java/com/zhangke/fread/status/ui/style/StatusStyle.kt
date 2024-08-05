@@ -21,7 +21,7 @@ object StatusStyleDefaults {
 
     val startPadding = 16.dp
 
-    val topPadding = 10.dp
+    val topPadding = 8.dp
 
     val endPadding = 16.dp
 

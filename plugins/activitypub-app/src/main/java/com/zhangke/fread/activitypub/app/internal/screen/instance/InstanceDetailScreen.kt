@@ -257,13 +257,13 @@ class InstanceDetailScreen(
                                     .padding(start = 6.dp)
                                     .size(22.dp)
                                     .clip(CircleShape),
-                                model = instance.contact.account.avatar,
+                                model = instance.contact?.account?.avatar,
                                 contentDescription = "Mod avatar",
                             )
                             FreadRichText(
                                 modifier = Modifier
                                     .padding(start = 4.dp),
-                                content = instance.contact.account.displayName,
+                                content = instance.contact?.account?.displayName.orEmpty(),
                                 emojis = uiState.modAccount?.emojis ?: emptyList(),
                                 onUrlClick = {},
                             )

@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
@@ -55,7 +54,8 @@ class ActivityPubNotificationsScreen(
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = LocalSnackbarHostState.current
-        val viewModel = screen.getViewModel<ActivityPubNotificationsViewModel>().getSubViewModel(userUriInsights)
+        val viewModel = screen.getViewModel<ActivityPubNotificationsViewModel>()
+            .getSubViewModel(userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
         ActivityPubNotificationsContent(
             uiState = uiState,
@@ -136,7 +136,6 @@ class ActivityPubNotificationsScreen(
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun NotificationTabTitle(
         uiState: ActivityPubNotificationsUiState,

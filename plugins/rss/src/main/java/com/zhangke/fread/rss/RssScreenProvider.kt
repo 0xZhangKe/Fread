@@ -8,10 +8,8 @@ import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.ContentConfig
-import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
 import javax.inject.Inject
@@ -19,14 +17,6 @@ import javax.inject.Inject
 class RssScreenProvider @Inject constructor(
     private val uriTransformer: RssUriTransformer,
 ) : IStatusScreenProvider {
-
-    override fun getServerDetailScreenRoute(config: ContentConfig): String? {
-        return null
-    }
-
-    override fun getPostStatusScreen(platform: BlogPlatform, accountUri: FormalUri?): String? {
-        return null
-    }
 
     override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
         return null

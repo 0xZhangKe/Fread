@@ -16,11 +16,11 @@ import kotlinx.coroutines.flow.map
 import javax.inject.Inject
 
 class ContentConfigRepo @Inject constructor(
-    private val statusDatabase: ContentConfigDatabases,
+    private val contentConfigDatabase: ContentConfigDatabases,
     private val contentConfigAdapter: ContentConfigAdapter,
 ) {
 
-    private val contentConfigDao get() = statusDatabase.getContentConfigDao()
+    private val contentConfigDao get() = contentConfigDatabase.getContentConfigDao()
 
     suspend fun getAllConfig(): List<ContentConfig> {
         return contentConfigDao.queryAllContentConfig().map { it.toContentConfig() }

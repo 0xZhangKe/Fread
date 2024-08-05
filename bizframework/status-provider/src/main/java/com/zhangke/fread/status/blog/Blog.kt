@@ -5,6 +5,7 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.buildRichText
@@ -31,6 +32,7 @@ data class Blog(
     val mentions: List<Mention>,
     val tags: List<HashtagInStatus>,
     val poll: BlogPoll?,
+    val visibility: StatusVisibility,
 ) : java.io.Serializable {
 
     val humanizedSpoilerText: RichText by lazy {

@@ -44,7 +44,11 @@ object OpmlParser {
                     }
                 }
             }
-            eventType = parser.next()
+            eventType = try {
+                parser.next()
+            } catch (e: Throwable) {
+                XmlPullParser.END_DOCUMENT
+            }
         }
         return outlineList.map {
             it.toOpmlOutline()

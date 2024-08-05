@@ -10,6 +10,8 @@ import androidx.room.Query
 import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
+import androidx.room.migration.Migration
+import androidx.sqlite.db.SupportSQLiteDatabase
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusEntityConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.FormalBaseUrlConverter
@@ -20,7 +22,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 
 private const val DB_NAME = "activity_pub_status.db"
-private const val DB_VERSION = 1
+private const val DB_VERSION = 2
 private const val TABLE_NAME = "activity_pub_status"
 
 @Entity(tableName = TABLE_NAME, primaryKeys = ["id", "role", "type", "listId"])
@@ -38,10 +40,19 @@ data class ActivityPubStatusTableEntity(
 interface ActivityPubStatusDao {
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role AND type = :type")
-    suspend fun query(role: IdentityRole, type: ActivityPubStatusSourceType, id: String): ActivityPubStatusTableEntity?
+    suspend fun query(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        id: String
+    ): ActivityPubStatusTableEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE id = :id AND role = :role AND type = :type AND listId = :listId ORDER BY createTimestamp DESC")
-    suspend fun queryStatusInList(role: IdentityRole, type: ActivityPubStatusSourceType, listId: String, id: String): ActivityPubStatusTableEntity?
+    suspend fun queryStatusInList(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        listId: String,
+        id: String
+    ): ActivityPubStatusTableEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE role = :role AND type = :type ORDER BY createTimestamp DESC LIMIT :limit")
     suspend fun queryTimelineStatus(
@@ -68,7 +79,11 @@ interface ActivityPubStatusDao {
     suspend fun delete(role: IdentityRole, type: ActivityPubStatusSourceType)
 
     @Query("DELETE FROM $TABLE_NAME WHERE role=:role AND type=:type AND listId=:listId")
-    suspend fun deleteListStatus(role: IdentityRole, type: ActivityPubStatusSourceType, listId: String)
+    suspend fun deleteListStatus(
+        role: IdentityRole,
+        type: ActivityPubStatusSourceType,
+        listId: String
+    )
 
     @Query("DELETE FROM $TABLE_NAME WHERE id=:id")
     suspend fun delete(id: String)
@@ -110,7 +125,14 @@ abstract class ActivityPubStatusDatabases : RoomDatabase() {
                 context,
                 ActivityPubStatusDatabases::class.java,
                 DB_NAME
-            ).build()
+            ).addMigrations(Status1to2Migration()).build()
         }
+    }
+}
+
+private class Status1to2Migration : Migration(1, 2) {
+
+    override fun migrate(db: SupportSQLiteDatabase) {
+        db.execSQL("DELETE FROM $TABLE_NAME")
     }
 }

@@ -6,9 +6,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
@@ -30,6 +32,7 @@ fun BlogInteractionNotification(
     indexInList: Int,
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
+    iconTint: Color = LocalContentColor.current,
 ) {
     val context = LocalContext.current
     Column(
@@ -48,6 +51,7 @@ fun BlogInteractionNotification(
             accountName = author.name,
             interactionDesc = interactionDesc,
             style = style,
+            iconTint = iconTint,
         )
         OnlyBlogContentUi(
             modifier = Modifier

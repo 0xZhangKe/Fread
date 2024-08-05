@@ -1,7 +1,8 @@
 package com.zhangke.fread.activitypub.app.internal.composable.notifications
 
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Star
+import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.res.stringResource
 import com.zhangke.fread.activitypub.app.R
@@ -25,7 +26,8 @@ fun FavouriteNotification(
     BlogInteractionNotification(
         statusUiState = status,
         author = notification.author,
-        icon = Icons.Default.Star,
+        icon = Icons.Default.Favorite,
+        iconTint = MaterialTheme.colorScheme.tertiary,
         interactionDesc = stringResource(R.string.activity_pub_notification_favourited_desc),
         indexInList = indexInList,
         style = style,

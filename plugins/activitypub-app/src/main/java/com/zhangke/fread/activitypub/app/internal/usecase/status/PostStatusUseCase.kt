@@ -1,12 +1,13 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.status
 
+import com.zhangke.activitypub.entities.ActivityPubStatusVisibilityEntity
 import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.model.PostStatusVisibility
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusVisibility
 import java.util.Locale
 import javax.inject.Inject
 
@@ -22,7 +23,7 @@ class PostStatusUseCase @Inject constructor(
         sensitive: Boolean? = null,
         spoilerText: String? = null,
         replyToId: String? = null,
-        visibility: PostStatusVisibility? = null,
+        visibility: StatusVisibility? = null,
         language: Locale? = null,
     ): Result<Unit> {
         val role = IdentityRole(account.uri, null)
@@ -51,8 +52,17 @@ class PostStatusUseCase @Inject constructor(
             sensitive = sensitive,
             replyToId = replyToId,
             spoilerText = spoilerText,
-            visibility = visibility?.toEntity(),
+            visibility = visibility?.toEntityVisibility(),
             language = language?.isO3Language,
         ).map { }
+    }
+
+    private fun StatusVisibility.toEntityVisibility(): ActivityPubStatusVisibilityEntity {
+        return when (this) {
+            StatusVisibility.PUBLIC -> ActivityPubStatusVisibilityEntity.PUBLIC
+            StatusVisibility.UNLISTED -> ActivityPubStatusVisibilityEntity.UNLISTED
+            StatusVisibility.PRIVATE -> ActivityPubStatusVisibilityEntity.PRIVATE
+            StatusVisibility.DIRECT -> ActivityPubStatusVisibilityEntity.DIRECT
+        }
     }
 }

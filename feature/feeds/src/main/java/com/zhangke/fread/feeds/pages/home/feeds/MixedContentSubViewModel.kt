@@ -4,18 +4,17 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
-import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
-import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -92,12 +91,9 @@ class MixedContentSubViewModel(
 
     fun onContentTitleClick() {
         val mixedContent = mixedContent ?: return
-        statusProvider.screenProvider
-            .getPlatformDetailScreenRoute(mixedContent)
-            ?.let { KRouter.routeScreen(it) }
-            ?.let { screen ->
-                launchInViewModel { mutableOpenScreenFlow.emit(screen) }
-            }
+        launchInViewModel {
+            mutableOpenScreenFlow.emit(EditMixedContentScreen(mixedContent.id))
+        }
     }
 
     private suspend fun loadFirstPageLocalFeeds(): Result<List<Status>> {

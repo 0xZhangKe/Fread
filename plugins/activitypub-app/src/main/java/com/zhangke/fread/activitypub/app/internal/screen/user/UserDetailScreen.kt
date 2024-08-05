@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -229,7 +230,10 @@ data class UserDetailScreen(
         ConsumeSnackbarFlow(hostState = snackbarHost, messageTextFlow = messageFlow)
         Scaffold(
             snackbarHost = {
-                SnackbarHost(hostState = snackbarHost)
+                SnackbarHost(
+                    modifier = Modifier.navigationBarsPadding(),
+                    hostState = snackbarHost,
+                )
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
         ) { innerPaddings ->

@@ -12,7 +12,6 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.ImportExport
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
@@ -34,6 +33,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
@@ -67,10 +67,10 @@ class PreAddFeedsScreen : BaseScreen() {
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getScreenModel<PreAddFeedsViewModel>()
         val uiState by viewModel.uiState.collectAsState()
-        val snackbarHostState = rememberSnackbarHostState()
+        val snackBarHostState = rememberSnackbarHostState()
         PreAddFeedsContent(
             uiState = uiState,
-            snackbarHostState = snackbarHostState,
+            snackBarHostState = snackBarHostState,
             onBackClick = navigator::pop,
             onQueryChanged = viewModel::onQueryChanged,
             onSearchClick = {
@@ -98,7 +98,7 @@ class PreAddFeedsScreen : BaseScreen() {
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.replace(it)
         }
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
         val bottomSheetIsVisible = bottomSheetNavigator.isVisible
         var loginPageShown by remember {
             mutableStateOf(false)
@@ -119,7 +119,7 @@ class PreAddFeedsScreen : BaseScreen() {
     @Composable
     private fun PreAddFeedsContent(
         uiState: PreAddFeedsUiState,
-        snackbarHostState: SnackbarHostState,
+        snackBarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onImportClick: () -> Unit,
         onQueryChanged: (String) -> Unit,
@@ -146,7 +146,7 @@ class PreAddFeedsScreen : BaseScreen() {
                 )
             },
             snackbarHost = {
-                SnackbarHost(snackbarHostState)
+                SnackbarHost(snackBarHostState)
             },
         ) { innerPaddings ->
             Column(
@@ -218,6 +218,9 @@ class PreAddFeedsScreen : BaseScreen() {
             }
             LoadingDialog(
                 loading = uiState.loading,
+                properties = DialogProperties(
+                    dismissOnClickOutside = false,
+                ),
                 onDismissRequest = onLoadingDismissRequest,
             )
         }

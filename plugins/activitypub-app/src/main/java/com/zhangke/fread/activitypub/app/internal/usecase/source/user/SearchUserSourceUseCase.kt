@@ -41,10 +41,19 @@ class SearchUserSourceUseCase @Inject constructor(
         return Result.success(null)
     }
 
-    private suspend fun searchAsWebFinger(role: IdentityRole, query: String): Result<StatusSource?> {
+    private suspend fun searchAsWebFinger(
+        role: IdentityRole,
+        query: String,
+    ): Result<StatusSource?> {
         val webFinger = WebFinger.create(query) ?: return Result.success(null)
+        val finalRole = if (role.nonRole) {
+            val baseUrl = FormalBaseUrl.parse(query) ?: return Result.success(null)
+            IdentityRole(null, baseUrl = baseUrl)
+        } else {
+            role
+        }
         return userRepo.lookupUserSource(
-            role = role,
+            role = finalRole,
             acct = webFinger.toString(),
         )
     }

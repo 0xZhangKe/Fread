@@ -15,7 +15,6 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
@@ -99,14 +98,20 @@ class ActivityPubContentScreen(
         val (role, config, account, errorMessage) = uiState
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
-        val snackbarHostState = rememberSnackbarHostState()
+        val snackBarHostState = rememberSnackbarHostState()
+        val showFb = account != null
         Scaffold(
             snackbarHost = {
-                SnackbarHost(hostState = snackbarHostState)
+                SnackbarHost(
+                    modifier = Modifier
+                        .navigationBarsPadding()
+                        .padding(bottom = if (showFb) 0.dp else 68.dp),
+                    hostState = snackBarHostState,
+                )
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
             floatingActionButton = {
-                if (account != null) {
+                if (showFb) {
                     val inImmersiveMode by mainTabConnection.inImmersiveFlow.collectAsState()
                     AnimatedVisibility(
                         modifier = Modifier
@@ -123,7 +128,7 @@ class ActivityPubContentScreen(
                         FloatingActionButton(
                             onClick = {
                                 reportClick(HomeTabElements.POST_STATUS)
-                                onPostBlogClick(account)
+                                account?.let(onPostBlogClick)
                             },
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary,
@@ -144,7 +149,7 @@ class ActivityPubContentScreen(
                     .padding(paddings)
             ) {
                 CompositionLocalProvider(
-                    LocalSnackbarHostState provides snackbarHostState,
+                    LocalSnackbarHostState provides snackBarHostState,
                 ) {
                     if (role != null && config != null) {
                         val tabList = remember(uiState) {

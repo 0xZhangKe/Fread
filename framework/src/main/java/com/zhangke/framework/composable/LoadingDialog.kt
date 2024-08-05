@@ -9,14 +9,19 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 
 @Composable
 fun LoadingDialog(
     loading: Boolean,
+    properties: DialogProperties = DialogProperties(),
     onDismissRequest: () -> Unit,
 ) {
     if (loading) {
-        Dialog(onDismissRequest = onDismissRequest) {
+        Dialog(
+            onDismissRequest = onDismissRequest,
+            properties = properties,
+        ) {
             Surface(
                 modifier = Modifier,
                 shape = RoundedCornerShape(16.dp),

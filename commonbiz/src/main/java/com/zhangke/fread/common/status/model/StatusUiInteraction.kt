@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.status.model
 
+import com.zhangke.framework.utils.formatAsCount
 import com.zhangke.fread.status.status.model.StatusInteraction
 
 sealed class StatusUiInteraction {
@@ -73,6 +74,6 @@ sealed class StatusUiInteraction {
 private fun Int.countToLabel(): String? {
     return when {
         this <= 0 -> null
-        else -> this.toString()
+        else -> this.formatAsCount()
     }
 }

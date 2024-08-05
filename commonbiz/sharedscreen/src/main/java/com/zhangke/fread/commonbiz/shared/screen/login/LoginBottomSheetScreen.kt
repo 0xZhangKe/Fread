@@ -29,6 +29,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.ConsumeFlow
@@ -66,7 +67,12 @@ class LoginBottomSheetScreen : BaseScreen() {
             onSearchClick = viewModel::onSearchClick,
         )
 
-        LoadingDialog(loading = uiState.loading) {
+        LoadingDialog(
+            loading = uiState.loading,
+            properties = DialogProperties(
+                dismissOnClickOutside = false,
+            ),
+        ) {
             viewModel.onDismissRequest()
         }
 

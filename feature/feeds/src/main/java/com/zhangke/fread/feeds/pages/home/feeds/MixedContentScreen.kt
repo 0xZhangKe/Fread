@@ -5,6 +5,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.rememberTopAppBarState
 import androidx.compose.runtime.Composable
@@ -13,11 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
-import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.analytics.HomeTabElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
@@ -40,14 +43,15 @@ class MixedContentScreen(
     @Composable
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
-        val snackbarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = rememberSnackbarHostState()
         val viewModel = screen.getViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
         val configUiState by viewModel.configUiState.collectAsState()
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         MixedContentUi(
             uiState = uiState,
             configUiState = configUiState,
+            snackBarHostState = snackBarHostState,
             openScreenFlow = viewModel.openScreenFlow,
             newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
             composedStatusInteraction = viewModel.composedStatusInteraction,
@@ -62,6 +66,7 @@ class MixedContentScreen(
     private fun MixedContentUi(
         uiState: CommonFeedsUiState,
         configUiState: MixedContentUiState,
+        snackBarHostState: SnackbarHostState,
         openScreenFlow: SharedFlow<Screen>,
         newStatusNotifyFlow: SharedFlow<Unit>,
         onTitleClick: () -> Unit,
@@ -100,6 +105,12 @@ class MixedContentScreen(
                             mainTabConnection.scrollToTop()
                         }
                     }
+                )
+            },
+            snackbarHost = {
+                SnackbarHost(
+                    modifier = Modifier.padding(bottom = 68.dp),
+                    hostState = snackBarHostState,
                 )
             },
         ) { paddings ->

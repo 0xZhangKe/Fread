@@ -206,6 +206,30 @@ class UserDetailViewModel(
         }
     }
 
+    fun onMuteUserClick() {
+        muteOrUnmute(true)
+    }
+
+    fun onUnmuteUserClick() {
+        muteOrUnmute(false)
+    }
+
+    private fun muteOrUnmute(mute: Boolean) {
+        val accountId = uiState.value.accountUiState?.account?.id ?: return
+        launchInViewModel {
+            val accountRepo = clientManager.getClient(role).accountRepo
+            if (mute) {
+                accountRepo.mute(accountId)
+            } else {
+                accountRepo.unmute(accountId)
+            }.onSuccess { relationship ->
+                _uiState.update { it.copy(relationship = relationship) }
+            }.onFailure {
+                _messageFlow.emitTextMessageFromThrowable(it)
+            }
+        }
+    }
+
     private fun performRelationshipAction(
         action: suspend (accountsRepo: AccountsRepo, accountId: String) -> Result<ActivityPubRelationshipEntity>,
     ) {

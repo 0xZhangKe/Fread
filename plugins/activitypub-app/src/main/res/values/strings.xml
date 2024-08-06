@@ -34,6 +34,7 @@
     <string name="activity_pub_user_detail_menu_edit_private_note_dialog_hint">请输入备注</string>
     <string name="activity_pub_user_detail_dialog_content_block">您确认要屏蔽对方吗？</string>
     <string name="activity_pub_user_detail_dialog_content_block_domain">您确认要屏蔽对方实例吗？</string>
+    <string name="activity_pub_user_menu_blocked_user_list">屏蔽的用户</string>
     <string name="activity_pub_user_menu_muted_user_list">隐藏的用户</string>
     <string name="activity_pub_user_detail_menu_mute_user">隐藏 %s</string>
     <string name="activity_pub_user_detail_menu_unmute_user">取消隐藏 %s</string>
@@ -123,10 +124,16 @@
     <string name="activity_pub_user_follower_list_title">关注者</string>
     <string name="activity_pub_user_following_list_title">已关注</string>
 
+    <string name="activity_pub_user_list_empty">暂无用户</string>
+
     <string name="activity_pub_user_detail_follows_you">关注了你</string>
     <string name="activity_pub_user_pinned_post">置顶</string>
 
     <string name="activity_pub_muted_user_list_title">隐藏的用户</string>
     <string name="activity_pub_muted_user_list_empty">暂无隐藏的用户</string>
     <string name="activity_pub_muted_user_list_unmute">取消屏蔽</string>
+
+    <string name="activity_pub_blocked_user_list_title">屏蔽的用户</string>
+    <string name="activity_pub_blocked_user_list_empty">暂无屏蔽的用户</string>
+    <string name="activity_pub_blocked_user_list_unblock">取消屏蔽</string>
 </resources>

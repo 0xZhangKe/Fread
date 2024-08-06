@@ -23,7 +23,7 @@ fun FreadRichText(
     onMentionClick: (Mention) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
     onMaybeHashtagTarget: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit = {},
-    onUrlClick: (url: String) -> Unit,
+    onUrlClick: (url: String) -> Unit = {},
     layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,

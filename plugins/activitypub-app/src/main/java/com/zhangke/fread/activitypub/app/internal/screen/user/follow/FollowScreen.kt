@@ -2,13 +2,10 @@ package com.zhangke.fread.activitypub.app.internal.screen.user.follow
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.lazy.items
-import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.MaterialTheme
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -18,33 +15,24 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserPlaceHolder
+import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserUi
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.ui.BlogAuthorAvatar
-import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.uri.FormalUri
 
 class FollowScreen(
@@ -62,11 +50,11 @@ class FollowScreen(
             it.create(role, userUri, isFollowing)
         }
         val uiState by viewModel.uiState.collectAsState()
-        val snackbarHostState = rememberSnackbarHostState()
+        val snackBarHostState = rememberSnackbarHostState()
         FollowContent(
             uiState = uiState,
             onBackClick = navigator::pop,
-            snackbarHostState = snackbarHostState,
+            snackBarHostState = snackBarHostState,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onAccountClick = {
@@ -74,14 +62,14 @@ class FollowScreen(
                 navigator.push(UserDetailScreen(route))
             },
         )
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.messageFlow)
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.messageFlow)
     }
 
     @Composable
     private fun FollowContent(
         uiState: FollowUiState,
         onBackClick: () -> Unit,
-        snackbarHostState: SnackbarHostState,
+        snackBarHostState: SnackbarHostState,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onAccountClick: (BlogAuthor) -> Unit,
@@ -99,7 +87,7 @@ class FollowScreen(
                 )
             },
             snackbarHost = {
-                SnackbarHost(snackbarHostState)
+                SnackbarHost(snackBarHostState)
             }
         ) { paddings ->
             if (uiState.initializing) {
@@ -126,10 +114,11 @@ class FollowScreen(
                         refreshing = uiState.refreshing,
                         loadState = uiState.loadMoreState,
                     ) {
-                        items(uiState.list) { account ->
+                        itemsIndexed(uiState.list) { index, account ->
                             FollowAccountUi(
                                 account = account,
                                 onClick = onAccountClick,
+                                showDivider = index < uiState.list.lastIndex,
                             )
                         }
                     }
@@ -140,102 +129,25 @@ class FollowScreen(
 
     @Composable
     private fun InitializingUi(modifier: Modifier) {
-        Column(modifier = modifier.fillMaxSize()) {
-            repeat(20) {
-                FollowAccountUi(null, {})
+        LazyColumn(modifier = modifier.fillMaxSize()) {
+            items(30) {
+                CommonUserPlaceHolder()
             }
         }
     }
 
     @Composable
     private fun FollowAccountUi(
-        account: BlogAuthor?,
+        account: BlogAuthor,
         onClick: (BlogAuthor) -> Unit,
+        showDivider: Boolean,
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
-                .clickable {
-                    if (account != null) {
-                        onClick(account)
-                    }
-                },
-        ) {
-            val (avatarRef, nameRef, acctRef, descRef, dividerRef) = createRefs()
-            BlogAuthorAvatar(
-                modifier = Modifier.constrainAs(avatarRef) {
-                    start.linkTo(parent.start, 16.dp)
-                    top.linkTo(parent.top, 8.dp)
-                    width = Dimension.value(38.dp)
-                    height = Dimension.value(38.dp)
-                },
-                imageUrl = account?.avatar,
-            )
-            Text(
-                modifier = Modifier
-                    .freadPlaceholder(account == null)
-                    .constrainAs(nameRef) {
-                        start.linkTo(avatarRef.end, 4.dp)
-                        top.linkTo(avatarRef.top)
-                        end.linkTo(parent.end, 16.dp)
-                        width = Dimension.fillToConstraints
-                    },
-                textAlign = TextAlign.Start,
-                text = account?.name.orEmpty(),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.titleMedium,
-            )
-            Text(
-                modifier = Modifier
-                    .freadPlaceholder(account == null)
-                    .constrainAs(acctRef) {
-                        start.linkTo(nameRef.start)
-                        top.linkTo(nameRef.bottom, 2.dp)
-                        end.linkTo(parent.end, 16.dp)
-                        width = Dimension.fillToConstraints
-                    },
-                maxLines = 1,
-                textAlign = TextAlign.Start,
-                text = "@${account?.webFinger}",
-                overflow = TextOverflow.Ellipsis,
-                style = MaterialTheme.typography.labelMedium,
-            )
-            val context = LocalContext.current
-            FreadRichText(
-                modifier = Modifier
-                    .freadPlaceholder(account == null)
-                    .constrainAs(descRef) {
-                        start.linkTo(nameRef.start)
-                        top.linkTo(acctRef.bottom, 2.dp)
-                        end.linkTo(parent.end, 16.dp)
-                        width = Dimension.fillToConstraints
-                    },
-                content = account?.description.orEmpty(),
-                onMentionClick = {},
-                onHashtagClick = {},
-                maxLines = 3,
-                overflow = TextOverflow.Ellipsis,
-                mentions = emptyList(),
-                tags = emptyList(),
-                emojis = account?.emojis.orEmpty(),
-                onUrlClick = {
-                    BrowserLauncher.launchWebTabInApp(context, it, role)
-                },
-            )
-            HorizontalDivider(
-                modifier = Modifier.constrainAs(dividerRef) {
-                    start.linkTo(parent.start)
-                    end.linkTo(parent.end)
-                    top.linkTo(descRef.bottom, 6.dp)
-                    width = Dimension.fillToConstraints
-                },
-                thickness = if (account == null) {
-                    0.dp
-                } else {
-                    1.dp
-                }
-            )
-        }
+        CommonUserUi(
+            modifier = Modifier.clickable {
+                onClick(account)
+            },
+            user = account,
+            showDivider = showDivider,
+        )
     }
 }

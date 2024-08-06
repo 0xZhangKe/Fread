@@ -132,10 +132,6 @@ class FollowViewModel @AssistedInject constructor(
         }
     }
 
-    fun onUserInfoClick(accountEntity: ActivityPubAccountEntity) {
-
-    }
-
     private suspend fun loadFollowList(
         id: String,
     ): Result<List<BlogAuthor>> {

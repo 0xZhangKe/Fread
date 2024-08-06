@@ -15,6 +15,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.defaultStatusStyle
 
@@ -30,23 +31,10 @@ fun StatusUi(
     val context = LocalContext.current
     Surface(modifier = modifier) {
         val rawStatus = status.status
-        val topLabel: (@Composable () -> Unit)? = if (rawStatus is Status.Reblog) {
-            {
-                ReblogTopLabel(
-                    author = rawStatus.author,
-                    style = style,
-                    onAuthorClick = {
-                        composedStatusInteraction.onUserInfoClick(status.role, it)
-                    },
-                )
-            }
-        } else {
-            null
-        }
         BlogUi(
             modifier = Modifier,
             blog = rawStatus.intrinsicBlog,
-            topLabel = topLabel,
+            topLabel = getStatusTopLabel(status, style, composedStatusInteraction),
             displayTime = status.displayTime,
             bottomPanelInteractions = status.bottomInteractions,
             moreInteractions = status.moreInteractions,
@@ -73,6 +61,31 @@ fun StatusUi(
             },
         )
     }
+}
+
+private fun getStatusTopLabel(
+    statusUiState: StatusUiState,
+    style: StatusStyle,
+    composedStatusInteraction: ComposedStatusInteraction,
+): (@Composable () -> Unit)? {
+    val rawStatus = statusUiState.status
+    if (rawStatus is Status.Reblog) {
+        return {
+            ReblogTopLabel(
+                author = rawStatus.author,
+                style = style,
+                onAuthorClick = {
+                    composedStatusInteraction.onUserInfoClick(statusUiState.role, it)
+                },
+            )
+        }
+    }
+    if (rawStatus.intrinsicBlog.pinned == true) {
+        return {
+            StatusPinnedLabel(style = style)
+        }
+    }
+    return null
 }
 
 interface ComposedStatusInteraction {

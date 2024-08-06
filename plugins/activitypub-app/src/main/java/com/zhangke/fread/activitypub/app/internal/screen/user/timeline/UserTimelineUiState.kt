@@ -5,7 +5,7 @@ import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.common.status.model.StatusUiState
 
 data class UserTimelineUiState(
-    val feeds: List<UserTimelineStatus>,
+    val feeds: List<StatusUiState>,
     val showPagingLoadingPlaceholder: Boolean,
     val pageErrorContent: TextString?,
     val refreshing: Boolean,
@@ -14,7 +14,7 @@ data class UserTimelineUiState(
 
     companion object {
 
-        val default = UserTimelineUiState(
+        fun default() = UserTimelineUiState(
             feeds = emptyList(),
             showPagingLoadingPlaceholder = false,
             pageErrorContent = null,
@@ -23,8 +23,3 @@ data class UserTimelineUiState(
         )
     }
 }
-
-data class UserTimelineStatus(
-    val status: StatusUiState,
-    val pinned: Boolean,
-)

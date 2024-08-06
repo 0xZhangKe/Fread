@@ -11,7 +11,10 @@ class BuildStatusUiStateUseCase @Inject constructor(
     private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
 ) {
 
-    operator fun invoke(role: IdentityRole, status: Status): StatusUiState {
+    operator fun invoke(
+        role: IdentityRole,
+        status: Status,
+    ): StatusUiState {
         return StatusUiState(
             status = status,
             role = role,

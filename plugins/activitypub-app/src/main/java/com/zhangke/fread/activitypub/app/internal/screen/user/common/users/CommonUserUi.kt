@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user.common
+package com.zhangke.fread.activitypub.app.internal.screen.user.common.users
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
@@ -19,7 +19,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -27,7 +26,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
-import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.BlogAuthorAvatar

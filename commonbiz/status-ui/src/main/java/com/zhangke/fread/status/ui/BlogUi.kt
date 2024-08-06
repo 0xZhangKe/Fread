@@ -19,7 +19,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.status.ui.visibility.StatusVisibilityUi
+import com.zhangke.fread.status.ui.label.StatusVisibilityLabel
 
 @Composable
 fun BlogUi(
@@ -46,7 +46,7 @@ fun BlogUi(
     val context = LocalContext.current
     Column(modifier = modifier.fillMaxWidth()) {
         topLabel?.invoke()
-        StatusVisibilityUi(
+        StatusVisibilityLabel(
             visibility = blog.visibility,
             style = style,
         )

@@ -125,7 +125,6 @@
     <string name="activity_pub_user_list_empty">No users for now”</string>
 
     <string name="activity_pub_user_detail_follows_you">Follows you</string>
-    <string name="activity_pub_user_pinned_post">Pinned</string>
 
     <string name="activity_pub_muted_user_list_title">Muted Users</string>
     <string name="activity_pub_muted_user_list_empty">No muted users</string>
@@ -134,4 +133,6 @@
     <string name="activity_pub_blocked_user_list_title">Blocked Users</string>
     <string name="activity_pub_blocked_user_list_empty">No blocked users</string>
     <string name="activity_pub_blocked_user_list_unblock">Unblock</string>
+
+    <string name="activity_pub_favourites_list_title">Liked content</string>
 </resources>

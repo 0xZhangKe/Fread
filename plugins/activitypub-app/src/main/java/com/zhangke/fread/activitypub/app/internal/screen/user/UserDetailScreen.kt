@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
@@ -84,6 +85,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.block.BlockedUserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.favourites.FavouritesScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.mute.MutedUserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
@@ -135,6 +137,9 @@ data class UserDetailScreen(
         UserDetailContent(
             uiState = uiState,
             messageFlow = viewModel.messageFlow,
+            onFavouritesClick = {
+                navigator.push(FavouritesScreen(role))
+            },
             onBackClick = navigator::pop,
             onFollowAccountClick = viewModel::onFollowClick,
             onUnfollowAccountClick = viewModel::onUnfollowClick,
@@ -232,6 +237,7 @@ data class UserDetailScreen(
         uiState: UserDetailUiState,
         messageFlow: SharedFlow<TextString>,
         onBackClick: () -> Unit,
+        onFavouritesClick: () -> Unit,
         onBannerClick: () -> Unit,
         onAvatarClick: () -> Unit,
         onMuteUserClick: () -> Unit,
@@ -283,6 +289,7 @@ data class UserDetailScreen(
                         actions = {
                             ToolbarActions(
                                 uiState = uiState,
+                                onFavouritesClick = onFavouritesClick,
                                 onBlockClick = onBlockClick,
                                 onBlockDomainClick = onBlockDomainClick,
                                 onUnblockDomainClick = onUnblockDomainClick,
@@ -490,6 +497,7 @@ data class UserDetailScreen(
     @Composable
     private fun ToolbarActions(
         uiState: UserDetailUiState,
+        onFavouritesClick: () -> Unit,
         onBlockClick: () -> Unit,
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
@@ -504,6 +512,12 @@ data class UserDetailScreen(
     ) {
         val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
+            SimpleIconButton(
+                onClick = onFavouritesClick,
+                imageVector = Icons.Default.Favorite,
+                contentDescription = "Favourites List",
+            )
+            Box(modifier = Modifier.width(8.dp))
             SimpleIconButton(
                 onClick = onEditClick,
                 imageVector = Icons.Default.Edit,
@@ -675,14 +689,14 @@ data class UserDetailScreen(
         onMuteUserListClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_user_menu_blocked_user_list),
-            imageVector = Icons.Default.Block,
-            onClick = onBlockedUserListClick,
-        )
-        ModalDropdownMenuItem(
             text = stringResource(R.string.activity_pub_user_menu_muted_user_list),
             imageVector = Icons.AutoMirrored.Filled.VolumeOff,
             onClick = onMuteUserListClick,
+        )
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_user_menu_blocked_user_list),
+            imageVector = Icons.Default.Block,
+            onClick = onBlockedUserListClick,
         )
     }
 
@@ -712,7 +726,7 @@ data class UserDetailScreen(
         }
         ModalDropdownMenuItem(
             text = muteOrUnmuteText,
-            imageVector = Icons.Default.Block,
+            imageVector = Icons.AutoMirrored.Filled.VolumeOff,
             onClick = {
                 onDismissMorePopupRequest()
                 if (relationship.muting) {

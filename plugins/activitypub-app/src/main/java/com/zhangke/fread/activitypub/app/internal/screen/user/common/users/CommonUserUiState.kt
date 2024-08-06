@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user.common
+package com.zhangke.fread.activitypub.app.internal.screen.user.common.users
 
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.status.author.BlogAuthor

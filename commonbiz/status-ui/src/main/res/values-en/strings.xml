@@ -26,4 +26,6 @@
     <string name="status_ui_interaction_copy_url">Copy Link</string>
 
     <string name="status_ui_visibility_mentioned_only">Mentioned Only</string>
+
+    <string name="status_ui_label_pinned">Pinned</string>
 </resources>

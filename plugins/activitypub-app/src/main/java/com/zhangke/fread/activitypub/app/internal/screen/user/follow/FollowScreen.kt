@@ -19,8 +19,8 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.R
-import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserPage
-import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserUiState
+import com.zhangke.fread.activitypub.app.internal.screen.user.common.users.CommonUserPage
+import com.zhangke.fread.activitypub.app.internal.screen.user.common.users.CommonUserUiState
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri

@@ -81,6 +81,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = poll?.let(pollAdapter::adapt),
             emojis = emojis,
+            pinned = pinned ?: false,
             mentions = this.mentions.mapNotNull { it.toMention() },
             tags = tags.map { it.toTag() },
             visibility = visibility.convertActivityPubVisibility(),

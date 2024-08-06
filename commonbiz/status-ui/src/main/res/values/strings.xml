@@ -26,4 +26,6 @@
     <string name="status_ui_interaction_copy_url">复制链接</string>
 
     <string name="status_ui_visibility_mentioned_only">仅提及用户可见</string>
+
+    <string name="status_ui_label_pinned">Pinned</string>
 </resources>

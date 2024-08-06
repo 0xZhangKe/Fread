@@ -16,6 +16,7 @@ import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdR
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -31,11 +32,11 @@ abstract class CommonUserListViewModel(
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
 ) : ViewModel() {
 
-    protected val _uiState = MutableStateFlow(CommonUserUiState.default())
-    val uiState: StateFlow<CommonUserUiState> = _uiState
+    protected val mutableUiState = MutableStateFlow(CommonUserUiState.default(role))
+    val uiState: StateFlow<CommonUserUiState> = mutableUiState
 
-    protected val _snackMessageFlow = MutableSharedFlow<TextString>()
-    val snackMessageFlow = _snackMessageFlow.asSharedFlow()
+    protected val mutableSnackMessageFlow = MutableSharedFlow<TextString>()
+    val snackMessageFlow = mutableSnackMessageFlow.asSharedFlow()
 
     private var refreshJob: Job? = null
     private var loadMoreJob: Job? = null
@@ -48,7 +49,7 @@ abstract class CommonUserListViewModel(
         accountRepo: AccountsRepo,
     ): Result<List<ActivityPubAccountEntity>>
 
-    init {
+    fun initData() {
         loadFirstPageUsers()
     }
 
@@ -62,20 +63,20 @@ abstract class CommonUserListViewModel(
 
     private fun loadFirstPageUsers() {
         if (refreshJob?.isActive == true) return
-        _uiState.update { it.copy(loading = true) }
+        mutableUiState.update { it.copy(loading = true) }
         refreshJob = launchInViewModel {
             val accountRepo = clientManager.getClient(role).accountRepo
             loadFirstPageUsersFromServer(accountRepo)
                 .onSuccess {
-                    _uiState.update { state ->
+                    mutableUiState.update { state ->
                         state.copy(
                             loading = false,
                             userList = it.map { it.toAuthor() },
                         )
                     }
                 }.onFailure { t ->
-                    _uiState.update { it.copy(loading = false) }
-                    _snackMessageFlow.emitTextMessageFromThrowable(t)
+                    mutableUiState.update { it.copy(loading = false) }
+                    mutableSnackMessageFlow.emitTextMessageFromThrowable(t)
                 }
         }
     }
@@ -83,31 +84,31 @@ abstract class CommonUserListViewModel(
     private fun loadNextPageUsers() {
         if (loadMoreJob?.isActive == true) return
         loadMoreJob = launchInViewModel {
-            _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
+            mutableUiState.update { it.copy(loadMoreState = LoadState.Loading) }
             val accountRepo = clientManager.getClient(role).accountRepo
             loadNextPageUsersFromServer(accountRepo)
                 .onSuccess {
-                    _uiState.update { state ->
+                    mutableUiState.update { state ->
                         state.copy(
                             loadMoreState = LoadState.Idle,
                             userList = state.userList + it.map { it.toAuthor() },
                         )
                     }
                 }.onFailure { t ->
-                    _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
+                    mutableUiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
                 }
         }
     }
 
-    protected suspend fun getAuthorId(author: BlogAuthor): String? {
-        val userInsight = userUriTransformer.parse(author.uri)
+    protected suspend fun getUserIdByUri(uri: FormalUri): String? {
+        val userInsight = userUriTransformer.parse(uri)
         if (userInsight == null) {
-            _snackMessageFlow.emit(textOf("Invalid user uri: ${author.uri}"))
+            mutableSnackMessageFlow.emit(textOf("Invalid user uri: $uri"))
             return null
         }
         val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsight.webFinger, role)
         if (userIdResult.isFailure) {
-            _snackMessageFlow.emitTextMessageFromThrowable(userIdResult.exceptionOrThrow())
+            mutableSnackMessageFlow.emitTextMessageFromThrowable(userIdResult.exceptionOrThrow())
             return null
         }
         return userIdResult.getOrNull()

@@ -54,7 +54,7 @@ fun FeedsContent(
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
-    nestedScrollConnection: NestedScrollConnection?,
+    nestedScrollConnection: NestedScrollConnection? = null,
     observeScrollToTopEvent: Boolean = false,
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,

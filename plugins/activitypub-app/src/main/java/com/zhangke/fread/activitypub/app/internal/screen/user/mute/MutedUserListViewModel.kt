@@ -8,7 +8,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
-import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserListViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.user.common.users.CommonUserListViewModel
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole

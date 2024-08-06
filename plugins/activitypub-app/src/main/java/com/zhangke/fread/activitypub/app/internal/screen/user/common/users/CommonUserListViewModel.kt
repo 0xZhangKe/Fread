@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user.common
+package com.zhangke.fread.activitypub.app.internal.screen.user.common.users
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.activitypub.api.AccountsRepo

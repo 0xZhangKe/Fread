@@ -31,6 +31,7 @@ data class Blog(
     val emojis: List<Emoji>,
     val mentions: List<Mention>,
     val tags: List<HashtagInStatus>,
+    val pinned: Boolean = false,
     val poll: BlogPoll?,
     val visibility: StatusVisibility,
 ) : java.io.Serializable {

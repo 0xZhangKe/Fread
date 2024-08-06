@@ -3,41 +3,56 @@ package com.zhangke.fread.activitypub.app.internal.screen.user
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -68,6 +83,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.mute.MutedUserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.analytics.reportClick
@@ -82,9 +98,11 @@ import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.launch
 
 @Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
@@ -196,6 +214,11 @@ data class UserDetailScreen(
                     )
                 )
             },
+            onUnmuteUserClick = viewModel::onUnmuteUserClick,
+            onMuteUserClick = viewModel::onMuteUserClick,
+            onMuteUserListClick = {
+                navigator.push(MutedUserListScreen(role))
+            },
         )
     }
 
@@ -206,6 +229,8 @@ data class UserDetailScreen(
         onBackClick: () -> Unit,
         onBannerClick: () -> Unit,
         onAvatarClick: () -> Unit,
+        onMuteUserClick: () -> Unit,
+        onUnmuteUserClick: () -> Unit,
         onUnblockClick: () -> Unit,
         onFollowAccountClick: () -> Unit,
         onUnfollowAccountClick: () -> Unit,
@@ -222,17 +247,18 @@ data class UserDetailScreen(
         onFollowingClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
         onMaybeHashtagTargetClick: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit,
+        onMuteUserListClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
         }
-        val snackbarHost = rememberSnackbarHostState()
-        ConsumeSnackbarFlow(hostState = snackbarHost, messageTextFlow = messageFlow)
+        val snackBarHost = rememberSnackbarHostState()
+        ConsumeSnackbarFlow(hostState = snackBarHost, messageTextFlow = messageFlow)
         Scaffold(
             snackbarHost = {
                 SnackbarHost(
                     modifier = Modifier.navigationBarsPadding(),
-                    hostState = snackbarHost,
+                    hostState = snackBarHost,
                 )
             },
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
@@ -258,6 +284,9 @@ data class UserDetailScreen(
                                 onEditClick = onEditClick,
                                 onNewNoteSet = onNewNoteSet,
                                 onCopyLinkClick = onCopyLinkClick,
+                                onMuteUserClick = onMuteUserClick,
+                                onUnmuteUserClick = onUnmuteUserClick,
+                                onMuteUserListClick = onMuteUserListClick,
                             )
                         },
                     )
@@ -357,7 +386,7 @@ data class UserDetailScreen(
                         NestedTabConnection()
                     }
                     CompositionLocalProvider(
-                        LocalSnackbarHostState provides snackbarHost,
+                        LocalSnackbarHostState provides snackBarHost,
                         LocalNestedTabConnection provides nestedTabConnection,
                     ) {
                         val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
@@ -461,9 +490,11 @@ data class UserDetailScreen(
         onCopyLinkClick: () -> Unit,
         onEditClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
+        onMuteUserClick: () -> Unit,
+        onUnmuteUserClick: () -> Unit,
+        onMuteUserListClick: () -> Unit,
     ) {
-        val account = uiState.accountUiState?.account ?: return
-        val userInsights = uiState.userInsight ?: return
+        val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
             SimpleIconButton(
                 onClick = onEditClick,
@@ -486,51 +517,13 @@ data class UserDetailScreen(
         var showBlockDomainConfirmDialog by remember {
             mutableStateOf(false)
         }
+        var showMuteDialog by remember {
+            mutableStateOf(false)
+        }
         DropdownMenu(
             expanded = showMorePopup,
             onDismissRequest = { showMorePopup = false },
         ) {
-            if (!uiState.isAccountOwner) {
-                EditPrivateNoteItem(
-                    note = uiState.relationship?.note.orEmpty(),
-                    onDismissRequest = { showMorePopup = false },
-                    onNewNoteSet = onNewNoteSet,
-                )
-            }
-            if (!uiState.isAccountOwner && uiState.relationship?.blocking == false) {
-                ModalDropdownMenuItem(
-                    text = stringResource(
-                        R.string.activity_pub_user_detail_menu_block,
-                        account.displayName.take(10)
-                    ),
-                    imageVector = Icons.Default.Block,
-                    onClick = {
-                        showMorePopup = false
-                        showBlockUserConfirmDialog = true
-                    },
-                )
-            }
-            val domainBlocked = uiState.domainBlocked
-            val host = userInsights.baseUrl.host
-            if (domainBlocked != null) {
-                val blockDomainLabel = if (domainBlocked) {
-                    stringResource(R.string.activity_pub_user_detail_menu_unblock_domain, host)
-                } else {
-                    stringResource(R.string.activity_pub_user_detail_menu_block_domain, host)
-                }
-                ModalDropdownMenuItem(
-                    text = blockDomainLabel,
-                    imageVector = Icons.Default.Block,
-                    onClick = {
-                        showMorePopup = false
-                        if (domainBlocked) {
-                            onUnblockDomainClick()
-                        } else {
-                            showBlockDomainConfirmDialog = true
-                        }
-                    }
-                )
-            }
             DropDownOpenInBrowserItem {
                 reportClick(ActivityPubDataElements.USER_DETAIL_OPEN_IN_BROWSER)
                 showMorePopup = false
@@ -540,6 +533,38 @@ data class UserDetailScreen(
                 reportClick(ActivityPubDataElements.USER_DETAIL_COPY_LINK)
                 showMorePopup = false
                 onCopyLinkClick()
+            }
+            val isAccountOwner = uiState.isAccountOwner
+            if (isAccountOwner) {
+                SelfAccountActions(
+                    onMuteUserListClick = {
+                        showMorePopup = false
+                        onMuteUserListClick()
+                    },
+                )
+            }
+            val relationship = uiState.relationship
+            if (!isAccountOwner && relationship != null) {
+                OtherAccountActions(
+                    uiState = uiState,
+                    account = accountUiState,
+                    relationship = relationship,
+                    onNewNoteSet = onNewNoteSet,
+                    onDismissMorePopupRequest = {
+                        showMorePopup = false
+                    },
+                    onShowBlockUserConfirmDialog = {
+                        showBlockUserConfirmDialog = true
+                    },
+                    onShowBlockDomainConfirmDialog = {
+                        showBlockDomainConfirmDialog = true
+                    },
+                    onUnblockDomainClick = onUnblockDomainClick,
+                    onUnmuteClick = onUnmuteUserClick,
+                    onShowMuteDialogClick = {
+                        showMuteDialog = true
+                    },
+                )
             }
         }
         if (showBlockUserConfirmDialog) {
@@ -560,6 +585,16 @@ data class UserDetailScreen(
                     onBlockDomainClick()
                 },
                 onDismissRequest = { showBlockDomainConfirmDialog = false },
+            )
+        }
+        if (showMuteDialog) {
+            MuteUserBottomSheetDialog(
+                account = accountUiState,
+                onDismissRequest = { showMuteDialog = false },
+                onConfirmClick = {
+                    showMuteDialog = false
+                    onMuteUserClick()
+                },
             )
         }
     }
@@ -623,20 +658,199 @@ data class UserDetailScreen(
     }
 
     @Composable
-    private fun SimpleDropdownMenuItem(
-        text: String,
-        onClick: () -> Unit,
+    private fun SelfAccountActions(
+        onMuteUserListClick: () -> Unit,
     ) {
-        DropdownMenuItem(
-            text = {
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_user_menu_muted_user_list),
+            imageVector = Icons.Default.Block,
+            onClick = onMuteUserListClick,
+        )
+    }
+
+    @Composable
+    private fun OtherAccountActions(
+        uiState: UserDetailUiState,
+        account: UserDetailAccountUiState,
+        relationship: ActivityPubRelationshipEntity,
+        onNewNoteSet: (String) -> Unit,
+        onUnmuteClick: () -> Unit,
+        onDismissMorePopupRequest: () -> Unit,
+        onUnblockDomainClick: () -> Unit,
+        onShowBlockUserConfirmDialog: () -> Unit,
+        onShowBlockDomainConfirmDialog: () -> Unit,
+        onShowMuteDialogClick: () -> Unit,
+    ) {
+        EditPrivateNoteItem(
+            note = uiState.relationship?.note.orEmpty(),
+            onDismissRequest = onDismissMorePopupRequest,
+            onNewNoteSet = onNewNoteSet,
+        )
+        val fixedName = account.account.displayName.take(10)
+        val muteOrUnmuteText = if (relationship.muting) {
+            stringResource(R.string.activity_pub_user_detail_menu_unmute_user, fixedName)
+        } else {
+            stringResource(R.string.activity_pub_user_detail_menu_mute_user, fixedName)
+        }
+        ModalDropdownMenuItem(
+            text = muteOrUnmuteText,
+            imageVector = Icons.Default.Block,
+            onClick = {
+                onDismissMorePopupRequest()
+                if (relationship.muting) {
+                    onUnmuteClick()
+                } else {
+                    onShowMuteDialogClick()
+                }
+            }
+        )
+        if (!relationship.blocking) {
+            ModalDropdownMenuItem(
+                text = stringResource(R.string.activity_pub_user_detail_menu_block, fixedName),
+                imageVector = Icons.Default.Block,
+                onClick = {
+                    onDismissMorePopupRequest()
+                    onShowBlockUserConfirmDialog()
+                },
+            )
+        }
+        val domainBlocked = uiState.domainBlocked
+        val host = uiState.userInsight!!.baseUrl.host
+        if (domainBlocked != null) {
+            val blockDomainLabel = if (domainBlocked) {
+                stringResource(R.string.activity_pub_user_detail_menu_unblock_domain, host)
+            } else {
+                stringResource(R.string.activity_pub_user_detail_menu_block_domain, host)
+            }
+            ModalDropdownMenuItem(
+                text = blockDomainLabel,
+                imageVector = Icons.Default.Block,
+                onClick = {
+                    onDismissMorePopupRequest()
+                    if (domainBlocked) {
+                        onUnblockDomainClick()
+                    } else {
+                        onShowBlockDomainConfirmDialog()
+                    }
+                }
+            )
+        }
+    }
+
+    @OptIn(ExperimentalMaterial3Api::class)
+    @Composable
+    private fun MuteUserBottomSheetDialog(
+        account: UserDetailAccountUiState,
+        onDismissRequest: () -> Unit,
+        onConfirmClick: () -> Unit,
+    ) {
+        val coroutineScope = rememberCoroutineScope()
+        val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        ModalBottomSheet(
+            sheetState = state,
+            onDismissRequest = onDismissRequest,
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, end = 16.dp, bottom = 8.dp),
+            ) {
                 Text(
-                    text = text,
+                    modifier = Modifier.align(Alignment.CenterHorizontally),
+                    text = stringResource(R.string.activity_pub_mute_user_bottom_sheet_title),
+                    style = MaterialTheme.typography.titleLarge,
+                )
+
+                FreadRichText(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .align(Alignment.CenterHorizontally),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    richText = account.userName,
+                    fontSizeSp = 16F,
+                )
+
+                Text(
+                    modifier = Modifier
+                        .padding(top = 6.dp)
+                        .align(Alignment.CenterHorizontally),
+                    text = account.account.prettyAcct,
+                    style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
-            },
-            onClick = onClick,
-        )
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                MuteUserRoleItem(
+                    icon = Icons.Default.Campaign,
+                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role1)
+                )
+
+                MuteUserRoleItem(
+                    icon = Icons.Default.VisibilityOff,
+                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role2)
+                )
+
+                MuteUserRoleItem(
+                    icon = Icons.Default.AlternateEmail,
+                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role3)
+                )
+
+                MuteUserRoleItem(
+                    icon = ImageVector.vectorResource(com.zhangke.fread.statusui.R.drawable.ic_status_forward),
+                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role4)
+                )
+
+                Button(
+                    modifier = Modifier
+                        .padding(top = 16.dp)
+                        .fillMaxWidth()
+                        .height(40.dp),
+                    onClick = onConfirmClick,
+                ) {
+                    Text(text = stringResource(R.string.activity_pub_mute_user_bottom_sheet_btn_mute))
+                }
+                TextButton(
+                    modifier = Modifier
+                        .align(Alignment.CenterHorizontally)
+                        .padding(top = 8.dp),
+                    onClick = {
+                        coroutineScope.launch {
+                            state.hide()
+                            onDismissRequest()
+                        }
+                    },
+                ) {
+                    Text(text = stringResource(com.zhangke.fread.framework.R.string.cancel))
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun MuteUserRoleItem(
+        icon: ImageVector,
+        role: String,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = icon,
+                contentDescription = null,
+            )
+            Spacer(modifier = Modifier.width(16.dp))
+            Text(
+                modifier = Modifier.weight(1F),
+                text = role,
+                textAlign = TextAlign.Start,
+            )
+        }
     }
 
     private val ActivityPubAccountEntity.prettyAcct: String

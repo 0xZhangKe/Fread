@@ -34,6 +34,15 @@
     <string name="activity_pub_user_detail_menu_edit_private_note_dialog_hint">请输入备注</string>
     <string name="activity_pub_user_detail_dialog_content_block">您确认要屏蔽对方吗？</string>
     <string name="activity_pub_user_detail_dialog_content_block_domain">您确认要屏蔽对方实例吗？</string>
+    <string name="activity_pub_user_menu_muted_user_list">隐藏的用户</string>
+    <string name="activity_pub_user_detail_menu_mute_user">隐藏 %s</string>
+    <string name="activity_pub_user_detail_menu_unmute_user">取消隐藏 %s</string>
+    <string name="activity_pub_mute_user_bottom_sheet_title">隐藏用户？</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role1">他们不会知道自己被隐藏</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role2">他们仍然可以看到你的帖子，但是你不会看到他们的帖子。</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role3">你将不会看到提及他们的帖子。</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role4">他们可以提及和关注你，但是你不会看到他们。</string>
+    <string name="activity_pub_mute_user_bottom_sheet_btn_mute">隐藏</string>
 
     <string name="activity_pub_about">关于</string>
     <string name="activity_pub_about_rule_title">站点规则</string>
@@ -116,4 +125,8 @@
 
     <string name="activity_pub_user_detail_follows_you">关注了你</string>
     <string name="activity_pub_user_pinned_post">置顶</string>
+
+    <string name="activity_pub_muted_user_list_title">隐藏的用户</string>
+    <string name="activity_pub_muted_user_list_empty">暂无隐藏的用户</string>
+    <string name="activity_pub_muted_user_list_unmute">取消屏蔽</string>
 </resources>

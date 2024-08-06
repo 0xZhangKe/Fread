@@ -66,6 +66,15 @@
     <string name="activity_pub_user_detail_menu_edit_private_note_dialog_hint">Enter Private Note</string>
     <string name="activity_pub_user_detail_dialog_content_block">Do you want to block this user?</string>
     <string name="activity_pub_user_detail_dialog_content_block_domain">Do you want to block this domain?</string>
+    <string name="activity_pub_user_menu_muted_user_list">Muted Users</string>
+    <string name="activity_pub_user_detail_menu_mute_user">Mute %s</string>
+    <string name="activity_pub_user_detail_menu_unmute_user">Unmute %s</string>
+    <string name="activity_pub_mute_user_bottom_sheet_title">Mute User?</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role1">They won\'t know they\'ve been muted.</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role2">They can still see your posts, but you won\'t see theirs.</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role3">You won\'t see posts that mention them.</string>
+    <string name="activity_pub_mute_user_bottom_sheet_role4">They can mention and follow you, but you won\'t see them.</string>
+    <string name="activity_pub_mute_user_bottom_sheet_btn_mute">Mute</string>
 
     <string name="add_instance_screen_title">Add Instance</string>
     <string name="add_instance_input_service_hint">Please enter server address</string>
@@ -115,4 +124,8 @@
 
     <string name="activity_pub_user_detail_follows_you">Follows you</string>
     <string name="activity_pub_user_pinned_post">Pinned</string>
+
+    <string name="activity_pub_muted_user_list_title">Muted Users</string>
+    <string name="activity_pub_muted_user_list_empty">No muted users</string>
+    <string name="activity_pub_muted_user_list_unmute">Unmute</string>
 </resources>

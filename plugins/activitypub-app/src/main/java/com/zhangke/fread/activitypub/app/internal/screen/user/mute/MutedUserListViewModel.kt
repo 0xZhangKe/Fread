@@ -41,6 +41,10 @@ class MutedUserListViewModel @AssistedInject constructor(
 
     private var nextMaxId: String? = null
 
+    init {
+        initData()
+    }
+
     override suspend fun loadFirstPageUsersFromServer(accountRepo: AccountsRepo): Result<List<ActivityPubAccountEntity>> {
         nextMaxId = null
         return accountRepo.getMutedUserList()
@@ -71,16 +75,16 @@ class MutedUserListViewModel @AssistedInject constructor(
     fun onUnmuteClick(author: BlogAuthor) {
         launchInViewModel {
             val accountRepo = clientManager.getClient(role).accountRepo
-            val authorId = getAuthorId(author) ?: return@launchInViewModel
+            val authorId = getUserIdByUri(author.uri) ?: return@launchInViewModel
             accountRepo.unmute(authorId)
                 .onSuccess {
-                    _uiState.update { state ->
+                    mutableUiState.update { state ->
                         state.copy(
                             userList = state.userList.filterNot { it.uri == author.uri }
                         )
                     }
                 }.onFailure {
-                    _snackMessageFlow.emitTextMessageFromThrowable(it)
+                    mutableSnackMessageFlow.emitTextMessageFromThrowable(it)
                 }
         }
     }

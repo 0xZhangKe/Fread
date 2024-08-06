@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Block
 import androidx.compose.material.icons.filled.Campaign
@@ -82,6 +83,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfo
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
+import com.zhangke.fread.activitypub.app.internal.screen.user.block.BlockedUserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.mute.MutedUserListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
@@ -219,6 +221,9 @@ data class UserDetailScreen(
             onMuteUserListClick = {
                 navigator.push(MutedUserListScreen(role))
             },
+            onBlockedUserListClick = {
+                navigator.push(BlockedUserListScreen(role))
+            },
         )
     }
 
@@ -248,6 +253,7 @@ data class UserDetailScreen(
         onNewNoteSet: (String) -> Unit,
         onMaybeHashtagTargetClick: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit,
         onMuteUserListClick: () -> Unit,
+        onBlockedUserListClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -287,6 +293,7 @@ data class UserDetailScreen(
                                 onMuteUserClick = onMuteUserClick,
                                 onUnmuteUserClick = onUnmuteUserClick,
                                 onMuteUserListClick = onMuteUserListClick,
+                                onBlockedUserListClick = onBlockedUserListClick,
                             )
                         },
                     )
@@ -493,6 +500,7 @@ data class UserDetailScreen(
         onMuteUserClick: () -> Unit,
         onUnmuteUserClick: () -> Unit,
         onMuteUserListClick: () -> Unit,
+        onBlockedUserListClick: () -> Unit,
     ) {
         val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
@@ -537,6 +545,10 @@ data class UserDetailScreen(
             val isAccountOwner = uiState.isAccountOwner
             if (isAccountOwner) {
                 SelfAccountActions(
+                    onBlockedUserListClick = {
+                        showMorePopup = false
+                        onBlockedUserListClick()
+                    },
                     onMuteUserListClick = {
                         showMorePopup = false
                         onMuteUserListClick()
@@ -659,11 +671,17 @@ data class UserDetailScreen(
 
     @Composable
     private fun SelfAccountActions(
+        onBlockedUserListClick: () -> Unit,
         onMuteUserListClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_user_menu_muted_user_list),
+            text = stringResource(R.string.activity_pub_user_menu_blocked_user_list),
             imageVector = Icons.Default.Block,
+            onClick = onBlockedUserListClick,
+        )
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_user_menu_muted_user_list),
+            imageVector = Icons.AutoMirrored.Filled.VolumeOff,
             onClick = onMuteUserListClick,
         )
     }

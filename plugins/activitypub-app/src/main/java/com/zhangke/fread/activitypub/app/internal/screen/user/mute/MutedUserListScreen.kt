@@ -5,12 +5,9 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -27,11 +24,8 @@ import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
-import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.activitypub.app.R
-import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserPlaceHolder
-import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserUi
+import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserPage
 import com.zhangke.fread.activitypub.app.internal.screen.user.common.CommonUserUiState
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.author.BlogAuthor
@@ -87,66 +81,24 @@ class MutedUserListScreen(
                     .fillMaxSize()
                     .padding(innerPadding)
             ) {
-                if (uiState.userList.isNotEmpty()) {
-                    val loadableState = rememberLoadableLazyColumnState(
-                        refreshing = uiState.loading,
-                        onRefresh = onRefresh,
-                        onLoadMore = onLoadMore,
-                    )
-                    LoadableLazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                        state = loadableState,
-                        refreshing = uiState.loading,
-                        loadState = uiState.loadMoreState,
-                    ) {
-                        itemsIndexed(uiState.userList) { index, item ->
-                            MutedUserUi(
-                                user = item,
-                                onUnmuteClick = onUnmuteClick,
-                                showDivider = index < uiState.userList.lastIndex,
-                            )
-                        }
-                    }
-                } else if (uiState.loading) {
-                    LazyColumn(
-                        modifier = Modifier.fillMaxSize(),
-                    ) {
-                        items(30) {
-                            CommonUserPlaceHolder()
-                        }
-                    }
-                } else {
-                    Box(modifier = Modifier.fillMaxSize()) {
-                        Text(
-                            modifier = Modifier.align(Alignment.Center),
-                            text = stringResource(R.string.activity_pub_muted_user_list_empty),
+                CommonUserPage(
+                    uiState = uiState,
+                    userAction = {
+                        Spacer(modifier = Modifier.width(6.dp))
+                        StyledTextButton(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            text = stringResource(R.string.activity_pub_muted_user_list_unmute),
+                            style = TextButtonStyle.STANDARD,
+                            onClick = {
+                                onUnmuteClick(it)
+                            },
                         )
-                    }
-                }
+                    },
+                    onRefresh = onRefresh,
+                    onLoadMore = onLoadMore,
+                    emptyText = stringResource(R.string.activity_pub_muted_user_list_empty),
+                )
             }
         }
-    }
-
-    @Composable
-    private fun MutedUserUi(
-        user: BlogAuthor,
-        onUnmuteClick: (BlogAuthor) -> Unit,
-        showDivider: Boolean,
-    ) {
-        CommonUserUi(
-            user = user,
-            showDivider = showDivider,
-            actionButton = {
-                Spacer(modifier = Modifier.width(6.dp))
-                StyledTextButton(
-                    modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(R.string.activity_pub_muted_user_list_unmute),
-                    style = TextButtonStyle.STANDARD,
-                    onClick = {
-                        onUnmuteClick(user)
-                    },
-                )
-            },
-        )
     }
 }

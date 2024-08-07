@@ -115,14 +115,9 @@ fun FeedsContent(
                 loadState = uiState.loadMoreState,
                 contentPadding = PaddingValues(
                     bottom = 80.dp,
-                )
+                ),
             ) {
-                itemsIndexed(
-                    items = uiState.feeds,
-                    key = { _, item ->
-                        item.status.id
-                    },
-                ) { index, item ->
+                itemsIndexed(uiState.feeds) { index, item ->
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
                         status = item,

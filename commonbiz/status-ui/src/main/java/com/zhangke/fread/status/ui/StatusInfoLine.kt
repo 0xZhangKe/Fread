@@ -31,7 +31,6 @@ import coil.compose.AsyncImage
 import coil.compose.AsyncImagePainter
 import coil.imageLoader
 import com.zhangke.framework.composable.freadPlaceholder
-import com.zhangke.framework.composable.startPadding
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
@@ -62,7 +61,7 @@ fun StatusInfoLine(
     reblogAuthor: BlogAuthor? = null,
 ) {
     val infoStyle = style.statusInfoStyle
-    ConstraintLayout(modifier = modifier.startPadding(style.containerPaddings)) {
+    ConstraintLayout(modifier = modifier.padding(start = style.containerStartPadding)) {
         val (
             avatar,
             upThread,
@@ -81,14 +80,14 @@ fun StatusInfoLine(
                     start.linkTo(avatar.start)
                     end.linkTo(avatar.end)
                     top.linkTo(parent.top)
-                    height = Dimension.value(style.containerPaddings.calculateTopPadding())
+                    height = Dimension.value(style.containerTopPadding)
                 },
             )
         } else {
             Box(modifier = Modifier.constrainAs(upThread) {
                 start.linkTo(avatar.end)
                 top.linkTo(parent.top)
-                height = Dimension.value(style.containerPaddings.calculateTopPadding())
+                height = Dimension.value(style.containerTopPadding)
             })
         }
 
@@ -184,7 +183,7 @@ fun StatusInfoLine(
         Text(
             modifier = Modifier.constrainAs(dateTime) {
                 start.linkTo(visibilityIconRef.end)
-                top.linkTo(name.bottom, infoStyle.nameToTimePadding)
+                top.linkTo(name.bottom, infoStyle.nameToInfoLineSpacing)
             },
             text = displayTime,
             style = infoStyle.descStyle,
@@ -197,7 +196,7 @@ fun StatusInfoLine(
             modifier = Modifier
                 .constrainAs(userId) {
                     baseline.linkTo(dateTime.baseline)
-                    start.linkTo(dateTime.end, infoStyle.timeToIdPadding)
+                    start.linkTo(dateTime.end, 2.dp)
                     end.linkTo(moreOptions.start, 8.dp)
                     width = Dimension.fillToConstraints
                 },

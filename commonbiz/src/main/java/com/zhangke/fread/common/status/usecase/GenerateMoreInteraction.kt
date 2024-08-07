@@ -9,14 +9,19 @@ class GenerateMoreInteraction @Inject constructor() {
 
     operator fun invoke(interactions: List<StatusInteraction>): List<StatusUiInteraction> {
         val moreInteractions = mutableListOf<StatusUiInteraction>()
-        interactions.mapFirstOrNull { it as? StatusInteraction.Bookmark }?.let {
+        interactions.firstNotNullOfOrNull { it as? StatusInteraction.Bookmark }?.let {
             if (it.enable) {
                 moreInteractions += StatusUiInteraction.Bookmark(it)
             }
         }
-        interactions.mapFirstOrNull { it as? StatusInteraction.Delete }?.let {
+        interactions.firstNotNullOfOrNull { it as? StatusInteraction.Delete }?.let {
             if (it.enable) {
                 moreInteractions += StatusUiInteraction.Delete(it)
+            }
+        }
+        interactions.firstNotNullOfOrNull { it as? StatusInteraction.Pin }?.let {
+            if (it.enable) {
+                moreInteractions += StatusUiInteraction.Pin(it)
             }
         }
         return moreInteractions

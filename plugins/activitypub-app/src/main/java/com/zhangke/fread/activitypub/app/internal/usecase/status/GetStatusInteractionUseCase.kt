@@ -50,6 +50,8 @@ class GetStatusInteractionUseCase @Inject constructor(
         )
         if (isSelfStatus) {
             actionList.add(StatusInteraction.Delete(enable = true))
+            val pinned = entity.pinned == true
+            actionList.add(StatusInteraction.Pin(pinned = pinned, enable = true))
         }
         return actionList
     }

@@ -50,6 +50,10 @@ fun StatusMoreInteractionIcon(
             expanded = showMorePopup,
             onDismissRequest = { showMorePopup = false },
         ) {
+            AdditionalMoreOptions(
+                blogUrl = blogUrl,
+                onDismissRequest = { showMorePopup = false },
+            )
             moreActionList.forEach { interaction ->
                 InteractionItem(
                     interaction = interaction,
@@ -57,10 +61,6 @@ fun StatusMoreInteractionIcon(
                     onActionClick = onActionClick,
                 )
             }
-            AdditionalMoreOptions(
-                blogUrl = blogUrl,
-                onDismissRequest = { showMorePopup = false },
-            )
         }
     }
 }

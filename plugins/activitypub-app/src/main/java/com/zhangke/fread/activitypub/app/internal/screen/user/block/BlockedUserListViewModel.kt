@@ -63,7 +63,7 @@ class BlockedUserListViewModel @AssistedInject constructor(
     override suspend fun loadNextPageUsersFromServer(accountRepo: AccountsRepo): Result<List<ActivityPubAccountEntity>> {
         val nextMaxId = nextMaxId
         if (nextMaxId.isNullOrEmpty()) {
-            return Result.failure(IllegalStateException("nextMaxId is null or empty"))
+            return Result.success(emptyList())
         }
         return accountRepo.getBlockedUserList(maxId = nextMaxId)
             .map { pagingResult ->

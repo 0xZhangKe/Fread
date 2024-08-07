@@ -1,8 +1,10 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user.favourites
+package com.zhangke.fread.activitypub.app.internal.screen.user.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
+import com.zhangke.activitypub.api.AccountsRepo
+import com.zhangke.activitypub.api.PagingResult
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -22,8 +24,8 @@ import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
 
-@HiltViewModel(assistedFactory = FavouritesViewModel.Factory::class)
-class FavouritesViewModel @AssistedInject constructor(
+@HiltViewModel(assistedFactory = StatusListViewModel.Factory::class)
+class StatusListViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusProvider: StatusProvider,
@@ -31,6 +33,7 @@ class FavouritesViewModel @AssistedInject constructor(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     @Assisted private val role: IdentityRole,
+    @Assisted private val type: StatusListType,
 ) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
@@ -40,7 +43,7 @@ class FavouritesViewModel @AssistedInject constructor(
     @AssistedFactory
     interface Factory : ScreenModelFactory {
 
-        fun create(role: IdentityRole): FavouritesViewModel
+        fun create(role: IdentityRole, type: StatusListType): StatusListViewModel
     }
 
     private var nextMaxId: String? = null
@@ -67,7 +70,7 @@ class FavouritesViewModel @AssistedInject constructor(
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        return accountRepo.getFavourites()
+        return fetchStatuses(accountRepo)
             .map { pagingResult ->
                 nextMaxId = pagingResult.pagingInfo.nextMaxId
                 RefreshResult(
@@ -80,7 +83,7 @@ class FavouritesViewModel @AssistedInject constructor(
     private suspend fun loadMoreDataFromServer(): Result<List<Status>> {
         val nextMaxId = nextMaxId
         if (nextMaxId.isNullOrEmpty()) {
-            return Result.failure(IllegalStateException("nextMaxId is null or empty"))
+            return Result.success(emptyList())
         }
         val accountRepo = clientManager.getClient(role).accountRepo
         val platformResult = platformRepo.getPlatform(role)
@@ -88,12 +91,22 @@ class FavouritesViewModel @AssistedInject constructor(
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
-        return accountRepo.getFavourites(maxId = nextMaxId)
+        return fetchStatuses(accountRepo, nextMaxId)
             .map { pagingResult ->
-                this@FavouritesViewModel.nextMaxId = pagingResult.pagingInfo.nextMaxId
+                this@StatusListViewModel.nextMaxId = pagingResult.pagingInfo.nextMaxId
                 pagingResult.data.map { it.toUiState(platform) }
             }
+    }
 
+    private suspend fun fetchStatuses(
+        accountRepo: AccountsRepo,
+        maxId: String? = null,
+    ): Result<PagingResult<List<ActivityPubStatusEntity>>> {
+        return if (type == StatusListType.FAVOURITES) {
+            accountRepo.getFavourites(maxId = maxId)
+        } else {
+            accountRepo.getBookmarks(maxId = maxId)
+        }
     }
 
     private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): Status {

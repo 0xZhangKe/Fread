@@ -7,9 +7,12 @@
     <string name="status_ui_delete">Delete</string>
     <string name="status_ui_share">Share</string>
     <string name="status_ui_bookmark">Bookmark</string>
+    <string name="status_ui_unbookmark">Unbookmark</string>
     <string name="status_ui_reply">Reply</string>
     <string name="status_ui_follow">Follow</string>
     <string name="status_ui_unfollow">Unfollow</string>
+    <string name="status_ui_pin">Pin</string>
+    <string name="status_ui_unpin">Unpin</string>
 
     <string name="status_ui_new_status">New Content</string>
 

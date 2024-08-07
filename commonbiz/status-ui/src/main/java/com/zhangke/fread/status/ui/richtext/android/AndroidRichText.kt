@@ -85,6 +85,7 @@ private fun UnSelectableTextView(
         factory = {
             LinkedTextView(it).apply {
                 this.gravity = Gravity.START
+                this.setLineSpacing(0F, 1.2F)
             }
         },
         update = {
@@ -127,6 +128,7 @@ private fun SelectableTextView(
                 this.isEnabled = true
                 this.setTextIsSelectable(true)
                 this.isLongClickable = true
+                this.setLineSpacing(0F, 1.2F)
             }
         },
         update = {

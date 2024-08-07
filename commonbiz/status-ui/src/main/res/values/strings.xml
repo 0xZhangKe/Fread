@@ -7,9 +7,12 @@
     <string name="status_ui_delete">删除</string>
     <string name="status_ui_share">分享</string>
     <string name="status_ui_bookmark">收藏</string>
+    <string name="status_ui_unbookmark">取消收藏</string>
     <string name="status_ui_reply">回复</string>
     <string name="status_ui_follow">关注</string>
     <string name="status_ui_unfollow">取消关注</string>
+    <string name="status_ui_pin">置顶</string>
+    <string name="status_ui_unpin">取消置顶</string>
 
     <string name="status_ui_new_status">新内容</string>
 

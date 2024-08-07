@@ -3,11 +3,11 @@ package com.zhangke.fread.status.ui.action
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
-import androidx.compose.material.icons.filled.ChatBubbleOutline
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.SwapHoriz
+import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
@@ -20,9 +20,23 @@ val StatusUiInteraction.actionName: String
         is StatusUiInteraction.Like -> stringResource(R.string.status_ui_like)
         is StatusUiInteraction.Forward -> stringResource(R.string.status_ui_forward)
         is StatusUiInteraction.Comment -> stringResource(R.string.status_ui_comment)
-        is StatusUiInteraction.Bookmark -> stringResource(R.string.status_ui_bookmark)
+        is StatusUiInteraction.Bookmark -> {
+            if (interaction.bookmarked) {
+                stringResource(R.string.status_ui_unbookmark)
+            } else {
+                stringResource(R.string.status_ui_bookmark)
+            }
+        }
+
         is StatusUiInteraction.Delete -> stringResource(R.string.status_ui_delete)
         is StatusUiInteraction.Share -> stringResource(R.string.status_ui_share)
+        is StatusUiInteraction.Pin -> {
+            if (interaction.pinned) {
+                stringResource(R.string.status_ui_unpin)
+            } else {
+                stringResource(R.string.status_ui_pin)
+            }
+        }
     }
 
 val StatusUiInteraction.logo: ImageVector
@@ -33,4 +47,5 @@ val StatusUiInteraction.logo: ImageVector
         is StatusUiInteraction.Bookmark -> if (interaction.bookmarked) Icons.Default.Bookmark else Icons.Default.BookmarkBorder
         is StatusUiInteraction.Delete -> Icons.Default.Delete
         is StatusUiInteraction.Share -> ImageVector.vectorResource(R.drawable.ic_share)
+        is StatusUiInteraction.Pin -> if (interaction.pinned) Icons.Default.PushPin else Icons.Outlined.PushPin
     }

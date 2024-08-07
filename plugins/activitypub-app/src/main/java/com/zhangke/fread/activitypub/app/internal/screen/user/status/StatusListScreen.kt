@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user.favourites
+package com.zhangke.fread.activitypub.app.internal.screen.user.status
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -22,15 +22,18 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
 
-class FavouritesScreen(private val role: IdentityRole) : BaseScreen() {
+class StatusListScreen(
+    private val role: IdentityRole,
+    private val type: StatusListType,
+) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getViewModel<FavouritesViewModel, FavouritesViewModel.Factory> {
-            it.create(role)
+        val viewModel = getViewModel<StatusListViewModel, StatusListViewModel.Factory> {
+            it.create(role, type)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
@@ -38,7 +41,7 @@ class FavouritesScreen(private val role: IdentityRole) : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(R.string.activity_pub_favourites_list_title),
+                    title = type.pageTitle,
                     onBackClick = navigator::pop,
                 )
             },
@@ -69,4 +72,10 @@ class FavouritesScreen(private val role: IdentityRole) : BaseScreen() {
             messageTextFlow = viewModel.errorMessageFlow,
         )
     }
+
+    private val StatusListType.pageTitle: String
+        @Composable get() = when (this) {
+            StatusListType.FAVOURITES -> stringResource(R.string.activity_pub_favourites_list_title)
+            StatusListType.BOOKMARKS -> stringResource(R.string.activity_pub_bookmarks_list_title)
+        }
 }

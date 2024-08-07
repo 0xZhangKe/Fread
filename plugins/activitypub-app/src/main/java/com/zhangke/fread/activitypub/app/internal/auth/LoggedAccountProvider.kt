@@ -1,8 +1,10 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
+import com.zhangke.framework.collections.container
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.status.uri.FormalUri
+import java.util.concurrent.CopyOnWriteArraySet
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -13,10 +15,11 @@ import javax.inject.Singleton
 @Singleton
 class LoggedAccountProvider @Inject constructor() {
 
-    private val accountSet = mutableSetOf<ActivityPubLoggedAccount>()
+    private val accountSet = CopyOnWriteArraySet<ActivityPubLoggedAccount>()
 
-    fun addAccount(account: ActivityPubLoggedAccount) {
-        accountSet.add(account)
+    fun updateAccounts(accountList: List<ActivityPubLoggedAccount>){
+        accountSet.clear()
+        accountSet.addAll(accountList)
     }
 
     fun getAccount(userUri: FormalUri): ActivityPubLoggedAccount? {

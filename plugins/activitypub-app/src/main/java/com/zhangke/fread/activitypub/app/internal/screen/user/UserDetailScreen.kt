@@ -19,6 +19,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.VolumeOff
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
@@ -85,9 +86,10 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.block.BlockedUserListScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.favourites.FavouritesScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.mute.MutedUserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.analytics.reportClick
@@ -138,7 +140,10 @@ data class UserDetailScreen(
             uiState = uiState,
             messageFlow = viewModel.messageFlow,
             onFavouritesClick = {
-                navigator.push(FavouritesScreen(role))
+                navigator.push(StatusListScreen(role, StatusListType.FAVOURITES))
+            },
+            onBookmarksClick = {
+                navigator.push(StatusListScreen(role, StatusListType.BOOKMARKS))
             },
             onBackClick = navigator::pop,
             onFollowAccountClick = viewModel::onFollowClick,
@@ -238,6 +243,7 @@ data class UserDetailScreen(
         messageFlow: SharedFlow<TextString>,
         onBackClick: () -> Unit,
         onFavouritesClick: () -> Unit,
+        onBookmarksClick: () -> Unit,
         onBannerClick: () -> Unit,
         onAvatarClick: () -> Unit,
         onMuteUserClick: () -> Unit,
@@ -291,6 +297,7 @@ data class UserDetailScreen(
                                 uiState = uiState,
                                 onFavouritesClick = onFavouritesClick,
                                 onBlockClick = onBlockClick,
+                                onBookmarksClick = onBookmarksClick,
                                 onBlockDomainClick = onBlockDomainClick,
                                 onUnblockDomainClick = onUnblockDomainClick,
                                 onOpenInBrowserClick = onOpenInBrowserClick,
@@ -498,6 +505,7 @@ data class UserDetailScreen(
     private fun ToolbarActions(
         uiState: UserDetailUiState,
         onFavouritesClick: () -> Unit,
+        onBookmarksClick: () -> Unit,
         onBlockClick: () -> Unit,
         onBlockDomainClick: () -> Unit,
         onUnblockDomainClick: () -> Unit,
@@ -513,17 +521,11 @@ data class UserDetailScreen(
         val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
             SimpleIconButton(
-                onClick = onFavouritesClick,
-                imageVector = Icons.Default.Favorite,
-                contentDescription = "Favourites List",
-            )
-            Box(modifier = Modifier.width(8.dp))
-            SimpleIconButton(
                 onClick = onEditClick,
                 imageVector = Icons.Default.Edit,
                 contentDescription = "Edit Profile",
             )
-            Box(modifier = Modifier.width(16.dp))
+            Box(modifier = Modifier.width(8.dp))
         }
         var showMorePopup by remember {
             mutableStateOf(false)
@@ -559,6 +561,14 @@ data class UserDetailScreen(
             val isAccountOwner = uiState.isAccountOwner
             if (isAccountOwner) {
                 SelfAccountActions(
+                    onBookmarksClick = {
+                        showMorePopup = false
+                        onBookmarksClick()
+                    },
+                    onFavouritesClick = {
+                        showMorePopup = false
+                        onFavouritesClick()
+                    },
                     onBlockedUserListClick = {
                         showMorePopup = false
                         onBlockedUserListClick()
@@ -685,9 +695,21 @@ data class UserDetailScreen(
 
     @Composable
     private fun SelfAccountActions(
+        onBookmarksClick: () -> Unit,
+        onFavouritesClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
         onMuteUserListClick: () -> Unit,
     ) {
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_favourites_list_title),
+            onClick = onFavouritesClick,
+            imageVector = Icons.Default.Favorite,
+        )
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_bookmarks_list_title),
+            onClick = onBookmarksClick,
+            imageVector = Icons.Default.Bookmarks,
+        )
         ModalDropdownMenuItem(
             text = stringResource(R.string.activity_pub_user_menu_muted_user_list),
             imageVector = Icons.AutoMirrored.Filled.VolumeOff,

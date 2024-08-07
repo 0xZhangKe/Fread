@@ -7,7 +7,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import javax.inject.Inject
 
 class ActivityPubStatusReadStateRepo @Inject constructor(
-    private val activityPubStatusReadStateDatabases: ActivityPubStatusReadStateDatabases,
+    activityPubStatusReadStateDatabases: ActivityPubStatusReadStateDatabases,
 ) {
 
     private val readStateDao = activityPubStatusReadStateDatabases.getDao()

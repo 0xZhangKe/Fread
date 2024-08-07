@@ -33,9 +33,7 @@ class ActivityPubAccountManager @Inject constructor(
         ApplicationScope.launch {
             accountRepo.getAllAccountFlow()
                 .collect {
-                    for (account in it) {
-                        loggedAccountProvider.addAccount(account)
-                    }
+                    loggedAccountProvider.updateAccounts(it)
                 }
         }
     }

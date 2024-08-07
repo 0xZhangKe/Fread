@@ -47,7 +47,7 @@ fun StatusPlaceHolder(
             modifier = Modifier
                 .height(12.dp)
                 .constrainAs(descRef) {
-                    top.linkTo(nameRef.bottom, StatusInfoStyleDefaults.nameToTimePadding)
+                    top.linkTo(nameRef.bottom, 2.dp)
                     start.linkTo(nameRef.start)
                     width = Dimension.value(200.dp)
                 }

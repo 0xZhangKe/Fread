@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.utils.ShareHelper
 import com.zhangke.fread.status.author.BlogAuthor
@@ -18,8 +17,8 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
-import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.label.StatusVisibilityLabel
+import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
 fun BlogUi(
@@ -68,7 +67,11 @@ fun BlogUi(
         BlogContent(
             modifier = Modifier
                 .fillMaxWidth()
-                .horizontalPadding(style.containerPaddings),
+                .padding(
+                    start = style.containerStartPadding,
+                    top = style.contentToInfoSpacing,
+                    end = style.containerEndPadding,
+                ),
             blog = blog,
             indexOfFeeds = indexInList,
             style = style,
@@ -100,7 +103,7 @@ fun BlogUi(
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(style.containerPaddings.calculateBottomPadding())
+                .height(style.containerBottomPadding)
         )
         if (showDivider) {
             BlogDivider()

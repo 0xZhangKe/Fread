@@ -11,7 +11,7 @@ data class StatusUiState(
     val displayTime: String,
     val bottomInteractions: List<StatusUiInteraction>,
     val moreInteractions: List<StatusUiInteraction>,
-): java.io.Serializable
+) : java.io.Serializable
 
 fun List<StatusUiState>.updateStatus(
     status: StatusUiState,
@@ -19,19 +19,6 @@ fun List<StatusUiState>.updateStatus(
     return map {
         if (it.status.intrinsicBlog.id == status.status.intrinsicBlog.id) {
             status
-        } else {
-            it
-        }
-    }
-}
-
-inline fun List<StatusUiState>.updateById(
-    statusId: String,
-    block: (StatusUiState) -> StatusUiState,
-): List<StatusUiState> {
-    return map {
-        if (it.status.id == statusId) {
-            block(it)
         } else {
             it
         }

@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.ui.style
 
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -8,7 +7,11 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
 data class StatusStyle(
-    val containerPaddings: PaddingValues,
+    val containerStartPadding: Dp,
+    val containerTopPadding: Dp,
+    val containerEndPadding: Dp,
+    val containerBottomPadding: Dp,
+    val contentToInfoSpacing: Dp,
     val bottomPanelStartPadding: Dp,
     val iconEndPadding: Dp,
     val bottomPanelTopPadding: Dp,
@@ -21,11 +24,13 @@ object StatusStyleDefaults {
 
     val startPadding = 16.dp
 
-    val topPadding = 8.dp
+    val topPadding = 16.dp
 
     val endPadding = 16.dp
 
-    val bottomPadding = 4.dp
+    val contentToInfoSpacing = 4.dp
+
+    val bottomPadding = 8.dp
 
     val bottomPanelStartPadding = 8.dp
 
@@ -38,19 +43,22 @@ object StatusStyleDefaults {
 
 @Composable
 fun defaultStatusStyle(
-    containerPaddings: PaddingValues = PaddingValues(
-        start = StatusStyleDefaults.startPadding,
-        top = StatusStyleDefaults.topPadding,
-        end = StatusStyleDefaults.endPadding,
-        bottom = StatusStyleDefaults.bottomPadding,
-    ),
+    containerStartPadding: Dp = StatusStyleDefaults.startPadding,
+    containerTopPadding: Dp = StatusStyleDefaults.topPadding,
+    containerEndPadding: Dp = StatusStyleDefaults.endPadding,
+    containerBottomPadding: Dp = StatusStyleDefaults.bottomPadding,
+    infoToContentSpacing: Dp = StatusStyleDefaults.contentToInfoSpacing,
     contentMaxLine: Int = StatusStyleDefaults.contentMaxLine,
     bottomPanelStartPadding: Dp = StatusStyleDefaults.bottomPanelStartPadding,
     iconEndPadding: Dp = StatusStyleDefaults.iconEndPadding,
     bottomPanelTopPadding: Dp = StatusStyleDefaults.bottomPanelTopPadding,
     statusInfoStyle: StatusInfoStyle = defaultStatusInfoStyle(),
 ) = StatusStyle(
-    containerPaddings = containerPaddings,
+    containerStartPadding = containerStartPadding,
+    containerTopPadding = containerTopPadding,
+    containerEndPadding = containerEndPadding,
+    containerBottomPadding = containerBottomPadding,
+    contentToInfoSpacing = infoToContentSpacing,
     bottomPanelStartPadding = bottomPanelStartPadding,
     iconEndPadding = iconEndPadding,
     statusInfoStyle = statusInfoStyle,

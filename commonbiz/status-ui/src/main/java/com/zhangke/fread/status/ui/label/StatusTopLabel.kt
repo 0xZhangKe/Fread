@@ -58,8 +58,8 @@ private fun IconWithTextLabel(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = style.containerPaddings.calculateTopPadding())
-            .horizontalPadding(style.containerPaddings),
+            .padding(top = style.containerTopPadding)
+            .padding(start = style.containerStartPadding, end = style.containerEndPadding),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -14,8 +15,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.zhangke.framework.composable.endPadding
-import com.zhangke.framework.composable.startPadding
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
@@ -46,7 +45,7 @@ fun AncestorBlogUi(
         ConstraintLayout(
             modifier = Modifier
                 .fillMaxWidth()
-                .startPadding(style.containerPaddings)
+                .padding(start = style.containerStartPadding)
         ) {
             val (
                 avatar,
@@ -65,7 +64,7 @@ fun AncestorBlogUi(
                 start.linkTo(avatar.start)
                 end.linkTo(avatar.end)
                 top.linkTo(parent.top)
-                height = Dimension.value(style.containerPaddings.calculateTopPadding())
+                height = Dimension.value(style.containerTopPadding)
             }
 
             if (isFirst) {
@@ -124,7 +123,7 @@ fun AncestorBlogUi(
             Text(
                 modifier = Modifier.constrainAs(dateTime) {
                     start.linkTo(name.start)
-                    top.linkTo(name.bottom, statusInfoStyle.nameToTimePadding)
+                    top.linkTo(name.bottom, style.statusInfoStyle.nameToInfoLineSpacing)
                 },
                 text = displayTime,
                 fontSize = style.contentSize.infoSize,
@@ -136,7 +135,7 @@ fun AncestorBlogUi(
             Text(
                 modifier = Modifier.constrainAs(userId) {
                     baseline.linkTo(dateTime.baseline)
-                    start.linkTo(dateTime.end, statusInfoStyle.timeToIdPadding)
+                    start.linkTo(dateTime.end, 2.dp)
                 },
                 text = blog.author.webFinger.toString(),
                 style = statusInfoStyle.descStyle,
@@ -158,7 +157,7 @@ fun AncestorBlogUi(
 
             BlogContent(
                 modifier = Modifier
-                    .endPadding(style.containerPaddings)
+                    .padding(end = style.containerEndPadding)
                     .constrainAs(blogContent) {
                         start.linkTo(name.start)
                         end.linkTo(parent.end)
@@ -198,7 +197,7 @@ fun AncestorBlogUi(
             Spacer(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(style.containerPaddings.calculateBottomPadding())
+                    .height(style.containerBottomPadding)
                     .constrainAs(bottomPaddingRef) {
                         start.linkTo(parent.start)
                         end.linkTo(parent.end)

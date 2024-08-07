@@ -3,7 +3,7 @@ package com.zhangke.fread.status.status.model
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class StatusInteraction: java.io.Serializable {
+sealed class StatusInteraction : java.io.Serializable {
 
     abstract val enable: Boolean
 
@@ -36,6 +36,12 @@ sealed class StatusInteraction: java.io.Serializable {
 
     @Serializable
     class Delete(
+        override val enable: Boolean,
+    ) : StatusInteraction(), java.io.Serializable
+
+    @Serializable
+    class Pin(
+        val pinned: Boolean,
         override val enable: Boolean,
     ) : StatusInteraction(), java.io.Serializable
 }

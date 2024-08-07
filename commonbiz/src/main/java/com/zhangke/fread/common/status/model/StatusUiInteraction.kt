@@ -21,6 +21,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
             is Bookmark -> interaction
             is Delete -> interaction
             is Share -> null
+            is Pin -> interaction
         }
 
     @Serializable
@@ -68,6 +69,15 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Delete(val interaction: StatusInteraction.Delete) : StatusUiInteraction(),
+        java.io.Serializable {
+
+        override val enabled: Boolean get() = interaction.enable
+
+        override val label: String? get() = null
+    }
+
+    @Serializable
+    data class Pin(val interaction: StatusInteraction.Pin) : StatusUiInteraction(),
         java.io.Serializable {
 
         override val enabled: Boolean get() = interaction.enable

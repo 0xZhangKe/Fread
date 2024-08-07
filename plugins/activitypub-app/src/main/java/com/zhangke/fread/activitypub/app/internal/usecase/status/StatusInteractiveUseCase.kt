@@ -50,6 +50,14 @@ class StatusInteractiveUseCase @Inject constructor(
 
             is StatusInteraction.Delete -> statusRepo.delete(statusId)
 
+            is StatusInteraction.Pin -> {
+                if (interaction.pinned) {
+                    statusRepo.unpin(statusId)
+                } else {
+                    statusRepo.pin(statusId)
+                }
+            }
+
             else -> {
                 Result.failure(IllegalArgumentException("Unknown interaction: $interaction"))
             }

@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
+import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.Icon
 import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
@@ -16,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.horizontalPadding
 import com.zhangke.fread.status.model.StatusVisibility
@@ -42,7 +42,7 @@ fun StatusVisibilityLabel(
 @Composable
 fun StatusPinnedLabel(style: StatusStyle) {
     IconWithTextLabel(
-        icon = ImageVector.vectorResource(R.drawable.ic_keep),
+        icon = Icons.Default.PushPin,
         text = stringResource(id = R.string.status_ui_label_pinned),
         style = style,
     )

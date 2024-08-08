@@ -18,7 +18,37 @@ data class StatusStyle(
     val statusInfoStyle: StatusInfoStyle,
     val contentMaxLine: Int = 10,
     val contentSize: StatusContentSize = StatusContentSize.default(),
-)
+){
+
+    data class TopLabelStyle(
+        val iconSize: Dp,
+        val textSize: TextUnit,
+        val containerHeight: Dp,
+    )
+
+    data class ContentStyle(
+        val maxLine: Int,
+        val textSize: TextUnit,
+        val contentToInfoLineSpacing: Dp,
+        val textToAttachmentSpacing: Dp,
+    )
+
+    data class InfoLineStyle(
+        val avatarSize: Dp,
+        val nameSize: TextUnit,
+        val datetimeSize: TextUnit,
+        val acctSize: TextUnit,
+        val visibilityLabelSize: Dp,
+        val nameToAcctSpacing: Dp,
+    )
+
+    data class BottomPanelStyle(
+        val height: Dp,
+        val iconSize: Dp,
+        val startPadding: Dp,
+        val endPadding: Dp,
+    )
+}
 
 object StatusStyleDefaults {
 

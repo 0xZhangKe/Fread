@@ -17,7 +17,7 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
-import com.zhangke.fread.status.ui.label.StatusVisibilityLabel
+import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
@@ -44,13 +44,19 @@ fun BlogUi(
 ) {
     val context = LocalContext.current
     Column(modifier = modifier.fillMaxWidth()) {
-        topLabel?.invoke()
-        StatusVisibilityLabel(
+        if (topLabel == null) {
+            Spacer(modifier = Modifier.height(style.containerTopPadding / 2))
+        } else {
+            topLabel()
+        }
+        StatusMentionOnlyLabel(
+            modifier = Modifier,
             visibility = blog.visibility,
             style = style,
         )
         StatusInfoLine(
             modifier = Modifier
+                .padding(top = style.containerTopPadding / 2)
                 .fillMaxWidth(),
             blogAuthor = blog.author,
             displayTime = displayTime,
@@ -61,7 +67,6 @@ fun BlogUi(
             onUserInfoClick = onUserInfoClick,
             onUrlClick = onUrlClick,
             style = style,
-            showUpThread = showUpThread,
             reblogAuthor = reblogAuthor,
         )
         BlogContent(

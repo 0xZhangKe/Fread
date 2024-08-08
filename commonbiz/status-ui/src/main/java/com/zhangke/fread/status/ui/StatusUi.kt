@@ -15,6 +15,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.label.ReblogTopLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.defaultStatusStyle
@@ -80,9 +81,11 @@ private fun getStatusTopLabel(
             )
         }
     }
-    if (rawStatus.intrinsicBlog.pinned == true) {
+    if (rawStatus.intrinsicBlog.pinned) {
         return {
-            StatusPinnedLabel(style = style)
+            StatusPinnedLabel(
+                style = style,
+            )
         }
     }
     return null

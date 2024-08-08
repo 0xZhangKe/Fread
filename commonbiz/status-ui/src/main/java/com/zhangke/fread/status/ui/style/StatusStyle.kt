@@ -1,16 +1,22 @@
 package com.zhangke.fread.status.ui.style
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
+// 垂直方向的 padding 外面统一加
 data class StatusStyle(
     val containerStartPadding: Dp,
     val containerTopPadding: Dp,
     val containerEndPadding: Dp,
     val containerBottomPadding: Dp,
+    val infoLineStyle: InfoLineStyle,
+
+
     val contentToInfoSpacing: Dp,
     val bottomPanelStartPadding: Dp,
     val iconEndPadding: Dp,
@@ -18,8 +24,11 @@ data class StatusStyle(
     val statusInfoStyle: StatusInfoStyle,
     val contentMaxLine: Int = 10,
     val contentSize: StatusContentSize = StatusContentSize.default(),
-){
+) {
 
+    /**
+     * 如果顶部有 Label，那么Label距离顶部和底部的高度均为 container top padding 的一半
+     */
     data class TopLabelStyle(
         val iconSize: Dp,
         val textSize: TextUnit,
@@ -34,13 +43,27 @@ data class StatusStyle(
     )
 
     data class InfoLineStyle(
-        val avatarSize: Dp,
         val nameSize: TextUnit,
-        val datetimeSize: TextUnit,
-        val acctSize: TextUnit,
-        val visibilityLabelSize: Dp,
-        val nameToAcctSpacing: Dp,
-    )
+        val avatarSize: Dp,
+        val descStyle: TextStyle,
+    ) {
+
+        companion object {
+
+            @Composable
+            fun default(
+                nameSize: TextUnit = 16.sp,
+                avatarSize: Dp = 40.dp,
+                descStyle: TextStyle = MaterialTheme.typography.bodySmall
+            ): InfoLineStyle {
+                return InfoLineStyle(
+                    nameSize = nameSize,
+                    avatarSize = avatarSize,
+                    descStyle = descStyle,
+                )
+            }
+        }
+    }
 
     data class BottomPanelStyle(
         val height: Dp,
@@ -77,6 +100,9 @@ fun defaultStatusStyle(
     containerTopPadding: Dp = StatusStyleDefaults.topPadding,
     containerEndPadding: Dp = StatusStyleDefaults.endPadding,
     containerBottomPadding: Dp = StatusStyleDefaults.bottomPadding,
+    infoLineStyle: StatusStyle.InfoLineStyle = StatusStyle.InfoLineStyle.default(),
+
+
     infoToContentSpacing: Dp = StatusStyleDefaults.contentToInfoSpacing,
     contentMaxLine: Int = StatusStyleDefaults.contentMaxLine,
     bottomPanelStartPadding: Dp = StatusStyleDefaults.bottomPanelStartPadding,
@@ -88,6 +114,8 @@ fun defaultStatusStyle(
     containerTopPadding = containerTopPadding,
     containerEndPadding = containerEndPadding,
     containerBottomPadding = containerBottomPadding,
+    infoLineStyle = infoLineStyle,
+
     contentToInfoSpacing = infoToContentSpacing,
     bottomPanelStartPadding = bottomPanelStartPadding,
     iconEndPadding = iconEndPadding,

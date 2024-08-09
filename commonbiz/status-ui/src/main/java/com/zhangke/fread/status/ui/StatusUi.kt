@@ -12,6 +12,7 @@ import com.zhangke.fread.status.ui.label.ReblogTopLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
+import com.zhangke.fread.status.ui.threads.contentIndent
 
 @Composable
 fun StatusUi(
@@ -36,21 +37,7 @@ fun StatusUi(
             moreInteractions = status.moreInteractions,
             indexInList = indexInList,
             threadsType = threadsType,
-            style = if (threadsType == ThreadsType.NONE || threadsType == ThreadsType.ANCHOR) {
-                style
-            } else {
-                val infoLineStyle = style.infoLineStyle
-                val contentStartPadding =
-                    infoLineStyle.avatarSize + infoLineStyle.nameToAvatarSpacing
-                style.copy(
-                    contentStyle = style.contentStyle.copy(
-                        startPadding = contentStartPadding,
-                    ),
-                    bottomPanelStyle = style.bottomPanelStyle.copy(
-                        startPadding = contentStartPadding,
-                    ),
-                )
-            },
+            style = if (threadsType.contentIndent) style.contentIndentStyle() else style,
             onInteractive = {
                 composedStatusInteraction.onStatusInteractive(status, it)
             },

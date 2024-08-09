@@ -23,6 +23,14 @@ data class StatusStyle(
     val threadsStyle: ThreadsStyle,
 ) {
 
+    fun contentIndentStyle(): StatusStyle {
+        val contentStartPadding = infoLineStyle.avatarSize + infoLineStyle.nameToAvatarSpacing
+        return copy(
+            contentStyle = contentStyle.copy(startPadding = contentStartPadding),
+            bottomPanelStyle = bottomPanelStyle.copy(startPadding = contentStartPadding),
+        )
+    }
+
     data class TopLabelStyle(
         val iconSize: Dp,
         val textSize: TextUnit,
@@ -157,6 +165,5 @@ data class StatusStyle(
             bottomPanelStyle = bottomPanelStyle,
             threadsStyle = threadsStyle,
         )
-
     }
 }

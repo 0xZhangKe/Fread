@@ -50,7 +50,7 @@ import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
-import com.zhangke.fread.common.config.AppFontSize
+import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.page.BaseScreen
@@ -132,7 +132,7 @@ class SettingScreen : BaseScreen() {
         onLanguageClick: (LanguageSettingType) -> Unit,
         onRatingClick: () -> Unit,
         onAboutClick: () -> Unit,
-        onContentSizeChanged: (AppFontSize) -> Unit,
+        onContentSizeChanged: (StatusContentSize) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -251,16 +251,16 @@ class SettingScreen : BaseScreen() {
 
     @Composable
     private fun ContentSizeItem(
-        contentSize: AppFontSize,
-        onContentSizeChanged: (AppFontSize) -> Unit,
+        contentSize: StatusContentSize,
+        onContentSizeChanged: (StatusContentSize) -> Unit,
     ) {
         SettingItemWithPopup(
             icon = Icons.Default.Language,
             title = stringResource(R.string.profile_setting_font_size),
             subtitle = contentSize.sizeName,
-            dropDownItems = AppFontSize.entries.map { it.sizeName },
+            dropDownItems = StatusContentSize.entries.map { it.sizeName },
             onItemClick = {
-                onContentSizeChanged(AppFontSize.entries[it])
+                onContentSizeChanged(StatusContentSize.entries[it])
             }
         )
     }
@@ -399,11 +399,10 @@ class SettingScreen : BaseScreen() {
             }
         }
 
-    private val AppFontSize.sizeName: String
+    private val StatusContentSize.sizeName: String
         @Composable get() = when (this) {
-            AppFontSize.SMALL -> stringResource(R.string.profile_setting_font_size_small)
-            AppFontSize.MEDIUM -> stringResource(R.string.profile_setting_font_size_medium)
-            AppFontSize.LARGE -> stringResource(R.string.profile_setting_font_size_large)
-            AppFontSize.EXTRA_LARGE -> stringResource(R.string.profile_setting_font_size_extra_large)
+            StatusContentSize.SMALL -> stringResource(R.string.profile_setting_font_size_small)
+            StatusContentSize.MEDIUM -> stringResource(R.string.profile_setting_font_size_medium)
+            StatusContentSize.LARGE -> stringResource(R.string.profile_setting_font_size_large)
         }
 }

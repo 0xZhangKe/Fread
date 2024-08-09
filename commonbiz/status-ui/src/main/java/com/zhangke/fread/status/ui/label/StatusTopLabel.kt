@@ -21,7 +21,6 @@ import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.R
@@ -29,19 +28,15 @@ import com.zhangke.fread.statusui.R
 @Composable
 fun StatusMentionOnlyLabel(
     modifier: Modifier,
-    visibility: StatusVisibility,
     style: StatusStyle,
 ) {
-    if (visibility == StatusVisibility.DIRECT) {
-        // mentioned only
-        IconWithTextLabel(
-            modifier = modifier,
-            icon = Icons.Default.AlternateEmail,
-            text = stringResource(R.string.status_ui_visibility_mentioned_only),
-            style = style,
-            color = MaterialTheme.colorScheme.primary,
-        )
-    }
+    IconWithTextLabel(
+        modifier = modifier,
+        icon = Icons.Default.AlternateEmail,
+        text = stringResource(R.string.status_ui_visibility_mentioned_only),
+        style = style,
+        color = MaterialTheme.colorScheme.primary,
+    )
 }
 
 @Composable
@@ -53,13 +48,13 @@ fun ReblogTopLabel(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = style.containerTopPadding / 2)
+            .padding(top = style.containerTopPadding)
             .padding(start = style.containerStartPadding, end = style.containerEndPadding)
             .noRippleClick { onAuthorClick(author) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(14.dp),
+            modifier = Modifier.size(style.topLabelStyle.iconSize),
             imageVector = ImageVector.vectorResource(R.drawable.ic_status_forward),
             contentDescription = null,
         )
@@ -70,21 +65,21 @@ fun ReblogTopLabel(
             onHashtagClick = {},
             onMentionClick = {},
             onUrlClick = {},
-            fontSizeSp = style.contentSize.topLabelSize.value,
+            fontSizeSp = style.topLabelStyle.textSize.value,
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
             text = stringResource(R.string.status_ui_forward),
             maxLines = 1,
             style = MaterialTheme.typography.bodySmall,
-            fontSize = style.contentSize.topLabelSize,
+            fontSize = style.topLabelStyle.textSize,
         )
     }
 }
 
 @Composable
 fun StatusPinnedLabel(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     style: StatusStyle,
 ) {
     IconWithTextLabel(
@@ -108,12 +103,13 @@ private fun IconWithTextLabel(
             .fillMaxWidth()
             .padding(
                 start = style.containerStartPadding,
+                top = style.containerTopPadding,
                 end = style.containerEndPadding,
             ),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(14.dp),
+            modifier = Modifier.size(style.topLabelStyle.iconSize),
             imageVector = icon,
             contentDescription = text,
             tint = color,
@@ -123,7 +119,7 @@ private fun IconWithTextLabel(
             maxLines = 1,
             text = text,
             color = color,
-            fontSize = style.contentSize.topLabelSize,
+            fontSize = style.topLabelStyle.textSize,
         )
     }
 }

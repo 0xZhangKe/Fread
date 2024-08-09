@@ -82,9 +82,9 @@ fun BlogContent(
         )
         val sensitive = blog.sensitive
         if (blog.mediaList.isNotEmpty()) {
-            Spacer(modifier = Modifier.height(8.dp))
             BlogMedias(
                 modifier = Modifier
+                    .padding(top = style.contentStyle.textToAttachmentSpacing)
                     .fillMaxWidth(),
                 mediaList = blog.mediaList,
                 indexInList = indexOfFeeds,
@@ -125,7 +125,7 @@ private fun BlogTextContentSection(
     textSelectable: Boolean = false,
 ) {
     val contentMaxLine = if (blog.platform.protocol.isRss) {
-        style.contentMaxLine
+        style.contentStyle.maxLine
     } else {
         Int.MAX_VALUE
     }
@@ -137,7 +137,7 @@ private fun BlogTextContentSection(
         SpoilerText(
             hideContent = hideContent,
             spoilerText = blog.humanizedSpoilerText,
-            fontSize = style.contentSize.bogContentSize,
+            fontSize = style.contentStyle.contentSize,
             onShowContent = { hideContent = false },
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,
@@ -153,26 +153,24 @@ private fun BlogTextContentSection(
                 FreadRichText(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .wrapContentHeight()
-                        .padding(top = 4.dp),
+                        .wrapContentHeight(),
                     richText = blog.humanizedContent,
                     maxLines = contentMaxLine,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagInStatusClick,
                     textSelectable = textSelectable,
                     onUrlClick = onUrlClick,
-                    fontSizeSp = style.contentSize.bogContentSize.value,
+                    fontSizeSp = style.contentStyle.contentSize.value,
                 )
             }
         }
     } else {
         if (!blog.title.isNullOrEmpty()) {
             Text(
-                modifier = Modifier
-                    .padding(top = 8.dp),
+                modifier = Modifier,
                 text = blog.title!!,
                 fontWeight = FontWeight.Bold,
-                fontSize = style.contentSize.blogTitleSize,
+                fontSize = style.contentStyle.titleSize,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleMedium,
@@ -192,7 +190,7 @@ private fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
-                fontSizeSp = style.contentSize.blogTitleSize.value,
+                fontSizeSp = style.contentStyle.contentSize.value,
                 textSelectable = textSelectable,
             )
         }
@@ -204,14 +202,13 @@ private fun BlogTextContentSection(
             FreadRichText(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .wrapContentHeight()
-                    .padding(top = 8.dp),
+                    .wrapContentHeight(),
                 richText = blog.humanizedContent,
                 maxLines = contentMaxLine,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
                 textSelectable = textSelectable,
-                fontSizeSp = style.contentSize.bogContentSize.value,
+                fontSizeSp = style.contentStyle.contentSize.value,
                 onUrlClick = onUrlClick,
             )
         }
@@ -232,7 +229,6 @@ private fun SpoilerText(
 ) {
     Box(
         modifier = Modifier
-            .padding(top = 8.dp)
             .fillMaxWidth()
             .wrapContentHeight()
             .drawSpoilerBackground()

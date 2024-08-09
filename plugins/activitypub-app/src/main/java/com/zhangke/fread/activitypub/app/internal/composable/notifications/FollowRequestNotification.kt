@@ -52,7 +52,7 @@ fun FollowRequestNotification(
             val (avatarRef, nameRef, webFingerRef, rejectRef, acceptRef) = createRefs()
             BlogAuthorAvatar(
                 modifier = Modifier
-                    .size(style.statusStyle.statusInfoStyle.avatarSize)
+                    .size(style.statusStyle.infoLineStyle.avatarSize)
                     .constrainAs(avatarRef) {
                         top.linkTo(nameRef.top)
                         start.linkTo(parent.start)

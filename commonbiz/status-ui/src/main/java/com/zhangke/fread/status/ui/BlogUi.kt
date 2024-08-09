@@ -6,7 +6,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.onGloballyPositioned
+import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalContext
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.utils.ShareHelper
@@ -21,6 +27,7 @@ import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
+import com.zhangke.fread.status.ui.threads.drawTopOfAvatarLine
 import com.zhangke.fread.status.ui.threads.threads
 
 @Composable
@@ -47,11 +54,13 @@ fun BlogUi(
 ) {
     val context = LocalContext.current
     val mentionOnly = blog.visibility == StatusVisibility.DIRECT
-    val containsTopLabel = topLabel != null || mentionOnly
+    var infoToTopSpacing: Float? by remember {
+        mutableStateOf(null)
+    }
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .threads(threadsType, containsTopLabel, style)
+            .threads(threadsType, infoToTopSpacing, style)
     ) {
         topLabel?.invoke()
         if (mentionOnly) {
@@ -63,7 +72,16 @@ fun BlogUi(
         StatusInfoLine(
             modifier = Modifier
                 .padding(top = style.containerTopPadding)
-                .fillMaxWidth(),
+                .fillMaxWidth()
+                .let {
+                    if (threadsType != ThreadsType.NONE) {
+                        it.onGloballyPositioned { coordinates ->
+                            infoToTopSpacing = coordinates.positionInParent().y
+                        }
+                    } else {
+                        it
+                    }
+                },
             blogAuthor = blog.author,
             displayTime = displayTime,
             visibility = blog.visibility,

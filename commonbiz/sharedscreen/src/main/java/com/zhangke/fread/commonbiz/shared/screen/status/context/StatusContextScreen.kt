@@ -33,7 +33,10 @@ import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.status.ui.StatusUi
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.status.ui.threads.ThreadsType
 
 data class StatusContextScreen(
     val role: IdentityRole,
@@ -139,42 +142,42 @@ data class StatusContextScreen(
         modifier: Modifier = Modifier,
         statusInContext: StatusInContext,
         indexInList: Int,
+        style: StatusStyle = StatusStyle.default(),
         onMediaClick: OnBlogMediaClick,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
         when (statusInContext.type) {
-            StatusInContextType.ANCESTOR -> AncestorBlogUi(
+            StatusInContextType.ANCESTOR -> StatusUi(
                 modifier = modifier.clickable {
                     composedStatusInteraction.onStatusClick(statusInContext.status)
                 },
+                style = style,
+                threadsType = if (indexInList == 0) {
+                    ThreadsType.FIRST_ANCESTOR
+                } else {
+                    ThreadsType.ANCESTOR
+                },
                 status = statusInContext.status,
-                displayTime = statusInContext.status.displayTime,
                 indexInList = indexInList,
-                isFirst = indexInList == 0,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
             )
 
-            StatusInContextType.ANCHOR -> AnchorBlogUi(
+            StatusInContextType.ANCHOR -> StatusUi(
                 modifier = modifier,
                 status = statusInContext.status,
-                displayTime = statusInContext.status.displayTime,
+                textSelectable = true,
                 indexInList = indexInList,
-                showUpThread = indexInList > 0,
+                threadsType = ThreadsType.ANCHOR,
                 onMediaClick = onMediaClick,
-                bottomPanelInteractions = statusInContext.status.bottomInteractions,
-                moreInteractions = statusInContext.status.moreInteractions,
                 composedStatusInteraction = composedStatusInteraction,
             )
 
-            StatusInContextType.DESCENDANT -> DescendantStatusUi(
+            StatusInContextType.DESCENDANT -> StatusUi(
                 modifier = modifier.clickable {
                     composedStatusInteraction.onStatusClick(statusInContext.status)
                 },
                 status = statusInContext.status,
-                displayTime = statusInContext.status.displayTime,
-                bottomPanelInteractions = statusInContext.status.bottomInteractions,
-                moreInteractions = statusInContext.status.moreInteractions,
                 indexInList = indexInList,
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,

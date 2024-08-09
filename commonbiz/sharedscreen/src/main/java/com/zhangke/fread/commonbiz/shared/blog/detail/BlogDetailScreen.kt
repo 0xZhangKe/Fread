@@ -32,7 +32,7 @@ import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.ui.StatusInfoLine
-import com.zhangke.fread.status.ui.style.defaultStatusStyle
+import com.zhangke.fread.status.ui.style.StatusStyle
 
 class BlogDetailScreen(
     private val blog: Blog,
@@ -80,7 +80,7 @@ class BlogDetailScreen(
                     blogUrl = blog.url,
                     visibility = blog.visibility,
                     displayTime = DateTimeFormatter.format(context, blog.date.time),
-                    style = defaultStatusStyle(),
+                    style = StatusStyle.default(),
                     moreInteractions = emptyList(),
                     onInteractive = {},
                     onUserInfoClick = viewModel::onUserInfoClick,

@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButtonColors
 import androidx.compose.material3.IconButtonDefaults
@@ -23,21 +22,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.status.model.StatusUiInteraction
+import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
 fun StatusBottomInteractionPanel(
     modifier: Modifier = Modifier,
+    style: StatusStyle,
     interactions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
 ) {
     if (interactions.isEmpty()) return
+    val startPadding = style.containerStartPadding / 2 + style.bottomPanelStyle.startPadding
     Row(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(start = startPadding, end = style.containerEndPadding / 2),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         interactions.forEachIndexed { index, interaction ->
@@ -45,6 +48,7 @@ fun StatusBottomInteractionPanel(
                 modifier = Modifier,
                 imageVector = interaction.logo,
                 enabled = interaction.enabled,
+                style = style,
                 contentDescription = interaction.actionName,
                 text = interaction.label,
                 highLight = interaction.highLight,
@@ -65,12 +69,13 @@ private fun StatusActionIcon(
     imageVector: ImageVector,
     enabled: Boolean,
     contentDescription: String,
+    style: StatusStyle,
     text: String? = null,
     highLight: Boolean,
     onClick: () -> Unit,
 ) {
     StatusIconButton(
-        modifier = modifier.height(32.dp),
+        modifier = modifier.height(style.bottomPanelStyle.iconSize),
         onClick = onClick,
         enabled = enabled,
     ) {

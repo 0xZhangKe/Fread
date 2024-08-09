@@ -1,7 +1,9 @@
 package com.zhangke.fread.status.ui.style
 
+import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.TextUnit
@@ -14,37 +16,63 @@ data class StatusStyle(
     val containerTopPadding: Dp,
     val containerEndPadding: Dp,
     val containerBottomPadding: Dp,
+    val topLabelStyle: TopLabelStyle,
     val infoLineStyle: InfoLineStyle,
-
-
-    val contentToInfoSpacing: Dp,
-    val bottomPanelStartPadding: Dp,
-    val iconEndPadding: Dp,
-    val bottomPanelTopPadding: Dp,
-    val statusInfoStyle: StatusInfoStyle,
-    val contentMaxLine: Int = 10,
-    val contentSize: StatusContentSize = StatusContentSize.default(),
+    val contentStyle: ContentStyle,
+    val bottomPanelStyle: BottomPanelStyle,
+    val threadsStyle: ThreadsStyle,
 ) {
 
-    /**
-     * 如果顶部有 Label，那么Label距离顶部和底部的高度均为 container top padding 的一半
-     */
     data class TopLabelStyle(
         val iconSize: Dp,
         val textSize: TextUnit,
-        val containerHeight: Dp,
-    )
+    ) {
+
+        companion object {
+
+            fun default(
+                iconSize: Dp = 14.dp,
+                textSize: TextUnit = 12.sp,
+            ): TopLabelStyle = TopLabelStyle(
+                iconSize = iconSize,
+                textSize = textSize,
+            )
+        }
+    }
 
     data class ContentStyle(
         val maxLine: Int,
-        val textSize: TextUnit,
+        val titleSize: TextUnit,
+        val contentSize: TextUnit,
+        val startPadding: Dp,
         val contentToInfoLineSpacing: Dp,
         val textToAttachmentSpacing: Dp,
-    )
+    ) {
+
+        companion object {
+
+            fun default(
+                maxLine: Int = 10,
+                titleSize: TextUnit = 16.sp,
+                contentSize: TextUnit = 14.sp,
+                startPadding: Dp = 0.dp,
+                contentToInfoLineSpacing: Dp = 2.dp,
+                textToAttachmentSpacing: Dp = 8.dp,
+            ) = ContentStyle(
+                maxLine = maxLine,
+                titleSize = titleSize,
+                contentSize = contentSize,
+                startPadding = startPadding,
+                contentToInfoLineSpacing = contentToInfoLineSpacing,
+                textToAttachmentSpacing = textToAttachmentSpacing,
+            )
+        }
+    }
 
     data class InfoLineStyle(
         val nameSize: TextUnit,
         val avatarSize: Dp,
+        val nameToAvatarSpacing: Dp,
         val descStyle: TextStyle,
     ) {
 
@@ -54,11 +82,13 @@ data class StatusStyle(
             fun default(
                 nameSize: TextUnit = 16.sp,
                 avatarSize: Dp = 40.dp,
+                nameToAvatarSpacing: Dp = 8.dp,
                 descStyle: TextStyle = MaterialTheme.typography.bodySmall
             ): InfoLineStyle {
                 return InfoLineStyle(
                     nameSize = nameSize,
                     avatarSize = avatarSize,
+                    nameToAvatarSpacing = nameToAvatarSpacing,
                     descStyle = descStyle,
                 )
             }
@@ -66,86 +96,67 @@ data class StatusStyle(
     }
 
     data class BottomPanelStyle(
-        val height: Dp,
         val iconSize: Dp,
+        val topPadding: Dp,
         val startPadding: Dp,
-        val endPadding: Dp,
-    )
-}
+    ) {
 
-object StatusStyleDefaults {
+        companion object {
 
-    val startPadding = 16.dp
+            fun default(
+                iconSize: Dp = 32.dp,
+                topPadding: Dp = 4.dp,
+                startPadding: Dp = 0.dp,
+            ) = BottomPanelStyle(
+                iconSize = iconSize,
+                topPadding = topPadding,
+                startPadding = startPadding,
+            )
+        }
+    }
 
-    val topPadding = 16.dp
+    data class ThreadsStyle(
+        val lineWidth: Dp,
+        val color: Color,
+    ) {
 
-    val endPadding = 16.dp
+        companion object {
 
-    val contentToInfoSpacing = 4.dp
-
-    val bottomPadding = 8.dp
-
-    val bottomPanelStartPadding = 8.dp
-
-    val iconEndPadding = 8.dp
-
-    val bottomPanelTopPadding = 4.dp
-
-    const val contentMaxLine = 10
-}
-
-@Composable
-fun defaultStatusStyle(
-    containerStartPadding: Dp = StatusStyleDefaults.startPadding,
-    containerTopPadding: Dp = StatusStyleDefaults.topPadding,
-    containerEndPadding: Dp = StatusStyleDefaults.endPadding,
-    containerBottomPadding: Dp = StatusStyleDefaults.bottomPadding,
-    infoLineStyle: StatusStyle.InfoLineStyle = StatusStyle.InfoLineStyle.default(),
-
-
-    infoToContentSpacing: Dp = StatusStyleDefaults.contentToInfoSpacing,
-    contentMaxLine: Int = StatusStyleDefaults.contentMaxLine,
-    bottomPanelStartPadding: Dp = StatusStyleDefaults.bottomPanelStartPadding,
-    iconEndPadding: Dp = StatusStyleDefaults.iconEndPadding,
-    bottomPanelTopPadding: Dp = StatusStyleDefaults.bottomPanelTopPadding,
-    statusInfoStyle: StatusInfoStyle = defaultStatusInfoStyle(),
-) = StatusStyle(
-    containerStartPadding = containerStartPadding,
-    containerTopPadding = containerTopPadding,
-    containerEndPadding = containerEndPadding,
-    containerBottomPadding = containerBottomPadding,
-    infoLineStyle = infoLineStyle,
-
-    contentToInfoSpacing = infoToContentSpacing,
-    bottomPanelStartPadding = bottomPanelStartPadding,
-    iconEndPadding = iconEndPadding,
-    statusInfoStyle = statusInfoStyle,
-    bottomPanelTopPadding = bottomPanelTopPadding,
-    contentMaxLine = contentMaxLine,
-)
-
-data class StatusContentSize(
-    val topLabelSize: TextUnit,
-    val userNameSize: TextUnit,
-    val infoSize: TextUnit,
-    val blogTitleSize: TextUnit,
-    val bogContentSize: TextUnit,
-) {
+            @Composable
+            fun default(
+                lineWidth: Dp = 1.5.dp,
+                color: Color = DividerDefaults.color,
+            ) = ThreadsStyle(
+                lineWidth = lineWidth,
+                color = color,
+            )
+        }
+    }
 
     companion object {
 
+        @Composable
         fun default(
-            topLabelSize: TextUnit = 12.sp,
-            userNameSize: TextUnit = 16.sp,
-            infoSize: TextUnit = 12.sp,
-            blogTitleSize: TextUnit = 16.sp,
-            bogContentSize: TextUnit = 14.sp,
-        ) = StatusContentSize(
-            topLabelSize = topLabelSize,
-            userNameSize = userNameSize,
-            infoSize = infoSize,
-            blogTitleSize = blogTitleSize,
-            bogContentSize = bogContentSize,
+            containerStartPadding: Dp = 16.dp,
+            containerTopPadding: Dp = 8.dp,
+            containerEndPadding: Dp = 16.dp,
+            containerBottomPadding: Dp = 8.dp,
+            topLabelStyle: TopLabelStyle = TopLabelStyle.default(),
+            infoLineStyle: InfoLineStyle = InfoLineStyle.default(),
+            contentStyle: ContentStyle = ContentStyle.default(),
+            bottomPanelStyle: BottomPanelStyle = BottomPanelStyle.default(),
+            threadsStyle: ThreadsStyle = ThreadsStyle.default(),
+        ) = StatusStyle(
+            containerStartPadding = containerStartPadding,
+            containerTopPadding = containerTopPadding,
+            containerEndPadding = containerEndPadding,
+            containerBottomPadding = containerBottomPadding,
+            topLabelStyle = topLabelStyle,
+            infoLineStyle = infoLineStyle,
+            contentStyle = contentStyle,
+            bottomPanelStyle = bottomPanelStyle,
+            threadsStyle = threadsStyle,
         )
+
     }
 }

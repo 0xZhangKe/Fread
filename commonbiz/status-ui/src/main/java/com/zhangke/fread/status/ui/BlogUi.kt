@@ -15,10 +15,13 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.status.ui.threads.ThreadsType
+import com.zhangke.fread.status.ui.threads.threads
 
 @Composable
 fun BlogUi(
@@ -39,24 +42,27 @@ fun BlogUi(
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     showDivider: Boolean = true,
-    showUpThread: Boolean = false,
     textSelectable: Boolean = false,
+    threadsType: ThreadsType = ThreadsType.NONE,
 ) {
     val context = LocalContext.current
-    Column(modifier = modifier.fillMaxWidth()) {
-        if (topLabel == null) {
-            Spacer(modifier = Modifier.height(style.containerTopPadding / 2))
-        } else {
-            topLabel()
+    val mentionOnly = blog.visibility == StatusVisibility.DIRECT
+    val containsTopLabel = topLabel != null || mentionOnly
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .threads(threadsType, containsTopLabel, style)
+    ) {
+        topLabel?.invoke()
+        if (mentionOnly) {
+            StatusMentionOnlyLabel(
+                modifier = Modifier,
+                style = style,
+            )
         }
-        StatusMentionOnlyLabel(
-            modifier = Modifier,
-            visibility = blog.visibility,
-            style = style,
-        )
         StatusInfoLine(
             modifier = Modifier
-                .padding(top = style.containerTopPadding / 2)
+                .padding(top = style.containerTopPadding)
                 .fillMaxWidth(),
             blogAuthor = blog.author,
             displayTime = displayTime,
@@ -73,8 +79,8 @@ fun BlogUi(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(
-                    start = style.containerStartPadding,
-                    top = style.contentToInfoSpacing,
+                    start = style.containerStartPadding + style.contentStyle.startPadding,
+                    top = style.contentStyle.contentToInfoLineSpacing,
                     end = style.containerEndPadding,
                 ),
             blog = blog,
@@ -90,11 +96,8 @@ fun BlogUi(
         StatusBottomInteractionPanel(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(
-                    start = style.bottomPanelStartPadding,
-                    top = style.bottomPanelTopPadding,
-                    end = style.iconEndPadding,
-                ),
+                .padding(top = style.bottomPanelStyle.topPadding),
+            style = style,
             interactions = bottomPanelInteractions,
             onInteractive = {
                 reportStatusInteractionClickEvent(it)

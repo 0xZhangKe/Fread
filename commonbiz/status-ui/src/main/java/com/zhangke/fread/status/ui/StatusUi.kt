@@ -5,29 +5,24 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
-import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.blog.BlogPoll
-import com.zhangke.fread.status.model.Hashtag
-import com.zhangke.fread.status.model.HashtagInStatus
-import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.ReblogTopLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.status.ui.style.defaultStatusStyle
+import com.zhangke.fread.status.ui.threads.ThreadsType
 
 @Composable
 fun StatusUi(
     modifier: Modifier = Modifier,
     status: StatusUiState,
     indexInList: Int,
-    style: StatusStyle = defaultStatusStyle(),
+    style: StatusStyle = StatusStyle.default(),
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
+    textSelectable: Boolean = false,
+    threadsType: ThreadsType = ThreadsType.NONE,
 ) {
     val context = LocalContext.current
     Surface(modifier = modifier) {
@@ -40,10 +35,27 @@ fun StatusUi(
             bottomPanelInteractions = status.bottomInteractions,
             moreInteractions = status.moreInteractions,
             indexInList = indexInList,
-            style = style,
+            threadsType = threadsType,
+            style = if (threadsType == ThreadsType.NONE || threadsType == ThreadsType.ANCHOR) {
+                style
+            } else {
+                val infoLineStyle = style.infoLineStyle
+                val contentStartPadding =
+                    infoLineStyle.avatarSize + infoLineStyle.nameToAvatarSpacing
+                style.copy(
+                    contentStyle = style.contentStyle.copy(
+                        startPadding = contentStartPadding,
+                    ),
+                    bottomPanelStyle = style.bottomPanelStyle.copy(
+                        startPadding = contentStartPadding,
+                    ),
+                )
+            },
             onInteractive = {
                 composedStatusInteraction.onStatusInteractive(status, it)
             },
+            textSelectable = textSelectable,
+            showDivider = threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
             onMediaClick = onMediaClick,
             onUserInfoClick = {
                 composedStatusInteraction.onUserInfoClick(status.role, it)
@@ -89,18 +101,4 @@ private fun getStatusTopLabel(
         }
     }
     return null
-}
-
-interface ComposedStatusInteraction {
-
-    fun onStatusInteractive(status: StatusUiState, interaction: StatusUiInteraction)
-    fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor)
-    fun onVoted(status: StatusUiState, blogPollOptions: List<BlogPoll.Option>)
-    fun onHashtagInStatusClick(role: IdentityRole, hashtagInStatus: HashtagInStatus)
-    fun onHashtagClick(role: IdentityRole, tag: Hashtag)
-    fun onMentionClick(role: IdentityRole, mention: Mention)
-    fun onStatusClick(status: StatusUiState)
-    fun onFollowClick(role: IdentityRole, target: BlogAuthor)
-    fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
-    // 后面如果需要给 Status 加上 follow 按钮，这里可以新增一个 onFollowClick(Status, BlogAuthor)
 }

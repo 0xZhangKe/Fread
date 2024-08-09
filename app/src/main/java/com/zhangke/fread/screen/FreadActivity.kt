@@ -6,9 +6,12 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -23,10 +26,13 @@ import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
+import com.zhangke.fread.status.ui.style.LocalStatusStyle
+import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.status.ui.style.StatusStyles
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.distinctUntilChangedBy
 import kotlinx.coroutines.launch
 
 @AndroidEntryPoint
@@ -37,8 +43,6 @@ class FreadActivity : AppCompatActivity() {
         DayNightHelper.setActivityDayNightMode()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
-
-        setupFontSize()
 
         lifecycleScope.launch {
             DayNightHelper.dayNightModeFlow.collect {
@@ -58,8 +62,10 @@ class FreadActivity : AppCompatActivity() {
                         videoPlayerManager.recycler()
                     }
                 }
+                val statusContentSize by FreadConfigManager.statusContentSizeFlow.collectAsState()
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
+                    LocalStatusStyle provides statusContentSize.toStyle(),
                 ) {
                     TransparentNavigator {
                         BottomSheetNavigator(
@@ -87,22 +93,12 @@ class FreadActivity : AppCompatActivity() {
         }
     }
 
-    private fun setupFontSize() {
-        lifecycleScope.launch {
-            val localScale = FreadConfigManager.getAppFontSize(this@FreadActivity).fontScale
-            val currentScale = resources.configuration.fontScale
-            if (localScale != currentScale) {
-                resources.configuration.fontScale = localScale
-                recreate()
-            }
-        }
-        lifecycleScope.launch {
-            FreadConfigManager.appFontSizeFlow
-                .distinctUntilChangedBy { it.fontScale }
-                .collect {
-                    resources.configuration.fontScale = it.fontScale
-                    recreate()
-                }
+    @Composable
+    private fun StatusContentSize.toStyle(): StatusStyle {
+        return when (this) {
+            StatusContentSize.SMALL -> StatusStyles.small()
+            StatusContentSize.MEDIUM -> StatusStyles.medium()
+            StatusContentSize.LARGE -> StatusStyles.large()
         }
     }
 

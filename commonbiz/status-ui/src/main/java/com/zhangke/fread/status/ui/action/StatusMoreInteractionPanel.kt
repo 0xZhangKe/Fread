@@ -1,8 +1,6 @@
 package com.zhangke.fread.status.ui.action
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -13,8 +11,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.res.vectorResource
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.SystemUtils
@@ -42,8 +42,8 @@ fun StatusMoreInteractionIcon(
                 reportClick(StatusDataElements.MORE)
                 showMorePopup = !showMorePopup
             },
-            imageVector = Icons.Default.MoreVert,
-            contentDescription = "More",
+            imageVector = ImageVector.vectorResource(id = R.drawable.ic_more),
+            contentDescription = "More Options",
         )
 
         DropdownMenu(

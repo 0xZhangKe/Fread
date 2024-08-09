@@ -35,7 +35,6 @@ import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
-import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
 
 data class StatusContextScreen(
@@ -142,7 +141,6 @@ data class StatusContextScreen(
         modifier: Modifier = Modifier,
         statusInContext: StatusInContext,
         indexInList: Int,
-        style: StatusStyle = StatusStyle.default(),
         onMediaClick: OnBlogMediaClick,
         composedStatusInteraction: ComposedStatusInteraction,
     ) {
@@ -151,7 +149,6 @@ data class StatusContextScreen(
                 modifier = modifier.clickable {
                     composedStatusInteraction.onStatusClick(statusInContext.status)
                 },
-                style = style,
                 threadsType = if (indexInList == 0) {
                     ThreadsType.FIRST_ANCESTOR
                 } else {

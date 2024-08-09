@@ -5,7 +5,7 @@ import android.content.pm.PackageManager
 import cafe.adriel.voyager.core.model.ScreenModel
 import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.fread.common.config.FreadConfigManager
-import com.zhangke.fread.common.config.AppFontSize
+import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageHelper
@@ -25,7 +25,7 @@ class SettingScreenModel @Inject constructor(
             dayNightMode = DayNightHelper.dayNightMode,
             languageSettingType = LanguageHelper.currentType,
             settingInfo = getAppVersionInfo(),
-            contentSize = AppFontSize.MEDIUM,
+            contentSize = StatusContentSize.default(),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -40,11 +40,11 @@ class SettingScreenModel @Inject constructor(
             LanguageHelper.systemLocale
         }
         launchInScreenModel {
-            FreadConfigManager.getAppFontSize(appContext)
+            FreadConfigManager.getStatusContentSize(appContext)
                 .let {
                     _uiState.value = _uiState.value.copy(contentSize = it)
                 }
-            FreadConfigManager.appFontSizeFlow
+            FreadConfigManager.statusContentSizeFlow
                 .collect {
                     _uiState.value = _uiState.value.copy(contentSize = it)
                 }
@@ -67,9 +67,9 @@ class SettingScreenModel @Inject constructor(
         LanguageHelper.setLanguage(context, type)
     }
 
-    fun onContentSizeChanged(contentSize: AppFontSize) {
+    fun onContentSizeChanged(contentSize: StatusContentSize) {
         launchInScreenModel {
-            FreadConfigManager.updateAppFontSize(contentSize)
+            FreadConfigManager.updateStatusContentSize(contentSize)
         }
     }
 

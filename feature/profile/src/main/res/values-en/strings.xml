@@ -18,12 +18,11 @@
     <string name="profile_setting_language_system">Follow System</string>
     <string name="profile_setting_ratting">Rating us</string>
     <string name="profile_setting_ratting_desc">"If you like it, please give us a good rating."</string>
-    <string name="profile_setting_font_size">Font Size</string>
-    <string name="profile_setting_font_size_desc">Adjust the app’s font size</string>
+    <string name="profile_setting_font_size">Content Font Size</string>
+    <string name="profile_setting_font_size_desc">Adjust the content’s font and icon size</string>
     <string name="profile_setting_font_size_small">Small</string>
     <string name="profile_setting_font_size_medium">Medium</string>
     <string name="profile_setting_font_size_large">Large</string>
-    <string name="profile_setting_font_size_extra_large">Extra Large</string>
 
     <string name="profile_about_version">Version:&#160;</string>
     <string name="profile_about_website">Website:&#160;</string>

@@ -18,12 +18,11 @@
     <string name="profile_setting_language_system">跟随系统</string>
     <string name="profile_setting_ratting">给我们评价</string>
     <string name="profile_setting_ratting_desc">如果觉得不错请到应用市场给我们一个好评</string>
-    <string name="profile_setting_font_size">字体大小</string>
-    <string name="profile_setting_font_size_desc">调整应用的字体大小</string>
+    <string name="profile_setting_font_size">内容字体大小</string>
+    <string name="profile_setting_font_size_desc">调整内容的字体和图标大小</string>
     <string name="profile_setting_font_size_small">小</string>
     <string name="profile_setting_font_size_medium">中</string>
     <string name="profile_setting_font_size_large">大</string>
-    <string name="profile_setting_font_size_extra_large">特大</string>
 
     <string name="profile_about_version">版本：</string>
     <string name="profile_about_website">官网：</string>

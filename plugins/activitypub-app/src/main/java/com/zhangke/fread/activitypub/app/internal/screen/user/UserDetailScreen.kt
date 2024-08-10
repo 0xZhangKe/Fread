@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -25,6 +26,7 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.VisibilityOff
+import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Button
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -340,6 +342,16 @@ data class UserDetailScreen(
                             Row(
                                 verticalAlignment = Alignment.CenterVertically,
                             ) {
+                                if (account?.bot == true) {
+                                    Icon(
+                                        modifier = Modifier
+                                            .padding(end = 4.dp)
+                                            .size(16.dp),
+                                        imageVector = Icons.Outlined.SmartToy,
+                                        contentDescription = "Bot",
+                                        tint = MaterialTheme.colorScheme.primary,
+                                    )
+                                }
                                 SelectionContainer {
                                     Text(
                                         modifier = Modifier,

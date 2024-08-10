@@ -74,6 +74,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.formatAsCount
@@ -101,6 +102,7 @@ import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.android.span.LinkSpan
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
+import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
@@ -118,7 +120,7 @@ data class UserDetailScreen(
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = route
+        get() = route + role.toString() + webFinger.toString()
 
     @Composable
     override fun Content() {
@@ -187,6 +189,16 @@ data class UserDetailScreen(
             onCopyLinkClick = {
                 uiState.accountUiState?.account?.url?.let {
                     SystemUtils.copyText(context, it)
+                }
+            },
+            onOpenOriginalInstanceClick = {
+                uiState.accountUiState?.account?.url?.let { FormalBaseUrl.parse(it) }?.let {
+                    BrowserLauncher.launchWebTabInApp(
+                        context = context,
+                        url = it.toString(),
+                        role = role,
+                        checkAppSupportPage = true,
+                    )
                 }
             },
             onEditClick = {
@@ -259,6 +271,7 @@ data class UserDetailScreen(
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
         onCopyLinkClick: () -> Unit,
+        onOpenOriginalInstanceClick: () -> Unit,
         onEditClick: () -> Unit,
         onFollowerClick: () -> Unit,
         onFollowingClick: () -> Unit,
@@ -301,6 +314,7 @@ data class UserDetailScreen(
                                 onBlockDomainClick = onBlockDomainClick,
                                 onUnblockDomainClick = onUnblockDomainClick,
                                 onOpenInBrowserClick = onOpenInBrowserClick,
+                                onOpenOriginalInstanceClick = onOpenOriginalInstanceClick,
                                 onEditClick = onEditClick,
                                 onNewNoteSet = onNewNoteSet,
                                 onCopyLinkClick = onCopyLinkClick,
@@ -511,6 +525,7 @@ data class UserDetailScreen(
         onUnblockDomainClick: () -> Unit,
         onOpenInBrowserClick: () -> Unit,
         onCopyLinkClick: () -> Unit,
+        onOpenOriginalInstanceClick: () -> Unit,
         onEditClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
         onMuteUserClick: () -> Unit,
@@ -557,6 +572,11 @@ data class UserDetailScreen(
                 reportClick(ActivityPubDataElements.USER_DETAIL_COPY_LINK)
                 showMorePopup = false
                 onCopyLinkClick()
+            }
+            DropDownOpenOriginalInstanceItem {
+                reportClick(ActivityPubDataElements.USER_DETAIL_OPEN_ORIGINAL_INSTANCE)
+                showMorePopup = false
+                onOpenOriginalInstanceClick()
             }
             val isAccountOwner = uiState.isAccountOwner
             if (isAccountOwner) {

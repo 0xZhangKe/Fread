@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.ui.action
 
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.CloudQueue
 import androidx.compose.material.icons.filled.ContentCopy
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.runtime.Composable
@@ -23,6 +24,15 @@ fun DropDownOpenInBrowserItem(onClick: () -> Unit) {
     ModalDropdownMenuItem(
         text = stringResource(R.string.status_ui_interaction_open_in_browser),
         imageVector = Icons.Default.Language,
+        onClick = onClick,
+    )
+}
+
+@Composable
+fun DropDownOpenOriginalInstanceItem(onClick: () -> Unit) {
+    ModalDropdownMenuItem(
+        text = stringResource(R.string.status_ui_interaction_open_original_instance),
+        imageVector = Icons.Default.CloudQueue,
         onClick = onClick,
     )
 }

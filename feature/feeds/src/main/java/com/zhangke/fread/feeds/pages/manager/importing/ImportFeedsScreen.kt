@@ -40,6 +40,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -191,6 +192,17 @@ class ImportFeedsScreen : BaseScreen() {
                             text = stringResource(R.string.feeds_import_button)
                         )
                     }
+                }
+
+                if (uiState.errorMessage.isNullOrEmpty().not()) {
+                    Text(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
+                        text = uiState.errorMessage.orEmpty(),
+                        textAlign = TextAlign.Start,
+                        color = MaterialTheme.colorScheme.error,
+                    )
                 }
 
                 ImportGroupList(

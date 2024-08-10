@@ -27,7 +27,6 @@ import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
-import com.zhangke.fread.status.ui.threads.drawTopOfAvatarLine
 import com.zhangke.fread.status.ui.threads.threads
 
 @Composable
@@ -69,9 +68,14 @@ fun BlogUi(
                 style = style,
             )
         }
+        val infoTopPadding = if (topLabel != null || mentionOnly) {
+            style.containerTopPadding / 2
+        } else {
+            style.containerTopPadding
+        }
         StatusInfoLine(
             modifier = Modifier
-                .padding(top = style.containerTopPadding)
+                .padding(top = infoTopPadding)
                 .fillMaxWidth()
                 .let {
                     if (threadsType != ThreadsType.NONE) {
@@ -98,7 +102,6 @@ fun BlogUi(
                 .fillMaxWidth()
                 .padding(
                     start = style.containerStartPadding + style.contentStyle.startPadding,
-                    top = style.contentStyle.contentToInfoLineSpacing,
                     end = style.containerEndPadding,
                 ),
             blog = blog,
@@ -129,7 +132,7 @@ fun BlogUi(
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(style.containerBottomPadding)
+                .height(style.containerBottomPadding / 2)
         )
         if (showDivider) {
             BlogDivider()

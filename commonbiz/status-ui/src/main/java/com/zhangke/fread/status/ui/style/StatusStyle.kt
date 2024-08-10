@@ -16,6 +16,7 @@ data class StatusStyle(
     val contentStyle: ContentStyle,
     val bottomPanelStyle: BottomPanelStyle,
     val threadsStyle: ThreadsStyle,
+    val cardStyle: CardStyle,
 ) {
 
     fun contentIndentStyle(): StatusStyle {
@@ -56,5 +57,12 @@ data class StatusStyle(
     data class ThreadsStyle(
         val lineWidth: Dp,
         val color: Color,
+    )
+
+    data class CardStyle(
+        val titleStyle: TextStyle,
+        val descStyle: TextStyle,
+        val imageBottomPadding: Dp,
+        val contentVerticalPadding: Dp,
     )
 }

@@ -103,7 +103,7 @@ private fun IconWithTextLabel(
             .fillMaxWidth()
             .padding(
                 start = style.containerStartPadding,
-                top = style.containerTopPadding,
+                top = style.containerTopPadding / 2,
                 end = style.containerEndPadding,
             ),
         verticalAlignment = Alignment.CenterVertically,

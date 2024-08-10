@@ -14,11 +14,13 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.filled.Code
-import androidx.compose.material.icons.filled.Feedback
+import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Language
-import androidx.compose.material.icons.filled.LogoDev
-import androidx.compose.material.icons.filled.PlayCircle
+import androidx.compose.material.icons.filled.PlayCircleOutline
+import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -164,7 +166,7 @@ class SettingScreen : BaseScreen() {
                     onContentSizeChanged = onContentSizeChanged,
                 )
                 SettingItem(
-                    icon = Icons.Default.Feedback,
+                    icon = Icons.AutoMirrored.Filled.Chat,
                     title = stringResource(R.string.profile_setting_open_source_feedback),
                     subtitle = stringResource(R.string.profile_setting_open_source_feedback_desc),
                     onClick = onFeedbackClick,
@@ -190,7 +192,7 @@ class SettingScreen : BaseScreen() {
                     onClick = onRatingClick,
                 )
                 SettingItem(
-                    icon = Icons.Default.LogoDev,
+                    icon = Icons.Outlined.Info,
                     title = stringResource(R.string.profile_setting_about_title),
                     subtitle = uiState.settingInfo,
                     onClick = onAboutClick,
@@ -213,7 +215,7 @@ class SettingScreen : BaseScreen() {
         ) {
             Icon(
                 modifier = Modifier.size(24.dp),
-                imageVector = Icons.Default.PlayCircle,
+                imageVector = Icons.Default.PlayCircleOutline,
                 contentDescription = "Auto play inline video",
             )
             Spacer(modifier = Modifier.width(16.dp))
@@ -239,7 +241,7 @@ class SettingScreen : BaseScreen() {
         onDayNightModeClick: (DayNightMode) -> Unit,
     ) {
         SettingItemWithPopup(
-            icon = Icons.Default.LogoDev,
+            icon = Icons.Default.Contrast,
             title = stringResource(R.string.profile_setting_dark_mode_title),
             subtitle = uiState.dayNightMode.modeName,
             dropDownItems = DayNightMode.entries.map { it.modeName },
@@ -255,7 +257,7 @@ class SettingScreen : BaseScreen() {
         onContentSizeChanged: (StatusContentSize) -> Unit,
     ) {
         SettingItemWithPopup(
-            icon = Icons.Default.Language,
+            icon = Icons.Default.TextFields,
             title = stringResource(R.string.profile_setting_font_size),
             subtitle = contentSize.sizeName,
             dropDownItems = StatusContentSize.entries.map { it.sizeName },

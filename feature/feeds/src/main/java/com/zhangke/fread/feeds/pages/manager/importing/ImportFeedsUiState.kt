@@ -7,6 +7,7 @@ import com.zhangke.fread.status.uri.FormalUri
 data class ImportFeedsUiState(
     val selectedFileUri: Uri?,
     val sourceList: List<ImportSourceGroup>,
+    val errorMessage: String? = null,
 ) {
 
     val importingUiItems: List<ImportingUiItem> by lazy {
@@ -24,14 +25,10 @@ data class ImportFeedsUiState(
         val default = ImportFeedsUiState(
             selectedFileUri = null,
             sourceList = emptyList(),
+            errorMessage = null,
         )
     }
 }
-
-val List<ImportSourceGroup>.importing: Boolean
-    get() {
-        return container { it.importing }
-    }
 
 sealed interface ImportingUiItem {
 
@@ -43,13 +40,7 @@ sealed interface ImportingUiItem {
 data class ImportSourceGroup(
     val title: String,
     val children: List<ImportingSource>,
-) {
-
-    val importing: Boolean
-        get() {
-            return children.container { it is ImportingSource.Importing }
-        }
-}
+)
 
 sealed interface ImportingSource {
 

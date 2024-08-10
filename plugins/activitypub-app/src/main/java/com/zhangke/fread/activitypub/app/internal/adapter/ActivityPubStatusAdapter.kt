@@ -87,6 +87,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             tags = tags.map { it.toTag() },
             visibility = visibility.convertActivityPubVisibility(),
             card = card?.toCard(),
+            editedAt = editedAt?.let { formatDatetimeToDate(it) },
         )
     }
 

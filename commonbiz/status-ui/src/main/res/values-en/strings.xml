@@ -32,4 +32,6 @@
     <string name="status_ui_visibility_mentioned_only">Mentioned Only</string>
 
     <string name="status_ui_label_pinned">Pinned</string>
+
+    <string name="status_ui_info_label_edited">Edited</string>
 </resources>

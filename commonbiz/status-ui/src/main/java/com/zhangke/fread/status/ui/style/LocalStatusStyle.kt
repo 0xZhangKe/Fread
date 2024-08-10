@@ -17,14 +17,15 @@ object StatusStyles {
     fun small(): StatusStyle {
         return StatusStyle(
             containerStartPadding = 16.dp,
-            containerTopPadding = 6.dp,
+            containerTopPadding = 10.dp,
             containerEndPadding = 16.dp,
-            containerBottomPadding = 6.dp,
+            containerBottomPadding = 10.dp,
             topLabelStyle = smallTopLabelStyle(),
             infoLineStyle = smallInfoStyle(),
             contentStyle = smallContentStyle(),
             bottomPanelStyle = smallBottomPanelStyle(),
             threadsStyle = smallThreadsStyle(),
+            cardStyle = smallCardStyle(),
         )
     }
 
@@ -32,14 +33,15 @@ object StatusStyles {
     fun medium(): StatusStyle {
         return StatusStyle(
             containerStartPadding = 16.dp,
-            containerTopPadding = 8.dp,
+            containerTopPadding = 12.dp,
             containerEndPadding = 16.dp,
-            containerBottomPadding = 8.dp,
+            containerBottomPadding = 12.dp,
             topLabelStyle = mediumTopLabelStyle(),
             infoLineStyle = mediumInfoStyle(),
             contentStyle = mediumContentStyle(),
             bottomPanelStyle = mediumBottomPanelStyle(),
             threadsStyle = mediumThreadsStyle(),
+            cardStyle = mediumCardStyle(),
         )
     }
 
@@ -47,14 +49,15 @@ object StatusStyles {
     fun large(): StatusStyle {
         return StatusStyle(
             containerStartPadding = 16.dp,
-            containerTopPadding = 8.dp,
+            containerTopPadding = 14.dp,
             containerEndPadding = 16.dp,
-            containerBottomPadding = 8.dp,
+            containerBottomPadding = 14.dp,
             topLabelStyle = largeTopLabelStyle(),
             infoLineStyle = largeInfoStyle(),
             contentStyle = largeContentStyle(),
             bottomPanelStyle = largeBottomPanelStyle(),
             threadsStyle = largeThreadsStyle(),
+            cardStyle = largeCardStyle(),
         )
     }
 
@@ -137,7 +140,7 @@ object StatusStyles {
             titleSize = 14.sp,
             contentSize = 12.sp,
             startPadding = 0.dp,
-            contentToInfoLineSpacing = 2.dp,
+            contentToInfoLineSpacing = 4.dp,
             textToAttachmentSpacing = 6.dp
         )
     }
@@ -149,7 +152,7 @@ object StatusStyles {
             titleSize = 16.sp,
             contentSize = 14.sp,
             startPadding = 0.dp,
-            contentToInfoLineSpacing = 4.dp,
+            contentToInfoLineSpacing = 6.dp,
             textToAttachmentSpacing = 8.dp
         )
     }
@@ -161,8 +164,8 @@ object StatusStyles {
             titleSize = 18.sp,
             contentSize = 16.sp,
             startPadding = 0.dp,
-            contentToInfoLineSpacing = 6.dp,
-            textToAttachmentSpacing = 8.dp
+            contentToInfoLineSpacing = 8.dp,
+            textToAttachmentSpacing = 10.dp
         )
     }
 
@@ -190,6 +193,36 @@ object StatusStyles {
             iconSize = 34.dp,
             topPadding = 6.dp,
             startPadding = 0.dp
+        )
+    }
+
+    @Composable
+    private fun smallCardStyle(): StatusStyle.CardStyle {
+        return StatusStyle.CardStyle(
+            titleStyle = MaterialTheme.typography.titleSmall,
+            descStyle = MaterialTheme.typography.bodySmall,
+            imageBottomPadding = 6.dp,
+            contentVerticalPadding = 6.dp
+        )
+    }
+
+    @Composable
+    private fun mediumCardStyle(): StatusStyle.CardStyle {
+        return StatusStyle.CardStyle(
+            titleStyle = MaterialTheme.typography.titleMedium,
+            descStyle = MaterialTheme.typography.bodyMedium,
+            imageBottomPadding = 8.dp,
+            contentVerticalPadding = 8.dp
+        )
+    }
+
+    @Composable
+    private fun largeCardStyle(): StatusStyle.CardStyle {
+        return StatusStyle.CardStyle(
+            titleStyle = MaterialTheme.typography.titleLarge,
+            descStyle = MaterialTheme.typography.bodyLarge,
+            imageBottomPadding = 10.dp,
+            contentVerticalPadding = 10.dp
         )
     }
 }

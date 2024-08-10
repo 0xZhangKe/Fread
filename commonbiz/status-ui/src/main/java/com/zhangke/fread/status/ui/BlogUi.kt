@@ -96,6 +96,7 @@ fun BlogUi(
             onUrlClick = onUrlClick,
             style = style,
             reblogAuthor = reblogAuthor,
+            editedAt = blog.editedAt,
         )
         BlogContent(
             modifier = Modifier

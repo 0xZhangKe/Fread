@@ -88,6 +88,7 @@ class BlogDetailScreen(
                     onUrlClick = {
                         BrowserLauncher.launchWebTabInApp(context, it)
                     },
+                    editedAt = blog.editedAt,
                 )
                 WebViewPreviewer(
                     modifier = Modifier

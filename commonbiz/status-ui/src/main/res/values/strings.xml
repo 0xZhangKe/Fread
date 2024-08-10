@@ -31,5 +31,7 @@
 
     <string name="status_ui_visibility_mentioned_only">仅提及用户可见</string>
 
-    <string name="status_ui_label_pinned">Pinned</string>
+    <string name="status_ui_label_pinned">置顶</string>
+
+    <string name="status_ui_info_label_edited">已编辑</string>
 </resources>

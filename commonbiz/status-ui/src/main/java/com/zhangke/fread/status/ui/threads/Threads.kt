@@ -25,7 +25,7 @@ fun Modifier.threads(
         if (threadsType.drawTopOfAvatarLine) {
             val needDrawTwoLine = infoToTopSpacing > containerTopPaddingPx * 2
             val firstLineBottom = if (needDrawTwoLine) {
-                topPaddingPx
+                topPaddingPx / 2
             } else {
                 topPaddingPx - threadToAvatarSpacing
             }
@@ -46,7 +46,7 @@ fun Modifier.threads(
                     strokeWidth = strokeWidthPx,
                     start = Offset(
                         x = startMarginPx,
-                        y = infoToTopSpacing - topPaddingPx
+                        y = infoToTopSpacing - topPaddingPx / 2
                     ),
                     end = Offset(x = startMarginPx, y = infoToTopSpacing - threadToAvatarSpacing),
                     cap = StrokeCap.Round,

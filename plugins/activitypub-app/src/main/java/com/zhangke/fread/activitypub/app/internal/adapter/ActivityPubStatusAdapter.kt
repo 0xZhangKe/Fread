@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusIntera
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusVisibility
@@ -85,6 +86,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             mentions = this.mentions.mapNotNull { it.toMention() },
             tags = tags.map { it.toTag() },
             visibility = visibility.convertActivityPubVisibility(),
+            card = card?.toCard(),
         )
     }
 
@@ -140,5 +142,34 @@ class ActivityPubStatusAdapter @Inject constructor(
             webFinger = webFinger,
             protocol = createActivityPubProtocol(context),
         )
+    }
+
+    private fun ActivityPubStatusEntity.PreviewCard.toCard(): PreviewCard {
+        return PreviewCard(
+            type = type.convertCardType(),
+            url = url,
+            title = title,
+            description = description,
+            authorName = authorName,
+            authorUrl = authorUrl,
+            providerName = providerName,
+            providerUrl = providerUrl,
+            html = html,
+            width = width,
+            height = height,
+            image = image,
+            embedUrl = embedUrl,
+            blurhash = blurhash,
+        )
+    }
+
+    private fun String.convertCardType(): PreviewCard.CardType {
+        return when (this) {
+            ActivityPubStatusEntity.PreviewCard.TYPE_LINK -> PreviewCard.CardType.LINK
+            ActivityPubStatusEntity.PreviewCard.TYPE_PHOTO -> PreviewCard.CardType.PHOTO
+            ActivityPubStatusEntity.PreviewCard.TYPE_VIDEO -> PreviewCard.CardType.VIDEO
+            ActivityPubStatusEntity.PreviewCard.TYPE_RICH -> PreviewCard.CardType.RICH
+            else -> PreviewCard.CardType.PHOTO
+        }
     }
 }

@@ -34,6 +34,7 @@ data class Blog(
     val pinned: Boolean = false,
     val poll: BlogPoll?,
     val visibility: StatusVisibility,
+    val card: PreviewCard? = null,
 ) : java.io.Serializable {
 
     val humanizedSpoilerText: RichText by lazy {

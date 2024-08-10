@@ -60,6 +60,7 @@ class RssStatusAdapter @Inject constructor(
             tags = emptyList(),
             pinned = false,
             visibility = StatusVisibility.PUBLIC,
+            card = null,
         )
     }
 

@@ -9,6 +9,7 @@ import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.opml.OpmlOutline
 import com.zhangke.framework.opml.OpmlParser
+import com.zhangke.fread.analytics.report
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
@@ -48,6 +49,7 @@ class ImportFeedsViewModel @Inject constructor(
     fun onImportClick(context: Context) {
         if (importingJob?.isActive == true) return
         if (uiState.value.sourceList.isNotEmpty()) return
+        _uiState.update { it.copy(errorMessage = null) }
         importingJob = launchInScreenModel {
             val sourceGroup = parseOpmlToGroup(context, uiState.value.selectedFileUri!!)
             _uiState.update { it.copy(sourceList = sourceGroup) }
@@ -206,10 +208,21 @@ class ImportFeedsViewModel @Inject constructor(
         context: Context,
         uri: Uri,
     ): List<OpmlOutline> = withContext(Dispatchers.IO) {
-        val xmlDocument = context.contentResolver
-            .openInputStream(uri)!!.use { inputStream ->
-                String(inputStream.readBytes())
+        var xmlDocument = ""
+        return@withContext try {
+            xmlDocument = context.contentResolver
+                .openInputStream(uri)!!.use { inputStream ->
+                    String(inputStream.readBytes())
+                }
+            OpmlParser.parse(xmlDocument)
+        } catch (e: Throwable) {
+            _uiState.update { it.copy(errorMessage = e.message) }
+            report("OPML_IMPORT_ERROR") {
+                putString("errorMessage", e.message)
+                putString("trace", e.stackTraceToString())
+                putString("document", xmlDocument)
             }
-        return@withContext OpmlParser.parse(xmlDocument)
+            emptyList<OpmlOutline>()
+        }
     }
 }

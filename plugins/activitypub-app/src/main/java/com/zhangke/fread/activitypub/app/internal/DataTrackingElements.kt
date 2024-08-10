@@ -13,4 +13,5 @@ object ActivityPubDataElements {
 
     const val USER_DETAIL_OPEN_IN_BROWSER = "userDetailOpenInBrowser"
     const val USER_DETAIL_COPY_LINK = "userDetailCopyLink"
+    const val USER_DETAIL_OPEN_ORIGINAL_INSTANCE = "userDetailOpenOriginalInstance"
 }

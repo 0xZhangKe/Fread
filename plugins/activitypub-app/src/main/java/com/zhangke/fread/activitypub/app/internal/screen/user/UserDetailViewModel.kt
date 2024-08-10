@@ -68,13 +68,13 @@ class UserDetailViewModel(
             }
             val account = accountResult.getOrThrow()!!
             val userInsight = accountEntityAdapter.toUri(account).let(userUriTransformer::parse)!!
-            val editable = accountManager.getAllLoggedAccount()
+            val isAccountOwner = accountManager.getAllLoggedAccount()
                 .any { loggedAccount ->
                     loggedAccount.uri == userInsight.uri
                 }
             _uiState.value = _uiState.value.copy(
                 userInsight = userInsight,
-                isAccountOwner = editable,
+                isAccountOwner = isAccountOwner,
                 accountUiState = account.toAccountUiState(),
                 loading = false,
             )

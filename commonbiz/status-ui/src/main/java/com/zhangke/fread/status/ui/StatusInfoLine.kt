@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.analytics.reportClick
@@ -23,6 +24,8 @@ import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.statusui.R
+import java.util.Date
 
 /**
  * Status 头部信息行，主要包括头像，
@@ -42,6 +45,7 @@ fun StatusInfoLine(
     onUserInfoClick: (BlogAuthor) -> Unit,
     onUrlClick: (url: String) -> Unit,
     reblogAuthor: BlogAuthor? = null,
+    editedAt: Date? = null,
 ) {
     Row(
         modifier = modifier.padding(start = style.containerStartPadding),
@@ -98,6 +102,16 @@ fun StatusInfoLine(
                             Icons.Default.Lock
                         },
                         contentDescription = null,
+                    )
+                }
+                if (editedAt != null) {
+                    Text(
+                        modifier = Modifier
+                            .padding(end = 4.dp),
+                        text = stringResource(id = R.string.status_ui_info_label_edited),
+                        style = style.infoLineStyle.descStyle,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
                     )
                 }
                 Text(

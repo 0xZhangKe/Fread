@@ -36,11 +36,9 @@ fun StatusBottomInteractionPanel(
     onInteractive: (StatusUiInteraction) -> Unit,
 ) {
     if (interactions.isEmpty()) return
-    val startPadding = style.containerStartPadding / 2 + style.bottomPanelStyle.startPadding
     Row(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(start = startPadding, end = style.containerEndPadding / 2),
+            .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         interactions.forEachIndexed { index, interaction ->
@@ -104,35 +102,5 @@ private fun StatusActionIcon(
                 )
             }
         }
-    }
-}
-
-@Composable
-private fun StatusIconButton(
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true,
-    colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
-    interactionSource: MutableInteractionSource? = null,
-    content: @Composable () -> Unit
-) {
-    Box(
-        modifier = modifier
-            .minimumInteractiveComponentSize()
-            .background(color = if (enabled) colors.containerColor else colors.disabledContainerColor)
-            .clickable(
-                onClick = onClick,
-                enabled = enabled,
-                role = Role.Button,
-                interactionSource = interactionSource,
-                indication = ripple(
-                    bounded = false,
-                    radius = 20.dp,
-                )
-            ),
-        contentAlignment = Alignment.Center,
-    ) {
-        val contentColor = if (enabled) colors.contentColor else colors.disabledContentColor
-        CompositionLocalProvider(LocalContentColor provides contentColor, content = content)
     }
 }

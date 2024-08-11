@@ -130,11 +130,15 @@
 
     <string name="activity_pub_muted_user_list_title">隐藏的用户</string>
     <string name="activity_pub_muted_user_list_empty">暂无隐藏的用户</string>
-    <string name="activity_pub_muted_user_list_unmute">取消屏蔽</string>
+    <string name="activity_pub_muted_user_list_unmute">取消隐藏</string>
 
     <string name="activity_pub_blocked_user_list_title">屏蔽的用户</string>
     <string name="activity_pub_blocked_user_list_empty">暂无屏蔽的用户</string>
     <string name="activity_pub_blocked_user_list_unblock">取消屏蔽</string>
+
+    <string name="activity_pub_status_favourites_by_title">点赞的用户</string>
+    <string name="activity_pub_status_reblog_by_title">转发的用户</string>
+
 
     <string name="activity_pub_bookmarks_list_title">收藏的内容</string>
     <string name="activity_pub_favourites_list_title">点赞的内容</string>

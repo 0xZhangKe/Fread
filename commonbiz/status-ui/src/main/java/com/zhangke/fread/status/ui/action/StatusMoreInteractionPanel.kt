@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.ui.action
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.size
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -16,19 +17,20 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import com.zhangke.framework.composable.FreadDialog
-import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.ui.StatusDataElements
 import com.zhangke.fread.status.ui.reportStatusInteractionClickEvent
+import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.R
 
 @Composable
 fun StatusMoreInteractionIcon(
     modifier: Modifier,
     blogUrl: String,
+    style: StatusStyle,
     moreActionList: List<StatusUiInteraction>,
     onActionClick: (StatusUiInteraction) -> Unit,
 ) {
@@ -36,15 +38,19 @@ fun StatusMoreInteractionIcon(
         mutableStateOf(false)
     }
     Box(modifier = modifier) {
-        SimpleIconButton(
-            modifier = Modifier,
+        StatusIconButton(
+            modifier = Modifier
+                .size(style.bottomPanelStyle.iconSize),
             onClick = {
                 reportClick(StatusDataElements.MORE)
                 showMorePopup = !showMorePopup
             },
-            imageVector = ImageVector.vectorResource(id = R.drawable.ic_more),
-            contentDescription = "More Options",
-        )
+        ) {
+            Icon(
+                imageVector = ImageVector.vectorResource(id = R.drawable.ic_more),
+                contentDescription = "More Options"
+            )
+        }
 
         DropdownMenu(
             expanded = showMorePopup,

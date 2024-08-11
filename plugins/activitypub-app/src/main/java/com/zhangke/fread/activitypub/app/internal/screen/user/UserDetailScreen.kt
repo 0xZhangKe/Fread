@@ -88,9 +88,8 @@ import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfo
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
-import com.zhangke.fread.activitypub.app.internal.screen.user.block.BlockedUserListScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.follow.FollowScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.mute.MutedUserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
@@ -211,20 +210,20 @@ data class UserDetailScreen(
             },
             onFollowerClick = {
                 if (uiState.userInsight != null) {
-                    val screen = FollowScreen(
+                    val screen = UserListScreen(
+                        type = UserListType.FOLLOWERS,
                         role = uiState.role,
                         userUri = uiState.userInsight!!.uri,
-                        isFollowing = false,
                     )
                     navigator.push(screen)
                 }
             },
             onFollowingClick = {
                 if (uiState.userInsight != null) {
-                    val screen = FollowScreen(
+                    val screen = UserListScreen(
+                        type = UserListType.FOLLOWING,
                         role = uiState.role,
                         userUri = uiState.userInsight!!.uri,
-                        isFollowing = true,
                     )
                     navigator.push(screen)
                 }
@@ -243,10 +242,20 @@ data class UserDetailScreen(
             onUnmuteUserClick = viewModel::onUnmuteUserClick,
             onMuteUserClick = viewModel::onMuteUserClick,
             onMuteUserListClick = {
-                navigator.push(MutedUserListScreen(role))
+                navigator.push(
+                    UserListScreen(
+                        role = role,
+                        type = UserListType.MUTED,
+                    )
+                )
             },
             onBlockedUserListClick = {
-                navigator.push(BlockedUserListScreen(role))
+                navigator.push(
+                    UserListScreen(
+                        role = role,
+                        type = UserListType.BLOCKED,
+                    )
+                )
             },
         )
     }

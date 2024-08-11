@@ -9,6 +9,8 @@ data class StatusUiState(
     val status: Status,
     val role: IdentityRole,
     val displayTime: String,
+    val specificTime : String,
+    val editedTime: String?,
     val bottomInteractions: List<StatusUiInteraction>,
     val moreInteractions: List<StatusUiInteraction>,
 ) : java.io.Serializable

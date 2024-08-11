@@ -34,4 +34,9 @@
     <string name="status_ui_label_pinned">Pinned</string>
 
     <string name="status_ui_info_label_edited">Edited</string>
+
+    <string name="status_ui_interaction_label_favourited_count">%s favorites</string>
+    <string name="status_ui_interaction_label_boosted_count">%s boosts</string>
+
+    <string name="status_ui_bottom_label_edited_at">Edited on %s</string>
 </resources>

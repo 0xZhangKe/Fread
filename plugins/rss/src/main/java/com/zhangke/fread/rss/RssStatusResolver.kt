@@ -113,4 +113,8 @@ class RssStatusResolver @Inject constructor(
     override suspend fun unfollow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {
         return null
     }
+
+    override suspend fun isFollowing(role: IdentityRole, target: BlogAuthor): Result<Boolean>? {
+        return null
+    }
 }

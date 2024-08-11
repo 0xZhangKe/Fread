@@ -169,4 +169,15 @@ class ActivityPubStatusResolver @Inject constructor(
             .updater(userId)
             .map {}
     }
+
+    override suspend fun isFollowing(role: IdentityRole, target: BlogAuthor): Result<Boolean>? {
+        userUriTransformer.parse(target.uri) ?: return null
+        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
+        if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
+        val userId = userIdResult.getOrThrow()
+        return clientManager.getClient(role)
+            .accountRepo
+            .getRelationships(listOf(userId))
+            .map { it.firstOrNull()?.following ?: false }
+    }
 }

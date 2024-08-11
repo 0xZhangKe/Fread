@@ -43,6 +43,7 @@ fun StatusUi(
             indexInList = indexInList,
             threadsType = threadsType,
             detailModel = detailModel,
+            following = status.following,
             style = if (threadsType.contentIndent) style.contentIndentStyle() else style,
             onInteractive = {
                 composedStatusInteraction.onStatusInteractive(status, it)
@@ -61,6 +62,9 @@ fun StatusUi(
             },
             onMentionClick = {
                 composedStatusInteraction.onMentionClick(status.role, it)
+            },
+            onFollowClick = {
+                composedStatusInteraction.onFollowClick(status.role, it)
             },
             onUrlClick = {
                 BrowserLauncher.launchWebTabInApp(context, it, status.role)

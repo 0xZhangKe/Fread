@@ -75,6 +75,7 @@ fun WholeBlogUi(
             displayTime = statusUiState.displayTime,
             specificTime = statusUiState.specificTime,
             editedTime = statusUiState.editedTime,
+            following = statusUiState.following,
             bottomPanelInteractions = statusUiState.bottomInteractions,
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,

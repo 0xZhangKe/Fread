@@ -16,6 +16,7 @@ class BuildStatusUiStateUseCase @Inject constructor(
     operator fun invoke(
         role: IdentityRole,
         status: Status,
+        following: Boolean? = null,
     ): StatusUiState {
         val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
         val timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault())
@@ -28,6 +29,7 @@ class BuildStatusUiStateUseCase @Inject constructor(
             editedTime = status.intrinsicBlog.editedAt?.let {
                 dateFormat.format(it) + " " + timeFormat.format(it)
             },
+            following = following,
             bottomInteractions = generateBottomInteractionUseCase(status.supportInteraction),
             moreInteractions = generateMoreInteraction(status.supportInteraction),
         )

@@ -74,6 +74,7 @@ class UserListScreen(
             onUnblockClick = viewModel::onUnblockClick,
             onUnmuteClick = viewModel::onUnmuteClick,
             onBackClick = navigator::pop,
+            onFollowClick = viewModel::onFollowClick,
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackMessageFlow)
     }
@@ -87,6 +88,7 @@ class UserListScreen(
         onUnmuteClick: (BlogAuthor) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
+        onFollowClick: (BlogAuthorUiState) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -123,17 +125,18 @@ class UserListScreen(
                                     navigator.push(
                                         UserDetailScreen(
                                             role = uiState.role,
-                                            webFinger = item.webFinger,
+                                            webFinger = item.author.webFinger,
                                         )
                                     )
                                 },
-                                user = item,
+                                user = item.author,
                                 showDivider = index < uiState.userList.lastIndex,
                                 actionButton = {
                                     StatusAction(
-                                        author = item,
+                                        authorUiState = item,
                                         onUnblockClick = onUnblockClick,
                                         onUnmuteClick = onUnmuteClick,
+                                        onFollowClick = onFollowClick,
                                     )
                                 },
                             )
@@ -161,10 +164,12 @@ class UserListScreen(
 
     @Composable
     private fun RowScope.StatusAction(
-        author: BlogAuthor,
+        authorUiState: BlogAuthorUiState,
         onUnblockClick: (BlogAuthor) -> Unit,
         onUnmuteClick: (BlogAuthor) -> Unit,
+        onFollowClick: (BlogAuthorUiState) -> Unit,
     ) {
+        val author = authorUiState.author
         when (type) {
             UserListType.BLOCKED -> {
                 Spacer(modifier = Modifier.width(6.dp))
@@ -188,6 +193,20 @@ class UserListScreen(
                         onUnmuteClick(author)
                     },
                 )
+            }
+
+            UserListType.REBLOGS, UserListType.FOLLOWERS, UserListType.FAVOURITES -> {
+                if (authorUiState.following == false) {
+                    Spacer(modifier = Modifier.width(6.dp))
+                    StyledTextButton(
+                        modifier = Modifier.align(Alignment.CenterVertically),
+                        text = stringResource(com.zhangke.fread.statusui.R.string.status_ui_follow),
+                        style = TextButtonStyle.STANDARD,
+                        onClick = {
+                            onFollowClick(authorUiState)
+                        },
+                    )
+                }
             }
 
             else -> {}

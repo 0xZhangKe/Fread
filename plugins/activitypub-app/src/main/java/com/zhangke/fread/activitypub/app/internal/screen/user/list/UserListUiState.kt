@@ -8,6 +8,11 @@ data class UserListUiState(
     val type: UserListType,
     val role: IdentityRole,
     val loading: Boolean,
-    val userList: List<BlogAuthor>,
+    val userList: List<BlogAuthorUiState>,
     val loadMoreState: LoadState,
+)
+
+data class BlogAuthorUiState(
+    val author: BlogAuthor,
+    val following: Boolean? = null,
 )

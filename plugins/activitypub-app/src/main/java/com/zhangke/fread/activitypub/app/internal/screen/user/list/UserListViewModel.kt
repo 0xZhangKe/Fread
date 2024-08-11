@@ -86,6 +86,10 @@ class UserListViewModel @AssistedInject constructor(
         loadNextPageUsers()
     }
 
+    fun onFollowClick(authorUiState: BlogAuthorUiState) {
+
+    }
+
     private fun loadFirstPageUsers() {
         if (refreshJob?.isActive == true) return
         loadMoreJob?.cancel()
@@ -126,7 +130,7 @@ class UserListViewModel @AssistedInject constructor(
         }
     }
 
-    private suspend fun fetchUserListFromServer(maxId: String? = null): Result<List<BlogAuthor>> {
+    private suspend fun fetchUserListFromServer(maxId: String? = null): Result<List<BlogAuthorUiState>> {
         val client = clientManager.getClient(role)
         val pagingResult = when (type) {
             UserListType.REBLOGS -> client.statusRepo.getReblogBy(
@@ -193,7 +197,7 @@ class UserListViewModel @AssistedInject constructor(
                     if (type == UserListType.BLOCKED) {
                         _uiState.update { state ->
                             state.copy(
-                                userList = state.userList.filterNot { it.uri == author.uri }
+                                userList = state.userList.filterNot { it.author.uri == author.uri }
                             )
                         }
                     }
@@ -210,7 +214,7 @@ class UserListViewModel @AssistedInject constructor(
                     if (type == UserListType.MUTED) {
                         _uiState.update { state ->
                             state.copy(
-                                userList = state.userList.filterNot { it.uri == author.uri }
+                                userList = state.userList.filterNot { it.author.uri == author.uri }
                             )
                         }
                     }
@@ -247,11 +251,14 @@ class UserListViewModel @AssistedInject constructor(
         return userIdResult.getOrNull()
     }
 
-    private fun List<ActivityPubAccountEntity>.toAuthors(): List<BlogAuthor> {
+    private fun List<ActivityPubAccountEntity>.toAuthors(): List<BlogAuthorUiState> {
         return this.map { it.toAuthor() }
     }
 
-    private fun ActivityPubAccountEntity.toAuthor(): BlogAuthor {
-        return accountEntityAdapter.toAuthor(this)
+    private fun ActivityPubAccountEntity.toAuthor(): BlogAuthorUiState {
+        return BlogAuthorUiState(
+            author = accountEntityAdapter.toAuthor(this),
+            following = null,
+        )
     }
 }

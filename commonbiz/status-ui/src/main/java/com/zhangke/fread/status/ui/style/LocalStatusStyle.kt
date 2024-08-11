@@ -26,6 +26,7 @@ object StatusStyles {
             bottomPanelStyle = smallBottomPanelStyle(),
             threadsStyle = smallThreadsStyle(),
             cardStyle = smallCardStyle(),
+            bottomLabelStyle = smallBottomLabelStyle(),
         )
     }
 
@@ -42,6 +43,7 @@ object StatusStyles {
             bottomPanelStyle = mediumBottomPanelStyle(),
             threadsStyle = mediumThreadsStyle(),
             cardStyle = mediumCardStyle(),
+            bottomLabelStyle = mediumBottomLabelStyle(),
         )
     }
 
@@ -58,6 +60,7 @@ object StatusStyles {
             bottomPanelStyle = largeBottomPanelStyle(),
             threadsStyle = largeThreadsStyle(),
             cardStyle = largeCardStyle(),
+            bottomLabelStyle = largeBottomLabelStyle(),
         )
     }
 
@@ -126,7 +129,7 @@ object StatusStyles {
     @Composable
     private fun largeInfoStyle(): StatusStyle.InfoLineStyle {
         return StatusStyle.InfoLineStyle(
-            nameSize = 18.sp,
+            nameSize = 16.sp,
             avatarSize = 44.dp,
             nameToAvatarSpacing = 8.dp,
             descStyle = MaterialTheme.typography.bodyMedium
@@ -140,8 +143,7 @@ object StatusStyles {
             titleSize = 14.sp,
             contentSize = 12.sp,
             startPadding = 0.dp,
-            contentToInfoLineSpacing = 4.dp,
-            textToAttachmentSpacing = 6.dp
+            contentVerticalSpacing = 6.dp,
         )
     }
 
@@ -152,8 +154,7 @@ object StatusStyles {
             titleSize = 16.sp,
             contentSize = 14.sp,
             startPadding = 0.dp,
-            contentToInfoLineSpacing = 6.dp,
-            textToAttachmentSpacing = 8.dp
+            contentVerticalSpacing = 8.dp,
         )
     }
 
@@ -164,16 +165,14 @@ object StatusStyles {
             titleSize = 18.sp,
             contentSize = 16.sp,
             startPadding = 0.dp,
-            contentToInfoLineSpacing = 8.dp,
-            textToAttachmentSpacing = 10.dp
+            contentVerticalSpacing = 10.dp,
         )
     }
 
     @Composable
     private fun smallBottomPanelStyle(): StatusStyle.BottomPanelStyle {
         return StatusStyle.BottomPanelStyle(
-            iconSize = 28.dp,
-            topPadding = 2.dp,
+            iconSize = 26.dp,
             startPadding = 0.dp
         )
     }
@@ -181,8 +180,7 @@ object StatusStyles {
     @Composable
     private fun mediumBottomPanelStyle(): StatusStyle.BottomPanelStyle {
         return StatusStyle.BottomPanelStyle(
-            iconSize = 32.dp,
-            topPadding = 4.dp,
+            iconSize = 28.dp,
             startPadding = 0.dp
         )
     }
@@ -190,8 +188,7 @@ object StatusStyles {
     @Composable
     private fun largeBottomPanelStyle(): StatusStyle.BottomPanelStyle {
         return StatusStyle.BottomPanelStyle(
-            iconSize = 34.dp,
-            topPadding = 6.dp,
+            iconSize = 30.dp,
             startPadding = 0.dp
         )
     }
@@ -223,6 +220,30 @@ object StatusStyles {
             descStyle = MaterialTheme.typography.bodyLarge,
             imageBottomPadding = 10.dp,
             contentVerticalPadding = 10.dp
+        )
+    }
+
+    @Composable
+    private fun smallBottomLabelStyle(): StatusStyle.BottomLabelStyle {
+        return StatusStyle.BottomLabelStyle(
+            textStyle = MaterialTheme.typography.bodySmall
+                .copy(fontSize = 11.sp),
+        )
+    }
+
+    @Composable
+    private fun mediumBottomLabelStyle(): StatusStyle.BottomLabelStyle {
+        return StatusStyle.BottomLabelStyle(
+            textStyle = MaterialTheme.typography.bodyMedium
+                .copy(fontSize = 12.sp),
+        )
+    }
+
+    @Composable
+    private fun largeBottomLabelStyle(): StatusStyle.BottomLabelStyle {
+        return StatusStyle.BottomLabelStyle(
+            textStyle = MaterialTheme.typography.bodyLarge
+                .copy(fontSize = 14.sp),
         )
     }
 }

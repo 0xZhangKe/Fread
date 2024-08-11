@@ -21,5 +21,6 @@ interface ComposedStatusInteraction {
     fun onStatusClick(status: StatusUiState)
     fun onFollowClick(role: IdentityRole, target: BlogAuthor)
     fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
-    // 后面如果需要给 Status 加上 follow 按钮，这里可以新增一个 onFollowClick(Status, BlogAuthor)
+    fun onBoostedClick(role: IdentityRole, status: StatusUiState)
+    fun onFavouritedClick(role: IdentityRole, status: StatusUiState)
 }

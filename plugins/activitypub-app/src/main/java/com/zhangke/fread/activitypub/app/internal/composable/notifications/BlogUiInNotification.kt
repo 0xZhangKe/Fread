@@ -38,6 +38,7 @@ fun OnlyBlogContentUi(
             blog = blog,
             indexOfFeeds = indexInList,
             style = style.statusStyle,
+            specificTime = statusUiState.specificTime,
             onMediaClick = { event ->
                 onStatusMediaClick(
                     transparentNavigator = transparentNavigator,
@@ -72,6 +73,8 @@ fun WholeBlogUi(
             blog = blog,
             indexInList = indexInList,
             displayTime = statusUiState.displayTime,
+            specificTime = statusUiState.specificTime,
+            editedTime = statusUiState.editedTime,
             bottomPanelInteractions = statusUiState.bottomInteractions,
             moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,

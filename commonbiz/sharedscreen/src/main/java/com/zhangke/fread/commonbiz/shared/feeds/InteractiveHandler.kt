@@ -80,6 +80,14 @@ class InteractiveHandler(
         override fun onHashtagClick(role: IdentityRole, tag: Hashtag) {
             this@InteractiveHandler.onHashtagClick(role, tag)
         }
+
+        override fun onBoostedClick(role: IdentityRole, status: StatusUiState) {
+            this@InteractiveHandler.onBoostedClick(role, status)
+        }
+
+        override fun onFavouritedClick(role: IdentityRole, status: StatusUiState) {
+            this@InteractiveHandler.onFavouritedClick(role, status)
+        }
     }
 
     override fun initInteractiveHandler(
@@ -221,6 +229,22 @@ class InteractiveHandler(
             role = role,
             tag = tag,
             protocol = protocol
+        )?.let(::tryOpenScreenByRoute)
+    }
+
+    private fun onBoostedClick(role: IdentityRole, status: StatusUiState) {
+        screenProvider.getBlogBoostedScreen(
+            role = role,
+            blogId = status.status.intrinsicBlog.id,
+            protocol = status.status.intrinsicBlog.platform.protocol,
+        )?.let(::tryOpenScreenByRoute)
+    }
+
+    private fun onFavouritedClick(role: IdentityRole, status: StatusUiState) {
+        screenProvider.getBlogFavouritedScreen(
+            role = role,
+            blogId = status.status.intrinsicBlog.id,
+            protocol = status.status.intrinsicBlog.platform.protocol,
         )?.let(::tryOpenScreenByRoute)
     }
 

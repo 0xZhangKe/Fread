@@ -9,6 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListRoute
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
@@ -78,5 +79,29 @@ class ActivityPubScreenProvider @Inject constructor(
     ): String? {
         if (protocol.notActivityPub) return null
         return HashtagTimelineRoute.buildRoute(role, tag)
+    }
+
+    override fun getBlogFavouritedScreen(
+        role: IdentityRole,
+        blogId: String,
+        protocol: StatusProviderProtocol
+    ): String? {
+        if (protocol.notActivityPub) return null
+        return UserListRoute.buildBlogFavouritedRoute(
+            role = role,
+            blogId = blogId,
+        )
+    }
+
+    override fun getBlogBoostedScreen(
+        role: IdentityRole,
+        blogId: String,
+        protocol: StatusProviderProtocol
+    ): String? {
+        if (protocol.notActivityPub) return null
+        return UserListRoute.buildBlogBoostedRoute(
+            role = role,
+            blogId = blogId,
+        )
     }
 }

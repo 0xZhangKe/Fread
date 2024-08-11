@@ -167,6 +167,7 @@ data class StatusContextScreen(
                 indexInList = indexInList,
                 threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
                 onMediaClick = onMediaClick,
+                detailModel = true,
                 composedStatusInteraction = composedStatusInteraction,
             )
 

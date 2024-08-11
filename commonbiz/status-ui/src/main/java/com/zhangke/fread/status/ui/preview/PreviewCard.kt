@@ -45,7 +45,7 @@ fun StatusPreviewCardUi(
 ) {
     val containerModifier = modifier
         .border(
-            width = 1.5.dp,
+            width = 1.dp,
             color = DividerDefaults.color,
             shape = RoundedCornerShape(8.dp),
         )
@@ -112,7 +112,7 @@ fun StatusPreviewCardUi(
             }
             Box(
                 modifier = Modifier
-                    .padding(end = 16.dp)
+                    .padding(end = 10.dp)
                     .fillMaxHeight()
                     .aspectRatio(1F)
                     .background(

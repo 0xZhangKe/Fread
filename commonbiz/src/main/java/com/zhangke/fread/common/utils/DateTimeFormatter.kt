@@ -20,10 +20,10 @@ object DateTimeFormatter {
         datetime: Long,
         config: DatetimeFormatConfig = defaultFormatConfig(context),
     ): String {
-        val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
         val duration = (System.currentTimeMillis() - datetime).milliseconds
         val inWholeDays = duration.inWholeDays
         if (inWholeDays > 3) {
+            val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
             return dateFormat.format(Date(datetime))
         }
         return "${formatDuration(config, duration)}${config.ago}"

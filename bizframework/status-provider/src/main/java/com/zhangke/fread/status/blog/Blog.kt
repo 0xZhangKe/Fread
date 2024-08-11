@@ -36,6 +36,7 @@ data class Blog(
     val visibility: StatusVisibility,
     val card: PreviewCard? = null,
     @Serializable(with = DateSerializer::class) val editedAt: Date? = null,
+    val application: PostingApplication? = null,
 ) : java.io.Serializable {
 
     val humanizedSpoilerText: RichText by lazy {

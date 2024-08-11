@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusIntera
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.blog.PostingApplication
 import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
@@ -88,6 +89,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             visibility = visibility.convertActivityPubVisibility(),
             card = card?.toCard(),
             editedAt = editedAt?.let { formatDatetimeToDate(it) },
+            application = application?.toApplication(),
         )
     }
 
@@ -172,5 +174,12 @@ class ActivityPubStatusAdapter @Inject constructor(
             ActivityPubStatusEntity.PreviewCard.TYPE_RICH -> PreviewCard.CardType.RICH
             else -> PreviewCard.CardType.PHOTO
         }
+    }
+
+    private fun ActivityPubStatusEntity.Application.toApplication(): PostingApplication {
+        return PostingApplication(
+            name = name,
+            website = website,
+        )
     }
 }

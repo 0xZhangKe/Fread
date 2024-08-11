@@ -33,7 +33,9 @@ import com.zhangke.fread.status.ui.threads.threads
 fun BlogUi(
     modifier: Modifier,
     blog: Blog,
+    specificTime: String,
     displayTime: String,
+    editedTime: String?,
     indexInList: Int,
     style: StatusStyle,
     bottomPanelInteractions: List<StatusUiInteraction>,
@@ -47,6 +49,9 @@ fun BlogUi(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onBoostedClick: ((String) -> Unit)? = null,
+    onFavouritedClick: ((String) -> Unit)? = null,
+    detailModel: Boolean = false,
     showDivider: Boolean = true,
     textSelectable: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
@@ -103,22 +108,34 @@ fun BlogUi(
                 .fillMaxWidth()
                 .padding(
                     start = style.containerStartPadding + style.contentStyle.startPadding,
+                    top = style.contentStyle.contentVerticalSpacing,
                     end = style.containerEndPadding,
                 ),
             blog = blog,
+            specificTime = specificTime,
+            detailModel = detailModel,
             indexOfFeeds = indexInList,
             style = style,
             onMediaClick = onMediaClick,
             onVoted = onVoted,
             onUrlClick = onUrlClick,
+            onBoostedClick = onBoostedClick,
+            onFavouritedClick = onFavouritedClick,
             textSelectable = textSelectable,
+            editedTime = editedTime,
+            favouritedCount = bottomPanelInteractions.favouritedCount,
+            boostedCount = bottomPanelInteractions.boostedCount,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(top = style.bottomPanelStyle.topPadding),
+                .padding(
+                    start = style.containerStartPadding / 2 + style.bottomPanelStyle.startPadding,
+                    top = style.contentStyle.contentVerticalSpacing,
+                    style.containerEndPadding / 2
+                ),
             style = style,
             interactions = bottomPanelInteractions,
             onInteractive = {
@@ -133,10 +150,22 @@ fun BlogUi(
         Spacer(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(style.containerBottomPadding / 2)
+                .height(style.containerBottomPadding)
         )
         if (showDivider) {
             BlogDivider()
         }
     }
 }
+
+private val List<StatusUiInteraction>.favouritedCount: Int?
+    get() {
+        return this.firstNotNullOfOrNull { it as? StatusUiInteraction.Like }
+            ?.interaction?.likeCount
+    }
+
+private val List<StatusUiInteraction>.boostedCount: Int?
+    get() {
+        return this.firstNotNullOfOrNull { it as? StatusUiInteraction.Forward }
+            ?.interaction?.forwardCount
+    }

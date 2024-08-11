@@ -34,4 +34,9 @@
     <string name="status_ui_label_pinned">置顶</string>
 
     <string name="status_ui_info_label_edited">已编辑</string>
+
+    <string name="status_ui_interaction_label_favourited_count">%s 次喜欢</string>
+    <string name="status_ui_interaction_label_boosted_count">%s 次转发</string>
+
+    <string name="status_ui_bottom_label_edited_at">编辑与 %s</string>
 </resources>

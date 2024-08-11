@@ -10,6 +10,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -104,6 +105,7 @@ fun StatusInfoLine(
                         contentDescription = null,
                     )
                 }
+                val fontColor = style.secondaryFontColor
                 if (editedAt != null) {
                     Text(
                         modifier = Modifier
@@ -111,6 +113,7 @@ fun StatusInfoLine(
                         text = stringResource(id = R.string.status_ui_info_label_edited),
                         style = style.infoLineStyle.descStyle,
                         maxLines = 1,
+                        color = fontColor,
                         overflow = TextOverflow.Ellipsis,
                     )
                 }
@@ -119,6 +122,7 @@ fun StatusInfoLine(
                     text = displayTime,
                     style = style.infoLineStyle.descStyle,
                     maxLines = 1,
+                    color = fontColor,
                     overflow = TextOverflow.Ellipsis,
                 )
                 Text(
@@ -126,14 +130,18 @@ fun StatusInfoLine(
                     text = blogAuthor.webFinger.toString(),
                     style = style.infoLineStyle.descStyle,
                     maxLines = 1,
+                    color = fontColor,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
         }
 
         StatusMoreInteractionIcon(
-            modifier = Modifier.padding(end = style.containerEndPadding / 2),
+            modifier = Modifier
+                .align(Alignment.Top)
+                .padding(end = style.containerEndPadding / 2),
             blogUrl = blogUrl,
+            style = style,
             moreActionList = moreInteractions,
             onActionClick = onInteractive,
         )

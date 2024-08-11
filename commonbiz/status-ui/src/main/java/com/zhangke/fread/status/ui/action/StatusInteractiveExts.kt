@@ -18,7 +18,7 @@ import com.zhangke.fread.statusui.R
 val StatusUiInteraction.actionName: String
     @Composable get() = when (this) {
         is StatusUiInteraction.Like -> stringResource(R.string.status_ui_like)
-        is StatusUiInteraction.Forward -> stringResource(R.string.status_ui_forward)
+        is StatusUiInteraction.Forward -> stringResource(R.string.status_ui_boosted)
         is StatusUiInteraction.Comment -> stringResource(R.string.status_ui_comment)
         is StatusUiInteraction.Bookmark -> {
             if (interaction.bookmarked) {

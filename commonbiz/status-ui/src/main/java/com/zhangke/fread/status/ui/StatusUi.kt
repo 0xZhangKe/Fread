@@ -25,6 +25,7 @@ fun StatusUi(
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
     textSelectable: Boolean = false,
+    detailModel: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
     val context = LocalContext.current
@@ -35,10 +36,13 @@ fun StatusUi(
             blog = rawStatus.intrinsicBlog,
             topLabel = getStatusTopLabel(status, style, composedStatusInteraction),
             displayTime = status.displayTime,
+            specificTime = status.specificTime,
+            editedTime = status.editedTime,
             bottomPanelInteractions = status.bottomInteractions,
             moreInteractions = status.moreInteractions,
             indexInList = indexInList,
             threadsType = threadsType,
+            detailModel = detailModel,
             style = if (threadsType.contentIndent) style.contentIndentStyle() else style,
             onInteractive = {
                 composedStatusInteraction.onStatusInteractive(status, it)
@@ -60,6 +64,12 @@ fun StatusUi(
             },
             onUrlClick = {
                 BrowserLauncher.launchWebTabInApp(context, it, status.role)
+            },
+            onBoostedClick = {
+                composedStatusInteraction.onBoostedClick(status.role, status)
+            },
+            onFavouritedClick = {
+                composedStatusInteraction.onFavouritedClick(status.role, status)
             },
         )
     }

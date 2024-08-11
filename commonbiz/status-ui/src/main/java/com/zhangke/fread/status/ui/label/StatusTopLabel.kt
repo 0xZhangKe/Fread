@@ -8,7 +8,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.AlternateEmail
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material3.Icon
-import androidx.compose.material3.LocalContentColor
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -57,6 +56,7 @@ fun ReblogTopLabel(
             modifier = Modifier.size(style.topLabelStyle.iconSize),
             imageVector = ImageVector.vectorResource(R.drawable.ic_status_forward),
             contentDescription = null,
+            tint = style.secondaryFontColor,
         )
         FreadRichText(
             modifier = Modifier.padding(start = 6.dp),
@@ -66,6 +66,7 @@ fun ReblogTopLabel(
             onMentionClick = {},
             onUrlClick = {},
             fontSizeSp = style.topLabelStyle.textSize.value,
+            color = style.secondaryFontColor,
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
@@ -73,6 +74,7 @@ fun ReblogTopLabel(
             maxLines = 1,
             style = MaterialTheme.typography.bodySmall,
             fontSize = style.topLabelStyle.textSize,
+            color = style.secondaryFontColor,
         )
     }
 }
@@ -96,7 +98,7 @@ private fun IconWithTextLabel(
     icon: ImageVector,
     text: String,
     style: StatusStyle,
-    color: Color = LocalContentColor.current,
+    color: Color = style.secondaryFontColor,
 ) {
     Row(
         modifier = modifier

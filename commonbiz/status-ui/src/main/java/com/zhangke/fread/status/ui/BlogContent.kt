@@ -40,6 +40,9 @@ import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.label.StatusBottomEditedLabel
+import com.zhangke.fread.status.ui.label.StatusBottomInteractionLabel
+import com.zhangke.fread.status.ui.label.StatusBottomTimeLabel
 import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
 import com.zhangke.fread.status.ui.preview.StatusPreviewCardUi
@@ -53,14 +56,21 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
+    specificTime: String,
     style: StatusStyle,
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onBoostedClick: ((String) -> Unit)? = null,
+    onFavouritedClick: ((String) -> Unit)? = null,
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     textSelectable: Boolean = false,
+    boostedCount: Int? = null,
+    favouritedCount: Int? = null,
+    detailModel: Boolean = false,
+    editedTime: String? = null,
 ) {
     Column(
         modifier = modifier,
@@ -83,7 +93,7 @@ fun BlogContent(
         if (blog.poll != null) {
             BlogPoll(
                 modifier = Modifier
-                    .padding(top = style.contentStyle.textToAttachmentSpacing)
+                    .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 poll = blog.poll!!,
                 onVoted = {
@@ -94,7 +104,7 @@ fun BlogContent(
         } else if (blog.mediaList.isNotEmpty()) {
             BlogMedias(
                 modifier = Modifier
-                    .padding(top = style.contentStyle.textToAttachmentSpacing)
+                    .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 mediaList = blog.mediaList,
                 indexInList = indexOfFeeds,
@@ -113,7 +123,7 @@ fun BlogContent(
         } else if (blog.card != null) {
             StatusPreviewCardUi(
                 modifier = Modifier
-                    .padding(top = style.contentStyle.textToAttachmentSpacing)
+                    .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 card = blog.card!!,
                 style = style,
@@ -121,6 +131,38 @@ fun BlogContent(
                     onUrlClick(it.url)
                 },
             )
+        }
+
+        if (detailModel) {
+            StatusBottomTimeLabel(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = style.contentStyle.contentVerticalSpacing),
+                blog = blog,
+                specificTime = specificTime,
+                style = style,
+                onUrlClick = onUrlClick,
+            )
+            if (!editedTime.isNullOrEmpty()) {
+                StatusBottomEditedLabel(
+                    modifier = Modifier
+                        .padding(top = style.contentStyle.contentVerticalSpacing),
+                    editedAt = editedTime,
+                    style = style,
+                )
+            }
+            if (favouritedCount != null && boostedCount != null) {
+                StatusBottomInteractionLabel(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = style.contentStyle.contentVerticalSpacing),
+                    boostedCount = boostedCount,
+                    favouritedCount = favouritedCount,
+                    style = style,
+                    onBoostedClick = { onBoostedClick?.invoke(blog.id) },
+                    onFavouritedClick = { onFavouritedClick?.invoke(blog.id) },
+                )
+            }
         }
     }
 }
@@ -145,7 +187,7 @@ private fun BlogTextContentSection(
             mutableStateOf(true)
         }
         SpoilerText(
-            modifier = Modifier.padding(top = style.contentStyle.contentToInfoLineSpacing),
+            modifier = Modifier,
             hideContent = hideContent,
             spoilerText = blog.humanizedSpoilerText,
             fontSize = style.contentStyle.contentSize,
@@ -179,7 +221,7 @@ private fun BlogTextContentSection(
     } else {
         if (!blog.title.isNullOrEmpty()) {
             Text(
-                modifier = Modifier.padding(top = style.contentStyle.contentToInfoLineSpacing),
+                modifier = Modifier,
                 text = blog.title!!,
                 fontWeight = FontWeight.Bold,
                 fontSize = style.contentStyle.titleSize,
@@ -190,9 +232,9 @@ private fun BlogTextContentSection(
         }
         if (!blog.description.isNullOrEmpty()) {
             val topPadding = if (blog.title.isNullOrEmpty()) {
-                style.contentStyle.contentToInfoLineSpacing
+                style.contentStyle.contentVerticalSpacing
             } else {
-                style.contentStyle.contentToInfoLineSpacing / 2
+                style.contentStyle.contentVerticalSpacing / 2
             }
             FreadRichText(
                 modifier = Modifier
@@ -214,7 +256,6 @@ private fun BlogTextContentSection(
             FreadRichText(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = style.contentStyle.contentToInfoLineSpacing)
                     .wrapContentHeight(),
                 richText = blog.humanizedContent,
                 maxLines = contentMaxLine,

@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.screen
 
-import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.account.LoggedAccount
@@ -8,7 +7,6 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 
 class StatusScreenProvider(
@@ -16,31 +14,31 @@ class StatusScreenProvider(
 ) {
 
     suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
-        return providerList.mapFirstOrNull {
+        return providerList.firstNotNullOfOrNull {
             it.getReplyBlogScreen(role, blog)
         }
     }
 
     fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
-        return providerList.mapFirstOrNull {
+        return providerList.firstNotNullOfOrNull {
             it.getContentScreen(contentConfig, isLatestTab)
         }
     }
 
     fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
-        return providerList.mapFirstOrNull {
+        return providerList.firstNotNullOfOrNull {
             it.getEditContentConfigScreenRoute(contentConfig)
         }
     }
 
     fun getNotificationScreen(account: LoggedAccount): PagerTab? {
-        return providerList.mapFirstOrNull {
+        return providerList.firstNotNullOfOrNull {
             it.getNotificationScreen(account)
         }
     }
 
     fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String? {
-        return providerList.mapFirstOrNull { it.getUserDetailRoute(role, uri) }
+        return providerList.firstNotNullOfOrNull { it.getUserDetailRoute(role, uri) }
     }
 
     fun getUserDetailRoute(
@@ -48,7 +46,13 @@ class StatusScreenProvider(
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
     ): String? {
-        return providerList.mapFirstOrNull { it.getUserDetailRoute(role, webFinger, protocol) }
+        return providerList.firstNotNullOfOrNull {
+            it.getUserDetailRoute(
+                role,
+                webFinger,
+                protocol
+            )
+        }
     }
 
     fun getTagTimelineScreenRoute(
@@ -56,7 +60,35 @@ class StatusScreenProvider(
         tag: String,
         protocol: StatusProviderProtocol,
     ): String? {
-        return providerList.mapFirstOrNull { it.getTagTimelineScreenRoute(role, tag, protocol) }
+        return providerList.firstNotNullOfOrNull {
+            it.getTagTimelineScreenRoute(
+                role,
+                tag,
+                protocol
+            )
+        }
+    }
+
+    fun getBlogFavouritedScreen(
+        role: IdentityRole,
+        blogId: String,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        return providerList.firstNotNullOfOrNull {
+            it.getBlogFavouritedScreen(
+                role,
+                blogId,
+                protocol
+            )
+        }
+    }
+
+    fun getBlogBoostedScreen(
+        role: IdentityRole,
+        blogId: String,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        return providerList.firstNotNullOfOrNull { it.getBlogBoostedScreen(role, blogId, protocol) }
     }
 }
 
@@ -82,5 +114,17 @@ interface IStatusScreenProvider {
         role: IdentityRole,
         tag: String,
         protocol: StatusProviderProtocol
+    ): String?
+
+    fun getBlogFavouritedScreen(
+        role: IdentityRole,
+        blogId: String,
+        protocol: StatusProviderProtocol,
+    ): String?
+
+    fun getBlogBoostedScreen(
+        role: IdentityRole,
+        blogId: String,
+        protocol: StatusProviderProtocol,
     ): String?
 }

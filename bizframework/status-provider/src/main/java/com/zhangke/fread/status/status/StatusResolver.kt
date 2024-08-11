@@ -96,6 +96,13 @@ class StatusResolver(
             it.getPublicTimeline(role, limit, maxId)
         }
     }
+
+    suspend fun isFollowing(
+        role: IdentityRole,
+        target: BlogAuthor,
+    ): Result<Boolean>? {
+        return resolverList.firstNotNullOfOrNull { it.isFollowing(role, target) }
+    }
 }
 
 interface IStatusResolver {
@@ -150,4 +157,9 @@ interface IStatusResolver {
         role: IdentityRole,
         target: BlogAuthor,
     ): Result<Unit>?
+
+    suspend fun isFollowing(
+        role: IdentityRole,
+        target: BlogAuthor,
+    ): Result<Boolean>?
 }

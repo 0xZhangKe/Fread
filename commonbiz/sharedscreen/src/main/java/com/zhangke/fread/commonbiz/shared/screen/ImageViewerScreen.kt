@@ -66,7 +66,7 @@ import java.io.Serializable
 class ImageViewerScreen(
     private val selectedIndex: Int,
     private val imageList: List<Image>,
-    @Transient private val coordinatesList: List<LayoutCoordinates?> = emptyList(),
+    @Transient private val coordinatesList: List<LayoutCoordinates?>? = emptyList(),
 ) : BaseScreen() {
 
     private val backgroundCommonAlpha = 0.95F
@@ -119,7 +119,7 @@ class ImageViewerScreen(
                     state = pagerState,
                 ) { pageIndex ->
                     val currentMedia = imageList[pageIndex]
-                    val coordinates = coordinatesList.getOrNull(pageIndex)
+                    val coordinates = coordinatesList?.getOrNull(pageIndex)
                     val animatedIn = pageIndex == selectedIndex && animatedInHolder.first().not()
                     ImagePageContent(
                         image = currentMedia,

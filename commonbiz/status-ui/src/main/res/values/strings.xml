@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="status_ui_forward">转发</string>
+    <string name="status_ui_boosted">转发</string>
     <string name="status_ui_like">喜欢</string>
     <string name="status_ui_comment">评论</string>
     <string name="status_ui_delete">删除</string>

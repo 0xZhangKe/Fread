@@ -73,7 +73,7 @@ fun ReblogTopLabel(
         )
         Text(
             modifier = Modifier.padding(start = 4.dp),
-            text = stringResource(R.string.status_ui_forward),
+            text = stringResource(R.string.status_ui_boosted),
             maxLines = 1,
             style = MaterialTheme.typography.bodySmall,
             fontSize = style.topLabelStyle.textSize,

@@ -40,6 +40,8 @@ class StatusContextSubViewModel(
     )
     val uiState = _uiState.asStateFlow()
 
+    private var anchorAuthorFollowing: Boolean? = null
+
     init {
         initInteractiveHandler(
             coroutineScope = viewModelScope,
@@ -54,7 +56,8 @@ class StatusContextSubViewModel(
                     }
 
                     is InteractiveHandleResult.UpdateFollowState -> {
-                        // no-op
+                        anchorAuthorFollowing = it.following
+                        updateAnchorFollowingState()
                     }
                 }
             },
@@ -68,6 +71,7 @@ class StatusContextSubViewModel(
         launchInViewModel {
             loadStatus()
         }
+        loadAnchorFollowingState()
     }
 
     private suspend fun loadStatus() {
@@ -117,7 +121,11 @@ class StatusContextSubViewModel(
                 .map { StatusInContext(buildStatusUiState(role, it), StatusInContextType.ANCESTOR) }
         }
         contextStatus += StatusInContext(
-            buildStatusUiState(role, anchorStatus),
+            buildStatusUiState(
+                role = role,
+                status = anchorStatus,
+                following = anchorAuthorFollowing
+            ),
             StatusInContextType.ANCHOR,
         )
         if (statusContext != null) {
@@ -145,6 +153,34 @@ class StatusContextSubViewModel(
                 )
             }
             state.copy(contextStatus = contextStatus)
+        }
+        updateAnchorFollowingState()
+    }
+
+    private fun loadAnchorFollowingState() {
+        launchInViewModel {
+            statusProvider.statusResolver
+                .isFollowing(
+                    role = role,
+                    target = anchorStatus.intrinsicBlog.author,
+                )?.onSuccess { following ->
+                    anchorAuthorFollowing = following
+                    updateAnchorFollowingState()
+                }
+        }
+    }
+
+    private fun updateAnchorFollowingState() {
+        _uiState.update { state ->
+            state.copy(
+                contextStatus = state.contextStatus.map { item ->
+                    if (item.type == StatusInContextType.ANCHOR) {
+                        item.copy(status = item.status.copy(following = anchorAuthorFollowing))
+                    } else {
+                        item
+                    }
+                }
+            )
         }
     }
 

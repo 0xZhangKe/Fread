@@ -47,8 +47,11 @@ fun ReblogTopLabel(
     Row(
         modifier = Modifier
             .fillMaxWidth()
-            .padding(top = style.containerTopPadding)
-            .padding(start = style.containerStartPadding, end = style.containerEndPadding)
+            .padding(
+                start = style.containerStartPadding,
+                top = style.containerTopPadding / 2,
+                end = style.containerEndPadding,
+            )
             .noRippleClick { onAuthorClick(author) },
         verticalAlignment = Alignment.CenterVertically,
     ) {

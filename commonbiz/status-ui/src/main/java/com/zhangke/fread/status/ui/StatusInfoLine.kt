@@ -2,15 +2,16 @@ package com.zhangke.fread.status.ui
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Lock
 import androidx.compose.material.icons.filled.LockOpen
 import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,6 +19,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.StyledTextButton
+import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
@@ -32,7 +35,6 @@ import java.util.Date
  * Status 头部信息行，主要包括头像，
  * 用户名，WebFinger，时间，更多按钮等。
  */
-
 @Composable
 fun StatusInfoLine(
     modifier: Modifier,
@@ -41,10 +43,12 @@ fun StatusInfoLine(
     displayTime: String,
     style: StatusStyle,
     visibility: StatusVisibility,
+    showFollowButton: Boolean,
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onUrlClick: (url: String) -> Unit,
+    onFollowClick: ((BlogAuthor) -> Unit)? = null,
     reblogAuthor: BlogAuthor? = null,
     editedAt: Date? = null,
 ) {
@@ -136,9 +140,27 @@ fun StatusInfoLine(
             }
         }
 
+        if (showFollowButton) {
+            StyledTextButton(
+                modifier = Modifier
+                    .align(Alignment.Top)
+                    .heightIn(min = 20.dp)
+                    .padding(end = 4.dp),
+                text = stringResource(R.string.status_ui_follow),
+                style = TextButtonStyle.STANDARD,
+                contentPadding = PaddingValues(horizontal = 6.dp, vertical = 4.dp),
+                onClick = { onFollowClick?.invoke(blogAuthor) },
+            )
+        }
+
+        val moreIconAlign = if (showFollowButton) {
+            Alignment.CenterVertically
+        } else {
+            Alignment.Top
+        }
         StatusMoreInteractionIcon(
             modifier = Modifier
-                .align(Alignment.Top)
+                .align(moreIconAlign)
                 .padding(end = style.containerEndPadding / 2),
             blogUrl = blogUrl,
             style = style,

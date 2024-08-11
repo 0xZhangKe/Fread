@@ -7,7 +7,7 @@ data class StatusContextUiState(
     val contextStatus: List<StatusInContext>,
     val loading: Boolean,
     val errorMessage: TextString?,
-){
+) {
 
     val anchorIndex: Int get() = contextStatus.indexOfFirst { it.type == StatusInContextType.ANCHOR }
 }

@@ -97,7 +97,7 @@ fun BlogUi(
             displayTime = displayTime,
             visibility = blog.visibility,
             blogUrl = blog.url,
-            showFollowButton = detailModel && following == false,
+            showFollowButton = !blog.isSelf && detailModel && following == false,
             moreInteractions = moreInteractions,
             onInteractive = onInteractive,
             onUserInfoClick = onUserInfoClick,

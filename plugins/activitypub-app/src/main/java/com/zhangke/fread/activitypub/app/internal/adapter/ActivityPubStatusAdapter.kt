@@ -5,9 +5,11 @@ import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -23,6 +25,7 @@ import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
+    private val accountManager: ActivityPubAccountManager,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val getStatusSupportInteraction: GetStatusInteractionUseCase,
     private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
@@ -36,60 +39,84 @@ class ActivityPubStatusAdapter @Inject constructor(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status {
-        val supportActions = getStatusSupportInteraction(entity, platform)
         return if (entity.reblog != null) {
-            entity.toReblog(supportActions, platform)
+            transformReblog(entity, platform)
         } else {
-            entity.toNewBlog(supportActions, platform)
+            transformNewBlog(entity, platform)
         }
     }
 
-    private fun ActivityPubStatusEntity.toNewBlog(
-        supportActions: List<StatusInteraction>,
+    private suspend fun transformNewBlog(
+        entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.NewBlog {
-        return Status.NewBlog(toBlog(platform), supportActions)
+        val (blog, supportActions) = getBlogAndInteractions(entity, platform)
+        return Status.NewBlog(blog, supportActions)
     }
 
-    private fun ActivityPubStatusEntity.toReblog(
-        supportActions: List<StatusInteraction>,
+    private suspend fun transformReblog(
+        entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.Reblog {
+        val (blog, supportActions) = getBlogAndInteractions(entity.reblog!!, platform)
         return Status.Reblog(
-            author = activityPubAccountEntityAdapter.toAuthor(account),
-            id = id,
-            datetime = formatDatetimeToDate(createdAt).time,
-            reblog = reblog!!.toBlog(platform),
+            author = activityPubAccountEntityAdapter.toAuthor(entity.account),
+            id = entity.id,
+            datetime = formatDatetimeToDate(entity.createdAt).time,
+            reblog = blog,
             supportInteraction = supportActions,
         )
     }
 
-    private fun ActivityPubStatusEntity.toBlog(platform: BlogPlatform): Blog {
-        val emojis = this.emojis.map(emojiEntityAdapter::toEmoji)
+    private suspend fun getBlogAndInteractions(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform
+    ): Pair<Blog, List<StatusInteraction>> {
+        val currentLoginAccount = accountManager.getAllLoggedAccount()
+            .firstOrNull { it.platform.uri == platform.uri }
+        val statusAuthor = activityPubAccountEntityAdapter.toAuthor(entity.account)
+        val isSelfStatus = currentLoginAccount?.webFinger == statusAuthor.webFinger
+        val blog = transformBlog(entity, platform, statusAuthor, isSelfStatus)
+        val supportActions = getStatusSupportInteraction(
+            entity = entity,
+            isSelfStatus = isSelfStatus,
+            logged = currentLoginAccount != null,
+        )
+        return blog to supportActions
+    }
+
+    private fun transformBlog(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
+        author: BlogAuthor,
+        isSelfStatus: Boolean,
+    ): Blog {
+        val emojis = entity.emojis.map(emojiEntityAdapter::toEmoji)
         return Blog(
-            id = id,
-            author = activityPubAccountEntityAdapter.toAuthor(account),
+            id = entity.id,
+            author = author,
             title = null,
             description = null,
-            content = content.orEmpty(),
-            sensitive = sensitive,
-            spoilerText = spoilerText,
-            date = formatDatetimeToDate(createdAt),
-            url = this.url.ifNullOrEmpty { this.uri },
-            forwardCount = reblogsCount,
-            likeCount = favouritesCount,
-            repliesCount = repliesCount,
+            content = entity.content.orEmpty(),
+            sensitive = entity.sensitive,
+            spoilerText = entity.spoilerText,
+            date = formatDatetimeToDate(entity.createdAt),
+            url = entity.url.ifNullOrEmpty { entity.uri },
+            forwardCount = entity.reblogsCount,
+            likeCount = entity.favouritesCount,
+            repliesCount = entity.repliesCount,
             platform = platform,
-            mediaList = mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
-            poll = poll?.let(pollAdapter::adapt),
+            mediaList = entity.mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
+            poll = entity.poll?.let(pollAdapter::adapt),
             emojis = emojis,
-            pinned = pinned ?: false,
-            mentions = this.mentions.mapNotNull { it.toMention() },
-            tags = tags.map { it.toTag() },
-            visibility = visibility.convertActivityPubVisibility(),
-            card = card?.toCard(),
-            editedAt = editedAt?.let { formatDatetimeToDate(it) },
-            application = application?.toApplication(),
+            pinned = entity.pinned ?: false,
+            isSelf = isSelfStatus,
+            mentions = entity.mentions.mapNotNull { it.toMention() },
+            tags = entity.tags.map { it.toTag() },
+            visibility = entity.visibility.convertActivityPubVisibility(),
+            card = entity.card?.toCard(),
+            editedAt = entity.editedAt?.let { formatDatetimeToDate(it) },
+            application = entity.application?.toApplication(),
         )
     }
 

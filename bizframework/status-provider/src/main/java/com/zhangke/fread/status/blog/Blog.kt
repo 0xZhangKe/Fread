@@ -35,6 +35,7 @@ data class Blog(
     val poll: BlogPoll?,
     val visibility: StatusVisibility,
     val card: PreviewCard? = null,
+    val isSelf: Boolean = false,
     @Serializable(with = DateSerializer::class) val editedAt: Date? = null,
     val application: PostingApplication? = null,
 ) : java.io.Serializable {

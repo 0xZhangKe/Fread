@@ -1,52 +1,47 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.status
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
-import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.StatusInteraction
 import javax.inject.Inject
 
-class GetStatusInteractionUseCase @Inject constructor(
-    private val accountManager: ActivityPubAccountManager,
-    private val loggedAccountAdapter: ActivityPubLoggedAccountAdapter,
-) {
+class GetStatusInteractionUseCase @Inject constructor() {
 
-    suspend operator fun invoke(
+    operator fun invoke(
         entity: ActivityPubStatusEntity,
-        platform: BlogPlatform,
+        isSelfStatus: Boolean,
+        logged: Boolean,
     ): List<StatusInteraction> {
-        return getStatusInteraction(entity.reblog ?: entity, platform)
+        return getStatusInteraction(
+            entity = entity.reblog ?: entity,
+            isSelfStatus = isSelfStatus,
+            logged = logged,
+        )
     }
 
-    private suspend fun getStatusInteraction(
+    private fun getStatusInteraction(
         entity: ActivityPubStatusEntity,
-        platform: BlogPlatform,
+        isSelfStatus: Boolean,
+        logged: Boolean,
     ): List<StatusInteraction> {
-        val account = accountManager.getAllLoggedAccount()
-            .firstOrNull { it.platform.uri == platform.uri }
-        val statusAuthorWebFinger = loggedAccountAdapter.accountToWebFinger(entity.account)
-        val isSelfStatus = account?.webFinger == statusAuthorWebFinger
-        val hasActiveUser = account != null
         val actionList = mutableListOf<StatusInteraction>()
         actionList += StatusInteraction.Like(
             likeCount = entity.favouritesCount,
             liked = entity.favourited ?: false,
-            enable = hasActiveUser,
+            enable = logged,
         )
         actionList += StatusInteraction.Forward(
             forwardCount = entity.reblogsCount,
             forwarded = entity.reblogged ?: false,
-            enable = hasActiveUser,
+            enable = logged,
         )
         actionList += StatusInteraction.Comment(
             commentCount = entity.repliesCount,
-            enable = hasActiveUser,
+            enable = logged,
         )
         actionList += StatusInteraction.Bookmark(
             bookmarkCount = null,
             bookmarked = entity.bookmarked ?: false,
-            enable = hasActiveUser,
+            enable = logged,
         )
         if (isSelfStatus) {
             actionList.add(StatusInteraction.Delete(enable = true))

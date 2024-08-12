@@ -12,4 +12,4 @@ data class StatusSource(
     val description: String,
     val thumbnail: String?,
     val protocol: StatusProviderProtocol,
-): Parcelable
+): Parcelable, java.io.Serializable

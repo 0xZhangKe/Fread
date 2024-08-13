@@ -128,7 +128,8 @@ fun RowScope.NavigationBarItem(
     ) {
         val animationProgress: State<Float> = animateFloatAsState(
             targetValue = if (selected) 1f else 0f,
-            animationSpec = tween(ItemAnimationDurationMillis)
+            animationSpec = tween(ItemAnimationDurationMillis),
+            label = "navigation-bar",
         )
 
         val deltaOffset: Offset
@@ -216,12 +217,10 @@ object NavigationBarItemDefaults {
 
     private const val DisabledAlpha = 0.38f
 
-    var defaultNavigationBarItemColorsCached: NavigationBarItemColors? = null
-
     private val ColorScheme.defaultNavigationBarItemColors: NavigationBarItemColors
         @Composable
         get() {
-            return defaultNavigationBarItemColorsCached ?: NavigationBarItemColors(
+            return NavigationBarItemColors(
                 selectedIconColor = onSecondaryContainer,
                 selectedTextColor = onSurface,
                 selectedIndicatorColor = secondaryContainer,
@@ -229,9 +228,7 @@ object NavigationBarItemDefaults {
                 unselectedTextColor = onSurfaceVariant,
                 disabledIconColor = onSurfaceVariant.copy(alpha = DisabledAlpha),
                 disabledTextColor = onSurfaceVariant.copy(alpha = DisabledAlpha),
-            ).also {
-                defaultNavigationBarItemColorsCached = it
-            }
+            )
         }
 }
 

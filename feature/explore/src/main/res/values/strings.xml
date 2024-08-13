@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="explorer_search_no_results">未搜索到结果</string>
-    <string name="explorer_search_bar_hint">搜索</string>
-    <string name="explorer_search_bar_hint_specialize_platform">搜索 %s</string>
-    <string name="explorer_search_tab_title_author">用户</string>
-    <string name="explorer_search_tab_title_status">帖子</string>
-    <string name="explorer_search_tab_title_hashtag">标签</string>
-    <string name="explorer_search_tab_title_server">服务器</string>
+    <string name="explorer_search_no_results">No results found</string>
+    <string name="explorer_search_bar_hint">Search</string>
+    <string name="explorer_search_bar_hint_specialize_platform">Search in %s</string>
+    <string name="explorer_search_tab_title_author">Accounts</string>
+    <string name="explorer_search_tab_title_status">Status</string>
+    <string name="explorer_search_tab_title_hashtag">Hashtags</string>
+    <string name="explorer_search_tab_title_server">Server</string>
 
-    <string name="explorer_tab_title">探索</string>
+    <string name="explorer_tab_title">Explorer</string>
 
-    <string name="explorer_tab_status_title">帖子</string>
-    <string name="explorer_tab_users_title">用户</string>
-    <string name="explorer_tab_hashtag_title">话题</string>
+    <string name="explorer_tab_status_title">Posts</string>
+    <string name="explorer_tab_users_title">Users</string>
+    <string name="explorer_tab_hashtag_title">Hashtags</string>
 </resources>

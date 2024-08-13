@@ -1,30 +1,35 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="login">登录</string>
+    <string name="image">Image</string>
 
-    <string name="add">添加</string>
+    <string name="video">Video</string>
 
-    <string name="search">搜索</string>
+    <string name="cancel">Cancel</string>
 
-    <string name="auth_success">登录成功</string>
+    <string name="ok">OK</string>
 
-    <string name="auth_failed">登录失败</string>
+    <string name="login">Login</string>
 
-    <string name="select">选择</string>
+    <string name="add">Add</string>
 
-    <string name="logout">退出登录</string>
+    <string name="search">Search</string>
 
-    <string name="image">图片</string>
+    <string name="auth_success">Login successful</string>
 
-    <string name="video">视频</string>
+    <string name="auth_failed">Login failed</string>
 
-    <string name="status_provider_type_mixed">混合内容</string>
-    <string name="status_provider_type_activity_pub">长毛象</string>
+    <string name="select">Select</string>
 
-    <string name="date_time_ago">前</string>
-    <string name="date_time_day">天</string>
-    <string name="date_time_hour">小时</string>
-    <string name="date_time_minute">分</string>
-    <string name="date_time_second">秒</string>
+    <string name="logout">Logout</string>
+
+    <string name="status_provider_type_mixed">Mixed Content</string>
+    <string name="status_provider_type_activity_pub">Mastodon</string>
+
+
+    <string name="date_time_ago">&#160;ago</string>
+    <string name="date_time_day">day</string>
+    <string name="date_time_hour">hour</string>
+    <string name="date_time_minute">min</string>
+    <string name="date_time_second">sec</string>
 </resources>

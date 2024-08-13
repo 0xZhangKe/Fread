@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="login">登录</string>
+
+    <string name="add">添加</string>
+
+    <string name="search">搜索</string>
+
+    <string name="auth_success">登录成功</string>
+
+    <string name="auth_failed">登录失败</string>
+
+    <string name="select">选择</string>
+
+    <string name="logout">退出登录</string>
+
+    <string name="image">图片</string>
+
+    <string name="video">视频</string>
+
+    <string name="status_provider_type_mixed">混合内容</string>
+    <string name="status_provider_type_activity_pub">长毛象</string>
+
+    <string name="date_time_ago">前</string>
+    <string name="date_time_day">天</string>
+    <string name="date_time_hour">小时</string>
+    <string name="date_time_minute">分</string>
+    <string name="date_time_second">秒</string>
+</resources>

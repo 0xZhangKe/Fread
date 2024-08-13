@@ -71,6 +71,7 @@ fun WholeBlogUi(
         BlogUi(
             modifier = Modifier,
             blog = blog,
+            blogTranslationState = statusUiState.blogTranslationState,
             indexInList = indexInList,
             displayTime = statusUiState.displayTime,
             specificTime = statusUiState.specificTime,

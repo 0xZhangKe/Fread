@@ -164,6 +164,9 @@ class PreAddFeedsScreen : BaseScreen() {
                     keyboardOptions = KeyboardOptions.Default.copy(
                         imeAction = ImeAction.Search
                     ),
+                    placeholder = {
+                        Text(text = stringResource(R.string.pre_add_feeds_hint))
+                    },
                     keyboardActions = KeyboardActions(
                         onSearch = {
                             onSearchClick()

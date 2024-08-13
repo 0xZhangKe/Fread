@@ -1,16 +1,11 @@
 package com.zhangke.fread.status.ui.common
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
@@ -20,9 +15,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.noDoubleClick
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -56,7 +51,7 @@ fun ContentToolbar(
         scrollBehavior = scrollBehavior,
         title = {
             Text(
-                modifier = Modifier.clickable {
+                modifier = Modifier.noDoubleClick {
                     onTitleClick()
                 },
                 text = title,

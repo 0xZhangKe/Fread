@@ -47,15 +47,6 @@ class ContentHomeViewModel @Inject constructor(
                     }
                 }
         }
-        launchInViewModel {
-            statusProvider.accountManager
-                .getAllAccountFlow()
-                .collect { accountList ->
-                    _uiState.update {
-                        it.copy(accountList = accountList)
-                    }
-                }
-        }
     }
 
     fun getContentScreen(

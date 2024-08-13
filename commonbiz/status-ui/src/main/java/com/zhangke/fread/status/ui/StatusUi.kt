@@ -34,6 +34,7 @@ fun StatusUi(
         BlogUi(
             modifier = Modifier,
             blog = rawStatus.intrinsicBlog,
+            blogTranslationState = status.blogTranslationState,
             topLabel = getStatusTopLabel(status, style, composedStatusInteraction),
             displayTime = status.displayTime,
             specificTime = status.specificTime,

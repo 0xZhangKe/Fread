@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import androidx.compose.ui.platform.LocalContext
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.utils.ShareHelper
 import com.zhangke.fread.status.author.BlogAuthor
@@ -33,6 +34,7 @@ import com.zhangke.fread.status.ui.threads.threads
 fun BlogUi(
     modifier: Modifier,
     blog: Blog,
+    blogTranslationState: BlogTranslationUiState?,
     specificTime: String,
     displayTime: String,
     editedTime: String?,

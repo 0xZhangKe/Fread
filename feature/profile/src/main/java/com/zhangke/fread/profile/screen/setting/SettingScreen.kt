@@ -172,7 +172,7 @@ class SettingScreen : BaseScreen() {
                     onClick = onFeedbackClick,
                 )
                 SettingItem(
-                    icon = Icons.Default.Code,
+                    icon = ImageVector.vectorResource(id = R.drawable.ic_code),
                     title = stringResource(R.string.profile_setting_open_source_title),
                     subtitle = stringResource(R.string.profile_setting_open_source_desc),
                     onClick = onOpenSourceClick,

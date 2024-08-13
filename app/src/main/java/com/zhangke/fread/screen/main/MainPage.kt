@@ -16,6 +16,7 @@ import androidx.compose.material3.DrawerValue
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalDrawerSheet
 import androidx.compose.material3.ModalNavigationDrawer
+import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -68,64 +69,66 @@ fun Screen.MainPage() {
     CompositionLocalProvider(
         LocalNestedTabConnection provides nestedTabConnection,
     ) {
-        ModalNavigationDrawer(
-            drawerState = drawerState,
-            gesturesEnabled = inFeedsTab,
-            drawerContent = {
-                val screenWidth = LocalConfiguration.current.screenWidthDp.dp
-                ModalDrawerSheet(
-                    modifier = Modifier.widthIn(max = screenWidth * 0.8F),
-                ) {
-                    MainDrawer(
-                        onDismissRequest = {
-                            coroutineScope.launch {
-                                drawerState.close()
-                            }
-                        },
-                    )
-                }
-            },
-        ) {
-            val tabs = remember {
-                createMainTabs()
-            }
-            TabNavigator(
-                tab = tabs.first(),
+        Surface(modifier = Modifier.fillMaxSize()) {
+            ModalNavigationDrawer(
+                drawerState = drawerState,
+                gesturesEnabled = inFeedsTab,
+                drawerContent = {
+                    val screenWidth = LocalConfiguration.current.screenWidthDp.dp
+                    ModalDrawerSheet(
+                        modifier = Modifier.widthIn(max = screenWidth * 0.8F),
+                    ) {
+                        MainDrawer(
+                            onDismissRequest = {
+                                coroutineScope.launch {
+                                    drawerState.close()
+                                }
+                            },
+                        )
+                    }
+                },
             ) {
-                val tabNavigator = LocalTabNavigator.current
-                inFeedsTab = tabNavigator.current.key == tabs.first().key
-                tabNavigator.current
-                BackHandler {
-                    if (inFeedsTab) {
-                        goHome(context)
-                    } else {
-                        tabNavigator.current = tabs.first()
-                    }
+                val tabs = remember {
+                    createMainTabs()
                 }
-                Box(modifier = Modifier.fillMaxSize()) {
-                    Box(
-                        modifier = Modifier.fillMaxSize()
-                    ) {
-                        CurrentTab()
+                TabNavigator(
+                    tab = tabs.first(),
+                ) {
+                    val tabNavigator = LocalTabNavigator.current
+                    inFeedsTab = tabNavigator.current.key == tabs.first().key
+                    tabNavigator.current
+                    BackHandler {
+                        if (inFeedsTab) {
+                            goHome(context)
+                        } else {
+                            tabNavigator.current = tabs.first()
+                        }
                     }
-                    val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
-                    AnimatedVisibility(
-                        modifier = Modifier
-                            .align(Alignment.BottomCenter)
-                            .fillMaxWidth(),
-                        visible = !inImmersiveMode || !inFeedsTab,
-                        enter = slideInVertically(
-                            initialOffsetY = { it },
-                        ),
-                        exit = slideOutVertically(
-                            targetOffsetY = { it },
-                        ),
-                    ) {
-                        NavigationBar(
-                            modifier = Modifier,
+                    Box(modifier = Modifier.fillMaxSize()) {
+                        Box(
+                            modifier = Modifier.fillMaxSize()
                         ) {
-                            tabs.forEach { tab ->
-                                TabNavigationItem(tab)
+                            CurrentTab()
+                        }
+                        val inImmersiveMode by nestedTabConnection.inImmersiveFlow.collectAsState()
+                        AnimatedVisibility(
+                            modifier = Modifier
+                                .align(Alignment.BottomCenter)
+                                .fillMaxWidth(),
+                            visible = !inImmersiveMode || !inFeedsTab,
+                            enter = slideInVertically(
+                                initialOffsetY = { it },
+                            ),
+                            exit = slideOutVertically(
+                                targetOffsetY = { it },
+                            ),
+                        ) {
+                            NavigationBar(
+                                modifier = Modifier,
+                            ) {
+                                tabs.forEach { tab ->
+                                    TabNavigationItem(tab)
+                                }
                             }
                         }
                     }

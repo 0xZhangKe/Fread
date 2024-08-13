@@ -4,17 +4,14 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
-import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
@@ -30,6 +27,7 @@ class ActivityPubContentSubViewModel(
 
     private var updateUserListJob: Job? = null
     private var userCreatedListUpdated = false
+    private var observeAccountJob: Job? = null
 
     init {
         launchInViewModel {
@@ -44,7 +42,7 @@ class ActivityPubContentSubViewModel(
                                 config = contentConfig,
                             )
                         }
-                        queryLoggedAccount(contentConfig.baseUrl)
+                        startObserveAccount(contentConfig.baseUrl)
                         updateUserCreateList()
                     } else {
                         _uiState.update {
@@ -57,11 +55,15 @@ class ActivityPubContentSubViewModel(
         }
     }
 
-    private suspend fun queryLoggedAccount(baseUrl: FormalBaseUrl) {
-        accountManager.getAccount(baseUrl)
-            ?.let { account ->
-                _uiState.update { it.copy(account = account) }
-            }
+    private fun startObserveAccount(baseUrl: FormalBaseUrl) {
+        observeAccountJob?.cancel()
+        observeAccountJob = launchInViewModel {
+            accountManager.observeAccount(baseUrl)
+                .distinctUntilChanged()
+                .collect { account ->
+                    _uiState.update { it.copy(account = account) }
+                }
+        }
     }
 
     private fun updateUserCreateList() {

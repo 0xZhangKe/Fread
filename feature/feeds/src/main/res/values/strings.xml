@@ -1,55 +1,54 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="add_provider_page_title">添加服务</string>
+    <string name="add_provider_page_title">Add Server</string>
 
-    <string name="add_provider_page_confirm_button">确定添加</string>
+    <string name="add_provider_page_confirm_button">Confirm Add</string>
 
-    <string name="feeds_import_page_title">导入</string>
-    <string name="feeds_import_page_hint">请选择要导入的 OPML 文件</string>
-    <string name="feeds_import_button">导入</string>
+    <string name="search_page_title">Search</string>
+    <string name="search_result_not_found">No search results found</string>
 
-    <string name="search_page_title">搜索</string>
-    <string name="search_result_not_found">未搜索到任何结果</string>
+    <string name="feeds_import_page_title">Import</string>
+    <string name="feeds_import_page_hint">Please select the OPML file to import</string>
+    <string name="feeds_import_button">Import</string>
 
-    <string name="add_feeds_page_title">添加内容</string>
-    <string name="add_feeds_page_feeds_name_label">内容名</string>
-    <string name="add_feeds_page_feeds_name_hint">请输入内容名</string>
-    <string name="add_feeds_page_feeds_empty">请添加订阅源</string>
+    <string name="add_feeds_page_title">Add Content</string>
+    <string name="add_feeds_page_feeds_name_label">Content Name</string>
+    <string name="add_feeds_page_feeds_name_hint">Please enter the content name</string>
+    <string name="add_feeds_page_feeds_empty">Please add a subscription source</string>
 
-    <string name="pre_add_feeds_no_result">未搜索到任何结果</string>
-    <string name="pre_add_feeds_hint">请输入实例名或者实例地址</string>
+    <string name="pre_add_feeds_no_result">No results found</string>
+    <string name="pre_add_feeds_hint">Please enter the instance name or url</string>
 
-    <string name="empty_content_hint_title">请先添加内容</string>
-    <string name="empty_content_hint_desc">需要先添加内容的订阅源哦，Fread 支持多种内容类型，以及不同平台的混合内容，可以打造您自己的信息流。</string>
+    <string name="empty_content_hint_title">Please add some content first</string>
+    <string name="empty_content_hint_desc">You\'ll need to add some subscription sources first. Fread supports a variety of content types and content from different platforms, enabling you to build your own information feed.</string>
 
-    <string name="feeds_add_content">添加内容</string>
+    <string name="feeds_add_content">Add Content</string>
 
-    <string name="feeds_pre_add_login_dialog_content">添加成功，是否登录？</string>
+    <string name="select_feeds_type_screen_title">Select Content Type</string>
 
-    <string name="select_feeds_type_screen_title">请选择内容类型</string>
+    <string name="feeds_pre_add_login_dialog_content">Content Successfully Added. Would You Like to Log In Now?</string>
 
-    <string name="add_feeds_page_empty_name_tips">请输入一个名字</string>
-    <string name="add_feeds_page_empty_name_exist">该名字已存在</string>
-    <string name="add_feeds_page_empty_content_exist">该内容已存在</string>
+    <string name="add_feeds_page_empty_name_tips">Please enter a name</string>
+    <string name="add_feeds_page_empty_name_exist">This username is already taken.</string>
+    <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>
+    <string name="add_feeds_page_empty_content_exist">This content already exists</string>
 
-    <string name="add_feeds_page_empty_source_tips">请添加信息源</string>
+    <string name="add_feeds_choose_auth_dialog_title">Please select login server</string>
 
-    <string name="add_feeds_choose_auth_dialog_title">请选择要登录的服务器</string>
+    <string name="add_content_success_snackbar">Add Success</string>
 
-    <string name="add_content_success_snackbar">添加成功</string>
+    <string name="search_feeds_title_hint">Please input the topic of interest</string>
 
-    <string name="search_feeds_title_hint">请输入感兴趣的内容</string>
+    <string name="feeds_select_account_for_post_status">Please select an account</string>
 
-    <string name="feeds_select_account_for_post_status">请选择一个账号</string>
+    <string name="feeds_mixed_config_edit_new_name_dialog_title">Please input name</string>
+    <string name="feeds_mixed_config_edit_new_name_dialog_label">Name</string>
+    <string name="feeds_mixed_config_edit_delete_content_dialog_message">Are you sure you want to delete this feeds?</string>
 
-    <string name="feeds_mixed_config_edit_new_name_dialog_title">请输入内容名称</string>
-    <string name="feeds_mixed_config_edit_new_name_dialog_label">名称</string>
-    <string name="feeds_mixed_config_edit_delete_content_dialog_message">您确定要删除这个内容吗？</string>
+    <string name="feeds_mixed_config_not_found">Abnormal status, configuration not found.</string>
 
-    <string name="feeds_mixed_config_not_found">状态异常，未找到配置</string>
+    <string name="feeds_import_back_dialog_message">Are you sure you want to exit?</string>
 
-    <string name="feeds_import_back_dialog_message">确定要退出吗？</string>
-
-    <string name="feeds_delete_confirm_content">确定要删除吗？</string>
+    <string name="feeds_delete_confirm_content">Are you sure you want to delete?</string>
 </resources>

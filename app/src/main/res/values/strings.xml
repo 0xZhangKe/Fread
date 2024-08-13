@@ -1,12 +1,12 @@
 <resources>
     <string name="app_name">Fread</string>
 
-    <string name="authentication_page_normal_title">该功能需要登录后才能使用哦</string>
+    <string name="authentication_page_normal_title">This function requires login to use</string>
 
-    <string name="authentication_page_failed_title">登录状态失效，请重新登录。</string>
+    <string name="authentication_page_failed_title">Login status is invalid, please login again.</string>
 
-    <string name="main_drawer_title">内容列表</string>
+    <string name="main_drawer_title">Content List</string>
 
-    <string name="main_drawer_mixed_item_subtitle_1">混合内容 ·</string>
-    <string name="main_drawer_mixed_item_subtitle_2">条订阅源</string>
+    <string name="main_drawer_mixed_item_subtitle_1">Mixed Content ·</string>
+    <string name="main_drawer_mixed_item_subtitle_2">Sources</string>
 </resources>

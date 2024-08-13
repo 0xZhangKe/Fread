@@ -1,36 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="skip">跳过</string>
+    <string name="skip">Skip</string>
 
-    <string name="cancel">取消</string>
+    <string name="alert">Alert</string>
 
-    <string name="ok">确定</string>
+    <string name="duration_minute">minute</string>
 
-    <string name="alert">提示</string>
+    <string name="duration_hour">hour</string>
 
+    <string name="duration_day">day</string>
 
+    <string name="duration_week">week</string>
 
-    <string name="duration_minute">分钟</string>
+    <string name="cancel">Cancel</string>
 
-    <string name="duration_hour">小时</string>
+    <string name="ok">Yes</string>
 
-    <string name="duration_day">天</string>
+    <string name="duration_selector_title">Set duration</string>
 
-    <string name="duration_week">周</string>
+    <string name="retry">Try Again</string>
 
-    <string name="duration_selector_title">设置时长</string>
+    <string name="load_more_error">Oops! Couldn\'t load.</string>
 
-    <string name="retry">重试</string>
+    <string name="image_saving">Saving…</string>
+    <string name="image_save_success">Save successful</string>
+    <string name="image_save_failed">Save failed</string>
 
-    <string name="load_more_error">哦！加载失败</string>
+    <string name="permission_write_external_permission_denied">Storage permission is denied, please open it in the settings.</string>
 
-    <string name="image_saving">保存中…</string>
-    <string name="image_save_success">保存成功</string>
-    <string name="image_save_failed">保存失败</string>
-
-    <string name="permission_write_external_permission_denied">存储权限被拒绝，请到设置中打开。</string>
-
-    <string name="feeds_load_previous_page_label">正在加载上一页内容</string>
-    <string name="feeds_load_previous_page_failed_label">加载失败，点击重试</string>
+    <string name="feeds_load_previous_page_label">Loading Previous Page Content</string>
+    <string name="feeds_load_previous_page_failed_label">Load Failed, Click to Retry</string>
 </resources>

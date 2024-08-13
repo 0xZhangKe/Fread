@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="profile_page_title">Profile</string>
+
+    <string name="profile_setting_about_title">关于</string>
+    <string name="profile_setting_inline_video_auto_play">Inline 视频自动播放</string>
+    <string name="profile_setting_dark_mode_title">深色模式</string>
+    <string name="profile_setting_dark_mode_dark">深色模式</string>
+    <string name="profile_setting_dark_mode_light">浅色模式</string>
+    <string name="profile_setting_dark_mode_follow_system">跟随系统</string>
+    <string name="profile_setting_open_source_title">开源声明</string>
+    <string name="profile_setting_open_source_desc">本项目使用到的依赖库的开源声明</string>
+    <string name="profile_setting_open_source_feedback">给我们反馈</string>
+    <string name="profile_setting_open_source_feedback_desc">请直接给我们反馈问题或者改进</string>
+    <string name="profile_setting_language_title">语言</string>
+    <string name="profile_setting_language_zh">简体中文</string>
+    <string name="profile_setting_language_en">English</string>
+    <string name="profile_setting_language_system">跟随系统</string>
+    <string name="profile_setting_ratting">给我们评价</string>
+    <string name="profile_setting_ratting_desc">如果觉得不错请到应用市场给我们一个好评</string>
+    <string name="profile_setting_font_size">内容字体大小</string>
+    <string name="profile_setting_font_size_desc">调整内容的字体和图标大小</string>
+    <string name="profile_setting_font_size_small">小</string>
+    <string name="profile_setting_font_size_medium">中</string>
+    <string name="profile_setting_font_size_large">大</string>
+
+    <string name="profile_about_version">版本：</string>
+    <string name="profile_about_website">官网：</string>
+    <string name="profile_about_developer">开发者：</string>
+    <string name="profile_about_contract_us">联系我：</string>
+    <string name="profile_about_privacy_policy">隐私协议：</string>
+</resources>

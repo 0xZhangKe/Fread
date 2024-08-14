@@ -60,10 +60,10 @@ class UserDetailViewModel(
             }
             _uiState.update { it.copy(loading = true) }
             val accountRepo = clientManager.getClient(role).accountRepo
-            val accountResult = accountRepo.lookup(webFinger.toString())
+            val accountResult = lookupAccount(accountRepo, webFinger)
             if (accountResult.isFailure) {
                 _uiState.update { it.copy(loading = false) }
-                _messageFlow.emit(textOf("Failed to lookup user, because ${accountResult.exceptionOrNull()!!.message}"))
+                _messageFlow.emit(textOf("Failed to lookup ${webFinger}, ${accountResult.exceptionOrNull()!!.message}"))
                 return@launchInViewModel
             }
             val account = accountResult.getOrThrow()!!
@@ -81,6 +81,17 @@ class UserDetailViewModel(
             loadRelationship(accountRepo, account.id)
             loadDomainBlockState(accountRepo, userInsight)
         }
+    }
+
+    private suspend fun lookupAccount(
+        accountRepo: AccountsRepo,
+        webFinger: WebFinger,
+    ): Result<ActivityPubAccountEntity?> {
+        val resultOfWebFinger = accountRepo.lookup(webFinger.toString())
+        if (resultOfWebFinger.isSuccess) {
+            return resultOfWebFinger
+        }
+        return accountRepo.lookup("@${webFinger.name}")
     }
 
     private suspend fun loadRelationship(

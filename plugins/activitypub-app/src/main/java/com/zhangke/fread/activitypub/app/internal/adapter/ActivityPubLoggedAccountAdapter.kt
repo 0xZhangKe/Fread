@@ -10,6 +10,7 @@ import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.analytics.report
 import com.zhangke.fread.status.platform.BlogPlatform
 import dagger.hilt.android.qualifiers.ApplicationContext
 import javax.inject.Inject
@@ -64,7 +65,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         account: ActivityPubAccountEntity,
         token: ActivityPubTokenEntity,
     ): ActivityPubLoggedAccount {
-        val baseUrl = FormalBaseUrl.parse(account.url)!!
+        val baseUrl = FormalBaseUrl.parse(instance.domain)!!
         return createFromAccount(
             platform = instanceAdapter.toPlatform(baseUrl, instance),
             account = account,
@@ -77,14 +78,13 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         account: ActivityPubAccountEntity,
         token: ActivityPubTokenEntity,
     ): ActivityPubLoggedAccount {
-        val webFinger = accountToWebFinger(account)
-        val baseUrl = FormalBaseUrl.parse(account.url)!!
+        val webFinger = accountToWebFinger(account, platform.baseUrl)
         return ActivityPubLoggedAccount(
             userId = account.id,
-            uri = userUriTransformer.build(webFinger, baseUrl),
+            uri = userUriTransformer.build(webFinger, platform.baseUrl),
             webFinger = webFinger,
             platform = platform,
-            baseUrl = baseUrl,
+            baseUrl = platform.baseUrl,
             name = account.displayName,
             description = account.note,
             avatar = account.avatar,
@@ -112,12 +112,19 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         thumbnail = thumbnail,
     )
 
-    fun accountToWebFinger(account: ActivityPubAccountEntity): WebFinger {
+    private fun accountToWebFinger(
+        account: ActivityPubAccountEntity,
+        baseUrl: FormalBaseUrl,
+    ): WebFinger {
         try {
-            WebFinger.create(account.acct)?.let { return it }
+            WebFinger.create(account.acct, baseUrl)?.let { return it }
             WebFinger.create(account.url)!!.let { return it }
         } catch (e: Throwable) {
             e.printStackTrace()
+            report("WebFingerCreateError") {
+                putString("acct", account.acct)
+                putString("url", account.url)
+            }
             throw e
         }
     }

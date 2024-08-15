@@ -1,6 +1,7 @@
 package com.zhangke.framework.utils
 
 import android.os.Parcelable
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import kotlinx.parcelize.Parcelize
 import kotlinx.serialization.Serializable
@@ -42,11 +43,19 @@ class WebFinger private constructor(
         return (other.name == name) && (other.host == host)
     }
 
+    fun equalsDomain(other: WebFinger): Boolean {
+        if (this == other) return true
+        if (this.name != other.name) return false
+        if (this.host.endsWith(other.host)) return true
+        if (other.host.endsWith(this.host)) return true
+        return false
+    }
+
     companion object {
 
-        fun create(content: String): WebFinger? {
+        fun create(content: String, baseUrl: FormalBaseUrl? = null): WebFinger? {
             if (content.isBlank()) return null
-            return createAsAcct(content) ?: createAsUrl(content)
+            return createAsAcct(content, baseUrl) ?: createAsUrl(content)
         }
 
         fun build(name: String, host: String): WebFinger {
@@ -63,14 +72,20 @@ class WebFinger private constructor(
             }
         }
 
-        private fun createAsAcct(content: String): WebFinger? {
-            val maybeAcct = content
-                .removePrefix("acct:")
-                .removePrefix("@")
-            val split = maybeAcct.split('@')
-            if (split.size != 2) return null
-            val name = split[0]
-            val host = split[1]
+        private fun createAsAcct(content: String, baseUrl: FormalBaseUrl? = null): WebFinger? {
+            val fixedAcct = content.removePrefix("acct:").removePrefix("@")
+            val name: String
+            val host: String
+            val split = fixedAcct.split('@')
+            if (split.size == 1 && baseUrl != null) {
+                name = split[0]
+                host = baseUrl.host
+            } else if (split.size == 2) {
+                name = split[0]
+                host = split[1]
+            } else {
+                return null
+            }
             if (!hostValidate(host)) return null
             return WebFinger(name, host)
         }

@@ -30,6 +30,13 @@ class FormalBaseUrl private constructor(
         return (other.scheme == scheme) && (other.host == host)
     }
 
+    fun equalsDomain(other: FormalBaseUrl): Boolean {
+        if (this == other) return true
+        if (this.host.endsWith(other.host)) return true
+        if (other.host.endsWith(this.host)) return true
+        return false
+    }
+
     /**
      * Not encode string
      */

@@ -73,9 +73,10 @@ class ActivityPubStatusAdapter @Inject constructor(
         platform: BlogPlatform
     ): Pair<Blog, List<StatusInteraction>> {
         val currentLoginAccount = accountManager.getAllLoggedAccount()
-            .firstOrNull { it.platform.uri == platform.uri }
+            .firstOrNull { it.platform.baseUrl.equalsDomain(platform.baseUrl) }
         val statusAuthor = activityPubAccountEntityAdapter.toAuthor(entity.account)
-        val isSelfStatus = currentLoginAccount?.webFinger == statusAuthor.webFinger
+        val isSelfStatus =
+            currentLoginAccount?.webFinger?.equalsDomain(statusAuthor.webFinger) == true
         val blog = transformBlog(entity, platform, statusAuthor, isSelfStatus)
         val supportActions = getStatusSupportInteraction(
             entity = entity,

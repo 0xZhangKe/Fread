@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
@@ -47,7 +46,6 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.rootNavigator
@@ -61,6 +59,7 @@ import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 class ProfileHomePage : BaseScreen() {
@@ -206,7 +205,7 @@ class ProfileHomePage : BaseScreen() {
                 .padding(bottom = 16.dp)
         ) {
             val (avatar, content, moreIcon) = createRefs()
-            AsyncImage(
+            BlogAuthorAvatar(
                 modifier = Modifier
                     .size(48.dp)
                     .clip(CircleShape)
@@ -215,10 +214,7 @@ class ProfileHomePage : BaseScreen() {
                         end.linkTo(content.start)
                         top.linkTo(parent.top, 12.dp)
                     },
-                placeholder = painterResource(id = com.zhangke.fread.framework.R.drawable.ic_avatar),
-                error = painterResource(id = com.zhangke.fread.framework.R.drawable.ic_avatar),
-                model = account.avatar,
-                contentDescription = "Avatar",
+                imageUrl = account.avatar,
             )
             Column(
                 modifier = Modifier

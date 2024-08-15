@@ -1,5 +1,6 @@
 package com.zhangke.framework.utils
 
+import com.zhangke.framework.network.FormalBaseUrl
 import org.junit.Assert
 import org.junit.Test
 
@@ -23,6 +24,38 @@ internal class WebFingerTest {
     @Test
     fun `should return null when content is not a web finger`() {
         assert(WebFinger.create("Supported") == null)
+    }
+
+    @Test
+    fun `should return WebFinger when acct and base url is present`() {
+        val baseUrl = FormalBaseUrl.parse("https://m.cmx.im")!!
+        val webFinger = WebFinger.create("@jw@jakewharton.com", baseUrl)
+        assert(webFinger!!.name == "jw")
+        assert(webFinger.host == "jakewharton.com")
+    }
+
+    @Test
+    fun `should return WebFinger when acct without @ and base url is present`() {
+        val baseUrl = FormalBaseUrl.parse("https://m.cmx.im")!!
+        val webFinger = WebFinger.create("jw@jakewharton.com", baseUrl)
+        assert(webFinger!!.name == "jw")
+        assert(webFinger.host == "jakewharton.com")
+    }
+
+    @Test
+    fun `should return WebFinger when acct just a name and base url is present`() {
+        val baseUrl = FormalBaseUrl.parse("https://m.cmx.im")!!
+        val webFinger = WebFinger.create("@jw", baseUrl)
+        assert(webFinger!!.name == "jw")
+        assert(webFinger.host == "m.cmx.im")
+    }
+
+    @Test
+    fun `should return WebFinger when acct just a name without @ and base url is present`() {
+        val baseUrl = FormalBaseUrl.parse("https://m.cmx.im")!!
+        val webFinger = WebFinger.create("jw", baseUrl)
+        assert(webFinger!!.name == "jw")
+        assert(webFinger.host == "m.cmx.im")
     }
 
     @Test

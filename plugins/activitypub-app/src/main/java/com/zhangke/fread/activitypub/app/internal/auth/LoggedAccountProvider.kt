@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
-import com.zhangke.framework.collections.container
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.status.uri.FormalUri
@@ -17,7 +16,7 @@ class LoggedAccountProvider @Inject constructor() {
 
     private val accountSet = CopyOnWriteArraySet<ActivityPubLoggedAccount>()
 
-    fun updateAccounts(accountList: List<ActivityPubLoggedAccount>){
+    fun updateAccounts(accountList: List<ActivityPubLoggedAccount>) {
         accountSet.clear()
         accountSet.addAll(accountList)
     }
@@ -27,7 +26,7 @@ class LoggedAccountProvider @Inject constructor() {
     }
 
     fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
-        return accountSet.find { it.platform.baseUrl == baseUrl }
+        return accountSet.find { it.platform.baseUrl.equalsDomain(baseUrl) }
     }
 
     fun removeAccount(uri: FormalUri) {

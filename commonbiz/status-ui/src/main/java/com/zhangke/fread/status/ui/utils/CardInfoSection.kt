@@ -16,12 +16,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import com.zhangke.fread.framework.R
+import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
@@ -41,7 +39,7 @@ fun CardInfoSection(
                 .fillMaxWidth()
         ) {
             val (avatarRef, contentRef, actionsRef) = createRefs()
-            AsyncImage(
+            BlogAuthorAvatar(
                 modifier = Modifier
                     .size(40.dp)
                     .clip(CircleShape)
@@ -50,10 +48,7 @@ fun CardInfoSection(
                         end.linkTo(contentRef.start)
                         top.linkTo(parent.top, 12.dp)
                     },
-                placeholder = painterResource(R.drawable.ic_avatar),
-                error = painterResource(R.drawable.ic_avatar),
-                model = avatar,
-                contentDescription = "Avatar",
+                imageUrl = avatar,
             )
             Column(
                 modifier = Modifier

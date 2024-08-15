@@ -30,11 +30,6 @@ sealed class BlogTranslationUiState : java.io.Serializable {
     data class Success(
         val blogTranslation: BlogTranslation,
     ) : BlogTranslationUiState(), java.io.Serializable
-
-    @Serializable
-    data class Failure(
-        val errorMessage: String,
-    ) : BlogTranslationUiState(), java.io.Serializable
 }
 
 fun List<StatusUiState>.updateStatus(

@@ -43,6 +43,11 @@ class GetStatusInteractionUseCase @Inject constructor() {
             bookmarked = entity.bookmarked ?: false,
             enable = logged,
         )
+        actionList += StatusInteraction.Bookmark(
+            bookmarkCount = null,
+            bookmarked = entity.bookmarked ?: false,
+            enable = true,
+        )
         if (isSelfStatus) {
             actionList.add(StatusInteraction.Delete(enable = true))
             val pinned = entity.pinned == true

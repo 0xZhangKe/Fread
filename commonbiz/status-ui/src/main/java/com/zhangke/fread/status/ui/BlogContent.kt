@@ -32,12 +32,14 @@ import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.ui.common.BlogTranslationState
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusBottomEditedLabel
@@ -56,6 +58,7 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
+    blogTranslationState: BlogTranslationUiState?,
     specificTime: String,
     style: StatusStyle,
     indexOfFeeds: Int,
@@ -75,6 +78,13 @@ fun BlogContent(
     Column(
         modifier = modifier,
     ) {
+        if (blogTranslationState != null) {
+            BlogTranslationState(
+                modifier = Modifier,
+                translationUiState = blogTranslationState,
+                style = style,
+            )
+        }
         BlogTextContentSection(
             blog = blog,
             style = style,

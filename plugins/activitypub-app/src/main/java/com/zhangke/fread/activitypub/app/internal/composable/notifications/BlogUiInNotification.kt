@@ -36,6 +36,7 @@ fun OnlyBlogContentUi(
         BlogContent(
             modifier = Modifier.fillMaxWidth(),
             blog = blog,
+            blogTranslationState = statusUiState.blogTranslationState,
             indexOfFeeds = indexInList,
             style = style.statusStyle,
             specificTime = statusUiState.specificTime,

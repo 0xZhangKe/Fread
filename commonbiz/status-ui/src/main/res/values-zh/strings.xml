@@ -39,4 +39,6 @@
     <string name="status_ui_interaction_label_boosted_count">%s 次转发</string>
 
     <string name="status_ui_bottom_label_edited_at">编辑与 %s</string>
+
+    <string name="status_ui_translating">翻译中…</string>
 </resources>

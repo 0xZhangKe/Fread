@@ -24,6 +24,7 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
+import com.zhangke.fread.status.ui.common.BlogTranslationState
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -118,6 +119,7 @@ fun BlogUi(
                     end = style.containerEndPadding,
                 ),
             blog = blog,
+            blogTranslationState = blogTranslationState,
             specificTime = specificTime,
             detailModel = detailModel,
             indexOfFeeds = indexInList,

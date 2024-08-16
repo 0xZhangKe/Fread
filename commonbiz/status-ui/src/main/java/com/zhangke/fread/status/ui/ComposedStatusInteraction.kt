@@ -23,4 +23,6 @@ interface ComposedStatusInteraction {
     fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
     fun onBoostedClick(role: IdentityRole, status: StatusUiState)
     fun onFavouritedClick(role: IdentityRole, status: StatusUiState)
+    fun onTranslateClick(role: IdentityRole, status: StatusUiState)
+    fun onShowOriginalClick(status: StatusUiState)
 }

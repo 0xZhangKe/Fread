@@ -39,7 +39,7 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
-import com.zhangke.fread.status.ui.common.BlogTranslationState
+import com.zhangke.fread.status.ui.common.BlogTranslateLabel
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusBottomEditedLabel
@@ -58,7 +58,7 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState?,
+    blogTranslationState: BlogTranslationUiState,
     specificTime: String,
     style: StatusStyle,
     indexOfFeeds: Int,
@@ -69,6 +69,7 @@ fun BlogContent(
     onFavouritedClick: ((String) -> Unit)? = null,
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onShowOriginalClick: () -> Unit,
     textSelectable: Boolean = false,
     boostedCount: Int? = null,
     favouritedCount: Int? = null,
@@ -78,13 +79,12 @@ fun BlogContent(
     Column(
         modifier = modifier,
     ) {
-        if (blogTranslationState != null) {
-            BlogTranslationState(
-                modifier = Modifier,
-                translationUiState = blogTranslationState,
-                style = style,
-            )
-        }
+        BlogTranslateLabel(
+            modifier = Modifier,
+            style = style,
+            blogTranslationState = blogTranslationState,
+            onShowOriginalClick = onShowOriginalClick,
+        )
         BlogTextContentSection(
             blog = blog,
             style = style,

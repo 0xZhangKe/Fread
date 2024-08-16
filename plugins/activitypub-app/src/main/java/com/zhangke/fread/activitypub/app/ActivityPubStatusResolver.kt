@@ -4,6 +4,7 @@ import com.zhangke.activitypub.api.AccountsRepo
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
+import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTranslationEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
@@ -14,6 +15,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.StatusInteracti
 import com.zhangke.fread.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.notActivityPub
@@ -37,6 +39,7 @@ class ActivityPubStatusResolver @Inject constructor(
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
+    private val translationAdapter: ActivityPubTranslationEntityAdapter,
 ) : IStatusResolver {
 
     override suspend fun getStatus(
@@ -179,5 +182,19 @@ class ActivityPubStatusResolver @Inject constructor(
             .accountRepo
             .getRelationships(listOf(userId))
             .map { it.firstOrNull()?.following ?: false }
+    }
+
+    override suspend fun translate(
+        role: IdentityRole,
+        status: Status,
+        lan: String,
+    ): Result<BlogTranslation>? {
+        if (status.notThisPlatform()) return null
+        return clientManager.getClient(role)
+            .statusRepo
+            .translate(status.id, lan)
+            .map {
+                translationAdapter.toTranslation(it)
+            }
     }
 }

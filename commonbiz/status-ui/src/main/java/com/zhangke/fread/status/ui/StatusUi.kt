@@ -76,6 +76,12 @@ fun StatusUi(
             onFavouritedClick = {
                 composedStatusInteraction.onFavouritedClick(status.role, status)
             },
+            onShowOriginalClick = {
+                composedStatusInteraction.onShowOriginalClick(status)
+            },
+            onTranslateClick = {
+                composedStatusInteraction.onTranslateClick(status.role, status)
+            },
         )
     }
 }

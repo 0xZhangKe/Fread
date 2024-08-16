@@ -13,6 +13,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.IdentityRole
@@ -24,6 +25,7 @@ import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 class InteractiveHandler(
     private val statusProvider: StatusProvider,
@@ -87,6 +89,14 @@ class InteractiveHandler(
 
         override fun onFavouritedClick(role: IdentityRole, status: StatusUiState) {
             this@InteractiveHandler.onFavouritedClick(role, status)
+        }
+
+        override fun onTranslateClick(role: IdentityRole, status: StatusUiState) {
+            this@InteractiveHandler.onTranslateClick(role, status)
+        }
+
+        override fun onShowOriginalClick(status: StatusUiState) {
+            this@InteractiveHandler.onShowOriginalClick(status)
         }
     }
 
@@ -246,6 +256,59 @@ class InteractiveHandler(
             blogId = status.status.intrinsicBlog.id,
             protocol = status.status.intrinsicBlog.platform.protocol,
         )?.let(::tryOpenScreenByRoute)
+    }
+
+    private fun onTranslateClick(role: IdentityRole, status: StatusUiState) {
+        coroutineScope.launch {
+            onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translating()))
+            statusProvider.statusResolver
+                .translate(role, status.status, Locale.getDefault().language)
+                .onFailure {
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
+                    onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translateFinish()))
+                }.onSuccess {
+                    onInteractiveHandleResult(
+                        InteractiveHandleResult.UpdateStatus(status.translated(it))
+                    )
+                }
+        }
+    }
+
+    private fun onShowOriginalClick(status: StatusUiState) {
+        coroutineScope.launch {
+            val showOriginalBlog = status.copy(
+                blogTranslationState = status.blogTranslationState.copy(
+                    showingTranslation = false,
+                )
+            )
+            onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(showOriginalBlog))
+        }
+    }
+
+    private fun StatusUiState.translating(): StatusUiState {
+        return this.copy(
+            blogTranslationState = this.blogTranslationState.copy(
+                translating = true,
+            )
+        )
+    }
+
+    private fun StatusUiState.translateFinish(): StatusUiState {
+        return this.copy(
+            blogTranslationState = this.blogTranslationState.copy(
+                translating = false,
+            )
+        )
+    }
+
+    private fun StatusUiState.translated(translation: BlogTranslation): StatusUiState {
+        return this.copy(
+            blogTranslationState = this.blogTranslationState.copy(
+                translating = false,
+                blogTranslation = translation,
+                showingTranslation = true,
+            )
+        )
     }
 
     private fun tryOpenScreenByRoute(route: String) = coroutineScope.launch {

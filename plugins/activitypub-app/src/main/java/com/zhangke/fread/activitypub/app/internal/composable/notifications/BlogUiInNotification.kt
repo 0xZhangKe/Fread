@@ -51,6 +51,7 @@ fun OnlyBlogContentUi(
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
             onUrlClick = onUrlClick,
+            onShowOriginalClick = {},
         )
     }
 }
@@ -106,6 +107,12 @@ fun WholeBlogUi(
             },
             onUrlClick = {
                 BrowserLauncher.launchWebTabInApp(context, it, statusUiState.role)
+            },
+            onShowOriginalClick = {
+                composedStatusInteraction.onShowOriginalClick(statusUiState)
+            },
+            onTranslateClick = {
+                composedStatusInteraction.onTranslateClick(statusUiState.role, statusUiState)
             },
         )
     }

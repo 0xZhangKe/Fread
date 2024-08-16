@@ -1,8 +1,10 @@
 package com.zhangke.fread.status.ui.common
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -14,12 +16,14 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.R
 
 @Composable
-fun BlogTranslationState(
+fun BlogTranslateLabel(
     modifier: Modifier,
-    translationUiState: BlogTranslationUiState,
     style: StatusStyle,
+    blogTranslationState: BlogTranslationUiState,
+    onShowOriginalClick: () -> Unit,
 ) {
-    if (translationUiState is BlogTranslationUiState.Success) return
+    if (!blogTranslationState.support) return
+    if (!blogTranslationState.translating && !blogTranslationState.showingTranslation) return
     Row(
         modifier = modifier
             .padding(vertical = style.contentStyle.contentVerticalSpacing),
@@ -28,12 +32,25 @@ fun BlogTranslationState(
         HorizontalDivider(
             modifier = Modifier.weight(1F)
         )
-        Text(
-            modifier = Modifier
-                .padding(horizontal = 16.dp),
-            text = stringResource(R.string.status_ui_translating),
-            style = style.infoLineStyle.descStyle,
-        )
+        if (blogTranslationState.showingTranslation) {
+            Text(
+                modifier = Modifier
+                    .clickable {
+                        onShowOriginalClick()
+                    }
+                    .padding(horizontal = 16.dp),
+                text = stringResource(R.string.status_ui_translate_show_original),
+                style = style.infoLineStyle.descStyle,
+                color = MaterialTheme.colorScheme.primary,
+            )
+        } else {
+            Text(
+                modifier = Modifier
+                    .padding(horizontal = 16.dp),
+                text = stringResource(R.string.status_ui_translating),
+                style = style.infoLineStyle.descStyle,
+            )
+        }
         HorizontalDivider(
             modifier = Modifier.weight(1F)
         )

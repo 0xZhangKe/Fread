@@ -22,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.StatusVisibility
@@ -39,6 +40,7 @@ import java.util.Date
 fun StatusInfoLine(
     modifier: Modifier,
     blogAuthor: BlogAuthor,
+    blogTranslationState: BlogTranslationUiState,
     blogUrl: String,
     displayTime: String,
     style: StatusStyle,
@@ -49,6 +51,7 @@ fun StatusInfoLine(
     onUserInfoClick: (BlogAuthor) -> Unit,
     onUrlClick: (url: String) -> Unit,
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
+    onTranslateClick: () -> Unit,
     reblogAuthor: BlogAuthor? = null,
     editedAt: Date? = null,
 ) {
@@ -163,9 +166,11 @@ fun StatusInfoLine(
                 .align(moreIconAlign)
                 .padding(end = style.containerEndPadding / 2),
             blogUrl = blogUrl,
+            blogTranslationState = blogTranslationState,
             style = style,
             moreActionList = moreInteractions,
             onActionClick = onInteractive,
+            onTranslateClick = onTranslateClick,
         )
     }
 }

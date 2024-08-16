@@ -3,6 +3,7 @@ package com.zhangke.fread.status.status
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -103,6 +104,14 @@ class StatusResolver(
     ): Result<Boolean>? {
         return resolverList.firstNotNullOfOrNull { it.isFollowing(role, target) }
     }
+
+    suspend fun translate(
+        role: IdentityRole,
+        status: Status,
+        lan: String,
+    ): Result<BlogTranslation>{
+        return resolverList.firstNotNullOf { it.translate(role, status, lan) }
+    }
 }
 
 interface IStatusResolver {
@@ -162,4 +171,10 @@ interface IStatusResolver {
         role: IdentityRole,
         target: BlogAuthor,
     ): Result<Boolean>?
+
+    suspend fun translate(
+        role: IdentityRole,
+        status: Status,
+        lan: String,
+    ): Result<BlogTranslation>?
 }

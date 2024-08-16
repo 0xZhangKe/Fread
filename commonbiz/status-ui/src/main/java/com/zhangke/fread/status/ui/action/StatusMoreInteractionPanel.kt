@@ -2,6 +2,8 @@ package com.zhangke.fread.status.ui.action
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Language
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
@@ -20,6 +22,7 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.ui.StatusDataElements
 import com.zhangke.fread.status.ui.reportStatusInteractionClickEvent
@@ -30,9 +33,11 @@ import com.zhangke.fread.statusui.R
 fun StatusMoreInteractionIcon(
     modifier: Modifier,
     blogUrl: String,
+    blogTranslationState: BlogTranslationUiState,
     style: StatusStyle,
     moreActionList: List<StatusUiInteraction>,
     onActionClick: (StatusUiInteraction) -> Unit,
+    onTranslateClick: () -> Unit,
 ) {
     var showMorePopup by remember {
         mutableStateOf(false)
@@ -58,7 +63,9 @@ fun StatusMoreInteractionIcon(
         ) {
             AdditionalMoreOptions(
                 blogUrl = blogUrl,
+                blogTranslationState = blogTranslationState,
                 onDismissRequest = { showMorePopup = false },
+                onTranslateClick = onTranslateClick,
             )
             moreActionList.forEach { interaction ->
                 InteractionItem(
@@ -123,7 +130,9 @@ private fun InteractionItem(
 @Composable
 private fun AdditionalMoreOptions(
     blogUrl: String,
+    blogTranslationState: BlogTranslationUiState,
     onDismissRequest: () -> Unit,
+    onTranslateClick: () -> Unit,
 ) {
     val context = LocalContext.current
     DropDownOpenInBrowserItem {
@@ -135,5 +144,16 @@ private fun AdditionalMoreOptions(
         reportClick(StatusDataElements.COPY_BLOG_LINK)
         onDismissRequest()
         SystemUtils.copyText(context, blogUrl)
+    }
+    if (blogTranslationState.support) {
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.status_ui_interaction_translate),
+            imageVector = Icons.Default.Language,
+            onClick = {
+                reportClick(StatusDataElements.TRANSLATE)
+                onDismissRequest()
+                onTranslateClick()
+            },
+        )
     }
 }

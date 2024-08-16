@@ -27,12 +27,12 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.utils.DateTimeFormatter
 import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.ui.StatusInfoLine
-import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
 
 class BlogDetailScreen(
@@ -88,8 +88,10 @@ class BlogDetailScreen(
                     onUrlClick = {
                         BrowserLauncher.launchWebTabInApp(context, it)
                     },
+                    blogTranslationState = BlogTranslationUiState(support = false),
                     editedAt = blog.editedAt,
                     showFollowButton = false,
+                    onTranslateClick = {},
                 )
                 WebViewPreviewer(
                     modifier = Modifier

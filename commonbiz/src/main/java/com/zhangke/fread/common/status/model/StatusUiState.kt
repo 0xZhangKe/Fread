@@ -8,7 +8,7 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class StatusUiState(
     val status: Status,
-    val blogTranslationState: BlogTranslationUiState? = null,
+    val blogTranslationState: BlogTranslationUiState,
     val role: IdentityRole,
     val displayTime: String,
     val specificTime: String,
@@ -19,18 +19,12 @@ data class StatusUiState(
 ) : java.io.Serializable
 
 @Serializable
-sealed class BlogTranslationUiState : java.io.Serializable {
-
-    @Serializable
-    data object Loading : BlogTranslationUiState(), java.io.Serializable {
-        private fun readResolve(): Any = Loading
-    }
-
-    @Serializable
-    data class Success(
-        val blogTranslation: BlogTranslation,
-    ) : BlogTranslationUiState(), java.io.Serializable
-}
+data class BlogTranslationUiState(
+    val support: Boolean,
+    val translating: Boolean = false,
+    val showingTranslation: Boolean = false,
+    val blogTranslation: BlogTranslation? = null,
+) : java.io.Serializable
 
 fun List<StatusUiState>.updateStatus(
     status: StatusUiState,

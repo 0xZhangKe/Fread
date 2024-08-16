@@ -7,7 +7,7 @@ data class BlogTranslation(
     val content: String,
     val spoilerText: String,
     val poll: Poll?,
-    val attachment: Attachment,
+    val attachment: Attachment?,
     val detectedSourceLanguage: String,
     val provider: String,
 ) : java.io.Serializable {

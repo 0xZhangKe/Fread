@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.status.usecase
 
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
@@ -29,6 +30,12 @@ class BuildStatusUiStateUseCase @Inject constructor(
             editedTime = status.intrinsicBlog.editedAt?.let {
                 dateFormat.format(it) + " " + timeFormat.format(it)
             },
+            blogTranslationState = BlogTranslationUiState(
+                support = status.intrinsicBlog.supportTranslate,
+                translating = false,
+                showingTranslation = false,
+                blogTranslation = null,
+            ),
             following = following,
             bottomInteractions = generateBottomInteractionUseCase(status.supportInteraction),
             moreInteractions = generateMoreInteraction(status.supportInteraction),

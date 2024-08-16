@@ -112,6 +112,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             emojis = emojis,
             pinned = entity.pinned ?: false,
             isSelf = isSelfStatus,
+            supportTranslate = true,
             mentions = entity.mentions.mapNotNull { it.toMention() },
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),

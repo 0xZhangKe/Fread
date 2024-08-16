@@ -6,6 +6,7 @@ import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.isRss
@@ -115,6 +116,14 @@ class RssStatusResolver @Inject constructor(
     }
 
     override suspend fun isFollowing(role: IdentityRole, target: BlogAuthor): Result<Boolean>? {
+        return null
+    }
+
+    override suspend fun translate(
+        role: IdentityRole,
+        status: Status,
+        lan: String,
+    ): Result<BlogTranslation>? {
         return null
     }
 }

@@ -24,7 +24,6 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
-import com.zhangke.fread.status.ui.common.BlogTranslationState
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -35,7 +34,7 @@ import com.zhangke.fread.status.ui.threads.threads
 fun BlogUi(
     modifier: Modifier,
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState?,
+    blogTranslationState: BlogTranslationUiState,
     specificTime: String,
     displayTime: String,
     editedTime: String?,
@@ -53,6 +52,8 @@ fun BlogUi(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onShowOriginalClick: () -> Unit,
+    onTranslateClick: () -> Unit,
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
@@ -96,6 +97,7 @@ fun BlogUi(
                         it
                     }
                 },
+            blogTranslationState = blogTranslationState,
             blogAuthor = blog.author,
             displayTime = displayTime,
             visibility = blog.visibility,
@@ -109,6 +111,7 @@ fun BlogUi(
             style = style,
             reblogAuthor = reblogAuthor,
             editedAt = blog.editedAt,
+            onTranslateClick = onTranslateClick,
         )
         BlogContent(
             modifier = Modifier
@@ -135,6 +138,7 @@ fun BlogUi(
             boostedCount = bottomPanelInteractions.boostedCount,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
+            onShowOriginalClick = onShowOriginalClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier

@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.trending
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
@@ -51,6 +52,11 @@ class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab() {
                 mainTabConnection.updateContentScrollInProgress(it)
             },
         )
+        LaunchedEffect(mainTabConnection.refreshFlow) {
+            mainTabConnection.refreshFlow.collect {
+                viewModel.onRefresh()
+            }
+        }
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
 }

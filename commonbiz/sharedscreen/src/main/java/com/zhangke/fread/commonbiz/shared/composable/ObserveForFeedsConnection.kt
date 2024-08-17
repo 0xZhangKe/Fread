@@ -10,7 +10,10 @@ import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
 
 @Composable
-fun ObserveForFeedsConnection(listState: LazyListState) {
+fun ObserveForFeedsConnection(
+    listState: LazyListState,
+    onRefresh: () -> Unit,
+) {
     val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()
     LaunchedEffect(listState, mainTabConnection.scrollToTopFlow) {
@@ -36,6 +39,11 @@ fun ObserveForFeedsConnection(listState: LazyListState) {
             }
         }
     )
+    LaunchedEffect(mainTabConnection.refreshFlow) {
+        mainTabConnection.refreshFlow.collect {
+            onRefresh()
+        }
+    }
 }
 
 @Composable

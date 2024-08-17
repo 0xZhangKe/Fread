@@ -175,6 +175,13 @@ class ActivityPubContentScreen(
                                             mainTabConnection.switchToNextTab()
                                         }
                                     },
+                                    onRefreshClick = {
+                                        reportClick(HomeTabElements.REFRESH)
+                                        coroutineScope.launch {
+                                            mainTabConnection.scrollToTop()
+                                            mainTabConnection.refresh()
+                                        }
+                                    },
                                     onTitleClick = {
                                         reportClick(HomeTabElements.TITLE)
                                         onTitleClick(config)

@@ -21,6 +21,7 @@ object MainDrawerElements {
 
 object HomeTabElements {
     const val NEXT = "homeTabNext"
+    const val REFRESH = "homeTabRefresh"
     const val SHOW_DRAWER = "homeTabShowDrawer"
     const val TITLE = "homeTabTitle"
     const val TITLE_DOUBLE_CLICK = "homeTabTitleDoubleClick"

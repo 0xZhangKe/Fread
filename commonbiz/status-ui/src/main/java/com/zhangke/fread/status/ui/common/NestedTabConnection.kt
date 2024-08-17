@@ -46,6 +46,9 @@ class NestedTabConnection {
     private val _contentScrollInpProgress = MutableStateFlow(false)
     val contentScrollInpProgress: StateFlow<Boolean> get() = _contentScrollInpProgress.asStateFlow()
 
+    private val _refreshFlow = MutableSharedFlow<Unit>()
+    val refreshFlow: SharedFlow<Unit> get() = _refreshFlow.asSharedFlow()
+
     private var toggleImmersiveJob: Job? = null
 
     suspend fun switchToNextTab() {
@@ -83,10 +86,14 @@ class NestedTabConnection {
     suspend fun scrollToTop() {
         _scrollToTopFlow.emit(Unit)
     }
+
+    suspend fun refresh() {
+        _refreshFlow.emit(Unit)
+    }
 }
 
 @Composable
-fun ObserveScrollInProgressForConnection(lazyListState: LazyListState){
+fun ObserveScrollInProgressForConnection(lazyListState: LazyListState) {
     val nestedTabConnection = LocalNestedTabConnection.current
     LaunchedEffect(lazyListState.isScrollInProgress) {
         nestedTabConnection.updateContentScrollInProgress(lazyListState.isScrollInProgress)

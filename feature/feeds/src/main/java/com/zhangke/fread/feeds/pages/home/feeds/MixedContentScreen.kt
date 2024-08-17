@@ -95,6 +95,13 @@ class MixedContentScreen(
                             mainTabConnection.switchToNextTab()
                         }
                     },
+                    onRefreshClick = {
+                        reportClick(HomeTabElements.REFRESH)
+                        coroutineScope.launch {
+                            mainTabConnection.scrollToTop()
+                            onRefresh()
+                        }
+                    },
                     onTitleClick = {
                         reportClick(HomeTabElements.TITLE)
                         onTitleClick()

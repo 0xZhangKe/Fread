@@ -2,6 +2,7 @@ package com.zhangke.fread.commonbiz.shared.screen.status.context
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
@@ -25,15 +26,24 @@ class StatusContextViewModel @Inject constructor(
             buildStatusUiState = buildStatusUiState,
             refactorToNewBlog = refactorToNewBlog,
             role = params.role,
-            anchorStatus = params.anchorStatus
+            anchorStatus = params.anchorStatus,
+            blogTranslationUiState = params.blogTranslationUiState,
         )
     }
 
-    fun getSubViewModel(role: IdentityRole, anchorStatus: Status): StatusContextSubViewModel {
-        return obtainSubViewModel(Params(role, anchorStatus))
+    fun getSubViewModel(
+        role: IdentityRole,
+        anchorStatus: Status,
+        blogTranslationUiState: BlogTranslationUiState?,
+    ): StatusContextSubViewModel {
+        return obtainSubViewModel(Params(role, anchorStatus, blogTranslationUiState))
     }
 
-    class Params(val role: IdentityRole, val anchorStatus: Status) : SubViewModelParams() {
+    class Params(
+        val role: IdentityRole,
+        val anchorStatus: Status,
+        val blogTranslationUiState: BlogTranslationUiState?,
+    ) : SubViewModelParams() {
 
         override val key: String = anchorStatus.id + role
     }

@@ -3,7 +3,7 @@ package com.zhangke.fread.status.ui.common
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
@@ -12,8 +12,9 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.material3.TopAppBarScrollBehavior
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.rotate
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.SimpleIconButton
@@ -28,6 +29,7 @@ fun ContentToolbar(
     scrollBehavior: TopAppBarScrollBehavior? = null,
     windowInsets: WindowInsets = TopAppBarDefaults.windowInsets,
     onMenuClick: () -> Unit,
+    onRefreshClick: () -> Unit,
     onNextClick: () -> Unit,
     onTitleClick: () -> Unit,
     onDoubleClick: (() -> Unit)? = null,
@@ -61,13 +63,21 @@ fun ContentToolbar(
             )
         },
         actions = {
+            SimpleIconButton(
+                modifier = Modifier,
+                onClick = {
+                    onRefreshClick()
+                },
+                imageVector = ImageVector.vectorResource(id = com.zhangke.fread.commonbiz.R.drawable.ic_logo_small),
+                contentDescription = "Next Content"
+            )
             if (showNextIcon) {
                 SimpleIconButton(
-                    modifier = Modifier.rotate(180F),
+                    modifier = Modifier,
                     onClick = {
                         onNextClick()
                     },
-                    imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                    imageVector = Icons.AutoMirrored.Filled.ArrowForward,
                     contentDescription = "Next Content"
                 )
             }

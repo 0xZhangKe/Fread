@@ -192,7 +192,7 @@ class ActivityPubStatusResolver @Inject constructor(
         if (status.notThisPlatform()) return null
         return clientManager.getClient(role)
             .statusRepo
-            .translate(status.id, lan)
+            .translate(status.intrinsicBlog.id, lan)
             .map {
                 translationAdapter.toTranslation(it)
             }

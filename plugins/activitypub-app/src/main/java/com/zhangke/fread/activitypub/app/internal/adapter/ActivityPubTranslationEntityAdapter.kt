@@ -11,7 +11,7 @@ class ActivityPubTranslationEntityAdapter @Inject constructor() {
             content = entity.content,
             spoilerText = entity.spoilerText,
             poll = entity.poll?.toPol(),
-            attachment = entity.mediaAttachments?.toAttachment(),
+            attachments = entity.mediaAttachments?.map { it.toAttachment() },
             detectedSourceLanguage = entity.detectedSourceLanguage,
             provider = entity.provider,
         )

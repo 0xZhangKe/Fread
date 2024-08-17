@@ -4,6 +4,7 @@ import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
@@ -25,6 +26,7 @@ class StatusContextSubViewModel(
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val role: IdentityRole,
     private val anchorStatus: Status,
+    private val blogTranslationUiState: BlogTranslationUiState?,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,
@@ -78,7 +80,13 @@ class StatusContextSubViewModel(
         statusProvider.statusResolver
             .getStatus(role, anchorStatus.id, anchorStatus.platform)
             .onSuccess {
-                updateStatus(buildStatusUiState(role, it))
+                updateStatus(
+                    buildStatusUiState(
+                        role = role,
+                        status = it,
+                        blogTranslationState = blogTranslationUiState
+                    )
+                )
             }
     }
 
@@ -124,7 +132,8 @@ class StatusContextSubViewModel(
             buildStatusUiState(
                 role = role,
                 status = anchorStatus,
-                following = anchorAuthorFollowing
+                following = anchorAuthorFollowing,
+                blogTranslationState = blogTranslationUiState,
             ),
             StatusInContextType.ANCHOR,
         )

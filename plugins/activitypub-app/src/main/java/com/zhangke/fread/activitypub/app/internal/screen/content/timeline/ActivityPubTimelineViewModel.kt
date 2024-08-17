@@ -289,9 +289,18 @@ class ActivityPubTimelineViewModel(
     ): List<ActivityPubTimelineItem> {
         if (items.isEmpty()) return this
         val newList = this.toMutableList()
-        newList.addAll(items)
+        val idSet = this.map { it.statusId }
+        val pendingAddItems = items.filter { it.statusId !in idSet }
+        newList.addAll(pendingAddItems)
         return newList
     }
+
+    private val ActivityPubTimelineItem.statusId: String
+        get() {
+            return when (this) {
+                is ActivityPubTimelineItem.StatusItem -> this.status.status.id
+            }
+        }
 
     private fun List<Status>.toTimelineItems(): List<ActivityPubTimelineItem> {
         return map { ActivityPubTimelineItem.StatusItem(buildStatusUiState(role, it)) }

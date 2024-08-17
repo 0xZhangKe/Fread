@@ -21,12 +21,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SlickRoundCornerShape
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.statusui.R
 
 @Composable
-internal fun ColumnScope.MultipleChoicePoll(
+internal fun MultipleChoicePoll(
     poll: BlogPoll,
+    blogTranslationState: BlogTranslationUiState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val indexToSelected = remember(poll) {
@@ -36,14 +38,21 @@ internal fun ColumnScope.MultipleChoicePoll(
         }
         mutableStateMapOf(*map.map { it.key to it.value }.toTypedArray())
     }
+    val translatedPoll = blogTranslationState.blogTranslation?.poll
     val pollIsInVotable = !poll.expired && poll.voted == false
     val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
     poll.options.forEachIndexed { index, option ->
         val votesCount = option.votesCount?.toFloat() ?: 0F
         val progress = if (votesCount > 0) votesCount / sum else 0F
+        var optionContent: String = option.title
+        if (blogTranslationState.showingTranslation) {
+            translatedPoll?.options?.getOrNull(index)?.title?.let {
+                optionContent = it
+            }
+        }
         BlogPollOption(
             modifier = Modifier.fillMaxWidth(),
-            optionContent = option.title,
+            optionContent = optionContent,
             selected = indexToSelected[index] ?: false,
             votable = pollIsInVotable,
             showProgress = poll.voted == true || poll.expired,

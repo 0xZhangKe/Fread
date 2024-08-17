@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.ui.media.BlogMedias
 
@@ -46,6 +47,7 @@ class SingleImageTestScreen : Screen {
                             modifier = Modifier
                                 .fillMaxWidth(),
                             mediaList = item,
+                            blogTranslationState = BlogTranslationUiState(support = false),
                             indexInList = 1,
                             sensitive = false,
                             onMediaClick = { },

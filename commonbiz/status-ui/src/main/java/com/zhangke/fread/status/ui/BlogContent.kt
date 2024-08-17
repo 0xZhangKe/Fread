@@ -87,6 +87,7 @@ fun BlogContent(
         )
         BlogTextContentSection(
             blog = blog,
+            blogTranslationState = blogTranslationState,
             style = style,
             onHashtagInStatusClick = {
                 reportClick(StatusDataElements.HASHTAG)
@@ -106,6 +107,7 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 poll = blog.poll!!,
+                blogTranslationState = blogTranslationState,
                 onVoted = {
                     reportClick(StatusDataElements.VOTE)
                     onVoted(it)
@@ -117,6 +119,7 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 mediaList = blog.mediaList,
+                blogTranslationState = blogTranslationState,
                 indexInList = indexOfFeeds,
                 sensitive = sensitive,
                 onMediaClick = {
@@ -180,6 +183,7 @@ fun BlogContent(
 @Composable
 private fun BlogTextContentSection(
     blog: Blog,
+    blogTranslationState: BlogTranslationUiState,
     style: StatusStyle,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
@@ -196,10 +200,15 @@ private fun BlogTextContentSection(
         var hideContent by rememberSaveable(spoilerText) {
             mutableStateOf(true)
         }
+        val humanizedSpoilerText = if (blogTranslationState.showingTranslation) {
+            blogTranslationState.blogTranslation!!.getHumanizedSpoilerText(blog)
+        } else {
+            blog.humanizedSpoilerText
+        }
         SpoilerText(
             modifier = Modifier,
             hideContent = hideContent,
-            spoilerText = blog.humanizedSpoilerText,
+            spoilerText = humanizedSpoilerText,
             fontSize = style.contentStyle.contentSize,
             onShowContent = { hideContent = false },
             onHideContent = { hideContent = true },
@@ -213,12 +222,17 @@ private fun BlogTextContentSection(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
             ) {
+                val humanizedContent = if (blogTranslationState.showingTranslation) {
+                    blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
+                } else {
+                    blog.humanizedContent
+                }
                 FreadRichText(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 4.dp)
                         .wrapContentHeight(),
-                    richText = blog.humanizedContent,
+                    richText = humanizedContent,
                     maxLines = contentMaxLine,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagInStatusClick,
@@ -263,11 +277,16 @@ private fun BlogTextContentSection(
             blog.description.isNullOrEmpty() &&
             blog.content.isNotEmpty()
         ) {
+            val humanizedContent = if (blogTranslationState.showingTranslation) {
+                blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
+            } else {
+                blog.humanizedContent
+            }
             FreadRichText(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight(),
-                richText = blog.humanizedContent,
+                richText = humanizedContent,
                 maxLines = contentMaxLine,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,

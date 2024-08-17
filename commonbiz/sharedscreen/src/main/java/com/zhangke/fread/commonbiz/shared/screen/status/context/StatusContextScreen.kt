@@ -28,6 +28,7 @@ import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.model.IdentityRole
@@ -40,6 +41,7 @@ import com.zhangke.fread.status.ui.threads.ThreadsType
 data class StatusContextScreen(
     val role: IdentityRole,
     val status: Status,
+    val blogTranslationUiState: BlogTranslationUiState? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
@@ -50,7 +52,11 @@ data class StatusContextScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(role, status)
+        val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(
+            role = role,
+            anchorStatus = status,
+            blogTranslationUiState = blogTranslationUiState,
+        )
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = rememberSnackbarHostState()
         StatusContextContent(

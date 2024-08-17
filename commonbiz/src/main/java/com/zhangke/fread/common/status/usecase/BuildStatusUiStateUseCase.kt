@@ -18,6 +18,7 @@ class BuildStatusUiStateUseCase @Inject constructor(
         role: IdentityRole,
         status: Status,
         following: Boolean? = null,
+        blogTranslationState: BlogTranslationUiState? = null,
     ): StatusUiState {
         val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
         val timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault())
@@ -30,7 +31,7 @@ class BuildStatusUiStateUseCase @Inject constructor(
             editedTime = status.intrinsicBlog.editedAt?.let {
                 dateFormat.format(it) + " " + timeFormat.format(it)
             },
-            blogTranslationState = BlogTranslationUiState(
+            blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,
                 translating = false,
                 showingTranslation = false,

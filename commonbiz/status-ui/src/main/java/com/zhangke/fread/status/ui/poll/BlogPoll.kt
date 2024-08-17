@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.statusui.R
 
@@ -15,13 +16,14 @@ import com.zhangke.fread.statusui.R
 fun BlogPoll(
     modifier: Modifier,
     poll: BlogPoll,
+    blogTranslationState: BlogTranslationUiState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     Column(modifier = modifier) {
         if (poll.multiple) {
-            MultipleChoicePoll(poll = poll, onVoted = onVoted)
+            MultipleChoicePoll(poll, blogTranslationState, onVoted)
         } else {
-            SingleChoicePoll(poll, onVoted)
+            SingleChoicePoll(poll, blogTranslationState, onVoted)
         }
         if (poll.expired) {
             val count = poll.votesCount

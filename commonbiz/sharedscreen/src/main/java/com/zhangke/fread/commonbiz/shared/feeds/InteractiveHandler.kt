@@ -150,6 +150,7 @@ class InteractiveHandler(
                 StatusContextScreen(
                     role = status.role,
                     status = refactorToNewBlog(status.status),
+                    blogTranslationUiState = status.blogTranslationState,
                 )
             }
             mutableOpenScreenFlow.emit(screen)

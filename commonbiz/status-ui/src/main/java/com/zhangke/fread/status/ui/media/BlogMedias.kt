@@ -25,9 +25,11 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.ui.image.BlogImageMedias
+import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.video.BlogVideos
 import com.zhangke.fread.statusui.R
@@ -38,6 +40,7 @@ private var cachedContainerWidth: Dp? = null
 fun BlogMedias(
     modifier: Modifier,
     mediaList: List<BlogMedia>,
+    blogTranslationState: BlogTranslationUiState,
     indexInList: Int,
     sensitive: Boolean,
     onMediaClick: OnBlogMediaClick,
@@ -59,6 +62,7 @@ fun BlogMedias(
         if (containerWidth != null) {
             BlogMediaContent(
                 mediaList = mediaList,
+                blogTranslationState = blogTranslationState,
                 hideContent = hideContent,
                 indexInList = indexInList,
                 containerWidth = containerWidth!!,
@@ -104,6 +108,7 @@ fun BlogMedias(
 @Composable
 private fun BlogMediaContent(
     mediaList: List<BlogMedia>,
+    blogTranslationState: BlogTranslationUiState,
     hideContent: Boolean,
     indexInList: Int,
     containerWidth: Dp,
@@ -123,7 +128,27 @@ private fun BlogMediaContent(
             mediaList = imageMediaList,
             hideContent = hideContent,
             containerWidth = containerWidth,
-            onMediaClick = onMediaClick,
+            onMediaClick = {
+                onMediaClick(it.transformTranslatedEvent(blogTranslationState))
+            },
         )
     }
+}
+
+private fun BlogMediaClickEvent.transformTranslatedEvent(
+    blogTranslationState: BlogTranslationUiState,
+): BlogMediaClickEvent {
+    val imageEvent = (this as? BlogMediaClickEvent.BlogImageClickEvent) ?: return this
+    if (!blogTranslationState.showingTranslation) return this
+    val attachment = blogTranslationState.blogTranslation?.attachments ?: return this
+    val mediaList = imageEvent.mediaList
+    if (attachment.size != mediaList.size) return this
+    val newMediaList = mediaList.map { media ->
+        val description =
+            attachment.firstOrNull { it.id == media.id }?.description ?: media.description
+        media.copy(description = description)
+    }
+    return imageEvent.copy(
+        mediaList = newMediaList,
+    )
 }

@@ -20,6 +20,7 @@ import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.ui.poll.BlogPoll
 
@@ -76,6 +77,7 @@ class BlogPollTestScreen : Screen {
                         .fillMaxWidth()
                         .padding(top = 6.dp),
                     poll = mockPoll(poll1),
+                    blogTranslationState = BlogTranslationUiState(support = false),
                     onVoted = {
                     }
                 )
@@ -92,6 +94,7 @@ class BlogPollTestScreen : Screen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
+                    blogTranslationState = BlogTranslationUiState(support = false),
                     poll = mockPoll(poll2),
                     onVoted = {
                         Log.d("U_TEST", "onVote:$it")
@@ -110,6 +113,7 @@ class BlogPollTestScreen : Screen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
+                    blogTranslationState = BlogTranslationUiState(support = false),
                     poll = mockPoll(
                         listOf(
                             mockPollOption(

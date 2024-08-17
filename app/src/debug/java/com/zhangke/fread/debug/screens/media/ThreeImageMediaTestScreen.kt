@@ -16,6 +16,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.second
 import com.zhangke.framework.ktx.third
+import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.ui.media.BlogMedias
 
@@ -51,6 +52,7 @@ class ThreeImageMediaTestScreen : Screen {
                             modifier = Modifier
                                 .fillMaxWidth(),
                             mediaList = item,
+                            blogTranslationState = BlogTranslationUiState(support = false),
                             indexInList = 1,
                             sensitive = false,
                             onMediaClick = { },

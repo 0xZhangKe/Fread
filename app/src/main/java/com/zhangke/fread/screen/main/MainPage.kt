@@ -22,6 +22,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -127,7 +128,15 @@ fun Screen.MainPage() {
                                 modifier = Modifier,
                             ) {
                                 tabs.forEach { tab ->
-                                    TabNavigationItem(tab)
+                                    TabNavigationItem(
+                                        tab = tab,
+                                        detectDoubleTap = inFeedsTab,
+                                        onDoubleTap = {
+                                            coroutineScope.launch {
+                                                nestedTabConnection.scrollToTop()
+                                            }
+                                        },
+                                    )
                                 }
                             }
                         }
@@ -148,11 +157,31 @@ private fun createMainTabs(): List<Tab> {
 }
 
 @Composable
-private fun RowScope.TabNavigationItem(tab: Tab) {
+private fun RowScope.TabNavigationItem(
+    tab: Tab,
+    detectDoubleTap: Boolean,
+    onDoubleTap: () -> Unit,
+) {
     val tabNavigator = LocalTabNavigator.current
+    val selected = tabNavigator.current.key == tab.key
+    var latestClickTime by remember {
+        mutableLongStateOf(0L)
+    }
     NavigationBarItem(
-        selected = tabNavigator.current.key == tab.key,
-        onClick = { tabNavigator.current = tab },
+        selected = selected,
+        onClick = {
+            if (selected) {
+                val currentTime = System.currentTimeMillis()
+                if (detectDoubleTap && currentTime - latestClickTime < 500) {
+                    onDoubleTap()
+                }
+                latestClickTime = currentTime
+                return@NavigationBarItem
+            } else {
+                tabNavigator.current = tab
+                latestClickTime = 0L
+            }
+        },
         alwaysShowLabel = false,
         icon = { Icon(painter = tab.options.icon!!, contentDescription = tab.options.title) },
     )

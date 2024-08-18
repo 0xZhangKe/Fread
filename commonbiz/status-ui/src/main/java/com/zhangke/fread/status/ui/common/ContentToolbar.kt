@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForward
 import androidx.compose.material.icons.filled.Menu
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
@@ -68,7 +69,7 @@ fun ContentToolbar(
                 onClick = {
                     onRefreshClick()
                 },
-                imageVector = ImageVector.vectorResource(id = com.zhangke.fread.commonbiz.R.drawable.ic_logo_small),
+                imageVector = Icons.Default.Refresh,
                 contentDescription = "Next Content"
             )
             if (showNextIcon) {

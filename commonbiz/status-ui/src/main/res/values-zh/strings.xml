@@ -42,5 +42,5 @@
     <string name="status_ui_bottom_label_edited_at">编辑与 %s</string>
 
     <string name="status_ui_translating">翻译中…</string>
-    <string name="status_ui_translate_show_original">显示全文</string>
+    <string name="status_ui_translate_show_original">显示原文</string>
 </resources>

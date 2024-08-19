@@ -25,6 +25,7 @@ import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material.icons.outlined.SmartToy
 import androidx.compose.material3.Button
@@ -92,11 +93,13 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScree
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
+import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
@@ -143,10 +146,10 @@ data class UserDetailScreen(
             uiState = uiState,
             messageFlow = viewModel.messageFlow,
             onFavouritesClick = {
-                navigator.push(StatusListScreen(role, StatusListType.FAVOURITES))
+                navigator.push(StatusListScreen(role = role, type = StatusListType.FAVOURITES))
             },
             onBookmarksClick = {
-                navigator.push(StatusListScreen(role, StatusListType.BOOKMARKS))
+                navigator.push(StatusListScreen(role = role, type = StatusListType.BOOKMARKS))
             },
             onBackClick = navigator::pop,
             onFollowAccountClick = viewModel::onFollowClick,
@@ -257,6 +260,9 @@ data class UserDetailScreen(
                     )
                 )
             },
+            onFollowedHashtagsListClick = {
+                navigator.pushDestination(TagListScreenRoute.buildRoute(role))
+            },
         )
     }
 
@@ -290,6 +296,7 @@ data class UserDetailScreen(
         onMaybeHashtagTargetClick: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit,
         onMuteUserListClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
+        onFollowedHashtagsListClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -333,6 +340,7 @@ data class UserDetailScreen(
                                 onUnmuteUserClick = onUnmuteUserClick,
                                 onMuteUserListClick = onMuteUserListClick,
                                 onBlockedUserListClick = onBlockedUserListClick,
+                                onFollowedHashtagsListClick = onFollowedHashtagsListClick,
                             )
                         },
                     )
@@ -553,6 +561,7 @@ data class UserDetailScreen(
         onUnmuteUserClick: () -> Unit,
         onMuteUserListClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
+        onFollowedHashtagsListClick: () -> Unit,
     ) {
         val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
@@ -617,6 +626,10 @@ data class UserDetailScreen(
                     onMuteUserListClick = {
                         showMorePopup = false
                         onMuteUserListClick()
+                    },
+                    onFollowedHashtagsListClick = {
+                        showMorePopup = false
+                        onFollowedHashtagsListClick()
                     },
                 )
             }
@@ -740,6 +753,7 @@ data class UserDetailScreen(
         onFavouritesClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
         onMuteUserListClick: () -> Unit,
+        onFollowedHashtagsListClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
             text = stringResource(R.string.activity_pub_favourites_list_title),
@@ -750,6 +764,11 @@ data class UserDetailScreen(
             text = stringResource(R.string.activity_pub_bookmarks_list_title),
             onClick = onBookmarksClick,
             imageVector = Icons.Default.Bookmarks,
+        )
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_followed_tags_screen_title),
+            onClick = onFollowedHashtagsListClick,
+            imageVector = Icons.Default.Tag,
         )
         ModalDropdownMenuItem(
             text = stringResource(R.string.activity_pub_user_menu_muted_user_list),

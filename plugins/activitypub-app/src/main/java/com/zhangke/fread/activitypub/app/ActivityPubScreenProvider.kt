@@ -10,6 +10,9 @@ import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityP
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreenRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
+import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
@@ -109,20 +112,23 @@ class ActivityPubScreenProvider @Inject constructor(
         role: IdentityRole,
         protocol: StatusProviderProtocol
     ): String? {
-        TODO("Not yet implemented")
+        if (protocol.notActivityPub) return null
+        return StatusListScreenRoute.buildRoute(role, StatusListType.BOOKMARKS)
     }
 
     override fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
     ): String? {
-        TODO("Not yet implemented")
+        if (protocol.notActivityPub) return null
+        return StatusListScreenRoute.buildRoute(role, StatusListType.FAVOURITES)
     }
 
     override fun getFollowedHashtagScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
     ): String? {
-        TODO("Not yet implemented")
+        if (protocol.notActivityPub) return null
+        return TagListScreenRoute.buildRoute(role)
     }
 }

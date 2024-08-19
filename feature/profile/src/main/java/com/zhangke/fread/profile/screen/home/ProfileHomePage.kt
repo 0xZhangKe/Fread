@@ -1,6 +1,5 @@
 package com.zhangke.fread.profile.screen.home
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -45,6 +44,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.ProfileElements
 import com.zhangke.fread.analytics.reportClick
@@ -236,7 +236,7 @@ class ProfileHomePage : BaseScreen() {
         }
         Row(modifier = Modifier
             .fillMaxWidth()
-            .clickable { onAccountClick(account) }) {
+            .noRippleClick { onAccountClick(account) }) {
             BlogAuthorAvatar(
                 modifier = Modifier
                     .size(48.dp)

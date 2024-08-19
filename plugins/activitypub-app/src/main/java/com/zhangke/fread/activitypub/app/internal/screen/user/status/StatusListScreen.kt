@@ -22,10 +22,11 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.krouter.Destination
+import com.zhangke.krouter.Router
 
 @Destination(StatusListScreenRoute.ROUTE)
 class StatusListScreen(
-    private val route: String = "",
+    @Router private val route: String = "",
     private val role: IdentityRole? = null,
     private val type: StatusListType? = null,
 ) : BaseScreen() {
@@ -36,7 +37,12 @@ class StatusListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<StatusListViewModel, StatusListViewModel.Factory> {
-            it.create(role, type)
+            if (route.isEmpty()) {
+                it.create(role!!, type!!)
+            } else {
+                val (role, type) = StatusListScreenRoute.parse(route)!!
+                it.create(role, type)
+            }
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
@@ -44,7 +50,7 @@ class StatusListScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = type.pageTitle,
+                    title = viewModel.type.pageTitle,
                     onBackClick = navigator::pop,
                 )
             },

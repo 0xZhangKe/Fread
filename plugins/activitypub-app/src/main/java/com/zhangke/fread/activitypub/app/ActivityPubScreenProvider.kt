@@ -104,4 +104,25 @@ class ActivityPubScreenProvider @Inject constructor(
             blogId = blogId,
         )
     }
+
+    override fun getBookmarkedScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol
+    ): String? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFavouritedScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol
+    ): String? {
+        TODO("Not yet implemented")
+    }
+
+    override fun getFollowedHashtagScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol
+    ): String? {
+        TODO("Not yet implemented")
+    }
 }

@@ -100,4 +100,31 @@ class ProfileHomeViewModel @Inject constructor(
                 ?.let { _openPageFlow.emit(it) }
         }
     }
+
+    fun onFavouritedClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.screenProvider
+                .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
+                ?.let { KRouter.routeScreen(it) }
+                ?.let { _openPageFlow.emit(it) }
+        }
+    }
+
+    fun onBookmarkedClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.screenProvider
+                .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
+                ?.let { KRouter.routeScreen(it) }
+                ?.let { _openPageFlow.emit(it) }
+        }
+    }
+
+    fun onFollowedHashtagClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.screenProvider
+                .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
+                ?.let { KRouter.routeScreen(it) }
+                ?.let { _openPageFlow.emit(it) }
+        }
+    }
 }

@@ -33,6 +33,9 @@ object ProfileElements {
     const val LOGOUT = "profileLogout"
     const val SETTING = "profileSetting"
     const val ACCOUNT = "profileAccount"
+    const val FAVOURITED = "profileFavourited"
+    const val BOOKMARKED = "profileBookmarked"
+    const val HASHTAG = "profileHashtag"
 }
 
 object SettingElements {

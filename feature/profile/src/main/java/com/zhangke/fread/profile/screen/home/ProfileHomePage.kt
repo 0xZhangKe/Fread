@@ -1,7 +1,6 @@
 package com.zhangke.fread.profile.screen.home
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,19 +9,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.outlined.Bookmarks
+import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -39,14 +36,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.ProfileElements
@@ -96,6 +93,18 @@ class ProfileHomePage : BaseScreen() {
                     reportClick(ProfileElements.ACCOUNT)
                     viewModel.onAccountClick(it)
                 },
+                onFavouritedClick = {
+                    reportClick(ProfileElements.FAVOURITED)
+                    viewModel.onFavouritedClick(it)
+                },
+                onBookmarkedClick = {
+                    reportClick(ProfileElements.BOOKMARKED)
+                    viewModel.onBookmarkedClick(it)
+                },
+                onFollowedHashtagClick = {
+                    reportClick(ProfileElements.HASHTAG)
+                    viewModel.onFollowedHashtagClick(it)
+                },
             )
             ConsumeFlow(viewModel.openPageFlow) {
                 navigator.push(it)
@@ -110,6 +119,9 @@ class ProfileHomePage : BaseScreen() {
         onSettingClick: () -> Unit,
         onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
+        onFavouritedClick: (LoggedAccount) -> Unit,
+        onBookmarkedClick: (LoggedAccount) -> Unit,
+        onFollowedHashtagClick: (LoggedAccount) -> Unit,
     ) {
         Surface(
             modifier = Modifier
@@ -153,6 +165,9 @@ class ProfileHomePage : BaseScreen() {
                             accountList = item.second,
                             onLogoutClick = onLogoutClick,
                             onAccountClick = onAccountClick,
+                            onFavouritedClick = onFavouritedClick,
+                            onBookmarkedClick = onBookmarkedClick,
+                            onFollowedHashtagClick = onFollowedHashtagClick,
                         )
                     }
                 }
@@ -166,17 +181,29 @@ class ProfileHomePage : BaseScreen() {
         accountList: List<LoggedAccount>,
         onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
+        onFavouritedClick: (LoggedAccount) -> Unit,
+        onBookmarkedClick: (LoggedAccount) -> Unit,
+        onFollowedHashtagClick: (LoggedAccount) -> Unit,
     ) {
         Card(
             modifier = Modifier
                 .padding(start = 16.dp, end = 16.dp, bottom = 16.dp)
                 .fillMaxWidth()
         ) {
-            Column {
+            Column(
+                modifier = Modifier.padding(
+                    start = 16.dp,
+                    top = 16.dp,
+                    end = 16.dp,
+                    bottom = 8.dp
+                )
+            ) {
                 Text(
-                    modifier = Modifier.padding(16.dp),
+                    modifier = Modifier.padding(bottom = 16.dp),
                     text = platform.name,
                     style = MaterialTheme.typography.titleLarge,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
                 )
                 accountList.forEach { account ->
                     LoggedAccountSection(
@@ -185,6 +212,9 @@ class ProfileHomePage : BaseScreen() {
                             onLogoutClick(account)
                         },
                         onAccountClick = onAccountClick,
+                        onFavouritedClick = onFavouritedClick,
+                        onBookmarkedClick = onBookmarkedClick,
+                        onFollowedHashtagClick = onFollowedHashtagClick,
                     )
                 }
             }
@@ -196,37 +226,27 @@ class ProfileHomePage : BaseScreen() {
         account: LoggedAccount,
         onLogoutClick: () -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
+        onFavouritedClick: (LoggedAccount) -> Unit,
+        onBookmarkedClick: (LoggedAccount) -> Unit,
+        onFollowedHashtagClick: (LoggedAccount) -> Unit,
     ) {
         val context = LocalContext.current
-        ConstraintLayout(
-            modifier = Modifier
-                .clickable { onAccountClick(account) }
-                .fillMaxWidth()
-                .padding(bottom = 16.dp)
-        ) {
-            val (avatar, content, moreIcon) = createRefs()
+        var showLogoutDialog by remember {
+            mutableStateOf(false)
+        }
+        Row(modifier = Modifier
+            .fillMaxWidth()
+            .clickable { onAccountClick(account) }) {
             BlogAuthorAvatar(
                 modifier = Modifier
                     .size(48.dp)
-                    .clip(CircleShape)
-                    .constrainAs(avatar) {
-                        start.linkTo(parent.start, 16.dp)
-                        end.linkTo(content.start)
-                        top.linkTo(parent.top, 12.dp)
-                    },
+                    .clip(CircleShape),
                 imageUrl = account.avatar,
             )
             Column(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .constrainAs(content) {
-                        start.linkTo(avatar.end, 16.dp)
-                        top.linkTo(parent.top, 8.dp)
-                        end.linkTo(moreIcon.start)
-                        bottom.linkTo(parent.bottom, 12.dp)
-                        width = Dimension.fillToConstraints
-                    },
-                horizontalAlignment = Alignment.Start,
+                    .fillMaxWidth()
+                    .padding(start = 16.dp)
             ) {
                 FreadRichText(
                     modifier = Modifier,
@@ -239,48 +259,59 @@ class ProfileHomePage : BaseScreen() {
                     },
                 )
                 FreadRichText(
-                    modifier = Modifier.padding(top = 2.dp),
+                    modifier = Modifier.padding(top = 4.dp),
                     maxLines = 3,
                     content = account.description.orEmpty(),
                     emojis = account.emojis,
+                    fontSizeSp = 16F,
                     onUrlClick = {
                         BrowserLauncher.launchWebTabInApp(context, it, account.role)
                     }
                 )
-            }
-            var showMorePopup by remember {
-                mutableStateOf(false)
-            }
-            Box(
-                modifier = Modifier.constrainAs(moreIcon) {
-                    start.linkTo(content.end, 16.dp)
-                    end.linkTo(parent.end, 24.dp)
-                    top.linkTo(parent.top, 12.dp)
-                    bottom.linkTo(parent.bottom)
-                }) {
-                IconButton(
-                    onClick = { showMorePopup = true },
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    Icon(
-                        imageVector = Icons.Default.MoreVert,
-                        contentDescription = "More option",
+                    SimpleIconButton(
+                        onClick = { onFavouritedClick(account) },
+                        imageVector = Icons.Outlined.FavoriteBorder,
+                        contentDescription = "Favorite",
                     )
-                }
-                DropdownMenu(
-                    expanded = showMorePopup,
-                    onDismissRequest = { showMorePopup = false },
-                ) {
-                    DropdownMenuItem(
-                        text = {
-                            Text(text = stringResource(com.zhangke.fread.commonbiz.R.string.logout))
-                        },
+                    Spacer(modifier = Modifier.weight(1F))
+                    SimpleIconButton(
+                        onClick = { onBookmarkedClick(account) },
+                        imageVector = Icons.Outlined.Bookmarks,
+                        contentDescription = "Bookmarks",
+                    )
+                    Spacer(modifier = Modifier.weight(1F))
+                    SimpleIconButton(
                         onClick = {
-                            onLogoutClick()
-                            showMorePopup = false
+                            onFollowedHashtagClick(account)
                         },
+                        imageVector = Icons.Default.Tag,
+                        contentDescription = "Followed Tags",
+                    )
+                    Spacer(modifier = Modifier.weight(1F))
+                    SimpleIconButton(
+                        onClick = { showLogoutDialog = true },
+                        imageVector = Icons.AutoMirrored.Filled.Logout,
+                        contentDescription = "Followed Tags",
                     )
                 }
             }
+        }
+        if (showLogoutDialog) {
+            FreadDialog(
+                onDismissRequest = { showLogoutDialog = false },
+                contentText = stringResource(id = R.string.profile_page_logout_dialog_content),
+                onPositiveClick = {
+                    showLogoutDialog = false
+                    onLogoutClick()
+                },
+                onNegativeClick = {
+                    showLogoutDialog = false
+                },
+            )
         }
     }
 

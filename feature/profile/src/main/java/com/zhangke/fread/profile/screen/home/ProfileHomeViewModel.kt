@@ -104,7 +104,10 @@ class ProfileHomeViewModel @Inject constructor(
     fun onFavouritedClick(account: LoggedAccount) {
         launchInViewModel {
             statusProvider.screenProvider
-                .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
+                .getFavouritedScreen(
+                    role = IdentityRole(account.uri, null),
+                    protocol = account.platform.protocol,
+                )
                 ?.let { KRouter.routeScreen(it) }
                 ?.let { _openPageFlow.emit(it) }
         }
@@ -113,7 +116,10 @@ class ProfileHomeViewModel @Inject constructor(
     fun onBookmarkedClick(account: LoggedAccount) {
         launchInViewModel {
             statusProvider.screenProvider
-                .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
+                .getBookmarkedScreen(
+                    role = IdentityRole(account.uri, null),
+                    protocol = account.platform.protocol,
+                )
                 ?.let { KRouter.routeScreen(it) }
                 ?.let { _openPageFlow.emit(it) }
         }
@@ -122,7 +128,10 @@ class ProfileHomeViewModel @Inject constructor(
     fun onFollowedHashtagClick(account: LoggedAccount) {
         launchInViewModel {
             statusProvider.screenProvider
-                .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
+                .getFollowedHashtagScreen(
+                    role = IdentityRole(account.uri, null),
+                    protocol = account.platform.protocol,
+                )
                 ?.let { KRouter.routeScreen(it) }
                 ?.let { _openPageFlow.emit(it) }
         }

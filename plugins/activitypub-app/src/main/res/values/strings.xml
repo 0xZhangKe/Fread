@@ -139,4 +139,6 @@
 
     <string name="activity_pub_bookmarks_list_title">Bookmarks</string>
     <string name="activity_pub_favourites_list_title">Favourites</string>
+
+    <string name="activity_pub_followed_tags_screen_title">Followed Hashtags</string>
 </resources>

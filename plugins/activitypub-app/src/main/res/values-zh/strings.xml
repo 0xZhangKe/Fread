@@ -139,7 +139,8 @@
     <string name="activity_pub_status_favourites_by_title">点赞的用户</string>
     <string name="activity_pub_status_reblog_by_title">转发的用户</string>
 
-
     <string name="activity_pub_bookmarks_list_title">收藏的内容</string>
     <string name="activity_pub_favourites_list_title">点赞的内容</string>
+
+    <string name="activity_pub_followed_tags_screen_title">关注的话题</string>
 </resources>

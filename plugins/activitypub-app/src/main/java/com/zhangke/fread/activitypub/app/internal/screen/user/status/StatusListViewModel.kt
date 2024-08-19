@@ -33,7 +33,7 @@ class StatusListViewModel @AssistedInject constructor(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     @Assisted private val role: IdentityRole,
-    @Assisted private val type: StatusListType,
+    @Assisted val type: StatusListType,
 ) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     buildStatusUiState = buildStatusUiState,

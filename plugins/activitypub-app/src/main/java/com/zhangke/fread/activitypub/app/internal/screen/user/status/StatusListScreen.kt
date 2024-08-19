@@ -21,10 +21,13 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.krouter.Destination
 
+@Destination(StatusListScreenRoute.ROUTE)
 class StatusListScreen(
-    private val role: IdentityRole,
-    private val type: StatusListType,
+    private val route: String = "",
+    private val role: IdentityRole? = null,
+    private val type: StatusListType? = null,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)

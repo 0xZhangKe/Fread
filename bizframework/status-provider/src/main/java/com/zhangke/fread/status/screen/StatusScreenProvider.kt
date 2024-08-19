@@ -90,6 +90,27 @@ class StatusScreenProvider(
     ): String? {
         return providerList.firstNotNullOfOrNull { it.getBlogBoostedScreen(role, blogId, protocol) }
     }
+
+    fun getBookmarkedScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol,
+    ): String?{
+        return providerList.firstNotNullOfOrNull { it.getBookmarkedScreen(role, protocol) }
+    }
+
+    fun getFavouritedScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol,
+    ): String?{
+        return providerList.firstNotNullOfOrNull { it.getFavouritedScreen(role, protocol) }
+    }
+
+    fun getFollowedHashtagScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol,
+    ): String?{
+        return providerList.firstNotNullOfOrNull { it.getFollowedHashtagScreen(role, protocol) }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -125,6 +146,21 @@ interface IStatusScreenProvider {
     fun getBlogBoostedScreen(
         role: IdentityRole,
         blogId: String,
+        protocol: StatusProviderProtocol,
+    ): String?
+
+    fun getBookmarkedScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol,
+    ): String?
+
+    fun getFavouritedScreen(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol,
+    ): String?
+
+    fun getFollowedHashtagScreen(
+        role: IdentityRole,
         protocol: StatusProviderProtocol,
     ): String?
 }

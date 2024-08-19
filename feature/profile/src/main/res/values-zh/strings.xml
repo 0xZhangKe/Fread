@@ -2,6 +2,8 @@
 <resources>
     <string name="profile_page_title">Profile</string>
 
+    <string name="profile_page_logout_dialog_content">你确定要退出登录吗？</string>
+
     <string name="profile_setting_about_title">关于</string>
     <string name="profile_setting_inline_video_auto_play">Inline 视频自动播放</string>
     <string name="profile_setting_dark_mode_title">深色模式</string>
@@ -29,4 +31,5 @@
     <string name="profile_about_developer">开发者：</string>
     <string name="profile_about_contract_us">联系我：</string>
     <string name="profile_about_privacy_policy">隐私协议：</string>
+
 </resources>

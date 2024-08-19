@@ -153,7 +153,7 @@ fun RecommendAuthorUi(
         FreadRichText(
             modifier = Modifier.constrainAs(descRef) {
                 start.linkTo(nameRef.start)
-                top.linkTo(webFingerRef.bottom, 2.dp)
+                top.linkTo(webFingerRef.bottom, 4.dp)
                 end.linkTo(parent.end, 16.dp)
                 width = Dimension.fillToConstraints
             },
@@ -174,10 +174,11 @@ fun RecommendAuthorUi(
             },
         )
         StyledTextButton(
-            modifier = Modifier.constrainAs(followBtn) {
-                end.linkTo(parent.end, 16.dp)
-                top.linkTo(parent.top, 8.dp)
-            },
+            modifier = Modifier
+                .constrainAs(followBtn) {
+                    end.linkTo(parent.end, 16.dp)
+                    top.linkTo(parent.top, 8.dp)
+                },
             text = if (following) {
                 stringResource(R.string.status_ui_unfollow)
             } else {

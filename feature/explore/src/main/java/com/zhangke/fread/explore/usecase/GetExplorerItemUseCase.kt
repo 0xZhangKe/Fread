@@ -26,7 +26,7 @@ class GetExplorerItemUseCase @Inject constructor(
         val statusResolver = statusProvider.statusResolver
         return when (type) {
             ExplorerFeedsTabType.USERS -> {
-                if (offset > 0 || maxId.isNullOrEmpty()) return Result.success(emptyList())
+                if (offset > 0 || !maxId.isNullOrEmpty()) return Result.success(emptyList())
                 statusResolver
                     .getSuggestionAccounts(role)
                     .map { list -> list.map { ExplorerItem.ExplorerUser(it, false) } }

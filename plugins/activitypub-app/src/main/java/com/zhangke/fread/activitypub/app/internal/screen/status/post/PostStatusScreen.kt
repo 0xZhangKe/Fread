@@ -141,7 +141,6 @@ class PostStatusScreen(
                 onWarningContentChanged = viewModel::onWarningContentChanged,
                 onVisibilityChanged = viewModel::onVisibilityChanged,
                 onDurationSelect = viewModel::onDurationSelect,
-                onDeleteEmojiClick = viewModel::onEmojiDeleteClick,
             )
         }
         if (postStatus is LoadableState.Success) {
@@ -198,7 +197,6 @@ class PostStatusScreen(
         onWarningContentChanged: (String) -> Unit,
         onVisibilityChanged: (StatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
-        onDeleteEmojiClick: () -> Unit,
     ) {
         val bottomBarHeight = 48.dp
         if (postStatus is LoadableState.Failed) {
@@ -268,7 +266,9 @@ class PostStatusScreen(
                         )
                         onContentChanged(textFieldValue.text)
                     },
-                    onDeleteEmojiClick = onDeleteEmojiClick,
+                    onDeleteEmojiClick = {
+                        textFieldValue = DeleteTextUtil.deleteText(textFieldValue)
+                    },
                 )
             }
         ) { paddingValues ->

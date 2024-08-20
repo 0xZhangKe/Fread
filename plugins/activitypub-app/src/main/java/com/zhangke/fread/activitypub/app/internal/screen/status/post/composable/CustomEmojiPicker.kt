@@ -1,90 +1,119 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.composable
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.icons.Tofu
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
+import kotlinx.coroutines.launch
 
 @Composable
 fun CustomEmojiPicker(
     modifier: Modifier,
-    emojiList: List<CustomEmojiCell>,
+    emojiList: List<GroupedCustomEmojiCell>,
     onEmojiPick: (CustomEmoji) -> Unit,
 ) {
+    if (emojiList.isEmpty()) return
+    val coroutineScope = rememberCoroutineScope()
     Surface(modifier = modifier) {
-        LazyColumn {
-            items(emojiList) { cell ->
-                when (cell) {
-                    is CustomEmojiCell.Title -> {
-                        Box(
-                            modifier = Modifier
-                                .fillMaxWidth()
-                                .height(30.dp)
-                        ) {
-                            Text(
-                                modifier = Modifier.align(Alignment.CenterStart),
-                                text = cell.title
-                            )
-                        }
-                    }
+        Column(modifier = Modifier.fillMaxWidth()) {
+            val pagerState = rememberPagerState {
+                emojiList.size
+            }
 
-                    is CustomEmojiCell.EmojiLine -> {
-                        EmojiLineUi(
-                            emojiLine = cell,
-                            onEmojiClick = onEmojiPick,
-                        )
+            var selectedTabIndex by remember {
+                mutableIntStateOf(0)
+            }
+
+            LaunchedEffect(pagerState.currentPage) {
+                selectedTabIndex = pagerState.currentPage
+            }
+
+            FreadTabRow(
+                selectedTabIndex = selectedTabIndex,
+                tabCount = emojiList.size,
+                tabContent = {
+                    Text(text = emojiList[it].title)
+                },
+                onTabClick = {
+                    selectedTabIndex = it
+                    coroutineScope.launch {
+                        pagerState.animateScrollToPage(it)
                     }
-                }
+                },
+            )
+
+            HorizontalPager(
+                modifier = Modifier
+                    .fillMaxWidth(),
+                state = pagerState,
+            ) { pageIndex ->
+                CustomEmojiPickerPage(
+                    emojis = emojiList[pageIndex].emojiList,
+                    onEmojiClick = onEmojiPick,
+                )
             }
         }
     }
 }
 
 @Composable
-private fun EmojiLineUi(
-    emojiLine: CustomEmojiCell.EmojiLine,
+private fun CustomEmojiPickerPage(
+    emojis: List<CustomEmoji>,
     onEmojiClick: (CustomEmoji) -> Unit,
 ) {
-    Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .height(36.dp),
-        verticalAlignment = Alignment.CenterVertically,
+    if (emojis.isEmpty()) return
+    LazyVerticalGrid(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.Center,
+        columns = GridCells.Fixed(7),
     ) {
-        Box(modifier = Modifier.weight(1F))
-        emojiLine.emojiList.forEachIndexed { _, emoji ->
-            AsyncImage(
+        items(emojis) { emoji ->
+            Box(
                 modifier = Modifier
-                    .size(20.dp)
+                    .padding(vertical = 8.dp)
                     .noRippleClick { onEmojiClick(emoji) },
-                model = emoji.url,
-                error = rememberVectorPainter(Icons.Default.Tofu),
-                placeholder = rememberVectorPainter(Icons.Default.Tofu),
-                contentDescription = emoji.shortcode,
-            )
-            Box(modifier = Modifier.weight(1F))
+                contentAlignment = Alignment.Center,
+            ) {
+                AsyncImage(
+                    modifier = Modifier
+                        .size(20.dp),
+                    model = emoji.url,
+                    error = rememberVectorPainter(Icons.Default.Tofu),
+                    placeholder = rememberVectorPainter(Icons.Default.Tofu),
+                    contentDescription = emoji.shortcode,
+                )
+            }
         }
     }
 }
 
-sealed interface CustomEmojiCell {
-
-    data class Title(val title: String) : CustomEmojiCell
-
-    data class EmojiLine(val emojiList: List<CustomEmoji>) : CustomEmojiCell
-}
+data class GroupedCustomEmojiCell(
+    val title: String,
+    val emojiList: List<CustomEmoji>,
+)

@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.composable
 
 import android.net.Uri
+import androidx.activity.compose.BackHandler
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,6 +16,7 @@ import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EmojiEmotions
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.KeyboardArrowDown
@@ -119,10 +121,13 @@ internal fun PostStatusBottomBar(
         AnimatedVisibility(
             visible = showEmojiPicker,
         ) {
+            BackHandler(showEmojiPicker) {
+                showEmojiPicker = false
+            }
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(200.dp)
+                    .height(280.dp)
             ) {
                 CustomEmojiPicker(
                     modifier = Modifier
@@ -147,14 +152,14 @@ internal fun PostStatusBottomBar(
                             imageVector = Icons.Default.KeyboardArrowDown,
                             contentDescription = "Hide keyboard",
                         )
-//                        SimpleIconButton(
-//                            modifier = Modifier
-//                                .padding(end = 16.dp)
-//                                .align(Alignment.CenterEnd),
-//                            onClick = onDeleteEmojiClick,
-//                            imageVector = Icons.Default.Close,
-//                            contentDescription = "Delete emoji",
-//                        )
+                        SimpleIconButton(
+                            modifier = Modifier
+                                .padding(end = 16.dp)
+                                .align(Alignment.CenterEnd),
+                            onClick = onDeleteEmojiClick,
+                            imageVector = Icons.Default.Close,
+                            contentDescription = "Delete emoji",
+                        )
                     }
                 }
             }

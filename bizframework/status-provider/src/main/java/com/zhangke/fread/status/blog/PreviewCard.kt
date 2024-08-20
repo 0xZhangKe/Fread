@@ -16,7 +16,7 @@ data class PreviewCard(
     val width: Int,
     val height: Int,
     val image: String?,
-    val embedUrl: String,
+    val embedUrl: String?,
     val blurhash: String?,
 ) : java.io.Serializable {
 

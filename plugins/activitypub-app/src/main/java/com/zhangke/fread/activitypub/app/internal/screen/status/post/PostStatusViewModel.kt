@@ -135,11 +135,9 @@ class PostStatusViewModel @AssistedInject constructor(
                 .mapNotNull { FormalUri.from(it.uri) }
                 .mapNotNull { platformUriTransformer.parse(it) }
                 .mapNotNull { getCustomEmoji(it.serverBaseUrl).getOrNull() }
-                .map { emojiAdapter.toEmojiCell(7, it) }
+                .map { emojiAdapter.toEmojiCell(it) }
                 .collect { emojiList ->
-                    _uiState.updateOnSuccess {
-                        it.copy(emojiList = emojiList)
-                    }
+                    _uiState.updateOnSuccess { it.copy(emojiList = emojiList) }
                 }
         }
     }
@@ -358,14 +356,6 @@ class PostStatusViewModel @AssistedInject constructor(
                 attachment = pollAttachment.copy(duration = duration)
             )
         }
-    }
-
-    fun onEmojiDeleteClick() {
-//        _uiState.updateOnSuccess { state ->
-//            state.copy(
-//                content = "",
-//            )
-//        }
     }
 
     fun onPostClick() {

@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.CustomEmojiCell
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
 import com.zhangke.fread.status.model.StatusVisibility
 import java.util.Locale
 import kotlin.time.Duration
@@ -19,7 +19,7 @@ data class PostStatusUiState(
     val sensitive: Boolean,
     val warningContent: String,
     val replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
-    val emojiList: List<CustomEmojiCell>,
+    val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
 ) {
 

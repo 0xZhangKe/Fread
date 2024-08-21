@@ -34,10 +34,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.DurationSelector
-import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.formattedString
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostBlogRules
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import kotlin.time.Duration
 
@@ -45,6 +46,7 @@ import kotlin.time.Duration
 internal fun PostStatusPoll(
     modifier: Modifier,
     poll: PostStatusAttachment.Poll,
+    rules: PostBlogRules,
     onRemovePollClick: () -> Unit,
     onRemoveItemClick: (Int) -> Unit,
     onAddPollItemClick: () -> Unit,
@@ -87,12 +89,14 @@ internal fun PostStatusPoll(
                     ),
                 )
                 if (index == poll.optionList.lastIndex) {
-                    SimpleIconButton(
-                        modifier = Modifier.align(Alignment.CenterVertically),
-                        onClick = onAddPollItemClick,
-                        imageVector = Icons.Rounded.Add,
-                        contentDescription = "",
-                    )
+                    if (poll.optionList.size < rules.maxPollOptions) {
+                        SimpleIconButton(
+                            modifier = Modifier.align(Alignment.CenterVertically),
+                            onClick = onAddPollItemClick,
+                            imageVector = Icons.Rounded.Add,
+                            contentDescription = "",
+                        )
+                    }
                 } else {
                     SimpleIconButton(
                         modifier = Modifier.align(Alignment.CenterVertically),

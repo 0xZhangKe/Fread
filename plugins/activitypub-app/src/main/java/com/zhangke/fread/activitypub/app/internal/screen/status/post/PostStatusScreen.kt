@@ -537,6 +537,7 @@ class PostStatusScreen(
                 PostStatusPoll(
                     modifier = modifier,
                     poll = attachment,
+                    rules = uiState.rules,
                     onPollContentChanged = onPollContentChanged,
                     onRemovePollClick = onRemovePollClick,
                     onRemoveItemClick = onRemovePollItemClick,

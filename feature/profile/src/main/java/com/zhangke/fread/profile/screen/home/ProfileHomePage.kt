@@ -246,10 +246,10 @@ class ProfileHomePage : BaseScreen() {
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(start = 16.dp)
             ) {
                 FreadRichText(
-                    modifier = Modifier,
+                    modifier = Modifier
+                        .padding(start = 16.dp),
                     maxLines = 1,
                     content = account.userName,
                     emojis = account.emojis,
@@ -259,7 +259,7 @@ class ProfileHomePage : BaseScreen() {
                     },
                 )
                 FreadRichText(
-                    modifier = Modifier.padding(top = 4.dp),
+                    modifier = Modifier.padding(start = 16.dp, top = 4.dp),
                     maxLines = 3,
                     content = account.description.orEmpty(),
                     emojis = account.emojis,
@@ -269,7 +269,9 @@ class ProfileHomePage : BaseScreen() {
                     }
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 8.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     SimpleIconButton(

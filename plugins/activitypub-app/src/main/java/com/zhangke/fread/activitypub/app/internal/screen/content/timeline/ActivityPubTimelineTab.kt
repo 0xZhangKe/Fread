@@ -5,9 +5,9 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -95,7 +95,6 @@ class ActivityPubTimelineTab(
                     onLoadMore = onLoadMore,
                     initialFirstVisibleItemIndex = uiState.initialShowIndex,
                 )
-                rememberLazyListState()
                 val lazyListState = state.lazyListState
                 ObserveMinReadItem(lazyListState) {
                     uiState.items.getOrNull(it)?.let { item ->
@@ -106,6 +105,14 @@ class ActivityPubTimelineTab(
                     listState = lazyListState,
                     onRefresh = onRefresh,
                 )
+                LaunchedEffect(uiState.jumpToStatusId) {
+                    if (!uiState.jumpToStatusId.isNullOrEmpty()) {
+                        val jumpToIndex = uiState.items.getIndexByIdOrNull(uiState.jumpToStatusId)
+                        if (jumpToIndex >= 0 && jumpToIndex < uiState.items.size) {
+                            state.lazyListState.animateScrollToItem(jumpToIndex)
+                        }
+                    }
+                }
                 LoadableInlineVideoLazyColumn(
                     modifier = Modifier
                         .fillMaxSize()

@@ -9,15 +9,17 @@ data class ActivityPubTimelineUiState(
     val showPagingLoadingPlaceholder: Boolean,
     val pageErrorContent: TextString?,
     val initialShowIndex: Int,
+    val jumpToStatusId: String?,
     val refreshing: Boolean,
     val loadMoreState: LoadState,
 ) {
 
     companion object {
 
-        val default = ActivityPubTimelineUiState(
+        fun default() = ActivityPubTimelineUiState(
             items = emptyList(),
             initialShowIndex = 0,
+            jumpToStatusId = null,
             showPagingLoadingPlaceholder = false,
             pageErrorContent = null,
             refreshing = false,
@@ -47,10 +49,16 @@ fun List<ActivityPubTimelineItem>.updateStatus(
 
 fun List<ActivityPubTimelineItem>.getStatusIdOrNull(index: Int): String? {
     return this.getOrNull(index)?.let {
-        if (it is ActivityPubTimelineItem.StatusItem) {
-            it.status.status.id
-        } else {
-            null
+        when (it) {
+            is ActivityPubTimelineItem.StatusItem -> it.status.status.id
+        }
+    }
+}
+
+fun List<ActivityPubTimelineItem>.getIndexByIdOrNull(id: String): Int {
+    return this.indexOfFirst {
+        when (it) {
+            is ActivityPubTimelineItem.StatusItem -> it.status.status.id == id
         }
     }
 }

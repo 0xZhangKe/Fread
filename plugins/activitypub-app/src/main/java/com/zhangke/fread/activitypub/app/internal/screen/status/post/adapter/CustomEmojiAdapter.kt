@@ -13,15 +13,5 @@ class CustomEmojiAdapter @Inject constructor() {
             .groupBy { it.category }
             .entries
             .map { GroupedCustomEmojiCell(it.key, it.value) }
-
-//        return customEmojiList
-//            .filter { it.visibleInPicker }
-//            .groupBy { it.category }
-//            .flatMap {
-//                val list = mutableListOf<CustomEmojiCell>()
-//                list += CustomEmojiCell.Title(it.key)
-//                list.addAll(it.value.chunked(rowCount).map(CustomEmojiCell::EmojiLine))
-//                list
-//            }
     }
 }

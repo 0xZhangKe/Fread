@@ -13,29 +13,55 @@ data class PostStatusUiState(
     val content: String,
     val initialContent: String?,
     val attachment: PostStatusAttachment?,
-    val maxContent: Int,
-    val maxMediaCount: Int,
     val visibility: StatusVisibility,
     val sensitive: Boolean,
     val warningContent: String,
     val replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
+    val rules: PostBlogRules,
 ) {
 
     val allowedSelectCount: Int
         get() {
-            val imageList = attachment?.asImageAttachmentOrNull?.imageList ?: return maxMediaCount
-            return (maxMediaCount - imageList.size).coerceAtLeast(0)
+            val imageList =
+                attachment?.asImageAttachmentOrNull?.imageList ?: return rules.maxMediaCount
+            return (rules.maxMediaCount - imageList.size).coerceAtLeast(0)
         }
 
-    val allowedInputCount: Int get() = maxContent - content.length
+    val allowedInputCount: Int get() = rules.maxCharacters - content.length
 
     fun hasInputtedData(): Boolean {
         if (content.isNotEmpty()) return true
         if (attachment != null) return true
         if (sensitive && warningContent.isNotEmpty()) return true
         return false
+    }
+
+    companion object {
+
+        fun initState(
+            account: ActivityPubLoggedAccount,
+            allLoggedAccount: List<ActivityPubLoggedAccount>,
+            initialContent: String?,
+            visibility: StatusVisibility,
+            replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+        ): PostStatusUiState {
+            return PostStatusUiState(
+                account = account,
+                availableAccountList = allLoggedAccount,
+                content = "",
+                initialContent = initialContent,
+                attachment = null,
+                visibility = visibility,
+                sensitive = false,
+                replyToAuthorInfo = replyToAuthorInfo,
+                warningContent = "",
+                emojiList = emptyList(),
+                language = Locale.getDefault(),
+                rules = PostBlogRules.default(),
+            )
+        }
     }
 }
 
@@ -65,3 +91,20 @@ data class PostStatusFile(
     val description: String?,
     val uploadJob: UploadMediaJob,
 )
+
+data class PostBlogRules(
+    val maxCharacters: Int,
+    val maxMediaCount: Int,
+    val maxPollOptions: Int,
+) {
+    companion object {
+
+        fun default(): PostBlogRules {
+            return PostBlogRules(
+                maxCharacters = 1000,
+                maxMediaCount = 4,
+                maxPollOptions = 4,
+            )
+        }
+    }
+}

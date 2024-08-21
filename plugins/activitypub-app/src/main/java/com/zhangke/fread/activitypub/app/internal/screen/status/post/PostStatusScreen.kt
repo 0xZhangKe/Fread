@@ -41,6 +41,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +59,7 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.toast.toast
@@ -400,6 +402,13 @@ class PostStatusScreen(
                             warning = uiState.warningContent,
                             onValueChanged = onWarningContentChanged,
                         )
+                    }
+                }
+                val focusManager = LocalFocusManager.current
+                val keyboardState by keyboardAsState()
+                LaunchedEffect(keyboardState) {
+                    if (!keyboardState) {
+                        focusManager.clearFocus()
                     }
                 }
                 TextField(

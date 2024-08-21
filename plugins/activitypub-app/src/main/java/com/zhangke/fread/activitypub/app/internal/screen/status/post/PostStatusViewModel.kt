@@ -10,6 +10,7 @@ import com.zhangke.framework.collections.updateIndex
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitInViewModel
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.textOf
@@ -23,10 +24,10 @@ import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
+import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.PostStatusUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
@@ -42,7 +43,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import java.util.Locale
 import kotlin.time.Duration
@@ -51,7 +51,7 @@ import kotlin.time.Duration.Companion.days
 @HiltViewModel(assistedFactory = PostStatusViewModel.Factory::class)
 class PostStatusViewModel @AssistedInject constructor(
     private val getCustomEmoji: GetCustomEmojiUseCase,
-    private val emojiAdapter: CustomEmojiAdapter,
+    private val getInstancePostStatusRules: GetInstancePostStatusRulesUseCase,
     private val accountManager: ActivityPubAccountManager,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val clientManager: ActivityPubClientManager,
@@ -59,11 +59,6 @@ class PostStatusViewModel @AssistedInject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
     @Assisted private val screenParams: PostStatusScreenParams,
 ) : ViewModel() {
-
-    companion object {
-
-        const val MAX_CONTENT = 1000
-    }
 
     @AssistedFactory
     interface Factory : ScreenModelFactory {
@@ -98,25 +93,17 @@ class PostStatusViewModel @AssistedInject constructor(
                     StatusVisibility.PUBLIC
                 }
                 _uiState.value = LoadableState.success(
-                    PostStatusUiState(
+                    PostStatusUiState.initState(
                         account = defaultAccount,
-                        availableAccountList = allLoggedAccount,
-                        content = "",
+                        allLoggedAccount = allLoggedAccount,
                         initialContent = buildInitialContent(defaultAccount),
-                        attachment = null,
-                        maxMediaCount = 4,
                         visibility = visibility,
-                        sensitive = false,
-                        maxContent = MAX_CONTENT,
                         replyToAuthorInfo = screenParams as? PostStatusScreenParams.ReplyStatusParams,
-                        warningContent = "",
-                        emojiList = emptyList(),
-                        language = Locale.ROOT,
                     )
                 )
             }
         }
-        loadCustomEmoji()
+        loadPostStatusRules()
     }
 
     private fun buildInitialContent(account: ActivityPubLoggedAccount): String? {
@@ -128,16 +115,26 @@ class PostStatusViewModel @AssistedInject constructor(
         return "$replyWebFinger "
     }
 
-    private fun loadCustomEmoji() {
+    private fun loadPostStatusRules() {
         launchInViewModel {
             _uiState.mapNotNull { it.successDataOrNull()?.account?.platform }
                 .distinctUntilChanged()
                 .mapNotNull { FormalUri.from(it.uri) }
                 .mapNotNull { platformUriTransformer.parse(it) }
-                .mapNotNull { getCustomEmoji(it.serverBaseUrl).getOrNull() }
-                .map { emojiAdapter.toEmojiCell(it) }
-                .collect { emojiList ->
-                    _uiState.updateOnSuccess { it.copy(emojiList = emojiList) }
+                .collect { platformInsights ->
+                    val platformBaseUrl = platformInsights.serverBaseUrl
+                    getCustomEmoji(platformBaseUrl)
+                        .onSuccess {
+                            _uiState.updateOnSuccess { state -> state.copy(emojiList = it) }
+                        }.onFailure {
+                            _snackMessage.emitTextMessageFromThrowable(it)
+                        }
+                    getInstancePostStatusRules(platformBaseUrl)
+                        .onSuccess {
+                            _uiState.updateOnSuccess { state -> state.copy(rules = it) }
+                        }.onFailure {
+                            _snackMessage.emitTextMessageFromThrowable(it)
+                        }
                 }
         }
     }
@@ -149,7 +146,7 @@ class PostStatusViewModel @AssistedInject constructor(
     }
 
     fun onContentChanged(inputtedText: String) {
-        if (inputtedText.length > MAX_CONTENT) return
+        if (_uiState.value.requireSuccessData().allowedInputCount <= 0) return
         _uiState.updateOnSuccess {
             it.copy(content = inputtedText)
         }

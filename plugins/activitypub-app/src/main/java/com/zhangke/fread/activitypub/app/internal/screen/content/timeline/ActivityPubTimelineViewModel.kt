@@ -44,7 +44,7 @@ class ActivityPubTimelineViewModel(
     refactorToNewBlog = refactorToNewBlog,
 ) {
 
-    private val _uiState = MutableStateFlow(ActivityPubTimelineUiState.default)
+    private val _uiState = MutableStateFlow(ActivityPubTimelineUiState.default())
     val uiState = _uiState.asStateFlow()
 
     private var initFeedsJob: Job? = null
@@ -173,6 +173,7 @@ class ActivityPubTimelineViewModel(
                     it.copy(
                         items = list,
                         refreshing = false,
+                        jumpToStatusId = list.firstOrNull()?.statusId,
                     )
                 }
             }

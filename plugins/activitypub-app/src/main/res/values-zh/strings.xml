@@ -143,4 +143,21 @@
     <string name="activity_pub_favourites_list_title">点赞的内容</string>
 
     <string name="activity_pub_followed_tags_screen_title">关注的话题</string>
+
+    <string name="activity_pub_filters_list_page_title">过滤器</string>
+    <string name="activity_pub_filters_active">生效中</string>
+    <string name="activity_pub_filters_expired">已失效</string>
+
+    <string name="activity_pub_filter_edit_title">编辑过滤器</string>
+    <string name="activity_pub_filter_edit_input_title_label">标题</string>
+    <string name="activity_pub_filter_edit_input_title_hint">请输入标题</string>
+    <string name="activity_pub_filter_edit_duration">持续时间</string>
+    <string name="activity_pub_filter_edit_duration_permanent">永久</string>
+    <string name="activity_pub_filter_edit_duration_thirty_minutes">三十分钟</string>
+    <string name="activity_pub_filter_edit_duration_one_hour">一小时</string>
+    <string name="activity_pub_filter_edit_duration_twelve_hours">十二小时</string>
+    <string name="activity_pub_filter_edit_duration_one_day">一天</string>
+    <string name="activity_pub_filter_edit_duration_three_day">三天</string>
+    <string name="activity_pub_filter_edit_duration_one_week">一周</string>
+    <string name="activity_pub_filter_edit_duration_custom">自定义</string>
 </resources>

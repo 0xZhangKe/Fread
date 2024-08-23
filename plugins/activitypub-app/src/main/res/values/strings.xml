@@ -141,4 +141,21 @@
     <string name="activity_pub_favourites_list_title">Favourites</string>
 
     <string name="activity_pub_followed_tags_screen_title">Followed Hashtags</string>
+
+    <string name="activity_pub_filters_list_page_title">Filters</string>
+    <string name="activity_pub_filters_active">Active</string>
+    <string name="activity_pub_filters_expired">Expired</string>
+
+    <string name="activity_pub_filter_edit_title">Edit Filter</string>
+    <string name="activity_pub_filter_edit_input_title_label">Title</string>
+    <string name="activity_pub_filter_edit_input_title_hint">Please enter a title</string>
+    <string name="activity_pub_filter_edit_duration">Duration</string>
+    <string name="activity_pub_filter_edit_duration_permanent">Permanent</string>
+    <string name="activity_pub_filter_edit_duration_thirty_minutes">30 minutes</string>
+    <string name="activity_pub_filter_edit_duration_one_hour">1 hour</string>
+    <string name="activity_pub_filter_edit_duration_twelve_hours">12 hours</string>
+    <string name="activity_pub_filter_edit_duration_one_day">1 day</string>
+    <string name="activity_pub_filter_edit_duration_three_day">3 days</string>
+    <string name="activity_pub_filter_edit_duration_one_week">1 week</string>
+    <string name="activity_pub_filter_edit_duration_custom">Custom</string>
 </resources>

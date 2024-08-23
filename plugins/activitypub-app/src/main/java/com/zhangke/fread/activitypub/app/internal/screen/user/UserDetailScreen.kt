@@ -24,6 +24,7 @@ import androidx.compose.material.icons.filled.Bookmarks
 import androidx.compose.material.icons.filled.Campaign
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FilterAlt
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.filled.VisibilityOff
@@ -86,6 +87,7 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
+import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
@@ -263,6 +265,9 @@ data class UserDetailScreen(
             onFollowedHashtagsListClick = {
                 navigator.pushDestination(TagListScreenRoute.buildRoute(role))
             },
+            onFilterClick = {
+                navigator.push(FiltersListScreen(uiState.role))
+            },
         )
     }
 
@@ -297,6 +302,7 @@ data class UserDetailScreen(
         onMuteUserListClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
+        onFilterClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
@@ -341,6 +347,7 @@ data class UserDetailScreen(
                                 onMuteUserListClick = onMuteUserListClick,
                                 onBlockedUserListClick = onBlockedUserListClick,
                                 onFollowedHashtagsListClick = onFollowedHashtagsListClick,
+                                onFilterClick = onFilterClick,
                             )
                         },
                     )
@@ -562,6 +569,7 @@ data class UserDetailScreen(
         onMuteUserListClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
+        onFilterClick: () -> Unit,
     ) {
         val accountUiState = uiState.accountUiState ?: return
         if (uiState.isAccountOwner) {
@@ -630,6 +638,10 @@ data class UserDetailScreen(
                     onFollowedHashtagsListClick = {
                         showMorePopup = false
                         onFollowedHashtagsListClick()
+                    },
+                    onFilterClick = {
+                        showMorePopup = false
+                        onFilterClick()
                     },
                 )
             }
@@ -754,6 +766,7 @@ data class UserDetailScreen(
         onBlockedUserListClick: () -> Unit,
         onMuteUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
+        onFilterClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
             text = stringResource(R.string.activity_pub_favourites_list_title),
@@ -779,6 +792,11 @@ data class UserDetailScreen(
             text = stringResource(R.string.activity_pub_user_menu_blocked_user_list),
             imageVector = Icons.Default.Block,
             onClick = onBlockedUserListClick,
+        )
+        ModalDropdownMenuItem(
+            text = stringResource(R.string.activity_pub_filters_list_page_title),
+            imageVector = Icons.Default.FilterAlt,
+            onClick = onFilterClick,
         )
     }
 

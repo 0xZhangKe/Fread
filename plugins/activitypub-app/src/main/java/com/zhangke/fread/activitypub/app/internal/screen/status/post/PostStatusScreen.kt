@@ -434,7 +434,7 @@ class PostStatusScreen(
                         disabledIndicatorColor = Color.Transparent,
                         errorIndicatorColor = Color.Transparent,
                     ),
-                    textStyle = MaterialTheme.typography.bodyMedium,
+                    textStyle = MaterialTheme.typography.bodyLarge,
                     onValueChange = {
                         textFieldValue = it
                         onContentChanged(it.text)

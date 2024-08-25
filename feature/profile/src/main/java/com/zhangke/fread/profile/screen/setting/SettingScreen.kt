@@ -15,7 +15,7 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Chat
-import androidx.compose.material.icons.filled.Code
+import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.PlayCircleOutline
@@ -50,8 +50,6 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.utils.SystemPageUtils
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageSettingType
@@ -109,13 +107,6 @@ class SettingScreen : BaseScreen() {
                 reportClick(SettingElements.ABOUT)
                 navigator.push(AboutScreen())
             },
-            onFeedbackClick = {
-                reportClick(SettingElements.FEEDBACK)
-                BrowserLauncher.launchWebTabInApp(
-                    context = context,
-                    url = AppCommonConfig.FEEDBACK_URL,
-                )
-            },
             onContentSizeChanged = {
                 reportClick(SettingElements.CONTENT_SIZE)
                 viewModel.onContentSizeChanged(it)
@@ -129,7 +120,6 @@ class SettingScreen : BaseScreen() {
         onBackClick: () -> Unit,
         onSwitchAutoPlayClick: (on: Boolean) -> Unit,
         onOpenSourceClick: () -> Unit,
-        onFeedbackClick: () -> Unit,
         onDayNightModeClick: (DayNightMode) -> Unit,
         onLanguageClick: (LanguageSettingType) -> Unit,
         onRatingClick: () -> Unit,
@@ -165,12 +155,7 @@ class SettingScreen : BaseScreen() {
                     contentSize = uiState.contentSize,
                     onContentSizeChanged = onContentSizeChanged,
                 )
-                SettingItem(
-                    icon = Icons.AutoMirrored.Filled.Chat,
-                    title = stringResource(R.string.profile_setting_open_source_feedback),
-                    subtitle = stringResource(R.string.profile_setting_open_source_feedback_desc),
-                    onClick = onFeedbackClick,
-                )
+                FeedbackItem()
                 SettingItem(
                     icon = ImageVector.vectorResource(id = R.drawable.ic_code),
                     title = stringResource(R.string.profile_setting_open_source_title),
@@ -281,6 +266,27 @@ class SettingScreen : BaseScreen() {
                 onLanguageClick(LanguageSettingType.entries[it])
             }
         )
+    }
+
+    @Composable
+    private fun FeedbackItem() {
+        var showFeedbackBottomSheet by remember {
+            mutableStateOf(false)
+        }
+        SettingItem(
+            icon = Icons.AutoMirrored.Outlined.Chat,
+            title = stringResource(R.string.profile_setting_open_source_feedback),
+            subtitle = stringResource(R.string.profile_setting_open_source_feedback_desc),
+            onClick = {
+                reportClick(SettingElements.FEEDBACK)
+                showFeedbackBottomSheet = true
+            },
+        )
+        if (showFeedbackBottomSheet) {
+            FeedbackBottomSheet(
+                onDismissRequest = { showFeedbackBottomSheet = false },
+            )
+        }
     }
 
     @Composable

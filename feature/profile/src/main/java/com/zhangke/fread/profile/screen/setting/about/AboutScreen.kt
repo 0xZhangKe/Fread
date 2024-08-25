@@ -127,6 +127,19 @@ class AboutScreen : BaseScreen() {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 AboutClickableItem(
+                    title = stringResource(R.string.profile_about_telegram),
+                    clickableText = AppCommonConfig.TELEGRAM_GROUP,
+                    showUnderline = false,
+                    onClick = {
+                        SystemUtils.copyText(context, AppCommonConfig.TELEGRAM_GROUP)
+                        BrowserLauncher.launchBySystemBrowser(
+                            context,
+                            AppCommonConfig.TELEGRAM_GROUP
+                        )
+                    },
+                )
+                Spacer(modifier = Modifier.height(16.dp))
+                AboutClickableItem(
                     title = stringResource(R.string.profile_about_privacy_policy),
                     clickableText = AppCommonConfig.PRIVACY_POLICY,
                     showUnderline = false,

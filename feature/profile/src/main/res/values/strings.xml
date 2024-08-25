@@ -13,7 +13,10 @@
     <string name="profile_setting_open_source_title">Open Source</string>
     <string name="profile_setting_open_source_desc">Open Source Licenses of Dependencies Used in This Project</string>
     <string name="profile_setting_open_source_feedback">Give us feedback</string>
-    <string name="profile_setting_open_source_feedback_desc">Please share your feedback or suggestions for improvement directly with us</string>
+    <string name="profile_setting_open_source_feedback_desc">Join the Telegram group or through other methods</string>
+    <string name="profile_setting_open_source_feedback_telegram">oin the Telegram group</string>
+    <string name="profile_setting_open_source_feedback_github">Create GitHub issue</string>
+    <string name="profile_setting_open_source_feedback_email">Send email</string>
     <string name="profile_setting_language_title">Language</string>
     <string name="profile_setting_language_zh">简体中文</string>
     <string name="profile_setting_language_en">English</string>
@@ -30,5 +33,6 @@
     <string name="profile_about_website">Website:&#160;</string>
     <string name="profile_about_developer">Created by&#160;</string>
     <string name="profile_about_contract_us">Contact me at:&#160;</string>
+    <string name="profile_about_telegram">Telegram Group:&#160;</string>
     <string name="profile_about_privacy_policy">Privacy Policy:&#160;</string>
 </resources>

@@ -16,6 +16,7 @@ import androidx.compose.material.icons.automirrored.filled.Logout
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tag
+import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.Bookmarks
 import androidx.compose.material.icons.outlined.FavoriteBorder
 import androidx.compose.material3.Card
@@ -45,6 +46,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.composable.size
 import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.ProfileElements
 import com.zhangke.fread.analytics.reportClick
@@ -275,18 +277,21 @@ class ProfileHomePage : BaseScreen() {
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     SimpleIconButton(
+                        iconModifier = Modifier.size(20.dp),
                         onClick = { onFavouritedClick(account) },
                         imageVector = Icons.Outlined.FavoriteBorder,
                         contentDescription = "Favorite",
                     )
                     Spacer(modifier = Modifier.weight(1F))
                     SimpleIconButton(
+                        iconModifier = Modifier.size(20.dp),
                         onClick = { onBookmarkedClick(account) },
-                        imageVector = Icons.Outlined.Bookmarks,
+                        imageVector = Icons.Outlined.BookmarkBorder,
                         contentDescription = "Bookmarks",
                     )
                     Spacer(modifier = Modifier.weight(1F))
                     SimpleIconButton(
+                        iconModifier = Modifier.size(20.dp),
                         onClick = {
                             onFollowedHashtagClick(account)
                         },
@@ -295,6 +300,7 @@ class ProfileHomePage : BaseScreen() {
                     )
                     Spacer(modifier = Modifier.weight(1F))
                     SimpleIconButton(
+                        iconModifier = Modifier.size(20.dp),
                         onClick = { showLogoutDialog = true },
                         imageVector = Icons.AutoMirrored.Filled.Logout,
                         contentDescription = "Followed Tags",

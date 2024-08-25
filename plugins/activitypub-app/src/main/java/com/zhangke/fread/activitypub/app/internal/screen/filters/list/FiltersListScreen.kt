@@ -10,6 +10,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
+import androidx.compose.material3.FloatingActionButton
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -33,6 +37,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.textString
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 
@@ -55,7 +60,10 @@ class FiltersListScreen(
             snackBarHostState = snackBarHostState,
             onBackClick = navigator::pop,
             onItemClick = {
-
+                navigator.push(EditFilterScreen(role, it.id))
+            },
+            onAddClick = {
+                navigator.push(EditFilterScreen(role, null))
             },
         )
         LaunchedEffect(Unit) {
@@ -70,6 +78,7 @@ class FiltersListScreen(
         snackBarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onItemClick: (FilterItemUiState) -> Unit,
+        onAddClick: () -> Unit,
     ) {
         Scaffold(
             snackbarHost = {
@@ -80,6 +89,16 @@ class FiltersListScreen(
                     title = stringResource(R.string.activity_pub_filters_list_page_title),
                     onBackClick = onBackClick,
                 )
+            },
+            floatingActionButton = {
+                FloatingActionButton(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    onClick = {
+                        onAddClick()
+                    },
+                ) {
+                    Icon(imageVector = Icons.Default.Add, contentDescription = "Add")
+                }
             },
         ) { innerPadding ->
             val state = rememberLazyListState()

@@ -160,4 +160,25 @@
     <string name="activity_pub_filter_edit_duration_three_day">三天</string>
     <string name="activity_pub_filter_edit_duration_one_week">一周</string>
     <string name="activity_pub_filter_edit_duration_custom">自定义</string>
+    <string name="activity_pub_filter_edit_duration_finish_subtitle">结束与 %s</string>
+
+    <string name="activity_pub_filter_edit_keyword_title">已隐藏的关键字</string>
+    <string name="activity_pub_filter_edit_keyword_dialog_title">编辑关键字</string>
+    <string name="activity_pub_filter_edit_keyword_dialog_hint">关键字</string>
+    <string name="activity_pub_filter_edit_keyword_remove_keyword_dialog_content">确定删除关键字吗？</string>
+    <string name="activity_pub_filter_edit_keyword_list_title">已隐藏关键字</string>
+    <string name="activity_pub_filter_edit_keyword_list_desc">%s 个已隐藏的关键字</string>
+    <string name="activity_pub_filter_edit_context_title">隐藏来源</string>
+    <string name="activity_pub_filter_edit_context_selector_title">请选择隐藏来源</string>
+    <string name="activity_pub_filter_edit_context_home">主页 &amp; 列表</string>
+    <string name="activity_pub_filter_edit_context_notification">通知</string>
+    <string name="activity_pub_filter_edit_context_timeline">公共时间线</string>
+    <string name="activity_pub_filter_edit_context_thread">嘟文 &amp; 回复</string>
+    <string name="activity_pub_filter_edit_context_account">个人资料</string>
+    <string name="activity_pub_filter_edit_empty_context">无</string>
+    <string name="activity_pub_filter_edit_warning_title">包含有内容警告的内容</string>
+    <string name="activity_pub_filter_edit_warning_desc">仍然显示符合该过滤器的嘟文，但会加上内容警告</string>
+    <string name="activity_pub_filter_edit_delete_content">确定删除吗？</string>
+    <string name="activity_pub_filter_edit_back_dialog">确定退出吗？</string>
+
 </resources>

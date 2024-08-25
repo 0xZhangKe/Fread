@@ -158,4 +158,24 @@
     <string name="activity_pub_filter_edit_duration_three_day">3 days</string>
     <string name="activity_pub_filter_edit_duration_one_week">1 week</string>
     <string name="activity_pub_filter_edit_duration_custom">Custom</string>
+    <string name="activity_pub_filter_edit_duration_finish_subtitle">Expires on %s</string>
+
+    <string name="activity_pub_filter_edit_keyword_title">Hidden Keywords</string>
+    <string name="activity_pub_filter_edit_keyword_dialog_title">Edit Keyword</string>
+    <string name="activity_pub_filter_edit_keyword_dialog_hint">Keyword</string>
+    <string name="activity_pub_filter_edit_keyword_remove_keyword_dialog_content">Are you sure you want to delete this keyword?</string>
+    <string name="activity_pub_filter_edit_keyword_list_title">Muted words</string>
+    <string name="activity_pub_filter_edit_keyword_list_desc">%s muted word or phrase</string>
+    <string name="activity_pub_filter_edit_context_title">Mute from</string>
+    <string name="activity_pub_filter_edit_context_selector_title">Please select sources to hide</string>
+    <string name="activity_pub_filter_edit_context_home">Home &amp; List</string>
+    <string name="activity_pub_filter_edit_context_notification">Notifications</string>
+    <string name="activity_pub_filter_edit_context_timeline">Public Timelines</string>
+    <string name="activity_pub_filter_edit_context_thread">Threads &amp; Replies</string>
+    <string name="activity_pub_filter_edit_context_account">Profiles</string>
+    <string name="activity_pub_filter_edit_empty_context">Empty</string>
+    <string name="activity_pub_filter_edit_warning_title">Show with content warning</string>
+    <string name="activity_pub_filter_edit_warning_desc">Still show posts that match this filter, but behind a content warning</string>
+    <string name="activity_pub_filter_edit_delete_content">Are you sure you want to delete?</string>
+    <string name="activity_pub_filter_edit_back_dialog">Are you sure you want to exit?</string>
 </resources>

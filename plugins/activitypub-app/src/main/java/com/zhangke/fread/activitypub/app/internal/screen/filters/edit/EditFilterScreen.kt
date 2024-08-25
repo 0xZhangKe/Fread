@@ -1,39 +1,130 @@
 package com.zhangke.fread.activitypub.app.internal.screen.filters.edit
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Save
+import androidx.compose.material3.Checkbox
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.DatePickerDialog
+import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.rememberFutureDatePickerState
+import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.status.model.IdentityRole
+import org.joda.time.LocalDateTime
+import java.util.Date
 
-class EditFilterScreen : BaseScreen() {
+class EditFilterScreen(
+    private val role: IdentityRole,
+    private val id: String?,
+) : BaseScreen() {
 
+    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val viewModel = getViewModel<EditFilterViewModel, EditFilterViewModel.Factory> {
+            it.create(role, id)
+        }
+        val addedKeywordList by navigator.navigationResult
+            .getResult<List<EditFilterUiState.Keyword>>(screenKey = HiddenKeywordScreen.SCREEN_KEY)
+        LaunchedEffect(addedKeywordList) {
+            addedKeywordList?.let(viewModel::onKeywordChanged)
+        }
+        val uiState by viewModel.uiState.collectAsState()
+        val snackBarHostState = rememberSnackbarHostState()
+
+        var showBackDialog by remember {
+            mutableStateOf(false)
+        }
+
+        fun onBack() {
+            if (uiState.hasInputtedSomething) {
+                showBackDialog = true
+            } else {
+                navigator.pop()
+            }
+        }
+
+        BackHandler {
+            onBack()
+        }
+
+        EditFilterContent(
+            uiState = uiState,
+            snackBarHostState = snackBarHostState,
+            onBackClick = {
+                onBack()
+            },
+            onTitleChanged = viewModel::onTitleChanged,
+            onExpiredDateSelected = viewModel::onExpiredDateSelected,
+            onKeywordClick = {
+                navigator.push(HiddenKeywordScreen(uiState.keywordList))
+            },
+            onContextChanged = viewModel::onContextChanged,
+            onWarningCheckChanged = viewModel::onWarningCheckChanged,
+            onDeleteClick = viewModel::onDeleteClick,
+            onSubmitClick = viewModel::onSubmitClick,
+        )
+        ConsumeSnackbarFlow(hostState = snackBarHostState, messageTextFlow = viewModel.snackBarFlow)
+        ConsumeFlow(viewModel.finishPageFlow) {
+            navigator.pop()
+        }
+
+        if (showBackDialog) {
+            FreadDialog(
+                onDismissRequest = { showBackDialog = false },
+                contentText = stringResource(id = R.string.activity_pub_filter_edit_back_dialog),
+                onNegativeClick = { showBackDialog = false },
+                onPositiveClick = {
+                    showBackDialog = false
+                    navigator.pop()
+                }
+            )
+        }
     }
 
     @Composable
@@ -42,12 +133,28 @@ class EditFilterScreen : BaseScreen() {
         snackBarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onTitleChanged: (String) -> Unit,
+        onExpiredDateSelected: (Date?) -> Unit,
+        onKeywordClick: () -> Unit,
+        onContextChanged: (List<FilterContext>) -> Unit,
+        onWarningCheckChanged: (Boolean) -> Unit,
+        onDeleteClick: () -> Unit,
+        onSubmitClick: () -> Unit,
     ) {
         Scaffold(
             topBar = {
                 Toolbar(
                     title = stringResource(R.string.activity_pub_filter_edit_title),
                     onBackClick = onBackClick,
+                    actions = {
+                        if (id.isNullOrEmpty().not()) {
+                            DeleteMenuItem(onDeleteClick = onDeleteClick)
+                        }
+                        SimpleIconButton(
+                            onClick = onSubmitClick,
+                            imageVector = Icons.Default.Save,
+                            contentDescription = "Save",
+                        )
+                    },
                 )
             },
             snackbarHost = {
@@ -73,86 +180,237 @@ class EditFilterScreen : BaseScreen() {
                         Text(text = stringResource(R.string.activity_pub_filter_edit_input_title_label))
                     },
                 )
-            }
 
+                DurationItem(
+                    uiState = uiState,
+                    onExpiredDateSelected = onExpiredDateSelected,
+                )
+
+                LinedItem(
+                    modifier = Modifier
+                        .clickable {
+                            onKeywordClick()
+                        }
+                        .fillMaxWidth()
+                        .padding(horizontal = 16.dp),
+                    title = stringResource(id = R.string.activity_pub_filter_edit_keyword_list_title),
+                    subtitle = stringResource(
+                        id = R.string.activity_pub_filter_edit_keyword_list_desc,
+                        uiState.keywordCount
+                    ),
+                )
+                ContextItem(
+                    uiState = uiState,
+                    onContextChanged = onContextChanged,
+                )
+                WarningItem(
+                    uiState = uiState,
+                    onCheckChanged = onWarningCheckChanged,
+                )
+            }
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun DurationItem(
-
+        uiState: EditFilterUiState,
+        onExpiredDateSelected: (Date?) -> Unit,
     ) {
+        val screenWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5F
         var showDurationPopup by remember {
             mutableStateOf(false)
         }
         var showDurationSelector by remember {
             mutableStateOf(false)
         }
-        LinedItem(
-            modifier = Modifier
-                .clickable {
-                    showDurationPopup = true
-                }
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            title = stringResource(id = R.string.activity_pub_filter_edit_duration),
-            subtitle = "",
-        )
-        DropdownMenu(
-            expanded = showDurationPopup,
-            onDismissRequest = { showDurationPopup = false },
-        ) {
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_permanent)) },
-                onClick = {
-                    showDurationPopup = false
-                },
+        Box(modifier = Modifier.fillMaxWidth()) {
+            LinedItem(
+                modifier = Modifier
+                    .clickable {
+                        showDurationPopup = true
+                    }
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp),
+                title = stringResource(id = R.string.activity_pub_filter_edit_duration),
+                subtitle = uiState.getExpiresDateDesc(),
             )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_thirty_minutes)) },
-                onClick = {
-                    showDurationPopup = false
-                },
+            DropdownMenu(
+                offset = DpOffset(screenWidth, 0.dp),
+                expanded = showDurationPopup,
+                onDismissRequest = { showDurationPopup = false },
+            ) {
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_permanent)) },
+                    onClick = {
+                        showDurationPopup = false
+                        onExpiredDateSelected(null)
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_thirty_minutes)) },
+                    onClick = {
+                        showDurationPopup = false
+                        onExpiredDateSelected(LocalDateTime.now().plusMinutes(30).toDate())
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_hour)) },
+                    onClick = {
+                        showDurationPopup = false
+                        onExpiredDateSelected(LocalDateTime.now().plusHours(1).toDate())
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_twelve_hours)) },
+                    onClick = {
+                        showDurationPopup = false
+                        onExpiredDateSelected(LocalDateTime.now().plusHours(12).toDate())
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_day)) },
+                    onClick = {
+                        showDurationPopup = false
+                        onExpiredDateSelected(LocalDateTime.now().plusDays(1).toDate())
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_three_day)) },
+                    onClick = {
+                        showDurationPopup = false
+                        onExpiredDateSelected(LocalDateTime.now().plusDays(3).toDate())
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_week)) },
+                    onClick = {
+                        showDurationPopup = false
+                        onExpiredDateSelected(LocalDateTime.now().plusDays(7).toDate())
+                    },
+                )
+                DropdownMenuItem(
+                    text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_custom)) },
+                    onClick = {
+                        showDurationPopup = false
+                        showDurationSelector = true
+                    },
+                )
+            }
+            val pickerState = rememberFutureDatePickerState(
+                initialSelectedDateMillis = uiState.expiresDate?.time
             )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_hour)) },
-                onClick = {
-                    showDurationPopup = false
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_twelve_hours)) },
-                onClick = {
-                    showDurationPopup = false
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_day)) },
-                onClick = {
-                    showDurationPopup = false
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_three_day)) },
-                onClick = {
-                    showDurationPopup = false
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_week)) },
-                onClick = {
-                    showDurationPopup = false
-                },
-            )
-            DropdownMenuItem(
-                text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_custom)) },
-                onClick = {
-                    showDurationPopup = false
-                    showDurationSelector = true
+            DatePickerDialog(
+                datePickerState = pickerState,
+                visible = showDurationSelector,
+                onDismissRequest = { showDurationSelector = false },
+                onConfirmClick = {
+                    showDurationSelector = false
+                    pickerState.selectedDateMillis?.let { Date(it) }?.let(onExpiredDateSelected)
                 },
             )
         }
+    }
 
+    @Composable
+    private fun WarningItem(
+        uiState: EditFilterUiState,
+        onCheckChanged: (Boolean) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            LinedItem(
+                modifier = Modifier.weight(1F),
+                title = stringResource(id = R.string.activity_pub_filter_edit_warning_title),
+                subtitle = stringResource(id = R.string.activity_pub_filter_edit_warning_desc),
+            )
+            Switch(
+                checked = uiState.filterByWarn,
+                onCheckedChange = {
+                    onCheckChanged(it)
+                },
+            )
+        }
+    }
+
+    @Composable
+    private fun ContextItem(
+        uiState: EditFilterUiState,
+        onContextChanged: (List<FilterContext>) -> Unit,
+    ) {
+        var showSelector by remember {
+            mutableStateOf(false)
+        }
+        LinedItem(
+            modifier = Modifier
+                .clickable { showSelector = true }
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp),
+            title = stringResource(id = R.string.activity_pub_filter_edit_context_title),
+            subtitle = uiState.contextList.map { it.title }.joinToString().ifEmpty {
+                stringResource(id = R.string.activity_pub_filter_edit_empty_context)
+            },
+        )
+        if (showSelector) {
+            ContextSelector(
+                selectedContext = uiState.contextList,
+                onContextSelected = onContextChanged,
+                onDismissRequest = { showSelector = false },
+            )
+        }
+    }
+
+    @Composable
+    private fun ContextSelector(
+        selectedContext: List<FilterContext>,
+        onContextSelected: (List<FilterContext>) -> Unit,
+        onDismissRequest: () -> Unit,
+    ) {
+        val currentSelected = remember(selectedContext) {
+            mutableStateListOf<FilterContext>().also { it.addAll(selectedContext) }
+        }
+        FreadDialog(
+            title = stringResource(id = R.string.activity_pub_filter_edit_context_selector_title),
+            onDismissRequest = onDismissRequest,
+            onNegativeClick = onDismissRequest,
+            content = {
+                Column {
+                    FilterContext.entries.forEach { context ->
+                        val selected = currentSelected.contains(context)
+                        Box(
+                            modifier = Modifier
+                                .fillMaxWidth()
+                                .padding(vertical = 8.dp, horizontal = 16.dp),
+                        ) {
+                            Text(
+                                modifier = Modifier.align(Alignment.CenterStart),
+                                text = context.title,
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            Checkbox(
+                                modifier = Modifier.align(Alignment.CenterEnd),
+                                checked = selected,
+                                onCheckedChange = {
+                                    if (it) {
+                                        currentSelected += context
+                                    } else {
+                                        currentSelected -= context
+                                    }
+                                },
+                            )
+                        }
+                    }
+                }
+            },
+            onPositiveClick = {
+                onDismissRequest()
+                onContextSelected(currentSelected)
+            },
+        )
     }
 
     @Composable
@@ -175,6 +433,29 @@ class EditFilterScreen : BaseScreen() {
                 style = MaterialTheme.typography.bodyMedium,
             )
             Spacer(modifier = Modifier.height(16.dp))
+        }
+    }
+
+    @Composable
+    private fun DeleteMenuItem(onDeleteClick: () -> Unit) {
+        var showConfirmDialog by remember {
+            mutableStateOf(false)
+        }
+        SimpleIconButton(
+            onClick = { showConfirmDialog = true },
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete"
+        )
+        if (showConfirmDialog) {
+            FreadDialog(
+                contentText = stringResource(id = R.string.activity_pub_filter_edit_delete_content),
+                onDismissRequest = { showConfirmDialog = false },
+                onNegativeClick = { showConfirmDialog = false },
+                onPositiveClick = {
+                    showConfirmDialog = false
+                    onDeleteClick()
+                },
+            )
         }
     }
 }

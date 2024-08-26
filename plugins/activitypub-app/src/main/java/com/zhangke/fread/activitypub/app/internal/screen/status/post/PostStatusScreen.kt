@@ -424,7 +424,7 @@ class PostStatusScreen(
                     placeholder = {
                         Text(
                             text = stringResource(R.string.post_screen_input_hint),
-                            style = MaterialTheme.typography.bodyMedium,
+                            style = MaterialTheme.typography.bodyLarge,
                         )
                     },
                     value = textFieldValue,

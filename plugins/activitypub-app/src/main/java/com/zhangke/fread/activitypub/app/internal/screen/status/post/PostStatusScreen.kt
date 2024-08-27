@@ -350,6 +350,7 @@ class PostStatusScreen(
                             start.linkTo(nameRef.start)
                         },
                     visibility = uiState.visibility,
+                    changeable = uiState.visibilityChangeable,
                     onVisibilitySelect = onVisibilityChanged,
                 )
                 Box(
@@ -359,7 +360,7 @@ class PostStatusScreen(
                     }
                 ) {
                     val availableAccountList = uiState.availableAccountList
-                    if (availableAccountList.size > 1) {
+                    if (uiState.accountChangeable && availableAccountList.size > 1) {
                         var showAccountSwitchPopup by remember {
                             mutableStateOf(false)
                         }

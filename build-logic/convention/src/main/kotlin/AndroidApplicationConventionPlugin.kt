@@ -14,13 +14,12 @@
  *   limitations under the License.
  */
 
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.variant.ApplicationAndroidComponentsExtension
+import com.zhangke.fread.applicationComponentsExtension
+import com.zhangke.fread.applicationExtension
 import com.zhangke.fread.configureKotlinAndroid
 import com.zhangke.fread.configurePrintApksTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.configure
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -31,11 +30,11 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("org.jetbrains.kotlin.plugin.serialization")
             }
 
-            extensions.configure<ApplicationExtension> {
+            applicationExtension {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 34
             }
-            extensions.configure<ApplicationAndroidComponentsExtension> {
+            applicationComponentsExtension {
                 configurePrintApksTask(this)
             }
         }

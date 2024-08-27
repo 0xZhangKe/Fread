@@ -1,9 +1,7 @@
 plugins {
-    id("fread.android.library")
-    id("fread.android.compose")
+    id("fread.project.framework")
     id("com.google.devtools.ksp")
     id("com.google.dagger.hilt.android")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
@@ -29,23 +27,14 @@ dependencies {
 
     implementation(libs.androidx.browser)
 
-    val composeBom = platform(libs.androidx.compose.bom)
-    implementation(composeBom)
-    implementation(libs.bundles.androidx.compose.ui)
-    implementation(libs.bundles.androidx.compose.foundation)
-    implementation(libs.bundles.androidx.compose.material)
-    implementation(libs.androidx.compose.material3)
-    implementation(libs.androidx.compose.runtime)
     implementation(libs.bundles.androidx.activity)
 
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
-    kapt(libs.androidx.room.compiler)
+    ksp(libs.androidx.room.compiler)
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.gson)
-    implementation(libs.bundles.voyager)
-
     implementation(libs.bundles.voyager)
 
     implementation(libs.krouter.core)

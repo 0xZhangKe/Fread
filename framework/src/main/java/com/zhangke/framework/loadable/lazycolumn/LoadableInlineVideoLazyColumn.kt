@@ -92,8 +92,8 @@ fun LoadableInlineVideoLazyColumn(
     )
 }
 
+@OptIn(ExperimentalMaterialApi::class)
 @Composable
-@ExperimentalMaterialApi
 fun rememberLoadableInlineVideoLazyColumnState(
     refreshing: Boolean,
     onRefresh: () -> Unit,

@@ -1,8 +1,14 @@
-on: push
+on:
+  push:
+    tags:
+      - '**'
+
+concurrency:
+  group: ${{ github.event.pull_request.number }}-ci
+  cancel-in-progress: true
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v2

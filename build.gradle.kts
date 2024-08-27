@@ -6,7 +6,8 @@ plugins {
     alias(libs.plugins.hilt.android) apply false
     alias(libs.plugins.ksp) apply false
     alias(libs.plugins.kotlinx.serialization) apply false
-    alias(libs.plugins.compose.compiler) apply false
+    alias(libs.plugins.jetbrains.compose) apply false
+    alias(libs.plugins.jetbrains.compose.compiler) apply false
     alias(libs.plugins.google.service)  apply false
     alias(libs.plugins.firebase.crashlytics)  apply false
 }

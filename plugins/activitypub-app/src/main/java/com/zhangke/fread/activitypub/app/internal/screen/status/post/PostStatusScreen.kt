@@ -76,6 +76,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.ui.hashtag.HashtagVisualTransformation
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import java.util.Locale
@@ -427,6 +428,9 @@ class PostStatusScreen(
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     },
+                    visualTransformation = HashtagVisualTransformation(
+                        highLightColor = MaterialTheme.colorScheme.primary,
+                    ),
                     value = textFieldValue,
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,

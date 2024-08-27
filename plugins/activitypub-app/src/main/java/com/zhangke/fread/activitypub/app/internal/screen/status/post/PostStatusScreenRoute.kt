@@ -53,7 +53,7 @@ object PostStatusScreenRoute {
         return buildString {
             append("$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}")
             val blogString = Json.encodeToString(Blog.serializer(), blog)
-            append("&$PARAM_EDIT_BLOG=${blogString.encodeAsUri()}}")
+            append("&$PARAM_EDIT_BLOG=${blogString.encodeAsUri()}")
         }
     }
 

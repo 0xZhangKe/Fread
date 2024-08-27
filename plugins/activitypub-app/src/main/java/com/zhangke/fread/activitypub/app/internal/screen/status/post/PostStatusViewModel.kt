@@ -20,10 +20,10 @@ import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.toContentProviderFile
-import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.GenerateInitPostStatusUiStateUseCase
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
@@ -52,7 +52,7 @@ import kotlin.time.Duration.Companion.days
 class PostStatusViewModel @AssistedInject constructor(
     private val getCustomEmoji: GetCustomEmojiUseCase,
     private val getInstancePostStatusRules: GetInstancePostStatusRulesUseCase,
-    private val accountManager: ActivityPubAccountManager,
+    private val generateInitPostStatusUiState: GenerateInitPostStatusUiStateUseCase,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val clientManager: ActivityPubClientManager,
     private val postNoAttachmentStatus: PostStatusUseCase,
@@ -77,42 +77,14 @@ class PostStatusViewModel @AssistedInject constructor(
 
     init {
         launchInViewModel {
-            val allLoggedAccount = accountManager.getAllLoggedAccount()
-            val defaultAccount = if (screenParams.accountUri != null) {
-                allLoggedAccount.firstOrNull { it.uri == screenParams.accountUri }
-                    ?: allLoggedAccount.firstOrNull()
-            } else {
-                allLoggedAccount.firstOrNull()
-            }
-            if (defaultAccount == null) {
-                _uiState.updateToFailed(IllegalStateException("Not login!"))
-            } else {
-                val visibility = if (screenParams is PostStatusScreenParams.ReplyStatusParams) {
-                    screenParams.replyVisibility
-                } else {
-                    StatusVisibility.PUBLIC
+            generateInitPostStatusUiState(screenParams)
+                .onSuccess {
+                    _uiState.value = LoadableState.success(it)
+                }.onFailure {
+                    _uiState.updateToFailed(it)
                 }
-                _uiState.value = LoadableState.success(
-                    PostStatusUiState.initState(
-                        account = defaultAccount,
-                        allLoggedAccount = allLoggedAccount,
-                        initialContent = buildInitialContent(defaultAccount),
-                        visibility = visibility,
-                        replyToAuthorInfo = screenParams as? PostStatusScreenParams.ReplyStatusParams,
-                    )
-                )
-            }
         }
         loadPostStatusRules()
-    }
-
-    private fun buildInitialContent(account: ActivityPubLoggedAccount): String? {
-        val replyWebFinger =
-            (screenParams as? PostStatusScreenParams.ReplyStatusParams)?.replyToBlogWebFinger
-                ?: return null
-        val currentPlatformHost = account.platform.baseUrl.host
-        if (currentPlatformHost == replyWebFinger.host) return "@${replyWebFinger.name} "
-        return "$replyWebFinger "
     }
 
     private fun loadPostStatusRules() {

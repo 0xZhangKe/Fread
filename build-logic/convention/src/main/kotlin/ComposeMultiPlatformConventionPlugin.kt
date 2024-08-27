@@ -13,8 +13,8 @@
  *   See the License for the specific language governing permissions and
  *   limitations under the License.
  */
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.dsl.LibraryExtension
+import com.zhangke.fread.applicationExtension
+import com.zhangke.fread.libraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
@@ -53,12 +53,6 @@ class ComposeMultiPlatformConventionPlugin : Plugin<Project> {
             }
         }
     }
-
-    private fun Project.libraryExtension(action: LibraryExtension.() -> Unit) =
-        extensions.configure<LibraryExtension>(action)
-
-    private fun Project.applicationExtension(action: ApplicationExtension.() -> Unit) =
-        extensions.configure<ApplicationExtension>(action)
 
     private fun Project.composeCompiler(block: ComposeCompilerGradlePluginExtension.() -> Unit) {
         extensions.configure<ComposeCompilerGradlePluginExtension>(block)

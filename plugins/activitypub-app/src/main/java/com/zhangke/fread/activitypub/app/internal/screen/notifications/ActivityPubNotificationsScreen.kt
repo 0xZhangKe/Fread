@@ -6,9 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
@@ -80,7 +80,6 @@ class ActivityPubNotificationsScreen(
         }
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun ActivityPubNotificationsContent(
         uiState: ActivityPubNotificationsUiState,
@@ -136,6 +135,7 @@ class ActivityPubNotificationsScreen(
         }
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun NotificationTabTitle(
         uiState: ActivityPubNotificationsUiState,

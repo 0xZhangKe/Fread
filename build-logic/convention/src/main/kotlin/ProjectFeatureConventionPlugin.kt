@@ -1,15 +1,13 @@
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import com.android.build.gradle.LibraryExtension
-import com.zhangke.fread.configureAndroidCompose
+import com.zhangke.fread.compose
 import com.zhangke.fread.configureKotlinAndroid
 import com.zhangke.fread.configurePrintApksTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 import org.gradle.kotlin.dsl.configure
 
-class AndroidFeatureConventionPlugin: Plugin<Project> {
+class ProjectFeatureConventionPlugin: Plugin<Project> {
 
     override fun apply(target: Project) {
         with(target) {
@@ -17,16 +15,27 @@ class AndroidFeatureConventionPlugin: Plugin<Project> {
                 apply("com.android.library")
                 apply("org.jetbrains.kotlin.android")
                 apply("org.jetbrains.kotlin.plugin.serialization")
-                apply("org.jetbrains.kotlin.plugin.compose")
+
+                apply("fread.compose.multiplatform")
             }
 
             extensions.configure<LibraryExtension> {
                 configureKotlinAndroid(this)
                 defaultConfig.targetSdk = 34
-                configureAndroidCompose(this)
             }
             extensions.configure<LibraryAndroidComponentsExtension> {
                 configurePrintApksTask(this)
+            }
+            dependencies.apply {
+                add("implementation", compose.runtime)
+                add("implementation", compose.ui)
+                add("implementation", compose.foundation)
+                add("implementation", compose.material)
+                add("implementation", compose.materialIconsExtended)
+                add("implementation", compose.material3)
+
+                add("implementation", compose.uiTooling)
+                add("implementation", compose.preview)
             }
         }
     }

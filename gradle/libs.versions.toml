@@ -1,8 +1,11 @@
 [versions]
-kotlin = "2.0.0-RC3"
+kotlin = "2.0.10"
+ksp = "2.0.10-1.0.24"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
 kotlinx-serialization = "1.7.0-RC"
+
+compose-multiplatform = "1.6.11"
 
 androidx-core = "1.13.1"
 androidx-fragment = "1.7.1"
@@ -13,11 +16,7 @@ androidx-preference = "1.2.1"
 androidx-collection = "1.3.0"
 androidx-room = "2.6.0"
 androidx-datastore-preferences = "1.0.0"
-androidx-constraintlayout = "2.1.3"
-androidx-coordinatorlayout = "1.2.0"
-androidx-viewpager2 = "1.0.0"
 androidx-browser = "1.4.0"
-androidx-compose-bom = "2024.06.00"
 androidx-constraintlayout-compose = "1.1.0-alpha13"
 androidx-lifecycle = "2.4.1"
 androidx-paging = "3.2.1"
@@ -27,7 +26,7 @@ androidx-media3 = "1.0.0-rc01"
 accompanist-placeholder-material = "0.31.5-beta"
 accompanist-permissions = "0.35.1-alpha"
 
-hilt = "2.51.1"
+hilt = "2.52"
 
 okhttp3 = "4.12.0"
 
@@ -41,8 +40,6 @@ joda-time = "2.12.1"
 
 auto_service = "1.0.1"
 
-ksp = "2.0.0-RC3-1.0.20"
-
 filt = "1.0.4"
 
 voyager = "1.1.0-beta02"
@@ -50,7 +47,6 @@ voyager = "1.1.0-beta02"
 krouter = "0.2.3"
 
 androidGradlePlugin = "8.2.2"
-hiltAndroidGradlePlugin = "2.46.1"
 
 compose-wheel-picker = "1.0.0-alpha19"
 
@@ -74,9 +70,6 @@ firebaseBom = "33.1.1"
 firebaseCrashlyticsPlugin = "3.0.2"
 
 [bundles]
-androidx-compose-ui = ["androidx.compose.ui", "androidx.compose.ui.tooling", "androidx.compose.ui.util"]
-androidx-compose-foundation = ["androidx.compose.foundation", "androidx.compose.foundation.layout"]
-androidx-compose-material = ["androidx.compose.material", "androidx.compose.material.icons.core", "androidx.compose.material.icons.extended"]
 androidx-viewmodel = ["androidx.viewmodel.ktx", "androidx.viewmodel.compose", "androidx.viewmodel.savedstate"]
 androidx-lifecycle = ["androidx.lifecycle.common.java8", "androidx.lifecycle.process"]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
@@ -113,22 +106,10 @@ androidx-room-compiler = { group = "androidx.room", name = "room-compiler", vers
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "androidx.datastore.preferences" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidx.datastore.preferences" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidx.browser" }
-androidx-compose-bom = { group = "androidx.compose", name = "compose-bom", version.ref = "androidx.compose.bom" }
-androidx-compose-material3 = { group = "androidx.compose.material3", name = "material3", version = "1.3.0-beta05" }
-androidx-compose-ui = { group = "androidx.compose.ui", name = "ui" }
-androidx-compose-ui-tooling = { group = "androidx.compose.ui", name = "ui-tooling" }
-androidx-compose-ui-util = { group = "androidx.compose.ui", name = "ui-util" }
-androidx-compose-foundation = { group = "androidx.compose.foundation", name = "foundation" }
-androidx-compose-foundation-layout = { group = "androidx.compose.foundation", name = "foundation-layout" }
-androidx-compose-runtime = { group = "androidx.compose.runtime", name = "runtime" }
-androidx-compose-material = { group = "androidx.compose.material", name = "material" }
-androidx-compose-material-icons-core = { group = "androidx.compose.material", name = "material-icons-core" }
-androidx-compose-material-icons-extended = { group = "androidx.compose.material", name = "material-icons-extended" }
 androidx-compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "androidx.constraintlayout.compose" }
 androidx-viewmodel_ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx.lifecycle" }
 androidx-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidx.lifecycle" }
 androidx-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidx.lifecycle" }
-androidx-lifecycle-compiler = { group = "androidx.lifecycle", name = "lifecycle-compiler", version.ref = "androidx.lifecycle" }
 androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecycle-common-java8", version.ref = "androidx.lifecycle" }
 androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidx.lifecycle" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidx.paging" }
@@ -178,7 +159,7 @@ coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 joda-time = { group = "joda-time", name = "joda-time", version.ref = "joda.time" }
 
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
-auto-service = { group = "com.google.auto.service", name = "auto-service", version.ref = "auto.service" }
+auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
 
 filt-annotaions = { group = "com.github.0xZhangKe.Filt", name = "annotaions", version.ref = "filt" }
 filt-compiler = { group = "com.github.0xZhangKe.Filt", name = "compiler", version.ref = "filt" }
@@ -191,6 +172,8 @@ android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", ver
 #firebase-performance-gradlePlugin = { group = "com.google.firebase", name = "perf-plugin", version.ref = "firebasePerfPlugin" }
 kotlin-gradlePlugin = { group = "org.jetbrains.kotlin", name = "kotlin-gradle-plugin", version.ref = "kotlin" }
 ksp-gradlePlugin = { group = "com.google.devtools.ksp", name = "com.google.devtools.ksp.gradle.plugin", version.ref = "ksp" }
+compose-gradlePlugin = { module = "org.jetbrains.compose:compose-gradle-plugin", version.ref = "compose-multiplatform" }
+composeCompiler-gradlePlugin = { module = "org.jetbrains.kotlin:compose-compiler-gradle-plugin", version.ref = "kotlin" }
 
 voyager-navigator = { module = "cafe.adriel.voyager:voyager-navigator", version.ref = "voyager" }
 voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", version.ref = "voyager" }
@@ -221,10 +204,11 @@ jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hiltAndroidGradlePlugin" }
+hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
+jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
+jetbrains-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-service = { id = "com.google.gms.google-services",  version.ref = "google.service.version"}
 firebase-crashlytics = { id = "com.google.firebase.crashlytics",  version.ref = "firebaseCrashlyticsPlugin"}

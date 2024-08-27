@@ -38,14 +38,12 @@ dependencies {
     compileOnly(libs.ksp.gradlePlugin)
     compileOnly(libs.android.gradlePlugin)
     compileOnly(libs.kotlin.gradlePlugin)
+    compileOnly(libs.compose.gradlePlugin)
+    compileOnly(libs.composeCompiler.gradlePlugin)
 }
 
 gradlePlugin {
     plugins {
-        register("androidCompose") {
-            id = "fread.android.compose"
-            implementationClass = "AndroidComposeConventionPlugin"
-        }
         register("androidApplication") {
             id = "fread.android.application"
             implementationClass = "AndroidApplicationConventionPlugin"
@@ -54,13 +52,21 @@ gradlePlugin {
             id = "fread.android.library"
             implementationClass = "AndroidLibraryConventionPlugin"
         }
-        register("androidFeature") {
-            id = "fread.android.feature"
-            implementationClass = "AndroidFeatureConventionPlugin"
+        register("composeMultiplatform") {
+            id = "fread.compose.multiplatform"
+            implementationClass = "ComposeMultiPlatformConventionPlugin"
+        }
+        register("projectFramework") {
+            id = "fread.project.framework"
+            implementationClass = "ProjectFrameworkConventionPlugin"
+        }
+        register("projectFeature") {
+            id = "fread.project.feature"
+            implementationClass = "ProjectFeatureConventionPlugin"
         }
         register("jvmLibrary") {
             id = "fread.jvm.library"
-            implementationClass = "JvmLibraryConventionPlugin"
+            implementationClass = "KotlinJvmLibraryConventionPlugin"
         }
     }
 }

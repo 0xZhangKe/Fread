@@ -1,7 +1,6 @@
 plugins {
     id("fread.android.library")
     id("com.google.devtools.ksp")
-    id("kotlin-kapt")
     id("kotlin-parcelize")
 }
 
@@ -24,7 +23,7 @@ dependencies {
     implementation(libs.gson)
     implementation(libs.okhttp3)
     implementation(libs.hilt)
-    kapt(libs.hilt.compiler)
+    ksp(libs.hilt.compiler)
     implementation(libs.androidx.room)
     ksp(libs.krouter.compiler)
 

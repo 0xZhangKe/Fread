@@ -4,6 +4,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Bookmark
 import androidx.compose.material.icons.filled.BookmarkBorder
 import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.PushPin
@@ -37,6 +38,8 @@ val StatusUiInteraction.actionName: String
                 stringResource(R.string.status_ui_pin)
             }
         }
+
+        is StatusUiInteraction.Edit -> stringResource(R.string.status_ui_edit)
     }
 
 val StatusUiInteraction.logo: ImageVector
@@ -48,4 +51,5 @@ val StatusUiInteraction.logo: ImageVector
         is StatusUiInteraction.Delete -> Icons.Default.Delete
         is StatusUiInteraction.Share -> ImageVector.vectorResource(R.drawable.ic_share)
         is StatusUiInteraction.Pin -> if (interaction.pinned) Icons.Default.PushPin else Icons.Outlined.PushPin
+        is StatusUiInteraction.Edit -> Icons.Default.Edit
     }

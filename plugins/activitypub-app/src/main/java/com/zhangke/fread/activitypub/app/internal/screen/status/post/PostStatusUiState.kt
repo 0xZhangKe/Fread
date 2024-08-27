@@ -10,10 +10,12 @@ import kotlin.time.Duration
 data class PostStatusUiState(
     val account: ActivityPubLoggedAccount,
     val availableAccountList: List<ActivityPubLoggedAccount>,
+    val accountChangeable: Boolean,
     val content: String,
     val initialContent: String?,
     val attachment: PostStatusAttachment?,
     val visibility: StatusVisibility,
+    val visibilityChangeable: Boolean,
     val sensitive: Boolean,
     val warningContent: String,
     val replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
@@ -40,12 +42,14 @@ data class PostStatusUiState(
 
     companion object {
 
-        fun initState(
+        fun default(
             account: ActivityPubLoggedAccount,
             allLoggedAccount: List<ActivityPubLoggedAccount>,
             initialContent: String?,
             visibility: StatusVisibility,
             replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+            accountChangeable: Boolean = true,
+            visibilityChangeable: Boolean = true,
         ): PostStatusUiState {
             return PostStatusUiState(
                 account = account,
@@ -60,6 +64,8 @@ data class PostStatusUiState(
                 emojiList = emptyList(),
                 language = Locale.getDefault(),
                 rules = PostBlogRules.default(),
+                accountChangeable = accountChangeable,
+                visibilityChangeable = visibilityChangeable,
             )
         }
     }

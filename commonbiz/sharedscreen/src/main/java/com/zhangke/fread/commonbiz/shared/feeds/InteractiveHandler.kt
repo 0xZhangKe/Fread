@@ -116,6 +116,13 @@ class InteractiveHandler(
             }
             return
         }
+        if (uiInteraction is StatusUiInteraction.Edit){
+            coroutineScope.launch {
+                screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
+                    ?.let(::tryOpenScreenByRoute)
+            }
+            return
+        }
         coroutineScope.launch {
             val interaction = uiInteraction.statusInteraction ?: return@launch
             val result = statusProvider.statusResolver

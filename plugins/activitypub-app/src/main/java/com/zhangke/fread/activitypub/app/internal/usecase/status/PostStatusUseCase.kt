@@ -1,10 +1,12 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.status
 
+import com.zhangke.activitypub.entities.ActivityPubEditStatusEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusVisibilityEntity
 import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import java.util.Locale
@@ -15,10 +17,14 @@ class PostStatusUseCase @Inject constructor(
     private val attachmentAdapter: PostStatusAttachmentAdapter,
 ) {
 
+    /**
+     * @param originStatusId edit status screen need provide that.
+     */
     suspend operator fun invoke(
         account: ActivityPubLoggedAccount,
         content: String?,
         attachment: PostStatusAttachment?,
+        originStatusId: String? = null,
         sensitive: Boolean? = null,
         spoilerText: String? = null,
         replyToId: String? = null,
@@ -40,16 +46,47 @@ class PostStatusUseCase @Inject constructor(
             else -> null
         }
 
-        return statusRepo.postStatus(
-            status = content,
-            mediaIds = mediaIds,
-            poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
-            sensitive = sensitive,
-            replyToId = replyToId,
-            spoilerText = spoilerText,
-            visibility = visibility?.toEntityVisibility(),
-            language = language?.isO3Language,
-        ).map { }
+        return if (originStatusId.isNullOrEmpty()) {
+            statusRepo.postStatus(
+                status = content,
+                mediaIds = mediaIds,
+                poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
+                sensitive = sensitive,
+                spoilerText = if (sensitive == true) spoilerText else null,
+                replyToId = replyToId,
+                visibility = visibility?.toEntityVisibility(),
+                language = language?.isO3Language,
+            ).map { }
+        } else {
+            val mediaAttributes = mutableListOf<ActivityPubEditStatusEntity.MediaAttributes>()
+            val mediaFileList = when (attachment) {
+                is PostStatusAttachment.Image -> {
+                    attachment.imageList
+                }
+
+                is PostStatusAttachment.Video -> {
+                    listOf(attachment.video)
+                }
+
+                else -> emptyList()
+            }
+            mediaFileList.mapNotNull { it as? PostStatusMediaAttachmentFile.RemoteFile }.map {
+                mediaAttributes += ActivityPubEditStatusEntity.MediaAttributes(
+                    id = it.id,
+                    description = it.description,
+                )
+            }
+            statusRepo.editStatus(
+                id = originStatusId,
+                status = content,
+                mediaIds = mediaIds,
+                mediaAttributes = mediaAttributes,
+                poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
+                sensitive = sensitive,
+                spoilerText = if (sensitive == true) spoilerText else null,
+                language = language?.isO3Language,
+            ).map { }
+        }
     }
 
     private fun StatusVisibility.toEntityVisibility(): ActivityPubStatusVisibilityEntity {

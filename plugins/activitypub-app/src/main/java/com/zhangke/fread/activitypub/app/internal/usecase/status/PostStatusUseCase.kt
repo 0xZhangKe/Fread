@@ -5,7 +5,6 @@ import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAd
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import java.util.Locale
@@ -29,17 +28,13 @@ class PostStatusUseCase @Inject constructor(
         val role = IdentityRole(account.uri, null)
         val statusRepo = clientManager.getClient(role).statusRepo
         val mediaIds = when (attachment) {
-            is PostStatusAttachment.VideoAttachment -> {
-                val videoMediaId =
-                    (attachment.video.uploadJob.uploadState.value as? UploadMediaJob.UploadState.Success)?.id
+            is PostStatusAttachment.Video -> {
+                val videoMediaId = attachment.video.fileId
                 if (videoMediaId.isNullOrEmpty()) null else listOf(videoMediaId)
             }
 
-            is PostStatusAttachment.ImageAttachment -> {
-                attachment.imageList
-                    .map { it.uploadJob.uploadState.value }
-                    .mapNotNull { it as? UploadMediaJob.UploadState.Success }
-                    .map { it.id }
+            is PostStatusAttachment.Image -> {
+                attachment.imageList.mapNotNull { it.fileId }
             }
 
             else -> null

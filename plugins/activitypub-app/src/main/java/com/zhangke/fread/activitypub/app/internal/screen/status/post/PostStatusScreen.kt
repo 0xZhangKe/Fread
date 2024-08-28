@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -187,10 +188,10 @@ class PostStatusScreen(
         onPostClick: () -> Unit,
         onSensitiveClick: () -> Unit,
         onMediaSelected: (List<Uri>) -> Unit,
-        onDeleteClick: (PostStatusFile) -> Unit,
-        onCancelUploadClick: (PostStatusFile) -> Unit,
-        onRetryClick: (PostStatusFile) -> Unit,
-        onDescriptionInputted: (PostStatusFile, String) -> Unit,
+        onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
+        onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
         onLanguageSelected: (Locale) -> Unit,
         onPollClicked: () -> Unit,
         onPollContentChanged: (Int, String) -> Unit,
@@ -212,7 +213,7 @@ class PostStatusScreen(
                 snackMessageState.showSnackbar(errorMessage)
             }
         }
-        var textFieldValue by remember {
+        var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue(uiState.initialContent.orEmpty()))
         }
         Scaffold(
@@ -503,10 +504,10 @@ class PostStatusScreen(
     private fun StatusAttachment(
         modifier: Modifier,
         uiState: PostStatusUiState,
-        onDeleteClick: (PostStatusFile) -> Unit,
-        onCancelUploadClick: (PostStatusFile) -> Unit,
-        onRetryClick: (PostStatusFile) -> Unit,
-        onDescriptionInputted: (PostStatusFile, String) -> Unit,
+        onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
+        onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
         onPollContentChanged: (Int, String) -> Unit,
         onRemovePollClick: () -> Unit,
         onRemovePollItemClick: (Int) -> Unit,
@@ -516,7 +517,7 @@ class PostStatusScreen(
     ) {
         val attachment = uiState.attachment ?: return
         when (attachment) {
-            is PostStatusAttachment.ImageAttachment -> {
+            is PostStatusAttachment.Image -> {
                 PostStatusImageAttachment(
                     modifier = modifier,
                     attachment = attachment,
@@ -527,7 +528,7 @@ class PostStatusScreen(
                 )
             }
 
-            is PostStatusAttachment.VideoAttachment -> {
+            is PostStatusAttachment.Video -> {
                 PostStatusVideoAttachment(
                     modifier = modifier,
                     attachment = attachment,

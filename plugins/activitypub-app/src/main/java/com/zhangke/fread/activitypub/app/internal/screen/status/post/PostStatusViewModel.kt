@@ -142,30 +142,28 @@ class PostStatusViewModel @AssistedInject constructor(
     }
 
     private fun onAddVideo(file: ContentProviderFile) {
-        val attachmentFile = buildAttachmentFile(file)
+        val attachmentFile = buildLocalAttachmentFile(file)
         attachmentFile.uploadJob.upload()
         _uiState.updateOnSuccess {
-            it.copy(
-                attachment = PostStatusAttachment.VideoAttachment(attachmentFile)
-            )
+            it.copy(attachment = PostStatusAttachment.Video(attachmentFile))
         }
     }
 
     private fun onAddImageList(uriList: List<ContentProviderFile>) {
-        val imageList = mutableListOf<PostStatusFile>()
+        val imageList = mutableListOf<PostStatusMediaAttachmentFile>()
         _uiState.value
             .requireSuccessData()
             .attachment
-            ?.asImageAttachmentOrNull
+            ?.asImageOrNull
             ?.imageList
             ?.let { imageList += it }
         uriList.forEach { uri ->
-            val attachmentFile = buildAttachmentFile(uri)
+            val attachmentFile = buildLocalAttachmentFile(uri)
             attachmentFile.uploadJob.upload()
             imageList += attachmentFile
         }
         _uiState.updateOnSuccess {
-            it.copy(attachment = PostStatusAttachment.ImageAttachment(imageList))
+            it.copy(attachment = PostStatusAttachment.Image(imageList))
         }
     }
 
@@ -176,26 +174,28 @@ class PostStatusViewModel @AssistedInject constructor(
         scope = viewModelScope,
     )
 
-    private fun buildAttachmentFile(file: ContentProviderFile) = PostStatusFile(
+    private fun buildLocalAttachmentFile(
+        file: ContentProviderFile,
+    ) = PostStatusMediaAttachmentFile.LocalFile(
         file = file,
         description = null,
         uploadJob = buildUploadFileJob(file),
     )
 
-    fun onMediaDeleteClick(image: PostStatusFile) {
+    fun onMediaDeleteClick(image: PostStatusMediaAttachmentFile) {
         val attachment = _uiState.value
             .requireSuccessData()
             .attachment ?: return
-        val imageAttachment = attachment.asImageAttachmentOrNull
+        val imageAttachment = attachment.asImageOrNull
         if (imageAttachment != null) {
             _uiState.updateOnSuccess { state ->
                 state.copy(
-                    attachment = PostStatusAttachment.ImageAttachment(imageAttachment.imageList.remove { it == image })
+                    attachment = PostStatusAttachment.Image(imageAttachment.imageList.remove { it == image })
                 )
             }
             return
         }
-        val videoAttachment = attachment.asVideoAttachmentOrNull
+        val videoAttachment = attachment.asVideoOrNull
         if (videoAttachment != null) {
             _uiState.updateOnSuccess { state ->
                 state.copy(attachment = null)
@@ -203,36 +203,43 @@ class PostStatusViewModel @AssistedInject constructor(
         }
     }
 
-    fun onCancelUploadClick(file: PostStatusFile) {
+    fun onCancelUploadClick(file: PostStatusMediaAttachmentFile.LocalFile) {
         file.uploadJob.cancel()
     }
 
-    fun onRetryClick(file: PostStatusFile) {
+    fun onRetryClick(file: PostStatusMediaAttachmentFile.LocalFile) {
         file.uploadJob.upload()
     }
 
-    fun onDescriptionInputted(file: PostStatusFile, description: String) {
+    fun onDescriptionInputted(file: PostStatusMediaAttachmentFile, description: String) {
         _uiState.updateOnSuccess { state ->
-            val imageList = state.attachment?.asImageAttachmentOrNull?.imageList ?: emptyList()
+            val imageList = state.attachment?.asImageOrNull?.imageList ?: emptyList()
             val newImageList = imageList.map {
                 if (it == file) {
-                    it.copy(description = description)
+                    when (it) {
+                        is PostStatusMediaAttachmentFile.LocalFile -> it.copy(description = description)
+                        is PostStatusMediaAttachmentFile.RemoteFile -> it.copy(description = description)
+                    }
                 } else {
                     it
                 }
             }
-            state.copy(attachment = PostStatusAttachment.ImageAttachment(newImageList))
+            state.copy(attachment = PostStatusAttachment.Image(newImageList))
         }
-        val mediaId = (file.uploadJob.uploadState.value as? UploadMediaJob.UploadState.Success)?.id
-        if (mediaId.isNullOrEmpty().not()) {
-            launchInViewModel {
-                val role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null)
-                clientManager.getClient(role)
-                    .mediaRepo
-                    .updateMedia(
-                        id = mediaId!!,
-                        description = description,
-                    )
+        if (file is PostStatusMediaAttachmentFile.LocalFile) {
+            val mediaId = file.fileId
+            if (!mediaId.isNullOrEmpty()){
+                launchInViewModel {
+                    val role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null)
+                    clientManager.getClient(role)
+                        .mediaRepo
+                        .updateMedia(
+                            id = mediaId,
+                            description = description,
+                        ).onFailure {
+                            _snackMessage.emitTextMessageFromThrowable(it)
+                        }
+                }
             }
         }
     }
@@ -336,8 +343,9 @@ class PostStatusViewModel @AssistedInject constructor(
             return
         }
         when (attachment) {
-            is PostStatusAttachment.ImageAttachment -> {
+            is PostStatusAttachment.Image -> {
                 val allSuccess = attachment.imageList
+                    .mapNotNull { it as? PostStatusMediaAttachmentFile.LocalFile }
                     .map { it.uploadJob.uploadState.value }
                     .all { it is UploadMediaJob.UploadState.Success }
                 if (!allSuccess) {
@@ -346,8 +354,11 @@ class PostStatusViewModel @AssistedInject constructor(
                 }
             }
 
-            is PostStatusAttachment.VideoAttachment -> {
-                if (attachment.video.uploadJob.uploadState.value !is UploadMediaJob.UploadState.Success) {
+            is PostStatusAttachment.Video -> {
+                val uploadJob = attachment.video
+                    .let { it as? PostStatusMediaAttachmentFile.LocalFile }
+                    ?.uploadJob
+                if (uploadJob != null && uploadJob.uploadState.value !is UploadMediaJob.UploadState.Success) {
                     _snackMessage.emitInViewModel(textOf(R.string.post_status_media_is_not_upload))
                     return
                 }
@@ -367,9 +378,6 @@ class PostStatusViewModel @AssistedInject constructor(
             }
 
             else -> {}
-        }
-        if (attachment != null) {
-            attachment.asImageAttachmentOrNull?.imageList?.map { it.uploadJob }
         }
         launchInViewModel {
             _postState.emit(LoadableState.loading())

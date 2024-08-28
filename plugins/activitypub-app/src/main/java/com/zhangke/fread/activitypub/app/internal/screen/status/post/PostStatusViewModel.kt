@@ -55,7 +55,7 @@ class PostStatusViewModel @AssistedInject constructor(
     private val generateInitPostStatusUiState: GenerateInitPostStatusUiStateUseCase,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val clientManager: ActivityPubClientManager,
-    private val postNoAttachmentStatus: PostStatusUseCase,
+    private val postStatus: PostStatusUseCase,
     private val platformUriTransformer: PlatformUriTransformer,
     @Assisted private val screenParams: PostStatusScreenParams,
 ) : ViewModel() {
@@ -228,7 +228,7 @@ class PostStatusViewModel @AssistedInject constructor(
         }
         if (file is PostStatusMediaAttachmentFile.LocalFile) {
             val mediaId = file.fileId
-            if (!mediaId.isNullOrEmpty()){
+            if (!mediaId.isNullOrEmpty()) {
                 launchInViewModel {
                     val role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null)
                     clientManager.getClient(role)
@@ -381,10 +381,11 @@ class PostStatusViewModel @AssistedInject constructor(
         }
         launchInViewModel {
             _postState.emit(LoadableState.loading())
-            postNoAttachmentStatus(
+            postStatus(
                 account = account,
                 content = currentUiState.content,
                 attachment = attachment,
+                originStatusId = (screenParams as? PostStatusScreenParams.EditStatusParams)?.blog?.id,
                 sensitive = currentUiState.sensitive,
                 replyToId = (screenParams as? PostStatusScreenParams.ReplyStatusParams)?.replyToBlogId,
                 spoilerText = currentUiState.warningContent,

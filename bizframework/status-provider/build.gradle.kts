@@ -18,9 +18,6 @@ dependencies {
 
     implementation(libs.bundles.kotlin)
 
-    implementation(libs.retrofit2)
-    implementation(libs.retrofit2.converter.gson)
-    implementation(libs.gson)
     implementation(libs.okhttp3)
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)

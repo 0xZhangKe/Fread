@@ -1,20 +1,21 @@
 package com.zhangke.fread.common.status.repo.db.converts
 
 import androidx.room.TypeConverter
-import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.blog.BlogPoll
+import kotlinx.serialization.encodeToString
 
 class BlogPollConverter {
 
     @TypeConverter
     fun fromStringList(text: String?): BlogPoll? {
         if (text.isNullOrEmpty()) return null
-        return globalGson.fromJson(text, BlogPoll::class.java)
+        return globalJson.decodeFromString(text)
     }
 
     @TypeConverter
     fun toStringList(poll: BlogPoll?): String? {
         if (poll == null) return null
-        return globalGson.toJson(poll).toString()
+        return globalJson.encodeToString(poll)
     }
 }

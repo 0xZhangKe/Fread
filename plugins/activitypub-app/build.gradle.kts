@@ -53,7 +53,6 @@ dependencies {
     implementation(libs.retrofit2)
     implementation(libs.retrofit2.converter.gson)
     implementation(libs.gson)
-    implementation(libs.joda.time)
     implementation(libs.auto.service.annotations)
     ksp(libs.auto.service.ksp)
     implementation(libs.androidx.paging.runtime)

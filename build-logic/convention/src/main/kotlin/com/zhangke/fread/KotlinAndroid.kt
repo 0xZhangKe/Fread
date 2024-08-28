@@ -17,14 +17,15 @@
 package com.zhangke.fread
 
 import com.android.build.api.dsl.CommonExtension
+import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
 import org.gradle.jvm.tasks.Jar
-import org.gradle.jvm.toolchain.JavaLanguageVersion
 import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
 
 /**
@@ -39,28 +40,28 @@ internal fun Project.configureKotlinAndroid(
         defaultConfig {
             minSdk = 23
         }
+
+        compileOptions {
+            // Up to Java 11 APIs are available through desugaring
+            // https://developer.android.com/studio/write/java11-minimal-support-table
+            sourceCompatibility = JavaVersion.VERSION_11
+            targetCompatibility = JavaVersion.VERSION_11
+        }
     }
     configureKotlin()
-    configureJava()
 }
 
 /**
  * Configure base Kotlin options for JVM (non-Android)
  */
 internal fun Project.configureKotlinJvm() {
-    configureKotlin()
-    configureJava()
-}
-
-/**
- * Configure Java options
- */
-private fun Project.configureJava() {
     java {
-        toolchain {
-            languageVersion.set(JavaLanguageVersion.of(17))
-        }
+        // Up to Java 11 APIs are available through desugaring
+        // https://developer.android.com/studio/write/java11-minimal-support-table
+        sourceCompatibility = JavaVersion.VERSION_11
+        targetCompatibility = JavaVersion.VERSION_11
     }
+    configureKotlin()
 }
 
 /**
@@ -69,6 +70,7 @@ private fun Project.configureJava() {
 private fun Project.configureKotlin() {
     kotlinCompile {
         compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
             languageVersion = KotlinVersion.KOTLIN_2_0
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties

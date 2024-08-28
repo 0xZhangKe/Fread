@@ -41,3 +41,6 @@
 -keep @androidx.room.Entity class * {
     *;
 }
+
+# Ktor
+-dontwarn org.slf4j.impl.StaticLoggerBinder

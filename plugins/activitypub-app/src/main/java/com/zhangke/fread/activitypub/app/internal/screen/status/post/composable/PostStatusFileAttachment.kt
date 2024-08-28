@@ -50,7 +50,7 @@ import com.zhangke.framework.utils.prettyString
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.InputMediaDescriptionScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusFile
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -60,11 +60,11 @@ private const val MEDIA_ASPECT = 1.78F
 @Composable
 internal fun PostStatusVideoAttachment(
     modifier: Modifier,
-    attachment: PostStatusAttachment.VideoAttachment,
-    onDeleteClick: (PostStatusFile) -> Unit,
-    onCancelUploadClick: (PostStatusFile) -> Unit,
-    onRetryClick: (PostStatusFile) -> Unit,
-    onDescriptionInputted: (PostStatusFile, String) -> Unit,
+    attachment: PostStatusAttachment.Video,
+    onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
+    onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+    onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+    onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -76,8 +76,14 @@ internal fun PostStatusVideoAttachment(
             modifier = Modifier.fillMaxSize(),
             file = attachmentFile,
             onDeleteClick = { onDeleteClick(attachmentFile) },
-            onCancelUploadClick = { onCancelUploadClick(attachmentFile) },
-            onRetryClick = { onRetryClick(attachmentFile) },
+            onCancelUploadClick = {
+                attachmentFile.let { it as? PostStatusMediaAttachmentFile.LocalFile }
+                    ?.let(onCancelUploadClick)
+            },
+            onRetryClick = {
+                attachmentFile.let { it as? PostStatusMediaAttachmentFile.LocalFile }
+                    ?.let(onRetryClick)
+            },
             onDescriptionInputted = { onDescriptionInputted(attachmentFile, it) },
         )
     }
@@ -86,11 +92,11 @@ internal fun PostStatusVideoAttachment(
 @Composable
 internal fun PostStatusImageAttachment(
     modifier: Modifier,
-    attachment: PostStatusAttachment.ImageAttachment,
-    onDeleteClick: (PostStatusFile) -> Unit,
-    onCancelUploadClick: (PostStatusFile) -> Unit,
-    onRetryClick: (PostStatusFile) -> Unit,
-    onDescriptionInputted: (PostStatusFile, String) -> Unit,
+    attachment: PostStatusAttachment.Image,
+    onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
+    onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+    onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+    onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
 ) {
     Box(
         modifier = modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
@@ -103,8 +109,14 @@ internal fun PostStatusImageAttachment(
                     modifier = Modifier.fillMaxSize(),
                     file = attachmentFile,
                     onDeleteClick = { onDeleteClick(attachmentFile) },
-                    onCancelUploadClick = { onCancelUploadClick(attachmentFile) },
-                    onRetryClick = { onRetryClick(attachmentFile) },
+                    onCancelUploadClick = {
+                        attachmentFile.let { it as? PostStatusMediaAttachmentFile.LocalFile }
+                            ?.let(onCancelUploadClick)
+                    },
+                    onRetryClick = {
+                        attachmentFile.let { it as? PostStatusMediaAttachmentFile.LocalFile }
+                            ?.let(onRetryClick)
+                    },
                     onDescriptionInputted = { onDescriptionInputted(attachmentFile, it) },
                 )
             }
@@ -115,7 +127,7 @@ internal fun PostStatusImageAttachment(
 @Composable
 private fun MediaFileContent(
     modifier: Modifier,
-    file: PostStatusFile,
+    file: PostStatusMediaAttachmentFile,
     onDeleteClick: () -> Unit,
     onCancelUploadClick: () -> Unit,
     onRetryClick: () -> Unit,
@@ -131,7 +143,7 @@ private fun MediaFileContent(
                     .fillMaxWidth()
                     .weight(1F)
             ) {
-                if (file.file.isVideo) {
+                if (file is PostStatusMediaAttachmentFile.LocalFile && file.isVideo) {
                     var bitmap: Bitmap? by remember(file) {
                         mutableStateOf(null)
                     }
@@ -156,7 +168,7 @@ private fun MediaFileContent(
                 } else {
                     AsyncImage(
                         modifier = Modifier.fillMaxSize(),
-                        model = file.file.uri,
+                        model = file.previewUri,
                         contentScale = ContentScale.Crop,
                         contentDescription = "Media",
                     )
@@ -165,54 +177,62 @@ private fun MediaFileContent(
 
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp),
-                text = file.description.ifNullOrEmpty {
-                    if (file.file.isVideo) {
-                        stringResource(R.string.post_screen_media_video_placeholder)
-                    } else {
-                        stringResource(R.string.post_screen_media_image_placeholder)
-                    }
-                },
+                text = file.description.ifNullOrEmpty { stringResource(R.string.post_screen_media_descriptor_placeholder) },
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
-            val mediaType = if (file.file.isVideo) {
-                stringResource(com.zhangke.fread.commonbiz.R.string.video)
+            if (file is PostStatusMediaAttachmentFile.LocalFile) {
+                val mediaType = if (file.file.isVideo) {
+                    stringResource(com.zhangke.fread.commonbiz.R.string.video)
+                } else {
+                    stringResource(com.zhangke.fread.commonbiz.R.string.image)
+                }
+                Text(
+                    modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),
+                    text = "${file.file.size.prettyString} / $mediaType",
+                    style = MaterialTheme.typography.bodyMedium,
+                )
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp)
+                ) {
+                    val uploadState by file.uploadJob.uploadState.collectAsState()
+                    when (uploadState) {
+                        is UploadMediaJob.UploadState.Uploading -> {
+                            ImageAttachmentBottomLoading(
+                                uploadState = uploadState as UploadMediaJob.UploadState.Uploading,
+                                onCancelUploadClick = onCancelUploadClick,
+                            )
+                        }
+
+                        is UploadMediaJob.UploadState.Failed -> {
+                            ImageAttachmentBottomFailed(
+                                onRetryClick = onRetryClick,
+                            )
+                        }
+
+                        else -> {
+                            ImageAttachmentBottomSuccess(
+                                file = file,
+                                onDescriptionInputted = onDescriptionInputted,
+                                onDeleteClick = onDeleteClick,
+                            )
+                        }
+                    }
+                }
             } else {
-                stringResource(com.zhangke.fread.commonbiz.R.string.image)
-            }
-            Text(
-                modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),
-                text = "${file.file.size.prettyString} / $mediaType",
-                style = MaterialTheme.typography.bodyMedium,
-            )
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(start = 16.dp)
-            ) {
-                val uploadState by file.uploadJob.uploadState.collectAsState()
-                when (uploadState) {
-                    is UploadMediaJob.UploadState.Uploading -> {
-                        ImageAttachmentBottomLoading(
-                            uploadState = uploadState as UploadMediaJob.UploadState.Uploading,
-                            onCancelUploadClick = onCancelUploadClick,
-                        )
-                    }
-
-                    is UploadMediaJob.UploadState.Failed -> {
-                        ImageAttachmentBottomFailed(
-                            onRetryClick = onRetryClick,
-                        )
-                    }
-
-                    else -> {
-                        ImageAttachmentBottomSuccess(
-                            file = file,
-                            onDescriptionInputted = onDescriptionInputted,
-                            onDeleteClick = onDeleteClick,
-                        )
-                    }
+                Box(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(start = 16.dp)
+                ) {
+                    ImageAttachmentBottomSuccess(
+                        file = file,
+                        onDescriptionInputted = onDescriptionInputted,
+                        onDeleteClick = onDeleteClick,
+                    )
                 }
             }
         }
@@ -231,10 +251,10 @@ private fun BoxScope.ImageAttachmentBottomLoading(
     ) {
         val progress by uploadState.progress.collectAsState(initial = 0F)
         LinearProgressIndicator(
+            progress = { progress },
             modifier = Modifier
                 .align(Alignment.CenterVertically)
                 .weight(1F),
-            progress = progress,
         )
         SimpleIconButton(
             modifier = Modifier.align(Alignment.CenterVertically),
@@ -255,10 +275,10 @@ private fun BoxScope.ImageAttachmentBottomFailed(
             .align(Alignment.Center)
     ) {
         LinearProgressIndicator(
+            progress = { 1F },
             modifier = Modifier
                 .weight(1F)
                 .align(Alignment.CenterVertically),
-            progress = 1F,
             color = MaterialTheme.colorScheme.error,
             trackColor = MaterialTheme.colorScheme.error,
         )
@@ -273,7 +293,7 @@ private fun BoxScope.ImageAttachmentBottomFailed(
 
 @Composable
 private fun BoxScope.ImageAttachmentBottomSuccess(
-    file: PostStatusFile,
+    file: PostStatusMediaAttachmentFile,
     onDescriptionInputted: (String) -> Unit,
     onDeleteClick: () -> Unit,
 ) {
@@ -286,7 +306,13 @@ private fun BoxScope.ImageAttachmentBottomSuccess(
             modifier = Modifier
                 .align(Alignment.CenterVertically),
             onClick = {
-                navigator.push(InputMediaDescriptionScreen(file, onDescriptionInputted))
+                navigator.push(
+                    InputMediaDescriptionScreen(
+                        previewUrl = file.previewUri,
+                        description = file.description,
+                        onDescriptionInputted = onDescriptionInputted,
+                    )
+                )
             },
             imageVector = Icons.Default.Edit,
             contentDescription = "Edit",

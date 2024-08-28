@@ -1,10 +1,16 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase
 
 import androidx.core.text.HtmlCompat
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
+import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.blog.BlogMedia
+import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.model.StatusVisibility
 import javax.inject.Inject
 
@@ -86,6 +92,27 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             replyToAuthorInfo = null,
             visibilityChangeable = false,
             accountChangeable = false,
+            attachment = blog.generateAttachment(),
+        )
+    }
+
+    private fun Blog.generateAttachment(): PostStatusAttachment? {
+        if (mediaList.isNotEmpty()) {
+            if (mediaList.first().type == BlogMediaType.VIDEO) {
+                return PostStatusAttachment.Video(mediaList.first().toAttachmentFile())
+            }
+            return PostStatusAttachment.Image(
+                mediaList.map { it.toAttachmentFile() }
+            )
+        }
+        return null
+    }
+
+    private fun BlogMedia.toAttachmentFile(): PostStatusMediaAttachmentFile.RemoteFile {
+        return PostStatusMediaAttachmentFile.RemoteFile(
+            id = this.id,
+            url = this.previewUrl.ifNullOrEmpty { this.url },
+            description = this.description,
         )
     }
 }

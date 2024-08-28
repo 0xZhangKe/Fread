@@ -27,7 +27,7 @@ data class PostStatusUiState(
     val allowedSelectCount: Int
         get() {
             val imageList =
-                attachment?.asImageAttachmentOrNull?.imageList ?: return rules.maxMediaCount
+                attachment?.asImageOrNull?.imageList ?: return rules.maxMediaCount
             return (rules.maxMediaCount - imageList.size).coerceAtLeast(0)
         }
 
@@ -50,13 +50,14 @@ data class PostStatusUiState(
             replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
             accountChangeable: Boolean = true,
             visibilityChangeable: Boolean = true,
+            attachment: PostStatusAttachment? = null,
         ): PostStatusUiState {
             return PostStatusUiState(
                 account = account,
                 availableAccountList = allLoggedAccount,
                 content = "",
                 initialContent = initialContent,
-                attachment = null,
+                attachment = attachment,
                 visibility = visibility,
                 sensitive = false,
                 replyToAuthorInfo = replyToAuthorInfo,
@@ -73,9 +74,9 @@ data class PostStatusUiState(
 
 sealed interface PostStatusAttachment {
 
-    data class ImageAttachment(val imageList: List<PostStatusFile>) : PostStatusAttachment
+    data class Image(val imageList: List<PostStatusMediaAttachmentFile>) : PostStatusAttachment
 
-    data class VideoAttachment(val video: PostStatusFile) : PostStatusAttachment
+    data class Video(val video: PostStatusMediaAttachmentFile) : PostStatusAttachment
 
     data class Poll(
         val optionList: List<String>,
@@ -83,20 +84,55 @@ sealed interface PostStatusAttachment {
         val duration: Duration,
     ) : PostStatusAttachment
 
-    val asImageAttachmentOrNull: ImageAttachment? get() = this as? ImageAttachment
+    val asImageOrNull: Image? get() = this as? Image
 
-    val asVideoAttachmentOrNull: VideoAttachment? get() = this as? VideoAttachment
+    val asVideoOrNull: Video? get() = this as? Video
 
     val asPollAttachment: Poll get() = this as Poll
 
     val asPollAttachmentOrNull: Poll? get() = this as? Poll
 }
 
-data class PostStatusFile(
-    val file: ContentProviderFile,
-    val description: String?,
-    val uploadJob: UploadMediaJob,
-)
+sealed interface PostStatusMediaAttachmentFile {
+
+    val previewUri: String
+
+    val description: String?
+
+    val fileId: String?
+        get() = when (this) {
+            is LocalFile -> {
+                uploadJob.uploadState.value.successIdOrNull
+            }
+
+            is RemoteFile -> {
+                id
+            }
+        }
+
+    data class LocalFile(
+        val file: ContentProviderFile,
+        override val description: String?,
+        val uploadJob: UploadMediaJob,
+    ) : PostStatusMediaAttachmentFile {
+
+        val isVideo: Boolean
+            get() = file.isVideo
+
+        override val previewUri: String
+            get() = file.uri.toString()
+    }
+
+    data class RemoteFile(
+        val id: String,
+        val url: String,
+        override val description: String?,
+    ) : PostStatusMediaAttachmentFile {
+
+        override val previewUri: String
+            get() = url
+    }
+}
 
 data class PostBlogRules(
     val maxCharacters: Int,

@@ -51,10 +51,14 @@ import com.zhangke.framework.composable.rememberFutureDatePickerState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.ext.toJavaDate
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
-import org.joda.time.LocalDateTime
+import kotlinx.datetime.Clock
 import java.util.Date
+import kotlin.time.Duration.Companion.days
+import kotlin.time.Duration.Companion.hours
+import kotlin.time.Duration.Companion.minutes
 
 class EditFilterScreen(
     private val role: IdentityRole,
@@ -251,42 +255,42 @@ class EditFilterScreen(
                     text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_thirty_minutes)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(LocalDateTime.now().plusMinutes(30).toDate())
+                        onExpiredDateSelected(Clock.System.now().plus(30.minutes).toJavaDate())
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_hour)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(LocalDateTime.now().plusHours(1).toDate())
+                        onExpiredDateSelected(Clock.System.now().plus(1.hours).toJavaDate())
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_twelve_hours)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(LocalDateTime.now().plusHours(12).toDate())
+                        onExpiredDateSelected(Clock.System.now().plus(12.hours).toJavaDate())
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_day)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(LocalDateTime.now().plusDays(1).toDate())
+                        onExpiredDateSelected(Clock.System.now().plus(1.days).toJavaDate())
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_three_day)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(LocalDateTime.now().plusDays(3).toDate())
+                        onExpiredDateSelected(Clock.System.now().plus(3.days).toJavaDate())
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(id = R.string.activity_pub_filter_edit_duration_one_week)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(LocalDateTime.now().plusDays(7).toDate())
+                        onExpiredDateSelected(Clock.System.now().plus(7.days).toJavaDate())
                     },
                 )
                 DropdownMenuItem(

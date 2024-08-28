@@ -4,6 +4,7 @@ ksp = "2.0.10-1.0.24"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
 kotlinx-serialization = "1.7.0-RC"
+kotlinx-datetime = "0.6.1"
 
 compose-multiplatform = "1.6.11"
 
@@ -34,8 +35,6 @@ retrofit2 = "2.9.0"
 gson = "2.10.1"
 
 coil = "2.7.0"
-
-joda-time = "2.12.1"
 
 auto_service = "1.0.1"
 
@@ -135,8 +134,9 @@ kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-corou
 kotlin-coroutine-android = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-android", version.ref = "kotlin.coroutine" }
 kotlin-coroutine-test = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-test", version.ref = "kotlin.coroutine.test" }
 
-kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx.serialization" }
-kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx.serialization" }
+kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-core", version.ref = "kotlinx-serialization" }
+kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
+kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
 hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
 hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
@@ -154,8 +154,6 @@ coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coi
 coil-compose-base = { group = "io.coil-kt", name = "coil-compose-base", version.ref = "coil" }
 coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
 coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
-
-joda-time = { group = "joda-time", name = "joda-time", version.ref = "joda.time" }
 
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }

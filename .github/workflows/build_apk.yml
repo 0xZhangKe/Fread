@@ -4,7 +4,7 @@ on:
       - '**'
 
 concurrency:
-  group: ${{ github.event.pull_request.number }}-ci
+  group: ${{ github.event.pull_request.number }}-build-ci
   cancel-in-progress: true
 
 jobs:
@@ -18,6 +18,9 @@ jobs:
 
       - name: Validate Gradle Wrapper
         uses: gradle/wrapper-validation-action@v3
+
+      - name: Copy CI gradle.properties
+        run: mkdir -p ~/.gradle ; cp .github/ci-gradle.properties ~/.gradle/gradle.properties
 
       - name: Set up JDK
         uses: actions/setup-java@v3

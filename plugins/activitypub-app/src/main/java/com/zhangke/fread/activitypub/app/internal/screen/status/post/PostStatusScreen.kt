@@ -216,6 +216,11 @@ class PostStatusScreen(
         var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue(uiState.initialContent.orEmpty()))
         }
+        LaunchedEffect(Unit) {
+            if (uiState.content.isEmpty() && !uiState.initialContent.isNullOrEmpty()) {
+                onContentChanged(uiState.initialContent)
+            }
+        }
         Scaffold(
             snackbarHost = {
                 SnackbarHost(hostState = snackMessageState)

@@ -61,6 +61,7 @@ class RssStatusAdapter @Inject constructor(
             pinned = false,
             visibility = StatusVisibility.PUBLIC,
             card = null,
+            language = null,
         )
     }
 

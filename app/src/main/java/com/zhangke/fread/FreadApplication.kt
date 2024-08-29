@@ -15,7 +15,6 @@ import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.language.LanguageHelper
-import com.zhangke.fread.common.review.FreadReviewManager
 import dagger.hilt.android.HiltAndroidApp
 import kotlinx.coroutines.launch
 import javax.inject.Inject
@@ -38,7 +37,6 @@ class FreadApplication : Application() {
         initCoil(this)
         initModuleStartups()
         TopActivityManager.init(this)
-        FreadReviewManager.init(this)
     }
 
     private fun initCoil(context: Context) {

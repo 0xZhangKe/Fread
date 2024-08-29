@@ -64,9 +64,5 @@ gradlePlugin {
             id = "fread.project.feature"
             implementationClass = "ProjectFeatureConventionPlugin"
         }
-        register("jvmLibrary") {
-            id = "fread.jvm.library"
-            implementationClass = "KotlinJvmLibraryConventionPlugin"
-        }
     }
 }

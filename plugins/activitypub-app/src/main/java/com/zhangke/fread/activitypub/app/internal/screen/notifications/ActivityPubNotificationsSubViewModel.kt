@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.notifications
 
-import com.zhangke.framework.composable.emitInViewModel
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel

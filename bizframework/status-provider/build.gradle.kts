@@ -31,5 +31,5 @@ dependencies {
     implementation(libs.halilibo.richtext)
     implementation(libs.halilibo.richtext.material3)
     api(libs.jsoup)
-    implementation(libs.coil)
+    implementation(libs.imageLoader)
 }

@@ -37,7 +37,7 @@ import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.freadPlaceholder
@@ -256,12 +256,12 @@ class InstanceDetailScreen(
                                 color = MaterialTheme.colorScheme.onPrimary,
                             )
 
-                            AsyncImage(
+                            AutoSizeImage(
+                                instance.contact?.account?.avatar.orEmpty(),
                                 modifier = Modifier
                                     .padding(start = 6.dp)
                                     .size(22.dp)
                                     .clip(CircleShape),
-                                model = instance.contact?.account?.avatar,
                                 contentDescription = "Mod avatar",
                             )
                             FreadRichText(

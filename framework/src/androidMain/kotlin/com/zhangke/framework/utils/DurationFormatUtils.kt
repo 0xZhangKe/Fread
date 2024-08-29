@@ -1,37 +1,41 @@
 package com.zhangke.framework.utils
 
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.duration_day
+import com.zhangke.fread.framework.duration_hour
+import com.zhangke.fread.framework.duration_minute
+import com.zhangke.fread.framework.duration_week
+import org.jetbrains.compose.resources.getString
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
-import com.zhangke.fread.framework.R
 
-fun Duration.formattedString(): String {
-    val context = appContext
+suspend fun Duration.formattedString(): String {
     val builder = StringBuilder()
     val formattedDuration = format()
     val weeks = dayToWeek(formattedDuration.days)
     if (weeks > 0) {
-        builder.append("$weeks${context.getString(R.string.duration_week)}")
+        builder.append("$weeks${getString(Res.string.duration_week)}")
     }
     val days = (formattedDuration.days - weeks * 7).coerceAtLeast(0)
     if (days > 0) {
         if (builder.isNotEmpty()) {
             builder.append(" ")
         }
-        builder.append("$days${context.getString(R.string.duration_day)}")
+        builder.append("$days${getString(Res.string.duration_day)}")
     }
     if (formattedDuration.hours > 0) {
         if (builder.isNotEmpty()) {
             builder.append(" ")
         }
-        builder.append("${formattedDuration.hours}${context.getString(R.string.duration_hour)}")
+        builder.append("${formattedDuration.hours}${getString(Res.string.duration_hour)}")
     }
     if (formattedDuration.minutes > 0) {
         if (builder.isNotEmpty()) {
             builder.append(" ")
         }
-        builder.append("${formattedDuration.minutes}${context.getString(R.string.duration_minute)}")
+        builder.append("${formattedDuration.minutes}${getString(Res.string.duration_minute)}")
     }
     return builder.toString()
 }

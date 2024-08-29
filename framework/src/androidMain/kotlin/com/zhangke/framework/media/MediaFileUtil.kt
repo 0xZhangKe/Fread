@@ -3,13 +3,12 @@ package com.zhangke.framework.media
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
-import coil.imageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import com.seiko.imageloader.imageLoader
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.model.ImageResult
 import com.zhangke.framework.permission.hasWriteStoragePermission
 import com.zhangke.framework.utils.ifDebugging
 import java.net.URLDecoder
@@ -36,13 +35,15 @@ object MediaFileUtil {
     }
 
     private suspend fun downloadImage(context: Context, url: String): Bitmap? {
-        val request = ImageRequest.Builder(context)
-            .data(url)
-            .build()
         return try {
+            val request = ImageRequest(url) {
+                options {
+                    isBitmap = true
+                }
+            }
             val result = context.imageLoader.execute(request)
-            if (result is SuccessResult) {
-                (result.drawable as? BitmapDrawable)?.bitmap
+            if (result is ImageResult.OfBitmap) {
+                result.bitmap
             } else {
                 null
             }

@@ -23,6 +23,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.fread.R
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.cancel
 
 @Composable
 fun AuthenticationPage(
@@ -79,7 +81,7 @@ fun AuthenticationPage(
                     Button(
                         onClick = onCancelClick
                     ) {
-                        Text(text = stringResource(com.zhangke.fread.framework.R.string.cancel))
+                        Text(text = org.jetbrains.compose.resources.stringResource(Res.string.cancel))
                     }
                     Button(
                         modifier = Modifier.padding(start = 15.dp),

@@ -25,13 +25,15 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -59,7 +61,10 @@ fun StatusPreviewCardUi(
                         .fillMaxWidth()
                         .aspectRatio(card.aspectRatio)
                 ) {
-                    AsyncImage(
+                    AutoSizeImage(
+                        remember(card.image) {
+                            ImageRequest(card.image.orEmpty())
+                        },
                         modifier = Modifier
                             .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
                             .fillMaxSize()
@@ -70,7 +75,6 @@ fun StatusPreviewCardUi(
                                     it.blurhash(card.blurhash!!)
                                 }
                             },
-                        model = card.image,
                         contentDescription = "Preview Image",
                     )
                     if (card.type == PreviewCard.CardType.VIDEO) {

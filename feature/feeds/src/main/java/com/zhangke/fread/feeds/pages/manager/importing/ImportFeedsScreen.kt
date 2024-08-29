@@ -55,6 +55,8 @@ import com.zhangke.framework.media.MediaFileUtil
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.pages.manager.add.showAddContentSuccessToast
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.alert
 
 class ImportFeedsScreen : BaseScreen() {
 
@@ -81,7 +83,7 @@ class ImportFeedsScreen : BaseScreen() {
                 onDismissRequest = {
                     showBackDialog = false
                 },
-                title = stringResource(com.zhangke.fread.framework.R.string.alert),
+                title = org.jetbrains.compose.resources.stringResource(Res.string.alert),
                 contentText = stringResource(R.string.feeds_import_back_dialog_message),
                 onNegativeClick = {
                     showBackDialog = false

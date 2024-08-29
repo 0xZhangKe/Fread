@@ -11,7 +11,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import com.google.accompanist.permissions.ExperimentalPermissionsApi
 import com.google.accompanist.permissions.PermissionStatus
 import com.google.accompanist.permissions.rememberPermissionState
@@ -19,7 +18,11 @@ import com.google.accompanist.permissions.shouldShowRationale
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.framework.R
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.alert
+import com.zhangke.fread.framework.permission_write_external_permission_denied
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalPermissionsApi::class)
 @Composable
@@ -56,11 +59,11 @@ fun RequirePermission(
             }
             if (showDeniedDialog) {
                 FreadDialog(
-                    title = stringResource(R.string.alert),
+                    title = stringResource(Res.string.alert),
                     onDismissRequest = {
                         showDeniedDialog = false
                     },
-                    contentText = stringResource(R.string.permission_write_external_permission_denied),
+                    contentText = stringResource(Res.string.permission_write_external_permission_denied),
                     onNegativeClick = {
                         showDeniedDialog = false
                         coroutineScope.launch {

@@ -70,7 +70,7 @@ class FreadApplication : Application(), ImageLoaderFactory {
     private fun initModuleStartups() {
         ApplicationScope.launch {
             moduleStartups?.forEach {
-                it.onAppCreate(this@FreadApplication)
+                it.onAppCreate()
             }
         }
     }

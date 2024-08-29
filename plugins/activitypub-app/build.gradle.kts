@@ -29,8 +29,6 @@ dependencies {
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.annotation)
     implementation(libs.androidx.compose.constraintlayout)
-    implementation(libs.bundles.androidx.viewmodel)
-    implementation(libs.bundles.androidx.lifecycle)
     implementation(libs.bundles.androidx.fragment)
     implementation(libs.bundles.androidx.activity)
     implementation(libs.bundles.androidx.preference)

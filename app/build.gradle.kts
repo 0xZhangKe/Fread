@@ -149,6 +149,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
 
+    implementation(libs.bundles.googlePlayReview)
+
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)

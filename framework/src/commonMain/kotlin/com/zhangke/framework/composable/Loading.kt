@@ -51,3 +51,14 @@ fun LoadErrorLineItem(
         )
     }
 }
+
+@Composable
+fun LoadErrorLineItem(
+    modifier: Modifier,
+    errorMessage: TextString,
+) {
+    LoadErrorLineItem(
+        modifier = modifier,
+        errorMessage = textString(text = errorMessage),
+    )
+}

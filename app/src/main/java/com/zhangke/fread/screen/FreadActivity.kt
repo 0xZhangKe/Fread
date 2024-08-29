@@ -20,6 +20,8 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import com.seiko.imageloader.LocalImageLoader
+import com.seiko.imageloader.imageLoader
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
@@ -66,6 +68,7 @@ class FreadActivity : AppCompatActivity() {
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
                     LocalStatusStyle provides statusContentSize.toStyle(),
+                    LocalImageLoader provides applicationContext.imageLoader,
                 ) {
                     TransparentNavigator {
                         BottomSheetNavigator(

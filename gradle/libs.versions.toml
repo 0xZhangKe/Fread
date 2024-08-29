@@ -30,11 +30,9 @@ accompanist = "0.34.0"
 hilt = "2.52"
 
 okhttp3 = "4.12.0"
-ktor = "2.3.12"
+ktor = "3.0.0-beta-2"
 ktorfit = "2.0.1"
 #ktorfit-ksp = "2.0.1-1.0.24"
-
-coil = "2.7.0"
 
 auto_service = "1.0.1"
 
@@ -77,8 +75,6 @@ androidx-collection = ["androidx.collection", "androidx.collection.ktx"]
 androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okhttp", "androidx.media3.ui", "androidx.media3.session", "androidx.media3.database", "androidx.media3.decoder", "androidx.media3.datasource", "androidx.media3.common"]
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
-
-coil = ["coil", "coil.compose", "coil.compose.base", "coil.gif", "coil.video"]
 
 voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.screenModel", "voyager.hilt"]
 
@@ -140,20 +136,15 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
 okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3" }
 
-ktor = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 
 ktorfit-lib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
 ktorfit-converters-response = { module = "de.jensklingenberg.ktorfit:ktorfit-converters-response", version.ref = "ktorfit" }
-
-coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-coil-compose-base = { group = "io.coil-kt", name = "coil-compose-base", version.ref = "coil" }
-coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
-coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
@@ -196,6 +187,8 @@ ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
 halilibo-richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "halilibo-richtext" }
 halilibo-richtext-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "halilibo-richtext" }
 jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
+# FIXME: release this
+imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "1.8.3-alpha02" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

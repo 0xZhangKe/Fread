@@ -42,6 +42,10 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.alert
+import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.framework.ok
 import com.zhangke.fread.rss.R
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -189,18 +193,18 @@ class RssSourceScreen(
                 mutableStateOf(displayName)
             }
             FreadDialog(
-                title = stringResource(com.zhangke.fread.framework.R.string.alert),
+                title = org.jetbrains.compose.resources.stringResource(Res.string.alert),
                 onDismissRequest = {
                     showEditDisplayNameDialog = false
                 },
-                positiveButtonText = stringResource(com.zhangke.fread.framework.R.string.ok),
+                positiveButtonText = org.jetbrains.compose.resources.stringResource(Res.string.ok),
                 onPositiveClick = {
                     showEditDisplayNameDialog = false
                     if (newDisplayName != displayName) {
                         onDisplayNameChanged(newDisplayName)
                     }
                 },
-                negativeButtonText = stringResource(com.zhangke.fread.framework.R.string.cancel),
+                negativeButtonText = org.jetbrains.compose.resources.stringResource(Res.string.cancel),
                 onNegativeClick = {
                     showEditDisplayNameDialog = false
                 },

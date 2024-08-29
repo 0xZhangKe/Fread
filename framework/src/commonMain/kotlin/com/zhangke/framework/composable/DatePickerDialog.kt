@@ -21,11 +21,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.framework.R
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.ok
+import io.ktor.util.date.getTimeMillis
 import kotlinx.coroutines.launch
-import java.util.Calendar
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.TimeZone
+import kotlinx.datetime.toLocalDateTime
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -62,7 +67,7 @@ fun DatePickerDialog(
                     onDismissRequest()
                     onConfirmClick()
                 }) {
-                    Text(text = stringResource(R.string.ok))
+                    Text(text = stringResource(Res.string.ok))
                 }
             }
             DatePicker(
@@ -81,12 +86,12 @@ fun DatePickerDialog(
 fun rememberFutureDatePickerState(
     initialSelectedDateMillis: Long? = null,
 ): DatePickerState {
-    val calendar = remember {
-        Calendar.getInstance()
+    val currentYear = remember {
+        Clock.System.now().toLocalDateTime(TimeZone.currentSystemDefault()).year
     }
     return rememberDatePickerState(
         initialSelectedDateMillis = initialSelectedDateMillis,
-        yearRange = calendar.get(Calendar.YEAR)..2100,
+        yearRange = currentYear..2100,
         selectableDates = remember {
             FutureDates()
         },
@@ -97,6 +102,6 @@ fun rememberFutureDatePickerState(
 class FutureDates : SelectableDates {
 
     override fun isSelectableDate(utcTimeMillis: Long): Boolean {
-        return System.currentTimeMillis() < utcTimeMillis
+        return getTimeMillis() < utcTimeMillis
     }
 }

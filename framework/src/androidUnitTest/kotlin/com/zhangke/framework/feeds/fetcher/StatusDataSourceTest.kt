@@ -1,9 +1,5 @@
 package com.zhangke.framework.feeds.fetcher
 
-import com.zhangke.framework.fetcher.LoadParams
-import com.zhangke.framework.fetcher.StatusDataSource
-import com.zhangke.framework.fetcher.StatusSourceData
-
 data class MockData(
     val dataId: String,
     val datetime: Long = System.currentTimeMillis()

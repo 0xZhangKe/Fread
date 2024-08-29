@@ -95,6 +95,8 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
+    implementation(compose.components.resources)
+
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)
@@ -120,10 +122,7 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-    implementation(libs.coil)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.gif)
-    implementation(libs.coil.video)
+    implementation(libs.imageLoader)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
     implementation(libs.auto.service.annotations)

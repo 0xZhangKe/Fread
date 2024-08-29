@@ -12,7 +12,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.seiko.imageloader.ui.AutoSizeImage
 
 @Composable
 fun AvatarHorizontalStack(
@@ -26,14 +26,14 @@ fun AvatarHorizontalStack(
     ) {
         avatars.forEachIndexed { index, imageUrl ->
             val startPadding = (avatarSize * index - avatarSize * 0.2F).coerceAtLeast(0.dp)
-            AsyncImage(
+            AutoSizeImage(
+                imageUrl,
                 modifier = Modifier
                     .padding(start = startPadding)
                     .size(avatarSize)
                     .border(color = borderColor, width = 1.dp, shape = CircleShape)
                     .clip(CircleShape),
                 contentScale = ContentScale.Crop,
-                model = imageUrl,
                 contentDescription = "avatar",
             )
         }

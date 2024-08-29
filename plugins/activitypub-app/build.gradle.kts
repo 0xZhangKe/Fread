@@ -23,6 +23,8 @@ dependencies {
     implementation(project(":commonbiz:analytics"))
     api(project(path = ":ActivityPub-Kotlin"))
 
+    implementation(compose.components.resources)
+
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)
@@ -43,9 +45,7 @@ dependencies {
     ksp(libs.filt.compiler)
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-    implementation(libs.coil)
-    implementation(libs.coil.compose)
-    implementation(libs.coil.gif)
+    implementation(libs.imageLoader)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
     implementation(libs.auto.service.annotations)
@@ -59,5 +59,4 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
-    implementation(libs.ktor.client.okhttp)
 }

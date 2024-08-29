@@ -19,6 +19,8 @@ kotlin {
             dependencies {
                 implementation(libs.bundles.voyager)
 
+                implementation(compose.components.resources)
+
                 implementation(libs.androidx.annotation)
 
                 implementation(libs.jetbrains.lifecycle.runtime)
@@ -26,6 +28,10 @@ kotlin {
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.ktor.client.core)
+
+                implementation(libs.imageLoader)
             }
         }
         commonTest {
@@ -47,9 +53,6 @@ kotlin {
                 implementation(libs.accompanist.placeholder.material)
                 implementation(libs.accompanist.permissions)
 
-                implementation(libs.coil)
-                implementation(libs.coil.compose)
-                implementation(libs.coil.gif)
                 implementation(libs.okhttp3)
                 implementation(libs.okhttp3.logging)
 
@@ -62,6 +65,8 @@ kotlin {
                 implementation(libs.ktml)
                 implementation(libs.halilibo.richtext)
                 implementation(libs.halilibo.richtext.material3)
+
+                implementation(libs.ktor.client.okhttp)
             }
         }
         androidUnitTest {
@@ -75,5 +80,18 @@ kotlin {
                 implementation(libs.androidx.test.espresso.core)
             }
         }
+        iosMain {
+            dependencies {
+                implementation(libs.ktor.client.darwin)
+            }
+        }
+    }
+}
+
+compose {
+    resources {
+        publicResClass = true
+        packageOfResClass = "com.zhangke.fread.framework"
+        generateResClass = always
     }
 }

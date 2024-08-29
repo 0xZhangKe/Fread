@@ -5,9 +5,10 @@ import android.graphics.Canvas
 import android.graphics.Paint
 import android.graphics.drawable.Drawable
 import android.text.style.ReplacementSpan
-import coil.imageLoader
-import coil.request.ImageRequest
-import coil.request.SuccessResult
+import androidx.core.graphics.drawable.toDrawable
+import com.seiko.imageloader.imageLoader
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.model.ImageResult
 import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.status.model.Emoji
 import kotlinx.coroutines.Dispatchers
@@ -22,15 +23,19 @@ class CustomEmojiSpan(private val emoji: Emoji) : ReplacementSpan() {
 
     suspend fun loadDrawable(context: Context): Boolean = withContext(Dispatchers.IO) {
         loading = true
-        val request = ImageRequest.Builder(context)
-            .data(emoji.url)
-            .build()
+        val request = ImageRequest(emoji.url)
         val result = context.imageLoader.execute(request)
         loading = false
-        if (result is SuccessResult) {
-            this@CustomEmojiSpan.drawable = result.drawable
+
+        var success = false
+        if (result is ImageResult.OfImage) {
+            success = true
+            this@CustomEmojiSpan.drawable = result.image.drawable
+        } else if (result is ImageResult.OfBitmap) {
+            success = true
+            this@CustomEmojiSpan.drawable = result.bitmap.toDrawable(context.resources)
         }
-        result is SuccessResult
+        success
     }
 
     override fun getSize(

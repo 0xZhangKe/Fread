@@ -22,7 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
-import coil.compose.AsyncImage
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.framework.composable.noRippleClick
@@ -119,10 +119,9 @@ private fun InlineVideoPlayer(
             )
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
-                AsyncImage(
-                    modifier = Modifier
-                        .fillMaxSize(),
-                    model = coverImage,
+                AutoSizeImage(
+                    coverImage.orEmpty(),
+                    modifier = Modifier.fillMaxSize(),
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )

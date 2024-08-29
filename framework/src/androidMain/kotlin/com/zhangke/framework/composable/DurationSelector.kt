@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.material.Text
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -15,14 +15,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.sd.lib.compose.wheel_picker.FVerticalWheelPicker
 import com.sd.lib.compose.wheel_picker.FWheelPickerState
 import com.sd.lib.compose.wheel_picker.rememberFWheelPickerState
 import com.zhangke.framework.utils.format
-import com.zhangke.fread.framework.R
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.duration_day
+import com.zhangke.fread.framework.duration_hour
+import com.zhangke.fread.framework.duration_minute
+import com.zhangke.fread.framework.duration_selector_title
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
@@ -39,7 +43,7 @@ fun DurationSelector(
     }
     FreadDialog(
         onDismissRequest = onDismissRequest,
-        title = stringResource(R.string.duration_selector_title),
+        title = stringResource(Res.string.duration_selector_title),
         onNegativeClick = {
             onDismissRequest()
         },
@@ -115,7 +119,7 @@ private fun DurationSelectorContent(
         Column(modifier = Modifier.weight(1F)) {
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(R.string.duration_day),
+                text = stringResource(Res.string.duration_day),
             )
             DurationSelectorItem(
                 state = dayState,
@@ -127,7 +131,7 @@ private fun DurationSelectorContent(
         Column(modifier = Modifier.weight(1F)) {
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(R.string.duration_hour),
+                text = stringResource(Res.string.duration_hour),
             )
             DurationSelectorItem(
                 state = hourState,
@@ -139,7 +143,7 @@ private fun DurationSelectorContent(
         Column(modifier = Modifier.weight(1F)) {
             Text(
                 modifier = Modifier.align(Alignment.CenterHorizontally),
-                text = stringResource(R.string.duration_minute),
+                text = stringResource(Res.string.duration_minute),
             )
             DurationSelectorItem(
                 state = minutesState,

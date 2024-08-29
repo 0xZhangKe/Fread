@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.ui.source
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,10 +11,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
@@ -23,8 +20,9 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
-import coil.compose.AsyncImagePainter
+import com.seiko.imageloader.model.ImageAction
+import com.seiko.imageloader.rememberImageActionPainter
+import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -47,26 +45,26 @@ fun SourceCommonUi(
                 .padding(bottom = 8.dp)
         ) {
             val (avatarRef, protocolRef, subtitleRef, nameRef, descRef) = createRefs()
-            var loadSuccess by remember {
-                mutableStateOf(false)
-            }
-            AsyncImage(
+            AutoSizeBox(
+                thumbnail,
                 modifier = Modifier
                     .constrainAs(avatarRef) {
                         start.linkTo(parent.start, 16.dp)
                         top.linkTo(parent.top, 8.dp)
                         width = Dimension.value(48.dp)
                         height = Dimension.value(48.dp)
-                    }
-                    .clip(CircleShape)
-                    .freadPlaceholder(!loadSuccess),
-                onState = {
-                    loadSuccess = it is AsyncImagePainter.State.Success
-                },
-                model = thumbnail,
-                contentScale = ContentScale.Crop,
-                contentDescription = null,
-            )
+                    },
+            ) { action ->
+                Image(
+                    rememberImageActionPainter(action),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier
+                        .freadPlaceholder(action is ImageAction.Loading)
+                        .matchParentSize()
+                        .clip(CircleShape),
+                )
+            }
             Text(
                 modifier = Modifier.constrainAs(nameRef) {
                     start.linkTo(avatarRef.end, 8.dp)

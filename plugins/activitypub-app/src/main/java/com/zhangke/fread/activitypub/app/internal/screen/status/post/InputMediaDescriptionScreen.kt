@@ -33,7 +33,8 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.activitypub.app.R
@@ -79,12 +80,14 @@ class InputMediaDescriptionScreen(
                     .verticalScroll(rememberScrollState()),
                 verticalArrangement = Arrangement.Top,
             ) {
-                AsyncImage(
+                AutoSizeImage(
+                    remember(file.file.uri) {
+                        ImageRequest(file.file.uri)
+                    },
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(paddingValues)
                         .aspectRatio(1F),
-                    model = file.file.uri,
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )

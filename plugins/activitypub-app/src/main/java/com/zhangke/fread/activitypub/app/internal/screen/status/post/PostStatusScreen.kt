@@ -183,7 +183,7 @@ class PostStatusScreen(
         postStatus: LoadableState<Unit>,
         snackMessageState: SnackbarHostState,
         onSwitchAccount: (ActivityPubLoggedAccount) -> Unit,
-        onContentChanged: (String) -> Unit,
+        onContentChanged: (TextFieldValue) -> Unit,
         onCloseClick: () -> Unit,
         onPostClick: () -> Unit,
         onSensitiveClick: () -> Unit,
@@ -218,7 +218,7 @@ class PostStatusScreen(
         }
         LaunchedEffect(Unit) {
             if (uiState.content.isEmpty() && !uiState.initialContent.isNullOrEmpty()) {
-                onContentChanged(uiState.initialContent)
+                onContentChanged(textFieldValue)
             }
         }
         Scaffold(
@@ -274,7 +274,7 @@ class PostStatusScreen(
                             value = textFieldValue,
                             insertText = " :${it.shortcode}: ",
                         )
-                        onContentChanged(textFieldValue.text)
+                        onContentChanged(textFieldValue)
                     },
                     onDeleteEmojiClick = {
                         textFieldValue = DeleteTextUtil.deleteText(textFieldValue)
@@ -448,7 +448,7 @@ class PostStatusScreen(
                     textStyle = MaterialTheme.typography.bodyLarge,
                     onValueChange = {
                         textFieldValue = it
-                        onContentChanged(it.text)
+                        onContentChanged(it)
                     },
                 )
                 StatusAttachment(

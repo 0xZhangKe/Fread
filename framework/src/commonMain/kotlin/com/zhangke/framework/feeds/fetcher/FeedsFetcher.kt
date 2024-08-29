@@ -1,4 +1,4 @@
-package com.zhangke.framework.fetcher
+package com.zhangke.framework.feeds.fetcher
 
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

@@ -22,6 +22,8 @@ dependencies {
     implementation(project(path = ":commonbiz:sharedscreen"))
     implementation(project(":commonbiz:analytics"))
 
+    implementation(compose.components.resources)
+
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)

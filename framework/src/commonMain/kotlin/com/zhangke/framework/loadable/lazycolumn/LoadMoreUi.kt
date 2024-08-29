@@ -18,14 +18,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.ScrollDirection
 import com.zhangke.framework.composable.rememberDirectionalLazyListState
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.fread.framework.R
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.load_more_error
+import com.zhangke.fread.framework.retry
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun LoadMoreUi(
@@ -56,7 +58,7 @@ fun LoadMoreUi(
             ) {
                 var errorMessage = loadState.message?.let { textString(it) }
                 if (errorMessage.isNullOrEmpty()) {
-                    errorMessage = stringResource(R.string.load_more_error)
+                    errorMessage = stringResource(Res.string.load_more_error)
                 }
                 Text(
                     modifier = Modifier.fillMaxWidth(),
@@ -67,7 +69,7 @@ fun LoadMoreUi(
                     modifier = Modifier.padding(top = 6.dp),
                     onClick = onLoadMore,
                 ) {
-                    Text(text = stringResource(R.string.retry))
+                    Text(text = stringResource(Res.string.retry))
                 }
             }
         }

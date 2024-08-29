@@ -20,13 +20,16 @@ import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.fread.framework.R
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.alert
+import com.zhangke.fread.framework.cancel
+import com.zhangke.fread.framework.ok
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FreadDialog(
@@ -69,7 +72,7 @@ fun FreadDialog(
         properties = properties,
         header = {
             Text(
-                text = title.ifNullOrEmpty { stringResource(R.string.alert) },
+                text = title.ifNullOrEmpty { stringResource(Res.string.alert) },
             )
         },
         content = content,
@@ -78,7 +81,7 @@ fun FreadDialog(
         } else {
             {
                 TextButton(onClick = { onNegativeClick?.invoke() }) {
-                    Text(text = negativeButtonText.ifNullOrEmpty { stringResource(R.string.cancel) })
+                    Text(text = negativeButtonText.ifNullOrEmpty { stringResource(Res.string.cancel) })
                 }
             }
         },
@@ -87,7 +90,7 @@ fun FreadDialog(
         } else {
             {
                 TextButton(onClick = { onPositiveClick?.invoke() }) {
-                    Text(text = positiveButtonText.ifNullOrEmpty { stringResource(R.string.ok) })
+                    Text(text = positiveButtonText.ifNullOrEmpty { stringResource(Res.string.ok) })
                 }
             }
         }

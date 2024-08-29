@@ -53,7 +53,7 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
@@ -321,7 +321,8 @@ class PostStatusScreen(
                         height = Dimension.value(0.dp)
                     })
                 }
-                AsyncImage(
+                AutoSizeImage(
+                    uiState.account.avatar.orEmpty(),
                     modifier = Modifier
                         .clip(CircleShape)
                         .constrainAs(avatarRef) {
@@ -330,7 +331,6 @@ class PostStatusScreen(
                             width = Dimension.value(36.dp)
                             height = Dimension.value(36.dp)
                         },
-                    model = uiState.account.avatar,
                     contentDescription = null,
                 )
                 NameAndAccountInfo(

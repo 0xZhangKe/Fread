@@ -1,6 +1,5 @@
 package com.zhangke.framework.feeds.fetcher
 
-import com.zhangke.framework.fetcher.StatusPagingSource
 import kotlinx.coroutines.runBlocking
 import org.junit.Assert
 import org.junit.Test

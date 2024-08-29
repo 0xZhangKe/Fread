@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
 import android.net.Uri
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
@@ -16,6 +17,7 @@ import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.composable.updateToFailed
+import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
@@ -29,6 +31,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUs
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.PostStatusUseCase
+import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
@@ -36,6 +39,7 @@ import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory
 import dagger.assisted.AssistedInject
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -74,6 +78,8 @@ class PostStatusViewModel @AssistedInject constructor(
 
     private val _snackMessage = MutableSharedFlow<TextString>()
     val snackMessage: SharedFlow<TextString> get() = _snackMessage
+
+    private var searchMentionUserJob: Job? = null
 
     init {
         launchInViewModel {
@@ -117,10 +123,49 @@ class PostStatusViewModel @AssistedInject constructor(
         }
     }
 
-    fun onContentChanged(inputtedText: String) {
+    fun onContentChanged(inputtedText: TextFieldValue) {
         if (_uiState.value.requireSuccessData().allowedInputCount <= 0) return
         _uiState.updateOnSuccess {
-            it.copy(content = inputtedText)
+            it.copy(content = inputtedText.text)
+        }
+        maybeSearchAccountForMention(inputtedText)
+    }
+
+    private fun maybeSearchAccountForMention(content: TextFieldValue) {
+        val contentText = content.text
+        if (contentText == _uiState.value.successDataOrNull()?.initialContent) return
+        val account = _uiState.value.successDataOrNull()?.account ?: return
+        searchMentionUserJob?.cancel()
+        val role = IdentityRole(accountUri = account.uri, null)
+        val mentionText = MentionTextUtil.findTypingMentionName(content)?.removePrefix("@")
+        if (mentionText == null || mentionText.length < 2) {
+            return
+        }
+        launchInViewModel {
+            _uiState.updateOnSuccess {
+                it.copy(mentionState = LoadableState.loading())
+            }
+            clientManager.getClient(role = role)
+                .accountRepo
+                .search(
+                    query = mentionText,
+                    limit = 10,
+                    resolve = false,
+                )
+                .onSuccess { list ->
+                    _uiState.updateOnSuccess {
+                        it.copy(mentionState = LoadableState.success(list))
+                    }
+                }.onFailure {
+                    _uiState.updateOnSuccess {
+                        it.copy(mentionState = LoadableState.idle())
+                    }
+                }
+        }
+        searchMentionUserJob?.invokeOnCancel {
+            _uiState.updateOnSuccess {
+                it.copy(mentionState = LoadableState.idle())
+            }
         }
     }
 

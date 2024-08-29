@@ -42,8 +42,8 @@ android {
 //            resolutionStrategy { force support.'core-ktx' }
 //        }
         applicationId = "com.zhangke.fread"
-        versionCode = 100091
-        versionName = "1.0.91"
+        versionCode = 100092
+        versionName = "1.0.92-beta"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

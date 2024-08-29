@@ -1,7 +1,10 @@
 package com.zhangke.framework.blurhash
 
-import android.graphics.Bitmap
-import android.graphics.Color
+import androidx.collection.SparseArrayCompat
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.ImageBitmap
+import androidx.compose.ui.graphics.toArgb
+import kotlin.math.PI
 import kotlin.math.cos
 import kotlin.math.pow
 import kotlin.math.withSign
@@ -14,8 +17,8 @@ object BlurHashDecoder {
     // cache Math.cos() calculations to improve performance.
     // The number of calculations can be huge for many bitmaps: width * height * numCompX * numCompY * 2 * nBitmaps
     // the cache is enabled by default, it is recommended to disable it only when just a few images are displayed
-    private val cacheCosinesX = HashMap<Int, DoubleArray>()
-    private val cacheCosinesY = HashMap<Int, DoubleArray>()
+    private val cacheCosinesX = SparseArrayCompat<DoubleArray>()
+    private val cacheCosinesY = SparseArrayCompat<DoubleArray>()
 
     /**
      * Clear calculations stored in memory cache.
@@ -39,8 +42,8 @@ object BlurHashDecoder {
         width: Int,
         height: Int,
         punch: Float = 1f,
-        useCache: Boolean = true
-    ): Bitmap? {
+        useCache: Boolean = true,
+    ): ImageBitmap? {
         if (blurHash.length < 6) {
             return null
         }
@@ -62,7 +65,7 @@ object BlurHashDecoder {
                 decodeAc(colorEnc, maxAc * punch)
             }
         }
-        return composeBitmap(width, height, numCompX, numCompY, colors, useCache)
+        return composeImageBitmap(width, height, numCompX, numCompY, colors, useCache)
     }
 
     private fun decode83(str: String, from: Int = 0, to: Int = str.length): Int {
@@ -105,12 +108,12 @@ object BlurHashDecoder {
 
     private fun signedPow2(value: Float) = value.pow(2f).withSign(value)
 
-    private fun composeBitmap(
+    private fun composeImageBitmap(
         width: Int, height: Int,
         numCompX: Int, numCompY: Int,
         colors: Array<FloatArray>,
-        useCache: Boolean
-    ): Bitmap {
+        useCache: Boolean,
+    ): ImageBitmap {
         // use an array for better performance when writing pixel colors
         val imageArray = IntArray(width * height)
         val calculateCosX = !useCache || !cacheCosinesX.containsKey(width * numCompX)
@@ -133,17 +136,20 @@ object BlurHashDecoder {
                         b += color[2] * basis
                     }
                 }
-                imageArray[x + width * y] =
-                    Color.rgb(linearToSrgb(r), linearToSrgb(g), linearToSrgb(b))
+                imageArray[x + width * y] = Color(
+                    red = linearToSrgb(r),
+                    green = linearToSrgb(g),
+                    blue = linearToSrgb(b)
+                ).toArgb()
             }
         }
-        return Bitmap.createBitmap(imageArray, width, height, Bitmap.Config.ARGB_8888)
+        return bitmapFromBuffer(imageArray, width, height)
     }
 
     private fun getArrayForCosinesY(calculate: Boolean, height: Int, numCompY: Int) = when {
         calculate -> {
             DoubleArray(height * numCompY).also {
-                cacheCosinesY[height * numCompY] = it
+                cacheCosinesY.put(height * numCompY, it)
             }
         }
 
@@ -155,7 +161,7 @@ object BlurHashDecoder {
     private fun getArrayForCosinesX(calculate: Boolean, width: Int, numCompX: Int) = when {
         calculate -> {
             DoubleArray(width * numCompX).also {
-                cacheCosinesX[width * numCompX] = it
+                cacheCosinesX.put(width * numCompX, it)
             }
         }
 
@@ -167,10 +173,10 @@ object BlurHashDecoder {
         x: Int,
         numComp: Int,
         y: Int,
-        size: Int
+        size: Int,
     ): Double {
         if (calculate) {
-            this[x + numComp * y] = cos(Math.PI * y * x / size)
+            this[x + numComp * y] = cos(PI * y * x / size)
         }
         return this[x + numComp * y]
     }

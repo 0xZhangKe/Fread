@@ -1,6 +1,5 @@
 package com.zhangke.framework.blurhash
 
-import android.graphics.Bitmap
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -11,11 +10,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.composed
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Size
-import androidx.compose.ui.graphics.asImageBitmap
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.onSizeChanged
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.toSize
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
@@ -24,7 +24,7 @@ fun Modifier.blurhash(blurHash: String): Modifier = composed {
     var size: Size? by remember(blurHash) {
         mutableStateOf(null)
     }
-    var bitmap: Bitmap? by remember(blurHash) {
+    var bitmap: ImageBitmap? by remember(blurHash) {
         mutableStateOf(null)
     }
     val coroutineScope = rememberCoroutineScope()
@@ -45,9 +45,6 @@ fun Modifier.blurhash(blurHash: String): Modifier = composed {
             }
 
             onDispose {
-                if (bitmap?.isRecycled == false) {
-                    bitmap?.recycle()
-                }
                 bitmap = null
             }
         }
@@ -57,7 +54,7 @@ fun Modifier.blurhash(blurHash: String): Modifier = composed {
     }.drawBehind {
         if (bitmap != null && size != null) {
             drawImage(
-                image = bitmap!!.asImageBitmap(),
+                image = bitmap!!,
                 dstSize = IntSize(size!!.width.roundToInt(), size!!.height.roundToInt()),
             )
         }

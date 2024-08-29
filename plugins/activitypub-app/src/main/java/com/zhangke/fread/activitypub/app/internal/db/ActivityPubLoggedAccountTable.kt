@@ -11,6 +11,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.model.Emoji
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.Serializable
 
 private const val TABLE_NAME = "logged_accounts"
 
@@ -36,6 +37,7 @@ data class ActivityPubLoggedAccountEntity(
     val addedTimestamp: Long,
 ) {
 
+    @Serializable
     data class BlogPlatformEntity(
         val uri: String,
         val name: String,

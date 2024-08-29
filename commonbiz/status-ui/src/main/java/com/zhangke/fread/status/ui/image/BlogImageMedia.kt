@@ -206,28 +206,6 @@ internal fun BlogImage(
 }
 
 @Composable
-private fun BlogGifVideoMedia(
-    modifier: Modifier,
-    media: BlogMedia,
-    hideContent: Boolean,
-) {
-    val videoUri = remember(media) {
-        media.url.toUri()
-    }
-    Box(
-        modifier = modifier,
-    ) {
-        if (!hideContent) {
-            VideoPlayer(
-                modifier = Modifier.fillMaxSize(),
-                uri = videoUri,
-                playWhenReady = true,
-            )
-        }
-    }
-}
-
-@Composable
 internal fun VerticalSpacer(height: Dp) {
     Spacer(
         modifier = Modifier

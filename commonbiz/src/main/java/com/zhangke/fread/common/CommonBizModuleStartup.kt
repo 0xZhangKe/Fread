@@ -10,10 +10,11 @@ import javax.inject.Inject
 
 @Filt
 class CommonBizModuleStartup @Inject constructor(
+    private val application: Application,
     private val feedsRepo: FeedsRepo,
 ) : ModuleStartup {
 
-    override suspend fun onAppCreate(application: Application) {
+    override suspend fun onAppCreate() {
         feedsRepo.onAppCreate(ApplicationScope)
         FreadConfigManager.initConfig(application)
     }

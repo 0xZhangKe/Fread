@@ -54,6 +54,8 @@ dependencies {
     implementation(libs.filt.annotaions)
     ksp(libs.filt.compiler)
 
+    implementation(libs.bundles.googlePlayReview)
+
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
 }

@@ -2,11 +2,14 @@ package com.zhangke.fread.activitypub.app.internal.usecase.status
 
 import com.zhangke.activitypub.entities.ActivityPubEditStatusEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusVisibilityEntity
+import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
+import com.zhangke.fread.common.status.StatusUpdater
+import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import java.util.Locale
@@ -14,6 +17,9 @@ import javax.inject.Inject
 
 class PostStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
+    private val statusUpdater: StatusUpdater,
+    private val statusEntityAdapter: ActivityPubStatusAdapter,
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val attachmentAdapter: PostStatusAttachmentAdapter,
 ) {
 
@@ -56,7 +62,10 @@ class PostStatusUseCase @Inject constructor(
                 replyToId = replyToId,
                 visibility = visibility?.toEntityVisibility(),
                 language = language?.isO3Language,
-            ).map { }
+            ).map {
+                val status = statusEntityAdapter.toStatus(it, account.platform)
+                statusUpdater.update(buildStatusUiState(role, status))
+            }
         } else {
             val mediaAttributes = mutableListOf<ActivityPubEditStatusEntity.MediaAttributes>()
             val mediaFileList = when (attachment) {
@@ -85,7 +94,10 @@ class PostStatusUseCase @Inject constructor(
                 sensitive = sensitive,
                 spoilerText = if (sensitive == true) spoilerText else null,
                 language = language?.isO3Language,
-            ).map { }
+            ).map {
+                val status = statusEntityAdapter.toStatus(it, account.platform)
+                statusUpdater.update(buildStatusUiState(role, status))
+            }
         }
     }
 

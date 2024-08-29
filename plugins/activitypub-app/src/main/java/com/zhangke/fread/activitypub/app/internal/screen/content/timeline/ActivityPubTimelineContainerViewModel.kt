@@ -5,6 +5,7 @@ import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
@@ -15,6 +16,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ActivityPubTimelineContainerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
@@ -25,6 +27,7 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
     override fun createSubViewModel(params: Params): ActivityPubTimelineViewModel {
         return ActivityPubTimelineViewModel(
             statusProvider = statusProvider,
+            statusUpdater = statusUpdater,
             buildStatusUiState = buildStatusUiState,
             refactorToNewBlog = refactorToNewBlog,
             statusReadStateRepo = statusReadStateRepo,

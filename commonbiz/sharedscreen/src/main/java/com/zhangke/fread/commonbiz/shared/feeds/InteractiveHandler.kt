@@ -11,6 +11,7 @@ import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
@@ -29,6 +30,7 @@ import java.util.Locale
 
 class InteractiveHandler(
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : IInteractiveHandler {
@@ -106,6 +108,11 @@ class InteractiveHandler(
     ) {
         this.coroutineScope = coroutineScope
         this.onInteractiveHandleResult = onInteractiveHandleResult
+        coroutineScope.launch {
+            statusUpdater.statusUpdateFlow.collect {
+                onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(it))
+            }
+        }
     }
 
     override fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction) {
@@ -116,7 +123,7 @@ class InteractiveHandler(
             }
             return
         }
-        if (uiInteraction is StatusUiInteraction.Edit){
+        if (uiInteraction is StatusUiInteraction.Edit) {
             coroutineScope.launch {
                 screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
                     ?.let(::tryOpenScreenByRoute)

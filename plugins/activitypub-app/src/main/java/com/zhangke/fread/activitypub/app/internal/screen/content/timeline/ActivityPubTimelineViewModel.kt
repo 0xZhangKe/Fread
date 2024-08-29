@@ -186,6 +186,10 @@ class ActivityPubTimelineViewModel(
         }
     }
 
+    fun onJumpedToStatus() {
+        _uiState.update { it.copy(jumpToStatusId = null) }
+    }
+
     fun onLoadPreviousPage() {
         if (refreshJob?.isActive == true) return
         if (initFeedsJob?.isActive == true) return

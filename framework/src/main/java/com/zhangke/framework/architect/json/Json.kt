@@ -7,6 +7,8 @@ import kotlinx.serialization.json.decodeFromJsonElement
 val globalJson: Json by lazy {
     Json {
         ignoreUnknownKeys = true
+        // use default value if JSON value is null but the property type is non-nullable.
+        coerceInputValues = true
     }
 }
 

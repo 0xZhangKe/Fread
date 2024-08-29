@@ -1,5 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
+import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
@@ -22,6 +24,7 @@ data class PostStatusUiState(
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
     val rules: PostBlogRules,
+    val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
 ) {
 
     val allowedSelectCount: Int
@@ -70,6 +73,7 @@ data class PostStatusUiState(
                 rules = PostBlogRules.default(),
                 accountChangeable = accountChangeable,
                 visibilityChangeable = visibilityChangeable,
+                mentionState = LoadableState.idle(),
             )
         }
     }

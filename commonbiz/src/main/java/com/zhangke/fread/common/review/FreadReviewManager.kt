@@ -8,10 +8,12 @@ import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.common.config.LocalConfigManager
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
+import kotlin.time.Duration.Companion.seconds
 
 object FreadReviewManager {
 
@@ -20,13 +22,13 @@ object FreadReviewManager {
     private const val LOCAL_KET_REVIEW_POP_COUNT = "playReviewPopCount"
     private val maxInternal = 90.days
 
-    fun init(context: Context) {
-
-    }
-
     fun trigger(forceShow: Boolean = false) {
         if (forceShow) {
             showPlayReviewPopup()
+        } else {
+            ApplicationScope.launch {
+                maybeShowPlayReviewPopup()
+            }
         }
     }
 
@@ -62,6 +64,7 @@ object FreadReviewManager {
                 val flow = manager.launchReviewFlow(activity, task.result)
                 flow.addOnCompleteListener { result ->
                     Log.d("F_TEST", "OnComplete: ${result.isSuccessful}")
+                    Log.i("F_TEST", "OnComplete: ${result.isSuccessful}")
                     if (result.isSuccessful) {
                         onReviewSuccess(activity)
                     } else {
@@ -72,10 +75,15 @@ object FreadReviewManager {
                         "F_TEST",
                         "on Failure: ${e.message}, ${(e as? ReviewException)?.errorCode}"
                     )
+                    Log.i(
+                        "F_TEST",
+                        "on Failure: ${e.message}, ${(e as? ReviewException)?.errorCode}"
+                    )
                 }
             } else {
                 val reviewErrorCode = (task.exception as? ReviewException)?.errorCode
                 Log.d("F_TEST", "reviewErrorCode: $reviewErrorCode")
+                Log.i("F_TEST", "reviewErrorCode: $reviewErrorCode")
             }
         }
     }

@@ -207,10 +207,10 @@ android-library = { id = "com.android.library", version.ref = "androidGradlePlug
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
+kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }
 kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", version.ref = "kotlin" }
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 jetbrains-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-service = { id = "com.google.gms.google-services",  version.ref = "google.service.version"}
 firebase-crashlytics = { id = "com.google.firebase.crashlytics",  version.ref = "firebaseCrashlyticsPlugin"}
 ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
-#ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit-plugin" }

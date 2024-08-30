@@ -9,8 +9,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import com.eygraber.uri.Uri
 import com.zhangke.framework.blurhash.blurhash
+import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -55,7 +55,7 @@ private fun SingleBlogInlineVideo(
                 coverImage = videoMedia.previewUrl,
                 indexInList = indexInList,
                 uri = remember(videoMedia.url) {
-                    Uri.parse(videoMedia.url)
+                    videoMedia.url.toPlatformUri()
                 },
                 onClick = {
                     onMediaClick(

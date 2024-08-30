@@ -113,7 +113,6 @@ androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", 
 androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3"}
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
 
-accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist"}
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
@@ -191,6 +190,7 @@ imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "
 okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }
 uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
+placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

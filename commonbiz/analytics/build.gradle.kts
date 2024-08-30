@@ -30,7 +30,6 @@ dependencies {
     implementation(libs.bundles.androidx.preference)
     implementation(libs.bundles.androidx.datastore)
     implementation(libs.bundles.androidx.collection)
-    implementation(libs.accompanist.placeholder.material)
 
     implementation(libs.auto.service.annotations)
     ksp(libs.auto.service.ksp)

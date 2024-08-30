@@ -14,6 +14,7 @@ import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -80,7 +81,9 @@ class BlogDetailScreen(
                     blogAuthor = blog.author,
                     blogUrl = blog.url,
                     visibility = blog.visibility,
-                    displayTime = DateTimeFormatter.format(context, blog.date.time),
+                    displayTime = remember(context, blog.date) {
+                        DateTimeFormatter.format(context, blog.date.toEpochMilliseconds())
+                    },
                     style = StatusStyles.medium(),
                     moreInteractions = emptyList(),
                     onInteractive = {},

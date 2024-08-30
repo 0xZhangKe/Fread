@@ -19,6 +19,7 @@ kotlin {
 
                 implementation(libs.androidx.room)
 
+                implementation(libs.ktml)
                 implementation(libs.imageLoader)
             }
         }
@@ -30,8 +31,6 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.hilt)
-
-                implementation(libs.ktml)
                 implementation(libs.halilibo.richtext)
                 implementation(libs.halilibo.richtext.material3)
 

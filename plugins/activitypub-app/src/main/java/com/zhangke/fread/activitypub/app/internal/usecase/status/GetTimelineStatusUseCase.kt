@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.status
 
-import android.util.Log
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
@@ -8,7 +7,6 @@ import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatf
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import javax.inject.Inject
-import kotlin.math.sin
 
 class GetTimelineStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,

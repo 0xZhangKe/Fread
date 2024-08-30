@@ -6,7 +6,6 @@ import com.zhangke.fread.common.status.repo.StatusContentRepo
 import com.zhangke.fread.common.status.usecase.RefreshStatusUseCase
 import com.zhangke.fread.common.status.usecase.previous.GetPreviousStatusUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.CoroutineScope

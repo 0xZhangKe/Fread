@@ -8,6 +8,7 @@ import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.status.model.Status
+import kotlinx.datetime.toKotlinInstant
 import javax.inject.Inject
 
 class RssStatusAdapter @Inject constructor(
@@ -46,7 +47,7 @@ class RssStatusAdapter @Inject constructor(
             url = this.link.ifNullOrEmpty { uriInsight.url },
             content = this.content.ifNullOrEmpty { this.description.ifNullOrEmpty { this.link.orEmpty() } },
             description = this.description,
-            date = this.pubDate,
+            date = this.pubDate.toInstant().toKotlinInstant(),
             forwardCount = null,
             likeCount = null,
             repliesCount = null,

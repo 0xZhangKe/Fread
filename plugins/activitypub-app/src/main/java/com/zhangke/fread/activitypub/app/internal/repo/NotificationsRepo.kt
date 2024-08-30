@@ -10,7 +10,6 @@ import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetActivityPubPlatformUseCase
 import com.zhangke.fread.common.status.StatusConfigurationDefault
-import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri

@@ -1,16 +1,10 @@
 package com.zhangke.fread.status
 
 import com.zhangke.fread.status.account.AccountManager
-import com.zhangke.fread.status.account.IAccountManager
-import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.platform.PlatformResolver
-import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.screen.StatusScreenProvider
-import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchEngine
-import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSourceResolver
-import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.StatusResolver
 import javax.inject.Inject
 
@@ -34,17 +28,3 @@ class StatusProvider @Inject constructor(
     val accountManager = AccountManager(providers.map { it.accountManager })
 }
 
-interface IStatusProvider {
-
-    val screenProvider: IStatusScreenProvider
-
-    val platformResolver: IPlatformResolver
-
-    val searchEngine: ISearchEngine
-
-    val statusResolver: IStatusResolver
-
-    val statusSourceResolver: IStatusSourceResolver
-
-    val accountManager: IAccountManager
-}

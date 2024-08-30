@@ -44,6 +44,7 @@ class VoyagerResultExtension(
 
     @Composable
     public fun <T> getResult(screenKey: String): State<T?> {
+        @Suppress("UNCHECKED_CAST")
         val result = results[screenKey] as? T
         val resultState = remember(screenKey, result) {
             derivedStateOf {

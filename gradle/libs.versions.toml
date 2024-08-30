@@ -3,7 +3,7 @@ kotlin = "2.0.10"
 ksp = "2.0.10-1.0.24"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
-kotlinx-serialization = "1.7.0-RC"
+kotlinx-serialization = "1.7.1"
 kotlinx-datetime = "0.6.1"
 
 compose-multiplatform = "1.6.11"
@@ -32,7 +32,6 @@ hilt = "2.52"
 okhttp3 = "4.12.0"
 ktor = "3.0.0-beta-2"
 ktorfit = "2.0.1"
-#ktorfit-ksp = "2.0.1-1.0.24"
 
 auto_service = "1.0.1"
 
@@ -187,8 +186,11 @@ ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
 halilibo-richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "halilibo-richtext" }
 halilibo-richtext-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "halilibo-richtext" }
 jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
-# FIXME: release this
+# FIXME: release imageLoader
 imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "1.8.3-alpha02" }
+okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }
+uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

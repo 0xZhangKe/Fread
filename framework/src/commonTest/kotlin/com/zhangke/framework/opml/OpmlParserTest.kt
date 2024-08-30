@@ -21,19 +21,20 @@ class OpmlParserTest {
                 <outline text="MacTalk-池建强的随想录" title="MacTalk-池建强的随想录" type="rss" xmlUrl="http://macshuo.com/?feed=rss2" htmlUrl="http://macshuo.com"/>
                 <outline text="ShrekShao" title="ShrekShao" type="rss" xmlUrl="http://shrekshao.github.io/feed.xml" htmlUrl="https://shrekshao.github.io/"/>
                 <outline text="云风的 BLOG" title="云风的 BLOG" type="rss" xmlUrl="http://blog.codingnow.com/atom.xml" htmlUrl="https://blog.codingnow.com"/>
-                <outline text="Reorx’s Forge" title="Reorx’s Forge" type="rss" xmlUrl="https://reorx.com/feed.xml" htmlUrl="https://reorx.com/"/>
                 <outline text="ZDDHUB 的博客" title="ZDDHUB 的博客" type="rss" xmlUrl="https://zddhub.com/feed" htmlUrl="https://zddhub.com/"/>
                 <outline text="全栈应用开发:精益实践" title="全栈应用开发:精益实践" type="rss" xmlUrl="https://www.phodal.com/blog/feeds/rss/" htmlUrl="https://www.phodal.com">
                     <outline text="前端之巅" title="前端之巅" type="rss" xmlUrl="https://www.phodal.com/blog/feeds/rss/" htmlUrl="https://www.phodal.com"/>
                     <outline text="云风的 BLOG" title="云风的 BLOG" type="rss" xmlUrl="http://blog.codingnow.com/atom.xml" htmlUrl="https://blog.codingnow.com"/>
                 </outline>
+                <outline text="Reorx’s Forge" title="Reorx’s Forge" type="rss" xmlUrl="https://reorx.com/feed.xml" htmlUrl="https://reorx.com/"/>
             </body>
             </opml>
         """.trimIndent()
         val result = OpmlParser.parse(xml)
         assertEquals(13, result.size)
         assertEquals("透明创业实验", result[0].title)
-        assertEquals("全栈应用开发:精益实践", result[12].title)
-        assertEquals("前端之巅", result[12].children[0].title)
+        assertEquals("全栈应用开发:精益实践", result[11].title)
+        assertEquals("前端之巅", result[11].children[0].title)
+        assertEquals("Reorx’s Forge", result[12].title)
     }
 }

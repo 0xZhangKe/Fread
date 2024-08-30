@@ -115,7 +115,6 @@ dependencies {
     implementation(libs.bundles.androidx.datastore)
     implementation(libs.bundles.androidx.collection)
     implementation(libs.androidx.browser)
-    implementation(libs.accompanist.placeholder.material)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)

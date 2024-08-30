@@ -36,6 +36,7 @@ kotlin {
                 implementation(libs.imageLoader)
                 implementation(libs.okio)
                 implementation(libs.ksoup)
+                implementation(libs.placeholder.material3)
             }
         }
         commonTest {
@@ -48,13 +49,8 @@ kotlin {
                 implementation(compose.uiTooling)
                 implementation(compose.preview)
 
-                implementation(libs.androidx.core)
                 implementation(libs.androidx.core.ktx)
-                implementation(libs.androidx.appcompat)
-                implementation(libs.androidx.compose.constraintlayout)
-                implementation(libs.bundles.androidx.fragment)
                 implementation(libs.bundles.androidx.activity)
-                implementation(libs.accompanist.placeholder.material)
                 implementation(libs.accompanist.permissions)
 
                 implementation(libs.okhttp3)

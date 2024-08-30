@@ -7,10 +7,15 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.blog.PostingApplication
+import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import java.util.Date
 
 fun createStatus(
@@ -18,14 +23,21 @@ fun createStatus(
     title: String = "title",
     author: BlogAuthor = createBlogAuthor(),
     content: String = "content",
-    date: Date = Date(),
+    date: Instant = Clock.System.now(),
     forwardCount: Int? = null,
     likeCount: Int? = null,
     repliesCount: Int? = null,
     sensitive: Boolean = false,
     spoilerText: String = "",
     mediaList: List<BlogMedia> = emptyList(),
+    pinned: Boolean = false,
     poll: BlogPoll? = null,
+    visibility: StatusVisibility = StatusVisibility.PUBLIC,
+    card: PreviewCard? = null,
+    isSelf: Boolean = false,
+    supportTranslate: Boolean = false,
+    editedAt: Instant? = null,
+    application: PostingApplication? = null,
 ): Status {
     return Status.NewBlog(
         blog = Blog(
@@ -47,6 +59,13 @@ fun createStatus(
             platform = createBlogPlatform(),
             mentions = emptyList(),
             tags = emptyList(),
+            card = null,
+            supportTranslate = false,
+            pinned = pinned,
+            visibility = visibility,
+            isSelf = isSelf,
+            editedAt = null,
+            application = application,
         ),
         supportInteraction = emptyList()
     )

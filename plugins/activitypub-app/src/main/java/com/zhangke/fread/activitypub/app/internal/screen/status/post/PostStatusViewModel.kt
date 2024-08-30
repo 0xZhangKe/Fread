@@ -139,9 +139,12 @@ class PostStatusViewModel @AssistedInject constructor(
         val role = IdentityRole(accountUri = account.uri, null)
         val mentionText = MentionTextUtil.findTypingMentionName(content)?.removePrefix("@")
         if (mentionText == null || mentionText.length < 2) {
+            _uiState.updateOnSuccess {
+                it.copy(mentionState = LoadableState.idle())
+            }
             return
         }
-        launchInViewModel {
+        searchMentionUserJob = launchInViewModel {
             _uiState.updateOnSuccess {
                 it.copy(mentionState = LoadableState.loading())
             }

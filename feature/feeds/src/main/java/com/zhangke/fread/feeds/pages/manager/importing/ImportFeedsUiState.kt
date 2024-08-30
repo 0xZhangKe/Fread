@@ -1,7 +1,6 @@
 package com.zhangke.fread.feeds.pages.manager.importing
 
 import android.net.Uri
-import com.zhangke.framework.collections.container
 import com.zhangke.fread.status.uri.FormalUri
 
 data class ImportFeedsUiState(

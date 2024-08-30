@@ -1,5 +1,3 @@
-import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
-
 plugins {
     id("fread.project.framework.kmp")
     id("kotlin-parcelize")
@@ -84,21 +82,6 @@ kotlin {
         iosMain {
             dependencies {
                 implementation(libs.ktor.client.darwin)
-            }
-        }
-    }
-    targets.configureEach {
-        val isAndroidTarget = platformType == KotlinPlatformType.androidJvm
-        compilations.configureEach {
-            compileTaskProvider.configure {
-                compilerOptions {
-                    if (isAndroidTarget) {
-                        freeCompilerArgs.addAll(
-                            "-P",
-                            "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=com.zhangke.framework.utils.Parcelize",
-                        )
-                    }
-                }
             }
         }
     }

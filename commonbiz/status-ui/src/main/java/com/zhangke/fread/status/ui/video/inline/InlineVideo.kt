@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.ui.video.inline
 
-import android.net.Uri
 import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
@@ -22,6 +21,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
+import com.eygraber.uri.Uri
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder

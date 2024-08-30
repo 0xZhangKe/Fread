@@ -1,19 +1,22 @@
 package com.zhangke.fread.commonbiz.shared.screen
 
-import android.net.Uri
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.eygraber.uri.Uri
+import com.eygraber.uri.toUri
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.video.full.FullScreenVideoPlayer
+import android.net.Uri as AndroidUri
 
 class FullVideoScreen(private val uri: Uri) : BaseScreen() {
+
+    constructor(uri: AndroidUri) : this(uri.toUri())
 
     @Composable
     override fun Content() {

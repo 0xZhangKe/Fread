@@ -1,6 +1,5 @@
 plugins {
     id("fread.project.framework.kmp")
-    id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
 
@@ -30,7 +29,8 @@ kotlin {
         }
         androidMain {
             dependencies {
-                implementation(libs.hilt)
+                implementation(libs.androidx.core.ktx)
+
                 implementation(libs.halilibo.richtext)
                 implementation(libs.halilibo.richtext.material3)
 
@@ -38,9 +38,4 @@ kotlin {
             }
         }
     }
-}
-
-dependencies {
-    add("kspAndroid", libs.hilt.compiler)
-    add("kspAndroid", libs.krouter.compiler)
 }

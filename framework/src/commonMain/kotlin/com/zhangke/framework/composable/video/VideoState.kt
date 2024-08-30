@@ -9,7 +9,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.Saver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.media3.common.Player
 
 @Composable
 fun rememberVideoPlayerState(
@@ -42,8 +41,8 @@ class VideoState(
     var duration by mutableLongStateOf(0L)
         private set
 
-    fun onPlaybackStateChanged(playbackState: Int) {
-        playbackEnded = playbackState == Player.STATE_ENDED
+    fun onPlaybackEndChanged(ended: Boolean) {
+        playbackEnded = ended
     }
 
     fun onVolumeChanged(volume: Float) {

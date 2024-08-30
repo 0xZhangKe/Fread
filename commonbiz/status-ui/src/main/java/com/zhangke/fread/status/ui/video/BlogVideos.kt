@@ -5,10 +5,11 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
+import com.eygraber.uri.Uri
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
@@ -53,7 +54,9 @@ private fun SingleBlogInlineVideo(
                 aspectRatio = aspect,
                 coverImage = videoMedia.previewUrl,
                 indexInList = indexInList,
-                uri = videoMedia.url.toUri(),
+                uri = remember(videoMedia.url) {
+                    Uri.parse(videoMedia.url)
+                },
                 onClick = {
                     onMediaClick(
                         BlogMediaClickEvent.BlogVideoClickEvent(

@@ -2,7 +2,6 @@ package com.zhangke.fread.common.status
 
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.minutes
-import kotlin.time.Duration.Companion.seconds
 
 data class StatusConfiguration(
     val loadFromServerLimit: Int,

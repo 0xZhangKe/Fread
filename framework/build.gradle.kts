@@ -36,6 +36,7 @@ kotlin {
                 implementation(libs.imageLoader)
                 implementation(libs.okio)
                 implementation(libs.ksoup)
+                implementation(libs.uri.kmp)
                 implementation(libs.placeholder.material3)
             }
         }

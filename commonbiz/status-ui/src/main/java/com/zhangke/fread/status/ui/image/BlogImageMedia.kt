@@ -25,7 +25,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.eygraber.uri.Uri
 import com.seiko.imageloader.imageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.option.SizeResolver
@@ -33,6 +32,7 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -227,7 +227,7 @@ private fun BlogGifVideoMedia(
     hideContent: Boolean,
 ) {
     val videoUri = remember(media) {
-        Uri.parse(media.url)
+        media.url.toPlatformUri()
     }
     Box(
         modifier = modifier,

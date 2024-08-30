@@ -21,13 +21,13 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.media3.common.util.UnstableApi
-import com.eygraber.uri.Uri
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.config.FreadConfigManager
 
 @androidx.annotation.OptIn(UnstableApi::class)
@@ -37,7 +37,7 @@ fun InlineVideo(
     coverImage: String?,
     indexInList: Int,
     style: InlineVideoPlayerStyle = InlineVideoPlayerDefault.defaultStyle,
-    uri: Uri,
+    uri: PlatformUri,
     onClick: () -> Unit,
 ) {
     val playableIndexRecorder = LocalPlayableIndexRecorder.current!!
@@ -82,7 +82,7 @@ private fun InlineVideoShell(
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 private fun InlineVideoPlayer(
-    uri: Uri,
+    uri: PlatformUri,
     coverImage: String?,
     autoPlay: Boolean,
     playWhenReady: Boolean,

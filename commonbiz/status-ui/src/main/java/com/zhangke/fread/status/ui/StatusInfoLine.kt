@@ -30,6 +30,7 @@ import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.R
+import kotlinx.datetime.Instant
 import java.util.Date
 
 /**
@@ -53,7 +54,7 @@ fun StatusInfoLine(
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
     onTranslateClick: () -> Unit,
     reblogAuthor: BlogAuthor? = null,
-    editedAt: Date? = null,
+    editedAt: Instant? = null,
 ) {
     Row(
         modifier = modifier.padding(start = style.containerStartPadding),

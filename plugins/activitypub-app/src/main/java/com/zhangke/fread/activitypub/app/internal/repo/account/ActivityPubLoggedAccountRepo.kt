@@ -8,7 +8,6 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import okhttp3.internal.userAgent
 import javax.inject.Inject
 
 class ActivityPubLoggedAccountRepo @Inject constructor(

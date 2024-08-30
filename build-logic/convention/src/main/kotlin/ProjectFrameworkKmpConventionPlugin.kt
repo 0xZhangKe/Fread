@@ -3,6 +3,7 @@ import com.zhangke.fread.kotlinMultiplatform
 import com.zhangke.fread.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.plugin.KotlinPlatformType
 
 class ProjectFrameworkKmpConventionPlugin: Plugin<Project> {
 
@@ -24,6 +25,21 @@ class ProjectFrameworkKmpConventionPlugin: Plugin<Project> {
                             implementation(compose.material3)
 
                             implementation(libs.findLibrary("kotlinx-datetime").get())
+                        }
+                    }
+                    targets.configureEach {
+                        val isAndroidTarget = platformType == KotlinPlatformType.androidJvm
+                        compilations.configureEach {
+                            compileTaskProvider.configure {
+                                compilerOptions {
+                                    if (isAndroidTarget) {
+                                        freeCompilerArgs.addAll(
+                                            "-P",
+                                            "plugin:org.jetbrains.kotlin.parcelize:additionalAnnotation=com.zhangke.framework.utils.Parcelize",
+                                        )
+                                    }
+                                }
+                            }
                         }
                     }
                 }

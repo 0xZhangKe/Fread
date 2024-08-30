@@ -76,6 +76,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.hashtag.HashtagVisualTransformation
 import com.zhangke.krouter.Destination
@@ -203,7 +204,6 @@ class PostStatusScreen(
         onVisibilityChanged: (StatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
     ) {
-        val bottomBarHeight = 48.dp
         if (postStatus is LoadableState.Failed) {
             var errorMessage = stringResource(R.string.post_status_failed)
             if (postStatus.exception.message.isNullOrEmpty().not()) {
@@ -263,7 +263,6 @@ class PostStatusScreen(
             },
             bottomBar = {
                 PostStatusBottomBar(
-                    height = bottomBarHeight,
                     uiState = uiState,
                     onSensitiveClick = onSensitiveClick,
                     onMediaSelected = onMediaSelected,
@@ -275,6 +274,12 @@ class PostStatusScreen(
                             insertText = " :${it.shortcode}: ",
                         )
                         onContentChanged(textFieldValue)
+                    },
+                    onMentionClick = {
+                        textFieldValue = MentionTextUtil.insertMention(
+                            text = textFieldValue,
+                            insertText = it.acct,
+                        )
                     },
                     onDeleteEmojiClick = {
                         textFieldValue = DeleteTextUtil.deleteText(textFieldValue)

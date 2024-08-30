@@ -1,13 +1,11 @@
 package com.zhangke.framework.utils
 
-import android.os.Parcelable
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
-import kotlinx.parcelize.Parcelize
+import io.ktor.http.decodeURLQueryComponent
+import io.ktor.http.encodeURLPath
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
-import java.net.URLDecoder
-import java.net.URLEncoder
 
 /**
  * Supported:
@@ -24,7 +22,7 @@ import java.net.URLEncoder
 class WebFinger private constructor(
     val name: String,
     val host: String,
-) : Parcelable, java.io.Serializable {
+) : PlatformParcelable, PlatformSerializable {
 
     override fun toString(): String {
         return "@$name@$host"
@@ -64,7 +62,7 @@ class WebFinger private constructor(
 
         fun decodeFromUrlString(text: String): WebFinger? {
             return try {
-                URLDecoder.decode(text, Charsets.UTF_8.name()).let {
+                text.decodeURLQueryComponent().let {
                     Json.decodeFromString(serializer(), it)
                 }
             } catch (e: Throwable) {
@@ -113,7 +111,5 @@ class WebFinger private constructor(
 }
 
 fun WebFinger.encodeToUrlString(): String {
-    return Json.encodeToString(WebFinger.serializer(), this).let {
-        URLEncoder.encode(it, Charsets.UTF_8.name())
-    }
+    return Json.encodeToString(WebFinger.serializer(), this).encodeURLPath()
 }

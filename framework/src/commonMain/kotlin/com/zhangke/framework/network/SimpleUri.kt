@@ -1,7 +1,7 @@
 package com.zhangke.framework.network
 
+import com.eygraber.uri.Uri
 import com.zhangke.framework.utils.uriString
-import java.net.URI
 
 data class SimpleUri(
     val scheme: String?,
@@ -24,28 +24,15 @@ data class SimpleUri(
         fun parse(uri: String): SimpleUri? {
             if (uri.isEmpty()) return null
             val formalUri = try {
-                URI.create(uri)
+                Uri.parseOrNull(uri)
             } catch (e: Throwable) {
-                return null
-            }
+                null
+            } ?: return null
             val scheme = formalUri.scheme
             val host = formalUri.host
             val path = formalUri.path
-            val queries = mutableMapOf<String, String>()
-            formalUri.rawQuery?.let { query ->
-                val queryGroups = if (query.contains("&")) {
-                    query.split("&")
-                } else {
-                    listOf(query)
-                }
-                queryGroups.forEach { pair ->
-                    pair.split("=")
-                        .takeIf { it.size == 2 }
-                        ?.let {
-                            val (key, value) = it
-                            queries[key] = value
-                        }
-                }
+            val queries = formalUri.getQueryParameterNames().associateWith {
+                formalUri.getQueryParameter(it).orEmpty()
             }
             return SimpleUri(scheme, host, path, queries)
         }

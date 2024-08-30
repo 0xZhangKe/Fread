@@ -1,17 +1,18 @@
 package com.zhangke.framework.network
 
-import android.os.Parcelable
+import com.zhangke.framework.utils.Parcelize
+import com.zhangke.framework.utils.PlatformParcelable
+import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.framework.utils.uriString
-import kotlinx.parcelize.Parcelize
+import io.ktor.http.encodeURLPath
 import kotlinx.serialization.Serializable
-import java.net.URLEncoder
 
 @Parcelize
 @Serializable
 class FormalBaseUrl private constructor(
     val scheme: String,
     val host: String,
-) : Parcelable, java.io.Serializable {
+) : PlatformParcelable, PlatformSerializable {
 
     override fun toString(): String {
         return "$scheme$SCHEME_SEPARATOR$host"
@@ -74,5 +75,5 @@ class FormalBaseUrl private constructor(
 }
 
 fun FormalBaseUrl.encode(): String {
-    return URLEncoder.encode(this.toRawString(), Charsets.UTF_8.name())
+    return this.toRawString().encodeURLPath()
 }

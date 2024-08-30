@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.timeline
 
-import android.util.Log
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.coroutines.invokeOnCancel
@@ -265,7 +264,6 @@ class ActivityPubTimelineViewModel(
     private suspend fun InteractiveHandleResult.handle() {
         when (this) {
             is InteractiveHandleResult.UpdateStatus -> {
-                Log.d("F_TEST", "UpdateStatus: ${status.status.id}")
                 _uiState.update { state ->
                     state.copy(items = state.items.updateStatus(this.status))
                 }

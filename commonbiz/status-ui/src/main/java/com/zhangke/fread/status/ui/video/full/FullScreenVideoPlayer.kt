@@ -36,19 +36,19 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.eygraber.uri.Uri
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun FullScreenVideoPlayer(
-    uri: Uri,
+    uri: PlatformUri,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {

@@ -32,8 +32,8 @@ import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
-import com.eygraber.uri.Uri
-import com.eygraber.uri.toAndroidUri
+import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.framework.utils.toAndroidUri
 import com.zhangke.framework.utils.toMediaSource
 import kotlinx.coroutines.delay
 import kotlin.math.abs
@@ -41,7 +41,7 @@ import kotlin.math.abs
 @OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 actual fun VideoPlayer(
-    uri: Uri,
+    uri: PlatformUri,
     playWhenReady: Boolean,
     modifier: Modifier,
     state: VideoState,

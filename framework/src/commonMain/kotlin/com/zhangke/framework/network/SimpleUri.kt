@@ -1,6 +1,6 @@
 package com.zhangke.framework.network
 
-import com.eygraber.uri.Uri
+import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.framework.utils.uriString
 
 data class SimpleUri(
@@ -24,7 +24,7 @@ data class SimpleUri(
         fun parse(uri: String): SimpleUri? {
             if (uri.isEmpty()) return null
             val formalUri = try {
-                Uri.parseOrNull(uri)
+                uri.toPlatformUri()
             } catch (e: Throwable) {
                 null
             } ?: return null

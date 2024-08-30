@@ -44,3 +44,8 @@
 
 # Ktor
 -dontwarn org.slf4j.impl.StaticLoggerBinder
+
+# Parcelable
+-keep class * implements android.os.Parcelable {
+  public static final android.os.Parcelable$Creator *;
+}

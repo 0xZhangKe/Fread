@@ -5,13 +5,14 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.common.routeScreen
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
@@ -144,6 +145,7 @@ class InteractiveHandler(
                 onInteractiveHandleResult(InteractiveHandleResult.DeleteStatus(status.status.id))
             } else {
                 val interactiveResult = InteractiveHandleResult.UpdateStatus(statusUiState)
+                statusUpdater.update(statusUiState)
                 onInteractiveHandleResult(interactiveResult)
             }
         }
@@ -159,7 +161,7 @@ class InteractiveHandler(
     override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
             val screen = if (status.status.intrinsicBlog.platform.protocol.isRss) {
-                com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailScreen(status.status.intrinsicBlog)
+                BlogDetailScreen(status.status.intrinsicBlog)
             } else {
                 StatusContextScreen(
                     role = status.role,

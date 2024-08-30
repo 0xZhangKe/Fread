@@ -39,7 +39,6 @@ dependencies {
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-    implementation(libs.accompanist.placeholder.material)
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
     implementation(libs.okhttp3)

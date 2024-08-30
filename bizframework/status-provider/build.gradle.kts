@@ -1,5 +1,5 @@
 plugins {
-    id("fread.android.library")
+    id("fread.project.framework.kmp")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
 }
@@ -8,28 +8,40 @@ android {
     namespace = "com.zhangke.fread.commonbiz.status.provider"
 }
 
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(project(path = ":framework"))
+
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.androidx.room)
+
+                implementation(libs.imageLoader)
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        androidMain {
+            dependencies {
+                implementation(libs.hilt)
+
+                implementation(libs.ktml)
+                implementation(libs.halilibo.richtext)
+                implementation(libs.halilibo.richtext.material3)
+
+                api(libs.jsoup)
+            }
+        }
+    }
+}
+
 dependencies {
-
-    testImplementation(libs.mockk)
-    testImplementation("junit:junit:4.+")
-    testImplementation(libs.bundles.kotlin)
-
-    implementation(project(path = ":framework"))
-
-    implementation(libs.bundles.kotlin)
-
-    implementation(libs.okhttp3)
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
-    implementation(libs.androidx.room)
-    ksp(libs.krouter.compiler)
-
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.serialization.json)
-
-    implementation(libs.ktml)
-    implementation(libs.halilibo.richtext)
-    implementation(libs.halilibo.richtext.material3)
-    api(libs.jsoup)
-    implementation(libs.imageLoader)
+    add("kspAndroid", libs.hilt.compiler)
+    add("kspAndroid", libs.krouter.compiler)
 }

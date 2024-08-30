@@ -137,6 +137,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
+    implementation(libs.uri.kmp)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

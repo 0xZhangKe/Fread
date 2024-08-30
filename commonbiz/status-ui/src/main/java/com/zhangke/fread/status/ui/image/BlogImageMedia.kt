@@ -25,7 +25,7 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
+import com.eygraber.uri.Uri
 import com.seiko.imageloader.imageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.option.SizeResolver
@@ -227,7 +227,7 @@ private fun BlogGifVideoMedia(
     hideContent: Boolean,
 ) {
     val videoUri = remember(media) {
-        media.url.toUri()
+        Uri.parse(media.url)
     }
     Box(
         modifier = modifier,

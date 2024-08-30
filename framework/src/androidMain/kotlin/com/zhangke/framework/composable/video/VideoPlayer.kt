@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.video
 
-import android.net.Uri
 import android.util.Log
 import android.view.ViewGroup
 import android.widget.FrameLayout
@@ -33,18 +32,20 @@ import androidx.media3.common.Player
 import androidx.media3.common.VideoSize
 import androidx.media3.ui.AspectRatioFrameLayout
 import androidx.media3.ui.PlayerView
+import com.eygraber.uri.Uri
+import com.eygraber.uri.toAndroidUri
 import com.zhangke.framework.utils.toMediaSource
 import kotlinx.coroutines.delay
 import kotlin.math.abs
 
 @OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
-fun VideoPlayer(
-    modifier: Modifier = Modifier,
+actual fun VideoPlayer(
     uri: Uri,
     playWhenReady: Boolean,
-    state: VideoState = rememberVideoPlayerState(),
-    useController: Boolean = false,
+    modifier: Modifier,
+    state: VideoState,
+    useController: Boolean,
 ) {
     val context = LocalContext.current
     var playErrorInfo: String? by remember {
@@ -64,7 +65,7 @@ fun VideoPlayer(
             override fun onPlaybackStateChanged(playbackState: Int) {
                 super.onPlaybackStateChanged(playbackState)
                 Log.d("PlayerManager", "onPlaybackStateChanged:$playbackState")
-                state.onPlaybackStateChanged(playbackState)
+                state.onPlaybackEndChanged(playbackState == Player.STATE_ENDED)
             }
 
             override fun onPlayerError(error: PlaybackException) {
@@ -101,13 +102,14 @@ fun VideoPlayer(
     val lifecycle = LocalLifecycleOwner.current.lifecycle
     val playerManager = LocalExoPlayerManager.current
     val exoPlayer = remember(uri) {
-        playerManager.obtainPlayer(context, uri, lifecycle).apply {
+        val androidUri = uri.toAndroidUri()
+        playerManager.obtainPlayer(context, androidUri, lifecycle).apply {
             addListener(playerListener)
             this.playWhenReady = true
             volume = state.playerVolume
             repeatMode = Player.REPEAT_MODE_ALL
             videoScalingMode = C.VIDEO_SCALING_MODE_SCALE_TO_FIT
-            setMediaSource(uri.toMediaSource())
+            setMediaSource(androidUri.toMediaSource())
             prepare()
             seekTo(state.targetSeekTo)
         }
@@ -177,7 +179,7 @@ fun VideoPlayer(
             Log.d("PlayerManager", "onDispose")
             state.updatePosition(exoPlayer.currentPosition)
             exoPlayer.removeListener(playerListener)
-            playerManager.recyclePlayer(uri)
+            playerManager.recyclePlayer(uri.toAndroidUri())
         }
     }
 }

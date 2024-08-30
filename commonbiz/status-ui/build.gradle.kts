@@ -50,4 +50,5 @@ dependencies {
     implementation(libs.halilibo.richtext.material3)
     implementation(libs.krouter.core)
     ksp(libs.krouter.compiler)
+    implementation(libs.uri.kmp)
 }

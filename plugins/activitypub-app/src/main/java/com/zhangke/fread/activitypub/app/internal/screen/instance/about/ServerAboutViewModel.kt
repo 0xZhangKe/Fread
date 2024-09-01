@@ -6,14 +6,12 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.usecase.GetInstanceAnnouncementUseCase
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
-internal class ServerAboutViewModel @Inject constructor(
+class ServerAboutViewModel @Inject constructor(
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val getInstanceAnnouncementUseCase: GetInstanceAnnouncementUseCase,
 ) : ViewModel() {

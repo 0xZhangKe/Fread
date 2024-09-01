@@ -1,24 +1,21 @@
 package com.zhangke.fread.explore.screens.home
 
 import android.annotation.SuppressLint
-import android.content.Context
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.uri.FormalUri
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @SuppressLint("StaticFieldLeak")
-@HiltViewModel
 class ExplorerHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) : ViewModel() {
 
     companion object {

@@ -16,7 +16,7 @@ import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssStatusResolver @Inject constructor(
     private val uriTransformer: RssUriTransformer,

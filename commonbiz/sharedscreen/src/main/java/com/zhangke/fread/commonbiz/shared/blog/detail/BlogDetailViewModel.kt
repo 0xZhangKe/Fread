@@ -1,26 +1,27 @@
 package com.zhangke.fread.commonbiz.shared.blog.detail
 
-import cafe.adriel.voyager.core.model.ScreenModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.fread.common.routeScreen
-import com.zhangke.krouter.KRouter
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Inject
+import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 class BlogDetailViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-) : ScreenModel {
+) : ViewModel() {
 
     private val _openScreenFlow = MutableSharedFlow<Screen>()
     val openScreenFlow = _openScreenFlow.asSharedFlow()
 
     fun onUserInfoClick(author: BlogAuthor) {
-        launchInScreenModel {
+        viewModelScope.launch {
             statusProvider.screenProvider
                 .getUserDetailRoute(IdentityRole.nonIdentityRole, author.uri)
                 ?.let { KRouter.routeScreen(it) }

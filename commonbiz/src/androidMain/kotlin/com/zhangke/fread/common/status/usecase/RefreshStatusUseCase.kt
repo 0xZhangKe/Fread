@@ -8,7 +8,7 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 /**
  * 刷新给定的订阅源，返回此次刷新到的所有数据。
@@ -16,7 +16,7 @@ import javax.inject.Inject
  * 为了保证数据的连续性，当获取到刷新数据之后，用新的与本地数据做对比，如果新的数据最早的那条的时间大于
  * 本地数据最近的时间，就认为这两份数据不连续，此时清空本地数据，然后插入新数据，这样可以保证数据仍然是连续的。
  */
-internal class RefreshStatusUseCase @Inject constructor(
+class RefreshStatusUseCase @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusContentRepo: StatusContentRepo,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,

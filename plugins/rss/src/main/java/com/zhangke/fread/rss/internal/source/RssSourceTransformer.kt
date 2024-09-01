@@ -1,15 +1,14 @@
 package com.zhangke.fread.rss.internal.source
 
-import android.content.Context
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.rss.createRssProtocol
 import com.zhangke.fread.rss.internal.model.RssSource
 import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.source.StatusSource
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssSourceTransformer @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) {
 
     fun createSource(

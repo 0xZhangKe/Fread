@@ -1,6 +1,5 @@
 package com.zhangke.fread.rss
 
-import com.zhangke.filt.annotaions.Filt
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.platform.IPlatformResolver
@@ -8,9 +7,8 @@ import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.status.IStatusResolver
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@Filt
 class RssStatusProvider @Inject constructor(
     rssScreenProvider: RssScreenProvider,
     rssSearchEngine: RssSearchEngine,

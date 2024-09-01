@@ -6,7 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.adapter.CustomEmojiAdapter
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
 import com.zhangke.fread.status.model.IdentityRole
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class GetCustomEmojiUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,

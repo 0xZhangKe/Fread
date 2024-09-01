@@ -6,9 +6,9 @@ import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-internal class StatusContentRepo @Inject constructor(
+class StatusContentRepo @Inject constructor(
     private val statusDatabase: StatusDatabase,
 ) {
 

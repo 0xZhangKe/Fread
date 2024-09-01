@@ -1,38 +1,34 @@
 package com.zhangke.fread.feeds.pages.manager.edit
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.uri.FormalUri
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = EditMixedContentViewModel.Factory::class)
-internal class EditMixedContentViewModel @AssistedInject constructor(
+class EditMixedContentViewModel @Inject constructor(
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val configRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
     @Assisted private val configId: Long,
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
 
         fun create(configId: Long): EditMixedContentViewModel
     }

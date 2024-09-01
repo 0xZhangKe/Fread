@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMedia
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import java.util.Locale
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class PostStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,

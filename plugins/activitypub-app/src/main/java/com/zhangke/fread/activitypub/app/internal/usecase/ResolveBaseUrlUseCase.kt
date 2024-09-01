@@ -5,7 +5,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.common.usecase.GetDefaultBaseUrlUseCase
 import com.zhangke.fread.status.model.IdentityRole
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ResolveBaseUrlUseCase @Inject constructor(
     private val loggedAccountProvider: LoggedAccountProvider,

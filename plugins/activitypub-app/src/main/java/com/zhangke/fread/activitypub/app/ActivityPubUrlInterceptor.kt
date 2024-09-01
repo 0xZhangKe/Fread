@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app
 
 import android.content.Context
-import com.zhangke.filt.annotaions.Filt
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.network.SimpleUri
@@ -19,9 +18,8 @@ import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScr
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@Filt
 class ActivityPubUrlInterceptor @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val clientManager: ActivityPubClientManager,

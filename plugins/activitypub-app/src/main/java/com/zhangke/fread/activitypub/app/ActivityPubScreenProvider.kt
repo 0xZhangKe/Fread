@@ -22,7 +22,7 @@ import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubScreenProvider @Inject constructor(
     private val userUriTransformer: UserUriTransformer,

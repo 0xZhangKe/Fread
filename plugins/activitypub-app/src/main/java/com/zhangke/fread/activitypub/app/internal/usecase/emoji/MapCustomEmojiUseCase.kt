@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.emoji
 
 import com.zhangke.fread.status.model.Emoji
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class MapCustomEmojiUseCase @Inject constructor() {
 

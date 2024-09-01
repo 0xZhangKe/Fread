@@ -27,15 +27,13 @@ jetbrains-lifecycle = "2.8.0"
 
 accompanist = "0.34.0"
 
-hilt = "2.52"
+kotlinInject = "0.7.1"
 
 okhttp3 = "4.12.0"
 ktor = "3.0.0-beta-2"
 ktorfit = "2.0.1"
 
 auto_service = "1.0.1"
-
-filt = "1.0.4"
 
 voyager = "1.1.0-beta02"
 
@@ -75,7 +73,14 @@ androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okht
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
-voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.screenModel", "voyager.hilt"]
+voyager = [
+    "voyager-navigator",
+    "voyager-bottom-sheet-navigator",
+    "voyager-tab-navigator",
+    "voyager-transitions",
+    "voyager-screenModel",
+    "voyager-lifecycle-kmp",
+]
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
@@ -103,6 +108,7 @@ androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", 
 
 jetbrains-lifecycle-runtime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "jetbrains-lifecycle" }
+jetbrains-lifecycle-viewmodel-compose = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "jetbrains-lifecycle" }
 
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidx.media3"}
 androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidx.media3"}
@@ -128,8 +134,8 @@ kotlinx-serialization-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-
 kotlinx-serialization-json = { group = "org.jetbrains.kotlinx", name = "kotlinx-serialization-json", version.ref = "kotlinx-serialization" }
 kotlinx-datetime = { group = "org.jetbrains.kotlinx", name = "kotlinx-datetime", version.ref = "kotlinx-datetime" }
 
-hilt = { group = "com.google.dagger", name = "hilt-android", version.ref = "hilt" }
-hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.ref = "hilt" }
+kotlinInject-runtime = { module = "me.tatarka.inject:kotlin-inject-runtime", version.ref = "kotlinInject" }
+kotlinInject-compiler = { module = "me.tatarka.inject:kotlin-inject-compiler-ksp", version.ref = "kotlinInject" }
 
 okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
 okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3" }
@@ -147,9 +153,6 @@ ktorfit-converters-response = { module = "de.jensklingenberg.ktorfit:ktorfit-con
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
 
-filt-annotaions = { group = "com.github.0xZhangKe.Filt", name = "annotaions", version.ref = "filt" }
-filt-compiler = { group = "com.github.0xZhangKe.Filt", name = "compiler", version.ref = "filt" }
-
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
 # Dependencies of the included build-logic
@@ -166,7 +169,7 @@ voyager-screenModel = { module = "cafe.adriel.voyager:voyager-screenmodel", vers
 voyager-bottom-sheet-navigator = {  module = "cafe.adriel.voyager:voyager-bottom-sheet-navigator", version.ref = "voyager" }
 voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", version.ref = "voyager" }
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
-voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
+voyager-lifecycle-kmp = { module = "cafe.adriel.voyager:voyager-lifecycle-kmp", version.ref = "voyager" }
 
 krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", version.ref = "krouter"}
 krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.ref = "krouter"}
@@ -196,7 +199,6 @@ placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3",
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
 android-application = { id = "com.android.application", version.ref = "androidGradlePlugin" }
 android-library = { id = "com.android.library", version.ref = "androidGradlePlugin" }
-hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
 kotlin-jvm = { id = "org.jetbrains.kotlin.jvm", version.ref = "kotlin" }
 kotlin-multiplatform = { id = "org.jetbrains.kotlin.multiplatform", version.ref = "kotlin" }

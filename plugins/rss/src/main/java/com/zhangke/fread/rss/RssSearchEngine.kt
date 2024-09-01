@@ -19,7 +19,7 @@ import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.status.model.Status
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssSearchEngine @Inject constructor(
     private val rssPlatformTransformer: RssPlatformTransformer,

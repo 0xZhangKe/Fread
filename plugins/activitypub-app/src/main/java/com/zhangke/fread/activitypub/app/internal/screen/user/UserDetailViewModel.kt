@@ -100,16 +100,9 @@ class UserDetailViewModel(
     ) {
         val relationshipEntityResult = accountRepo.getRelationships(listOf(accountId))
         if (relationshipEntityResult.isFailure) {
-            relationshipEntityResult.exceptionOrNull()?.message?.let {
-                _messageFlow.emit(textOf(it))
-            }
             return
         }
-        val relationshipEntity = relationshipEntityResult.getOrThrow().firstOrNull()
-        if (relationshipEntity == null) {
-            _messageFlow.emit(textOf("Failed to get relationship entity"))
-            return
-        }
+        val relationshipEntity = relationshipEntityResult.getOrThrow().firstOrNull() ?: return
         _uiState.value = _uiState.value.copy(
             relationship = relationshipEntity
         )

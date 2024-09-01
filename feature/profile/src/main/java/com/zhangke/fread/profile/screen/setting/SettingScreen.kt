@@ -42,7 +42,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
@@ -70,7 +70,7 @@ class SettingScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getScreenModel<SettingScreenModel>()
+        val viewModel = getViewModel<SettingScreenModel>()
         val uiState by viewModel.uiState.collectAsState()
         val context = LocalContext.current
         SettingContent(

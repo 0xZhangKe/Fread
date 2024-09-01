@@ -4,7 +4,7 @@ import com.zhangke.fread.activitypub.app.internal.db.notifications.Notifications
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.status.uri.FormalUri
 import java.util.Date
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class NotificationsEntityAdapter @Inject constructor() {
 

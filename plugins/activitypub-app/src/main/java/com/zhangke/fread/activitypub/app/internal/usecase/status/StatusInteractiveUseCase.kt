@@ -5,7 +5,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class StatusInteractiveUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,

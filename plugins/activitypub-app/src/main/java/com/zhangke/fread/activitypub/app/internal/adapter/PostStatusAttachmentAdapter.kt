@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubPollRequestEntity
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class PostStatusAttachmentAdapter @Inject constructor() {
 

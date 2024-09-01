@@ -1,6 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.instance
 
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class MastodonInstanceRepo @Inject constructor() {
 

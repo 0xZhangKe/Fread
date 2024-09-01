@@ -13,7 +13,6 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.krouter.KRouter
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,9 +22,8 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class ProfileHomeViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,

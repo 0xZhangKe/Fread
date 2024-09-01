@@ -6,11 +6,11 @@ import com.zhangke.framework.architect.http.createHttpClientEngine
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.IdentityRole
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
+@ApplicationScope
 class ActivityPubClientManager @Inject constructor(
     private val resolveBaseUrl: ResolveBaseUrlUseCase,
     private val loggedAccountProvider: LoggedAccountProvider,

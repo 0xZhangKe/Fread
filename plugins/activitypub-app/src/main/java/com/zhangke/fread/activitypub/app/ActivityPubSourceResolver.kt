@@ -9,7 +9,7 @@ import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.emptyFlow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubSourceResolver @Inject constructor(
     private val userRepo: UserRepo,

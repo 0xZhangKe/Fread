@@ -2,7 +2,8 @@ package com.zhangke.fread.feeds.pages.manager.importing
 
 import android.content.Context
 import android.net.Uri
-import cafe.adriel.voyager.core.model.ScreenModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.collections.remove
 import com.zhangke.framework.ktx.launchInScreenModel
@@ -22,14 +23,15 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ImportFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val configRepo: ContentConfigRepo,
-) : ScreenModel {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ImportFeedsUiState.default)
     val uiState = _uiState.asStateFlow()
@@ -50,7 +52,7 @@ class ImportFeedsViewModel @Inject constructor(
         if (importingJob?.isActive == true) return
         if (uiState.value.sourceList.isNotEmpty()) return
         _uiState.update { it.copy(errorMessage = null) }
-        importingJob = launchInScreenModel {
+        importingJob = viewModelScope.launch {
             val sourceGroup = parseOpmlToGroup(context, uiState.value.selectedFileUri!!)
             _uiState.update { it.copy(sourceList = sourceGroup) }
             sourceGroup.forEach {
@@ -133,18 +135,18 @@ class ImportFeedsViewModel @Inject constructor(
 
     fun onSaveClick() {
         if (importingJob?.isActive == true) return
-        launchInScreenModel {
+        viewModelScope.launch {
             val mixedContentList = _uiState.value
                 .sourceList
                 .mapNotNull { it.toMixedContent() }
-            if (mixedContentList.isEmpty()) return@launchInScreenModel
+            if (mixedContentList.isEmpty()) return@launch
             configRepo.insert(mixedContentList)
             _saveSuccessFlow.emit(Unit)
         }
     }
 
     fun retryImportClick(group: ImportSourceGroup, source: ImportingSource) {
-        launchInScreenModel {
+        viewModelScope.launch {
             importSource(group, source)
         }
     }

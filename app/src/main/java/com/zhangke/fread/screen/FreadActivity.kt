@@ -15,7 +15,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.viewmodel.CreationExtras
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.hilt.CREATION_CALLBACK_KEY
+import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
+import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
@@ -26,17 +32,18 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.common.commonComponent
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.ui.style.LocalStatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.flow.map
+import kotlin.reflect.KClass
 
-@AndroidEntryPoint
 class FreadActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
@@ -44,6 +51,22 @@ class FreadActivity : ComponentActivity() {
         DayNightHelper.setActivityDayNightMode()
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
+
+        val commonComponent = applicationContext.commonComponent
+
+        val viewModelProviderFactory = object : ViewModelProvider.Factory {
+            @Suppress("UNCHECKED_CAST")
+            override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
+                if (commonComponent.viewModelMaps.containsKey(modelClass)) {
+                    return commonComponent.viewModelMaps[modelClass]!!() as T
+                } else if (commonComponent.viewModelFactoryMaps.containsKey(modelClass)) {
+                    val callback: (ViewModelFactory) -> ViewModel = extras[CREATION_CALLBACK_KEY]!!
+                    return callback(commonComponent.viewModelFactoryMaps[modelClass]!!) as T
+                } else {
+                    throw IllegalArgumentException("Unknown ViewModel class: $modelClass")
+                }
+            }
+        }
 
         setContent {
             val isNight by remember {
@@ -65,23 +88,26 @@ class FreadActivity : ComponentActivity() {
                     LocalExoPlayerManager provides videoPlayerManager,
                     LocalStatusStyle provides statusContentSize.toStyle(),
                     LocalImageLoader provides applicationContext.imageLoader,
+                    LocalViewModelProviderFactory provides viewModelProviderFactory,
                 ) {
-                    TransparentNavigator {
-                        BottomSheetNavigator(
-                            modifier = Modifier,
-                            sheetShape = RoundedCornerShape(12.dp),
-                        ) {
-                            Navigator(
-                                screen = FreadScreen(),
-                                key = ROOT_NAVIGATOR_KEY,
+                    ProvideNavigatorLifecycleKMPSupport {
+                        TransparentNavigator {
+                            BottomSheetNavigator(
+                                modifier = Modifier,
+                                sheetShape = RoundedCornerShape(12.dp),
                             ) {
-                                SlideTransition(
-                                    navigator = it,
-                                    disposeScreenAfterTransitionEnd = false,
-                                )
-                                LaunchedEffect(Unit) {
-                                    GlobalScreenNavigation.openScreenFlow.collect { screen ->
-                                        it.push(screen)
+                                Navigator(
+                                    screen = FreadScreen(),
+                                    key = ROOT_NAVIGATOR_KEY,
+                                ) {
+                                    SlideTransition(
+                                        navigator = it,
+                                        disposeScreenAfterTransitionEnd = false,
+                                    )
+                                    LaunchedEffect(Unit) {
+                                        GlobalScreenNavigation.openScreenFlow.collect { screen ->
+                                            it.push(screen)
+                                        }
                                     }
                                 }
                             }

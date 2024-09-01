@@ -10,24 +10,28 @@ import com.seiko.imageloader.intercept.imageMemoryCacheConfig
 import com.seiko.imageloader.intercept.painterMemoryCacheConfig
 import com.seiko.imageloader.option.androidContext
 import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
+import com.zhangke.fread.activitypub.app.di.ActivityPubComponentProvider
+import com.zhangke.fread.common.CommonComponentProvider
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.language.LanguageHelper
-import dagger.hilt.android.HiltAndroidApp
+import com.zhangke.fread.di.ApplicationComponent
+import com.zhangke.fread.di.create
 import kotlinx.coroutines.launch
 import okio.Path.Companion.toOkioPath
-import javax.inject.Inject
 
 /**
  * Created by ZhangKe on 2022/11/27.
  */
-@HiltAndroidApp
-class FreadApplication : Application(), ImageLoaderFactory {
+class FreadApplication : Application(),
+    CommonComponentProvider,
+    ActivityPubComponentProvider,
+    ImageLoaderFactory {
 
-    var moduleStartups: Set<@JvmSuppressWildcards ModuleStartup>? = null
-        @Inject set
+    override val component: ApplicationComponent by lazy(LazyThreadSafetyMode.NONE) {
+        ApplicationComponent.create(this)
+    }
 
     override fun onCreate() {
         super.onCreate()
@@ -69,7 +73,7 @@ class FreadApplication : Application(), ImageLoaderFactory {
 
     private fun initModuleStartups() {
         ApplicationScope.launch {
-            moduleStartups?.forEach {
+            component.moduleStartups.forEach {
                 it.onAppCreate()
             }
         }

@@ -7,7 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.status.platform.BlogPlatform
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubNotificationEntityAdapter @Inject constructor(
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,

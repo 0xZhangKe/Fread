@@ -9,10 +9,8 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class UserDetailContainerViewModel @Inject constructor(
     private val accountManager: ActivityPubAccountManager,
     private val userUriTransformer: UserUriTransformer,

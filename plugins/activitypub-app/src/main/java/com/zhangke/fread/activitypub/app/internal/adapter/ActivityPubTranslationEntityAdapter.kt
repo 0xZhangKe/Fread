@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubTranslationEntity
 import com.zhangke.fread.status.blog.BlogTranslation
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubTranslationEntityAdapter @Inject constructor() {
 

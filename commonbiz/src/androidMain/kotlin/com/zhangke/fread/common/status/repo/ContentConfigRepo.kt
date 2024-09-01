@@ -13,7 +13,7 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ContentConfigRepo @Inject constructor(
     private val contentConfigDatabase: ContentConfigDatabases,

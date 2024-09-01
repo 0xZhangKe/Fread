@@ -10,10 +10,8 @@ import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.common.status.usecase.FormatStatusDisplayTimeUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class ActivityPubNotificationsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val accountManager: ActivityPubAccountManager,

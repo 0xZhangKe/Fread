@@ -2,9 +2,9 @@ package com.zhangke.fread.feeds.adapter
 
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.source.StatusSource
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-internal class StatusSourceUiStateAdapter @Inject constructor() {
+class StatusSourceUiStateAdapter @Inject constructor() {
 
     fun adapt(
         source: StatusSource,

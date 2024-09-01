@@ -1,7 +1,6 @@
 plugins {
     id("fread.project.framework")
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
 }
 
@@ -33,9 +32,6 @@ dependencies {
 
     implementation(libs.auto.service.annotations)
     ksp(libs.auto.service.ksp)
-
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
 
     implementation(libs.bundles.voyager)
 

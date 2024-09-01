@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.usecase.status
 
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.fread.status.status.model.StatusInteraction
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class GetStatusInteractionUseCase @Inject constructor() {
 

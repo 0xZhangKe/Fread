@@ -1,17 +1,16 @@
 package com.zhangke.fread.activitypub.app.internal.adapter
 
-import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.textOf
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.model.Hashtag
-import dagger.hilt.android.qualifiers.ApplicationContext
+import me.tatarka.inject.annotations.Inject
 import java.util.Calendar
-import javax.inject.Inject
 
 class ActivityPubTagAdapter @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) {
 
     fun adapt(entity: ActivityPubTagEntity): Hashtag {

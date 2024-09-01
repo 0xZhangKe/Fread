@@ -44,7 +44,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
@@ -64,7 +64,7 @@ class ImportFeedsScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val viewModel = getScreenModel<ImportFeedsViewModel>()
+        val viewModel = getViewModel<ImportFeedsViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val context = LocalContext.current
         var showBackDialog by remember {

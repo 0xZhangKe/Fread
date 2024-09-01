@@ -9,6 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.notActivityPub
@@ -16,10 +17,9 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
+@ApplicationScope
 class ActivityPubAccountManager @Inject constructor(
     private val oAuthor: ActivityPubOAuthor,
     private val clientManager: ActivityPubClientManager,

@@ -1,7 +1,6 @@
 plugins {
     id("fread.project.feature")
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
 }
 
 android {
@@ -37,10 +36,8 @@ dependencies {
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-    implementation(libs.filt.annotaions)
-    ksp(libs.filt.compiler)
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
+    implementation(libs.kotlinInject.runtime)
+    ksp(libs.kotlinInject.compiler)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
     implementation(libs.auto.service.annotations)

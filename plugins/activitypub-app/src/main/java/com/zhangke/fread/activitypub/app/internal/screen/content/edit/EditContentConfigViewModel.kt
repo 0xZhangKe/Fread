@@ -1,30 +1,26 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.edit
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.model.ContentConfig
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = EditContentConfigViewModel.Factory::class)
-class EditContentConfigViewModel @AssistedInject constructor(
+class EditContentConfigViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
     @Assisted private val configId: Long
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
         fun create(configId: Long): EditContentConfigViewModel
     }
 

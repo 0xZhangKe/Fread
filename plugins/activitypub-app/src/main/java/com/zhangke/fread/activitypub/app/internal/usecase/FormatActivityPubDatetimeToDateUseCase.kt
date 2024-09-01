@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.usecase
 
 import com.zhangke.framework.date.DateParser
 import java.util.Date
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class FormatActivityPubDatetimeToDateUseCase @Inject constructor() {
 

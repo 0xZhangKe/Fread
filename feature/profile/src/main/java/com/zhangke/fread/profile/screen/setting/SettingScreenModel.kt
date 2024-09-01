@@ -2,22 +2,23 @@ package com.zhangke.fread.profile.screen.setting
 
 import android.content.Context
 import android.content.pm.PackageManager
-import cafe.adriel.voyager.core.model.ScreenModel
-import com.zhangke.framework.ktx.launchInScreenModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.daynight.DayNightMode
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.language.LanguageHelper
 import com.zhangke.fread.common.language.LanguageSettingType
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
+import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 class SettingScreenModel @Inject constructor(
-    @ApplicationContext private val appContext: Context,
-) : ScreenModel {
+    private val appContext: ApplicationContext,
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         SettingUiState(
@@ -31,15 +32,15 @@ class SettingScreenModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
-        launchInScreenModel {
+        viewModelScope.launch {
             DayNightHelper.dayNightModeFlow.collect {
                 _uiState.value = _uiState.value.copy(dayNightMode = DayNightHelper.dayNightMode)
             }
         }
-        launchInScreenModel {
+        viewModelScope.launch {
             LanguageHelper.systemLocale
         }
-        launchInScreenModel {
+        viewModelScope.launch {
             FreadConfigManager.getStatusContentSize(appContext)
                 .let {
                     _uiState.value = _uiState.value.copy(contentSize = it)
@@ -52,7 +53,7 @@ class SettingScreenModel @Inject constructor(
     }
 
     fun onChangeAutoPlayInlineVideo(on: Boolean) {
-        launchInScreenModel {
+        viewModelScope.launch {
             FreadConfigManager.updateAutoPlayInlineVideo(on)
             _uiState.value = _uiState.value.copy(autoPlayInlineVideo = on)
         }
@@ -68,7 +69,7 @@ class SettingScreenModel @Inject constructor(
     }
 
     fun onContentSizeChanged(contentSize: StatusContentSize) {
-        launchInScreenModel {
+        viewModelScope.launch {
             FreadConfigManager.updateStatusContentSize(contentSize)
         }
     }

@@ -17,7 +17,7 @@ fun onStatusMediaClick(
     when (event) {
         is BlogMediaClickEvent.BlogImageClickEvent -> {
             if (event.mediaList[event.index].type == BlogMediaType.GIFV) {
-                navigator.push(FullVideoScreen(event.mediaList[event.index].url.toUri()))
+                navigator.push(FullVideoScreen(event.mediaList[event.index].url))
                 return
             }
             transparentNavigator.push(
@@ -30,7 +30,7 @@ fun onStatusMediaClick(
         }
 
         is BlogMediaClickEvent.BlogVideoClickEvent -> {
-            navigator.push(FullVideoScreen(event.media.url.toUri()))
+            navigator.push(FullVideoScreen(event.media.url))
         }
     }
 }

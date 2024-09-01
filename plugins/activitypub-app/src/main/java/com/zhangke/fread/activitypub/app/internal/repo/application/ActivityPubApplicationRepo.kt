@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubApplication
 import com.zhangke.fread.activitypub.app.internal.platform.FreadApplicationRegisterInfo
 import com.zhangke.fread.status.model.IdentityRole
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubApplicationRepo @Inject constructor(
     private val databases: ActivityPubDatabases,

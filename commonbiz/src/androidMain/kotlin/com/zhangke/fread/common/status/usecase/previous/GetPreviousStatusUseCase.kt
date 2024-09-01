@@ -7,9 +7,9 @@ import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-internal class GetPreviousStatusUseCase @Inject constructor(
+class GetPreviousStatusUseCase @Inject constructor(
     private val getSingleSourcePreviousStatus: GetSingleSourcePreviousStatusUseCase,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,
 ) {

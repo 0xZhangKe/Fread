@@ -1,6 +1,7 @@
 package com.zhangke.fread.feeds.pages.manager.add.pre
 
-import cafe.adriel.voyager.core.model.ScreenModel
+import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
@@ -22,12 +23,13 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
+import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 
 class PreAddFeedsViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
-) : ScreenModel {
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PreAddFeedsUiState.default)
     val uiState = _uiState.asStateFlow()
@@ -48,7 +50,7 @@ class PreAddFeedsViewModel @Inject constructor(
     private var selectedContentPlatform: BlogPlatform? = null
 
     init {
-        launchInScreenModel {
+        viewModelScope.launch {
             _uiState.update {
                 it.copy(allSearchedResult = getSuggestedPlatformSnapshots())
             }
@@ -59,7 +61,7 @@ class PreAddFeedsViewModel @Inject constructor(
         _uiState.value = _uiState.value.copy(query = query)
         if (query.isEmpty()) {
             searchJob?.cancel()
-            launchInScreenModel {
+            viewModelScope.launch {
                 _uiState.update {
                     it.copy(allSearchedResult = getSuggestedPlatformSnapshots())
                 }
@@ -76,7 +78,7 @@ class PreAddFeedsViewModel @Inject constructor(
 
     private fun doSearch() {
         searchJob?.cancel()
-        searchJob = launchInScreenModel {
+        searchJob = viewModelScope.launch {
             _uiState.update {
                 it.copy(
                     searching = true,
@@ -112,7 +114,7 @@ class PreAddFeedsViewModel @Inject constructor(
     fun onContentClick(result: SearchContentResult) {
         pendingLoginPlatform = null
         addContentJob?.cancel()
-        addContentJob = launchInScreenModel {
+        addContentJob = viewModelScope.launch {
             when (result) {
                 is SearchContentResult.Source -> {
                     _openScreenFlow.emit(AddMixedFeedsScreen(result.source))
@@ -147,7 +149,7 @@ class PreAddFeedsViewModel @Inject constructor(
 
     fun onLoginClick() {
         val platform = selectedContentPlatform ?: return
-        launchInScreenModel {
+        viewModelScope.launch {
             statusProvider.accountManager
                 .triggerAuthBySource(platform.baseUrl)
             _exitScreenFlow.emit(Unit)

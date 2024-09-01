@@ -1,9 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
-import android.content.Context
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
@@ -11,20 +9,21 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEnt
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
+import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.di.ApplicationContext
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.IdentityRole
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
 /**
  * Created by ZhangKe on 2022/12/4.
  */
-@Singleton
+@ApplicationScope
 class ActivityPubOAuthor @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
     private val repo: ActivityPubLoggedAccountRepo,
     private val applicationRepo: ActivityPubApplicationRepo,
     private val clientManager: ActivityPubClientManager,

@@ -4,7 +4,7 @@ import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubInstanceRule
 
-internal data class ServerAboutUiState(
+data class ServerAboutUiState(
     val announcement: List<ActivityPubAnnouncementEntity>,
     val rules: List<ActivityPubInstanceEntity.Rule>,
 )

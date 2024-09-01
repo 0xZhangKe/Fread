@@ -3,7 +3,6 @@ package com.zhangke.fread.activitypub.app.internal.screen.status.post
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.collections.remove
 import com.zhangke.framework.collections.removeIndex
 import com.zhangke.framework.collections.updateIndex
@@ -29,13 +28,10 @@ import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUs
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.PostStatusUseCase
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -44,12 +40,13 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
-@HiltViewModel(assistedFactory = PostStatusViewModel.Factory::class)
-class PostStatusViewModel @AssistedInject constructor(
+class PostStatusViewModel @Inject constructor(
     private val getCustomEmoji: GetCustomEmojiUseCase,
     private val getInstancePostStatusRules: GetInstancePostStatusRulesUseCase,
     private val accountManager: ActivityPubAccountManager,
@@ -60,8 +57,7 @@ class PostStatusViewModel @AssistedInject constructor(
     @Assisted private val screenParams: PostStatusScreenParams,
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
 
         fun create(screenParams: PostStatusScreenParams): PostStatusViewModel
     }

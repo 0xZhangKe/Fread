@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user.list
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.api.PagingResult
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.TextString
@@ -15,23 +14,21 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEnti
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = UserListViewModel.Factory::class)
-class UserListViewModel @AssistedInject constructor(
+class UserListViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val userUriTransformer: UserUriTransformer,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
@@ -42,8 +39,7 @@ class UserListViewModel @AssistedInject constructor(
     @Assisted private val userUri: FormalUri?,
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
 
         fun create(
             role: IdentityRole,

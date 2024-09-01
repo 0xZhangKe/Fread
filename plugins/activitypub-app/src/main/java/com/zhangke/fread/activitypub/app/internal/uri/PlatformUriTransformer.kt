@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.uri
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.model.PlatformUriInsights
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class PlatformUriTransformer @Inject constructor() {
 

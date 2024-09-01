@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubCustomEmojiEntity
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.fread.status.model.Emoji
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubCustomEmojiEntityAdapter @Inject constructor() {
 

@@ -1,7 +1,7 @@
 package com.zhangke.fread.rss.internal.uri
 
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssUriTransformer @Inject constructor() {
 

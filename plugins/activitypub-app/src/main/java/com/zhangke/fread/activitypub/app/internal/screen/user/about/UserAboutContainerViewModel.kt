@@ -7,10 +7,8 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.status.model.IdentityRole
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class UserAboutContainerViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,

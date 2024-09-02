@@ -5,8 +5,12 @@ import com.android.build.api.dsl.LibraryExtension
 import com.android.build.api.variant.ApplicationAndroidComponentsExtension
 import com.android.build.api.variant.LibraryAndroidComponentsExtension
 import org.gradle.api.Project
+import org.gradle.api.artifacts.VersionCatalog
+import org.gradle.api.artifacts.VersionCatalogsExtension
+import org.gradle.api.artifacts.dsl.DependencyHandler
 import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
@@ -35,3 +39,9 @@ internal fun Project.kotlin(action: KotlinProjectExtension.() -> Unit) =
 
 internal fun Project.java(action: JavaPluginExtension.() -> Unit) =
     extensions.configure<JavaPluginExtension>(action)
+
+internal val Project.libs: VersionCatalog
+    get() = extensions.getByType<VersionCatalogsExtension>().named("libs")
+
+internal fun DependencyHandler.implementation(dependency: Any) =
+    add("implementation", dependency)

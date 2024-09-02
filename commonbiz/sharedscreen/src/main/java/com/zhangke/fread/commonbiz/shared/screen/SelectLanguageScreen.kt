@@ -26,7 +26,7 @@ import com.zhangke.fread.common.page.BaseScreen
 import java.util.Locale
 
 class SelectLanguageScreen(
-    private val onSelected: (Locale) -> Unit,
+    @Transient private val onSelected: (Locale) -> Unit,
 ) : BaseScreen() {
 
     @Composable

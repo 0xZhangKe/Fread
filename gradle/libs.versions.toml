@@ -64,6 +64,9 @@ google-service-version = "4.4.2"
 firebaseBom = "33.1.1"
 firebaseCrashlyticsPlugin = "3.0.2"
 
+goolgePlayReview = "2.0.1"
+goolgePlayReviewKtx = "2.0.1"
+
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
 androidx-activity = ["androidx.activity", "androidx.activity.ktx", "androidx.activity.compose"]
@@ -76,6 +79,8 @@ androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okht
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
 voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.screenModel", "voyager.hilt"]
+
+googlePlayReview = ["googlePlayReview", "googlePlayReviewKtx"]
 
 [libraries]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
@@ -185,12 +190,14 @@ ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
 halilibo-richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "halilibo-richtext" }
 halilibo-richtext-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "halilibo-richtext" }
 jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
-# FIXME: release imageLoader
-imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "1.8.3-alpha02" }
+imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "1.8.3" }
 okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }
 uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
 placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
+
+googlePlayReview = { group = "com.google.android.play", name = "review", version.ref = "goolgePlayReview" }
+googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "goolgePlayReview" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

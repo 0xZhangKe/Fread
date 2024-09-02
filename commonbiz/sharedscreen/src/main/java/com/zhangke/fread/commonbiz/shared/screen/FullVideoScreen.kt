@@ -8,11 +8,11 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
-import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.video.full.FullScreenVideoPlayer
 
-class FullVideoScreen(private val uri: PlatformUri) : BaseScreen() {
+class FullVideoScreen(private val uri: String) : BaseScreen() {
 
     @Composable
     override fun Content() {
@@ -25,7 +25,7 @@ class FullVideoScreen(private val uri: PlatformUri) : BaseScreen() {
             LocalExoPlayerManager provides playerManager
         ) {
             FullScreenVideoPlayer(
-                uri = uri,
+                uri = uri.toPlatformUri(),
                 onBackClick = navigator::pop,
             )
         }

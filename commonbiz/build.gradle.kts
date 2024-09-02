@@ -35,6 +35,8 @@ kotlin {
                 implementation(libs.hilt)
                 implementation(libs.krouter.core)
                 implementation(libs.filt.annotaions)
+
+                implementation(libs.bundles.googlePlayReview)
             }
         }
         androidUnitTest {

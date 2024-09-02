@@ -11,7 +11,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.MutableCreationExtras
 import androidx.lifecycle.viewmodel.compose.LocalViewModelStoreOwner
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.di.ViewModelKey
+import kotlin.reflect.KClass
 
 val LocalViewModelProviderFactory = staticCompositionLocalOf<ViewModelProvider.Factory> {
     error("No ViewModelProvider.Factory was provided via LocalViewModelProviderFactory")
@@ -29,9 +32,10 @@ public inline fun <reified T : ViewModel> Screen.getViewModel(
     val defaultViewModelProviderFactory = LocalViewModelProviderFactory.current
 
     return remember(key1 = T::class) {
-        val hasDefaultViewModelProviderFactory = requireNotNull(lifecycleOwner as? HasDefaultViewModelProviderFactory) {
-            "$lifecycleOwner is not a androidx.lifecycle.HasDefaultViewModelProviderFactory"
-        }
+        val hasDefaultViewModelProviderFactory =
+            requireNotNull(lifecycleOwner as? HasDefaultViewModelProviderFactory) {
+                "$lifecycleOwner is not a androidx.lifecycle.HasDefaultViewModelProviderFactory"
+            }
         val viewModelStore = requireNotNull(viewModelStoreOwner.viewModelStore) {
             "$viewModelStoreOwner is null or have a null viewModelStore"
         }
@@ -106,10 +110,27 @@ fun <VMF : ViewModelFactory> CreationExtras.withCreationCallback(callback: (VMF)
     MutableCreationExtras(this).addCreationCallback(callback)
 
 @Suppress("UNCHECKED_CAST")
-fun <VMF : ViewModelFactory> MutableCreationExtras.addCreationCallback(callback: (VMF) -> ViewModel): CreationExtras =
+private fun <VMF : ViewModelFactory> MutableCreationExtras.addCreationCallback(callback: (VMF) -> ViewModel): CreationExtras =
     this.apply {
         this[CREATION_CALLBACK_KEY] = { factory -> callback(factory as VMF) }
     }
 
-val CREATION_CALLBACK_KEY: CreationExtras.Key<(ViewModelFactory) -> ViewModel> =
+private val CREATION_CALLBACK_KEY: CreationExtras.Key<(ViewModelFactory) -> ViewModel> =
     object : CreationExtras.Key<(ViewModelFactory) -> ViewModel> {}
+
+internal class KotlinInjectViewModelProviderFactory(
+    private val viewModelMaps: Map<ViewModelKey, ViewModelCreator>,
+    private val viewModelFactoryMaps: Map<ViewModelKey, ViewModelFactory>,
+) : ViewModelProvider.Factory {
+    @Suppress("UNCHECKED_CAST")
+    override fun <T : ViewModel> create(modelClass: KClass<T>, extras: CreationExtras): T {
+        if (viewModelMaps.containsKey(modelClass)) {
+            return viewModelMaps[modelClass]!!() as T
+        } else if (viewModelFactoryMaps.containsKey(modelClass)) {
+            val callback: (ViewModelFactory) -> ViewModel = extras[CREATION_CALLBACK_KEY]!!
+            return callback(viewModelFactoryMaps[modelClass]!!) as T
+        } else {
+            throw IllegalArgumentException("Unknown ViewModel class: $modelClass")
+        }
+    }
+}

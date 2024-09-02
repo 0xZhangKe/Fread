@@ -1,11 +1,11 @@
 package com.zhangke.fread.common
 
-import android.app.Application
 import android.content.Context
-import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewmodel.ViewModelInitializer
+import androidx.lifecycle.ViewModelProvider
+import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
@@ -21,25 +21,33 @@ interface CommonComponent {
 
     val browserInterceptorSet: Set<BrowserInterceptor>
 
-    val viewModelMaps: Map<ViewModelKey, ViewModelCreator>
+    val viewModelProviderFactory: ViewModelProvider.Factory
 
-    val viewModelFactoryMaps: Map<ViewModelKey, ViewModelFactory>
+    @ApplicationScope
+    @Provides
+    fun provideViewModelProviderFactory(
+        viewModelMaps: Map<ViewModelKey, ViewModelCreator>,
+        viewModelFactoryMaps: Map<ViewModelKey, ViewModelFactory>,
+    ): ViewModelProvider.Factory {
+        return KotlinInjectViewModelProviderFactory(
+            viewModelMaps = viewModelMaps,
+            viewModelFactoryMaps = viewModelFactoryMaps,
+        )
+    }
 
     @ApplicationScope
     @Provides
     fun provideStatusDatabases(
-        application: Application,
-        // @ApplicationContext context: Context
+        context: ApplicationContext,
     ): StatusDatabase {
-        return StatusDatabase.getInstance(application)
+        return StatusDatabase.getInstance(context)
     }
 
     @Provides
     fun provideContentConfigDatabases(
-        // @ApplicationContext context: Context
-        application: Application,
+        context: ApplicationContext,
     ): ContentConfigDatabases {
-        return ContentConfigDatabases.getInstance(application)
+        return ContentConfigDatabases.getInstance(context)
     }
 
     @IntoSet

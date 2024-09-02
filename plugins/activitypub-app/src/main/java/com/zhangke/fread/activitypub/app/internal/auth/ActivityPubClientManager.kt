@@ -3,10 +3,11 @@ package com.zhangke.fread.activitypub.app.internal.auth
 import com.zhangke.activitypub.ActivityPubClient
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
 import com.zhangke.framework.architect.http.GlobalOkHttpClient
-import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.fread.status.model.IdentityRole
+import io.ktor.client.engine.okhttp.OkHttp
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -44,8 +45,10 @@ class ActivityPubClientManager @Inject constructor(
     ): ActivityPubClient {
         return ActivityPubClient(
             baseUrl = "${baseUrl}/",
-            httpClient = GlobalOkHttpClient.client,
-            gson = globalGson,
+            engine = OkHttp.create {
+                preconfigured = GlobalOkHttpClient.client
+            },
+            json = globalJson,
             tokenProvider = tokenProvider,
             onAuthorizeFailed = {
 

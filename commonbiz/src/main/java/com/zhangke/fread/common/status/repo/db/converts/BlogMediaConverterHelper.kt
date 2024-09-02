@@ -1,15 +1,19 @@
 package com.zhangke.fread.common.status.repo.db.converts
 
 import androidx.room.TypeConverter
-import com.google.gson.JsonObject
-import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 class BlogMediaConverterHelper {
 
-    @TypeConverter
     fun fromJsonObject(jsonObject: JsonObject?): BlogMedia? {
         if (jsonObject == null) return null
         return BlogMedia(
@@ -20,54 +24,50 @@ class BlogMediaConverterHelper {
             remoteUrl = jsonObject.getStringOrNull("remoteUrl"),
             description = jsonObject.getStringOrNull("description"),
             blurhash = jsonObject.getStringOrNull("blurhash"),
-            meta = jsonObject.get("meta")?.asJsonObject?.let(::convertJsonObjectToMeta),
+            meta = jsonObject.get("meta")?.jsonObject?.let(::convertJsonObjectToMeta),
         )
     }
 
-    @TypeConverter
     fun toJsonObject(media: BlogMedia?): JsonObject? {
         if (media == null) return null
-        val jsonObject = JsonObject()
-        jsonObject.addProperty("id", media.id)
-        jsonObject.addProperty("url", media.url)
-        jsonObject.addProperty("type", media.type.name)
-        jsonObject.addStringIfNotNull("previewUrl", media.previewUrl)
-        jsonObject.addStringIfNotNull("remoteUrl", media.remoteUrl)
-        jsonObject.addStringIfNotNull("description", media.description)
-        jsonObject.addStringIfNotNull("blurhash", media.blurhash)
-        media.meta
-            ?.let { convertMetaToJsonObject(it) }
-            ?.let { jsonObject.add("meta", it) }
-        return jsonObject
+        val map = buildMap {
+            put("id", JsonPrimitive(media.id))
+            put("url", JsonPrimitive(media.url))
+            put("type", JsonPrimitive(media.type.name))
+            if (media.previewUrl != null) put("previewUrl", JsonPrimitive(media.previewUrl))
+            if (media.remoteUrl != null) put("remoteUrl", JsonPrimitive(media.remoteUrl))
+            if (media.description != null) put("description", JsonPrimitive(media.description))
+            if (media.blurhash != null) put("blurhash", JsonPrimitive(media.blurhash))
+            media.meta
+                ?.let { convertMetaToJsonObject(it) }
+                ?.let { put("meta", it) }
+        }
+        return JsonObject(map)
     }
 
     private fun convertJsonObjectToMeta(jsonObject: JsonObject): BlogMediaMeta {
-        return when (jsonObject.get("type").asString.let(::toType)) {
+        return when (jsonObject.getStringOrNull("type")?.let(::toType)) {
             BlogMediaType.IMAGE -> {
-                globalGson.fromJson(
-                    jsonObject.get("data").asJsonObject,
-                    BlogMediaMeta.ImageMeta::class.java
+                globalJson.decodeFromString<BlogMediaMeta.ImageMeta>(
+                    jsonObject.getStringOrNull("data").orEmpty()
                 )
             }
 
             BlogMediaType.GIFV -> {
-                globalGson.fromJson(
-                    jsonObject.get("data").asJsonObject,
-                    BlogMediaMeta.GifvMeta::class.java
+                globalJson.decodeFromString<BlogMediaMeta.GifvMeta>(
+                    jsonObject.getStringOrNull("data").orEmpty()
                 )
             }
 
             BlogMediaType.VIDEO -> {
-                globalGson.fromJson(
-                    jsonObject.get("data").asJsonObject,
-                    BlogMediaMeta.VideoMeta::class.java
+                globalJson.decodeFromString<BlogMediaMeta.VideoMeta>(
+                    jsonObject.getStringOrNull("data").orEmpty()
                 )
             }
 
             BlogMediaType.AUDIO -> {
-                globalGson.fromJson(
-                    jsonObject.get("data").asJsonObject,
-                    BlogMediaMeta.AudioMeta::class.java
+                globalJson.decodeFromString<BlogMediaMeta.AudioMeta>(
+                    jsonObject.getStringOrNull("data").orEmpty()
                 )
             }
 
@@ -77,16 +77,17 @@ class BlogMediaConverterHelper {
 
     @TypeConverter
     private fun convertMetaToJsonObject(meta: BlogMediaMeta): JsonObject {
-        val jsonObject = JsonObject()
         val type = when (meta) {
             is BlogMediaMeta.ImageMeta -> BlogMediaType.IMAGE
             is BlogMediaMeta.GifvMeta -> BlogMediaType.GIFV
             is BlogMediaMeta.VideoMeta -> BlogMediaType.VIDEO
             is BlogMediaMeta.AudioMeta -> BlogMediaType.AUDIO
         }
-        jsonObject.addProperty("type", type.name)
-        jsonObject.add("data", globalGson.toJsonTree(meta))
-        return jsonObject
+        val map = buildMap {
+            put("type", JsonPrimitive(type.name))
+            put("data", JsonPrimitive(globalJson.encodeToString(meta)))
+        }
+        return JsonObject(map)
     }
 
     private fun toType(typeName: String): BlogMediaType {
@@ -94,15 +95,10 @@ class BlogMediaConverterHelper {
     }
 
     private fun JsonObject.getString(key: String): String {
-        return get(key).asString
+        return get(key)?.jsonPrimitive?.contentOrNull.orEmpty()
     }
 
     private fun JsonObject.getStringOrNull(key: String): String? {
-        return get(key)?.asString
-    }
-
-    private fun JsonObject.addStringIfNotNull(key: String, value: String?) {
-        if (value == null) return
-        addProperty(key, value)
+        return get(key)?.jsonPrimitive?.contentOrNull
     }
 }

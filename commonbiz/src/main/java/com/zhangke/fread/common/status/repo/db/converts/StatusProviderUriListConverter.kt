@@ -1,17 +1,16 @@
 package com.zhangke.fread.common.status.repo.db.converts
 
 import androidx.room.TypeConverter
-import com.google.gson.reflect.TypeToken
-import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.uri.FormalUri
+import kotlinx.serialization.encodeToString
 
 class StatusProviderUriListConverter {
 
     @TypeConverter
     fun fromString(text: String?): List<FormalUri>? {
         text ?: return null
-        val stringList: List<String> =
-            globalGson.fromJson(text, object : TypeToken<List<String>>() {}.type)
+        val stringList: List<String> = globalJson.decodeFromString(text)
         return stringList.map(::stringToUri)
     }
 
@@ -19,7 +18,7 @@ class StatusProviderUriListConverter {
     fun toString(uriList: List<FormalUri>?): String? {
         uriList ?: return null
         val stringList = uriList.map(::uriToString)
-        return globalGson.toJson(stringList).toString()
+        return globalJson.encodeToString(stringList)
     }
 
     private fun stringToUri(string: String): FormalUri {

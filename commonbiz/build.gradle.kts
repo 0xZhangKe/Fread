@@ -34,7 +34,6 @@ dependencies {
     ksp(libs.androidx.room.compiler)
     implementation(libs.hilt)
     ksp(libs.hilt.compiler)
-    implementation(libs.gson)
     implementation(libs.bundles.voyager)
 
     implementation(libs.krouter.core)

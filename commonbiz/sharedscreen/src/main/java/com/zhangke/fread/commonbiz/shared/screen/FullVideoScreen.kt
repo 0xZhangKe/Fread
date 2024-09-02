@@ -5,7 +5,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.video.ExoPlayerManager
@@ -13,7 +12,7 @@ import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.video.full.FullScreenVideoPlayer
 
-class FullVideoScreen(private val uri: Uri) : BaseScreen() {
+class FullVideoScreen(private val uri: String) : BaseScreen() {
 
     @Composable
     override fun Content() {
@@ -26,7 +25,7 @@ class FullVideoScreen(private val uri: Uri) : BaseScreen() {
             LocalExoPlayerManager provides playerManager
         ) {
             FullScreenVideoPlayer(
-                uri = uri,
+                uri = Uri.parse(uri),
                 onBackClick = navigator::pop,
             )
         }

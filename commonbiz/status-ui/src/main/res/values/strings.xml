@@ -13,6 +13,7 @@
     <string name="status_ui_unfollow">Unfollow</string>
     <string name="status_ui_pin">Pin</string>
     <string name="status_ui_unpin">Unpin</string>
+    <string name="status_ui_edit">Edit</string>
 
     <string name="status_ui_new_status">New Content</string>
 

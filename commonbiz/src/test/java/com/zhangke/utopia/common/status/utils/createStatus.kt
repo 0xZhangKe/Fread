@@ -1,4 +1,4 @@
-package com.zhangke.fread.common.status.utils
+package com.zhangke.utopia.common.status.utils
 
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
@@ -8,6 +8,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
@@ -47,6 +48,7 @@ fun createStatus(
             platform = createBlogPlatform(),
             mentions = emptyList(),
             tags = emptyList(),
+            visibility = StatusVisibility.PUBLIC,
         ),
         supportInteraction = emptyList()
     )

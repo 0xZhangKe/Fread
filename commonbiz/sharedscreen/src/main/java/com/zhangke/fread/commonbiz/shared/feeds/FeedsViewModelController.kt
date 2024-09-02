@@ -7,6 +7,7 @@ import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusConfigurationDefault
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.model.updateStatus
@@ -33,6 +34,7 @@ import kotlinx.coroutines.launch
 class FeedsViewModelController(
     statusProvider: StatusProvider,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
+    statusUpdater: StatusUpdater,
     refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : IFeedsViewModelController {
 
@@ -45,6 +47,7 @@ class FeedsViewModelController(
 
     private val interactiveHandler = InteractiveHandler(
         statusProvider = statusProvider,
+        statusUpdater = statusUpdater,
         buildStatusUiState = buildStatusUiState,
         refactorToNewBlog = refactorToNewBlog,
     )

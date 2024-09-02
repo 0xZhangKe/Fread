@@ -13,6 +13,7 @@
     <string name="status_ui_unfollow">取消关注</string>
     <string name="status_ui_pin">置顶</string>
     <string name="status_ui_unpin">取消置顶</string>
+    <string name="status_ui_edit">编辑</string>
 
     <string name="status_ui_new_status">新内容</string>
 

@@ -20,7 +20,7 @@ class PlayableIndexRecorder {
         private const val UNSPECIFIED_INDEX = -1
     }
 
-    private val _recorder = sortedSetOf<Int>()
+    private val _recorder = mutableSetOf<Int>()
 
     private val _currentActiveIndex = mutableIntStateOf(-1)
     val currentActiveIndex: Int by _currentActiveIndex
@@ -65,7 +65,7 @@ class PlayableIndexRecorder {
 
     private fun getIntervalIndexList(startIndex: Int, endIndex: Int): List<Int> {
         val intervalList = mutableListOf<Int>()
-        _recorder.forEach { index ->
+        _recorder.sorted().forEach { index ->
             if (index > endIndex) return@forEach
             if (index in startIndex..endIndex) {
                 intervalList += index

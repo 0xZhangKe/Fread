@@ -30,9 +30,7 @@ import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.option.SizeResolver
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
-import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -217,28 +215,6 @@ internal fun BlogImage(
             contentScale = ContentScale.Crop,
             contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
         )
-    }
-}
-
-@Composable
-private fun BlogGifVideoMedia(
-    modifier: Modifier,
-    media: BlogMedia,
-    hideContent: Boolean,
-) {
-    val videoUri = remember(media) {
-        media.url.toPlatformUri()
-    }
-    Box(
-        modifier = modifier,
-    ) {
-        if (!hideContent) {
-            VideoPlayer(
-                modifier = Modifier.fillMaxSize(),
-                uri = videoUri,
-                playWhenReady = true,
-            )
-        }
     }
 }
 

@@ -17,7 +17,6 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldColors
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,12 +27,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
@@ -41,7 +37,8 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.common.page.BaseScreen
 
 class InputMediaDescriptionScreen(
-    private val file: PostStatusFile,
+    private val previewUrl: String,
+    private val description: String?,
     @Transient private val onDescriptionInputted: (String) -> Unit,
 ) : BaseScreen() {
 
@@ -50,7 +47,7 @@ class InputMediaDescriptionScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         var inputtedText by remember {
-            mutableStateOf(file.description.orEmpty())
+            mutableStateOf(description.orEmpty())
         }
         Scaffold(
             topBar = {
@@ -81,9 +78,7 @@ class InputMediaDescriptionScreen(
                 verticalArrangement = Arrangement.Top,
             ) {
                 AutoSizeImage(
-                    remember(file.file.uri) {
-                        ImageRequest(file.file.uri)
-                    },
+                    previewUrl,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(paddingValues)

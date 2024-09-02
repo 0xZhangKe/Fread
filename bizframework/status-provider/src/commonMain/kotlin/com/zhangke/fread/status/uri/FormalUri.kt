@@ -4,8 +4,8 @@ import com.zhangke.framework.utils.Parcelize
 import com.zhangke.framework.utils.PlatformIgnoredOnParcel
 import com.zhangke.framework.utils.PlatformParcelable
 import com.zhangke.framework.utils.PlatformSerializable
+import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.framework.utils.uriString
-import io.ktor.http.encodeURLPath
 import kotlinx.serialization.Serializable
 
 @Parcelize
@@ -93,5 +93,5 @@ class FormalUri private constructor(
 }
 
 fun FormalUri.encode(): String {
-    return this.toRawString().encodeURLPath()
+    return UrlEncoder.encode(toRawString())
 }

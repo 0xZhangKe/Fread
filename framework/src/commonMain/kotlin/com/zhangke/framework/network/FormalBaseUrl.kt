@@ -3,8 +3,8 @@ package com.zhangke.framework.network
 import com.zhangke.framework.utils.Parcelize
 import com.zhangke.framework.utils.PlatformParcelable
 import com.zhangke.framework.utils.PlatformSerializable
+import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.framework.utils.uriString
-import io.ktor.http.encodeURLPath
 import kotlinx.serialization.Serializable
 
 @Parcelize
@@ -75,5 +75,5 @@ class FormalBaseUrl private constructor(
 }
 
 fun FormalBaseUrl.encode(): String {
-    return this.toRawString().encodeURLPath()
+    return UrlEncoder.encode(toRawString())
 }

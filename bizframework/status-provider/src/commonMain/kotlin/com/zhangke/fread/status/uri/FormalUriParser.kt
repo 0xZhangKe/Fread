@@ -19,6 +19,7 @@ class FormalUriParser(
         val path = findPath(fixedUriString)
         if (path.isNullOrEmpty()) return null
         val queries = findQueries(fixedUriString)
+        if (queries.isEmpty()) return null
         return Triple(host, path, queries)
     }
 
@@ -30,7 +31,9 @@ class FormalUriParser(
 
     private fun findHost(uri: String): String? {
         val scheme = findScheme(uri) ?: return null
-        return uri.removePrefix("$scheme://")
+        val uriNoSchemeAndQuery = uri.removePrefix("$scheme://").substringBefore('?')
+        if (!uriNoSchemeAndQuery.contains('/')) return null
+        return uriNoSchemeAndQuery
             .split("/")
             .getOrNull(0)
     }
@@ -38,10 +41,8 @@ class FormalUriParser(
     private fun findPath(uri: String): String? {
         val scheme = findScheme(uri) ?: return null
         val host = findHost(uri) ?: return null
-        return uri.removePrefix("$scheme://$host/")
-            .split('?')
-            .getOrNull(0)
-            ?.takeIf { it.isNotEmpty() }
+        return uri.removePrefix("$scheme://$host/").substringBefore('?')
+            .takeIf { it.isNotEmpty() }
             ?.let { "/$it" }
     }
 

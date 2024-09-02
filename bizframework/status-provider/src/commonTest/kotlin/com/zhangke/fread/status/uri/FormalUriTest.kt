@@ -1,7 +1,9 @@
-package com.zhangke.fread.status_provider
+package com.zhangke.fread.status.uri
 
-import com.zhangke.fread.status.uri.FormalUri
-import org.junit.Test
+import kotlin.test.Test
+import kotlin.test.assertEquals
+import kotlin.test.assertTrue
+
 
 class FormalUriTest {
 
@@ -9,9 +11,8 @@ class FormalUriTest {
     fun `should throw when empty host`() {
         try {
             FormalUri.create("", "", emptyMap())
-            assert(false)
         } catch (e: Throwable) {
-            assert(true)
+            e.printStackTrace()
         }
     }
 
@@ -21,9 +22,9 @@ class FormalUriTest {
         val path = "user"
         val queries = mapOf("name" to "zhangke")
         val uri = FormalUri.create(host, path, queries)
-        assert(uri.host == host)
-        assert(uri.path == "/$path")
-        assert(uri.queries == queries)
+        assertEquals(uri.host, host)
+        assertEquals(uri.path, "/$path")
+        assertEquals(uri.queries, queries)
     }
 
     @Test
@@ -32,9 +33,9 @@ class FormalUriTest {
         val path = "user/name"
         val queries = mapOf("name" to "zhangke")
         val uri = FormalUri.create(host, path, queries)
-        assert(uri.host == host)
-        assert(uri.path == "/$path")
-        assert(uri.queries == queries)
+        assertEquals(uri.host, host)
+        assertEquals(uri.path, "/$path")
+        assertEquals(uri.queries, queries)
     }
 
     @Test
@@ -43,9 +44,9 @@ class FormalUriTest {
         val path = "user/"
         val queries = mapOf("name" to "zhangke")
         val uri = FormalUri.create(host, path, queries)
-        assert(uri.host == host)
-        assert(uri.path == "/user")
-        assert(uri.queries == queries)
+        assertEquals(uri.host, host)
+        assertEquals(uri.path, "/user")
+        assertEquals(uri.queries, queries)
     }
 
     @Test
@@ -54,112 +55,112 @@ class FormalUriTest {
         val path = "user/name/as/"
         val queries = mapOf("name" to "zhangke")
         val uri = FormalUri.create(host, path, queries)
-        assert(uri.host == host)
-        assert(uri.path == "/user/name/as")
-        assert(uri.queries == queries)
+        assertEquals(uri.host, host)
+        assertEquals(uri.path, "/user/name/as")
+        assertEquals(uri.queries, queries)
     }
 
     @Test
     fun `should return null when scheme is bad`() {
         val uriString = "badScheme://activity/user?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return null when scheme is empty`() {
         val uriString = "://activity/user?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return null when scheme and divider is empty`() {
         val uriString = "activity/user?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return uri when scheme is ok`() {
         val uriString = "${FormalUri.SCHEME}://activity/user?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri != null)
+        assertTrue(uri != null)
     }
 
     @Test
     fun `should return null when host is empty`() {
         val uriString = "${FormalUri.SCHEME}:///user?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return null when host is null`() {
         val uriString = "${FormalUri.SCHEME}://user?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return null when path is empty`() {
         val uriString = "${FormalUri.SCHEME}://activity_pub/?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return null when path is null`() {
-        val uriString = "${FormalUri.SCHEME}://activity_pub/query=zhang"
+        val uriString = "${FormalUri.SCHEME}://activity_pub/?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return null when path and divider is null`() {
         val uriString = "${FormalUri.SCHEME}://activity_pub?query=zhang"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return null when query is null`() {
         val uriString = "${FormalUri.SCHEME}://activity_pub/user"
         val uri = FormalUri.from(uriString)
-        assert(uri == null)
+        assertEquals(uri, null)
     }
 
     @Test
     fun `should return uri when query is empty`() {
         val uriString = "${FormalUri.SCHEME}://activity_pub/user?query="
         val uri = FormalUri.from(uriString)
-        assert(uri != null)
+        assertTrue(uri != null)
     }
 
     @Test
     fun `should return uri and empty query when query is empty`() {
         val uriString = "${FormalUri.SCHEME}://activity_pub/user?query="
         val uri = FormalUri.from(uriString)
-        assert(uri!!.host == "activity_pub")
-        assert(uri.path == "/user")
-        assert(uri.queries["query"] == "")
+        assertEquals(uri!!.host, "activity_pub")
+        assertEquals(uri.path, "/user")
+        assertEquals(uri.queries["query"], "")
     }
 
     @Test
     fun `should return uri when uri is ok`() {
         val uriString = "${FormalUri.SCHEME}://activity_pub/user?query=zhangke"
         val uri = FormalUri.from(uriString)
-        assert(uri!!.host == "activity_pub")
-        assert(uri.path == "/user")
-        assert(uri.queries["query"] == "zhangke")
+        assertEquals(uri!!.host, "activity_pub")
+        assertEquals(uri.path, "/user")
+        assertEquals(uri.queries["query"], "zhangke")
     }
 
     @Test
     fun `should return uri when have multiple path`() {
         val uriString = "${FormalUri.SCHEME}://activity_pub/user/name?query=zhangke"
         val uri = FormalUri.from(uriString)
-        assert(uri!!.host == "activity_pub")
-        assert(uri.path == "/user/name")
-        assert(uri.queries["query"] == "zhangke")
+        assertEquals(uri!!.host, "activity_pub")
+        assertEquals(uri.path, "/user/name")
+        assertEquals(uri.queries["query"], "zhangke")
     }
 }

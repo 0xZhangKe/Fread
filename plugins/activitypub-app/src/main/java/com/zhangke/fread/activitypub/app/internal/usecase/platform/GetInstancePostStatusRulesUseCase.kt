@@ -20,9 +20,9 @@ class GetInstancePostStatusRulesUseCase @Inject constructor(
 
     private fun ActivityPubInstanceConfigurationEntity.toRule(): PostBlogRules {
         return PostBlogRules(
-            maxCharacters = this.statuses.maxCharacters,
-            maxMediaCount = this.statuses.maxMediaAttachments,
-            maxPollOptions = this.polls.maxOptions,
+            maxCharacters = this.statuses?.maxCharacters ?: 0,
+            maxMediaCount = this.statuses?.maxMediaAttachments ?: 0,
+            maxPollOptions = this.polls?.maxOptions ?: 0,
         )
     }
 }

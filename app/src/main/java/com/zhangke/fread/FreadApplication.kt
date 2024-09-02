@@ -8,6 +8,7 @@ import coil.ImageLoader
 import coil.decode.GifDecoder
 import coil.decode.ImageDecoderDecoder
 import coil.decode.VideoFrameDecoder
+import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.utils.initApplication
@@ -35,6 +36,7 @@ class FreadApplication : Application() {
         LanguageHelper.prepare(this)
         initCoil(this)
         initModuleStartups()
+        TopActivityManager.init(this)
     }
 
     private fun initCoil(context: Context) {

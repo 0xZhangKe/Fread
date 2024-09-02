@@ -1,6 +1,5 @@
 package com.zhangke.fread.common.status.usecase
 
-import com.zhangke.framework.collections.mapFirstOrNull
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.status.model.StatusInteraction
 import javax.inject.Inject
@@ -22,6 +21,11 @@ class GenerateMoreInteraction @Inject constructor() {
         interactions.firstNotNullOfOrNull { it as? StatusInteraction.Pin }?.let {
             if (it.enable) {
                 moreInteractions += StatusUiInteraction.Pin(it)
+            }
+        }
+        interactions.firstNotNullOfOrNull { it as? StatusInteraction.Edit }?.let {
+            if (it.enable) {
+                moreInteractions += StatusUiInteraction.Edit(it)
             }
         }
         return moreInteractions

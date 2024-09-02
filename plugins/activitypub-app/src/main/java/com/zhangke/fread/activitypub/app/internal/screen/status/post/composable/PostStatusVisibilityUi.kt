@@ -33,6 +33,7 @@ import com.zhangke.fread.status.model.StatusVisibility
 internal fun PostStatusVisibilityUi(
     modifier: Modifier,
     visibility: StatusVisibility,
+    changeable: Boolean,
     onVisibilitySelect: (StatusVisibility) -> Unit,
 ) {
     var showSelector by remember {
@@ -47,7 +48,7 @@ internal fun PostStatusVisibilityUi(
                     shape = RoundedCornerShape(6.dp),
                 )
                 .padding(horizontal = 4.dp, vertical = 2.dp)
-                .clickable { showSelector = true },
+                .clickable(changeable) { showSelector = true },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
@@ -62,10 +63,12 @@ internal fun PostStatusVisibilityUi(
                 style = MaterialTheme.typography.bodySmall,
             )
             Box(modifier = Modifier.width(4.dp))
-            Icon(
-                imageVector = Icons.Default.ArrowDropDown,
-                contentDescription = null,
-            )
+            if (changeable) {
+                Icon(
+                    imageVector = Icons.Default.ArrowDropDown,
+                    contentDescription = null,
+                )
+            }
         }
         DropdownMenu(
             expanded = showSelector,

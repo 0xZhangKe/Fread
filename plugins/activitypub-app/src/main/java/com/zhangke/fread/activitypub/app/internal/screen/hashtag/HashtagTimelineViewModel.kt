@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusConfigurationDefault
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
@@ -28,6 +29,7 @@ import java.util.Calendar
 class HashtagTimelineViewModel @AssistedInject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val context: Context,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
@@ -37,6 +39,7 @@ class HashtagTimelineViewModel @AssistedInject constructor(
     private val hashtag: String,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

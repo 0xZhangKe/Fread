@@ -1,14 +1,17 @@
+name: Check CI
+
 on:
-  push:
-    tags:
-      - '**'
+  pull_request:
+    paths-ignore:
+      - 'documents/**'
+      - '**.md'
 
 concurrency:
-  group: ${{ github.event.pull_request.number }}-build-ci
+  group: ${{ github.event.pull_request.number }}-check-ci
   cancel-in-progress: true
 
 jobs:
-  build:
+  assemble:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository and submodules
@@ -28,11 +31,5 @@ jobs:
           distribution: 'zulu'
           java-version: 17
 
-      - name: Build with Gradle
-        run: bash ./gradlew assembleRelease
-
-      - name: Upload APK
-        uses: actions/upload-artifact@v2
-        with:
-          name: app
-          path: app/build/outputs/apk/release/app-release.apk
+      - name: Assemble
+        run: ./gradlew assembleRelease --stacktrace

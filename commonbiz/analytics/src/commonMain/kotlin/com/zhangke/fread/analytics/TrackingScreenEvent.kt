@@ -6,6 +6,7 @@ import androidx.compose.runtime.LaunchedEffect
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 
+
 private val screenShownIdSet = mutableSetOf<String>()
 private val tabShownIdSet = mutableSetOf<String>()
 
@@ -51,18 +52,11 @@ private fun onTabShow(
     reportPageShow(tab.pageEventName, paramsBuilder)
 }
 
-private val Screen.pageEventName: String
-    get() = this::class.java.simpleName
 
-private val PagerTab.pageEventName: String
-    get() = this::class.java.simpleName
+internal expect val Screen.pageEventName: String
 
-private fun Screen?.generateEventId(): String {
-    if (this == null) return "unknownPage"
-    return "${this.javaClass.simpleName}@${this.hashCode()}"
-}
+internal expect val PagerTab.pageEventName: String
 
-private fun PagerTab?.generateEventId(): String {
-    if (this == null) return "unknownPage"
-    return "${this.javaClass.simpleName}@${this.hashCode()}"
-}
+internal expect fun Screen?.generateEventId(): String
+
+internal expect fun PagerTab?.generateEventId(): String

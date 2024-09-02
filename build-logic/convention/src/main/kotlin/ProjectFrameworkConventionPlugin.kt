@@ -1,4 +1,6 @@
 import com.zhangke.fread.compose
+import com.zhangke.fread.implementation
+import com.zhangke.fread.libs
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
@@ -11,15 +13,17 @@ class ProjectFrameworkConventionPlugin: Plugin<Project> {
                 apply("fread.compose.multiplatform")
             }
             dependencies.apply {
-                add("implementation", compose.runtime)
-                add("implementation", compose.ui)
-                add("implementation", compose.foundation)
-                add("implementation", compose.material)
-                add("implementation", compose.materialIconsExtended)
-                add("implementation", compose.material3)
+                implementation(compose.runtime)
+                implementation(compose.ui)
+                implementation(compose.foundation)
+                implementation(compose.material)
+                implementation(compose.materialIconsExtended)
+                implementation(compose.material3)
 
-                add("implementation", compose.uiTooling)
-                add("implementation", compose.preview)
+                implementation(compose.uiTooling)
+                implementation(compose.preview)
+
+                implementation(libs.findLibrary("kotlinx-datetime").get())
             }
         }
     }

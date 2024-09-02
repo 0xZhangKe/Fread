@@ -26,6 +26,10 @@ data class Blog(
     val repliesCount: Int?,
     val sensitive: Boolean,
     val spoilerText: String,
+    /**
+     * ISO 639 Part 1 two-letter language code
+     */
+    val language: String? = null,
     val platform: BlogPlatform,
     val mediaList: List<BlogMedia>,
     val emojis: List<Emoji>,

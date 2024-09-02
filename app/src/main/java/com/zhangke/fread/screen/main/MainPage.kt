@@ -41,6 +41,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
 import com.zhangke.framework.utils.extractActivity
+import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.explore.ExploreTab
 import com.zhangke.fread.feature.message.NotificationsTab
 import com.zhangke.fread.feeds.FeedsHomeTab
@@ -180,6 +181,7 @@ private fun RowScope.TabNavigationItem(
             } else {
                 tabNavigator.current = tab
                 latestClickTime = 0L
+                FreadReviewManager.trigger()
             }
         },
         alwaysShowLabel = false,

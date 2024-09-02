@@ -40,7 +40,8 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.common.page.BaseScreen
 
 class InputMediaDescriptionScreen(
-    private val file: PostStatusFile,
+    private val previewUrl: String,
+    private val description: String?,
     @Transient private val onDescriptionInputted: (String) -> Unit,
 ) : BaseScreen() {
 
@@ -49,7 +50,7 @@ class InputMediaDescriptionScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         var inputtedText by remember {
-            mutableStateOf(file.description.orEmpty())
+            mutableStateOf(description.orEmpty())
         }
         Scaffold(
             topBar = {
@@ -84,7 +85,7 @@ class InputMediaDescriptionScreen(
                         .fillMaxWidth()
                         .padding(paddingValues)
                         .aspectRatio(1F),
-                    model = file.file.uri,
+                    model = previewUrl,
                     contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )

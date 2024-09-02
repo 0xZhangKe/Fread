@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.model.updateStatus
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -24,11 +25,13 @@ import kotlinx.coroutines.flow.update
 @HiltViewModel(assistedFactory = SearchStatusViewModel.Factory::class)
 class SearchStatusViewModel @AssistedInject constructor(
     private val statusProvider: StatusProvider,
+    statusUpdater: StatusUpdater,
     buildStatusUiState: BuildStatusUiStateUseCase,
     refactorToNewBlog: RefactorToNewBlogUseCase,
     @Assisted val role: IdentityRole,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

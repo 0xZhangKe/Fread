@@ -4,6 +4,7 @@ import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -22,6 +23,7 @@ import kotlinx.coroutines.flow.update
 class StatusContextSubViewModel(
     private val feedsRepo: FeedsRepo,
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val role: IdentityRole,
@@ -29,6 +31,7 @@ class StatusContextSubViewModel(
     private val blogTranslationUiState: BlogTranslationUiState?,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {
@@ -50,7 +53,11 @@ class StatusContextSubViewModel(
             onInteractiveHandleResult = {
                 when (it) {
                     is InteractiveHandleResult.UpdateStatus -> {
-                        updateStatus(it.status)
+                        val anchorStatus = _uiState.value.contextStatus
+                            .firstOrNull { status -> status.type == StatusInContextType.ANCHOR }
+                        if (anchorStatus?.status != it.status) {
+                            updateStatus(it.status)
+                        }
                     }
 
                     is InteractiveHandleResult.DeleteStatus -> {
@@ -85,7 +92,9 @@ class StatusContextSubViewModel(
                         role = role,
                         status = it,
                         blogTranslationState = blogTranslationUiState
-                    )
+                    ).also { status ->
+                        statusUpdater.update(status)
+                    }
                 )
             }
     }

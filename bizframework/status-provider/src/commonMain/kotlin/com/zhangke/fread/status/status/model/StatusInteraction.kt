@@ -45,4 +45,9 @@ sealed class StatusInteraction : PlatformSerializable {
         val pinned: Boolean,
         override val enable: Boolean,
     ) : StatusInteraction(), PlatformSerializable
+
+    @Serializable
+    class Edit(
+        override val enable: Boolean,
+    ) : StatusInteraction(), PlatformSerializable
 }

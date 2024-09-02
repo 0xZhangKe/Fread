@@ -1,7 +1,5 @@
 package com.zhangke.framework.utils
 
-import io.ktor.http.encodeURLPath
-
 fun uriString(
     scheme: String,
     host: String,
@@ -27,7 +25,7 @@ fun uriString(
         val query = queries.entries
             .joinToString(prefix = "?", separator = "&") {
                 val value = if (encode) {
-                    it.value.encodeURLPath()
+                    UrlEncoder.encode(it.value)
                 } else {
                     it.value
                 }
@@ -39,5 +37,5 @@ fun uriString(
 }
 
 fun String.decodeAsUri(): String {
-    return encodeURLPath()
+    return UrlEncoder.decode(this)
 }

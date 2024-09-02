@@ -20,7 +20,7 @@ class FullVideoPlayDemoScreen : Screen {
         val navigator = LocalNavigator.currentOrThrow
         Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
             Button(onClick = {
-                FullVideoScreen(Uri.parse("https://media.cmx.edu.kg/media_attachments/files/112/782/745/301/676/929/original/78da2d1c7fd52d2f.mp4")).let {
+                FullVideoScreen("https://media.cmx.edu.kg/media_attachments/files/112/782/745/301/676/929/original/78da2d1c7fd52d2f.mp4").let {
                     navigator.push(it)
                 }
             }) {

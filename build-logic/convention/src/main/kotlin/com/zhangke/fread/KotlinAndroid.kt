@@ -20,15 +20,13 @@ import com.android.build.api.dsl.CommonExtension
 import org.gradle.api.JavaVersion
 import org.gradle.api.Project
 import org.gradle.api.file.DuplicatesStrategy
-import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.jvm.tasks.Jar
-import org.gradle.kotlin.dsl.configure
+import org.gradle.kotlin.dsl.assign
 import org.gradle.kotlin.dsl.provideDelegate
 import org.gradle.kotlin.dsl.withType
 import org.gradle.language.jvm.tasks.ProcessResources
-import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
+import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 import org.jetbrains.kotlin.gradle.dsl.KotlinVersion
-import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 /**
  * Configure base Kotlin with Android options
@@ -50,7 +48,6 @@ internal fun Project.configureKotlinAndroid(
             targetCompatibility = JavaVersion.VERSION_11
         }
     }
-
     configureKotlin()
 }
 
@@ -58,13 +55,12 @@ internal fun Project.configureKotlinAndroid(
  * Configure base Kotlin options for JVM (non-Android)
  */
 internal fun Project.configureKotlinJvm() {
-    extensions.configure<JavaPluginExtension> {
+    java {
         // Up to Java 11 APIs are available through desugaring
         // https://developer.android.com/studio/write/java11-minimal-support-table
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
     }
-
     configureKotlin()
 }
 
@@ -72,36 +68,28 @@ internal fun Project.configureKotlinJvm() {
  * Configure base Kotlin options
  */
 private fun Project.configureKotlin() {
-    // Use withType to workaround https://youtrack.jetbrains.com/issue/KT-55947
-//    tasks.named("compileKotlin", org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask::class.java){
-//        compilerOptions{
-//            languageVersion.set(KotlinVersion.KOTLIN_2_0)
-//            freeCompilerArgs.add("-Xcontext-receivers")
-//            freeCompilerArgs.add("-XXLanguage:+ExplicitBackingFields")
-//            freeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
-//            freeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
-//            freeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
-//        }
-//    }
-    tasks.withType<KotlinCompile>().configureEach {
-        kotlinOptions {
-            // Set JVM target to 11
-            jvmTarget = JavaVersion.VERSION_11.toString()
-            languageVersion = KotlinVersion.KOTLIN_2_0.version
-            val newFreeCompilerArgs = freeCompilerArgs.toMutableList()
-            newFreeCompilerArgs.add("-Xcontext-receivers")
-            newFreeCompilerArgs.add("-XXLanguage:+ExplicitBackingFields")
-            newFreeCompilerArgs.add("-opt-in=kotlin.RequiresOptIn")
-            newFreeCompilerArgs.add("-opt-in=kotlinx.coroutines.ExperimentalCoroutinesApi")
-            newFreeCompilerArgs.add("-opt-in=kotlinx.coroutines.FlowPreview")
-            freeCompilerArgs = newFreeCompilerArgs
+    kotlinCompile {
+        compilerOptions {
+            jvmTarget = JvmTarget.JVM_11
+            languageVersion = KotlinVersion.KOTLIN_2_0
             // Treat all Kotlin warnings as errors (disabled by default)
             // Override by setting warningsAsErrors=true in your ~/.gradle/gradle.properties
             val warningsAsErrors: String? by project
             allWarningsAsErrors = warningsAsErrors.toBoolean()
         }
     }
-    extensions.configure<KotlinProjectExtension>("kotlin") {
+    kotlin {
+        sourceSets.all {
+            languageSettings {
+                languageVersion = KotlinVersion.KOTLIN_2_0.version
+                enableLanguageFeature("ContextReceivers")
+                enableLanguageFeature("ExplicitBackingFields")
+                optIn("kotlin.RequiresOptIn")
+                optIn("kotlinx.coroutines.ExperimentalCoroutinesApi")
+                optIn("kotlinx.coroutines.FlowPreview")
+                optIn("androidx.compose.foundation.ExperimentalFoundationApi")
+            }
+        }
         sourceSets.findByName("main")?.apply {
             kotlin.srcDir("build/generated/ksp/main/kotlin")
             resources.srcDir("build/generated/ksp/main/resources")
@@ -113,11 +101,6 @@ private fun Project.configureKotlin() {
         sourceSets.findByName("release")?.apply {
             kotlin.srcDir("build/generated/ksp/release/kotlin")
             resources.srcDir("build/generated/ksp/release/resources")
-        }
-        sourceSets.all {
-            languageSettings {
-                languageVersion = "2.0"
-            }
         }
     }
     tasks.withType<ProcessResources>{

@@ -1,5 +1,5 @@
 /*
- * Copyright 2022 The Android Open Source Project
+ * Copyright 2023 The Android Open Source Project
  *
  *   Licensed under the Apache License, Version 2.0 (the "License");
  *   you may not use this file except in compliance with the License.
@@ -14,26 +14,18 @@
  *   limitations under the License.
  */
 
-import com.android.build.api.dsl.ApplicationExtension
-import com.android.build.gradle.LibraryExtension
-import com.zhangke.fread.configureAndroidCompose
+import com.zhangke.fread.configureKotlinJvm
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import org.gradle.kotlin.dsl.getByType
 
-class AndroidComposeConventionPlugin : Plugin<Project> {
+class KotlinJvmLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
         with(target) {
             with(pluginManager) {
-                apply("org.jetbrains.kotlin.plugin.compose")
+                apply("org.jetbrains.kotlin.jvm")
+                apply("org.jetbrains.kotlin.plugin.serialization")
             }
-            val extension =
-                try {
-                    extensions.getByType<LibraryExtension>()
-                } catch (e: Throwable) {
-                    extensions.getByType<ApplicationExtension>()
-                }
-            configureAndroidCompose(extension)
+            configureKotlinJvm()
         }
     }
 }

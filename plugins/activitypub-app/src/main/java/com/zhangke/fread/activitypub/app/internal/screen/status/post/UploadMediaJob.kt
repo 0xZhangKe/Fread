@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
 import com.zhangke.framework.utils.ContentProviderFile
-import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.CoroutineScope
@@ -55,6 +54,8 @@ class UploadMediaJob(
 
     sealed interface UploadState {
 
+        val successIdOrNull: String? get() = (this as? Success)?.id
+
         data object Idle : UploadState
 
         class Uploading : UploadState {
@@ -70,6 +71,7 @@ class UploadMediaJob(
         class Failed(val reason: Throwable?) : UploadState
 
         data class Success(val id: String) : UploadState
+
     }
 
     class CancelByManualException : RuntimeException()

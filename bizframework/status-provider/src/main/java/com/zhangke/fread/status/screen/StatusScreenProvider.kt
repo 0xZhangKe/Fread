@@ -19,6 +19,12 @@ class StatusScreenProvider(
         }
     }
 
+    suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+        return providerList.firstNotNullOfOrNull {
+            it.getEditBlogScreen(role, blog)
+        }
+    }
+
     fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
         return providerList.firstNotNullOfOrNull {
             it.getContentScreen(contentConfig, isLatestTab)
@@ -116,6 +122,8 @@ class StatusScreenProvider(
 interface IStatusScreenProvider {
 
     suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String?
+
+    suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String?
 
     fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab?
 

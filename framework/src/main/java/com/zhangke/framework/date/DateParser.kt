@@ -1,9 +1,11 @@
 package com.zhangke.framework.date
 
-import org.joda.time.format.ISODateTimeFormat
+import kotlinx.datetime.Instant
+import kotlinx.datetime.toJavaInstant
 import java.text.SimpleDateFormat
 import java.util.Date
 import java.util.Locale
+import java.util.TimeZone
 
 object DateParser {
 
@@ -14,7 +16,8 @@ object DateParser {
 
     fun parseISODate(datetime: String): Date? {
         return try {
-            ISODateTimeFormat.dateTime().parseDateTime(datetime).toDate()
+            val instant = Instant.parse(datetime)
+            Date.from(instant.toJavaInstant())
         } catch (e: Throwable) {
             null
         }
@@ -31,17 +34,21 @@ object DateParser {
 
     fun parseRfc3339Date(datetime: String): Date? {
         return try {
-            ISODateTimeFormat.dateTime().parseDateTime(datetime).toDate()
+            val instant = Instant.parse(datetime)
+            Date.from(instant.toJavaInstant())
         } catch (e: Throwable) {
             null
         }
     }
 
-    fun parseISO8601(datetime: String): Date? {
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", Locale.getDefault())
+    fun parseISO8601(datetime: String, locale: Locale = Locale.getDefault()): Date? {
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'", locale).apply {
+            timeZone = TimeZone.getTimeZone("UTC")
+        }
         return try {
             format.parse(datetime)
         } catch (e: Throwable) {
+            e.printStackTrace()
             null
         }
     }

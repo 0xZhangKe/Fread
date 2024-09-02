@@ -1,16 +1,18 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
 import android.content.Context
-import com.google.gson.JsonArray
-import com.google.gson.JsonObject
-import com.google.gson.JsonPrimitive
-import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
@@ -24,8 +26,8 @@ class BlogPlatformResourceLoader @Inject constructor(
     suspend fun loadLocalPlatforms(): List<PlatformSnapshot> = withContext(Dispatchers.IO) {
         val json = getLocalMastodonJson()
         if (json.isNullOrEmpty()) return@withContext emptyList()
-        return@withContext globalGson.fromJson(json, JsonArray::class.java)
-            ?.mapNotNull { if (it.isJsonObject) it.asJsonObject else null }
+        return@withContext globalJson.decodeFromString<JsonArray?>(json)
+            ?.mapNotNull { it as? JsonObject }
             ?.mapNotNull { it.toPlatformSnapshot() }
             ?: emptyList()
     }
@@ -48,15 +50,15 @@ class BlogPlatformResourceLoader @Inject constructor(
     private fun JsonObject.getAsString(key: String): String? {
         val element = get(key)
         if (element is JsonPrimitive) {
-            return element.asString
+            return element.contentOrNull
         }
         return null
     }
 
     private fun JsonObject.getAsInt(key: String): Int? {
         val element = get(key)
-        if (element is JsonPrimitive && element.isNumber) {
-            return element.asInt
+        if (element is JsonPrimitive) {
+            return element.intOrNull
         }
         return null
     }

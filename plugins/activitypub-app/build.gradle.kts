@@ -50,9 +50,6 @@ dependencies {
     implementation(libs.coil.gif)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
-    implementation(libs.retrofit2)
-    implementation(libs.retrofit2.converter.gson)
-    implementation(libs.gson)
     implementation(libs.auto.service.annotations)
     ksp(libs.auto.service.ksp)
     implementation(libs.androidx.paging.runtime)
@@ -64,4 +61,5 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
+    implementation(libs.ktor.client.okhttp)
 }

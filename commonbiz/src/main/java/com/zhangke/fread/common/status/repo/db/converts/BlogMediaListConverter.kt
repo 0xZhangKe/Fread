@@ -1,9 +1,10 @@
 package com.zhangke.fread.common.status.repo.db.converts
 
 import androidx.room.TypeConverter
-import com.google.gson.JsonArray
-import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.blog.BlogMedia
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.jsonObject
 
 class BlogMediaListConverter {
 
@@ -11,20 +12,22 @@ class BlogMediaListConverter {
 
     @TypeConverter
     fun fromStringList(text: String): List<BlogMedia> {
-        val jsonArray = globalGson.fromJson(text, JsonArray::class.java)
+        val jsonArray: JsonArray = globalJson.decodeFromString(text)
         val list = mutableListOf<BlogMedia>()
         jsonArray.forEach { element ->
-            mediaConvertHelper.fromJsonObject(element.asJsonObject)?.let { list += it }
+            mediaConvertHelper.fromJsonObject(element.jsonObject)?.let { list += it }
         }
         return list
     }
 
     @TypeConverter
     fun toStringList(list: List<BlogMedia>): String {
-        val jsonArray = JsonArray()
-        list.forEach { media ->
-            mediaConvertHelper.toJsonObject(media)?.let { jsonArray.add(it) }
-        }
-        return jsonArray.toString()
+        return JsonArray(
+            buildList {
+                list.forEach { media ->
+                    mediaConvertHelper.toJsonObject(media)?.let { add(it) }
+                }
+            },
+        ).toString()
     }
 }

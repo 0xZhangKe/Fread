@@ -42,8 +42,8 @@ android {
 //            resolutionStrategy { force support.'core-ktx' }
 //        }
         applicationId = "com.zhangke.fread"
-        versionCode = 100091
-        versionName = "1.0.91"
+        versionCode = 101001
+        versionName = "1.1.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }
@@ -137,6 +137,8 @@ dependencies {
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
+
+    implementation(libs.bundles.googlePlayReview)
 
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)

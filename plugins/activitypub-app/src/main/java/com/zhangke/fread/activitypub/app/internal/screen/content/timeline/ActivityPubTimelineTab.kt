@@ -61,6 +61,7 @@ class ActivityPubTimelineTab(
             uiState = uiState,
             nestedScrollConnection = nestedScrollConnection,
             composedStatusInteraction = viewModel.composedStatusInteraction,
+            onJumpedToStatus = viewModel::onJumpedToStatus,
             onLoadPrevious = viewModel::onLoadPreviousPage,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
@@ -76,6 +77,7 @@ class ActivityPubTimelineTab(
         uiState: ActivityPubTimelineUiState,
         nestedScrollConnection: NestedScrollConnection?,
         composedStatusInteraction: ComposedStatusInteraction,
+        onJumpedToStatus: () -> Unit,
         onLoadPrevious: () -> Unit,
         onLoadMore: () -> Unit,
         onRefresh: () -> Unit,
@@ -109,6 +111,7 @@ class ActivityPubTimelineTab(
                     if (!uiState.jumpToStatusId.isNullOrEmpty()) {
                         val jumpToIndex = uiState.items.getIndexByIdOrNull(uiState.jumpToStatusId)
                         if (jumpToIndex >= 0 && jumpToIndex < uiState.items.size) {
+                            onJumpedToStatus()
                             state.lazyListState.animateScrollToItem(jumpToIndex)
                         }
                     }

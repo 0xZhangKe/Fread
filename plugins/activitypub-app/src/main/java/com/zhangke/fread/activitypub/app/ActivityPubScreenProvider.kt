@@ -45,6 +45,19 @@ class ActivityPubScreenProvider @Inject constructor(
         )
     }
 
+    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+        if (blog.platform.protocol.notActivityPub) return null
+        var accountUri = role.accountUri
+        if (accountUri == null && role.baseUrl != null) {
+            accountUri = loggedAccountProvider.getAccount(role.baseUrl!!)?.uri
+        }
+        accountUri ?: return null
+        return PostStatusScreenRoute.buildEditBlogRoute(
+            accountUri = accountUri,
+            blog = blog,
+        )
+    }
+
     override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
         if (contentConfig !is ContentConfig.ActivityPubContent) return null
         return ActivityPubContentScreen(contentConfig.id, isLatestTab)

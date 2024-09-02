@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
@@ -30,6 +31,7 @@ import kotlinx.coroutines.flow.update
 // pull to refresh to load previous page
 class ActivityPubTimelineViewModel(
     private val statusProvider: StatusProvider,
+    statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     refactorToNewBlog: RefactorToNewBlogUseCase,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
@@ -40,6 +42,7 @@ class ActivityPubTimelineViewModel(
     private val listId: String?,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {
@@ -181,6 +184,10 @@ class ActivityPubTimelineViewModel(
         refreshJob?.invokeOnCancel {
             _uiState.update { it.copy(refreshing = false) }
         }
+    }
+
+    fun onJumpedToStatus() {
+        _uiState.update { it.copy(jumpToStatusId = null) }
     }
 
     fun onLoadPreviousPage() {

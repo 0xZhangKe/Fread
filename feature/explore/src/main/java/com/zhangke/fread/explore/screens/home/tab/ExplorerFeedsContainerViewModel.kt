@@ -1,6 +1,7 @@
 package com.zhangke.fread.explore.screens.home.tab
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.explore.usecase.GetExplorerItemUseCase
@@ -12,6 +13,7 @@ import javax.inject.Inject
 @HiltViewModel
 class ExplorerFeedsContainerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val getExplorerItem: GetExplorerItemUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
@@ -21,6 +23,7 @@ class ExplorerFeedsContainerViewModel @Inject constructor(
         return ExplorerFeedsViewModel(
             type = params.type,
             role = params.role,
+            statusUpdater = statusUpdater,
             statusProvider = statusProvider,
             getExplorerItem = getExplorerItem,
             refactorToNewBlog = refactorToNewBlog,

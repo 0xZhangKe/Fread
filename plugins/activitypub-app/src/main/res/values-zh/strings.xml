@@ -56,8 +56,7 @@
 
     <string name="post_status_page_title">新博客</string>
     <string name="post_screen_input_hint">请输入你的博客</string>
-    <string name="post_screen_media_image_placeholder">图片描述文本</string>
-    <string name="post_screen_media_video_placeholder">图片描述文本</string>
+    <string name="post_screen_media_descriptor_placeholder">描述文本</string>
     <string name="post_status_poll_item_hint">选项 %s</string>
     <string name="post_status_poll_duration">投票时长</string>
     <string name="post_status_poll_function_title">能力</string>

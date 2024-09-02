@@ -2,6 +2,7 @@ package com.zhangke.fread.commonbiz.shared.screen.status.context
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -15,6 +16,7 @@ import javax.inject.Inject
 class StatusContextViewModel @Inject constructor(
     private val feedsRepo: FeedsRepo,
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ContainerViewModel<StatusContextSubViewModel, StatusContextViewModel.Params>() {
@@ -23,6 +25,7 @@ class StatusContextViewModel @Inject constructor(
         return StatusContextSubViewModel(
             feedsRepo = feedsRepo,
             statusProvider = statusProvider,
+            statusUpdater = statusUpdater,
             buildStatusUiState = buildStatusUiState,
             refactorToNewBlog = refactorToNewBlog,
             role = params.role,

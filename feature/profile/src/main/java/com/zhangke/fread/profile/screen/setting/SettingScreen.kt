@@ -46,7 +46,6 @@ import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.utils.SystemPageUtils
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.config.StatusContentSize

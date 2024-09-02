@@ -5,9 +5,11 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.common.routeScreen
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
@@ -29,6 +31,7 @@ import java.util.Locale
 
 class InteractiveHandler(
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : IInteractiveHandler {
@@ -106,12 +109,24 @@ class InteractiveHandler(
     ) {
         this.coroutineScope = coroutineScope
         this.onInteractiveHandleResult = onInteractiveHandleResult
+        coroutineScope.launch {
+            statusUpdater.statusUpdateFlow.collect {
+                onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(it))
+            }
+        }
     }
 
     override fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction) {
         if (uiInteraction is StatusUiInteraction.Comment) {
             coroutineScope.launch {
                 screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
+                    ?.let(::tryOpenScreenByRoute)
+            }
+            return
+        }
+        if (uiInteraction is StatusUiInteraction.Edit) {
+            coroutineScope.launch {
+                screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
                     ?.let(::tryOpenScreenByRoute)
             }
             return
@@ -130,6 +145,7 @@ class InteractiveHandler(
                 onInteractiveHandleResult(InteractiveHandleResult.DeleteStatus(status.status.id))
             } else {
                 val interactiveResult = InteractiveHandleResult.UpdateStatus(statusUiState)
+                statusUpdater.update(statusUiState)
                 onInteractiveHandleResult(interactiveResult)
             }
         }
@@ -145,7 +161,7 @@ class InteractiveHandler(
     override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
             val screen = if (status.status.intrinsicBlog.platform.protocol.isRss) {
-                com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailScreen(status.status.intrinsicBlog)
+                BlogDetailScreen(status.status.intrinsicBlog)
             } else {
                 StatusContextScreen(
                     role = status.role,

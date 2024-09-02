@@ -1,7 +1,6 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
 import cafe.adriel.voyager.navigator.Navigator
-import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.commonbiz.shared.screen.FullVideoScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
@@ -17,7 +16,7 @@ fun onStatusMediaClick(
     when (event) {
         is BlogMediaClickEvent.BlogImageClickEvent -> {
             if (event.mediaList[event.index].type == BlogMediaType.GIFV) {
-                navigator.push(FullVideoScreen(event.mediaList[event.index].url.toPlatformUri()))
+                navigator.push(FullVideoScreen(event.mediaList[event.index].url))
                 return
             }
             transparentNavigator.push(
@@ -30,7 +29,7 @@ fun onStatusMediaClick(
         }
 
         is BlogMediaClickEvent.BlogVideoClickEvent -> {
-            navigator.push(FullVideoScreen(event.media.url.toPlatformUri()))
+            navigator.push(FullVideoScreen(event.media.url))
         }
     }
 }

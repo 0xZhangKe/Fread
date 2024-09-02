@@ -1,28 +1,29 @@
 package com.zhangke.fread.common.status.repo.db.converts
 
 import androidx.room.TypeConverter
-import com.zhangke.framework.architect.json.globalGson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.model.ContentConfig
-import kotlinx.serialization.json.Json
+import kotlinx.serialization.encodeToString
 
 class ContentTabConverter {
 
     @TypeConverter
     fun toJsonString(tabList: List<ContentConfig.ActivityPubContent.ContentTab>): String {
-        val stringList = tabList?.map {
-            Json.encodeToString(ContentConfig.ActivityPubContent.ContentTab.serializer(), it)
+        if (tabList.isEmpty()) return ""
+        val stringList = tabList.map {
+            globalJson.encodeToString(ContentConfig.ActivityPubContent.ContentTab.serializer(), it)
         }
-        return globalGson.toJson(stringList)
+        return globalJson.encodeToString(stringList)
     }
 
     @TypeConverter
     fun toTabList(jsonText: String): List<ContentConfig.ActivityPubContent.ContentTab> {
-        return globalGson.fromJson(jsonText, Array<String>::class.java)
-            .map {
-                Json.decodeFromString(
-                    deserializer = ContentConfig.ActivityPubContent.ContentTab.serializer(),
-                    string = it,
-                )
-            }
+        if (jsonText.isEmpty()) return emptyList()
+        return globalJson.decodeFromString<List<String>>(jsonText).map {
+            globalJson.decodeFromString(
+                deserializer = ContentConfig.ActivityPubContent.ContentTab.serializer(),
+                string = it,
+            )
+        }
     }
 }

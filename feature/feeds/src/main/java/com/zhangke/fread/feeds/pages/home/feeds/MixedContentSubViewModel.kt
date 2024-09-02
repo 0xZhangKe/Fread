@@ -5,6 +5,7 @@ import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
 import com.zhangke.fread.common.status.StatusConfigurationDefault
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
@@ -24,12 +25,14 @@ import kotlinx.coroutines.flow.update
 class MixedContentSubViewModel(
     private val contentConfigRepo: ContentConfigRepo,
     private val feedsRepo: FeedsRepo,
+    statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val configId: Long,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

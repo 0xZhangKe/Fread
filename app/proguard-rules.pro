@@ -44,6 +44,27 @@
 
 # Ktor
 -dontwarn org.slf4j.impl.StaticLoggerBinder
+-dontwarn io.ktor.client.network.sockets.TimeoutExceptionsCommonKt
+-dontwarn io.ktor.client.plugins.HttpTimeout$HttpTimeoutCapabilityConfiguration
+-dontwarn io.ktor.client.plugins.HttpTimeout$Plugin
+-dontwarn io.ktor.client.plugins.HttpTimeout
+-dontwarn io.ktor.util.InternalAPI
+-dontwarn io.ktor.utils.io.ByteReadChannelJVMKt
+-dontwarn io.ktor.utils.io.CoroutinesKt
+-dontwarn io.ktor.utils.io.ReadSessionKt
+-dontwarn io.ktor.utils.io.core.Buffer$Companion
+-dontwarn io.ktor.utils.io.core.Buffer
+-dontwarn io.ktor.utils.io.core.ByteBuffersKt
+-dontwarn io.ktor.utils.io.core.BytePacketBuilder
+-dontwarn io.ktor.utils.io.core.ByteReadPacket$Companion
+-dontwarn io.ktor.utils.io.core.ByteReadPacket
+-dontwarn io.ktor.utils.io.core.CloseableJVMKt
+-dontwarn io.ktor.utils.io.core.Input
+-dontwarn io.ktor.utils.io.core.InputArraysKt
+-dontwarn io.ktor.utils.io.core.InputPrimitivesKt
+-dontwarn io.ktor.utils.io.core.Output
+-dontwarn io.ktor.utils.io.core.OutputPrimitivesKt
+-dontwarn io.ktor.utils.io.core.PreviewKt
 
 # Parcelable
 -keep class * implements android.os.Parcelable {

@@ -25,6 +25,18 @@ kotlin {
                 implementation(libs.bundles.voyager)
             }
         }
+        commonTest {
+            dependencies {
+                implementation(project(path = ":framework"))
+                implementation(project(path = ":bizframework:status-provider"))
+
+                implementation(kotlin("test"))
+
+                implementation(libs.kotlin.coroutine.core)
+                implementation(libs.kotlin.coroutine.test)
+                implementation(libs.kotlinx.datetime)
+            }
+        }
         androidMain {
             dependencies {
                 implementation(libs.bundles.androidx.activity)
@@ -37,16 +49,6 @@ kotlin {
                 implementation(libs.filt.annotaions)
 
                 implementation(libs.bundles.googlePlayReview)
-            }
-        }
-        androidUnitTest {
-            dependencies {
-                implementation(libs.junit)
-                implementation(libs.androidx.test.ext.junit)
-                implementation(libs.androidx.test.espresso.core)
-                implementation(libs.kotlin.coroutine.core)
-                implementation(libs.kotlin.coroutine.test)
-                implementation(libs.mockk)
             }
         }
     }

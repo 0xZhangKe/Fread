@@ -22,10 +22,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
 import androidx.compose.ui.layout.onGloballyPositioned
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.seiko.imageloader.imageLoader
+import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.option.SizeResolver
 import com.seiko.imageloader.ui.AutoSizeImage
@@ -160,10 +159,10 @@ internal fun BlogImage(
     media: BlogMedia,
     hideContent: Boolean,
 ) {
-    val context = LocalContext.current
     if (hideContent) {
+        val imageLoader = LocalImageLoader.current
         LaunchedEffect(media) {
-            context.imageLoader.execute(
+            imageLoader.execute(
                 ImageRequest {
                     data(media.url)
                     size(SizeResolver(Size(50f, 50f)))

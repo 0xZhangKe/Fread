@@ -1,11 +1,12 @@
 package com.zhangke.fread.common.status.model
 
+import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.framework.utils.formatAsCount
 import com.zhangke.fread.status.status.model.StatusInteraction
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class StatusUiInteraction : java.io.Serializable {
+sealed class StatusUiInteraction : PlatformSerializable {
 
     abstract val enabled: Boolean
 
@@ -27,7 +28,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Like(val interaction: StatusInteraction.Like) : StatusUiInteraction(),
-        java.io.Serializable {
+        PlatformSerializable {
 
         override val enabled: Boolean get() = interaction.enable
 
@@ -38,7 +39,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Comment(val interaction: StatusInteraction.Comment) : StatusUiInteraction(),
-        java.io.Serializable {
+        PlatformSerializable {
 
         override val enabled: Boolean get() = interaction.enable
 
@@ -47,7 +48,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Forward(val interaction: StatusInteraction.Forward) : StatusUiInteraction(),
-        java.io.Serializable {
+        PlatformSerializable {
 
         override val enabled: Boolean get() = interaction.enable
 
@@ -59,7 +60,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Bookmark(val interaction: StatusInteraction.Bookmark) : StatusUiInteraction(),
-        java.io.Serializable {
+        PlatformSerializable {
 
         override val enabled: Boolean get() = interaction.enable
 
@@ -70,7 +71,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Delete(val interaction: StatusInteraction.Delete) : StatusUiInteraction(),
-        java.io.Serializable {
+        PlatformSerializable {
 
         override val enabled: Boolean get() = interaction.enable
 
@@ -79,7 +80,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Pin(val interaction: StatusInteraction.Pin) : StatusUiInteraction(),
-        java.io.Serializable {
+        PlatformSerializable {
 
         override val enabled: Boolean get() = interaction.enable
 
@@ -88,7 +89,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
 
     @Serializable
     data class Edit(val interaction: StatusInteraction.Edit) : StatusUiInteraction(),
-        java.io.Serializable {
+        PlatformSerializable {
 
         override val enabled: Boolean get() = interaction.enable
 
@@ -96,7 +97,7 @@ sealed class StatusUiInteraction : java.io.Serializable {
     }
 
     @Serializable
-    data object Share : StatusUiInteraction(), java.io.Serializable {
+    data object Share : StatusUiInteraction(), PlatformSerializable {
 
         private fun readResolve(): Any = Share
 

@@ -16,7 +16,6 @@ import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import java.util.Date
 
 fun createStatus(
     id: String = "1",

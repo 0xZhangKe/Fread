@@ -1,7 +1,6 @@
 plugins {
     id("fread.project.framework.kmp")
     id("com.google.devtools.ksp")
-    // id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
 }
 
@@ -28,7 +27,6 @@ kotlin {
             dependencies {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.auto.service.annotations)
-                implementation(libs.hilt)
                 implementation(libs.firebase.analytics)
                 implementation(libs.firebase.crashlytics)
             }
@@ -38,8 +36,6 @@ kotlin {
 
 dependencies {
     add("kspAndroid", libs.auto.service.ksp)
-    add("kspAndroid", libs.hilt.compiler)
-    add("kspAndroid", libs.filt.compiler)
 
     implementation(platform(libs.firebase.bom))
 }

@@ -85,7 +85,6 @@ import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import java.util.Locale
 import kotlin.time.Duration
-import com.zhangke.fread.statusui.R as StatusUiR
 
 @Destination(PostStatusScreenRoute.ROUTE)
 class PostStatusScreen(

@@ -54,7 +54,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -103,7 +102,6 @@ import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.fread.framework.Res
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
@@ -115,10 +113,12 @@ import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.statusui.ic_status_forward
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.vectorResource
 
 @Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
@@ -933,7 +933,7 @@ data class UserDetailScreen(
                 )
 
                 MuteUserRoleItem(
-                    icon = ImageVector.vectorResource(com.zhangke.fread.statusui.R.drawable.ic_status_forward),
+                    icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
                     role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role4)
                 )
 
@@ -957,7 +957,7 @@ data class UserDetailScreen(
                         }
                     },
                 ) {
-                    Text(text = org.jetbrains.compose.resources.stringResource(Res.string.cancel))
+                    Text(text = org.jetbrains.compose.resources.stringResource(com.zhangke.fread.framework.Res.string.cancel))
                 }
             }
         }

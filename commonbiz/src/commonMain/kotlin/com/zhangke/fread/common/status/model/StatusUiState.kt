@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.status.model
 
+import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
@@ -16,7 +17,7 @@ data class StatusUiState(
     val following: Boolean? = null,
     val bottomInteractions: List<StatusUiInteraction>,
     val moreInteractions: List<StatusUiInteraction>,
-) : java.io.Serializable
+) : PlatformSerializable
 
 @Serializable
 data class BlogTranslationUiState(
@@ -24,7 +25,7 @@ data class BlogTranslationUiState(
     val translating: Boolean = false,
     val showingTranslation: Boolean = false,
     val blogTranslation: BlogTranslation? = null,
-) : java.io.Serializable
+) : PlatformSerializable
 
 fun List<StatusUiState>.updateStatus(
     status: StatusUiState,

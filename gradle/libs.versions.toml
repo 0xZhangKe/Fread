@@ -194,6 +194,7 @@ imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "
 okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }
 uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
+bignum = { module = "com.ionspin.kotlin:bignum", version = "0.3.10" }
 placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
 
 googlePlayReview = { group = "com.google.android.play", name = "review", version.ref = "goolgePlayReview" }

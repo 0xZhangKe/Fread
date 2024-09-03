@@ -79,6 +79,8 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.status_ui_reply
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import java.util.Locale
@@ -318,7 +320,7 @@ class PostStatusScreen(
                             imageVector = Icons.Default.Reply,
                             contentDescription = null,
                         )
-                        val replyLabel = stringResource(StatusUiR.string.status_ui_reply)
+                        val replyLabel = org.jetbrains.compose.resources.stringResource(Res.string.status_ui_reply)
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
                             text = "$replyLabel ${uiState.replyToAuthorInfo.replyAuthorName}",

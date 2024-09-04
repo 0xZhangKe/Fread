@@ -14,7 +14,8 @@ import androidx.compose.material.icons.filled.OpenInBrowser
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
@@ -76,14 +77,15 @@ class BlogDetailScreen(
                     .background(MaterialTheme.colorScheme.surface),
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
+                val displayTime by produceState("", blog.date) {
+                    value = DateTimeFormatter.format(blog.date.toEpochMilliseconds())
+                }
                 StatusInfoLine(
                     modifier = Modifier.fillMaxWidth(),
                     blogAuthor = blog.author,
                     blogUrl = blog.url,
                     visibility = blog.visibility,
-                    displayTime = remember(context, blog.date) {
-                        DateTimeFormatter.format(context, blog.date.toEpochMilliseconds())
-                    },
+                    displayTime = displayTime,
                     style = StatusStyles.medium(),
                     moreInteractions = emptyList(),
                     onInteractive = {},

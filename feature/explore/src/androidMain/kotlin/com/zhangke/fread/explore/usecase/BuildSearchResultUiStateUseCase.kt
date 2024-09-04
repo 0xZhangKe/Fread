@@ -10,7 +10,7 @@ class BuildSearchResultUiStateUseCase @Inject constructor(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
 ) {
 
-    operator fun invoke(role: IdentityRole, result: SearchResult): SearchResultUiState {
+    suspend operator fun invoke(role: IdentityRole, result: SearchResult): SearchResultUiState {
         return when (result) {
             is SearchResult.Author -> {
                 SearchResultUiState.Author(role, result.user)

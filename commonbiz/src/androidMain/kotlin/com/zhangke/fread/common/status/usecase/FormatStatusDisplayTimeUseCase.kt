@@ -1,19 +1,26 @@
 package com.zhangke.fread.common.status.usecase
 
-import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.utils.DateTimeFormatter
 import com.zhangke.fread.common.utils.DatetimeFormatConfig
 import com.zhangke.fread.common.utils.defaultFormatConfig
 import me.tatarka.inject.annotations.Inject
 
 class FormatStatusDisplayTimeUseCase @Inject constructor(
-    private val context: ApplicationContext,
 ) {
+
+    suspend operator fun invoke(
+        datetime: Long,
+    ): String {
+        return invoke(
+            datetime,
+            config = defaultFormatConfig(),
+        )
+    }
 
     operator fun invoke(
         datetime: Long,
-        config: DatetimeFormatConfig = defaultFormatConfig(context),
+        config: DatetimeFormatConfig,
     ): String {
-        return DateTimeFormatter.format(context, datetime, config)
+        return DateTimeFormatter.format(datetime, config)
     }
 }

@@ -15,6 +15,8 @@ kotlin {
                 implementation(project(path = ":framework"))
                 implementation(project(path = ":bizframework:status-provider"))
 
+                implementation(compose.components.resources)
+
                 implementation(libs.bundles.androidx.datastore)
 
                 implementation(libs.kotlinx.serialization.core)
@@ -61,4 +63,12 @@ dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspAndroid", libs.krouter.compiler)
     add("kspAndroid", libs.kotlinInject.compiler)
+}
+
+compose {
+    resources {
+        publicResClass = true
+        packageOfResClass = "com.zhangke.fread.commonbiz"
+        generateResClass = always
+    }
 }

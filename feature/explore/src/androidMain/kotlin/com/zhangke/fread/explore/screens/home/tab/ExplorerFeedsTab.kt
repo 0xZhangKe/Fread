@@ -20,7 +20,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -38,7 +37,10 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsStatusNode
-import com.zhangke.fread.explore.R
+import com.zhangke.fread.explore.Res
+import com.zhangke.fread.explore.explorer_tab_hashtag_title
+import com.zhangke.fread.explore.explorer_tab_status_title
+import com.zhangke.fread.explore.explorer_tab_users_title
 import com.zhangke.fread.explore.model.ExplorerItem
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -46,6 +48,7 @@ import com.zhangke.fread.status.ui.RecommendAuthorUi
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.common.ObserveScrollInProgressForConnection
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
+import org.jetbrains.compose.resources.stringResource
 
 class ExplorerFeedsTab(
     private val type: ExplorerFeedsTabType,
@@ -55,9 +58,9 @@ class ExplorerFeedsTab(
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
             title = when (type) {
-                ExplorerFeedsTabType.STATUS -> stringResource(R.string.explorer_tab_status_title)
-                ExplorerFeedsTabType.USERS -> stringResource(R.string.explorer_tab_users_title)
-                ExplorerFeedsTabType.HASHTAG -> stringResource(R.string.explorer_tab_hashtag_title)
+                ExplorerFeedsTabType.STATUS -> stringResource(Res.string.explorer_tab_status_title)
+                ExplorerFeedsTabType.USERS -> stringResource(Res.string.explorer_tab_users_title)
+                ExplorerFeedsTabType.HASHTAG -> stringResource(Res.string.explorer_tab_hashtag_title)
             }
         )
 

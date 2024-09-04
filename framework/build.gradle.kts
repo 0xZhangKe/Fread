@@ -35,6 +35,7 @@ kotlin {
                 implementation(libs.okio)
                 implementation(libs.ksoup)
                 implementation(libs.uri.kmp)
+                implementation(libs.bignum)
                 implementation(libs.placeholder.material3)
             }
         }

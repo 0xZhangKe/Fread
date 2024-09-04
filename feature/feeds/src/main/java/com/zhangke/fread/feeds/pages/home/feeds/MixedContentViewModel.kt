@@ -2,6 +2,7 @@ package com.zhangke.fread.feeds.pages.home.feeds
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -11,6 +12,7 @@ import me.tatarka.inject.annotations.Inject
 class MixedContentViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
     private val feedsRepo: FeedsRepo,
+    private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
@@ -20,6 +22,7 @@ class MixedContentViewModel @Inject constructor(
         return MixedContentSubViewModel(
             contentConfigRepo = contentConfigRepo,
             feedsRepo = feedsRepo,
+            statusUpdater = statusUpdater,
             buildStatusUiState = buildStatusUiState,
             statusProvider = statusProvider,
             configId = params.configId,

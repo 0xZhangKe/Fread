@@ -22,6 +22,10 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
+    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+        return null
+    }
+
     override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
         return null
     }

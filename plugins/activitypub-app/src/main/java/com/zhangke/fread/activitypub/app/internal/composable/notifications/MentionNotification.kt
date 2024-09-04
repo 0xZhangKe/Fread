@@ -4,8 +4,6 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 

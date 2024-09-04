@@ -18,7 +18,13 @@
     <string name="add_feeds_page_feeds_empty">Please add a subscription source</string>
 
     <string name="pre_add_feeds_no_result">No results found</string>
-    <string name="pre_add_feeds_hint">Please enter the instance name or url</string>
+    <string name="pre_add_feeds_hint">Instance name, URL, User homepage URL, RSS</string>
+    <string name="pre_add_feeds_input_label_1">
+        Fread supports adding [[Mastodon]] as well as [[RSS]] feeds, and even [[mixed content]].
+    </string>
+    <string name="pre_add_feeds_input_label_2">
+        Please enter the Mastodon instance [[name]], instance [[address]], Mastodon user [[homepage URL]], or the [[RSS]] feed URL here.
+    </string>
 
     <string name="empty_content_hint_title">Please add some content first</string>
     <string name="empty_content_hint_desc">You\'ll need to add some subscription sources first. Fread supports a variety of content types and content from different platforms, enabling you to build your own information feed.</string>

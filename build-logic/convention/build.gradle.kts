@@ -72,5 +72,9 @@ gradlePlugin {
             id = "fread.project.feature"
             implementationClass = "ProjectFeatureConventionPlugin"
         }
+        register("projectFeatureKmp") {
+            id = "fread.project.feature.kmp"
+            implementationClass = "ProjectFeatureKmpConventionPlugin"
+        }
     }
 }

@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.onFocusChanged
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
@@ -57,12 +56,15 @@ import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
 import com.zhangke.fread.explore.ExplorerElements
-import com.zhangke.fread.explore.R
+import com.zhangke.fread.explore.Res
+import com.zhangke.fread.explore.explorer_search_bar_hint
+import com.zhangke.fread.explore.explorer_search_bar_hint_specialize_platform
 import com.zhangke.fread.explore.screens.search.SearchScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.flow.Flow
+import org.jetbrains.compose.resources.stringResource
 
 @OptIn(ExperimentalMaterial3Api::class, InternalVoyagerApi::class)
 @Composable
@@ -118,14 +120,14 @@ fun Screen.ExplorerSearchBar(
             if (selectedAccount != null && accountList.size > 1) {
                 Text(
                     text = stringResource(
-                        R.string.explorer_search_bar_hint_specialize_platform,
+                        Res.string.explorer_search_bar_hint_specialize_platform,
                         selectedAccount.platform.baseUrl.host,
                     ),
                     overflow = TextOverflow.Ellipsis,
                 )
             } else {
                 Text(
-                    text = stringResource(R.string.explorer_search_bar_hint),
+                    text = stringResource(Res.string.explorer_search_bar_hint),
                 )
             }
         },

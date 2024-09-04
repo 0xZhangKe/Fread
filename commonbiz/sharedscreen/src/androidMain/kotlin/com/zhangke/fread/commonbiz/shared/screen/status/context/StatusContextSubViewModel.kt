@@ -128,7 +128,7 @@ class StatusContextSubViewModel(
             }
     }
 
-    private fun buildContextStatus(
+    private suspend fun buildContextStatus(
         anchorStatus: Status.NewBlog,
         statusContext: StatusContext? = null,
     ): List<StatusInContext> {

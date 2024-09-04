@@ -15,7 +15,7 @@ class BuildStatusUiStateUseCase @Inject constructor(
     private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
 ) {
 
-    operator fun invoke(
+    suspend operator fun invoke(
         role: IdentityRole,
         status: Status,
         following: Boolean? = null,

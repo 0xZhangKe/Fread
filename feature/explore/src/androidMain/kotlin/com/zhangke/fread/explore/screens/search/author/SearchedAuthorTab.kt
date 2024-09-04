@@ -11,8 +11,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -28,10 +26,12 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
-import com.zhangke.fread.explore.R
+import com.zhangke.fread.explore.Res
+import com.zhangke.fread.explore.explorer_search_tab_title_author
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.BlogAuthorUi
+import org.jetbrains.compose.resources.stringResource
 
 class SearchedAuthorTab(
     private val role: IdentityRole,
@@ -40,10 +40,9 @@ class SearchedAuthorTab(
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(R.string.explorer_search_tab_title_author),
+            title = stringResource(Res.string.explorer_search_tab_title_author),
         )
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)

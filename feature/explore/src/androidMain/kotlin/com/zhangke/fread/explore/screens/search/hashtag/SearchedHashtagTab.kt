@@ -10,7 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.res.stringResource
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -25,16 +24,18 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.common.page.BasePagerTab
-import com.zhangke.fread.explore.R
+import com.zhangke.fread.explore.Res
+import com.zhangke.fread.explore.explorer_search_tab_title_hashtag
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
+import org.jetbrains.compose.resources.stringResource
 
 class SearchedHashtagTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(R.string.explorer_search_tab_title_hashtag),
+            title = stringResource(Res.string.explorer_search_tab_title_hashtag),
         )
 
     @OptIn(ExperimentalVoyagerApi::class)

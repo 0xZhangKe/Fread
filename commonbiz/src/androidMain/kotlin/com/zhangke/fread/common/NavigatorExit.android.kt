@@ -6,18 +6,9 @@ import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.krouter.KRouter
 
-fun Navigator.pushDestination(routerDestination: String): Boolean {
+actual fun Navigator.pushDestination(routerDestination: String): Boolean {
     val destination = KRouter.routeScreen(routerDestination) ?: return false
     push(destination)
-    return true
-}
-
-fun Navigator.tryPush(screen: Any): Boolean {
-    if (screen is String) {
-        return pushDestination(screen)
-    }
-    val realScreen = screen as? Screen ?: return false
-    push(realScreen)
     return true
 }
 

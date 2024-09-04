@@ -291,7 +291,7 @@ class FeedsViewModelController(
         }
     }
 
-    private fun List<StatusUiState>.applyRefreshResult(
+    private suspend fun List<StatusUiState>.applyRefreshResult(
         refreshResult: RefreshResult,
     ): List<StatusUiState> {
         if (refreshResult.useOldData) {
@@ -341,7 +341,7 @@ class FeedsViewModelController(
         )
     }
 
-    private fun Status.toUiState(): StatusUiState {
+    private suspend fun Status.toUiState(): StatusUiState {
         return buildStatusUiState(roleResolver(this), this)
     }
 }

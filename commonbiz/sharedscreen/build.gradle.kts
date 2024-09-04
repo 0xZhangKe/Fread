@@ -55,8 +55,6 @@ kotlin {
                 implementation(libs.okhttp3.logging)
 
                 implementation(libs.auto.service.annotations)
-                implementation(libs.filt.annotaions)
-                implementation(libs.hilt)
                 implementation(libs.krouter.core)
             }
         }

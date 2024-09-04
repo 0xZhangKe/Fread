@@ -12,6 +12,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.NotificationsRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.common.status.usecase.FormatStatusDisplayTimeUseCase
@@ -27,6 +28,7 @@ class ActivityPubNotificationsSubViewModel(
     private val statusProvider: StatusProvider,
     private val userUriInsights: UserUriInsights,
     private val accountManager: ActivityPubAccountManager,
+    statusUpdater: StatusUpdater,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
     private val notificationsRepo: NotificationsRepo,
@@ -35,6 +37,7 @@ class ActivityPubNotificationsSubViewModel(
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

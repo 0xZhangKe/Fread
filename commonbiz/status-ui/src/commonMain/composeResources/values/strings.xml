@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="status_ui_boosted">boosted</string>
+    <string name="status_ui_like">Like</string>
+    <string name="status_ui_comment">Comment</string>
+    <string name="status_ui_delete">Delete</string>
+    <string name="status_ui_share">Share</string>
+    <string name="status_ui_bookmark">Bookmark</string>
+    <string name="status_ui_unbookmark">Unbookmark</string>
+    <string name="status_ui_reply">Reply</string>
+    <string name="status_ui_follow">Follow</string>
+    <string name="status_ui_unfollow">Unfollow</string>
+    <string name="status_ui_pin">Pin</string>
+    <string name="status_ui_unpin">Unpin</string>
+    <string name="status_ui_edit">Edit</string>
+
+    <string name="status_ui_new_status">New Content</string>
+
+    <string name="status_ui_delete_status_confirm">Are you sure you want to delete this content?</string>
+
+    <string name="status_ui_image_sensitive_label">Media hidden</string>
+    <string name="status_ui_image_content_show_hidden_label">Show more</string>
+    <string name="status_ui_image_content_hide_hidden_label">Hide content</string>
+    <string name="status_ui_poll_vote">Vote</string>
+    <string name="status_ui_poll_vote_finished_tip">%s vote · Closed</string>
+    <string name="status_ui_poll_votes_finished_tip">%s votes · Closed</string>
+
+    <string name="status_ui_interaction_open_in_browser">Open In Browser</string>
+    <string name="status_ui_interaction_open_original_instance">Open the other instance</string>
+    <string name="status_ui_interaction_copy_url">Copy Link</string>
+    <string name="status_ui_interaction_translate">Translate</string>
+
+    <string name="status_ui_visibility_mentioned_only">Mentioned Only</string>
+
+    <string name="status_ui_label_pinned">Pinned</string>
+
+    <string name="status_ui_info_label_edited">Edited</string>
+
+    <string name="status_ui_interaction_label_favourited_count">%s favorites</string>
+    <string name="status_ui_interaction_label_boosted_count">%s boosts</string>
+
+    <string name="status_ui_bottom_label_edited_at">Edited on %s</string>
+
+    <string name="status_ui_translating">Translating…</string>
+    <string name="status_ui_translate_show_original">Show Original</string>
+</resources>

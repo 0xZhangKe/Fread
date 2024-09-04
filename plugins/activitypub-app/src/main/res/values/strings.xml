@@ -38,8 +38,7 @@
 
     <string name="post_status_page_title">New Blog</string>
     <string name="post_screen_input_hint">Please input your blog</string>
-    <string name="post_screen_media_image_placeholder">Image description text</string>
-    <string name="post_screen_media_video_placeholder">Video description text</string>
+    <string name="post_screen_media_descriptor_placeholder">Description text</string>
     <string name="post_status_poll_item_hint">Option %s</string>
     <string name="post_status_poll_duration">Voting duration</string>
     <string name="post_status_poll_function_title">Function</string>

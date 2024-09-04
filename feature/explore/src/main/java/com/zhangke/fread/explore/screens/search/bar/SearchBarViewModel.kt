@@ -3,6 +3,7 @@ package com.zhangke.fread.explore.screens.search.bar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.SearchResultUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
@@ -24,11 +25,13 @@ import me.tatarka.inject.annotations.Inject
 
 class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
+    statusUpdater: StatusUpdater,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
     buildStatusUiState: BuildStatusUiStateUseCase,
     refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

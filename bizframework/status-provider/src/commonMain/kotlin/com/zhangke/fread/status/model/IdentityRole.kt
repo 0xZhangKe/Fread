@@ -4,9 +4,8 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.Parcelize
 import com.zhangke.framework.utils.PlatformParcelable
 import com.zhangke.framework.utils.PlatformSerializable
+import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.fread.status.uri.FormalUri
-import io.ktor.http.decodeURLQueryComponent
-import io.ktor.http.encodeURLPath
 import kotlinx.serialization.Serializable
 import kotlinx.serialization.json.Json
 
@@ -28,11 +27,11 @@ data class IdentityRole(
 
     companion object {
 
-        val nonIdentityRole = IdentityRole(null, null)
+        val nonIdentityRole by lazy { IdentityRole(null, null) }
 
         fun decodeFromString(text: String): IdentityRole? {
             return try {
-                text.decodeURLQueryComponent().let {
+                UrlEncoder.decode(text).let {
                     Json.decodeFromString(serializer(), it)
                 }
             } catch (e: Throwable) {
@@ -44,6 +43,6 @@ data class IdentityRole(
 
 fun IdentityRole.encodeToUrlString(): String {
     return Json.encodeToString(IdentityRole.serializer(), this).let {
-        it.encodeURLPath()
+        UrlEncoder.encode(it)
     }
 }

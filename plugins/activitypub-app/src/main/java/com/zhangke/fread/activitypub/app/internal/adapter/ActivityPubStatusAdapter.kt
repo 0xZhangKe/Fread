@@ -103,6 +103,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             spoilerText = entity.spoilerText,
             date = formatDatetimeToDate(entity.createdAt).toInstant().toKotlinInstant(),
             url = entity.url.ifNullOrEmpty { entity.uri },
+            language = entity.language,
             forwardCount = entity.reblogsCount,
             likeCount = entity.favouritesCount,
             repliesCount = entity.repliesCount,

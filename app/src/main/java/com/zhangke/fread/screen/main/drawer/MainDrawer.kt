@@ -58,6 +58,9 @@ import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.ic_drag_indicator
+import com.zhangke.fread.statusui.ic_mode_edit
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -248,7 +251,7 @@ private fun ContentConfigItem(
                 .alpha(0.7F)
                 .padding(2.dp),
             onClick = { onEditClick(contentConfig) },
-            painter = painterResource(com.zhangke.fread.statusui.R.drawable.ic_mode_edit),
+            painter = org.jetbrains.compose.resources.painterResource(Res.drawable.ic_mode_edit),
             contentDescription = "Edit Content Config",
         )
         Spacer(modifier = Modifier.width(16.dp))
@@ -258,7 +261,7 @@ private fun ContentConfigItem(
                 .size(24.dp)
                 .alpha(0.7F)
                 .padding(2.dp),
-            painter = painterResource(com.zhangke.fread.statusui.R.drawable.ic_drag_indicator),
+            painter = org.jetbrains.compose.resources.painterResource(Res.drawable.ic_drag_indicator),
             contentDescription = "Edit Content Config",
         )
     }

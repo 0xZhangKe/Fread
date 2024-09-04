@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.model.updateStatus
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -21,11 +22,13 @@ import me.tatarka.inject.annotations.Inject
 
 class SearchStatusViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
+    statusUpdater: StatusUpdater,
     buildStatusUiState: BuildStatusUiStateUseCase,
     refactorToNewBlog: RefactorToNewBlogUseCase,
     @Assisted val role: IdentityRole,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

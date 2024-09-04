@@ -36,6 +36,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,12 +76,15 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.status_ui_reply
 import com.zhangke.krouter.Destination
 import com.zhangke.krouter.Router
 import java.util.Locale
 import kotlin.time.Duration
-import com.zhangke.fread.statusui.R as StatusUiR
 
 @Destination(PostStatusScreenRoute.ROUTE)
 class PostStatusScreen(
@@ -181,15 +185,15 @@ class PostStatusScreen(
         postStatus: LoadableState<Unit>,
         snackMessageState: SnackbarHostState,
         onSwitchAccount: (ActivityPubLoggedAccount) -> Unit,
-        onContentChanged: (String) -> Unit,
+        onContentChanged: (TextFieldValue) -> Unit,
         onCloseClick: () -> Unit,
         onPostClick: () -> Unit,
         onSensitiveClick: () -> Unit,
         onMediaSelected: (List<Uri>) -> Unit,
-        onDeleteClick: (PostStatusFile) -> Unit,
-        onCancelUploadClick: (PostStatusFile) -> Unit,
-        onRetryClick: (PostStatusFile) -> Unit,
-        onDescriptionInputted: (PostStatusFile, String) -> Unit,
+        onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
+        onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
         onLanguageSelected: (Locale) -> Unit,
         onPollClicked: () -> Unit,
         onPollContentChanged: (Int, String) -> Unit,
@@ -201,7 +205,6 @@ class PostStatusScreen(
         onVisibilityChanged: (StatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
     ) {
-        val bottomBarHeight = 48.dp
         if (postStatus is LoadableState.Failed) {
             var errorMessage = stringResource(R.string.post_status_failed)
             if (postStatus.exception.message.isNullOrEmpty().not()) {
@@ -211,8 +214,13 @@ class PostStatusScreen(
                 snackMessageState.showSnackbar(errorMessage)
             }
         }
-        var textFieldValue by remember {
+        var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
             mutableStateOf(TextFieldValue(uiState.initialContent.orEmpty()))
+        }
+        LaunchedEffect(Unit) {
+            if (uiState.content.isEmpty() && !uiState.initialContent.isNullOrEmpty()) {
+                onContentChanged(textFieldValue)
+            }
         }
         Scaffold(
             snackbarHost = {
@@ -256,7 +264,6 @@ class PostStatusScreen(
             },
             bottomBar = {
                 PostStatusBottomBar(
-                    height = bottomBarHeight,
                     uiState = uiState,
                     onSensitiveClick = onSensitiveClick,
                     onMediaSelected = onMediaSelected,
@@ -267,7 +274,13 @@ class PostStatusScreen(
                             value = textFieldValue,
                             insertText = " :${it.shortcode}: ",
                         )
-                        onContentChanged(textFieldValue.text)
+                        onContentChanged(textFieldValue)
+                    },
+                    onMentionClick = {
+                        textFieldValue = MentionTextUtil.insertMention(
+                            text = textFieldValue,
+                            insertText = it.acct,
+                        )
                     },
                     onDeleteEmojiClick = {
                         textFieldValue = DeleteTextUtil.deleteText(textFieldValue)
@@ -306,7 +319,7 @@ class PostStatusScreen(
                             imageVector = Icons.Default.Reply,
                             contentDescription = null,
                         )
-                        val replyLabel = stringResource(StatusUiR.string.status_ui_reply)
+                        val replyLabel = org.jetbrains.compose.resources.stringResource(Res.string.status_ui_reply)
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
                             text = "$replyLabel ${uiState.replyToAuthorInfo.replyAuthorName}",
@@ -349,6 +362,7 @@ class PostStatusScreen(
                             start.linkTo(nameRef.start)
                         },
                     visibility = uiState.visibility,
+                    changeable = uiState.visibilityChangeable,
                     onVisibilitySelect = onVisibilityChanged,
                 )
                 Box(
@@ -358,7 +372,7 @@ class PostStatusScreen(
                     }
                 ) {
                     val availableAccountList = uiState.availableAccountList
-                    if (availableAccountList.size > 1) {
+                    if (uiState.accountChangeable && availableAccountList.size > 1) {
                         var showAccountSwitchPopup by remember {
                             mutableStateOf(false)
                         }
@@ -427,6 +441,9 @@ class PostStatusScreen(
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     },
+                    visualTransformation = PostStatusTextVisualTransformation(
+                        highLightColor = MaterialTheme.colorScheme.primary,
+                    ),
                     value = textFieldValue,
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.Transparent,
@@ -437,7 +454,7 @@ class PostStatusScreen(
                     textStyle = MaterialTheme.typography.bodyLarge,
                     onValueChange = {
                         textFieldValue = it
-                        onContentChanged(it.text)
+                        onContentChanged(it)
                     },
                 )
                 StatusAttachment(
@@ -498,10 +515,10 @@ class PostStatusScreen(
     private fun StatusAttachment(
         modifier: Modifier,
         uiState: PostStatusUiState,
-        onDeleteClick: (PostStatusFile) -> Unit,
-        onCancelUploadClick: (PostStatusFile) -> Unit,
-        onRetryClick: (PostStatusFile) -> Unit,
-        onDescriptionInputted: (PostStatusFile, String) -> Unit,
+        onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
+        onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
+        onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
         onPollContentChanged: (Int, String) -> Unit,
         onRemovePollClick: () -> Unit,
         onRemovePollItemClick: (Int) -> Unit,
@@ -511,7 +528,7 @@ class PostStatusScreen(
     ) {
         val attachment = uiState.attachment ?: return
         when (attachment) {
-            is PostStatusAttachment.ImageAttachment -> {
+            is PostStatusAttachment.Image -> {
                 PostStatusImageAttachment(
                     modifier = modifier,
                     attachment = attachment,
@@ -522,7 +539,7 @@ class PostStatusScreen(
                 )
             }
 
-            is PostStatusAttachment.VideoAttachment -> {
+            is PostStatusAttachment.Video -> {
                 PostStatusVideoAttachment(
                     modifier = modifier,
                     attachment = attachment,

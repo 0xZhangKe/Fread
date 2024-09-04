@@ -4,6 +4,7 @@ import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
@@ -21,11 +22,13 @@ class ExplorerFeedsViewModel(
     private val type: ExplorerFeedsTabType,
     private val role: IdentityRole,
     private val statusProvider: StatusProvider,
+    statusUpdater: StatusUpdater,
     private val getExplorerItem: GetExplorerItemUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

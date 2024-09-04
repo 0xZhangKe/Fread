@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEnti
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.NotificationsRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.common.status.usecase.FormatStatusDisplayTimeUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -15,6 +16,7 @@ import me.tatarka.inject.annotations.Inject
 class ActivityPubNotificationsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val accountManager: ActivityPubAccountManager,
+    private val statusUpdater: StatusUpdater,
     private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val notificationsRepo: NotificationsRepo,
@@ -26,6 +28,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
     override fun createSubViewModel(params: Params): ActivityPubNotificationsSubViewModel {
         return ActivityPubNotificationsSubViewModel(
             statusProvider = statusProvider,
+            statusUpdater = statusUpdater,
             userUriInsights = params.userUriInsights,
             accountManager = accountManager,
             formatStatusDisplayTime = formatStatusDisplayTime,

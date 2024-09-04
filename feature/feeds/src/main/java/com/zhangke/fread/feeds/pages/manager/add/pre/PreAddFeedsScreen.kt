@@ -14,6 +14,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -31,8 +32,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
+import androidx.compose.ui.text.AnnotatedString
+import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -45,6 +50,7 @@ import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.fread.analytics.PreAddContentElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
@@ -157,7 +163,7 @@ class PreAddFeedsScreen : BaseScreen() {
                 OutlinedTextField(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 22.dp, top = 24.dp, end = 22.dp),
+                        .padding(start = 16.dp, top = 18.dp, end = 16.dp),
                     value = uiState.query,
                     onValueChange = onQueryChanged,
                     maxLines = 1,
@@ -165,7 +171,10 @@ class PreAddFeedsScreen : BaseScreen() {
                         imeAction = ImeAction.Search
                     ),
                     placeholder = {
-                        Text(text = stringResource(R.string.pre_add_feeds_hint))
+                        Text(
+                            text = stringResource(R.string.pre_add_feeds_hint),
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
                     },
                     keyboardActions = KeyboardActions(
                         onSearch = {
@@ -199,10 +208,23 @@ class PreAddFeedsScreen : BaseScreen() {
                 } else {
                     if (uiState.allSearchedResult.isNotEmpty()) {
                         LazyColumn(
-                            modifier = Modifier
-                                .fillMaxSize()
-                                .padding(top = 16.dp),
+                            modifier = Modifier.fillMaxSize(),
                         ) {
+                            item {
+                                Text(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(
+                                            start = 16.dp,
+                                            top = 12.dp,
+                                            end = 16.dp,
+                                            bottom = 8.dp,
+                                        ),
+                                    lineHeight = 22.sp,
+                                    text = buildInputLabelText(),
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            }
                             items(uiState.allSearchedResult) { content ->
                                 SearchContentResultUi(content, onContentClick)
                             }
@@ -240,6 +262,27 @@ class PreAddFeedsScreen : BaseScreen() {
                     onLoginDialogDismissRequest()
                     onCancelLoginDialogClick()
                 },
+            )
+        }
+    }
+
+    @Composable
+    private fun buildInputLabelText(): AnnotatedString {
+        return buildAnnotatedString {
+            append(
+                HighlightTextBuildUtil.buildHighlightText(
+                    text = stringResource(id = R.string.pre_add_feeds_input_label_1),
+                    fontWeight = FontWeight.Bold,
+                    highLightSize = 14.sp,
+                )
+            )
+            append(
+                HighlightTextBuildUtil.buildHighlightText(
+                    text = stringResource(id = R.string.pre_add_feeds_input_label_2),
+                    fontWeight = FontWeight.Bold,
+                    highLightSize = 14.sp,
+                    highLightColor = MaterialTheme.colorScheme.tertiary,
+                )
             )
         }
     }

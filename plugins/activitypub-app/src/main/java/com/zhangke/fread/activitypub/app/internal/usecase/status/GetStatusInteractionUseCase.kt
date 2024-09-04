@@ -52,6 +52,7 @@ class GetStatusInteractionUseCase @Inject constructor() {
             actionList.add(StatusInteraction.Delete(enable = true))
             val pinned = entity.pinned == true
             actionList.add(StatusInteraction.Pin(pinned = pinned, enable = true))
+            actionList.add(StatusInteraction.Edit(true))
         }
         return actionList
     }

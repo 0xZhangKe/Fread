@@ -9,6 +9,7 @@ import com.seiko.imageloader.intercept.bitmapMemoryCacheConfig
 import com.seiko.imageloader.intercept.imageMemoryCacheConfig
 import com.seiko.imageloader.intercept.painterMemoryCacheConfig
 import com.seiko.imageloader.option.androidContext
+import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
@@ -40,6 +41,7 @@ class FreadApplication : Application(),
         DayNightHelper
         LanguageHelper.prepare(this)
         initModuleStartups()
+        TopActivityManager.init(this)
     }
 
     override fun newImageLoader(): ImageLoader {

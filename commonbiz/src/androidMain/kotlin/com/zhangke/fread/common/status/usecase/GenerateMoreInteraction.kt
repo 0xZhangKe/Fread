@@ -23,6 +23,11 @@ class GenerateMoreInteraction @Inject constructor() {
                 moreInteractions += StatusUiInteraction.Pin(it)
             }
         }
+        interactions.firstNotNullOfOrNull { it as? StatusInteraction.Edit }?.let {
+            if (it.enable) {
+                moreInteractions += StatusUiInteraction.Edit(it)
+            }
+        }
         return moreInteractions
     }
 }

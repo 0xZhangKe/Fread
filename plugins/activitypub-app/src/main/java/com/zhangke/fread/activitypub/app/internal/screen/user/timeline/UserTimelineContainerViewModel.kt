@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapt
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
@@ -15,6 +16,7 @@ import me.tatarka.inject.annotations.Inject
 class UserTimelineContainerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
+    private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
@@ -25,6 +27,7 @@ class UserTimelineContainerViewModel @Inject constructor(
     override fun createSubViewModel(params: Params): UserTimelineViewModel {
         return UserTimelineViewModel(
             statusProvider = statusProvider,
+            statusUpdater = statusUpdater,
             webFingerBaseUrlToUserIdRepo = webFingerBaseUrlToUserIdRepo,
             buildStatusUiState = buildStatusUiState,
             platformRepo = platformRepo,

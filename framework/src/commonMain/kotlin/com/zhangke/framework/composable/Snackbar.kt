@@ -6,7 +6,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
-import androidx.compose.ui.platform.LocalContext
 import kotlinx.coroutines.flow.Flow
 
 @Composable
@@ -44,9 +43,8 @@ fun ConsumeSnackbarFlow(
     duration: SnackbarDuration = SnackbarDuration.Short
 ) {
     hostState ?: return
-    val context = LocalContext.current
     ConsumeFlow(messageTextFlow) {
-        val message = it.getString(context).take(180)
+        val message = it.getString().take(180)
         if (message.isNotEmpty()) {
             hostState.showSnackbar(message, actionLabel, duration = duration)
         }

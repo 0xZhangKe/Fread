@@ -50,3 +50,5 @@ fun Throwable.toTextStringOrNull(): TextString? {
 suspend fun MutableSharedFlow<TextString>.emitTextMessageFromThrowable(t: Throwable) {
     t.toTextStringOrNull()?.let { this.emit(it) }
 }
+
+expect suspend fun TextString.getString(): String

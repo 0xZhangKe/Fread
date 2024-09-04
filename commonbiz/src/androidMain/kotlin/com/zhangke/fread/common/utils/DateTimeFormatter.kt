@@ -1,7 +1,12 @@
 package com.zhangke.fread.common.utils
 
-import android.content.Context
-import com.zhangke.fread.commonbiz.R
+import com.zhangke.fread.commonbiz.Res
+import com.zhangke.fread.commonbiz.date_time_ago
+import com.zhangke.fread.commonbiz.date_time_day
+import com.zhangke.fread.commonbiz.date_time_hour
+import com.zhangke.fread.commonbiz.date_time_minute
+import com.zhangke.fread.commonbiz.date_time_second
+import org.jetbrains.compose.resources.getString
 import java.text.DateFormat
 import java.util.Date
 import java.util.Locale
@@ -15,10 +20,18 @@ import kotlin.time.DurationUnit
 
 object DateTimeFormatter {
 
-    fun format(
-        context: Context,
+    suspend fun format(
         datetime: Long,
-        config: DatetimeFormatConfig = defaultFormatConfig(context),
+    ): String {
+        return format(
+            datetime = datetime,
+            config = defaultFormatConfig(),
+        )
+    }
+
+    fun format(
+        datetime: Long,
+        config: DatetimeFormatConfig,
     ): String {
         val duration = (System.currentTimeMillis() - datetime).milliseconds
         val inWholeDays = duration.inWholeDays
@@ -60,10 +73,10 @@ data class DatetimeFormatConfig(
     val second: String,
 )
 
-fun defaultFormatConfig(context: Context) = DatetimeFormatConfig(
-    ago = context.getString(R.string.date_time_ago),
-    day = context.getString(R.string.date_time_day),
-    hour = context.getString(R.string.date_time_hour),
-    minutes = context.getString(R.string.date_time_minute),
-    second = context.getString(R.string.date_time_second),
+suspend fun defaultFormatConfig() = DatetimeFormatConfig(
+    ago = getString(Res.string.date_time_ago),
+    day = getString(Res.string.date_time_day),
+    hour = getString(Res.string.date_time_hour),
+    minutes = getString(Res.string.date_time_minute),
+    second = getString(Res.string.date_time_second),
 )

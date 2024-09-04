@@ -18,6 +18,8 @@ kotlin {
                 implementation(project(":commonbiz:sharedscreen"))
                 implementation(project(":commonbiz:status-ui"))
 
+                implementation(compose.components.resources)
+
                 implementation(libs.bundles.voyager)
 
                 implementation(libs.jetbrains.lifecycle.viewmodel)
@@ -41,4 +43,12 @@ kotlin {
 
 dependencies {
     add("kspAndroid", libs.kotlinInject.compiler)
+}
+
+compose {
+    resources {
+        publicResClass = false
+        packageOfResClass = "com.zhangke.fread.explore"
+        generateResClass = always
+    }
 }

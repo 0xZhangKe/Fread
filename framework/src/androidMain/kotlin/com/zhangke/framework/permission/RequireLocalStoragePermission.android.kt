@@ -6,9 +6,9 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.platform.LocalContext
 
 @Composable
-fun RequireLocalStoragePermission(
+actual fun RequireLocalStoragePermission(
     onPermissionGranted: suspend () -> Unit,
-    onPermissionDenied: suspend (() -> Unit) = {},
+    onPermissionDenied: suspend (() -> Unit),
 ) {
     val context = LocalContext.current
     if (context.hasWriteStoragePermission()) {

@@ -10,6 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.feeds.model.RefreshResult
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
@@ -26,6 +27,7 @@ class StatusListViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusProvider: StatusProvider,
+    statusUpdater: StatusUpdater,
     private val platformRepo: ActivityPubPlatformRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
@@ -33,6 +35,7 @@ class StatusListViewModel @Inject constructor(
     @Assisted val type: StatusListType,
 ) : ViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
     buildStatusUiState = buildStatusUiState,
     refactorToNewBlog = refactorToNewBlog,
 ) {

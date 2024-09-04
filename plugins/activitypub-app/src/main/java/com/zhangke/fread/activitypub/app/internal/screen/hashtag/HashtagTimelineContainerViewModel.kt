@@ -5,6 +5,7 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
@@ -16,6 +17,7 @@ import me.tatarka.inject.annotations.Inject
 class HashtagTimelineContainerViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusProvider: StatusProvider,
+    private val statusUpdater: StatusUpdater,
     private val context: ApplicationContext,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
@@ -28,6 +30,7 @@ class HashtagTimelineContainerViewModel @Inject constructor(
             clientManager = clientManager,
             statusProvider = statusProvider,
             context = context,
+            statusUpdater = statusUpdater,
             statusAdapter = statusAdapter,
             platformRepo = platformRepo,
             buildStatusUiState = buildStatusUiState,

@@ -36,6 +36,7 @@ kotlin {
                 implementation(libs.ksoup)
                 implementation(libs.uri.kmp)
                 implementation(libs.bignum)
+                implementation(libs.kermit)
                 implementation(libs.placeholder.material3)
             }
         }
@@ -58,7 +59,6 @@ kotlin {
 
                 implementation(libs.bundles.androidx.media3)
                 implementation(libs.krouter.core)
-                api(libs.compose.wheel.picker)
 
                 implementation(libs.composeReorderable)
 

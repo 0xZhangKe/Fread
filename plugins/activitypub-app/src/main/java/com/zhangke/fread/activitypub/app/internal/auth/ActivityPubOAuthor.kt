@@ -23,13 +23,13 @@ import me.tatarka.inject.annotations.Inject
  */
 @ApplicationScope
 class ActivityPubOAuthor @Inject constructor(
-    private val context: ApplicationContext,
     private val repo: ActivityPubLoggedAccountRepo,
     private val applicationRepo: ActivityPubApplicationRepo,
     private val clientManager: ActivityPubClientManager,
     private val accountAdapter: ActivityPubLoggedAccountAdapter,
     private val platformEntityAdapter: ActivityPubPlatformEntityAdapter,
     private val activityPubDatabases: ActivityPubDatabases,
+    private val browserLauncher: BrowserLauncher,
 ) {
 
     private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
@@ -74,6 +74,6 @@ class ActivityPubOAuthor @Inject constructor(
     }
 
     private fun openOauthPage(oauthUrl: String) {
-        BrowserLauncher.launchWebTabInApp(context, oauthUrl, checkAppSupportPage = false)
+        browserLauncher.launchWebTabInApp(oauthUrl, checkAppSupportPage = false)
     }
 }

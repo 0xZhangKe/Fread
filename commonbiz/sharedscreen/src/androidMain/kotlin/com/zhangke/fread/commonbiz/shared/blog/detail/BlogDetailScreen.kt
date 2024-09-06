@@ -17,7 +17,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -27,7 +26,7 @@ import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.utils.DateTimeFormatter
@@ -45,7 +44,8 @@ class BlogDetailScreen(
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val context = LocalContext.current
+        val browserLauncher = LocalBrowserLauncher.current
+
         val viewModel = getViewModel<BlogDetailViewModel>()
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         Scaffold(
@@ -56,8 +56,7 @@ class BlogDetailScreen(
                     actions = {
                         SimpleIconButton(
                             onClick = {
-                                BrowserLauncher.launchWebTabInApp(
-                                    context,
+                                browserLauncher.launchWebTabInApp(
                                     blog.url,
                                     checkAppSupportPage = false
                                 )
@@ -91,7 +90,7 @@ class BlogDetailScreen(
                     onInteractive = {},
                     onUserInfoClick = viewModel::onUserInfoClick,
                     onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it)
+                        browserLauncher.launchWebTabInApp(it)
                     },
                     blogTranslationState = BlogTranslationUiState(support = false),
                     editedAt = blog.editedAt,

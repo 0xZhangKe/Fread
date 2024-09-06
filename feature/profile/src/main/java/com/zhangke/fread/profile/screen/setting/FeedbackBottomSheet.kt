@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.analytics.report
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.profile.R
 import kotlinx.coroutines.launch
@@ -46,6 +46,7 @@ fun FeedbackBottomSheet(
     onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
+    val browserLauncher = LocalBrowserLauncher.current
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     ModalBottomSheet(
@@ -62,7 +63,7 @@ fun FeedbackBottomSheet(
                 modifier = Modifier
                     .clickable {
                         onDismissRequest()
-                        openTelegramGroup(context)
+                        browserLauncher.launchWebTabInApp(AppCommonConfig.TELEGRAM_GROUP)
                     }
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -85,7 +86,7 @@ fun FeedbackBottomSheet(
                 modifier = Modifier
                     .clickable {
                         onDismissRequest()
-                        openCreateGithubIssue(context)
+                        browserLauncher.launchWebTabInApp(AppCommonConfig.FEEDBACK_URL)
                     }
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -125,20 +126,6 @@ fun FeedbackBottomSheet(
             }
         }
     }
-}
-
-private fun openTelegramGroup(context: Context) {
-    BrowserLauncher.launchWebTabInApp(
-        context = context,
-        url = AppCommonConfig.TELEGRAM_GROUP,
-    )
-}
-
-private fun openCreateGithubIssue(context: Context) {
-    BrowserLauncher.launchWebTabInApp(
-        context = context,
-        url = AppCommonConfig.FEEDBACK_URL,
-    )
 }
 
 private fun openSendEmail(context: Context) {

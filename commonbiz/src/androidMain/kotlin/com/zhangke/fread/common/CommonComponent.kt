@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModelProvider
 import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
+import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
@@ -22,6 +23,8 @@ interface CommonComponent {
     val browserInterceptorSet: Set<BrowserInterceptor>
 
     val viewModelProviderFactory: ViewModelProvider.Factory
+
+    val browserLauncher: BrowserLauncher
 
     @ApplicationScope
     @Provides
@@ -54,6 +57,14 @@ interface CommonComponent {
     @Provides
     fun bindCommonBizModuleStartup(module: CommonBizModuleStartup): ModuleStartup {
         return module
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideBrowserLauncher(
+        context: ApplicationContext,
+    ): BrowserLauncher {
+        return BrowserLauncher(context)
     }
 }
 

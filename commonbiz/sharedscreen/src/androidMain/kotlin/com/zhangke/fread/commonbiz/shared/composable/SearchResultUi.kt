@@ -2,13 +2,12 @@ package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.status.model.SearchResultUiState
 import com.zhangke.fread.status.ui.BlogAuthorUi
-import com.zhangke.fread.status.ui.source.BlogPlatformUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
+import com.zhangke.fread.status.ui.source.BlogPlatformUi
 
 @Composable
 fun SearchResultUi(
@@ -17,7 +16,7 @@ fun SearchResultUi(
     indexInList: Int,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalBrowserLauncher.current
     when (searchResult) {
         is SearchResultUiState.Platform -> {
             BlogPlatformUi(
@@ -53,7 +52,7 @@ fun SearchResultUi(
                     composedStatusInteraction.onUserInfoClick(searchResult.role, it)
                 },
                 onUrlClick = {
-                    BrowserLauncher.launchWebTabInApp(context, it, searchResult.role)
+                    browserLauncher.launchWebTabInApp(it, searchResult.role)
                 }
             )
         }

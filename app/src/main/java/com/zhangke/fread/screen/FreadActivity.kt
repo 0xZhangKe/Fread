@@ -28,11 +28,15 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.commonComponent
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
+import com.zhangke.fread.di.ActivityComponent
+import com.zhangke.fread.di.applicationComponent
+import com.zhangke.fread.di.create
 import com.zhangke.fread.status.ui.style.LocalStatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
@@ -46,7 +50,8 @@ class FreadActivity : ComponentActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        val commonComponent = applicationContext.commonComponent
+        val applicationComponent = applicationContext.applicationComponent
+        val activityComponent = ActivityComponent.create(applicationComponent, this)
 
         setContent {
             val isNight by remember {
@@ -69,6 +74,7 @@ class FreadActivity : ComponentActivity() {
                     LocalStatusStyle provides statusContentSize.toStyle(),
                     LocalImageLoader provides applicationContext.imageLoader,
                     LocalViewModelProviderFactory provides commonComponent.viewModelProviderFactory,
+                    LocalBrowserLauncher provides activityComponent.activityBrowserLauncher,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {
@@ -77,7 +83,7 @@ class FreadActivity : ComponentActivity() {
                                 sheetShape = RoundedCornerShape(12.dp),
                             ) {
                                 Navigator(
-                                    screen = FreadScreen(),
+                                    screen = remember { FreadScreen() },
                                     key = ROOT_NAVIGATOR_KEY,
                                 ) {
                                     SlideTransition(

@@ -91,8 +91,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
                 finish()
                 return@launch
             }
-            BrowserLauncher.launchWebTabInApp(
-                context = this@BrowserBridgeDialogActivity,
+            commonModule.browserLauncher.launchWebTabInApp(
                 url = url,
                 checkAppSupportPage = false,
             )
@@ -102,7 +101,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
 
     private suspend fun intercept(role: IdentityRole, url: String): Boolean {
         commonModule.browserInterceptorSet.forEach {
-            if (it.intercept(this, role, url)) {
+            if (it.intercept(role, url)) {
                 return true
             }
         }

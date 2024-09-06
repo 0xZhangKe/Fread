@@ -22,6 +22,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.profile.R
 
@@ -31,7 +32,7 @@ class OpenSourceScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val context = LocalContext.current
+        val browserLauncher = LocalBrowserLauncher.current
         Scaffold(
             topBar = {
                 Toolbar(
@@ -55,7 +56,7 @@ class OpenSourceScreen : BaseScreen() {
                         OpenSourceItem(
                             openSource = openSourceInfo,
                             onClick = {
-                                BrowserLauncher.launchWebTabInApp(context, it.url)
+                                browserLauncher.launchWebTabInApp(it.url)
                             },
                         )
                     }

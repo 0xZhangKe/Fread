@@ -99,6 +99,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimel
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
@@ -136,6 +137,7 @@ data class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
+        val browserLauncher = LocalBrowserLauncher.current
         val (role, userUri, webFinger) = remember(route, role, webFinger) {
             if (role != null && webFinger != null) {
                 Triple(role, null, webFinger)
@@ -191,7 +193,7 @@ data class UserDetailScreen(
             },
             onOpenInBrowserClick = {
                 uiState.accountUiState?.account?.url?.let {
-                    BrowserLauncher.launchWebTabInApp(context, it)
+                    browserLauncher.launchWebTabInApp(it)
                 }
             },
             onCopyLinkClick = {
@@ -201,8 +203,7 @@ data class UserDetailScreen(
             },
             onOpenOriginalInstanceClick = {
                 uiState.accountUiState?.account?.url?.let { FormalBaseUrl.parse(it) }?.let {
-                    BrowserLauncher.launchWebTabInApp(
-                        context = context,
+                    browserLauncher.launchWebTabInApp(
                         url = it.toString(),
                         role = role,
                         checkAppSupportPage = true,
@@ -306,6 +307,7 @@ data class UserDetailScreen(
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
     ) {
+        val browserLauncher = LocalBrowserLauncher.current
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
         }
@@ -420,7 +422,7 @@ data class UserDetailScreen(
                         onFollowAccountClick = onFollowAccountClick,
                         onUnfollowAccountClick = onUnfollowAccountClick,
                         onUrlClick = {
-                            BrowserLauncher.launchWebTabInApp(context, it, role)
+                            browserLauncher.launchWebTabInApp(it, role)
                         },
                         onMaybeHashtagTargetClick = onMaybeHashtagTargetClick,
                     )

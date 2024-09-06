@@ -20,6 +20,8 @@ dependencies {
     implementation(project(":commonbiz:sharedscreen"))
     implementation(project(":commonbiz:status-ui"))
 
+    implementation(compose.components.resources)
+
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)

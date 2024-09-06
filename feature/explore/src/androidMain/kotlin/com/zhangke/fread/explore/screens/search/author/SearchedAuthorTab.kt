@@ -24,6 +24,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.explore.Res
@@ -83,7 +84,7 @@ class SearchedAuthorTab(
         onUserInfoClick: (BlogAuthor) -> Unit,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
-        val context = LocalContext.current
+        val browserLauncher = LocalBrowserLauncher.current
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
             onRefresh = onRefresh,
@@ -103,7 +104,7 @@ class SearchedAuthorTab(
                     author = item,
                     onClick = onUserInfoClick,
                     onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it, role)
+                        browserLauncher.launchWebTabInApp(it, role)
                     },
                 )
             }

@@ -5,6 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -28,7 +29,7 @@ fun StatusUi(
     detailModel: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalBrowserLauncher.current
     Surface(modifier = modifier) {
         val rawStatus = status.status
         BlogUi(
@@ -68,7 +69,7 @@ fun StatusUi(
                 composedStatusInteraction.onFollowClick(status.role, it)
             },
             onUrlClick = {
-                BrowserLauncher.launchWebTabInApp(context, it, status.role)
+                browserLauncher.launchWebTabInApp(it, status.role)
             },
             onBoostedClick = {
                 composedStatusInteraction.onBoostedClick(status.role, status)

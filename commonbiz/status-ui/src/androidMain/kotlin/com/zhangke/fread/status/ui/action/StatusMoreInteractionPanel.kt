@@ -19,6 +19,7 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.ui.StatusDataElements
@@ -137,10 +138,11 @@ private fun AdditionalMoreOptions(
     onTranslateClick: () -> Unit,
 ) {
     val context = LocalContext.current
+    val browserLauncher = LocalBrowserLauncher.current
     DropDownOpenInBrowserItem {
         reportClick(StatusDataElements.OPEN_IN_BROWSER)
         onDismissRequest()
-        BrowserLauncher.launchWebTabInApp(context, blogUrl, checkAppSupportPage = false)
+        browserLauncher.launchWebTabInApp(blogUrl, checkAppSupportPage = false)
     }
     DropDownCopyLinkItem {
         reportClick(StatusDataElements.COPY_BLOG_LINK)

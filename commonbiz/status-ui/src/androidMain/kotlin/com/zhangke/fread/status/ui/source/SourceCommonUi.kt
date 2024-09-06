@@ -25,6 +25,7 @@ import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
@@ -37,7 +38,7 @@ fun SourceCommonUi(
     modifier: Modifier = Modifier,
     showDivider: Boolean = true,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalBrowserLauncher.current
     Column(modifier = modifier) {
         ConstraintLayout(
             modifier = Modifier
@@ -129,7 +130,7 @@ fun SourceCommonUi(
                 onMentionClick = {},
                 onHashtagClick = {},
                 onUrlClick = {
-                    BrowserLauncher.launchWebTabInApp(context, it)
+                    browserLauncher.launchWebTabInApp(it)
                 },
             )
         }

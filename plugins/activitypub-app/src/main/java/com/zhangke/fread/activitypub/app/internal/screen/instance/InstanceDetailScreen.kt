@@ -54,7 +54,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderConten
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.buildRichText
@@ -193,6 +193,7 @@ class InstanceDetailScreen(
         onUserClick: (IdentityRole, WebFinger) -> Unit,
     ) {
         val context = LocalContext.current
+        val browserLauncher = LocalBrowserLauncher.current
         val loading = uiState.loading
         val instance = uiState.instance
         DetailHeaderContent(
@@ -287,7 +288,7 @@ class InstanceDetailScreen(
                 } else {
                     null
                 }
-                BrowserLauncher.launchWebTabInApp(context, it, role)
+                browserLauncher.launchWebTabInApp(it, role)
             },
             onMaybeHashtagTargetClick = {},
         )
@@ -296,6 +297,7 @@ class InstanceDetailScreen(
     @Composable
     private fun InstanceDetailActions(baseUrl: FormalBaseUrl) {
         val context = LocalContext.current
+        val browserLauncher = LocalBrowserLauncher.current
         var showMorePopup by remember {
             mutableStateOf(false)
         }
@@ -311,7 +313,7 @@ class InstanceDetailScreen(
             DropDownOpenInBrowserItem {
                 reportClick(ActivityPubDataElements.INSTANCE_DETAIL_OPEN_IN_BROWSER)
                 showMorePopup = false
-                BrowserLauncher.launchBySystemBrowser(context, baseUrl.toString())
+                browserLauncher.launchBySystemBrowser(baseUrl.toString())
             }
 
             DropDownCopyLinkItem {

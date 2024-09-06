@@ -32,6 +32,7 @@ import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
@@ -111,14 +112,14 @@ private fun ServerAboutAnnouncement(
     entity: ActivityPubAnnouncementEntity,
     baseUrl: FormalBaseUrl,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalBrowserLauncher.current
     FreadRichText(
         modifier = modifier,
         content = entity.content,
         textSelectable = true,
         onUrlClick = {
             val role = IdentityRole(null, baseUrl = baseUrl)
-            BrowserLauncher.launchWebTabInApp(context, it, role)
+            browserLauncher.launchWebTabInApp(it, role)
         },
     )
 }

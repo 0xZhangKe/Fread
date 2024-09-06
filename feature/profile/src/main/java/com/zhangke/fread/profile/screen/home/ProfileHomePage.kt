@@ -51,6 +51,7 @@ import com.zhangke.framework.voyager.rootNavigator
 import com.zhangke.fread.analytics.ProfileElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.fread.profile.R
@@ -235,7 +236,7 @@ class ProfileHomePage : BaseScreen() {
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
     ) {
-        val context = LocalContext.current
+        val browserLauncher = LocalBrowserLauncher.current
         var showLogoutDialog by remember {
             mutableStateOf(false)
         }
@@ -260,7 +261,7 @@ class ProfileHomePage : BaseScreen() {
                     emojis = account.emojis,
                     fontSizeSp = 22F,
                     onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it, account.role)
+                        browserLauncher.launchWebTabInApp(it, account.role)
                     },
                 )
                 FreadRichText(
@@ -270,7 +271,7 @@ class ProfileHomePage : BaseScreen() {
                     emojis = account.emojis,
                     fontSizeSp = 16F,
                     onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it, account.role)
+                        browserLauncher.launchWebTabInApp(it, account.role)
                     }
                 )
                 Row(

@@ -41,6 +41,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.framework.Res
 import com.zhangke.fread.framework.alert
@@ -83,6 +84,7 @@ class RssSourceScreen(
         onDisplayNameChanged: (String) -> Unit,
     ) {
         val context = LocalContext.current
+        val browserLauncher = LocalBrowserLauncher.current
         val snackBarState = rememberSnackbarHostState()
         ConsumeSnackbarFlow(snackBarState, snackBarMessageFlow)
         Scaffold(
@@ -127,7 +129,7 @@ class RssSourceScreen(
                     onHashtagClick = {},
                     onMentionClick = {},
                     onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it)
+                        browserLauncher.launchWebTabInApp(it)
                     },
                 )
 
@@ -141,7 +143,7 @@ class RssSourceScreen(
                     )
                     RssInfoItem(
                         modifier = Modifier.clickable {
-                            BrowserLauncher.launchWebTabInApp(context, rssSource.url)
+                            browserLauncher.launchWebTabInApp(rssSource.url)
                         },
                         title = stringResource(R.string.rss_source_detail_screen_url),
                         content = rssSource.url,
@@ -149,7 +151,7 @@ class RssSourceScreen(
                     if (rssSource.homePage.isNullOrEmpty().not()) {
                         RssInfoItem(
                             modifier = Modifier.clickable {
-                                BrowserLauncher.launchWebTabInApp(context, rssSource.homePage!!)
+                                browserLauncher.launchWebTabInApp(rssSource.homePage!!)
                             },
                             title = stringResource(R.string.rss_source_detail_screen_home_url),
                             content = rssSource.homePage!!,

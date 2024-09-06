@@ -30,6 +30,7 @@ kotlin {
 
                 implementation(libs.androidx.room)
                 implementation(libs.bundles.voyager)
+                implementation(libs.uri.kmp)
             }
         }
         commonTest {

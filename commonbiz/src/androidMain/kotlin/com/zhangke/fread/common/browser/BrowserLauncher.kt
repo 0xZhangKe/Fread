@@ -2,30 +2,32 @@ package com.zhangke.fread.common.browser
 
 import android.content.Context
 import android.content.Intent
-import android.net.Uri
 import androidx.browser.customtabs.CustomTabsIntent
+import androidx.compose.runtime.staticCompositionLocalOf
+import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.framework.utils.toAndroidUri
+import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.status.model.IdentityRole
 
-object BrowserLauncher {
+class BrowserLauncher(
+    private val context: Context,
+) {
 
     fun launchWebTabInApp(
-        context: Context,
         url: String,
         role: IdentityRole? = null,
         checkAppSupportPage: Boolean = true,
     ) {
         launchWebTabInApp(
-            context = context,
-            uri = Uri.parse(url),
+            uri = url.toPlatformUri(),
             role = role,
             checkAppSupportPage = checkAppSupportPage,
         )
     }
 
     fun launchWebTabInApp(
-        context: Context,
-        uri: Uri,
+        uri: PlatformUri,
         role: IdentityRole? = null,
         checkAppSupportPage: Boolean = true,
     ) {
@@ -36,24 +38,28 @@ object BrowserLauncher {
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
         customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-        customTabsIntent.launchUrl(context, uri)
+        customTabsIntent.launchUrl(context, uri.toAndroidUri())
     }
 
-    fun launchBySystemBrowser(context: Context, url: String) {
-        launchBySystemBrowser(context, Uri.parse(url))
+    fun launchBySystemBrowser(url: String) {
+        launchBySystemBrowser(url.toPlatformUri())
     }
 
-    fun launchBySystemBrowser(context: Context, uri: Uri) {
-        val intent = Intent(Intent.ACTION_VIEW, uri)
+    fun launchBySystemBrowser(uri: PlatformUri) {
+        val intent = Intent(Intent.ACTION_VIEW, uri.toAndroidUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
-    fun launchFreadLandingPage(context: Context) {
-        launchWebTabInApp(context, AppCommonConfig.WEBSITE)
+    fun launchFreadLandingPage() {
+        launchWebTabInApp(AppCommonConfig.WEBSITE)
     }
 
-    fun launchAuthorWebsite(context: Context) {
-        launchWebTabInApp(context, AppCommonConfig.AUTHOR_WEBSITE)
+    fun launchAuthorWebsite() {
+        launchWebTabInApp(AppCommonConfig.AUTHOR_WEBSITE)
     }
+}
+
+val LocalBrowserLauncher = staticCompositionLocalOf<BrowserLauncher> {
+    error("No BrowserLauncher was provided via LocalBrowserLauncher")
 }

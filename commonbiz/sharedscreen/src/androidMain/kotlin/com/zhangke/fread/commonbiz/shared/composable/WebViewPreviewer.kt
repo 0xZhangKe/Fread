@@ -13,13 +13,15 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.zhangke.framework.utils.dpToPx
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.framework.utils.toPlatformUri
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 
 @Composable
 fun WebViewPreviewer(
     html: String,
     modifier: Modifier = Modifier,
 ) {
+    val browserLauncher = LocalBrowserLauncher.current
     val density = LocalDensity.current
     val fontColor = LocalContentColor.current.toArgb()
     AndroidView(
@@ -35,7 +37,7 @@ fun WebViewPreviewer(
                         view: WebView?,
                         request: WebResourceRequest,
                     ): Boolean {
-                        BrowserLauncher.launchWebTabInApp(context, request.url)
+                        browserLauncher.launchWebTabInApp(request.url.toPlatformUri())
                         return true
                     }
                 }

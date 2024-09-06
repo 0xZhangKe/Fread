@@ -19,6 +19,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalBrowserLauncher
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.status.ui.utils.CardInfoSection
 import com.zhangke.fread.status.uri.FormalUri
@@ -52,14 +53,14 @@ internal fun StatusSourceNode(
     onAddClick: (() -> Unit)? = null,
     onRemoveClick: (() -> Unit)? = null,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalBrowserLauncher.current
     CardInfoSection(
         modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
         avatar = source.thumbnail,
         title = source.name,
         description = source.description,
         onUrlClick = {
-            BrowserLauncher.launchWebTabInApp(context, it)
+            browserLauncher.launchWebTabInApp(it)
         },
         actions = {
             if (source.addEnabled) {

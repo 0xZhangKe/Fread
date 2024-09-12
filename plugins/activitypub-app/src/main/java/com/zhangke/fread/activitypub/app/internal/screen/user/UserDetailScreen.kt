@@ -80,6 +80,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.utils.decodeAsUri
 import com.zhangke.framework.utils.formatAsCount
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.R
@@ -113,22 +114,25 @@ import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.vectorResource
 
 @Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
-    @Router val route: String = "",
+    @RouteParam(UserDetailRoute.PARAMS_ROLE) val roleParam: String?,
+    @RouteParam(UserDetailRoute.PARAMS_USER_URI) val userUriParam: String?,
+    @RouteParam(UserDetailRoute.PARAMS_WEB_FINGER) val webFingerParam: String?,
     private val role: IdentityRole? = null,
     private val webFinger: WebFinger? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = route + role.toString() + webFinger.toString()
+        get() = roleParam + userUriParam + webFingerParam + role.toString() + webFinger.toString()
 
     @Composable
     override fun Content() {
@@ -136,11 +140,15 @@ data class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val (role, userUri, webFinger) = remember(route, role, webFinger) {
+        val (role, userUri, webFinger) = remember(roleParam, userUriParam, role, webFinger) {
             if (role != null && webFinger != null) {
                 Triple(role, null, webFinger)
             } else {
-                UserDetailRoute.parseRoute(route)
+                Triple(
+                    IdentityRole.decodeFromString(roleParam!!)!!,
+                    FormalUri.from(userUriParam!!.decodeAsUri()),
+                    WebFinger.decodeFromUrlString(webFingerParam!!),
+                )
             }
         }
         val viewModel = getViewModel<UserDetailContainerViewModel>()

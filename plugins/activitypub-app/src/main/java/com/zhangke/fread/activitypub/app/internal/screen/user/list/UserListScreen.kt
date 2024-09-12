@@ -41,7 +41,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_follow
-import com.zhangke.krouter.Destination
+import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.Router
 
 @Destination(UserListRoute.ROUTE)

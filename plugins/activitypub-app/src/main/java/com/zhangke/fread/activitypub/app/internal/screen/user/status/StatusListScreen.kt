@@ -21,12 +21,13 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 
 @Destination(StatusListScreenRoute.ROUTE)
 class StatusListScreen(
-    @Router private val route: String = "",
+    @RouteParam(StatusListScreenRoute.PARAM_ROLE) private val roleString: String? = null,
+    @RouteParam(StatusListScreenRoute.PARAM_TYPE) private val typeString: String? = null,
     private val role: IdentityRole? = null,
     private val type: StatusListType? = null,
 ) : BaseScreen() {
@@ -37,10 +38,11 @@ class StatusListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<StatusListViewModel, StatusListViewModel.Factory> {
-            if (route.isEmpty()) {
+            if (roleString.isNullOrEmpty() || typeString.isNullOrEmpty()) {
                 it.create(role!!, type!!)
             } else {
-                val (role, type) = StatusListScreenRoute.parse(route)!!
+                val role = IdentityRole.decodeFromString(roleString)!!
+                val type = StatusListType.valueOf(roleString)
                 it.create(role, type)
             }
         }

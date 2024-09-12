@@ -25,14 +25,15 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.Hashtag
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import com.zhangke.fread.status.ui.hashtag.HashtagUiPlaceholder
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 
 @Destination(TagListScreenRoute.ROUTE)
 class TagListScreen(
-    @Router private val route: String = "",
+    @RouteParam(TagListScreenRoute.PARAM_ROLE) private val roleString: String,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
@@ -41,7 +42,7 @@ class TagListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<TagListViewModel, TagListViewModel.Factory> {
-            it.create(TagListScreenRoute.parseRoute(route)!!)
+            it.create(IdentityRole.decodeFromString(roleString)!!)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = rememberSnackbarHostState()

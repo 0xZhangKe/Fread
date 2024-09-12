@@ -39,7 +39,7 @@ filt = "1.0.4"
 
 voyager = "1.1.0-beta02"
 
-krouter = "0.2.3"
+krouter = "0.9.9"
 
 androidGradlePlugin = "8.2.2"
 
@@ -173,8 +173,10 @@ voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", 
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-hilt = { module = "cafe.adriel.voyager:voyager-hilt", version.ref = "voyager" }
 
-krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", version.ref = "krouter"}
-krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.ref = "krouter"}
+krouter-reducing-compiler = { group = "io.github.0xzhangke", name = "krouter-reducing-compiler", version.ref = "krouter"}
+krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-collecting-compiler", version.ref = "krouter"}
+krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", version.ref = "krouter"}
+krouter-annotation = { group = "io.github.0xzhangke", name = "krouter-annotation", version.ref = "krouter"}
 
 compose-wheel-picker = { group = "com.github.zj565061763", name = "compose-wheel-picker", version.ref = "compose.wheel.picker"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }

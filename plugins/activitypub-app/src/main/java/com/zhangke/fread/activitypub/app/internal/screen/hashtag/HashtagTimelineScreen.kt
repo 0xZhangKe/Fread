@@ -53,18 +53,19 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
+import java.net.URLDecoder
 
 @Destination(HashtagTimelineRoute.ROUTE)
 data class HashtagTimelineScreen(
-    @RouteParam(HashtagTimelineRoute.PARAMS_ROLE) private val _role: String,
-    @RouteParam(HashtagTimelineRoute.PARAM_HASHTAG) private val hashtag: String,
+    @RouteParam(HashtagTimelineRoute.PARAMS_ROLE) private val _role: String? = null,
+    @RouteParam(HashtagTimelineRoute.PARAM_HASHTAG) private val _hashtag: String? = null,
+    private val role: IdentityRole = IdentityRole.decodeFromString(_role!!)!!,
+    private val hashtag: String = URLDecoder.decode(_hashtag!!, Charsets.UTF_8.name())
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = _role + hashtag
-
-    private val role = IdentityRole.decodeFromString(_role)!!
-
+        get() = _role + _hashtag
+    
     @Composable
     override fun Content() {
         super.Content()

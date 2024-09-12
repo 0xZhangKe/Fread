@@ -42,11 +42,11 @@ import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_follow
 import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.krouter.annotation.RouteUri
 
 @Destination(UserListRoute.ROUTE)
 class UserListScreen(
-    @Router private val route: String = "",
+    @RouteUri private val route: String = "",
     private val role: IdentityRole? = null,
     private val type: UserListType? = null,
     private val statusId: String? = null,

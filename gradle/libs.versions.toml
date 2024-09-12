@@ -39,7 +39,7 @@ filt = "1.0.4"
 
 voyager = "1.1.0-beta02"
 
-krouter = "0.9.9"
+krouter = "0.9.95"
 
 androidGradlePlugin = "8.2.2"
 

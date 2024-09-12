@@ -88,12 +88,12 @@ import kotlin.time.Duration
 
 @Destination(PostStatusScreenRoute.ROUTE)
 class PostStatusScreen(
-    @RouteParam(PostStatusScreenRoute.PARAM_ACCOUNT_URI) private val accountUri: String?,
-    @RouteParam(PostStatusScreenRoute.PARAM_EDIT_BLOG) private val editBlog: String?,
-    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ACCT) private val replyBlogAcct: String?,
-    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ID) private val replyBlogId: String?,
-    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_AUTHOR_NAME) private val replyAuthorName: String?,
-    @RouteParam(PostStatusScreenRoute.PARAMS_REPLY_VISIBILITY) private val replyVisibility: String?,
+    @RouteParam(PostStatusScreenRoute.PARAM_ACCOUNT_URI) private val accountUri: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_EDIT_BLOG) private val editBlog: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ACCT) private val replyBlogAcct: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ID) private val replyBlogId: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_AUTHOR_NAME) private val replyAuthorName: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAMS_REPLY_VISIBILITY) private val replyVisibility: String? = null,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)

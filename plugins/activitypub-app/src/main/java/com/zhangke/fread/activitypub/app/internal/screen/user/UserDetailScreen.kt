@@ -88,7 +88,6 @@ import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
-import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
@@ -124,9 +123,9 @@ import org.jetbrains.compose.resources.vectorResource
 
 @Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
-    @RouteParam(UserDetailRoute.PARAMS_ROLE) val roleParam: String?,
-    @RouteParam(UserDetailRoute.PARAMS_USER_URI) val userUriParam: String?,
-    @RouteParam(UserDetailRoute.PARAMS_WEB_FINGER) val webFingerParam: String?,
+    @RouteParam(UserDetailRoute.PARAMS_ROLE) val roleParam: String? = null,
+    @RouteParam(UserDetailRoute.PARAMS_USER_URI) val userUriParam: String? = null,
+    @RouteParam(UserDetailRoute.PARAMS_WEB_FINGER) val webFingerParam: String? = null,
     private val role: IdentityRole? = null,
     private val webFinger: WebFinger? = null,
 ) : BaseScreen() {
@@ -146,8 +145,8 @@ data class UserDetailScreen(
             } else {
                 Triple(
                     IdentityRole.decodeFromString(roleParam!!)!!,
-                    FormalUri.from(userUriParam!!.decodeAsUri()),
-                    WebFinger.decodeFromUrlString(webFingerParam!!),
+                    userUriParam?.decodeAsUri()?.let(FormalUri::from),
+                    webFingerParam?.let(WebFinger::decodeFromUrlString),
                 )
             }
         }
@@ -247,10 +246,8 @@ data class UserDetailScreen(
             onMaybeHashtagTargetClick = {
                 navigator.push(
                     HashtagTimelineScreen(
-                        HashtagTimelineRoute.buildRoute(
-                            role = uiState.role,
-                            hashtag = it.hashtag
-                        )
+                        role = uiState.role,
+                        hashtag = it.hashtag.removePrefix("#"),
                     )
                 )
             },

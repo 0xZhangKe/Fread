@@ -26,6 +26,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.encodeToUrlString
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import com.zhangke.fread.status.ui.hashtag.HashtagUiPlaceholder
 import com.zhangke.krouter.annotation.Destination
@@ -55,10 +56,8 @@ class TagListScreen(
             onTagClick = { hashtag ->
                 navigator.push(
                     HashtagTimelineScreen(
-                        HashtagTimelineRoute.buildRoute(
-                            role = uiState.role,
-                            hashtag = hashtag.name,
-                        )
+                        role = uiState.role,
+                        hashtag = hashtag.name.removePrefix("#"),
                     )
                 )
             },

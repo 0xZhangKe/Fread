@@ -59,6 +59,7 @@ import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.uri.encode
 import kotlinx.coroutines.launch
 
 class ActivityPubContentScreen(
@@ -82,7 +83,7 @@ class ActivityPubContentScreen(
                 navigator.push(InstanceDetailScreen(PlatformDetailRoute.buildRoute(it.baseUrl)))
             },
             onPostBlogClick = {
-                navigator.push(PostStatusScreen(PostStatusScreenRoute.buildRoute(it.uri)))
+                navigator.push(PostStatusScreen(accountUri = it.uri.encode()))
             },
         )
     }

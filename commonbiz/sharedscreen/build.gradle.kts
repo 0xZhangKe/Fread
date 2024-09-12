@@ -25,6 +25,8 @@ kotlin {
                 implementation(libs.bundles.voyager)
 
                 implementation(libs.imageLoader)
+
+                implementation(libs.krouter.runtime)
             }
         }
         commonTest {
@@ -57,7 +59,6 @@ kotlin {
                 implementation(libs.auto.service.annotations)
                 implementation(libs.filt.annotaions)
                 implementation(libs.hilt)
-                implementation(libs.krouter.core)
             }
         }
     }
@@ -68,5 +69,5 @@ dependencies {
     add("kspAndroid", libs.filt.compiler)
     add("kspAndroid", libs.hilt.compiler)
     add("kspAndroid", libs.auto.service.ksp)
-    add("kspAndroid", libs.krouter.compiler)
+    add("kspAndroid", libs.krouter.collecting.compiler)
 }

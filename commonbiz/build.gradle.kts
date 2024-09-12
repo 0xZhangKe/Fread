@@ -23,6 +23,8 @@ kotlin {
 
                 implementation(libs.androidx.room)
                 implementation(libs.bundles.voyager)
+
+                implementation(libs.krouter.runtime)
             }
         }
         commonTest {
@@ -45,7 +47,6 @@ kotlin {
                 implementation(libs.androidx.browser)
 
                 implementation(libs.hilt)
-                implementation(libs.krouter.core)
                 implementation(libs.filt.annotaions)
 
                 implementation(libs.bundles.googlePlayReview)
@@ -57,6 +58,5 @@ kotlin {
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspAndroid", libs.hilt.compiler)
-    add("kspAndroid", libs.krouter.compiler)
     add("kspAndroid", libs.filt.compiler)
 }

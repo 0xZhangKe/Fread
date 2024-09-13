@@ -6,10 +6,17 @@ import kotlin.test.assertEquals
 class IntExtTest {
     @Test
     fun testIntFormatAsCount() {
-        assertEquals("1.2GB", (1.2 * 1024 * 1024 * 1024).toInt().formatAsCount())
-        assertEquals("22.2MB", (22.2 * 1024 * 1024).toInt().formatAsCount())
-        assertEquals("33.3KB", (33.33 * 1024).toInt().formatAsCount())
-        assertEquals("33.4KB", (33.37 * 1024).toInt().formatAsCount())
-        assertEquals("44B", (44.44).toInt().formatAsCount())
+        assertEquals("1M", 1_000_000.formatToHumanReadable())
+        assertEquals("1.1M", 1_100_000.formatToHumanReadable())
+        assertEquals("1.9M", 1_900_000.formatToHumanReadable())
+        assertEquals("1.5M", 1_500_000.formatToHumanReadable())
+        assertEquals("1M", 1_009_000.formatToHumanReadable())
+        assertEquals("1.1M", 1_090_000.formatToHumanReadable())
+        assertEquals("10M", 10_000_000.formatToHumanReadable())
+        assertEquals("1K", 1000.formatToHumanReadable())
+        assertEquals("10K", 10000.formatToHumanReadable())
+        assertEquals("89K", 89000.formatToHumanReadable())
+        assertEquals("99K", 99000.formatToHumanReadable())
+        assertEquals("999", 999.formatToHumanReadable())
     }
 }

@@ -81,7 +81,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.decodeAsUri
-import com.zhangke.framework.utils.formatAsCount
+import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
@@ -542,7 +542,7 @@ data class UserDetailScreen(
     }
 
     private fun buildCountedDesc(count: Int, desc: String): AnnotatedString {
-        val formattedCount = count.formatAsCount()
+        val formattedCount = count.formatToHumanReadable()
         return buildAnnotatedString {
             append(formattedCount)
             addStyle(

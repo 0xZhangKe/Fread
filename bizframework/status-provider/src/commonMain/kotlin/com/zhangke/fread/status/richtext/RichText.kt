@@ -1,11 +1,11 @@
 package com.zhangke.fread.status.richtext
 
 import com.zhangke.framework.utils.PlatformSerializable
+import com.zhangke.framework.utils.PlatformTransient
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 
 @Serializable
 class RichText(
@@ -17,7 +17,7 @@ class RichText(
     private val parsePossibleHashtag: Boolean = false,
 ) : PlatformSerializable {
 
-    @Transient
+    @PlatformTransient
     private var charSequence: CharSequence? = null
 
     fun parse(): CharSequence {

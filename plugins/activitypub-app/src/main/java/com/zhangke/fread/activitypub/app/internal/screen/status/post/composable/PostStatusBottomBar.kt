@@ -41,7 +41,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -55,6 +54,9 @@ import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
 import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.ic_post_status_spoiler
+import org.jetbrains.compose.resources.painterResource
 import java.util.Locale
 
 @Composable
@@ -113,7 +115,7 @@ internal fun PostStatusBottomBar(
                         .align(Alignment.CenterVertically)
                         .padding(start = 16.dp),
                     onClick = onSensitiveClick,
-                    painter = painterResource(com.zhangke.fread.statusui.R.drawable.ic_post_status_spoiler),
+                    painter = painterResource(Res.drawable.ic_post_status_spoiler),
                     contentDescription = "Sensitive content",
                 )
                 SelectLanguageIconButton(

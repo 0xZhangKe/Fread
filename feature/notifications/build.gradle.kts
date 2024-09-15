@@ -14,13 +14,12 @@ dependencies {
     androidTestImplementation("androidx.test.ext:junit:1.1.5")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
-    implementation(project(path = ":framework"))
-    implementation(project(path = ":commonbiz"))
-    implementation(project(path = ":bizframework:status-provider"))
+    implementation(project(":framework"))
+    implementation(project(":bizframework:status-provider"))
+    implementation(project(":commonbiz"))
     implementation(project(":commonbiz:analytics"))
-    implementation(project(path = ":commonbiz:status-ui"))
-    implementation(project(path = ":commonbiz:sharedscreen"))
-    implementation(project(":commonbiz:analytics"))
+    implementation(project(":commonbiz:sharedscreen"))
+    implementation(project(":commonbiz:status-ui"))
 
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
@@ -48,6 +47,7 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.bundles.voyager)
-    implementation(libs.krouter.core)
-    ksp(libs.krouter.compiler)
+
+    implementation(libs.krouter.runtime)
+    ksp(libs.krouter.collecting.compiler)
 }

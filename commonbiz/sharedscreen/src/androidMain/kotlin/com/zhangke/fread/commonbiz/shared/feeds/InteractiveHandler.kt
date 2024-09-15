@@ -1,6 +1,7 @@
 package com.zhangke.fread.commonbiz.shared.feeds
 
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
@@ -22,6 +23,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.isRss
+import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
@@ -165,7 +167,9 @@ class InteractiveHandler(
             } else {
                 StatusContextScreen(
                     role = status.role,
-                    status = refactorToNewBlog(status.status),
+                    serializedStatus = refactorToNewBlog(status.status).let {
+                        globalJson.encodeToString(Status.serializer(), it)
+                    },
                     blogTranslationUiState = status.blogTranslationState,
                 )
             }

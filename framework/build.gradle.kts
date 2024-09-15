@@ -35,7 +35,10 @@ kotlin {
                 implementation(libs.okio)
                 implementation(libs.ksoup)
                 implementation(libs.uri.kmp)
+                implementation(libs.bignum)
                 implementation(libs.placeholder.material3)
+
+                implementation(libs.krouter.runtime)
             }
         }
         commonTest {
@@ -56,7 +59,6 @@ kotlin {
                 implementation(libs.okhttp3.logging)
 
                 implementation(libs.bundles.androidx.media3)
-                implementation(libs.krouter.core)
                 api(libs.compose.wheel.picker)
 
                 implementation(libs.composeReorderable)

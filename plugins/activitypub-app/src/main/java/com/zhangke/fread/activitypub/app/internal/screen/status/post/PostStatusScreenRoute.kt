@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
-import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.encodeToUrlString
 import com.zhangke.fread.activitypub.app.internal.route.ActivityPubRoutes
@@ -16,14 +15,14 @@ object PostStatusScreenRoute {
 
     const val ROUTE = "${ActivityPubRoutes.ROOT}/status/post"
 
-    private const val PARAM_ACCOUNT_URI = "accountUri"
+    const val PARAM_ACCOUNT_URI = "accountUri"
 
-    private const val PARAM_EDIT_BLOG = "editBlog"
+    const val PARAM_EDIT_BLOG = "editBlog"
 
-    private const val PARAM_REPLY_TO_BLOG_ACCT = "replyToBlogAcct"
-    private const val PARAM_REPLY_TO_BLOG_ID = "replyToBlogId"
-    private const val PARAM_REPLY_TO_AUTHOR_NAME = "replyAuthorName"
-    private const val PARAMS_REPLY_VISIBILITY = "replyVisibility"
+    const val PARAM_REPLY_TO_BLOG_ACCT = "replyToBlogAcct"
+    const val PARAM_REPLY_TO_BLOG_ID = "replyToBlogId"
+    const val PARAM_REPLY_TO_AUTHOR_NAME = "replyAuthorName"
+    const val PARAMS_REPLY_VISIBILITY = "replyVisibility"
 
     fun buildRoute(accountUri: FormalUri): String {
         return "$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}"
@@ -57,45 +56,38 @@ object PostStatusScreenRoute {
         }
     }
 
-    fun parse(route: String): PostStatusScreenParams {
-        val queries = SimpleUri.parse(route)!!.queries
-        val accountUri = queries[PARAM_ACCOUNT_URI]?.decodeAsUri()?.let { FormalUri.from(it) }
-        parseAsReply(accountUri, queries)?.let { return it }
-        parseAsEdit(accountUri, queries)?.let { return it }
-        return PostStatusScreenParams.PostStatusParams(accountUri)
-    }
-
-    private fun parseAsReply(
-        accountUri: FormalUri?,
-        queries: Map<String, String>,
-    ): PostStatusScreenParams.ReplyStatusParams? {
-        val replyWebFinger =
-            queries[PARAM_REPLY_TO_BLOG_ACCT]?.let { WebFinger.decodeFromUrlString(it) }
-        val replyToBlogId = queries[PARAM_REPLY_TO_BLOG_ID]
-        val replyAuthorName = queries[PARAM_REPLY_TO_AUTHOR_NAME]?.decodeAsUri()
-        val replyVisibility = queries[PARAMS_REPLY_VISIBILITY]?.let {
-            StatusVisibility.valueOf(it)
-        } ?: StatusVisibility.PUBLIC
-        if (replyWebFinger != null && replyToBlogId != null && replyAuthorName != null) {
+    fun buildParams(
+        accountUri: String?,
+        editBlog: String?,
+        replyBlogAcct: String?,
+        replyBlogId: String?,
+        replyAuthorName: String?,
+        replyVisibility: String?,
+    ): PostStatusScreenParams {
+        val formalAccountUri = accountUri?.decodeAsUri()?.let { FormalUri.from(it) }
+        val formalReplyToBlogAcct = replyBlogAcct?.let { WebFinger.decodeFromUrlString(it) }
+        val formalReplyVisibility = replyVisibility?.let(StatusVisibility::valueOf)
+        if (formalReplyToBlogAcct != null
+            && !replyAuthorName.isNullOrEmpty()
+            && !replyBlogId.isNullOrEmpty()
+        ) {
             return PostStatusScreenParams.ReplyStatusParams(
-                accountUri = accountUri,
-                replyToBlogWebFinger = replyWebFinger,
-                replyToBlogId = replyToBlogId,
+                accountUri = formalAccountUri,
+                replyToBlogWebFinger = formalReplyToBlogAcct,
+                replyToBlogId = replyBlogId,
                 replyAuthorName = replyAuthorName,
-                replyVisibility = replyVisibility,
+                replyVisibility = formalReplyVisibility ?: StatusVisibility.PUBLIC,
             )
         }
-        return null
-    }
-
-    private fun parseAsEdit(
-        accountUri: FormalUri?,
-        queries: Map<String, String>,
-    ): PostStatusScreenParams.EditStatusParams? {
-        val blog = queries[PARAM_EDIT_BLOG]?.decodeAsUri()?.let {
-            runCatching { Json.decodeFromString<Blog>(it) }.getOrNull()
-        } ?: return null
-        return PostStatusScreenParams.EditStatusParams(accountUri, blog)
+        if (!editBlog.isNullOrEmpty()) {
+            val blog = editBlog.decodeAsUri().let {
+                runCatching { Json.decodeFromString<Blog>(it) }.getOrNull()
+            }
+            if (blog != null) {
+                return PostStatusScreenParams.EditStatusParams(formalAccountUri, blog)
+            }
+        }
+        return PostStatusScreenParams.PostStatusParams(formalAccountUri)
     }
 
     private fun String.encodeAsUri(): String {

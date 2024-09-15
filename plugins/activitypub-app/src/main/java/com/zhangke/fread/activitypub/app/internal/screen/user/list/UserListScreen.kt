@@ -39,12 +39,14 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.status_ui_follow
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteUri
 
 @Destination(UserListRoute.ROUTE)
 class UserListScreen(
-    @Router private val route: String = "",
+    @RouteUri private val route: String = "",
     private val role: IdentityRole? = null,
     private val type: UserListType? = null,
     private val statusId: String? = null,
@@ -200,7 +202,7 @@ class UserListScreen(
                     Spacer(modifier = Modifier.width(6.dp))
                     StyledTextButton(
                         modifier = Modifier.align(Alignment.CenterVertically),
-                        text = stringResource(com.zhangke.fread.statusui.R.string.status_ui_follow),
+                        text = org.jetbrains.compose.resources.stringResource(Res.string.status_ui_follow),
                         style = TextButtonStyle.STANDARD,
                         onClick = {
                             onFollowClick(authorUiState)

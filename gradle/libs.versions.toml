@@ -3,7 +3,7 @@ kotlin = "2.0.10"
 ksp = "2.0.10-1.0.24"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
-kotlinx-serialization = "1.7.0-RC"
+kotlinx-serialization = "1.7.1"
 kotlinx-datetime = "0.6.1"
 
 compose-multiplatform = "1.6.11"
@@ -11,29 +11,27 @@ compose-multiplatform = "1.6.11"
 androidx-core = "1.13.1"
 androidx-fragment = "1.7.1"
 androidx-appcompat = "1.6.1"
-androidx-annotation = "1.7.1"
+androidx-annotation = "1.8.2"
 androidx-activity = "1.8.2"
 androidx-preference = "1.2.1"
 androidx-collection = "1.3.0"
-androidx-room = "2.6.0"
+androidx-room = "2.7.0-alpha07"
 androidx-datastore-preferences = "1.0.0"
 androidx-browser = "1.4.0"
 androidx-constraintlayout-compose = "1.1.0-alpha13"
-androidx-lifecycle = "2.4.1"
 androidx-paging = "3.2.1"
 androidx-paging-compose = "3.2.1"
 androidx-media3 = "1.0.0-rc01"
+
+jetbrains-lifecycle = "2.8.0"
 
 accompanist = "0.34.0"
 
 hilt = "2.52"
 
 okhttp3 = "4.12.0"
-ktor = "2.3.12"
+ktor = "3.0.0-beta-2"
 ktorfit = "2.0.1"
-#ktorfit-ksp = "2.0.1-1.0.24"
-
-coil = "2.7.0"
 
 auto_service = "1.0.1"
 
@@ -70,8 +68,6 @@ goolgePlayReview = "2.0.1"
 goolgePlayReviewKtx = "2.0.1"
 
 [bundles]
-androidx-viewmodel = ["androidx.viewmodel.ktx", "androidx.viewmodel.compose", "androidx.viewmodel.savedstate"]
-androidx-lifecycle = ["androidx.lifecycle.common.java8", "androidx.lifecycle.process"]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
 androidx-activity = ["androidx.activity", "androidx.activity.ktx", "androidx.activity.compose"]
 androidx-preference = ["androidx.preference", "androidx.preference.ktx"]
@@ -82,8 +78,6 @@ androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okht
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
-coil = ["coil", "coil.compose", "coil.compose.base", "coil.gif", "coil.video"]
-
 voyager = ["voyager.navigator", "voyager.bottom.sheet.navigator", "voyager.tab.navigator", "voyager.transitions", "voyager.screenModel", "voyager.hilt"]
 
 googlePlayReview = ["googlePlayReview", "googlePlayReviewKtx"]
@@ -92,7 +86,7 @@ googlePlayReview = ["googlePlayReview", "googlePlayReviewKtx"]
 androidx-core = { group = "androidx.core", name = "core", version.ref = "androidx.core" }
 androidx-core-ktx = { group = "androidx.core", name = "core-ktx", version.ref = "androidx.core" }
 androidx-appcompat = { group = "androidx.appcompat", name = "appcompat", version.ref = "androidx.appcompat" }
-androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx.annotation" }
+androidx-annotation = { group = "androidx.annotation", name = "annotation", version.ref = "androidx-annotation" }
 androidx-fragment = { group = "androidx.fragment", name = "fragment", version.ref = "androidx.fragment" }
 androidx-fragment-ktx = { group = "androidx.fragment", name = "fragment-ktx", version.ref = "androidx.fragment" }
 androidx-activity = { group = "androidx.activity", name = "activity", version.ref = "androidx.activity" }
@@ -102,20 +96,18 @@ androidx-preference = { group = "androidx.preference", name = "preference", vers
 androidx-preference-ktx = { group = "androidx.preference", name = "preference-ktx", version.ref = "androidx.preference" }
 androidx-collection = { group = "androidx.collection", name = "collection", version.ref = "androidx.collection" }
 androidx-collection-ktx = { group = "androidx.collection", name = "collection-ktx", version.ref = "androidx.collection" }
-androidx-room = { group = "androidx.room", name = "room-runtime", version.ref = "androidx.room" }
-androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidx.room" }
-androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx.room" }
+androidx-room = { group = "androidx.room", name = "room-runtime", version.ref = "androidx-room" }
+androidx-room-ktx = { group = "androidx.room", name = "room-ktx", version.ref = "androidx-room" }
+androidx-room-compiler = { group = "androidx.room", name = "room-compiler", version.ref = "androidx-room" }
 androidx-datastore = { group = "androidx.datastore", name = "datastore", version.ref = "androidx.datastore.preferences" }
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidx.datastore.preferences" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidx.browser" }
 androidx-compose-constraintlayout = { group = "androidx.constraintlayout", name = "constraintlayout-compose", version.ref = "androidx.constraintlayout.compose" }
-androidx-viewmodel_ktx = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-ktx", version.ref = "androidx.lifecycle" }
-androidx-viewmodel-compose = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-compose", version.ref = "androidx.lifecycle" }
-androidx-viewmodel-savedstate = { group = "androidx.lifecycle", name = "lifecycle-viewmodel-savedstate", version.ref = "androidx.lifecycle" }
-androidx-lifecycle-common-java8 = { group = "androidx.lifecycle", name = "lifecycle-common-java8", version.ref = "androidx.lifecycle" }
-androidx-lifecycle-process = { group = "androidx.lifecycle", name = "lifecycle-process", version.ref = "androidx.lifecycle" }
 androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidx.paging" }
 androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx.paging.compose" }
+
+jetbrains-lifecycle-runtime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime", version.ref = "jetbrains-lifecycle" }
+jetbrains-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "jetbrains-lifecycle" }
 
 androidx-media3-exoplayer = { group = "androidx.media3", name = "media3-exoplayer", version.ref = "androidx.media3"}
 androidx-media3-datasource-okhttp = { group = "androidx.media3", name = "media3-datasource-okhttp", version.ref = "androidx.media3"}
@@ -126,7 +118,6 @@ androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", 
 androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3"}
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
 
-accompanist-placeholder-material = { group = "com.google.accompanist", name = "accompanist-placeholder-material", version.ref = "accompanist"}
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
 firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
@@ -148,20 +139,15 @@ hilt-compiler = { group = "com.google.dagger", name = "hilt-compiler", version.r
 okhttp3 = { group = "com.squareup.okhttp3", name = "okhttp", version.ref = "okhttp3" }
 okhttp3-logging = { group = "com.squareup.okhttp3", name = "logging-interceptor", version.ref = "okhttp3" }
 
-ktor = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
+ktor-client-core = { group = "io.ktor", name = "ktor-client-core", version.ref = "ktor" }
 ktor-client-content-negotiation = { module = "io.ktor:ktor-client-content-negotiation", version.ref = "ktor" }
 ktor-client-serialization-kotlinx-json = { module = "io.ktor:ktor-serialization-kotlinx-json", version.ref = "ktor" }
 ktor-client-okhttp = { group = "io.ktor", name = "ktor-client-okhttp", version.ref = "ktor" }
+ktor-client-darwin = { group = "io.ktor", name = "ktor-client-darwin", version.ref = "ktor" }
 ktor-client-logging = { group = "io.ktor", name = "ktor-client-logging", version.ref = "ktor" }
 
 ktorfit-lib = { module = "de.jensklingenberg.ktorfit:ktorfit-lib", version.ref = "ktorfit" }
 ktorfit-converters-response = { module = "de.jensklingenberg.ktorfit:ktorfit-converters-response", version.ref = "ktorfit" }
-
-coil = { group = "io.coil-kt", name = "coil", version.ref = "coil" }
-coil-compose = { group = "io.coil-kt", name = "coil-compose", version.ref = "coil" }
-coil-compose-base = { group = "io.coil-kt", name = "coil-compose-base", version.ref = "coil" }
-coil-gif = { group = "io.coil-kt", name = "coil-gif", version.ref = "coil" }
-coil-video = { group = "io.coil-kt", name = "coil-video", version.ref = "coil" }
 
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
@@ -193,7 +179,7 @@ krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.
 compose-wheel-picker = { group = "com.github.zj565061763", name = "compose-wheel-picker", version.ref = "compose.wheel.picker"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
+androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
 material = { group = "com.google.android.material", name = "material", version.ref = "material" }
 
 rssparser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rssparser" }
@@ -204,6 +190,11 @@ ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
 halilibo-richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "halilibo-richtext" }
 halilibo-richtext-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "halilibo-richtext" }
 jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
+imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "1.8.3" }
+okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }
+uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
+placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
 
 googlePlayReview = { group = "com.google.android.play", name = "review", version.ref = "goolgePlayReview" }
 googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "goolgePlayReview" }

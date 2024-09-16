@@ -17,6 +17,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -24,12 +25,11 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import coil.compose.AsyncImage
-import coil.imageLoader
-import coil.request.ImageRequest
+import com.seiko.imageloader.imageLoader
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.option.SizeResolver
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
-import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
@@ -163,11 +163,12 @@ internal fun BlogImage(
     val context = LocalContext.current
     if (hideContent) {
         LaunchedEffect(media) {
-            ImageRequest.Builder(context)
-                .data(media.url)
-                .size(50, 50)
-                .build()
-                .let { context.imageLoader.execute(it) }
+            context.imageLoader.execute(
+                ImageRequest {
+                    data(media.url)
+                    size(SizeResolver(Size(50f, 50f)))
+                }
+            )
         }
     }
     val mediaModifier = modifier.run {
@@ -179,9 +180,15 @@ internal fun BlogImage(
     }
     if (media.type == BlogMediaType.GIFV) {
         Box(modifier = mediaModifier) {
-            AsyncImage(
+            AutoSizeImage(
+                remember {
+                    ImageRequest {
+                        if (!hideContent) {
+                            data(media.url)
+                        }
+                    }
+                },
                 modifier = mediaModifier,
-                model = if (hideContent) null else media.url,
                 contentScale = ContentScale.Crop,
                 contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
             )
@@ -196,9 +203,15 @@ internal fun BlogImage(
             )
         }
     } else {
-        AsyncImage(
+        AutoSizeImage(
+            remember {
+                ImageRequest {
+                    if (!hideContent) {
+                        data(media.url)
+                    }
+                }
+            },
             modifier = mediaModifier,
-            model = if (hideContent) null else media.url,
             contentScale = ContentScale.Crop,
             contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
         )

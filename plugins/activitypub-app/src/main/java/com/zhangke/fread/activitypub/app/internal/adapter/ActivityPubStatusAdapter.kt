@@ -22,6 +22,7 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
 import dagger.hilt.android.qualifiers.ApplicationContext
+import kotlinx.datetime.toKotlinInstant
 import javax.inject.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
@@ -101,7 +102,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             content = entity.content.orEmpty(),
             sensitive = entity.sensitive,
             spoilerText = entity.spoilerText,
-            date = formatDatetimeToDate(entity.createdAt),
+            date = formatDatetimeToDate(entity.createdAt).toInstant().toKotlinInstant(),
             url = entity.url.ifNullOrEmpty { entity.uri },
             language = entity.language,
             forwardCount = entity.reblogsCount,
@@ -118,7 +119,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),
             card = entity.card?.toCard(),
-            editedAt = entity.editedAt?.let { formatDatetimeToDate(it) },
+            editedAt = entity.editedAt?.let { formatDatetimeToDate(it).toInstant().toKotlinInstant() },
             application = entity.application?.toApplication(),
         )
     }

@@ -1,6 +1,5 @@
 package com.zhangke.fread.commonbiz.shared.composable
 
-import androidx.core.net.toUri
 import cafe.adriel.voyager.navigator.Navigator
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.commonbiz.shared.screen.FullVideoScreen

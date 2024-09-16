@@ -12,6 +12,7 @@ import org.gradle.api.plugins.JavaPluginExtension
 import org.gradle.kotlin.dsl.configure
 import org.gradle.kotlin.dsl.getByType
 import org.gradle.kotlin.dsl.withType
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
 import org.jetbrains.kotlin.gradle.dsl.KotlinProjectExtension
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 import org.jetbrains.kotlin.gradle.tasks.KotlinJvmCompile
@@ -36,6 +37,9 @@ internal fun Project.kotlinCompile(action: KotlinJvmCompile.() -> Unit) =
 
 internal fun Project.kotlin(action: KotlinProjectExtension.() -> Unit) =
     extensions.configure<KotlinProjectExtension>(action)
+
+internal fun Project.kotlinMultiplatform(action: KotlinMultiplatformExtension.() -> Unit) =
+    extensions.configure<KotlinMultiplatformExtension>(action)
 
 internal fun Project.java(action: JavaPluginExtension.() -> Unit) =
     extensions.configure<JavaPluginExtension>(action)

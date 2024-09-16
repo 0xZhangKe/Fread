@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.activitypub.app.R
@@ -14,7 +14,7 @@ import javax.inject.Inject
  * Created by ZhangKe on 2022/12/4.
  */
 @AndroidEntryPoint
-class ActivityPubOAuthRedirectActivity : AppCompatActivity() {
+class ActivityPubOAuthRedirectActivity : ComponentActivity() {
 
     @Inject
     lateinit var author: ActivityPubOAuthor

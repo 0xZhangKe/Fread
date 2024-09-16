@@ -54,7 +54,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -81,14 +80,14 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.utils.formatAsCount
+import com.zhangke.framework.utils.decodeAsUri
+import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
-import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
@@ -103,7 +102,6 @@ import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
-import com.zhangke.fread.framework.Res
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
@@ -115,20 +113,25 @@ import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.fread.status.uri.FormalUri
+import com.zhangke.fread.statusui.ic_status_forward
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.vectorResource
 
 @Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
-    @Router val route: String = "",
+    @RouteParam(UserDetailRoute.PARAMS_ROLE) val roleParam: String? = null,
+    @RouteParam(UserDetailRoute.PARAMS_USER_URI) val userUriParam: String? = null,
+    @RouteParam(UserDetailRoute.PARAMS_WEB_FINGER) val webFingerParam: String? = null,
     private val role: IdentityRole? = null,
     private val webFinger: WebFinger? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = route + role.toString() + webFinger.toString()
+        get() = roleParam + userUriParam + webFingerParam + role.toString() + webFinger.toString()
 
     @Composable
     override fun Content() {
@@ -136,11 +139,15 @@ data class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val (role, userUri, webFinger) = remember(route, role, webFinger) {
+        val (role, userUri, webFinger) = remember(roleParam, userUriParam, role, webFinger) {
             if (role != null && webFinger != null) {
                 Triple(role, null, webFinger)
             } else {
-                UserDetailRoute.parseRoute(route)
+                Triple(
+                    IdentityRole.decodeFromString(roleParam!!)!!,
+                    userUriParam?.decodeAsUri()?.let(FormalUri::from),
+                    webFingerParam?.let(WebFinger::decodeFromUrlString),
+                )
             }
         }
         val viewModel = getViewModel<UserDetailContainerViewModel>()
@@ -239,10 +246,8 @@ data class UserDetailScreen(
             onMaybeHashtagTargetClick = {
                 navigator.push(
                     HashtagTimelineScreen(
-                        HashtagTimelineRoute.buildRoute(
-                            role = uiState.role,
-                            hashtag = it.hashtag
-                        )
+                        role = uiState.role,
+                        hashtag = it.hashtag.removePrefix("#"),
                     )
                 )
             },
@@ -537,7 +542,7 @@ data class UserDetailScreen(
     }
 
     private fun buildCountedDesc(count: Int, desc: String): AnnotatedString {
-        val formattedCount = count.formatAsCount()
+        val formattedCount = count.formatToHumanReadable()
         return buildAnnotatedString {
             append(formattedCount)
             addStyle(
@@ -933,7 +938,7 @@ data class UserDetailScreen(
                 )
 
                 MuteUserRoleItem(
-                    icon = ImageVector.vectorResource(com.zhangke.fread.statusui.R.drawable.ic_status_forward),
+                    icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
                     role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role4)
                 )
 
@@ -957,7 +962,7 @@ data class UserDetailScreen(
                         }
                     },
                 ) {
-                    Text(text = org.jetbrains.compose.resources.stringResource(Res.string.cancel))
+                    Text(text = org.jetbrains.compose.resources.stringResource(com.zhangke.fread.framework.Res.string.cancel))
                 }
             }
         }

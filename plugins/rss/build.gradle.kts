@@ -50,8 +50,9 @@ dependencies {
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.bundles.voyager)
-    implementation(libs.krouter.core)
-    ksp(libs.krouter.compiler)
+
+    implementation(libs.krouter.runtime)
+    ksp(libs.krouter.collecting.compiler)
 
     implementation(libs.kotlinx.serialization.core)
     implementation(libs.kotlinx.serialization.json)

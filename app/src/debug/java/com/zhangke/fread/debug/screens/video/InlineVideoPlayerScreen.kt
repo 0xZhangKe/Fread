@@ -18,11 +18,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-import androidx.core.net.toUri
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
+import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.video.inline.InlineVideo
 
@@ -119,7 +118,9 @@ class InlineVideoPlayerScreen : BaseScreen() {
                     aspectRatio = 2F,
                     indexInList = index,
                     coverImage = "https://pbs.twimg.com/media/F8ZjbTDakAAOCfA?format=jpg&name=small",
-                    uri = url.toUri(),
+                    uri = remember(url) {
+                        url.toPlatformUri()
+                    },
                     onClick = {
 
                     },

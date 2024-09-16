@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.status.usecase
 
+import com.zhangke.fread.common.ext.toJavaDate
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.model.IdentityRole
@@ -29,7 +30,7 @@ class BuildStatusUiStateUseCase @Inject constructor(
             displayTime = formatStatusDisplayTime(createdDate),
             specificTime = dateFormat.format(createdDate) + " " + timeFormat.format(createdDate),
             editedTime = status.intrinsicBlog.editedAt?.let {
-                dateFormat.format(it) + " " + timeFormat.format(it)
+                dateFormat.format(it.toJavaDate()) + " " + timeFormat.format(it.toJavaDate())
             },
             blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,

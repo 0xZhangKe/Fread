@@ -10,7 +10,6 @@ import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.common.utils.DatetimeFormatConfig
 import com.zhangke.fread.status.model.IdentityRole
 import dagger.assisted.Assisted
 import dagger.assisted.AssistedFactory

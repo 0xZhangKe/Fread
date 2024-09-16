@@ -42,7 +42,8 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.getThumbnail
@@ -166,9 +167,11 @@ private fun MediaFileContent(
                         )
                     }
                 } else {
-                    AsyncImage(
+                    AutoSizeImage(
+                        remember(file.previewUri) {
+                            ImageRequest(file.previewUri)
+                        },
                         modifier = Modifier.fillMaxSize(),
-                        model = file.previewUri,
                         contentScale = ContentScale.Crop,
                         contentDescription = "Media",
                     )

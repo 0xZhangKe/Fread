@@ -1,9 +1,9 @@
 package com.zhangke.fread.screen
 
 import android.os.Bundle
+import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
@@ -15,11 +15,12 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
+import com.seiko.imageloader.LocalImageLoader
+import com.seiko.imageloader.imageLoader
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
@@ -33,10 +34,10 @@ import com.zhangke.fread.status.ui.style.LocalStatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.launch
+import kotlinx.coroutines.flow.map
 
 @AndroidEntryPoint
-class FreadActivity : AppCompatActivity() {
+class FreadActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -44,15 +45,12 @@ class FreadActivity : AppCompatActivity() {
         enableEdgeToEdge()
         super.onCreate(savedInstanceState)
 
-        lifecycleScope.launch {
-            DayNightHelper.dayNightModeFlow.collect {
-                recreate()
-            }
-        }
-
         setContent {
+            val isNight by remember {
+                DayNightHelper.dayNightModeFlow.map { it.isNight }
+            }.collectAsState(DayNightHelper.dayNightMode.isNight)
             FreadTheme(
-                darkTheme = DayNightHelper.dayNightMode.isNight,
+                darkTheme = isNight,
             ) {
                 val videoPlayerManager = remember {
                     ExoPlayerManager()
@@ -66,6 +64,7 @@ class FreadActivity : AppCompatActivity() {
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
                     LocalStatusStyle provides statusContentSize.toStyle(),
+                    LocalImageLoader provides applicationContext.imageLoader,
                 ) {
                     TransparentNavigator {
                         BottomSheetNavigator(
@@ -100,10 +99,5 @@ class FreadActivity : AppCompatActivity() {
             StatusContentSize.MEDIUM -> StatusStyles.medium()
             StatusContentSize.LARGE -> StatusStyles.large()
         }
-    }
-
-    override fun onNightModeChanged(mode: Int) {
-        super.onNightModeChanged(mode)
-        recreate()
     }
 }

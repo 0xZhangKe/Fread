@@ -25,7 +25,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.icons.Tofu
 import com.zhangke.framework.composable.noRippleClick
@@ -100,12 +100,12 @@ private fun CustomEmojiPickerPage(
                     .noRippleClick { onEmojiClick(emoji) },
                 contentAlignment = Alignment.Center,
             ) {
-                AsyncImage(
-                    modifier = Modifier
-                        .size(20.dp),
-                    model = emoji.url,
-                    error = rememberVectorPainter(Icons.Default.Tofu),
-                    placeholder = rememberVectorPainter(Icons.Default.Tofu),
+                val placePainter = rememberVectorPainter(Icons.Default.Tofu)
+                AutoSizeImage(
+                    emoji.url,
+                    modifier = Modifier.size(20.dp),
+                    errorPainter = { placePainter },
+                    placeholderPainter = { placePainter },
                     contentDescription = emoji.shortcode,
                 )
             }

@@ -34,6 +34,7 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -41,12 +42,14 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import cafe.adriel.voyager.core.screen.Screen
+import androidx.core.graphics.drawable.toDrawable
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
-import coil.imageLoader
-import coil.request.ImageRequest
+import com.seiko.imageloader.imageLoader
+import com.seiko.imageloader.model.ImageRequest
+import com.seiko.imageloader.model.ImageResult
+import com.seiko.imageloader.option.SizeResolver
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.composable.HorizontalPageIndicator
 import com.zhangke.framework.composable.SimpleIconButton
@@ -183,13 +186,18 @@ class ImageViewerScreen(
         }
         if (aspectRatio == null) {
             LaunchedEffect(image) {
-                aspectRatio = ImageRequest.Builder(context)
-                    .data(image.url)
-                    .size(50, 50)
-                    .build()
+                aspectRatio = ImageRequest {
+                        data(image.url)
+                        size(SizeResolver(Size(50f, 50f)))
+                    }
                     .let { context.imageLoader.execute(it) }
-                    .drawable
-                    ?.aspectRatio() ?: 1F
+                    .let {
+                        when (it) {
+                            is ImageResult.OfImage -> it.image.drawable
+                            is ImageResult.OfBitmap -> it.bitmap.toDrawable(context.resources)
+                            else -> null
+                        }
+                    }?.aspectRatio() ?: 1F
             }
         }
         if (aspectRatio != null) {
@@ -214,7 +222,8 @@ class ImageViewerScreen(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
             ) {
-                AsyncImage(
+                AutoSizeImage(
+                    image.url,
                     modifier = Modifier
                         .fillMaxSize()
                         .run {
@@ -227,7 +236,6 @@ class ImageViewerScreen(
                                 this
                             }
                         },
-                    model = image.url,
                     contentScale = ContentScale.FillBounds,
                     contentDescription = image.description,
                 )

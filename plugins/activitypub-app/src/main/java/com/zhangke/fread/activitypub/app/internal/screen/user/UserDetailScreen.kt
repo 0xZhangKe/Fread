@@ -103,6 +103,8 @@ import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.android.span.LinkSpan
@@ -955,7 +957,7 @@ data class UserDetailScreen(
                         }
                     },
                 ) {
-                    Text(text = stringResource(com.zhangke.fread.framework.R.string.cancel))
+                    Text(text = org.jetbrains.compose.resources.stringResource(Res.string.cancel))
                 }
             }
         }

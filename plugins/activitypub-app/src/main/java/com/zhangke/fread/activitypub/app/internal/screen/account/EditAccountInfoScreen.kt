@@ -47,7 +47,7 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import coil.compose.AsyncImage
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.IconButtonStyle
@@ -297,7 +297,8 @@ class EditAccountInfoScreen(
         val launcher = rememberSinglePickVisualMediaLauncher(
             onResult = { onHeaderSelected(it) },
         )
-        AsyncImage(
+        AutoSizeImage(
+            uiState.header,
             modifier = Modifier
                 .height(headerHeight)
                 .fillMaxWidth()
@@ -305,7 +306,6 @@ class EditAccountInfoScreen(
                 .clickable {
                     launcher.launch(buildPickVisualImageRequest())
                 },
-            model = uiState.header,
             contentScale = ContentScale.Crop,
             contentDescription = null,
         )
@@ -326,9 +326,9 @@ class EditAccountInfoScreen(
                 .border(2.dp, Color.White, CircleShape)
                 .freadPlaceholder(uiState.avatar.isEmpty())
         ) {
-            AsyncImage(
+            AutoSizeImage(
+                uiState.avatar,
                 modifier = Modifier.fillMaxSize(),
-                model = uiState.avatar,
                 contentScale = ContentScale.Crop,
                 contentDescription = "avatar",
             )

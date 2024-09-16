@@ -22,14 +22,13 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import coil.compose.AsyncImage
+import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.status.richtext.RichText
@@ -80,7 +79,8 @@ fun DetailHeaderContent(
         )
 
         // avatar
-        AsyncImage(
+        AutoSizeImage(
+            avatar.orEmpty(),
             modifier = Modifier
                 .scale(1F - progress)
                 .clip(CircleShape)
@@ -94,7 +94,6 @@ fun DetailHeaderContent(
                     width = Dimension.value(avatarSize)
                     height = Dimension.value(avatarSize)
                 },
-            model = avatar,
             contentScale = ContentScale.Crop,
             contentDescription = "avatar",
         )
@@ -235,7 +234,8 @@ private fun Banner(
             contentScale = ContentScale.Crop,
         )
         val maskColor = MaterialTheme.colorScheme.inverseSurface
-        AsyncImage(
+        AutoSizeImage(
+            url.orEmpty(),
             modifier = Modifier
                 .fillMaxSize()
                 .drawWithContent {
@@ -249,7 +249,6 @@ private fun Banner(
                         ),
                     )
                 },
-            model = url,
             contentScale = ContentScale.Crop,
             contentDescription = "banner",
         )

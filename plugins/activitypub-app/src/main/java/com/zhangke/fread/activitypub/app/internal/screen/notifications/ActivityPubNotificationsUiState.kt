@@ -9,7 +9,6 @@ import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.uri.FormalUri
 import java.util.Date
 
 data class ActivityPubNotificationsUiState(

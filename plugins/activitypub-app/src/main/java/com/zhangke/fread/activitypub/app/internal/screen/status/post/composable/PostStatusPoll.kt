@@ -26,6 +26,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -136,9 +137,12 @@ internal fun PostStatusPoll(
                     style = MaterialTheme.typography.labelMedium,
                 )
                 Box(modifier = Modifier.weight(1F))
+                val durationString by produceState("") {
+                    value = poll.duration.formattedString()
+                }
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
-                    text = poll.duration.formattedString(),
+                    text = durationString,
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
                 )

@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.ui.video.full
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -43,14 +42,15 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
 @Composable
 fun FullScreenVideoPlayer(
-    modifier: Modifier = Modifier,
-    uri: Uri,
+    uri: PlatformUri,
     onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     var panelVisible by remember {
         mutableStateOf(true)

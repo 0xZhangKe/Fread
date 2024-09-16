@@ -14,7 +14,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Chat
 import androidx.compose.material.icons.automirrored.outlined.Chat
 import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Language
@@ -47,7 +46,6 @@ import cafe.adriel.voyager.hilt.getScreenModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.utils.SystemPageUtils
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.config.StatusContentSize

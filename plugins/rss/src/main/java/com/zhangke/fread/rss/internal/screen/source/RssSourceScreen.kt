@@ -49,13 +49,14 @@ import com.zhangke.fread.framework.ok
 import com.zhangke.fread.rss.R
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
+import java.net.URLDecoder
 
 @Destination(RssSourceScreenRoute.ROUTE)
 class RssSourceScreen(
-    @Router private val route: String = "",
+    @RouteParam(RssSourceScreenRoute.PARAMS_URL) private val url: String,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
@@ -64,7 +65,7 @@ class RssSourceScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<RssSourceViewModel, RssSourceViewModel.Factory> {
-            it.create(RssSourceScreenRoute.parseRoute(route))
+            it.create(URLDecoder.decode(url, Charsets.UTF_8.name()))
         }
         val uiState by viewModel.uiState.collectAsState()
         RssSourceContent(

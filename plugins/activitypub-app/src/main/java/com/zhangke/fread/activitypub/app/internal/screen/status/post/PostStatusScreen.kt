@@ -79,15 +79,21 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.status_ui_reply
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 import java.util.Locale
 import kotlin.time.Duration
-import com.zhangke.fread.statusui.R as StatusUiR
 
 @Destination(PostStatusScreenRoute.ROUTE)
 class PostStatusScreen(
-    @Router private val route: String = "",
+    @RouteParam(PostStatusScreenRoute.PARAM_ACCOUNT_URI) private val accountUri: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_EDIT_BLOG) private val editBlog: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ACCT) private val replyBlogAcct: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ID) private val replyBlogId: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_AUTHOR_NAME) private val replyAuthorName: String? = null,
+    @RouteParam(PostStatusScreenRoute.PARAMS_REPLY_VISIBILITY) private val replyVisibility: String? = null,
 ) : BaseScreen() {
 
     @OptIn(ExperimentalVoyagerApi::class)
@@ -96,7 +102,16 @@ class PostStatusScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PostStatusViewModel, PostStatusViewModel.Factory> {
-            it.create(PostStatusScreenRoute.parse(route))
+            it.create(
+                PostStatusScreenRoute.buildParams(
+                    accountUri = accountUri,
+                    editBlog = editBlog,
+                    replyBlogAcct = replyBlogAcct,
+                    replyBlogId = replyBlogId,
+                    replyAuthorName = replyAuthorName,
+                    replyVisibility = replyVisibility,
+                )
+            )
         }
         val loadableUiState by viewModel.uiState.collectAsState()
         val postStatus by viewModel.postState.collectAsState(initial = LoadableState.idle())
@@ -318,7 +333,8 @@ class PostStatusScreen(
                             imageVector = Icons.Default.Reply,
                             contentDescription = null,
                         )
-                        val replyLabel = stringResource(StatusUiR.string.status_ui_reply)
+                        val replyLabel =
+                            org.jetbrains.compose.resources.stringResource(Res.string.status_ui_reply)
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
                             text = "$replyLabel ${uiState.replyToAuthorInfo.replyAuthorName}",

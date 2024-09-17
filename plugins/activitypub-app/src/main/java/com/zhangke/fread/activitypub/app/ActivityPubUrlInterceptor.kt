@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app
 
 import android.content.Context
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
 import com.zhangke.framework.network.SimpleUri
@@ -33,7 +34,12 @@ class ActivityPubUrlInterceptor @Inject constructor(
         if (HttpScheme.validate(uri.scheme.orEmpty())) return false
         val status = parseStatus(role, uri)
         if (status != null) {
-            GlobalScreenNavigation.navigate(StatusContextScreen(role = role, status = status))
+            GlobalScreenNavigation.navigate(
+                StatusContextScreen(
+                    role = role,
+                    serializedStatus = globalJson.encodeToString(Status.serializer(), status),
+                )
+            )
             return true
         }
         val webFinger = parseActivityPubUser(role, uri)

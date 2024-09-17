@@ -61,13 +61,13 @@ import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteUri
 import kotlinx.coroutines.launch
 
 @Destination(PlatformDetailRoute.ROUTE)
 class InstanceDetailScreen(
-    @Router private val route: String = "",
+    @RouteUri private val route: String = "",
     private val baseUrl: FormalBaseUrl? = null,
 ) : BaseScreen() {
 

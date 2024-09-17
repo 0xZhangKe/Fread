@@ -42,6 +42,6 @@ dependencies {
     implementation(libs.auto.service.annotations)
     ksp(libs.auto.service.ksp)
     implementation(libs.bundles.voyager)
-    implementation(libs.krouter.core)
-    ksp(libs.krouter.compiler)
+    implementation(libs.krouter.runtime)
+    ksp(libs.krouter.collecting.compiler)
 }

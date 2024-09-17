@@ -53,8 +53,8 @@ import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.ContentConfig
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -63,7 +63,7 @@ import org.burnoutcrew.reorderable.reorderable
 
 @Destination(EditContentConfigRoute.ROUTE)
 class EditContentConfigScreen(
-    @Router private val route: String = ""
+    @RouteParam(EditContentConfigRoute.PARAM_CONTENT_ID) private val contentId: Long,
 ) : BaseScreen() {
 
     companion object {
@@ -78,7 +78,7 @@ class EditContentConfigScreen(
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
             getViewModel<EditContentConfigViewModel, EditContentConfigViewModel.Factory> {
-                it.create(EditContentConfigRoute.parseRoute(route))
+                it.create(contentId)
             }
         val uiState by viewModel.uiState.collectAsState()
         EditContentConfigScreenContent(

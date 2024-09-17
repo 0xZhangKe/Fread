@@ -19,6 +19,7 @@ import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.LoadErrorLineItem
@@ -26,13 +27,13 @@ import com.zhangke.framework.composable.LoadingLineItem
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.security.Md5
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.commonbiz.shared.screen.R
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusUi
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -40,12 +41,11 @@ import com.zhangke.fread.status.ui.threads.ThreadsType
 
 data class StatusContextScreen(
     val role: IdentityRole,
-    val status: Status,
+    val serializedStatus: String,
     val blogTranslationUiState: BlogTranslationUiState? = null,
 ) : BaseScreen() {
 
-    override val key: ScreenKey
-        get() = role.toString() + status.id
+    override val key: ScreenKey = role.toString() + Md5.md5(serializedStatus)
 
     @Composable
     override fun Content() {
@@ -54,7 +54,7 @@ data class StatusContextScreen(
         val transparentNavigator = LocalTransparentNavigator.current
         val viewModel = getViewModel<StatusContextViewModel>().getSubViewModel(
             role = role,
-            anchorStatus = status,
+            anchorStatus = globalJson.decodeFromString(serializedStatus),
             blogTranslationUiState = blogTranslationUiState,
         )
         val uiState by viewModel.uiState.collectAsState()

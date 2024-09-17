@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
 import android.os.Bundle
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.activitypub.app.R
@@ -12,7 +12,7 @@ import kotlinx.coroutines.launch
 /**
  * Created by ZhangKe on 2022/12/4.
  */
-class ActivityPubOAuthRedirectActivity : AppCompatActivity() {
+class ActivityPubOAuthRedirectActivity : ComponentActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

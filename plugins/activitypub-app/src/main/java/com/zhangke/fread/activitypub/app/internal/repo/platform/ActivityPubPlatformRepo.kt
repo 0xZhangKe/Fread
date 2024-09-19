@@ -10,7 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubPlatformRepo @Inject constructor(
     databases: ActivityPubDatabases,

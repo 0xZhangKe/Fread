@@ -19,14 +19,13 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
-import dagger.assisted.AssistedInject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import java.util.Calendar
 
-class HashtagTimelineViewModel @AssistedInject constructor(
+class HashtagTimelineViewModel(
     private val clientManager: ActivityPubClientManager,
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,

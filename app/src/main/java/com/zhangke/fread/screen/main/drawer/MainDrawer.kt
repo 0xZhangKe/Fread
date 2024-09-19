@@ -46,7 +46,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
-import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
@@ -72,7 +72,7 @@ fun Screen.MainDrawer(
     onDismissRequest: () -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
-    val viewModel = getScreenModel<MainDrawerScreenModel>()
+    val viewModel = getViewModel<MainDrawerViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()

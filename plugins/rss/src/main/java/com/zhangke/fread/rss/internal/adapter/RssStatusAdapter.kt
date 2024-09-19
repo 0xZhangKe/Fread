@@ -9,7 +9,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.status.model.Status
 import kotlinx.datetime.toKotlinInstant
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssStatusAdapter @Inject constructor(
     private val blogAuthorAdapter: BlogAuthorAdapter,

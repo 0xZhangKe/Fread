@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.adapter
 
-import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.activitypub.entities.ActivityPubTokenEntity
@@ -11,15 +10,15 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEnt
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.report
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.platform.BlogPlatform
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val userUriTransformer: UserUriTransformer,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) {
 
     fun adapt(

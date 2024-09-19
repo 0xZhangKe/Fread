@@ -2,12 +2,12 @@ package com.zhangke.fread.feeds.pages.manager.add.mixed
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
@@ -16,10 +16,6 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,9 +23,10 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = AddMixedFeedsViewModel.Factory::class)
-internal class AddMixedFeedsViewModel @AssistedInject constructor(
+class AddMixedFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val contentConfigRepo: ContentConfigRepo,
@@ -37,8 +34,7 @@ internal class AddMixedFeedsViewModel @AssistedInject constructor(
     @Assisted private val statusSource: StatusSource? = null
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
 
         fun create(statusSource: StatusSource?): AddMixedFeedsViewModel
     }

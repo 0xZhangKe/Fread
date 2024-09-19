@@ -1,17 +1,16 @@
 package com.zhangke.fread.activitypub.app.internal.adapter
 
-import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.platform.BlogPlatform
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubInstanceAdapter @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) {
 
     fun toPlatform(

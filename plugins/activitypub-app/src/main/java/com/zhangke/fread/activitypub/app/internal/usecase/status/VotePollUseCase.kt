@@ -5,7 +5,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class VotePollUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,

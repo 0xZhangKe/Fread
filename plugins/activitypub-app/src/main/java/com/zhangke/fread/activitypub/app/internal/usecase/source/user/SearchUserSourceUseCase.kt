@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class SearchUserSourceUseCase @Inject constructor(
     private val userRepo: UserRepo,

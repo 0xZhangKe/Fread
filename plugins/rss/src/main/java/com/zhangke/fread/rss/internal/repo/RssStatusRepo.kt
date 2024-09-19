@@ -3,7 +3,7 @@ package com.zhangke.fread.rss.internal.repo
 import com.zhangke.fread.rss.internal.adapter.RssStatusAdapter
 import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.status.model.Status
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssStatusRepo @Inject constructor(
     private val rssStatusAdapter: RssStatusAdapter,

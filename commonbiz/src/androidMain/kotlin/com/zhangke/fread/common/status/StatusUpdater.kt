@@ -1,13 +1,13 @@
 package com.zhangke.fread.common.status
 
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.status.model.StatusUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
+@ApplicationScope
 class StatusUpdater @Inject constructor() {
 
     private val _statusUpdateFlow = MutableSharedFlow<StatusUiState>()

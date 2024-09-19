@@ -2,8 +2,8 @@ package com.zhangke.fread.explore.screens.search.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.model.updateStatus
@@ -15,15 +15,12 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = SearchStatusViewModel.Factory::class)
-class SearchStatusViewModel @AssistedInject constructor(
+class SearchStatusViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,
     buildStatusUiState: BuildStatusUiStateUseCase,
@@ -36,8 +33,7 @@ class SearchStatusViewModel @AssistedInject constructor(
     refactorToNewBlog = refactorToNewBlog,
 ) {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
         fun create(role: IdentityRole): SearchStatusViewModel
     }
 

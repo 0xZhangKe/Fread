@@ -3,7 +3,6 @@ package com.zhangke.fread.activitypub.app.internal.screen.account
 import android.net.Uri
 import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.UpdateFieldRequestEntity
 import com.zhangke.framework.composable.TextString
@@ -12,21 +11,19 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = EditAccountInfoViewModel.Factory::class)
-class EditAccountInfoViewModel @AssistedInject constructor(
+class EditAccountInfoViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     @Assisted private val accountUri: FormalUri,
 ) : ViewModel() {
@@ -36,8 +33,7 @@ class EditAccountInfoViewModel @AssistedInject constructor(
         const val FIELD_MAX_COUNT = 4
     }
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
         fun create(uri: FormalUri): EditAccountInfoViewModel
     }
 

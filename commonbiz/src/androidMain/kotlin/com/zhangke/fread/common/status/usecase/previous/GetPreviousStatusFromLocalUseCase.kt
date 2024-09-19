@@ -4,9 +4,9 @@ import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.repo.StatusContentRepo
 import com.zhangke.fread.common.status.repo.db.StatusContentEntity
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-internal class GetPreviousStatusFromLocalUseCase @Inject constructor(
+class GetPreviousStatusFromLocalUseCase @Inject constructor(
     private val statusContentRepo: StatusContentRepo,
 ) {
 

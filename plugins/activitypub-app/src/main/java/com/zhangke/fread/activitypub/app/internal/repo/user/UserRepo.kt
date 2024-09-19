@@ -7,7 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdR
 import com.zhangke.fread.activitypub.app.internal.source.UserSourceTransformer
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.source.StatusSource
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class UserRepo @Inject constructor(
     private val clientManager: ActivityPubClientManager,

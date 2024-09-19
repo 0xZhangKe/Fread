@@ -4,7 +4,7 @@ import com.zhangke.fread.common.status.model.SearchResultUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.search.SearchResult
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class BuildSearchResultUiStateUseCase @Inject constructor(
     private val buildStatusUiState: BuildStatusUiStateUseCase,

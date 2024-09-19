@@ -6,12 +6,12 @@ import com.zhangke.fread.common.status.repo.db.StatusContentEntity
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 /**
  * 通过服务端拉去一页数据，并存入本地数据库。
  */
-internal class SyncPreviousStatusUseCase @Inject constructor(
+class SyncPreviousStatusUseCase @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusContentRepo: StatusContentRepo,
     private val statusContentEntityAdapter: StatusContentEntityAdapter,

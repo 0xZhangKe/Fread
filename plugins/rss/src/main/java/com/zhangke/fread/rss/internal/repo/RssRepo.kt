@@ -1,5 +1,6 @@
 package com.zhangke.fread.rss.internal.repo
 
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.rss.internal.adapter.BlogAuthorAdapter
 import com.zhangke.fread.rss.internal.db.RssChannelEntity
 import com.zhangke.fread.rss.internal.db.RssDatabases
@@ -12,11 +13,10 @@ import com.zhangke.fread.rss.internal.utils.AvatarUtils
 import com.zhangke.fread.status.author.BlogAuthor
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import me.tatarka.inject.annotations.Inject
 import java.io.File
-import javax.inject.Inject
-import javax.inject.Singleton
 
-@Singleton
+@ApplicationScope
 class RssRepo @Inject constructor(
     rssDatabases: RssDatabases,
     private val blogAuthorAdapter: BlogAuthorAdapter,

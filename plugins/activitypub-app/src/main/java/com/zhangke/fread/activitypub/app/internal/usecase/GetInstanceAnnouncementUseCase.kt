@@ -4,7 +4,7 @@ import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.status.model.IdentityRole
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class GetInstanceAnnouncementUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,

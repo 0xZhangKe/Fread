@@ -14,7 +14,7 @@ import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssStatusSourceResolver @Inject constructor(
     private val rssUriTransformer: RssUriTransformer,

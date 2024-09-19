@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubMediaMetaEntity
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubBlogMetaAdapter @Inject constructor() {
 

@@ -7,7 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.db.WebFingerBaseurlToIdEntity
 import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.fread.status.model.IdentityRole
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class WebFingerBaseUrlToUserIdRepo @Inject constructor(
     private val resolveBaseUrl: ResolveBaseUrlUseCase,

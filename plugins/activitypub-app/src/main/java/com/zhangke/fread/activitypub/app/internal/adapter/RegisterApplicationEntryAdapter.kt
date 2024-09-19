@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.RegisterApplicationEntry
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubApplication
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RegisterApplicationEntryAdapter @Inject constructor() {
 

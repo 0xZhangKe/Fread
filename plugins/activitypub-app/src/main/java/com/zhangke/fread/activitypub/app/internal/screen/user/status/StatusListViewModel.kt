@@ -2,13 +2,13 @@ package com.zhangke.fread.activitypub.app.internal.screen.user.status
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.activitypub.api.AccountsRepo
 import com.zhangke.activitypub.api.PagingResult
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -20,13 +20,10 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.preParseRichText
 import com.zhangke.fread.status.status.model.Status
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = StatusListViewModel.Factory::class)
-class StatusListViewModel @AssistedInject constructor(
+class StatusListViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val statusProvider: StatusProvider,
@@ -43,8 +40,7 @@ class StatusListViewModel @AssistedInject constructor(
     refactorToNewBlog = refactorToNewBlog,
 ) {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
 
         fun create(role: IdentityRole, type: StatusListType): StatusListViewModel
     }

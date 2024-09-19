@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.source
 
-import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
@@ -8,16 +7,16 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEnti
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.MapCustomEmojiUseCase
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.source.StatusSource
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class UserSourceTransformer @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val mapCustomEmoji: MapCustomEmojiUseCase,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) {
 
     fun createByUserEntity(entity: ActivityPubAccountEntity): StatusSource {

@@ -8,13 +8,11 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.platform.BlogPlatform
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 open class SearchPlatformViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {

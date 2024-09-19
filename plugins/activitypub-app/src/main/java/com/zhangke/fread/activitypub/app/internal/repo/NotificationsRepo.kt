@@ -13,7 +13,7 @@ import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class NotificationsRepo @Inject constructor(
     notificationsDatabase: NotificationsDatabase,

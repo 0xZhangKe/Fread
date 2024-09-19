@@ -19,7 +19,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.hilt.getScreenModel
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
@@ -45,7 +45,7 @@ class BlogDetailScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val context = LocalContext.current
-        val viewModel = getScreenModel<BlogDetailViewModel>()
+        val viewModel = getViewModel<BlogDetailViewModel>()
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         Scaffold(
             topBar = {

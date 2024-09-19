@@ -17,14 +17,12 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.preParseRichText
 import com.zhangke.fread.status.search.SearchResult
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,

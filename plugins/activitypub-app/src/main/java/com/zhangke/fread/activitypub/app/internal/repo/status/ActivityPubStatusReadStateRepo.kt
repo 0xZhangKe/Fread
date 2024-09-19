@@ -4,7 +4,7 @@ import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusRea
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.status.model.IdentityRole
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubStatusReadStateRepo @Inject constructor(
     activityPubStatusReadStateDatabases: ActivityPubStatusReadStateDatabases,

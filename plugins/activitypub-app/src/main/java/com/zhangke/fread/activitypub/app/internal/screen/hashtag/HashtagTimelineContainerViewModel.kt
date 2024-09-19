@@ -1,27 +1,24 @@
 package com.zhangke.fread.activitypub.app.internal.screen.hashtag
 
 import android.annotation.SuppressLint
-import android.content.Context
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.status.StatusUpdater
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
-import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 @SuppressLint("StaticFieldLeak")
-@HiltViewModel
 class HashtagTimelineContainerViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     private val buildStatusUiState: BuildStatusUiStateUseCase,

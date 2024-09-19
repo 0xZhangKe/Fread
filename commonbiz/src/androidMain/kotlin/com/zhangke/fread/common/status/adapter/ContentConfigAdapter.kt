@@ -3,7 +3,7 @@ package com.zhangke.fread.common.status.adapter
 import com.zhangke.fread.common.status.repo.db.ContentConfigEntity
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentType
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ContentConfigAdapter @Inject constructor() {
 

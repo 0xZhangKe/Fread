@@ -7,7 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.GetTimelineStat
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubTimelineStatusRepo @Inject constructor(
     activityPubStatusDatabases: ActivityPubStatusDatabases,

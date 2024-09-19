@@ -5,22 +5,19 @@ import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.activitypub.app.R
-import dagger.hilt.android.AndroidEntryPoint
+import com.zhangke.fread.activitypub.app.di.activityPubComponent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 /**
  * Created by ZhangKe on 2022/12/4.
  */
-@AndroidEntryPoint
 class ActivityPubOAuthRedirectActivity : ComponentActivity() {
-
-    @Inject
-    lateinit var author: ActivityPubOAuthor
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        val author = activityPubComponent.author
 
         val code = intent.data?.getQueryParameter("code")
         lifecycleScope.launch {

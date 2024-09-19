@@ -6,7 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class UploadMediaAttachmentUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,

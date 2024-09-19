@@ -7,7 +7,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import java.text.DateFormat
 import java.util.Locale
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class BuildStatusUiStateUseCase @Inject constructor(
     private val generateBottomInteractionUseCase: GenerateBottomInteractionUseCase,

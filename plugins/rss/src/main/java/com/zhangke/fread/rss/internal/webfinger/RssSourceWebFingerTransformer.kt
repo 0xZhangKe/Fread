@@ -3,7 +3,7 @@ package com.zhangke.fread.rss.internal.webfinger
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.rss.internal.model.RssSource
 import java.net.URL
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssSourceWebFingerTransformer @Inject constructor() {
 

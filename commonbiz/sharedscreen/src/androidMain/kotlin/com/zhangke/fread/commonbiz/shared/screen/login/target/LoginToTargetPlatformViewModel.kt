@@ -1,23 +1,19 @@
 package com.zhangke.fread.commonbiz.shared.screen.login.target
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.platform.BlogPlatform
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = LoginToTargetPlatformViewModel.Factory::class)
-class LoginToTargetPlatformViewModel @AssistedInject constructor(
+class LoginToTargetPlatformViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     @Assisted private val platform: BlogPlatform,
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
 
         fun create(platform: BlogPlatform): LoginToTargetPlatformViewModel
     }

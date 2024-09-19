@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubPollEntity
 import com.zhangke.fread.status.blog.BlogPoll
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubPollAdapter @Inject constructor() {
 

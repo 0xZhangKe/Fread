@@ -1,30 +1,26 @@
 package com.zhangke.fread.rss.internal.screen.source
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.rss.internal.repo.RssRepo
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 import java.text.DateFormat
 import java.util.Locale
 
-@HiltViewModel(assistedFactory = RssSourceViewModel.Factory::class)
-class RssSourceViewModel @AssistedInject constructor(
+class RssSourceViewModel @Inject constructor(
     private val rssRepo: RssRepo,
     @Assisted private val url: String,
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
         fun create(url: String): RssSourceViewModel
     }
 

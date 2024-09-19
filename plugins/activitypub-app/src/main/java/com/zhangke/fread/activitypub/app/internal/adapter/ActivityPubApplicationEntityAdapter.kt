@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubApplication
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubApplicationEntity
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubApplicationEntityAdapter @Inject constructor() {
 

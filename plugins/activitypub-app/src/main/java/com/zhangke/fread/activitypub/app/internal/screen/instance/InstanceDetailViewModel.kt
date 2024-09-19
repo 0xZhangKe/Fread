@@ -1,28 +1,23 @@
 package com.zhangke.fread.activitypub.app.internal.screen.instance
 
 import androidx.lifecycle.ViewModel
-import cafe.adriel.voyager.hilt.ScreenModelFactory
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
-import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import dagger.assisted.Assisted
-import dagger.assisted.AssistedFactory
-import dagger.assisted.AssistedInject
-import dagger.hilt.android.lifecycle.HiltViewModel
+import com.zhangke.fread.common.di.ViewModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import me.tatarka.inject.annotations.Assisted
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel(assistedFactory = InstanceDetailViewModel.Factory::class)
-class InstanceDetailViewModel @AssistedInject constructor(
+class InstanceDetailViewModel @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val authorAdapter: ActivityPubAccountEntityAdapter,
     @Assisted private val serverBaseUrl: FormalBaseUrl,
 ) : ViewModel() {
 
-    @AssistedFactory
-    interface Factory : ScreenModelFactory {
+    fun interface Factory : ViewModelFactory {
 
         fun create(serverBaseUrl: FormalBaseUrl): InstanceDetailViewModel
     }

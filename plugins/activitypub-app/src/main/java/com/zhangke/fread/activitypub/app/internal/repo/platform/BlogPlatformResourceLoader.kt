@@ -1,11 +1,10 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
-import android.content.Context
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.platform.PlatformSnapshot
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import kotlinx.serialization.json.JsonArray
@@ -13,14 +12,14 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.JsonPrimitive
 import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.intOrNull
+import me.tatarka.inject.annotations.Inject
 import java.io.BufferedOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.util.zip.ZipInputStream
-import javax.inject.Inject
 
 class BlogPlatformResourceLoader @Inject constructor(
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) {
 
     suspend fun loadLocalPlatforms(): List<PlatformSnapshot> = withContext(Dispatchers.IO) {

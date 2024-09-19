@@ -1,7 +1,6 @@
 plugins {
     id("fread.project.framework.kmp")
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
 }
 
@@ -24,6 +23,7 @@ kotlin {
 
                 implementation(libs.bundles.voyager)
 
+                implementation(libs.kotlinInject.runtime)
                 implementation(libs.imageLoader)
 
                 implementation(libs.krouter.runtime)
@@ -57,8 +57,6 @@ kotlin {
                 implementation(libs.okhttp3.logging)
 
                 implementation(libs.auto.service.annotations)
-                implementation(libs.filt.annotaions)
-                implementation(libs.hilt)
             }
         }
     }
@@ -66,8 +64,7 @@ kotlin {
 
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
-    add("kspAndroid", libs.filt.compiler)
-    add("kspAndroid", libs.hilt.compiler)
+    add("kspAndroid", libs.kotlinInject.compiler)
     add("kspAndroid", libs.auto.service.ksp)
     add("kspAndroid", libs.krouter.collecting.compiler)
 }

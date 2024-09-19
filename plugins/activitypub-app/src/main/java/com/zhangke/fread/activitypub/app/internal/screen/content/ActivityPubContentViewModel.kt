@@ -4,10 +4,8 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class ActivityPubContentViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
     private val accountManager: ActivityPubAccountManager,

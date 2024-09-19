@@ -23,7 +23,7 @@ import com.zhangke.fread.feeds.R
 import com.zhangke.fread.status.ui.utils.CardInfoSection
 import com.zhangke.fread.status.uri.FormalUri
 
-internal data class StatusSourceUiState(
+data class StatusSourceUiState(
     val uri: FormalUri,
     val name: String,
     val description: String,

@@ -18,15 +18,15 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.toast.toast
+import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.extractActivity
+import com.zhangke.fread.common.CommonComponent
+import com.zhangke.fread.common.commonComponent
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.commonbiz.R
 import com.zhangke.fread.status.model.IdentityRole
-import dagger.hilt.android.AndroidEntryPoint
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
-@AndroidEntryPoint
 class BrowserBridgeDialogActivity : AppCompatActivity() {
 
     companion object {
@@ -48,8 +48,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
         }
     }
 
-    @Inject
-    lateinit var browserInterceptorSet: Set<@JvmSuppressWildcards BrowserInterceptor>
+    private lateinit var commonModule: CommonComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -63,6 +62,8 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
             finish()
             return
         }
+
+        commonModule = appContext.commonComponent
 
         setContent {
             FreadTheme(
@@ -100,7 +101,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
     }
 
     private suspend fun intercept(role: IdentityRole, url: String): Boolean {
-        browserInterceptorSet.forEach {
+        commonModule.browserInterceptorSet.forEach {
             if (it.intercept(this, role, url)) {
                 return true
             }

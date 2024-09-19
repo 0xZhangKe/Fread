@@ -1,7 +1,6 @@
 plugins {
     id("fread.project.framework.kmp")
     id("com.google.devtools.ksp")
-    id("com.google.dagger.hilt.android")
     id("kotlin-parcelize")
 }
 
@@ -20,6 +19,12 @@ kotlin {
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.jetbrains.lifecycle.runtime)
+                implementation(libs.jetbrains.lifecycle.viewmodel)
+                implementation(libs.jetbrains.lifecycle.viewmodel.compose)
+
+                implementation(libs.kotlinInject.runtime)
 
                 implementation(libs.androidx.room)
                 implementation(libs.bundles.voyager)
@@ -46,9 +51,6 @@ kotlin {
 
                 implementation(libs.androidx.browser)
 
-                implementation(libs.hilt)
-                implementation(libs.filt.annotaions)
-
                 implementation(libs.bundles.googlePlayReview)
             }
         }
@@ -57,6 +59,5 @@ kotlin {
 
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
-    add("kspAndroid", libs.hilt.compiler)
-    add("kspAndroid", libs.filt.compiler)
+    add("kspAndroid", libs.kotlinInject.compiler)
 }

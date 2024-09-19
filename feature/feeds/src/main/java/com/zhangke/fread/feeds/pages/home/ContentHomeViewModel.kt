@@ -7,14 +7,12 @@ import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
-import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.flow.update
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@HiltViewModel
 class ContentHomeViewModel @Inject constructor(
     private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,

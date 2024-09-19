@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 import com.zhangke.activitypub.entities.ActivityPubSearchEntity
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchResult
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubSearchAdapter @Inject constructor(
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,

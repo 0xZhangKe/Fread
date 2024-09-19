@@ -1,13 +1,11 @@
 package com.zhangke.fread.activitypub.app
 
-import com.zhangke.filt.annotaions.Filt
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.status.IStatusResolver
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
-@Filt
 class ActivityPubProvider @Inject constructor(
     internalScreenProvider: ActivityPubScreenProvider,
     internalPlatformResolver: ActivityPubPlatformResolver,

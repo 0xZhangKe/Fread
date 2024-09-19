@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.feeds.repo
 
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.fread.common.status.repo.StatusContentRepo
@@ -12,11 +13,10 @@ import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
-import javax.inject.Singleton
+import me.tatarka.inject.annotations.Inject
 
-@Singleton
-class FeedsRepo @Inject internal constructor(
+@ApplicationScope
+class FeedsRepo @Inject constructor(
     private val getPreviousStatus: GetPreviousStatusUseCase,
     private val statusContentRepo: StatusContentRepo,
     private val refreshStatus: RefreshStatusUseCase,

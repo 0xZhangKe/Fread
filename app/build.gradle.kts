@@ -4,7 +4,6 @@ import java.util.Properties
 plugins {
     id("fread.android.application")
     id("fread.compose.multiplatform")
-    id("com.google.dagger.hilt.android")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
     id("com.google.gms.google-services")
@@ -83,6 +82,7 @@ dependencies {
     implementation(project(path = ":plugins:activitypub-app"))
     implementation(project(path = ":plugins:rss"))
     implementation(project(path = ":bizframework:status-provider"))
+    implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":commonbiz:sharedscreen"))
     implementation(project(path = ":feature:feeds"))
@@ -119,15 +119,13 @@ dependencies {
     implementation(libs.androidx.room)
     implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
-    implementation(libs.hilt)
-    ksp(libs.hilt.compiler)
+    implementation(libs.kotlinInject.runtime)
+    ksp(libs.kotlinInject.compiler)
     implementation(libs.imageLoader)
     implementation(libs.okhttp3)
     implementation(libs.okhttp3.logging)
     implementation(libs.auto.service.annotations)
     ksp(libs.auto.service.ksp)
-    implementation(libs.filt.annotaions)
-    ksp(libs.filt.compiler)
     implementation(libs.androidx.paging.runtime)
     implementation(libs.androidx.paging.compose)
     implementation(libs.bundles.voyager)
@@ -143,4 +141,8 @@ dependencies {
     implementation(platform(libs.firebase.bom))
     implementation(libs.firebase.analytics)
     implementation(libs.firebase.crashlytics)
+}
+
+ksp {
+    arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }

@@ -8,7 +8,7 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class RssPlatformResolver @Inject constructor(
     private val rssPlatformTransformer: RssPlatformTransformer,

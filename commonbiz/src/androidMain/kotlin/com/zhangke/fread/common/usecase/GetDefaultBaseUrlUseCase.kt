@@ -1,7 +1,7 @@
 package com.zhangke.fread.common.usecase
 
 import com.zhangke.framework.network.FormalBaseUrl
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class GetDefaultBaseUrlUseCase @Inject constructor() {
 

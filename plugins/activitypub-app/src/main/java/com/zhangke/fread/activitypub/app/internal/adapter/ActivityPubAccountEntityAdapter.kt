@@ -7,7 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.report
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.uri.FormalUri
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubAccountEntityAdapter @Inject constructor(
     private val userUriTransformer: UserUriTransformer,

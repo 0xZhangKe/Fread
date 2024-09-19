@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.adapter
 
-import android.content.Context
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.ktx.ifNullOrEmpty
@@ -9,6 +8,7 @@ import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
@@ -21,9 +21,8 @@ import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.datetime.toKotlinInstant
-import javax.inject.Inject
+import me.tatarka.inject.annotations.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
     private val accountManager: ActivityPubAccountManager,
@@ -33,7 +32,7 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    @ApplicationContext private val context: Context,
+    private val context: ApplicationContext,
 ) {
 
     suspend fun toStatus(

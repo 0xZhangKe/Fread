@@ -67,7 +67,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
 
         setContent {
             FreadTheme(
-                darkTheme = DayNightHelper.dayNightMode.isNight,
+                darkTheme = commonModule.dayNightHelper.dayNightMode.isNight,
             ) {
                 Box(
                     modifier = Modifier,

@@ -39,6 +39,8 @@ voyager = "1.1.0-beta02"
 
 krouter = "0.9.96"
 
+multiplatformsettings = "1.2.0"
+
 androidGradlePlugin = "8.2.2"
 
 compose-wheel-picker = "1.0.0-alpha19"
@@ -182,6 +184,11 @@ krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", ver
 krouter-annotation = { group = "io.github.0xzhangke", name = "krouter-annotation", version.ref = "krouter"}
 
 compose-wheel-picker = { group = "com.github.zj565061763", name = "compose-wheel-picker", version.ref = "compose.wheel.picker"}
+
+multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }
+multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }
+multiplatformsettings-datastore = { module = "com.russhwolf:multiplatform-settings-datastore", version.ref = "multiplatformsettings" }
+
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }

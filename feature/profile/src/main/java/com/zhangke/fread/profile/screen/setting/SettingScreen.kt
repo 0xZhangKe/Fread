@@ -52,7 +52,7 @@ import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.common.review.FreadReviewManager
+import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.profile.R
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
@@ -73,6 +73,7 @@ class SettingScreen : BaseScreen() {
         val viewModel = getViewModel<SettingScreenModel>()
         val uiState by viewModel.uiState.collectAsState()
         val context = LocalContext.current
+        val freadReviewManager = LocalFreadReviewManager.current
         SettingContent(
             uiState = uiState,
             onBackClick = navigator::pop,
@@ -100,7 +101,7 @@ class SettingScreen : BaseScreen() {
             },
             onRatingClick = {
                 reportClick(SettingElements.RATTING)
-                FreadReviewManager.trigger(true)
+                freadReviewManager.trigger(true)
 //                SystemPageUtils.openAppMarket(context)
             },
             onAboutClick = {

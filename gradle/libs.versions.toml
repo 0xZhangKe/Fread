@@ -37,7 +37,7 @@ auto_service = "1.0.1"
 
 voyager = "1.1.0-beta02"
 
-krouter = "0.9.96"
+krouter = "1.0.2"
 
 androidGradlePlugin = "8.2.2"
 

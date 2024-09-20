@@ -31,8 +31,6 @@ actual interface CommonPlatformComponent {
 
     val freadReviewManager: FreadReviewManager
 
-    val languageHelper: LanguageHelper
-
     @OptIn(ExperimentalSettingsImplementation::class)
     @ApplicationScope
     @Provides

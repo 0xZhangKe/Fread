@@ -22,7 +22,7 @@ class SettingScreenModel @Inject constructor(
     private val _uiState = MutableStateFlow(
         SettingUiState(
             autoPlayInlineVideo = freadConfigManager.autoPlayInlineVideo,
-            dayNightMode = dayNightHelper.dayNightMode,
+            dayNightMode = dayNightHelper.dayNightModeFlow.value,
             settingInfo = getAppVersionInfo(),
             contentSize = StatusContentSize.default(),
         )
@@ -32,7 +32,7 @@ class SettingScreenModel @Inject constructor(
     init {
         viewModelScope.launch {
             dayNightHelper.dayNightModeFlow.collect {
-                _uiState.value = _uiState.value.copy(dayNightMode = dayNightHelper.dayNightMode)
+                _uiState.value = _uiState.value.copy(dayNightMode = it)
             }
         }
         viewModelScope.launch {
@@ -55,8 +55,10 @@ class SettingScreenModel @Inject constructor(
     }
 
     fun onChangeDayNightMode(mode: DayNightMode) {
-        if (mode == dayNightHelper.dayNightMode) return
-        dayNightHelper.setMode(mode)
+        if (mode == dayNightHelper.dayNightModeFlow.value) return
+        viewModelScope.launch {
+            dayNightHelper.setMode(mode)
+        }
     }
 
     fun onContentSizeChanged(contentSize: StatusContentSize) {

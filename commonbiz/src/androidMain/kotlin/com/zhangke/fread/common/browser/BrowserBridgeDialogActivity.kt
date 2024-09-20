@@ -12,6 +12,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -22,7 +24,6 @@ import com.zhangke.framework.utils.appContext
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.common.CommonComponent
 import com.zhangke.fread.common.commonComponent
-import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.commonbiz.R
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.launch
@@ -66,8 +67,9 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
         commonModule = appContext.commonComponent
 
         setContent {
+            val dayNightMode by commonModule.dayNightHelper.dayNightModeFlow.collectAsState()
             FreadTheme(
-                darkTheme = commonModule.dayNightHelper.dayNightMode.isNight,
+                darkTheme = dayNightMode.isNight,
             ) {
                 Box(
                     modifier = Modifier,

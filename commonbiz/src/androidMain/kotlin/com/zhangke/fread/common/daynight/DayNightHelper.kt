@@ -5,16 +5,21 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.tatarka.inject.annotations.Inject
 
-object DayNightHelper {
+@ApplicationScope
+class DayNightHelper @Inject constructor(
+    private val localConfigManager: LocalConfigManager,
+) {
 
-    private const val DAY_NIGHT_SETTING = "day_night_setting"
+    companion object {
+        private const val DAY_NIGHT_SETTING = "day_night_setting"
+    }
 
     private val _nightModeFlow = MutableSharedFlow<DayNightMode>()
     val dayNightModeFlow: SharedFlow<DayNightMode> get() = _nightModeFlow
@@ -40,7 +45,7 @@ object DayNightHelper {
     fun setMode(mode: DayNightMode) {
         dayNightMode = mode
         ApplicationScope.launch {
-            LocalConfigManager.putInt(appContext, DAY_NIGHT_SETTING, mode.modeValue)
+            localConfigManager.putInt(DAY_NIGHT_SETTING, mode.modeValue)
         }
         AppCompatDelegate.setDefaultNightMode(mode.modeValue)
         ApplicationScope.launch {
@@ -49,7 +54,7 @@ object DayNightHelper {
     }
 
     private suspend fun getDayNightModeSetting(): Int {
-        return LocalConfigManager.getInt(appContext, DAY_NIGHT_SETTING)
+        return localConfigManager.getInt(DAY_NIGHT_SETTING)
             ?: DayNightMode.FOLLOW_SYSTEM.modeValue
     }
 

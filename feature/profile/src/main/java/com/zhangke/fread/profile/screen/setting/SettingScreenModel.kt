@@ -18,13 +18,16 @@ import me.tatarka.inject.annotations.Inject
 
 class SettingScreenModel @Inject constructor(
     private val appContext: ApplicationContext,
+    private val freadConfigManager: FreadConfigManager,
+    private val dayNightHelper: DayNightHelper,
+    private val languageHelper: LanguageHelper,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         SettingUiState(
-            autoPlayInlineVideo = FreadConfigManager.autoPlayInlineVideo,
-            dayNightMode = DayNightHelper.dayNightMode,
-            languageSettingType = LanguageHelper.currentType,
+            autoPlayInlineVideo = freadConfigManager.autoPlayInlineVideo,
+            dayNightMode = dayNightHelper.dayNightMode,
+            languageSettingType = languageHelper.currentType,
             settingInfo = getAppVersionInfo(),
             contentSize = StatusContentSize.default(),
         )
@@ -33,19 +36,19 @@ class SettingScreenModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            DayNightHelper.dayNightModeFlow.collect {
-                _uiState.value = _uiState.value.copy(dayNightMode = DayNightHelper.dayNightMode)
+            dayNightHelper.dayNightModeFlow.collect {
+                _uiState.value = _uiState.value.copy(dayNightMode = dayNightHelper.dayNightMode)
             }
         }
         viewModelScope.launch {
             LanguageHelper.systemLocale
         }
         viewModelScope.launch {
-            FreadConfigManager.getStatusContentSize(appContext)
+            freadConfigManager.getStatusContentSize()
                 .let {
                     _uiState.value = _uiState.value.copy(contentSize = it)
                 }
-            FreadConfigManager.statusContentSizeFlow
+            freadConfigManager.statusContentSizeFlow
                 .collect {
                     _uiState.value = _uiState.value.copy(contentSize = it)
                 }
@@ -54,23 +57,23 @@ class SettingScreenModel @Inject constructor(
 
     fun onChangeAutoPlayInlineVideo(on: Boolean) {
         viewModelScope.launch {
-            FreadConfigManager.updateAutoPlayInlineVideo(on)
+            freadConfigManager.updateAutoPlayInlineVideo(on)
             _uiState.value = _uiState.value.copy(autoPlayInlineVideo = on)
         }
     }
 
     fun onChangeDayNightMode(mode: DayNightMode) {
-        if (mode == DayNightHelper.dayNightMode) return
-        DayNightHelper.setMode(mode)
+        if (mode == dayNightHelper.dayNightMode) return
+        dayNightHelper.setMode(mode)
     }
 
     fun onLanguageClick(context: Context, type: LanguageSettingType) {
-        LanguageHelper.setLanguage(context, type)
+        languageHelper.setLanguage(context, type)
     }
 
     fun onContentSizeChanged(contentSize: StatusContentSize) {
         viewModelScope.launch {
-            FreadConfigManager.updateStatusContentSize(contentSize)
+            freadConfigManager.updateStatusContentSize(contentSize)
         }
     }
 

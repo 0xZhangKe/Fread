@@ -8,21 +8,28 @@ import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.ActivityLifecycleCallbacksAdapter
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.tatarka.inject.annotations.Inject
 import java.lang.ref.WeakReference
 import java.util.Locale
 
-object LanguageHelper {
+@ApplicationScope
+class LanguageHelper @Inject constructor(
+    private val localConfigManager: LocalConfigManager,
+) {
 
-    private const val LANGUAGE_SETTING = "app_language_setting"
+    companion object {
+        private const val LANGUAGE_SETTING = "app_language_setting"
+
+        lateinit var systemLocale: Locale
+    }
 
     lateinit var currentType: LanguageSettingType
         private set
 
     private val pausedActivityList = mutableListOf<WeakReference<Activity>>()
-
-    lateinit var systemLocale: Locale
 
     private lateinit var application: Application
 
@@ -82,13 +89,13 @@ object LanguageHelper {
 
     private fun saveLocalToStorage(type: LanguageSettingType) {
         ApplicationScope.launch {
-            LocalConfigManager.putInt(application, LANGUAGE_SETTING, type.value)
+            localConfigManager.putInt(LANGUAGE_SETTING, type.value)
         }
     }
 
     private fun readLocalFromStorage(): LanguageSettingType? {
         return runBlocking {
-            when (LocalConfigManager.getInt(application, LANGUAGE_SETTING)) {
+            when (localConfigManager.getInt(LANGUAGE_SETTING)) {
                 LanguageSettingType.CN.value -> LanguageSettingType.CN
                 LanguageSettingType.EN.value -> LanguageSettingType.EN
                 LanguageSettingType.SYSTEM.value -> LanguageSettingType.SYSTEM

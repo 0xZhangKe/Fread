@@ -40,7 +40,6 @@ import com.zhangke.fread.di.create
 import com.zhangke.fread.status.ui.style.LocalStatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
-import kotlinx.coroutines.flow.map
 
 class FreadActivity : ComponentActivity() {
 
@@ -58,11 +57,9 @@ class FreadActivity : ComponentActivity() {
         val activityComponent = ActivityComponent.create(applicationContext.component, this)
 
         setContent {
-            val isNight by remember {
-                dayNightHelper.dayNightModeFlow.map { it.isNight }
-            }.collectAsState(dayNightHelper.dayNightMode.isNight)
+            val dayNightMode by component.dayNightHelper.dayNightModeFlow.collectAsState()
             FreadTheme(
-                darkTheme = isNight,
+                darkTheme = dayNightMode.isNight,
             ) {
                 val videoPlayerManager = remember {
                     ExoPlayerManager()
@@ -92,9 +89,9 @@ class FreadActivity : ComponentActivity() {
                                 Navigator(
                                     screen = FreadScreen(),
                                     key = ROOT_NAVIGATOR_KEY,
-                                ) {
+                                ) { navigator ->
                                     SlideTransition(
-                                        navigator = it,
+                                        navigator = navigator,
                                         disposeScreenAfterTransitionEnd = false,
                                     )
                                     LaunchedEffect(Unit) {

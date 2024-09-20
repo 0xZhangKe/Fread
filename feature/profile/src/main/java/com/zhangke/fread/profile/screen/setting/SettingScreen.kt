@@ -28,6 +28,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +38,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpOffset
@@ -51,6 +51,7 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.language.LanguageSettingType
+import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.profile.R
@@ -72,8 +73,10 @@ class SettingScreen : BaseScreen() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<SettingScreenModel>()
         val uiState by viewModel.uiState.collectAsState()
-        val context = LocalContext.current
+
+        val activityLanguageHelper = LocalActivityLanguageHelper.current
         val freadReviewManager = LocalFreadReviewManager.current
+
         SettingContent(
             uiState = uiState,
             onBackClick = navigator::pop,
@@ -97,7 +100,7 @@ class SettingScreen : BaseScreen() {
                 reportClick(SettingElements.LANGUAGE) {
                     put("language", it.name)
                 }
-                viewModel.onLanguageClick(context, it)
+                activityLanguageHelper.setLanguage(it)
             },
             onRatingClick = {
                 reportClick(SettingElements.RATTING)
@@ -149,7 +152,6 @@ class SettingScreen : BaseScreen() {
                     onDayNightModeClick = onDayNightModeClick,
                 )
                 LanguageItem(
-                    uiState = uiState,
                     onLanguageClick = onLanguageClick,
                 )
                 ContentSizeItem(
@@ -230,7 +232,8 @@ class SettingScreen : BaseScreen() {
             icon = Icons.Default.Contrast,
             title = stringResource(R.string.profile_setting_dark_mode_title),
             subtitle = uiState.dayNightMode.modeName,
-            dropDownItems = DayNightMode.entries.map { it.modeName },
+            dropDownItemCount = DayNightMode.entries.size,
+            dropDownItemText = { DayNightMode.entries[it].modeName },
             onItemClick = { index ->
                 onDayNightModeClick(DayNightMode.entries[index])
             },
@@ -246,7 +249,8 @@ class SettingScreen : BaseScreen() {
             icon = Icons.Default.TextFields,
             title = stringResource(R.string.profile_setting_font_size),
             subtitle = contentSize.sizeName,
-            dropDownItems = StatusContentSize.entries.map { it.sizeName },
+            dropDownItemCount = StatusContentSize.entries.size,
+            dropDownItemText = { StatusContentSize.entries[it].sizeName },
             onItemClick = {
                 onContentSizeChanged(StatusContentSize.entries[it])
             }
@@ -255,14 +259,15 @@ class SettingScreen : BaseScreen() {
 
     @Composable
     private fun LanguageItem(
-        uiState: SettingUiState,
         onLanguageClick: (LanguageSettingType) -> Unit,
     ) {
+        val activityLanguageHelper = LocalActivityLanguageHelper.current
         SettingItemWithPopup(
             icon = Icons.Default.Language,
             title = stringResource(R.string.profile_setting_language_title),
-            subtitle = uiState.languageSettingType.typeName,
-            dropDownItems = LanguageSettingType.entries.map { it.typeName },
+            subtitle = activityLanguageHelper.currentType.typeName,
+            dropDownItemCount = LanguageSettingType.entries.size,
+            dropDownItemText = { LanguageSettingType.entries[it].typeName },
             onItemClick = {
                 onLanguageClick(LanguageSettingType.entries[it])
             }
@@ -295,7 +300,9 @@ class SettingScreen : BaseScreen() {
         icon: ImageVector,
         title: String,
         subtitle: String,
-        dropDownItems: List<String>,
+        // dropDownItems: List<String>,
+        dropDownItemCount: Int,
+        dropDownItemText: @Composable (Int) -> String,
         onItemClick: (Int) -> Unit,
     ) {
         val coroutineScope = rememberCoroutineScope()
@@ -316,9 +323,9 @@ class SettingScreen : BaseScreen() {
                 offset = DpOffset(x = 36.dp, y = 0.dp),
                 onDismissRequest = { showPopup = false },
             ) {
-                dropDownItems.forEachIndexed { index, item ->
+                repeat(dropDownItemCount) { index ->
                     DropdownMenuItem(
-                        text = { Text(item) },
+                        text = { Text(dropDownItemText(index)) },
                         onClick = {
                             showPopup = false
                             coroutineScope.launch {
@@ -391,7 +398,9 @@ class SettingScreen : BaseScreen() {
     }
 
     private val LanguageSettingType.typeName: String
-        @Composable get() {
+        @ReadOnlyComposable
+        @Composable
+        get() {
             return when (this) {
                 LanguageSettingType.CN -> stringResource(R.string.profile_setting_language_zh)
                 LanguageSettingType.EN -> stringResource(R.string.profile_setting_language_en)
@@ -400,7 +409,9 @@ class SettingScreen : BaseScreen() {
         }
 
     private val DayNightMode.modeName: String
-        @Composable get() {
+        @ReadOnlyComposable
+        @Composable
+        get() {
             return when (this) {
                 DayNightMode.NIGHT -> stringResource(R.string.profile_setting_dark_mode_dark)
                 DayNightMode.DAY -> stringResource(R.string.profile_setting_dark_mode_light)
@@ -409,7 +420,9 @@ class SettingScreen : BaseScreen() {
         }
 
     private val StatusContentSize.sizeName: String
-        @Composable get() = when (this) {
+        @ReadOnlyComposable
+        @Composable
+        get() = when (this) {
             StatusContentSize.SMALL -> stringResource(R.string.profile_setting_font_size_small)
             StatusContentSize.MEDIUM -> stringResource(R.string.profile_setting_font_size_medium)
             StatusContentSize.LARGE -> stringResource(R.string.profile_setting_font_size_large)

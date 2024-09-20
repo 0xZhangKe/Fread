@@ -28,12 +28,15 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.common.commonComponent
-import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.config.LocalFreadConfigManager
+import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
+import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
+import com.zhangke.fread.di.ActivityComponent
+import com.zhangke.fread.di.component
+import com.zhangke.fread.di.create
 import com.zhangke.fread.status.ui.style.LocalStatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
@@ -43,13 +46,16 @@ class FreadActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        val commonComponent = applicationContext.commonComponent
-        val dayNightHelper = commonComponent.dayNightHelper
+        val component = applicationContext.component
 
+        val dayNightHelper = component.dayNightHelper
         dayNightHelper.setActivityDayNightMode()
+
         enableEdgeToEdge()
 
         super.onCreate(savedInstanceState)
+
+        val activityComponent = ActivityComponent.create(applicationContext.component, this)
 
         setContent {
             val isNight by remember {
@@ -66,15 +72,16 @@ class FreadActivity : ComponentActivity() {
                         videoPlayerManager.recycler()
                     }
                 }
-                val statusContentSize by commonComponent.freadConfigManager.statusContentSizeFlow.collectAsState()
+                val statusContentSize by component.freadConfigManager.statusContentSizeFlow.collectAsState()
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
                     LocalStatusStyle provides statusContentSize.toStyle(),
                     LocalImageLoader provides applicationContext.imageLoader,
-                    LocalViewModelProviderFactory provides commonComponent.viewModelProviderFactory,
-                    LocalLocalConfigManager provides commonComponent.localConfigManager,
-                    LocalFreadConfigManager provides commonComponent.freadConfigManager,
-                    LocalFreadReviewManager provides commonComponent.freadReviewManager,
+                    LocalViewModelProviderFactory provides component.viewModelProviderFactory,
+                    LocalLocalConfigManager provides component.localConfigManager,
+                    LocalFreadConfigManager provides component.freadConfigManager,
+                    LocalFreadReviewManager provides component.freadReviewManager,
+                    LocalActivityLanguageHelper provides activityComponent.activityLanguageHelper,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {

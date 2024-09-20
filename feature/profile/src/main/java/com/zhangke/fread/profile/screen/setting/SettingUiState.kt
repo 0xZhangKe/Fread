@@ -7,7 +7,6 @@ import com.zhangke.fread.common.language.LanguageSettingType
 data class SettingUiState(
     val autoPlayInlineVideo: Boolean,
     val dayNightMode: DayNightMode,
-    val languageSettingType: LanguageSettingType,
     val settingInfo: String,
     val contentSize: StatusContentSize,
 )

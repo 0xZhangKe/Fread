@@ -1,38 +1,45 @@
 package com.zhangke.fread.common
 
 import android.content.Context
-import androidx.lifecycle.ViewModelProvider
-import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStore
+import com.russhwolf.settings.ExperimentalSettingsImplementation
+import com.russhwolf.settings.coroutines.FlowSettings
+import com.russhwolf.settings.datastore.DataStoreSettings
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
+import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.di.ViewModelCreator
-import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.di.ViewModelKey
+import com.zhangke.fread.common.language.LanguageHelper
+import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface CommonComponent {
+private val Context.localConfig: DataStore<Preferences> by preferencesDataStore(name = "local_config")
+
+actual interface CommonPlatformComponent {
 
     val moduleStartups: Set<ModuleStartup>
 
     val browserInterceptorSet: Set<BrowserInterceptor>
 
-    val viewModelProviderFactory: ViewModelProvider.Factory
+    val dayNightHelper: DayNightHelper
 
+    val freadReviewManager: FreadReviewManager
+
+    val languageHelper: LanguageHelper
+
+    @OptIn(ExperimentalSettingsImplementation::class)
     @ApplicationScope
     @Provides
-    fun provideViewModelProviderFactory(
-        viewModelMaps: Map<ViewModelKey, ViewModelCreator>,
-        viewModelFactoryMaps: Map<ViewModelKey, ViewModelFactory>,
-    ): ViewModelProvider.Factory {
-        return KotlinInjectViewModelProviderFactory(
-            viewModelMaps = viewModelMaps,
-            viewModelFactoryMaps = viewModelFactoryMaps,
-        )
+    fun provideFlowSettings(
+        context: ApplicationContext,
+    ): FlowSettings {
+        return DataStoreSettings(context.localConfig)
     }
 
     @ApplicationScope
@@ -55,10 +62,6 @@ interface CommonComponent {
     fun bindCommonBizModuleStartup(module: CommonBizModuleStartup): ModuleStartup {
         return module
     }
-}
-
-interface CommonComponentProvider {
-    val component: CommonComponent
 }
 
 val Context.commonComponent get() = (applicationContext as CommonComponentProvider).component

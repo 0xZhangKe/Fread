@@ -38,8 +38,7 @@ class FreadApplication : Application(),
         super.onCreate()
         initDebuggable(BuildConfig.DEBUG)
         initApplication(this)
-        DayNightHelper
-        LanguageHelper.prepare(this)
+        component.languageHelper.prepare(this)
         initModuleStartups()
         TopActivityManager.init(this)
     }

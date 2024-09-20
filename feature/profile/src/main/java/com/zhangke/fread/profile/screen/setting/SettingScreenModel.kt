@@ -1,6 +1,5 @@
 package com.zhangke.fread.profile.screen.setting
 
-import android.content.Context
 import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -9,8 +8,6 @@ import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.di.ApplicationContext
-import com.zhangke.fread.common.language.LanguageHelper
-import com.zhangke.fread.common.language.LanguageSettingType
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
@@ -20,14 +17,12 @@ class SettingScreenModel @Inject constructor(
     private val appContext: ApplicationContext,
     private val freadConfigManager: FreadConfigManager,
     private val dayNightHelper: DayNightHelper,
-    private val languageHelper: LanguageHelper,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
         SettingUiState(
             autoPlayInlineVideo = freadConfigManager.autoPlayInlineVideo,
             dayNightMode = dayNightHelper.dayNightMode,
-            languageSettingType = languageHelper.currentType,
             settingInfo = getAppVersionInfo(),
             contentSize = StatusContentSize.default(),
         )
@@ -39,9 +34,6 @@ class SettingScreenModel @Inject constructor(
             dayNightHelper.dayNightModeFlow.collect {
                 _uiState.value = _uiState.value.copy(dayNightMode = dayNightHelper.dayNightMode)
             }
-        }
-        viewModelScope.launch {
-            LanguageHelper.systemLocale
         }
         viewModelScope.launch {
             freadConfigManager.getStatusContentSize()
@@ -65,10 +57,6 @@ class SettingScreenModel @Inject constructor(
     fun onChangeDayNightMode(mode: DayNightMode) {
         if (mode == dayNightHelper.dayNightMode) return
         dayNightHelper.setMode(mode)
-    }
-
-    fun onLanguageClick(context: Context, type: LanguageSettingType) {
-        languageHelper.setLanguage(context, type)
     }
 
     fun onContentSizeChanged(contentSize: StatusContentSize) {

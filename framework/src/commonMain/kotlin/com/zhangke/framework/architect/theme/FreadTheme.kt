@@ -93,9 +93,11 @@ fun FreadTheme(
         darkTheme -> darkScheme
         else -> lightScheme
     }
-    val m1Colors = colorScheme.toColors(!darkTheme)
+
+    FreadPlatformTheme(darkTheme)
+
     androidx.compose.material.MaterialTheme(
-        colors = m1Colors,
+        colors = colorScheme.toColors(!darkTheme),
         content = {
             MaterialTheme(
                 colorScheme = colorScheme,
@@ -104,6 +106,9 @@ fun FreadTheme(
         }
     )
 }
+
+@Composable
+internal expect fun FreadPlatformTheme(darkTheme: Boolean)
 
 private fun ColorScheme.toColors(isLight: Boolean): Colors = Colors(
     primary = primary,

@@ -60,7 +60,6 @@ kotlin {
                 implementation(libs.okhttp3.logging)
 
                 implementation(libs.bundles.androidx.media3)
-                implementation(libs.krouter.core)
                 api(libs.compose.wheel.picker)
 
                 implementation(libs.composeReorderable)

@@ -39,6 +39,8 @@ voyager = "1.1.0-beta02"
 
 krouter = "1.0.2"
 
+multiplatformsettings = "1.2.0"
+
 androidGradlePlugin = "8.2.2"
 
 mockk = "1.13.8"
@@ -178,6 +180,10 @@ krouter-reducing-compiler = { group = "io.github.0xzhangke", name = "krouter-red
 krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-collecting-compiler", version.ref = "krouter"}
 krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", version.ref = "krouter"}
 krouter-annotation = { group = "io.github.0xzhangke", name = "krouter-annotation", version.ref = "krouter"}
+
+multiplatformsettings-core = { module = "com.russhwolf:multiplatform-settings", version.ref = "multiplatformsettings" }
+multiplatformsettings-coroutines = { module = "com.russhwolf:multiplatform-settings-coroutines", version.ref = "multiplatformsettings" }
+multiplatformsettings-datastore = { module = "com.russhwolf:multiplatform-settings-datastore", version.ref = "multiplatformsettings" }
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }

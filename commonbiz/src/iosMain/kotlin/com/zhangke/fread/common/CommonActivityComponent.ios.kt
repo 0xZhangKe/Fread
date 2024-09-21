@@ -1,0 +1,3 @@
+package com.zhangke.fread.common
+
+actual interface CommonActivityPlatformComponent

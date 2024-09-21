@@ -1,8 +1,11 @@
 package com.zhangke.fread.di
 
 import android.app.Application
+import android.content.Context
 import com.zhangke.fread.activitypub.app.di.ActivityPubComponent
+import com.zhangke.fread.activitypub.app.di.ActivityPubComponentProvider
 import com.zhangke.fread.common.CommonComponent
+import com.zhangke.fread.common.CommonComponentProvider
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
@@ -55,3 +58,11 @@ abstract class ApplicationComponent(
 
     companion object
 }
+
+interface ApplicationComponentProvider :
+    CommonComponentProvider,
+    ActivityPubComponentProvider {
+    override val component: ApplicationComponent
+}
+
+val Context.component get() = (applicationContext as ApplicationComponentProvider).component

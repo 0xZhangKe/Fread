@@ -28,7 +28,7 @@ import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.config.LocalFreadConfigManager
 
 @androidx.annotation.OptIn(UnstableApi::class)
 @Composable
@@ -47,10 +47,11 @@ fun InlineVideo(
         aspectRatio = aspectRatio ?: style.defaultMediaAspect,
         style = style,
     ) {
+        val freadConfigManager = LocalFreadConfigManager.current
         InlineVideoPlayer(
             uri = uri,
             coverImage = coverImage,
-            autoPlay = FreadConfigManager.autoPlayInlineVideo,
+            autoPlay = freadConfigManager.autoPlayInlineVideo,
             playWhenReady = playWhenReady,
             onClick = onClick,
             onPlayManually = {

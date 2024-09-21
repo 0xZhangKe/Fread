@@ -40,7 +40,7 @@
     <string name="status_ui_interaction_label_favourited_count">%1$s favorites</string>
     <string name="status_ui_interaction_label_boosted_count">%1$s boosts</string>
 
-    <string name="status_ui_bottom_label_edited_at">Edited on %s</string>
+    <string name="status_ui_bottom_label_edited_at">Edited on %1$s</string>
 
     <string name="status_ui_translating">Translating…</string>
     <string name="status_ui_translate_show_original">Show Original</string>

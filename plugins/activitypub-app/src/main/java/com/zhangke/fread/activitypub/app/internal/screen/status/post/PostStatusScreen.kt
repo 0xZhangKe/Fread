@@ -565,6 +565,7 @@ class PostStatusScreen(
                 )
             }
 
+
             is PostStatusAttachment.Poll -> {
                 PostStatusPoll(
                     modifier = modifier,

@@ -31,6 +31,7 @@ import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
+import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
@@ -46,18 +47,17 @@ class FreadActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val component = applicationContext.component
+        val activityComponent = ActivityComponent.create(applicationContext.component, this)
 
-        val dayNightHelper = component.dayNightHelper
-        dayNightHelper.setActivityDayNightMode()
+        val activityDayNightHelper = activityComponent.activityDayNightHelper
+        activityDayNightHelper.setDefaultMode()
 
         enableEdgeToEdge()
 
         super.onCreate(savedInstanceState)
 
-        val activityComponent = ActivityComponent.create(applicationContext.component, this)
-
         setContent {
-            val dayNightMode by component.dayNightHelper.dayNightModeFlow.collectAsState()
+            val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
             FreadTheme(
                 darkTheme = dayNightMode.isNight,
             ) {
@@ -79,6 +79,7 @@ class FreadActivity : ComponentActivity() {
                     LocalFreadConfigManager provides component.freadConfigManager,
                     LocalFreadReviewManager provides component.freadReviewManager,
                     LocalActivityLanguageHelper provides activityComponent.activityLanguageHelper,
+                    LocalActivityDayNightHelper provides activityComponent.activityDayNightHelper,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {

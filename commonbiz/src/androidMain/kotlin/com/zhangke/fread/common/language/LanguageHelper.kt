@@ -134,4 +134,4 @@ enum class LanguageSettingType(val value: Int) {
     }
 }
 
-val LocalActivityLanguageHelper = staticCompositionLocalOf<ActivityLanguageHelper> { error("No LanguageHelper provided") }
+val LocalActivityLanguageHelper = staticCompositionLocalOf<ActivityLanguageHelper> { error("No ActivityLanguageHelper provided") }

@@ -50,6 +50,7 @@ import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
+import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
@@ -75,6 +76,7 @@ class SettingScreen : BaseScreen() {
         val uiState by viewModel.uiState.collectAsState()
 
         val activityLanguageHelper = LocalActivityLanguageHelper.current
+        val activityDayNightHelper = LocalActivityDayNightHelper.current
         val freadReviewManager = LocalFreadReviewManager.current
 
         SettingContent(
@@ -94,7 +96,7 @@ class SettingScreen : BaseScreen() {
                 reportClick(SettingElements.DARK_MODE) {
                     put("mode", it.name)
                 }
-                viewModel.onChangeDayNightMode(it)
+                activityDayNightHelper.setMode(it)
             },
             onLanguageClick = {
                 reportClick(SettingElements.LANGUAGE) {

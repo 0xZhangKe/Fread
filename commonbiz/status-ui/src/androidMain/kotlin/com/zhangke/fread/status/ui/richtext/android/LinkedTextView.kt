@@ -4,12 +4,14 @@ import android.annotation.SuppressLint
 import android.content.Context
 import android.graphics.Canvas
 import android.view.MotionEvent
+import android.widget.TextView
 import androidx.appcompat.widget.AppCompatTextView
 import com.zhangke.fread.status.richtext.android.span.LinkSpan
 
+@SuppressLint("AppCompatCustomView")
 class LinkedTextView(
     context: Context,
-) : AppCompatTextView(context) {
+) : TextView(context) {
 
     var onLinkSpanClick: ((LinkSpan) -> Unit)? = null
         set(value) {

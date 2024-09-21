@@ -10,6 +10,11 @@ android {
 
 kotlin {
     sourceSets {
+        all {
+            languageSettings {
+                optIn("com.russhwolf.settings.ExperimentalSettingsApi")
+            }
+        }
         commonMain {
             dependencies {
                 implementation(project(path = ":framework"))
@@ -30,6 +35,9 @@ kotlin {
                 implementation(libs.bundles.voyager)
 
                 implementation(libs.krouter.runtime)
+
+                implementation(libs.multiplatformsettings.core)
+                implementation(libs.multiplatformsettings.coroutines)
             }
         }
         commonTest {
@@ -52,6 +60,8 @@ kotlin {
                 implementation(libs.androidx.browser)
 
                 implementation(libs.bundles.googlePlayReview)
+
+                implementation(libs.multiplatformsettings.datastore)
             }
         }
     }

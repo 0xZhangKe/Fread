@@ -37,7 +37,7 @@ auto_service = "1.0.1"
 
 voyager = "1.1.0-beta02"
 
-krouter = "0.2.3"
+krouter = "1.0.2"
 
 androidGradlePlugin = "8.2.2"
 
@@ -174,8 +174,10 @@ voyager-tab-navigator = { module = "cafe.adriel.voyager:voyager-tab-navigator", 
 voyager-transitions = { module = "cafe.adriel.voyager:voyager-transitions", version.ref = "voyager" }
 voyager-lifecycle-kmp = { module = "cafe.adriel.voyager:voyager-lifecycle-kmp", version.ref = "voyager" }
 
-krouter-compiler = { group = "com.github.0xZhangKe.KRouter", name = "compiler", version.ref = "krouter"}
-krouter-core = { group = "com.github.0xZhangKe.KRouter", name = "core", version.ref = "krouter"}
+krouter-reducing-compiler = { group = "io.github.0xzhangke", name = "krouter-reducing-compiler", version.ref = "krouter"}
+krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-collecting-compiler", version.ref = "krouter"}
+krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", version.ref = "krouter"}
+krouter-annotation = { group = "io.github.0xzhangke", name = "krouter-annotation", version.ref = "krouter"}
 
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }

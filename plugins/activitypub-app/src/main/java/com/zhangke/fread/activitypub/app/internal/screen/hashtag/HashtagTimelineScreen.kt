@@ -43,32 +43,35 @@ import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.krouter.Destination
-import com.zhangke.krouter.Router
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.krouter.annotation.Destination
+import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
+import java.net.URLDecoder
 
 @Destination(HashtagTimelineRoute.ROUTE)
 data class HashtagTimelineScreen(
-    @Router private val route: String = "",
+    @RouteParam(HashtagTimelineRoute.PARAMS_ROLE) private val _role: String? = null,
+    @RouteParam(HashtagTimelineRoute.PARAM_HASHTAG) private val _hashtag: String? = null,
+    private val role: IdentityRole = IdentityRole.decodeFromString(_role!!)!!,
+    private val hashtag: String = URLDecoder.decode(_hashtag!!, Charsets.UTF_8.name())
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = route
-
+        get() = _role + _hashtag
+    
     @Composable
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val (role, hashtag) = remember(route) {
-            HashtagTimelineRoute.parseRoute(route)
-        }
-        val viewModel = getViewModel<HashtagTimelineContainerViewModel>().getViewModel(role, hashtag)
+        val viewModel =
+            getViewModel<HashtagTimelineContainerViewModel>().getViewModel(role, hashtag)
         val hashtagTimelineUiState by viewModel.hashtagTimelineUiState.collectAsState()
         val statusUiState by viewModel.uiState.collectAsState()
         HashtagTimelineContent(

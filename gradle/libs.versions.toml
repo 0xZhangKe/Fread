@@ -41,8 +41,6 @@ krouter = "1.0.2"
 
 androidGradlePlugin = "8.2.2"
 
-compose-wheel-picker = "1.0.0-alpha19"
-
 mockk = "1.13.8"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
@@ -181,7 +179,6 @@ krouter-collecting-compiler = { group = "io.github.0xzhangke", name = "krouter-c
 krouter-runtime = { group = "io.github.0xzhangke", name = "krouter-runtime", version.ref = "krouter"}
 krouter-annotation = { group = "io.github.0xzhangke", name = "krouter-annotation", version.ref = "krouter"}
 
-compose-wheel-picker = { group = "com.github.zj565061763", name = "compose-wheel-picker", version.ref = "compose.wheel.picker"}
 junit = { group = "junit", name = "junit", version.ref = "junit" }
 androidx-test-ext-junit = { group = "androidx.test.ext", name = "junit", version.ref = "androidx-test-ext-junit" }
 androidx-test-espresso-core = { group = "androidx.test.espresso", name = "espresso-core", version.ref = "espresso-core" }
@@ -200,6 +197,7 @@ okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }
 uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
 bignum = { module = "com.ionspin.kotlin:bignum", version = "0.3.10" }
+kermit = { module = "co.touchlab:kermit", version = "2.0.4" }
 placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
 
 googlePlayReview = { group = "com.google.android.play", name = "review", version.ref = "goolgePlayReview" }

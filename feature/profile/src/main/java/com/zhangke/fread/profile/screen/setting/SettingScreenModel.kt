@@ -6,7 +6,6 @@ import androidx.lifecycle.viewModelScope
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
-import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.di.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -51,13 +50,6 @@ class SettingScreenModel @Inject constructor(
         viewModelScope.launch {
             freadConfigManager.updateAutoPlayInlineVideo(on)
             _uiState.value = _uiState.value.copy(autoPlayInlineVideo = on)
-        }
-    }
-
-    fun onChangeDayNightMode(mode: DayNightMode) {
-        if (mode == dayNightHelper.dayNightModeFlow.value) return
-        viewModelScope.launch {
-            dayNightHelper.setMode(mode)
         }
     }
 

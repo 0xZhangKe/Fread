@@ -1,14 +1,19 @@
 package com.zhangke.fread.common.daynight
 
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.lifecycle.lifecycleScope
 import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.fread.common.di.ActivityScope
 import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Inject
 
@@ -34,11 +39,8 @@ class DayNightHelper @Inject constructor(
         dayNightModeFlow = _dayNightModeFlow.asStateFlow()
     }
 
-    fun setActivityDayNightMode() {
-        AppCompatDelegate.setDefaultNightMode(_dayNightModeFlow.value.modeValue)
-    }
-
-    suspend fun setMode(mode: DayNightMode) {
+    // FIXME: use ActivityDayNightHelper.setMode before https://github.com/adrielcafe/voyager/issues/489 fix
+    internal suspend fun setMode(mode: DayNightMode) {
         _dayNightModeFlow.value = mode
         localConfigManager.putInt(DAY_NIGHT_SETTING, mode.modeValue)
         AppCompatDelegate.setDefaultNightMode(mode.modeValue)
@@ -58,6 +60,28 @@ class DayNightHelper @Inject constructor(
         }
     }
 }
+
+@ActivityScope
+class ActivityDayNightHelper @Inject constructor(
+    private val dayNightHelper: DayNightHelper,
+    private val activity: ComponentActivity,
+) {
+
+    val dayNightModeFlow get() = dayNightHelper.dayNightModeFlow
+
+    fun setDefaultMode() {
+        AppCompatDelegate.setDefaultNightMode(dayNightModeFlow.value.modeValue)
+    }
+
+    fun setMode(mode: DayNightMode) {
+        activity.lifecycleScope.launch {
+            dayNightHelper.setMode(mode)
+            activity.recreate()
+        }
+    }
+}
+
+val LocalActivityDayNightHelper = staticCompositionLocalOf<ActivityDayNightHelper> { error("No ActivityDayNightHelper provided") }
 
 enum class DayNightMode(val modeValue: Int) {
 

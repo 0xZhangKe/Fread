@@ -47,7 +47,7 @@ class FreadActivity : ComponentActivity() {
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val component = applicationContext.component
-        val activityComponent = ActivityComponent.create(applicationContext.component, this)
+        val activityComponent = ActivityComponent.create(component, this)
 
         val activityDayNightHelper = activityComponent.activityDayNightHelper
         activityDayNightHelper.setDefaultMode()

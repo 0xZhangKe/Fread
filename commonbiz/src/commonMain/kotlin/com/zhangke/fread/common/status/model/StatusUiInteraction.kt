@@ -1,7 +1,7 @@
 package com.zhangke.fread.common.status.model
 
 import com.zhangke.framework.utils.PlatformSerializable
-import com.zhangke.framework.utils.formatAsCount
+import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.status.status.model.StatusInteraction
 import kotlinx.serialization.Serializable
 
@@ -110,6 +110,6 @@ sealed class StatusUiInteraction : PlatformSerializable {
 private fun Int.countToLabel(): String? {
     return when {
         this <= 0 -> null
-        else -> this.formatAsCount()
+        else -> this.formatToHumanReadable()
     }
 }

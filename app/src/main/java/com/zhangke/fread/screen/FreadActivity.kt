@@ -28,32 +28,38 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.common.commonComponent
-import com.zhangke.fread.common.config.FreadConfigManager
+import com.zhangke.fread.common.config.LocalFreadConfigManager
+import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
-import com.zhangke.fread.common.daynight.DayNightHelper
+import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
+import com.zhangke.fread.common.language.LocalActivityLanguageHelper
+import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
+import com.zhangke.fread.di.ActivityComponent
+import com.zhangke.fread.di.component
+import com.zhangke.fread.di.create
 import com.zhangke.fread.status.ui.style.LocalStatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
-import kotlinx.coroutines.flow.map
 
 class FreadActivity : ComponentActivity() {
 
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
-        DayNightHelper.setActivityDayNightMode()
+        val component = applicationContext.component
+        val activityComponent = ActivityComponent.create(component, this)
+
+        val activityDayNightHelper = activityComponent.activityDayNightHelper
+        activityDayNightHelper.setDefaultMode()
+
         enableEdgeToEdge()
+
         super.onCreate(savedInstanceState)
 
-        val commonComponent = applicationContext.commonComponent
-
         setContent {
-            val isNight by remember {
-                DayNightHelper.dayNightModeFlow.map { it.isNight }
-            }.collectAsState(DayNightHelper.dayNightMode.isNight)
+            val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
             FreadTheme(
-                darkTheme = isNight,
+                darkTheme = dayNightMode.isNight,
             ) {
                 val videoPlayerManager = remember {
                     ExoPlayerManager()
@@ -63,12 +69,17 @@ class FreadActivity : ComponentActivity() {
                         videoPlayerManager.recycler()
                     }
                 }
-                val statusContentSize by FreadConfigManager.statusContentSizeFlow.collectAsState()
+                val statusContentSize by component.freadConfigManager.statusContentSizeFlow.collectAsState()
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
                     LocalStatusStyle provides statusContentSize.toStyle(),
                     LocalImageLoader provides applicationContext.imageLoader,
-                    LocalViewModelProviderFactory provides commonComponent.viewModelProviderFactory,
+                    LocalViewModelProviderFactory provides component.viewModelProviderFactory,
+                    LocalLocalConfigManager provides component.localConfigManager,
+                    LocalFreadConfigManager provides component.freadConfigManager,
+                    LocalFreadReviewManager provides component.freadReviewManager,
+                    LocalActivityLanguageHelper provides activityComponent.activityLanguageHelper,
+                    LocalActivityDayNightHelper provides activityComponent.activityDayNightHelper,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {
@@ -79,9 +90,9 @@ class FreadActivity : ComponentActivity() {
                                 Navigator(
                                     screen = FreadScreen(),
                                     key = ROOT_NAVIGATOR_KEY,
-                                ) {
+                                ) { navigator ->
                                     SlideTransition(
-                                        navigator = it,
+                                        navigator = navigator,
                                         disposeScreenAfterTransitionEnd = false,
                                     )
                                     LaunchedEffect(Unit) {

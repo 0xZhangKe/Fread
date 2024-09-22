@@ -30,6 +30,7 @@ import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
+import com.zhangke.fread.common.config.LocalStatusConfig
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
@@ -69,10 +70,10 @@ class FreadActivity : ComponentActivity() {
                         videoPlayerManager.recycler()
                     }
                 }
-                val statusContentSize by component.freadConfigManager.statusContentSizeFlow.collectAsState()
+                val statusConfig by component.freadConfigManager.statusConfigFlow.collectAsState()
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
-                    LocalStatusStyle provides statusContentSize.toStyle(),
+                    LocalStatusConfig provides statusConfig,
                     LocalImageLoader provides applicationContext.imageLoader,
                     LocalViewModelProviderFactory provides component.viewModelProviderFactory,
                     LocalLocalConfigManager provides component.localConfigManager,

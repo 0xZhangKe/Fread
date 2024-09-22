@@ -187,9 +187,9 @@ class ImageViewerScreen(
         if (aspectRatio == null) {
             LaunchedEffect(image) {
                 aspectRatio = ImageRequest {
-                        data(image.url)
-                        size(SizeResolver(Size(50f, 50f)))
-                    }
+                    data(image.url)
+                    size(SizeResolver(Size(50f, 50f)))
+                }
                     .let { context.imageLoader.execute(it) }
                     .let {
                         when (it) {
@@ -223,15 +223,12 @@ class ImageViewerScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 AutoSizeImage(
-                    image.url,
+                    url = image.url,
                     modifier = Modifier
                         .fillMaxSize()
                         .run {
-                            if (image.blurhash
-                                    .isNullOrEmpty()
-                                    .not()
-                            ) {
-                                blurhash(image.blurhash!!)
+                            if (!image.blurhash.isNullOrEmpty()) {
+                                blurhash(image.blurhash)
                             } else {
                                 this
                             }
@@ -309,7 +306,7 @@ class ImageViewerScreen(
         val description: String? = null,
         val blurhash: String? = null,
         val aspect: Float? = null,
-    ): Serializable
+    ) : Serializable
 }
 
 fun BlogMedia.toImage(): ImageViewerScreen.Image {

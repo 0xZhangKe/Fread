@@ -117,7 +117,6 @@ dependencies {
     implementation(libs.androidx.browser)
     implementation(libs.accompanist.permissions)
     implementation(libs.androidx.room)
-    implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)

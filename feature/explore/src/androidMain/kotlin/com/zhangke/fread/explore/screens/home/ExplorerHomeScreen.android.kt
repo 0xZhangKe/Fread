@@ -29,7 +29,7 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 
-class ExplorerHomeScreen : BaseScreen() {
+actual class ExplorerHomeScreen : BaseScreen() {
 
     @Composable
     override fun Content() {

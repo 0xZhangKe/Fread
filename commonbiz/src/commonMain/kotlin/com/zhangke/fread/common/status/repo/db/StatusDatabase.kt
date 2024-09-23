@@ -1,6 +1,5 @@
 package com.zhangke.fread.common.status.repo.db
 
-import android.content.Context
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -9,11 +8,11 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
-import androidx.sqlite.db.SupportSQLiteDatabase
+import androidx.sqlite.SQLiteConnection
+import androidx.sqlite.execSQL
 import com.zhangke.fread.common.status.repo.db.converts.BlogMediaListConverter
 import com.zhangke.fread.common.status.repo.db.converts.BlogPollConverter
 import com.zhangke.fread.common.status.repo.db.converts.ContentTypeConverter
@@ -22,15 +21,12 @@ import com.zhangke.fread.common.status.repo.db.converts.StatusConverter
 import com.zhangke.fread.common.status.repo.db.converts.StatusProviderUriConverter
 import com.zhangke.fread.common.status.repo.db.converts.StatusProviderUriListConverter
 import com.zhangke.fread.common.status.repo.db.converts.StatusTypeConverter
-import com.zhangke.fread.common.utils.DateTypeConverter
 import com.zhangke.fread.common.utils.ListStringConverter
 import com.zhangke.fread.common.utils.WebFingerConverter
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 
-private const val DB_NAME = "StatusDatabase.db"
 private const val DB_VERSION = 2
-
 private const val TABLE_NAME = "status_content"
 
 @Entity(tableName = TABLE_NAME)
@@ -171,7 +167,7 @@ interface StatusContentDao {
     StatusTypeConverter::class,
     BlogMediaListConverter::class,
     BlogPollConverter::class,
-    DateTypeConverter::class,
+    // DateTypeConverter::class,
     WebFingerConverter::class,
     StatusConverter::class,
     ContentTypeConverter::class,
@@ -187,33 +183,13 @@ abstract class StatusDatabase : RoomDatabase() {
     abstract fun getStatusContentDao(): StatusContentDao
 
     companion object {
+        const val DB_NAME = "StatusDatabase.db"
+    }
 
-        private var instance: StatusDatabase? = null
-
-        fun getInstance(context: Context): StatusDatabase {
-            if (instance == null) {
-                synchronized(StatusDatabase::class.java) {
-                    if (instance == null) {
-                        instance = createDatabase(context)
-                    }
-                }
-            }
-            return instance!!
-        }
-
-        private fun createDatabase(context: Context): StatusDatabase {
-            return Room.databaseBuilder(
-                context,
-                StatusDatabase::class.java,
-                DB_NAME,
-            ).addMigrations(Status1to2Migration()).build()
+    class Status1to2Migration : Migration(1, 2) {
+        override fun migrate(connection: SQLiteConnection) {
+            connection.execSQL("DELETE FROM $TABLE_NAME")
         }
     }
 }
 
-private class Status1to2Migration : Migration(1, 2) {
-
-    override fun migrate(db: SupportSQLiteDatabase) {
-        db.execSQL("DELETE FROM $TABLE_NAME")
-    }
-}

@@ -1,6 +1,5 @@
 package com.zhangke.fread.common.status.repo.db
 
-import android.content.Context
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -9,7 +8,6 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import androidx.room.Room
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.framework.network.FormalBaseUrl
@@ -23,7 +21,6 @@ import com.zhangke.fread.status.model.ContentType
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 
-private const val DB_NAME = "ContentConfig.db"
 private const val DB_VERSION = 1
 private const val TABLE_NAME = "content_configs"
 
@@ -102,26 +99,6 @@ abstract class ContentConfigDatabases : RoomDatabase() {
     abstract fun getContentConfigDao(): ContentConfigDao
 
     companion object {
-
-        private var instance: ContentConfigDatabases? = null
-
-        fun getInstance(context: Context): ContentConfigDatabases {
-            if (instance == null) {
-                synchronized(ContentConfigDatabases::class.java) {
-                    if (instance == null) {
-                        instance = createDatabase(context)
-                    }
-                }
-            }
-            return instance!!
-        }
-
-        private fun createDatabase(context: Context): ContentConfigDatabases {
-            return Room.databaseBuilder(
-                context,
-                ContentConfigDatabases::class.java,
-                DB_NAME,
-            ).build()
-        }
+        const val DB_NAME = "ContentConfig.db"
     }
 }

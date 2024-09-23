@@ -37,7 +37,6 @@ dependencies {
     implementation(libs.bundles.androidx.collection)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.room)
-    implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)

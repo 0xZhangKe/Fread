@@ -40,8 +40,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.framework.Res
 import com.zhangke.fread.framework.alert
@@ -85,7 +84,7 @@ class RssSourceScreen(
         onDisplayNameChanged: (String) -> Unit,
     ) {
         val context = LocalContext.current
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val snackBarState = rememberSnackbarHostState()
         ConsumeSnackbarFlow(snackBarState, snackBarMessageFlow)
         Scaffold(

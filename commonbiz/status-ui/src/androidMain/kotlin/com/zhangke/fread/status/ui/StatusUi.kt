@@ -3,9 +3,7 @@ package com.zhangke.fread.status.ui
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -29,7 +27,7 @@ fun StatusUi(
     detailModel: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
-    val browserLauncher = LocalBrowserLauncher.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     Surface(modifier = modifier) {
         val rawStatus = status.status
         BlogUi(

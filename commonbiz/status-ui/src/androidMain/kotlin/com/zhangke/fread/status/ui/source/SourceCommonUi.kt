@@ -14,7 +14,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -24,8 +23,7 @@ import com.seiko.imageloader.model.ImageAction
 import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
@@ -38,7 +36,7 @@ fun SourceCommonUi(
     modifier: Modifier = Modifier,
     showDivider: Boolean = true,
 ) {
-    val browserLauncher = LocalBrowserLauncher.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     Column(modifier = modifier) {
         ConstraintLayout(
             modifier = Modifier

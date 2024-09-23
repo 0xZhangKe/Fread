@@ -2,7 +2,8 @@ package com.zhangke.fread.di
 
 import android.app.Activity
 import android.content.Context
-import com.zhangke.fread.common.CommonUiComponent
+import androidx.activity.ComponentActivity
+import com.zhangke.fread.common.CommonActivityComponent
 import com.zhangke.fread.common.di.ActivityScope
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
@@ -11,14 +12,15 @@ import me.tatarka.inject.annotations.Provides
 @ActivityScope
 abstract class ActivityComponent(
     @Component val applicationComponent: ApplicationComponent,
-    @get:Provides val activity: Activity,
-) : CommonUiComponent {
+    @get:Provides val activity: ComponentActivity,
+) : CommonActivityComponent {
 
     @Provides
-    @ActivityScope
-    fun provideActivityContext(): Context {
-        return activity
-    }
+    fun provideActivity(): Activity = activity
+
+
+    @Provides
+    fun provideActivityContext(): Context = activity
 
     companion object
 }

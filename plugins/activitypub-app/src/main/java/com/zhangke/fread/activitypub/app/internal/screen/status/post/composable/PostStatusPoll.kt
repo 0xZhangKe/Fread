@@ -137,7 +137,7 @@ internal fun PostStatusPoll(
                     style = MaterialTheme.typography.labelMedium,
                 )
                 Box(modifier = Modifier.weight(1F))
-                val durationString by produceState("") {
+                val durationString by produceState("", poll.duration) {
                     value = poll.duration.formattedString()
                 }
                 Text(

@@ -1,55 +1,53 @@
 package com.zhangke.fread.common.daynight
 
-import android.content.res.Configuration
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.framework.utils.appContext
+import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.lifecycle.lifecycleScope
 import com.zhangke.fread.common.config.LocalConfigManager
-import kotlinx.coroutines.flow.MutableSharedFlow
+import com.zhangke.fread.common.di.ActivityScope
+import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runBlocking
+import me.tatarka.inject.annotations.Inject
 
-object DayNightHelper {
+@ApplicationScope
+class DayNightHelper @Inject constructor(
+    private val localConfigManager: LocalConfigManager,
+) {
 
-    private const val DAY_NIGHT_SETTING = "day_night_setting"
+    companion object {
+        private const val DAY_NIGHT_SETTING = "day_night_setting"
+    }
 
-    private val _nightModeFlow = MutableSharedFlow<DayNightMode>()
-    val dayNightModeFlow: SharedFlow<DayNightMode> get() = _nightModeFlow
-
-    var dayNightMode: DayNightMode
-        private set
+    private val _dayNightModeFlow: MutableStateFlow<DayNightMode>
+    val dayNightModeFlow: StateFlow<DayNightMode>
 
     init {
         val modeValue = runBlocking {
             getDayNightModeSetting()
         }
         AppCompatDelegate.setDefaultNightMode(modeValue)
-        dayNightMode = modeValue.toDayNightMode()
-        ApplicationScope.launch {
-            _nightModeFlow.emit(dayNightMode)
-        }
+
+        _dayNightModeFlow = MutableStateFlow(modeValue.toDayNightMode())
+        dayNightModeFlow = _dayNightModeFlow.asStateFlow()
     }
 
-    fun setActivityDayNightMode() {
-        AppCompatDelegate.setDefaultNightMode(dayNightMode.modeValue)
-    }
-
-    fun setMode(mode: DayNightMode) {
-        dayNightMode = mode
-        ApplicationScope.launch {
-            LocalConfigManager.putInt(appContext, DAY_NIGHT_SETTING, mode.modeValue)
-        }
+    // FIXME: use ActivityDayNightHelper.setMode before https://github.com/adrielcafe/voyager/issues/489 fix
+    internal suspend fun setMode(mode: DayNightMode) {
+        _dayNightModeFlow.value = mode
+        localConfigManager.putInt(DAY_NIGHT_SETTING, mode.modeValue)
         AppCompatDelegate.setDefaultNightMode(mode.modeValue)
-        ApplicationScope.launch {
-            _nightModeFlow.emit(mode)
-        }
     }
 
     private suspend fun getDayNightModeSetting(): Int {
-        return LocalConfigManager.getInt(appContext, DAY_NIGHT_SETTING)
+        return localConfigManager.getInt(DAY_NIGHT_SETTING)
             ?: DayNightMode.FOLLOW_SYSTEM.modeValue
     }
 
@@ -63,6 +61,28 @@ object DayNightHelper {
     }
 }
 
+@ActivityScope
+class ActivityDayNightHelper @Inject constructor(
+    private val dayNightHelper: DayNightHelper,
+    private val activity: ComponentActivity,
+) {
+
+    val dayNightModeFlow get() = dayNightHelper.dayNightModeFlow
+
+    fun setDefaultMode() {
+        AppCompatDelegate.setDefaultNightMode(dayNightModeFlow.value.modeValue)
+    }
+
+    fun setMode(mode: DayNightMode) {
+        activity.lifecycleScope.launch {
+            dayNightHelper.setMode(mode)
+            activity.recreate()
+        }
+    }
+}
+
+val LocalActivityDayNightHelper = staticCompositionLocalOf<ActivityDayNightHelper> { error("No ActivityDayNightHelper provided") }
+
 enum class DayNightMode(val modeValue: Int) {
 
     DAY(AppCompatDelegate.MODE_NIGHT_NO),
@@ -72,15 +92,13 @@ enum class DayNightMode(val modeValue: Int) {
     FOLLOW_SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
 
     val isNight: Boolean
+        @ReadOnlyComposable
+        @Composable
         get() {
             return when (this) {
                 DAY -> false
                 NIGHT -> true
-                FOLLOW_SYSTEM -> systemIsNight()
+                FOLLOW_SYSTEM -> isSystemInDarkTheme()
             }
         }
-
-    private fun systemIsNight(): Boolean {
-        return appContext.resources.configuration.uiMode and Configuration.UI_MODE_NIGHT_MASK == Configuration.UI_MODE_NIGHT_YES
-    }
 }

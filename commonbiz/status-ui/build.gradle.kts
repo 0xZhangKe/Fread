@@ -27,6 +27,8 @@ kotlin {
                 implementation(libs.bundles.voyager)
                 implementation(libs.imageLoader)
                 implementation(libs.ktml)
+
+                implementation(libs.krouter.runtime)
             }
         }
         commonTest {
@@ -52,7 +54,6 @@ kotlin {
                 implementation(libs.halilibo.richtext.material3)
 
                 implementation(libs.auto.service.annotations)
-                implementation(libs.krouter.core)
             }
         }
     }
@@ -61,7 +62,6 @@ kotlin {
 dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspAndroid", libs.auto.service.ksp)
-    add("kspAndroid", libs.krouter.compiler)
 }
 
 compose {

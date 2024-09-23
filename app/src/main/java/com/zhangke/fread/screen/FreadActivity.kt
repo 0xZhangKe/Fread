@@ -28,7 +28,7 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.config.LocalStatusConfig
@@ -40,7 +40,6 @@ import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.di.ActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
-import com.zhangke.fread.status.ui.style.LocalStatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
 
@@ -82,7 +81,7 @@ class FreadActivity : ComponentActivity() {
                     LocalFreadReviewManager provides component.freadReviewManager,
                     LocalActivityLanguageHelper provides activityComponent.activityLanguageHelper,
                     LocalActivityDayNightHelper provides activityComponent.activityDayNightHelper,
-                    LocalBrowserLauncher provides activityComponent.activityBrowserLauncher,
+                    LocalActivityBrowserLauncher provides activityComponent.activityBrowserLauncher,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {

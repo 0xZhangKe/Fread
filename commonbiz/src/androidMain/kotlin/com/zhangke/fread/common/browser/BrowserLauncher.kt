@@ -60,6 +60,8 @@ class BrowserLauncher(
     }
 }
 
-val LocalBrowserLauncher = staticCompositionLocalOf<BrowserLauncher> {
-    error("No BrowserLauncher was provided via LocalBrowserLauncher")
+typealias ActivityBrowserLauncher = BrowserLauncher
+
+val LocalActivityBrowserLauncher = staticCompositionLocalOf<ActivityBrowserLauncher> {
+    error("No ActivityBrowserLauncher provided")
 }

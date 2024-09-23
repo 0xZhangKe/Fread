@@ -7,7 +7,7 @@ import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.status.blog.BlogPoll
@@ -64,7 +64,7 @@ fun WholeBlogUi(
     showDivider: Boolean = true,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val browserLauncher = LocalBrowserLauncher.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     val blog = statusUiState.status.intrinsicBlog

@@ -14,14 +14,14 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
 import com.zhangke.framework.utils.dpToPx
 import com.zhangke.framework.utils.toPlatformUri
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 
 @Composable
 fun WebViewPreviewer(
     html: String,
     modifier: Modifier = Modifier,
 ) {
-    val browserLauncher = LocalBrowserLauncher.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     val density = LocalDensity.current
     val fontColor = LocalContentColor.current.toArgb()
     AndroidView(

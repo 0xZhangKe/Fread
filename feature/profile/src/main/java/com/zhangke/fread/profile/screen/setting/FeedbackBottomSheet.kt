@@ -35,7 +35,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.analytics.report
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.profile.R
 import kotlinx.coroutines.launch
@@ -46,7 +46,7 @@ fun FeedbackBottomSheet(
     onDismissRequest: () -> Unit,
 ) {
     val context = LocalContext.current
-    val browserLauncher = LocalBrowserLauncher.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
     ModalBottomSheet(

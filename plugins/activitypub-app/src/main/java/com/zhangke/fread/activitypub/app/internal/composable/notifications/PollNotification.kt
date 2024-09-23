@@ -13,7 +13,7 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 
 @Composable
@@ -23,7 +23,7 @@ fun PollNotification(
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val browserLauncher = LocalBrowserLauncher.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     val status = notification.status
     if (status == null) {
         UnknownNotification(

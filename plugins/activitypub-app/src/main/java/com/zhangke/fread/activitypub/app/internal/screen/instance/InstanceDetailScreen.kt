@@ -54,7 +54,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderConten
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.buildRichText
@@ -193,7 +193,7 @@ class InstanceDetailScreen(
         onUserClick: (IdentityRole, WebFinger) -> Unit,
     ) {
         val context = LocalContext.current
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val loading = uiState.loading
         val instance = uiState.instance
         DetailHeaderContent(
@@ -297,7 +297,7 @@ class InstanceDetailScreen(
     @Composable
     private fun InstanceDetailActions(baseUrl: FormalBaseUrl) {
         val context = LocalContext.current
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         var showMorePopup by remember {
             mutableStateOf(false)
         }

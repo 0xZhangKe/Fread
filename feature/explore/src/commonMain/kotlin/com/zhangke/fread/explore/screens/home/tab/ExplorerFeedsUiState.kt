@@ -3,5 +3,5 @@ package com.zhangke.fread.explore.screens.home.tab
 import com.zhangke.fread.explore.model.ExplorerItem
 
 data class ExplorerFeedsUiState(
-    val list: List<com.zhangke.fread.explore.model.ExplorerItem>,
+    val list: List<ExplorerItem>,
 )

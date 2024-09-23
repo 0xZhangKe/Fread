@@ -68,10 +68,8 @@ class FreadApplication : Application(),
     }
 
     private fun initModuleStartups() {
-        ApplicationScope.launch {
-            component.moduleStartups.forEach {
-                it.onAppCreate()
-            }
+        component.moduleStartups.forEach {
+            it.onAppCreate()
         }
     }
 }

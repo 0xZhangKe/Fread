@@ -6,7 +6,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.container
 import com.zhangke.framework.collections.remove
-import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.opml.OpmlOutline
 import com.zhangke.framework.opml.OpmlParser

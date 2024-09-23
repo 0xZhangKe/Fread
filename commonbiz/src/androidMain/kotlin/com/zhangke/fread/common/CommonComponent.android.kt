@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
+import androidx.room.Room
 import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.datastore.DataStoreSettings
@@ -14,6 +15,7 @@ import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.review.FreadReviewManager
+import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
 import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import me.tatarka.inject.annotations.IntoSet
@@ -47,19 +49,29 @@ actual interface CommonPlatformComponent {
     fun provideStatusDatabases(
         context: ApplicationContext,
     ): StatusDatabase {
-        return StatusDatabase.getInstance(context)
+        return Room.databaseBuilder(
+            context,
+            StatusDatabase::class.java,
+            StatusDatabase.DB_NAME,
+        ).addMigrations(
+            StatusDatabase.Status1to2Migration(),
+        ).build()
     }
 
     @Provides
     fun provideContentConfigDatabases(
         context: ApplicationContext,
     ): ContentConfigDatabases {
-        return ContentConfigDatabases.getInstance(context)
+        return Room.databaseBuilder(
+            context,
+            ContentConfigDatabases::class.java,
+            ContentConfigDatabases.DB_NAME,
+        ).build()
     }
 
     @IntoSet
     @Provides
-    fun bindCommonBizModuleStartup(module: CommonBizModuleStartup): ModuleStartup {
+    fun bindCommonBizModuleStartup(module: FeedsRepoModuleStartup): ModuleStartup {
         return module
     }
 

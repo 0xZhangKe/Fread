@@ -12,7 +12,7 @@ import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.status.ui.BlogDivider
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
-import com.zhangke.fread.status.ui.style.LocalStatusStyle
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
 
@@ -189,7 +189,7 @@ fun defaultNotificationStyle(
         bottom = NotificationStyleDefaults.internalBlogBottomPadding,
     ),
     headLineToContentPadding: Dp = NotificationStyleDefaults.headLineToContentPadding,
-    statusStyle: StatusStyle = LocalStatusStyle.current ?: StatusStyles.medium(),
+    statusStyle: StatusStyle = LocalStatusUiConfig.current?.contentStyle ?: StatusStyles.medium(),
     triggerAccountAvatarSize: Dp = NotificationStyleDefaults.triggerAccountAvatarSize,
     typeLogoSize: Dp = NotificationStyleDefaults.typeLogoSize,
 ) = NotificationStyle(

@@ -7,6 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.status.platform.BlogPlatform
+import kotlinx.datetime.toKotlinInstant
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubNotificationEntityAdapter @Inject constructor(
@@ -30,7 +31,7 @@ class ActivityPubNotificationEntityAdapter @Inject constructor(
         return RelationshipSeveranceEvent(
             id = this.id,
             type = this.type.convertToEventType(),
-            createdAt = formatDatetimeToDate(this.createdAt),
+            createdAt = formatDatetimeToDate(this.createdAt).toInstant().toKotlinInstant(),
             purged = this.purged,
             targetName = this.targetName,
             relationshipsCount = this.relationshipsCount,

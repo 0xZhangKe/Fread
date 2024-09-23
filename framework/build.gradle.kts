@@ -38,6 +38,8 @@ kotlin {
                 implementation(libs.bignum)
                 implementation(libs.kermit)
                 implementation(libs.placeholder.material3)
+
+                implementation(libs.krouter.runtime)
             }
         }
         commonTest {
@@ -58,7 +60,6 @@ kotlin {
                 implementation(libs.okhttp3.logging)
 
                 implementation(libs.bundles.androidx.media3)
-                implementation(libs.krouter.core)
 
                 implementation(libs.composeReorderable)
 

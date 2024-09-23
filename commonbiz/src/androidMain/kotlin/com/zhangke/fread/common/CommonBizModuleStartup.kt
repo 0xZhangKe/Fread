@@ -8,12 +8,10 @@ import com.zhangke.fread.common.feeds.repo.FeedsRepo
 import me.tatarka.inject.annotations.Inject
 
 class CommonBizModuleStartup @Inject constructor(
-    private val context: ApplicationContext,
     private val feedsRepo: FeedsRepo,
 ) : ModuleStartup {
 
     override suspend fun onAppCreate() {
         feedsRepo.onAppCreate(ApplicationScope)
-        FreadConfigManager.initConfig(context)
     }
 }

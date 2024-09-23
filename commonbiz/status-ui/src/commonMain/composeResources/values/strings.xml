@@ -23,8 +23,8 @@
     <string name="status_ui_image_content_show_hidden_label">Show more</string>
     <string name="status_ui_image_content_hide_hidden_label">Hide content</string>
     <string name="status_ui_poll_vote">Vote</string>
-    <string name="status_ui_poll_vote_finished_tip">%s vote · Closed</string>
-    <string name="status_ui_poll_votes_finished_tip">%s votes · Closed</string>
+    <string name="status_ui_poll_vote_finished_tip">%1$s vote · Closed</string>
+    <string name="status_ui_poll_votes_finished_tip">%1$s votes · Closed</string>
 
     <string name="status_ui_interaction_open_in_browser">Open In Browser</string>
     <string name="status_ui_interaction_open_original_instance">Open the other instance</string>
@@ -37,10 +37,10 @@
 
     <string name="status_ui_info_label_edited">Edited</string>
 
-    <string name="status_ui_interaction_label_favourited_count">%s favorites</string>
-    <string name="status_ui_interaction_label_boosted_count">%s boosts</string>
+    <string name="status_ui_interaction_label_favourited_count">%1$s favorites</string>
+    <string name="status_ui_interaction_label_boosted_count">%1$s boosts</string>
 
-    <string name="status_ui_bottom_label_edited_at">Edited on %s</string>
+    <string name="status_ui_bottom_label_edited_at">Edited on %1$s</string>
 
     <string name="status_ui_translating">Translating…</string>
     <string name="status_ui_translate_show_original">Show Original</string>

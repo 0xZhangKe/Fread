@@ -59,8 +59,10 @@ abstract class ApplicationComponent(
     companion object
 }
 
-interface ApplicationComponentProvider : CommonComponentProvider, ActivityPubComponentProvider {
+interface ApplicationComponentProvider :
+    CommonComponentProvider,
+    ActivityPubComponentProvider {
     override val component: ApplicationComponent
 }
 
-val Context.applicationComponent get() = (applicationContext as ApplicationComponentProvider).component
+val Context.component get() = (applicationContext as ApplicationComponentProvider).component

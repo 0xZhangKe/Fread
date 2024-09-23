@@ -10,7 +10,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -23,8 +22,7 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.common.tryPush
 import com.zhangke.fread.explore.Res
@@ -84,7 +82,7 @@ class SearchedAuthorTab(
         onUserInfoClick: (BlogAuthor) -> Unit,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val state = rememberLoadableInlineVideoLazyColumnState(
             refreshing = uiState.refreshing,
             onRefresh = onRefresh,

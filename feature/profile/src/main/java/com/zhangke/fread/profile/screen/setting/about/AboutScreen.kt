@@ -26,7 +26,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.SystemUtils
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.ic_fread_logo
@@ -51,7 +51,7 @@ class AboutScreen : BaseScreen() {
         onBackClick: () -> Unit,
     ) {
         val context = LocalContext.current
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         Scaffold(
             topBar = {
                 Toolbar(

@@ -222,15 +222,12 @@ class ImageViewerScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 AutoSizeImage(
-                    image.url,
+                    url = image.url,
                     modifier = Modifier
                         .fillMaxSize()
                         .run {
-                            if (image.blurhash
-                                    .isNullOrEmpty()
-                                    .not()
-                            ) {
-                                blurhash(image.blurhash!!)
+                            if (!image.blurhash.isNullOrEmpty()) {
+                                blurhash(image.blurhash)
                             } else {
                                 this
                             }

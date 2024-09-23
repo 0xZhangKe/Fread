@@ -17,7 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.isSpecified
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.framework.utils.formatAsCount
+import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_interaction_label_boosted_count
@@ -39,10 +39,10 @@ fun StatusBottomInteractionLabel(
     ) {
 
         val boostedText = buildHighlightLabelText(
-            highlight = boostedCount.formatAsCount(),
+            highlight = boostedCount.formatToHumanReadable(),
             wholeText = stringResource(
                 Res.string.status_ui_interaction_label_boosted_count,
-                boostedCount.formatAsCount(),
+                boostedCount.formatToHumanReadable(),
             ),
             style = style.bottomLabelStyle.textStyle,
             highLightColor = MaterialTheme.colorScheme.onSurface,
@@ -55,10 +55,10 @@ fun StatusBottomInteractionLabel(
         )
 
         val favouritedText = buildHighlightLabelText(
-            highlight = favouritedCount.formatAsCount(),
+            highlight = favouritedCount.formatToHumanReadable(),
             wholeText = stringResource(
                 Res.string.status_ui_interaction_label_favourited_count,
-                favouritedCount.formatAsCount(),
+                favouritedCount.formatToHumanReadable(),
             ),
             style = style.bottomLabelStyle.textStyle,
             highLightColor = MaterialTheme.colorScheme.onSurface,
@@ -90,7 +90,6 @@ private fun buildHighlightLabelText(
             } else {
                 16.sp
             }
-            style.fontSize
             addStyle(
                 style = SpanStyle(
                     fontSize = highlightFontSize,

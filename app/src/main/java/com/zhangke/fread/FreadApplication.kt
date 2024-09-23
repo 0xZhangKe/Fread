@@ -13,8 +13,6 @@ import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
-import com.zhangke.fread.common.daynight.DayNightHelper
-import com.zhangke.fread.common.language.LanguageHelper
 import com.zhangke.fread.di.ApplicationComponent
 import com.zhangke.fread.di.ApplicationComponentProvider
 import com.zhangke.fread.di.create
@@ -36,8 +34,6 @@ class FreadApplication : Application(),
         super.onCreate()
         initDebuggable(BuildConfig.DEBUG)
         initApplication(this)
-        DayNightHelper
-        LanguageHelper.prepare(this)
         initModuleStartups()
         TopActivityManager.init(this)
     }

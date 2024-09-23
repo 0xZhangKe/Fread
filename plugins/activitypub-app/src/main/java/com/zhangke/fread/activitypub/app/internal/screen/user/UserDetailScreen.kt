@@ -98,8 +98,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
@@ -140,7 +139,7 @@ data class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val (role, userUri, webFinger) = remember(roleParam, userUriParam, role, webFinger) {
             if (role != null && webFinger != null) {
                 Triple(role, null, webFinger)
@@ -312,7 +311,7 @@ data class UserDetailScreen(
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
     ) {
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
         }

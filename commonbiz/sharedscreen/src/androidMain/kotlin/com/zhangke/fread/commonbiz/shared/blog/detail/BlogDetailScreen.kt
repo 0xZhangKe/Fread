@@ -26,7 +26,7 @@ import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.utils.DateTimeFormatter
@@ -44,7 +44,7 @@ class BlogDetailScreen(
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
 
         val viewModel = getViewModel<BlogDetailViewModel>()
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)

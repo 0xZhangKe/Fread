@@ -24,7 +24,7 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.R
-import com.zhangke.fread.common.browser.LocalBrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.IdentityRole
@@ -94,7 +94,7 @@ class UserAboutTab(
         field: ActivityPubField,
         emojis: List<Emoji>,
     ) {
-        val browserLauncher = LocalBrowserLauncher.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         Text(
             modifier = Modifier
                 .padding(top = 16.dp)

@@ -47,9 +47,6 @@ kotlin {
                 implementation(libs.bundles.androidx.collection)
                 implementation(libs.androidx.browser)
 
-                implementation(libs.androidx.room)
-                implementation(libs.androidx.room.ktx)
-
                 implementation(libs.androidx.paging.runtime)
                 implementation(libs.androidx.paging.compose)
 

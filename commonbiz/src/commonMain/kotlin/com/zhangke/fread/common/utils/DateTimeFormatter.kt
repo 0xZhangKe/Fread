@@ -6,17 +6,20 @@ import com.zhangke.fread.commonbiz.date_time_day
 import com.zhangke.fread.commonbiz.date_time_hour
 import com.zhangke.fread.commonbiz.date_time_minute
 import com.zhangke.fread.commonbiz.date_time_second
+import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.Padding
+import kotlinx.datetime.format.char
 import org.jetbrains.compose.resources.getString
-import java.text.DateFormat
-import java.util.Date
-import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
-import kotlin.time.Duration.Companion.milliseconds
 import kotlin.time.Duration.Companion.minutes
 import kotlin.time.Duration.Companion.seconds
 import kotlin.time.DurationUnit
+
 
 object DateTimeFormatter {
 
@@ -33,11 +36,19 @@ object DateTimeFormatter {
         datetime: Long,
         config: DatetimeFormatConfig,
     ): String {
-        val duration = (System.currentTimeMillis() - datetime).milliseconds
-        val inWholeDays = duration.inWholeDays
-        if (inWholeDays > 3) {
-            val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
-            return dateFormat.format(Date(datetime))
+        val instant = Instant.fromEpochMilliseconds(datetime)
+        val duration = Clock.System.now() - instant
+        if (duration > 3.days) {
+            // TODO: format with locale
+            return instant.format(
+                DateTimeComponents.Format {
+                    year()
+                    char('-')
+                    monthNumber(Padding.ZERO)
+                    char('-')
+                    dayOfMonth()
+                }
+            )
         }
         return "${formatDuration(config, duration)}${config.ago}"
     }

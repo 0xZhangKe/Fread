@@ -30,15 +30,13 @@ class FeedsRepo @Inject constructor(
     private val _feedsInfoChangedFlow = MutableSharedFlow<Unit>()
     val feedsInfoChangedFlow = _feedsInfoChangedFlow.asSharedFlow()
 
-    fun onAppCreate(coroutineScope: CoroutineScope) {
-        coroutineScope.launch {
-            statusProvider.statusSourceResolver
-                .getAuthorUpdateFlow()
-                .collect {
-                    statusContentRepo.updateAuthor(it)
-                    _feedsInfoChangedFlow.emit(Unit)
-                }
-        }
+    suspend fun onAppCreate() {
+        statusProvider.statusSourceResolver
+            .getAuthorUpdateFlow()
+            .collect {
+                statusContentRepo.updateAuthor(it)
+                _feedsInfoChangedFlow.emit(Unit)
+            }
     }
 
     suspend fun getLocalFirstPageStatus(

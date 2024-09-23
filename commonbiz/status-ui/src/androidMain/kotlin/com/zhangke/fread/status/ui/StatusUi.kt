@@ -10,7 +10,7 @@ import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.ReblogTopLabel
 import com.zhangke.fread.status.ui.label.StatusPinnedLabel
-import com.zhangke.fread.status.ui.style.LocalStatusStyle
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.style.StatusStyles
 import com.zhangke.fread.status.ui.threads.ThreadsType
@@ -21,7 +21,7 @@ fun StatusUi(
     modifier: Modifier = Modifier,
     status: StatusUiState,
     indexInList: Int,
-    style: StatusStyle = LocalStatusStyle.current ?: StatusStyles.medium(),
+    style: StatusStyle = LocalStatusUiConfig.current?.contentStyle ?: StatusStyles.medium(),
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
     textSelectable: Boolean = false,

@@ -6,7 +6,6 @@ import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
@@ -30,8 +29,6 @@ import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
-import com.zhangke.fread.common.config.LocalStatusConfig
-import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.LocalFreadReviewManager
@@ -39,9 +36,8 @@ import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.di.ActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
-import com.zhangke.fread.status.ui.style.LocalStatusStyle
-import com.zhangke.fread.status.ui.style.StatusStyle
-import com.zhangke.fread.status.ui.style.StatusStyles
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
+import com.zhangke.fread.status.ui.style.StatusUiConfig
 
 class FreadActivity : ComponentActivity() {
 
@@ -73,7 +69,7 @@ class FreadActivity : ComponentActivity() {
                 val statusConfig by component.freadConfigManager.statusConfigFlow.collectAsState()
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
-                    LocalStatusConfig provides statusConfig,
+                    LocalStatusUiConfig provides StatusUiConfig.create(config = statusConfig),
                     LocalImageLoader provides applicationContext.imageLoader,
                     LocalViewModelProviderFactory provides component.viewModelProviderFactory,
                     LocalLocalConfigManager provides component.localConfigManager,
@@ -107,15 +103,6 @@ class FreadActivity : ComponentActivity() {
                     }
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun StatusContentSize.toStyle(): StatusStyle {
-        return when (this) {
-            StatusContentSize.SMALL -> StatusStyles.small()
-            StatusContentSize.MEDIUM -> StatusStyles.medium()
-            StatusContentSize.LARGE -> StatusStyles.large()
         }
     }
 }

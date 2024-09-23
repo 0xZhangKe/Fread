@@ -20,9 +20,6 @@ class FreadConfigManager @Inject constructor(
             "fread_status_always_show_sensitive"
     }
 
-    private val _statusContentSizeFlow = MutableStateFlow(StatusContentSize.default())
-    val statusContentSizeFlow get(): StateFlow<StatusContentSize> = _statusContentSizeFlow
-
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
     val statusConfigFlow get(): StateFlow<StatusConfig> = _statusConfigFlow
 

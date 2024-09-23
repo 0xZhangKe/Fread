@@ -2,6 +2,7 @@ plugins {
     id("fread.project.framework.kmp")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -33,6 +34,7 @@ kotlin {
 
                 implementation(libs.kotlinInject.runtime)
 
+                implementation(libs.androidx.sqlite.bundled)
                 implementation(libs.androidx.room)
                 implementation(libs.bundles.voyager)
                 implementation(libs.uri.kmp)
@@ -71,8 +73,8 @@ kotlin {
 }
 
 dependencies {
-    add("kspAndroid", libs.androidx.room.compiler)
-    add("kspAndroid", libs.kotlinInject.compiler)
+    kspAll(libs.androidx.room.compiler)
+    kspAll(libs.kotlinInject.compiler)
 }
 
 compose {
@@ -81,4 +83,8 @@ compose {
         packageOfResClass = "com.zhangke.fread.commonbiz"
         generateResClass = always
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

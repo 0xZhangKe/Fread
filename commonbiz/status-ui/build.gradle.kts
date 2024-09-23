@@ -44,9 +44,6 @@ kotlin {
                 implementation(libs.bundles.androidx.media3)
                 implementation(libs.androidx.compose.constraintlayout)
 
-                implementation(libs.androidx.room)
-                implementation(libs.androidx.room.ktx)
-
                 implementation(libs.okhttp3)
                 implementation(libs.okhttp3.logging)
 

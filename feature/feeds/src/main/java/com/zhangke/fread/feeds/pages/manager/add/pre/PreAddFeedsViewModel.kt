@@ -8,7 +8,6 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.framework.ktx.launchInScreenModel
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen

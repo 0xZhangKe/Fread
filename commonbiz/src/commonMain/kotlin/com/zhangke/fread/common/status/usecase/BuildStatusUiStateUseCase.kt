@@ -1,12 +1,13 @@
 package com.zhangke.fread.common.status.usecase
 
-import com.zhangke.fread.common.ext.toJavaDate
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
-import java.text.DateFormat
-import java.util.Locale
+import kotlinx.datetime.Instant
+import kotlinx.datetime.format
+import kotlinx.datetime.format.DateTimeComponents
+import kotlinx.datetime.format.char
 import me.tatarka.inject.annotations.Inject
 
 class BuildStatusUiStateUseCase @Inject constructor(
@@ -21,17 +22,43 @@ class BuildStatusUiStateUseCase @Inject constructor(
         following: Boolean? = null,
         blogTranslationState: BlogTranslationUiState? = null,
     ): StatusUiState {
-        val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
-        val timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault())
         val createdDate = status.datetime
         return StatusUiState(
             status = status,
             role = role,
             displayTime = formatStatusDisplayTime(createdDate),
-            specificTime = dateFormat.format(createdDate) + " " + timeFormat.format(createdDate),
-            editedTime = status.intrinsicBlog.editedAt?.let {
-                dateFormat.format(it.toJavaDate()) + " " + timeFormat.format(it.toJavaDate())
-            },
+            // TODO: maybe set date time format
+            specificTime = Instant.fromEpochMilliseconds(createdDate).format(
+                DateTimeComponents.Format {
+                    year()
+                    char('-')
+                    monthNumber()
+                    char('-')
+                    dayOfMonth()
+                    char(' ')
+                    hour()
+                    char(':')
+                    minute()
+                    char(':')
+                    second()
+                }
+            ),
+            // TODO: maybe set date time format
+            editedTime = status.intrinsicBlog.editedAt?.format(
+                DateTimeComponents.Format {
+                    year()
+                    char('-')
+                    monthNumber()
+                    char('-')
+                    dayOfMonth()
+                    char(' ')
+                    hour()
+                    char(':')
+                    minute()
+                    char(':')
+                    second()
+                }
+            ),
             blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,
                 translating = false,

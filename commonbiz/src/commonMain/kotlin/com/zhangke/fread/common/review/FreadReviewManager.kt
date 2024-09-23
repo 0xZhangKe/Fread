@@ -1,13 +1,10 @@
 package com.zhangke.fread.common.review
 
-import android.util.Log
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.google.android.play.core.review.ReviewException
-import com.google.android.play.core.review.ReviewManagerFactory
-import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
@@ -28,7 +25,7 @@ class FreadReviewManager @Inject constructor(
 
     fun trigger(forceShow: Boolean = false) {
         if (forceShow) {
-            showPlayReviewPopup()
+            showPlayReviewPopup(this)
         } else {
             ApplicationScope.launch {
                 maybeShowPlayReviewPopup()
@@ -46,9 +43,9 @@ class FreadReviewManager @Inject constructor(
             setLatestShowPlayReviewTime()
             return
         }
-        val duration = System.currentTimeMillis().milliseconds - latestShowTime.milliseconds
+        val duration = getCurrentTimeMillis().milliseconds - latestShowTime.milliseconds
         if (isDurationOvertime(duration, count)) {
-            showPlayReviewPopup()
+            showPlayReviewPopup(this)
         }
     }
 
@@ -60,33 +57,13 @@ class FreadReviewManager @Inject constructor(
         return false
     }
 
-    private fun showPlayReviewPopup() {
-        val activity = TopActivityManager.topActiveActivity ?: return
-        val manager = ReviewManagerFactory.create(activity)
-        manager.requestReviewFlow().addOnCompleteListener { task ->
-            if (task.isSuccessful) {
-                val flow = manager.launchReviewFlow(activity, task.result)
-                flow.addOnCompleteListener { result ->
-                    if (result.isSuccessful) {
-                        onReviewSuccess()
-                    } else {
-                        onReviewCancel()
-                    }
-                }
-            } else {
-                val reviewErrorCode = (task.exception as? ReviewException)?.errorCode
-                Log.i("ReviewManager", "reviewErrorCode: $reviewErrorCode")
-            }
-        }
-    }
-
-    private fun onReviewSuccess() {
+    internal fun onReviewSuccess() {
         ApplicationScope.launch {
             setReviewed()
         }
     }
 
-    private fun onReviewCancel() {
+    internal fun onReviewCancel() {
         ApplicationScope.launch {
             increasePlayReviewPopCount()
             setLatestShowPlayReviewTime()
@@ -111,7 +88,7 @@ class FreadReviewManager @Inject constructor(
     }
 
     private suspend fun setLatestShowPlayReviewTime() {
-        val time = (System.currentTimeMillis() / 1000).toInt()
+        val time = (getCurrentTimeMillis() / 1000).toInt()
         localConfigManager.putInt(LOCAL_KEY_LATEST_SHOW_TIME, time)
     }
 
@@ -119,5 +96,7 @@ class FreadReviewManager @Inject constructor(
         return localConfigManager.getInt(LOCAL_KEY_LATEST_SHOW_TIME) ?: 0
     }
 }
+
+internal expect fun showPlayReviewPopup(freadReviewManager: FreadReviewManager)
 
 val LocalFreadReviewManager = staticCompositionLocalOf<FreadReviewManager> { error("No FreadReviewManager provided") }

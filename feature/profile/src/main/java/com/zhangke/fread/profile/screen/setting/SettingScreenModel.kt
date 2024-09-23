@@ -39,9 +39,9 @@ class SettingScreenModel @Inject constructor(
                 .let {
                     _uiState.value = _uiState.value.copy(contentSize = it)
                 }
-            freadConfigManager.statusContentSizeFlow
+            freadConfigManager.statusConfigFlow
                 .collect {
-                    _uiState.value = _uiState.value.copy(contentSize = it)
+                    _uiState.value = _uiState.value.copy(contentSize = it.contentSize)
                 }
         }
     }

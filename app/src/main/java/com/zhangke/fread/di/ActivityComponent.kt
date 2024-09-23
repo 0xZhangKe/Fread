@@ -18,9 +18,5 @@ abstract class ActivityComponent(
     @Provides
     fun provideActivity(): Activity = activity
 
-
-    @Provides
-    fun provideActivityContext(): Context = activity
-
     companion object
 }

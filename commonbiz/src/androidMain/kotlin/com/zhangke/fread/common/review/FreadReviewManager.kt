@@ -1,24 +1,30 @@
 package com.zhangke.fread.common.review
 
-import android.content.Context
 import android.util.Log
+import androidx.compose.runtime.staticCompositionLocalOf
 import com.google.android.play.core.review.ReviewException
 import com.google.android.play.core.review.ReviewManagerFactory
 import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.coroutines.launch
+import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
 
-object FreadReviewManager {
+@ApplicationScope
+class FreadReviewManager @Inject constructor(
+    private val localConfigManager: LocalConfigManager,
+) {
 
-    private const val LOCAL_KEY_LATEST_SHOW_TIME = "latestShowPlayReviewTime"
-    private const val LOCAL_KEY_REVIEWED = "playReviewed"
-    private const val LOCAL_KET_REVIEW_POP_COUNT = "playReviewPopCount"
-    private val maxInternal = 90.days
+    companion object {
+        private const val LOCAL_KEY_LATEST_SHOW_TIME = "latestShowPlayReviewTime"
+        private const val LOCAL_KEY_REVIEWED = "playReviewed"
+        private const val LOCAL_KET_REVIEW_POP_COUNT = "playReviewPopCount"
+        private val maxInternal = 90.days
+    }
 
     fun trigger(forceShow: Boolean = false) {
         if (forceShow) {
@@ -30,14 +36,14 @@ object FreadReviewManager {
         }
     }
 
-    private suspend fun maybeShowPlayReviewPopup(context: Context = appContext) {
-        val reviewed = getReviewed(context)
+    private suspend fun maybeShowPlayReviewPopup() {
+        val reviewed = getReviewed()
         if (reviewed) return
-        val count = getPlayReviewPopCount(context)
-        val latestShowTime = getLatestShowPlayReviewTime(context)
+        val count = getPlayReviewPopCount()
+        val latestShowTime = getLatestShowPlayReviewTime()
         if (count == 0 && latestShowTime == 0) {
             // mark first launching app time
-            setLatestShowPlayReviewTime(context)
+            setLatestShowPlayReviewTime()
             return
         }
         val duration = System.currentTimeMillis().milliseconds - latestShowTime.milliseconds
@@ -62,9 +68,9 @@ object FreadReviewManager {
                 val flow = manager.launchReviewFlow(activity, task.result)
                 flow.addOnCompleteListener { result ->
                     if (result.isSuccessful) {
-                        onReviewSuccess(activity)
+                        onReviewSuccess()
                     } else {
-                        onReviewCancel(activity)
+                        onReviewCancel()
                     }
                 }
             } else {
@@ -74,42 +80,44 @@ object FreadReviewManager {
         }
     }
 
-    private fun onReviewSuccess(context: Context) {
+    private fun onReviewSuccess() {
         ApplicationScope.launch {
-            setReviewed(context)
+            setReviewed()
         }
     }
 
-    private fun onReviewCancel(context: Context) {
+    private fun onReviewCancel() {
         ApplicationScope.launch {
-            increasePlayReviewPopCount(context)
-            setLatestShowPlayReviewTime(context)
+            increasePlayReviewPopCount()
+            setLatestShowPlayReviewTime()
         }
     }
 
-    private suspend fun setReviewed(context: Context) {
-        LocalConfigManager.putBoolean(context, LOCAL_KEY_REVIEWED, true)
+    private suspend fun setReviewed() {
+        localConfigManager.putBoolean(LOCAL_KEY_REVIEWED, true)
     }
 
-    private suspend fun getReviewed(context: Context): Boolean {
-        return LocalConfigManager.getBoolean(context, LOCAL_KEY_REVIEWED) ?: false
+    private suspend fun getReviewed(): Boolean {
+        return localConfigManager.getBoolean(LOCAL_KEY_REVIEWED) ?: false
     }
 
-    private suspend fun increasePlayReviewPopCount(context: Context) {
-        val count = getPlayReviewPopCount(context) + 1
-        LocalConfigManager.putInt(context, LOCAL_KET_REVIEW_POP_COUNT, count)
+    private suspend fun increasePlayReviewPopCount() {
+        val count = getPlayReviewPopCount() + 1
+        localConfigManager.putInt(LOCAL_KET_REVIEW_POP_COUNT, count)
     }
 
-    private suspend fun getPlayReviewPopCount(context: Context): Int {
-        return LocalConfigManager.getInt(context, LOCAL_KET_REVIEW_POP_COUNT) ?: 0
+    private suspend fun getPlayReviewPopCount(): Int {
+        return localConfigManager.getInt(LOCAL_KET_REVIEW_POP_COUNT) ?: 0
     }
 
-    private suspend fun setLatestShowPlayReviewTime(context: Context) {
+    private suspend fun setLatestShowPlayReviewTime() {
         val time = (System.currentTimeMillis() / 1000).toInt()
-        LocalConfigManager.putInt(context, LOCAL_KEY_LATEST_SHOW_TIME, time)
+        localConfigManager.putInt(LOCAL_KEY_LATEST_SHOW_TIME, time)
     }
 
-    private suspend fun getLatestShowPlayReviewTime(context: Context): Int {
-        return LocalConfigManager.getInt(context, LOCAL_KEY_LATEST_SHOW_TIME) ?: 0
+    private suspend fun getLatestShowPlayReviewTime(): Int {
+        return localConfigManager.getInt(LOCAL_KEY_LATEST_SHOW_TIME) ?: 0
     }
 }
+
+val LocalFreadReviewManager = staticCompositionLocalOf<FreadReviewManager> { error("No FreadReviewManager provided") }

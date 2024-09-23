@@ -25,6 +25,7 @@ kotlin {
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
                 implementation(libs.kotlinInject.runtime)
+                implementation(libs.krouter.runtime)
             }
         }
         commonTest {
@@ -35,7 +36,6 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.androidx.core.ktx)
-                implementation(libs.krouter.core)
             }
         }
     }
@@ -43,6 +43,7 @@ kotlin {
 
 dependencies {
     add("kspAndroid", libs.kotlinInject.compiler)
+    add("kspAndroid", libs.krouter.collecting.compiler)
 }
 
 compose {

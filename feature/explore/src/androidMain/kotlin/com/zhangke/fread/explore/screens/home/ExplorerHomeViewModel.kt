@@ -1,10 +1,8 @@
 package com.zhangke.fread.explore.screens.home
 
-import android.annotation.SuppressLint
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.config.LocalConfigManager
-import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.uri.FormalUri
@@ -12,10 +10,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import me.tatarka.inject.annotations.Inject
 
-@SuppressLint("StaticFieldLeak")
 class ExplorerHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val context: ApplicationContext,
+    private val localConfigManager: LocalConfigManager,
 ) : ViewModel() {
 
     companion object {
@@ -58,11 +55,11 @@ class ExplorerHomeViewModel @Inject constructor(
     }
 
     private suspend fun getLastedSelectedAccount(): FormalUri? {
-        return LocalConfigManager.getString(context, LATEST_SELECTED_ACCOUNT)
+        return localConfigManager.getString(LATEST_SELECTED_ACCOUNT)
             ?.let { FormalUri.from(it) }
     }
 
     private suspend fun updateLatestSelectedAccount(accountUri: FormalUri) {
-        LocalConfigManager.putString(context, LATEST_SELECTED_ACCOUNT, accountUri.toString())
+        localConfigManager.putString(LATEST_SELECTED_ACCOUNT, accountUri.toString())
     }
 }

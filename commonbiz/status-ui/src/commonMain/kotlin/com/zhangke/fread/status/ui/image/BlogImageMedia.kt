@@ -164,7 +164,7 @@ internal fun BlogImage(
         LaunchedEffect(media) {
             imageLoader.execute(
                 ImageRequest {
-                    data(media.url)
+                    data(media.previewUrl)
                     size(SizeResolver(Size(50f, 50f)))
                 }
             )
@@ -183,7 +183,7 @@ internal fun BlogImage(
                 remember {
                     ImageRequest {
                         if (!hideContent) {
-                            data(media.url)
+                            data(media.previewUrl)
                         }
                     }
                 },
@@ -206,7 +206,7 @@ internal fun BlogImage(
             remember {
                 ImageRequest {
                     if (!hideContent) {
-                        data(media.url)
+                        data(media.previewUrl)
                     }
                 }
             },

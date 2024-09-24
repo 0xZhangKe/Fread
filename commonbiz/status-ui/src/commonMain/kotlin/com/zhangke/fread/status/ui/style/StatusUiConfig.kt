@@ -6,8 +6,8 @@ import androidx.compose.runtime.compositionLocalOf
 import com.zhangke.fread.common.config.StatusConfig
 import com.zhangke.fread.common.config.StatusContentSize
 
-val LocalStatusUiConfig: ProvidableCompositionLocal<StatusUiConfig?> =
-    compositionLocalOf { null }
+val LocalStatusUiConfig: ProvidableCompositionLocal<StatusUiConfig> =
+    compositionLocalOf { error("LocalStatusUiConfig not init!") }
 
 data class StatusUiConfig(
     val alwaysShowSensitiveContent: Boolean,

@@ -18,7 +18,13 @@ expect class BrowserLauncher {
         checkAppSupportPage: Boolean = true,
     )
 
+    fun launchBySystemBrowser(url: String)
 
+    fun launchBySystemBrowser(uri: PlatformUri)
+
+    fun launchFreadLandingPage()
+
+    fun launchAuthorWebsite()
 }
 
 val LocalActivityBrowserLauncher = staticCompositionLocalOf<BrowserLauncher> {

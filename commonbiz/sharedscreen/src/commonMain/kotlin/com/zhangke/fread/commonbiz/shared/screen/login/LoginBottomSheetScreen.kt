@@ -4,6 +4,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -25,7 +26,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -94,12 +94,13 @@ class LoginBottomSheetScreen : BaseScreen() {
         onSnapshotClick: (PlatformSnapshot) -> Unit,
         onPlatformClick: (BlogPlatform) -> Unit,
     ) {
-        val configuration = LocalConfiguration.current
-        val screenHeight = configuration.screenHeightDp.dp * 0.9F
+        // FIXME: get root screen height
+        // val configuration = LocalConfiguration.current
+        // val screenHeight = configuration.screenHeightDp.dp * 0.9F
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .height(screenHeight)
+                .fillMaxHeight(0.9f)
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.fillMaxSize()) {

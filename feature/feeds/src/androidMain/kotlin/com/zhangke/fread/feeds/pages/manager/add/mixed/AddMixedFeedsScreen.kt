@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
@@ -44,13 +43,18 @@ import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.analytics.AddMixedFeedsElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feeds.R
+import com.zhangke.fread.feeds.Res
+import com.zhangke.fread.feeds.add_feeds_page_feeds_empty
+import com.zhangke.fread.feeds.add_feeds_page_feeds_name_hint
+import com.zhangke.fread.feeds.add_feeds_page_feeds_name_label
+import com.zhangke.fread.feeds.add_feeds_page_title
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.pages.manager.add.showAddContentSuccessToast
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * 添加混合 Feeds 页面
@@ -114,7 +118,7 @@ internal class AddMixedFeedsScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(id = R.string.add_feeds_page_title),
+                    title = stringResource(Res.string.add_feeds_page_title),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
@@ -144,10 +148,10 @@ internal class AddMixedFeedsScreen(
                         value = uiState.sourceName,
                         maxLines = 1,
                         label = {
-                            Text(text = stringResource(id = R.string.add_feeds_page_feeds_name_label))
+                            Text(text = stringResource(Res.string.add_feeds_page_feeds_name_label))
                         },
                         placeholder = {
-                            Text(text = stringResource(id = R.string.add_feeds_page_feeds_name_hint))
+                            Text(text = stringResource(Res.string.add_feeds_page_feeds_name_hint))
                         },
                         onValueChange = {
                             onNameInputValueChanged(it.take(uiState.maxNameLength))
@@ -170,7 +174,7 @@ internal class AddMixedFeedsScreen(
                             .clickable {
                                 onAddSourceClick()
                             },
-                        text = stringResource(id = R.string.add_feeds_page_feeds_empty),
+                        text = stringResource(Res.string.add_feeds_page_feeds_empty),
                         style = MaterialTheme.typography.labelLarge,
                     )
                 } else {

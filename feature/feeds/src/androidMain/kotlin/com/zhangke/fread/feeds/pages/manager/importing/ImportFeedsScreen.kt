@@ -38,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -54,10 +53,14 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.media.MediaFileUtil
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feeds.R
+import com.zhangke.fread.feeds.feeds_delete_confirm_content
+import com.zhangke.fread.feeds.feeds_import_back_dialog_message
+import com.zhangke.fread.feeds.feeds_import_button
+import com.zhangke.fread.feeds.feeds_import_page_hint
+import com.zhangke.fread.feeds.feeds_import_page_title
 import com.zhangke.fread.feeds.pages.manager.add.showAddContentSuccessToast
-import com.zhangke.fread.framework.Res
 import com.zhangke.fread.framework.alert
+import org.jetbrains.compose.resources.stringResource
 
 class ImportFeedsScreen : BaseScreen() {
 
@@ -85,8 +88,8 @@ class ImportFeedsScreen : BaseScreen() {
                 onDismissRequest = {
                     showBackDialog = false
                 },
-                title = org.jetbrains.compose.resources.stringResource(Res.string.alert),
-                contentText = stringResource(R.string.feeds_import_back_dialog_message),
+                title = stringResource(com.zhangke.fread.framework.Res.string.alert),
+                contentText = stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_back_dialog_message),
                 onNegativeClick = {
                     showBackDialog = false
                 },
@@ -131,7 +134,7 @@ class ImportFeedsScreen : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(R.string.feeds_import_page_title),
+                    title = stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_page_title),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
@@ -180,7 +183,7 @@ class ImportFeedsScreen : BaseScreen() {
                             Text(
                                 modifier = Modifier.align(Alignment.Center),
                                 text = prettyFileUri
-                                    ?: stringResource(R.string.feeds_import_page_hint),
+                                    ?: stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_page_hint),
                                 overflow = TextOverflow.Clip,
                                 maxLines = 1,
                                 fontSize = 12.sp,
@@ -193,7 +196,7 @@ class ImportFeedsScreen : BaseScreen() {
                         enabled = uiState.selectedFileUri != null,
                     ) {
                         Text(
-                            text = stringResource(R.string.feeds_import_button)
+                            text = stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_button)
                         )
                     }
                 }
@@ -288,7 +291,7 @@ class ImportFeedsScreen : BaseScreen() {
             if (showDeleteDialog) {
                 FreadDialog(
                     onDismissRequest = { showDeleteDialog = false },
-                    contentText = stringResource(R.string.feeds_delete_confirm_content),
+                    contentText = stringResource(com.zhangke.fread.feeds.Res.string.feeds_delete_confirm_content),
                     onNegativeClick = { showDeleteDialog = false },
                     onPositiveClick = {
                         showDeleteDialog = false
@@ -371,7 +374,7 @@ class ImportFeedsScreen : BaseScreen() {
             if (showDeleteDialog) {
                 FreadDialog(
                     onDismissRequest = { showDeleteDialog = false },
-                    contentText = stringResource(R.string.feeds_delete_confirm_content),
+                    contentText = stringResource(com.zhangke.fread.feeds.Res.string.feeds_delete_confirm_content),
                     onNegativeClick = { showDeleteDialog = false },
                     onPositiveClick = {
                         showDeleteDialog = false

@@ -9,7 +9,8 @@ import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.feeds.R
+import com.zhangke.fread.feeds.Res
+import com.zhangke.fread.feeds.add_feeds_page_empty_content_exist
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
@@ -160,7 +161,7 @@ class PreAddFeedsViewModel @Inject constructor(
             .filterIsInstance<ContentConfig.ActivityPubContent>()
             .firstOrNull { it.baseUrl == platform.baseUrl }
         if (existsConfig != null) {
-            _snackBarMessageFlow.emit(textOf(R.string.add_feeds_page_empty_content_exist))
+            _snackBarMessageFlow.emit(textOf(Res.string.add_feeds_page_empty_content_exist))
             return
         }
         contentConfigRepo.insertActivityPubContent(platform)

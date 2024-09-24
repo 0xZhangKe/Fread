@@ -56,3 +56,11 @@ dependencies {
     kspAll(libs.kotlinInject.compiler)
     kspAll(libs.krouter.collecting.compiler)
 }
+
+compose {
+    resources {
+        publicResClass = false
+        packageOfResClass = "com.zhangke.fread.feeds"
+        generateResClass = always
+    }
+}

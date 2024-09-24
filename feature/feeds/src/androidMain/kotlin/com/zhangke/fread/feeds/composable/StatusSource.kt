@@ -14,13 +14,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.feeds.R
+import com.zhangke.fread.feeds.Res
+import com.zhangke.fread.feeds.feeds_delete_confirm_content
 import com.zhangke.fread.status.ui.utils.CardInfoSection
 import com.zhangke.fread.status.uri.FormalUri
+import org.jetbrains.compose.resources.stringResource
 
 data class StatusSourceUiState(
     val uri: FormalUri,
@@ -92,7 +93,7 @@ internal fun StatusSourceNode(
                 if (showDeleteConfirmDialog) {
                     FreadDialog(
                         onDismissRequest = { showDeleteConfirmDialog = false },
-                        contentText = stringResource(id = R.string.feeds_delete_confirm_content),
+                        contentText = stringResource(Res.string.feeds_delete_confirm_content),
                         onNegativeClick = {
                             showDeleteConfirmDialog = false
                         },

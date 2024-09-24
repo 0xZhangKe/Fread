@@ -12,12 +12,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.commonbiz.illustration_inspiration
-import com.zhangke.fread.feeds.R
+import com.zhangke.fread.feeds.Res
+import com.zhangke.fread.feeds.empty_content_hint_desc
+import com.zhangke.fread.feeds.empty_content_hint_title
+import com.zhangke.fread.feeds.feeds_add_content
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun EmptyContent(
@@ -45,14 +48,14 @@ fun EmptyContent(
 
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                text = stringResource(R.string.empty_content_hint_title),
+                text = stringResource(Res.string.empty_content_hint_title),
                 textAlign = TextAlign.Center,
                 style = MaterialTheme.typography.titleLarge,
             )
 
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
-                text = stringResource(R.string.empty_content_hint_desc),
+                text = stringResource(Res.string.empty_content_hint_desc),
                 style = MaterialTheme.typography.bodyMedium,
                 textAlign = TextAlign.Center,
             )
@@ -62,7 +65,7 @@ fun EmptyContent(
             modifier = Modifier.padding(top = 32.dp),
             onClick = onAddClick
         ) {
-            Text(text = stringResource(R.string.feeds_add_content))
+            Text(text = stringResource(Res.string.feeds_add_content))
         }
     }
 }

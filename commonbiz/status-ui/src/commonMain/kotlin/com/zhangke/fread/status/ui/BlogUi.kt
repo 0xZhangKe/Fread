@@ -13,7 +13,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
-import com.zhangke.fread.common.handler.LocalTextHandler
+import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
@@ -61,7 +61,7 @@ fun BlogUi(
     textSelectable: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
-    val textHandler = LocalTextHandler.current
+    val textHandler = LocalActivityTextHandler.current
     val mentionOnly = blog.visibility == StatusVisibility.DIRECT
     var infoToTopSpacing: Float? by remember {
         mutableStateOf(null)

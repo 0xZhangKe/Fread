@@ -3,13 +3,8 @@ package com.zhangke.fread.status.ui.style
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ProvidableCompositionLocal
-import androidx.compose.runtime.compositionLocalOf
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-
-val LocalStatusStyle: ProvidableCompositionLocal<StatusStyle?> =
-    compositionLocalOf { null }
 
 object StatusStyles {
 

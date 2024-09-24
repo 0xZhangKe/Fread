@@ -24,6 +24,10 @@ fun textOf(string: String): TextString {
     return TextString.StringText(string)
 }
 
+fun textOf(stringResource: StringResource, vararg formatArgs: Any): TextString {
+    return TextString.ComposeResourceText(stringResource, arrayOf(*formatArgs))
+}
+
 @Composable
 fun textString(text: TextString): String {
     return when (text) {

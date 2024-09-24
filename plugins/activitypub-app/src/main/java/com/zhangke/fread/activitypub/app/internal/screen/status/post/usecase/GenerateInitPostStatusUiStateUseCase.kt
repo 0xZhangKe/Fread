@@ -9,6 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusA
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
+import com.zhangke.fread.common.ext.toJavaDate
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
@@ -119,6 +120,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         if (poll != null) {
             val duration = poll.expiresAt
                 ?.let { DateParser.parseAll(it) }
+                ?.toJavaDate()
                 ?.time
                 ?.let { it - System.currentTimeMillis() }
                 ?.takeIf { it > 0 }

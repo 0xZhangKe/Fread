@@ -20,9 +20,12 @@ kotlin {
 
                 implementation(compose.components.resources)
 
+                implementation(libs.bundles.voyager)
+
+                implementation(libs.jetbrains.lifecycle.viewmodel)
+
                 implementation(libs.androidx.paging.common)
 
-                implementation(libs.bundles.voyager)
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.krouter.runtime)

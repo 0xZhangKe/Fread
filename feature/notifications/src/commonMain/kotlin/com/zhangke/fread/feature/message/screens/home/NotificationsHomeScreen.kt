@@ -50,7 +50,6 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.illustration_message
 import com.zhangke.fread.feature.message.NotificationElements
-import com.zhangke.fread.feature.notifications.R
 import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.notification_tab_title
 import com.zhangke.fread.feature.notifications.notifications_account_empty_tip

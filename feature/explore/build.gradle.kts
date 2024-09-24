@@ -1,5 +1,5 @@
 plugins {
-    id("fread.project.feature")
+    id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
 }
 
@@ -7,41 +7,49 @@ android {
     namespace = "com.zhangke.fread.explore"
 }
 
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(project(":framework"))
+                implementation(project(":bizframework:status-provider"))
+                implementation(project(":commonbiz"))
+                implementation(project(":commonbiz:analytics"))
+                implementation(project(":commonbiz:sharedscreen"))
+                implementation(project(":commonbiz:status-ui"))
+
+                implementation(compose.components.resources)
+
+                implementation(libs.bundles.voyager)
+
+                implementation(libs.jetbrains.lifecycle.viewmodel)
+
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.krouter.runtime)
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.core.ktx)
+            }
+        }
+    }
+}
+
 dependencies {
+    add("kspAndroid", libs.kotlinInject.compiler)
+    add("kspAndroid", libs.krouter.collecting.compiler)
+}
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
-    implementation(project(":framework"))
-    implementation(project(":bizframework:status-provider"))
-    implementation(project(":commonbiz"))
-    implementation(project(":commonbiz:analytics"))
-    implementation(project(":commonbiz:sharedscreen"))
-    implementation(project(":commonbiz:status-ui"))
-
-    implementation(libs.bundles.kotlin)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.annotation)
-    implementation(libs.androidx.compose.constraintlayout)
-    implementation(libs.bundles.androidx.fragment)
-    implementation(libs.bundles.androidx.activity)
-    implementation(libs.bundles.androidx.preference)
-    implementation(libs.bundles.androidx.datastore)
-    implementation(libs.bundles.androidx.collection)
-    implementation(libs.androidx.browser)
-    implementation(libs.androidx.room)
-    implementation(libs.androidx.room.ktx)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.kotlinInject.runtime)
-    ksp(libs.kotlinInject.compiler)
-    implementation(libs.okhttp3)
-    implementation(libs.okhttp3.logging)
-    implementation(libs.auto.service.annotations)
-    ksp(libs.auto.service.ksp)
-    implementation(libs.bundles.voyager)
-    implementation(libs.krouter.runtime)
-    ksp(libs.krouter.collecting.compiler)
+compose {
+    resources {
+        publicResClass = false
+        packageOfResClass = "com.zhangke.fread.explore"
+        generateResClass = always
+    }
 }

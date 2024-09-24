@@ -23,6 +23,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.fread.R
+import com.zhangke.fread.commonbiz.login
 import com.zhangke.fread.framework.Res
 import com.zhangke.fread.framework.cancel
 
@@ -87,7 +88,7 @@ fun AuthenticationPage(
                         modifier = Modifier.padding(start = 15.dp),
                         onClick = onLoginClick
                     ) {
-                        Text(text = stringResource(com.zhangke.fread.commonbiz.R.string.login))
+                        Text(text = org.jetbrains.compose.resources.stringResource(com.zhangke.fread.commonbiz.Res.string.login))
                     }
                 }
             }

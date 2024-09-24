@@ -42,10 +42,9 @@ import androidx.compose.ui.layout.positionInRoot
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
-import androidx.core.graphics.drawable.toDrawable
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.seiko.imageloader.imageLoader
+import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
 import com.seiko.imageloader.option.SizeResolver
@@ -58,13 +57,13 @@ import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
 import com.zhangke.framework.media.MediaFileHelper
 import com.zhangke.framework.permission.RequireLocalStoragePermission
+import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.framework.utils.aspectRatio
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.asImageMetaOrNull
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import java.io.Serializable
 
 class ImageViewerScreen(
     private val selectedIndex: Int,
@@ -180,24 +179,24 @@ class ImageViewerScreen(
         onDismissRequest: () -> Unit,
         onStartDismiss: () -> Unit,
     ) {
-        val context = LocalContext.current
+        val imageLoader = LocalImageLoader.current
         var aspectRatio: Float? by remember {
             mutableStateOf(image.aspect)
         }
         if (aspectRatio == null) {
             LaunchedEffect(image) {
                 aspectRatio = ImageRequest {
-                    data(image.url)
-                    size(SizeResolver(Size(50f, 50f)))
-                }
-                    .let { context.imageLoader.execute(it) }
+                        data(image.url)
+                        size(SizeResolver(Size(50f, 50f)))
+                    }
+                    .let { imageLoader.execute(it) }
                     .let {
                         when (it) {
-                            is ImageResult.OfImage -> it.image.drawable
-                            is ImageResult.OfBitmap -> it.bitmap.toDrawable(context.resources)
+                            is ImageResult.OfImage -> it.image.drawable.aspectRatio()
+                            is ImageResult.OfBitmap -> it.bitmap.run { width.toFloat() / height }
                             else -> null
                         }
-                    }?.aspectRatio() ?: 1F
+                    } ?: 1F
             }
         }
         if (aspectRatio != null) {
@@ -306,7 +305,7 @@ class ImageViewerScreen(
         val description: String? = null,
         val blurhash: String? = null,
         val aspect: Float? = null,
-    ) : Serializable
+    ): PlatformSerializable
 }
 
 fun BlogMedia.toImage(): ImageViewerScreen.Image {

@@ -15,9 +15,10 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.fread.commonbiz.illustration_celebrate
+import org.jetbrains.compose.resources.painterResource
 
 class ScrollDemoScreen : Screen {
 
@@ -54,7 +55,7 @@ class ScrollDemoScreen : Screen {
                             .fillMaxWidth()
                             .padding(horizontal = 16.dp)
                             .padding(top = 16.dp),
-                        painter = painterResource(id = com.zhangke.fread.commonbiz.R.drawable.illustration_celebrate),
+                        painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.illustration_celebrate),
                         contentDescription = "",
                     )
                 }

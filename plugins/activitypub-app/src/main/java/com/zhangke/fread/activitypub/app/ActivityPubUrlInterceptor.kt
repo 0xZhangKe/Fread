@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app
 
-import android.content.Context
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.network.HttpScheme
@@ -29,7 +28,7 @@ class ActivityPubUrlInterceptor @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : BrowserInterceptor {
 
-    override suspend fun intercept(context: Context, role: IdentityRole, url: String): Boolean {
+    override suspend fun intercept(role: IdentityRole, url: String): Boolean {
         val uri = SimpleUri.parse(url) ?: return false
         if (HttpScheme.validate(uri.scheme.orEmpty())) return false
         val status = parseStatus(role, uri)

@@ -310,7 +310,7 @@ class ActivityPubTimelineViewModel(
             }
         }
 
-    private fun List<Status>.toTimelineItems(): List<ActivityPubTimelineItem> {
+    private suspend fun List<Status>.toTimelineItems(): List<ActivityPubTimelineItem> {
         return map { ActivityPubTimelineItem.StatusItem(buildStatusUiState(role, it)) }
     }
 }

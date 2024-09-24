@@ -26,7 +26,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.DialogProperties
@@ -38,11 +37,15 @@ import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.R
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.login_dialog_input_hint
+import com.zhangke.fread.commonbiz.shared.screen.login_dialog_target_title
+import com.zhangke.fread.commonbiz.shared.screen.profile_description
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
+import org.jetbrains.compose.resources.stringResource
 
 class LoginBottomSheetScreen : BaseScreen() {
 
@@ -102,12 +105,12 @@ class LoginBottomSheetScreen : BaseScreen() {
                 Column(modifier = Modifier.fillMaxSize()) {
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-                        text = stringResource(R.string.login_dialog_target_title),
+                        text = stringResource(Res.string.login_dialog_target_title),
                         style = MaterialTheme.typography.titleMedium,
                     )
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 8.dp, end = 16.dp),
-                        text = stringResource(R.string.profile_description),
+                        text = stringResource(Res.string.profile_description),
                         style = MaterialTheme.typography.bodySmall,
                         color = MaterialTheme.colorScheme.onBackground,
                     )
@@ -122,7 +125,7 @@ class LoginBottomSheetScreen : BaseScreen() {
                             imeAction = ImeAction.Search
                         ),
                         placeholder = {
-                            Text(text = stringResource(R.string.login_dialog_input_hint))
+                            Text(text = stringResource(Res.string.login_dialog_input_hint))
                         },
                         keyboardActions = KeyboardActions(
                             onSearch = {

@@ -31,6 +31,8 @@ kotlin {
                 implementation(libs.imageLoader)
 
                 implementation(libs.krouter.runtime)
+
+                implementation(libs.androidx.paging.common)
             }
         }
         commonTest {
@@ -49,12 +51,6 @@ kotlin {
                 implementation(libs.bundles.androidx.datastore)
                 implementation(libs.bundles.androidx.collection)
                 implementation(libs.androidx.browser)
-
-                implementation(libs.androidx.paging.runtime)
-                implementation(libs.androidx.paging.compose)
-
-                implementation(libs.okhttp3)
-                implementation(libs.okhttp3.logging)
 
                 implementation(libs.auto.service.annotations)
             }

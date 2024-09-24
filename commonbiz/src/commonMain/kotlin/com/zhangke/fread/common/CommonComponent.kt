@@ -11,7 +11,6 @@ import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
-import com.zhangke.fread.common.handler.TextHandler
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -23,8 +22,6 @@ interface CommonComponent : CommonPlatformComponent {
     val localConfigManager: LocalConfigManager
 
     val freadConfigManager: FreadConfigManager
-
-    val textHandler: TextHandler
 
     val viewModelProviderFactory: ViewModelProvider.Factory
 

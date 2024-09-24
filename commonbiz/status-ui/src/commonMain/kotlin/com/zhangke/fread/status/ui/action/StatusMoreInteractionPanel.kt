@@ -17,7 +17,7 @@ import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.handler.LocalTextHandler
+import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.ui.StatusDataElements
@@ -135,7 +135,7 @@ private fun AdditionalMoreOptions(
     onDismissRequest: () -> Unit,
     onTranslateClick: () -> Unit,
 ) {
-    val textHandler = LocalTextHandler.current
+    val textHandler = LocalActivityTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
     DropDownOpenInBrowserItem {
         reportClick(StatusDataElements.OPEN_IN_BROWSER)

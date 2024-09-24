@@ -22,9 +22,7 @@ import okio.Path.Companion.toOkioPath
 /**
  * Created by ZhangKe on 2022/11/27.
  */
-class FreadApplication : Application(),
-    ApplicationComponentProvider,
-    ImageLoaderFactory {
+class FreadApplication : Application(), ApplicationComponentProvider, ImageLoaderFactory {
 
     override val component: ApplicationComponent by lazy(LazyThreadSafetyMode.NONE) {
         ApplicationComponent.create(this)

@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -52,9 +51,13 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.illustration_message
 import com.zhangke.fread.feature.message.NotificationElements
 import com.zhangke.fread.feature.notifications.R
+import com.zhangke.fread.feature.notifications.Res
+import com.zhangke.fread.feature.notifications.notification_tab_title
+import com.zhangke.fread.feature.notifications.notifications_account_empty_tip
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 class NotificationsHomeScreen : BaseScreen() {
 
@@ -129,7 +132,7 @@ class NotificationsHomeScreen : BaseScreen() {
 
                     Text(
                         modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp),
-                        text = stringResource(R.string.notifications_account_empty_tip),
+                        text = stringResource(Res.string.notifications_account_empty_tip),
                         textAlign = TextAlign.Center,
                     )
                 }
@@ -180,7 +183,7 @@ class NotificationsHomeScreen : BaseScreen() {
         ) {
             Text(
                 modifier = Modifier.padding(16.dp),
-                text = stringResource(R.string.notification_tab_title),
+                text = stringResource(Res.string.notification_tab_title),
                 style = MaterialTheme.typography.titleLarge,
             )
             Spacer(modifier = Modifier.weight(1F))

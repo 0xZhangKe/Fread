@@ -27,7 +27,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
@@ -42,16 +41,22 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.framework.Res
 import com.zhangke.fread.framework.alert
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.framework.ok
-import com.zhangke.fread.rss.R
+import com.zhangke.fread.rss.Res
+import com.zhangke.fread.rss.rss_source_detail_screen_add_date
+import com.zhangke.fread.rss.rss_source_detail_screen_custom_title
+import com.zhangke.fread.rss.rss_source_detail_screen_home_url
+import com.zhangke.fread.rss.rss_source_detail_screen_last_update_date
+import com.zhangke.fread.rss.rss_source_detail_screen_title
+import com.zhangke.fread.rss.rss_source_detail_screen_url
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
+import org.jetbrains.compose.resources.stringResource
 import java.net.URLDecoder
 
 @Destination(RssSourceScreenRoute.ROUTE)
@@ -91,7 +96,7 @@ class RssSourceScreen(
             topBar = {
                 Toolbar(
                     onBackClick = onBackClick,
-                    title = stringResource(R.string.rss_source_detail_screen_title),
+                    title = stringResource(Res.string.rss_source_detail_screen_title),
                 )
             },
             snackbarHost = {
@@ -145,7 +150,7 @@ class RssSourceScreen(
                         modifier = Modifier.clickable {
                             browserLauncher.launchWebTabInApp(rssSource.url)
                         },
-                        title = stringResource(R.string.rss_source_detail_screen_url),
+                        title = stringResource(Res.string.rss_source_detail_screen_url),
                         content = rssSource.url,
                     )
                     if (rssSource.homePage.isNullOrEmpty().not()) {
@@ -153,16 +158,16 @@ class RssSourceScreen(
                             modifier = Modifier.clickable {
                                 browserLauncher.launchWebTabInApp(rssSource.homePage!!)
                             },
-                            title = stringResource(R.string.rss_source_detail_screen_home_url),
+                            title = stringResource(Res.string.rss_source_detail_screen_home_url),
                             content = rssSource.homePage!!,
                         )
                     }
                     RssInfoItem(
-                        title = stringResource(R.string.rss_source_detail_screen_add_date),
+                        title = stringResource(Res.string.rss_source_detail_screen_add_date),
                         content = uiState.formattedAddDate.orEmpty(),
                     )
                     RssInfoItem(
-                        title = stringResource(R.string.rss_source_detail_screen_last_update_date),
+                        title = stringResource(Res.string.rss_source_detail_screen_last_update_date),
                         content = uiState.formattedLastUpdateDate.orEmpty(),
                     )
                 }
@@ -179,7 +184,7 @@ class RssSourceScreen(
             mutableStateOf(false)
         }
         RssInfoItem(
-            title = stringResource(R.string.rss_source_detail_screen_custom_title),
+            title = stringResource(Res.string.rss_source_detail_screen_custom_title),
             content = displayName,
             option = {
                 SimpleIconButton(
@@ -195,18 +200,18 @@ class RssSourceScreen(
                 mutableStateOf(displayName)
             }
             FreadDialog(
-                title = org.jetbrains.compose.resources.stringResource(Res.string.alert),
+                title = stringResource(com.zhangke.fread.framework.Res.string.alert),
                 onDismissRequest = {
                     showEditDisplayNameDialog = false
                 },
-                positiveButtonText = org.jetbrains.compose.resources.stringResource(Res.string.ok),
+                positiveButtonText = stringResource(com.zhangke.fread.framework.Res.string.ok),
                 onPositiveClick = {
                     showEditDisplayNameDialog = false
                     if (newDisplayName != displayName) {
                         onDisplayNameChanged(newDisplayName)
                     }
                 },
-                negativeButtonText = org.jetbrains.compose.resources.stringResource(Res.string.cancel),
+                negativeButtonText = stringResource(com.zhangke.fread.framework.Res.string.cancel),
                 onNegativeClick = {
                     showEditDisplayNameDialog = false
                 },
@@ -220,7 +225,7 @@ class RssSourceScreen(
                             newDisplayName = it
                         },
                         label = {
-                            Text(text = stringResource(R.string.rss_source_detail_screen_custom_title))
+                            Text(text = stringResource(Res.string.rss_source_detail_screen_custom_title))
                         }
                     )
                 }

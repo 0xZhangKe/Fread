@@ -21,7 +21,7 @@ class RssStatusAdapter @Inject constructor(
         "null",
     )
 
-    fun toStatus(
+    suspend fun toStatus(
         uriInsight: RssUriInsight,
         source: RssSource,
         rssItem: RssChannelItem,
@@ -39,7 +39,7 @@ class RssStatusAdapter @Inject constructor(
         )
     }
 
-    private fun RssChannelItem.toBlog(uriInsight: RssUriInsight, source: RssSource): Blog {
+    private suspend fun RssChannelItem.toBlog(uriInsight: RssUriInsight, source: RssSource): Blog {
         return Blog(
             id = this.id,
             author = blogAuthorAdapter.createAuthor(uriInsight, source),

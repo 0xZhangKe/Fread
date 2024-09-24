@@ -61,7 +61,7 @@ kotlin {
 
                 implementation(libs.bundles.androidx.media3)
 
-                implementation(libs.composeReorderable)
+                // implementation(libs.composeReorderable)
 
                 implementation(libs.ktml)
                 implementation(libs.halilibo.richtext)

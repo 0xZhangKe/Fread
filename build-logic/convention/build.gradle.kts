@@ -60,17 +60,9 @@ gradlePlugin {
             id = "fread.compose.multiplatform"
             implementationClass = "ComposeMultiPlatformConventionPlugin"
         }
-        register("projectFramework") {
-            id = "fread.project.framework"
-            implementationClass = "ProjectFrameworkConventionPlugin"
-        }
         register("projectFrameworkKmp") {
             id = "fread.project.framework.kmp"
             implementationClass = "ProjectFrameworkKmpConventionPlugin"
-        }
-        register("projectFeature") {
-            id = "fread.project.feature"
-            implementationClass = "ProjectFeatureConventionPlugin"
         }
         register("projectFeatureKmp") {
             id = "fread.project.feature.kmp"

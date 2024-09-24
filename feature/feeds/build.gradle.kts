@@ -43,7 +43,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.androidx.browser)
-                implementation(libs.composeReorderable)
             }
         }
     }

@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -29,10 +28,12 @@ import cafe.adriel.voyager.hilt.getViewModel
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_about_rule_title
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun Screen.ServerAboutPage(
@@ -131,7 +132,7 @@ private fun ServerAboutRulesSection(
         Column(modifier = modifier) {
             Text(
                 modifier = Modifier,
-                text = stringResource(R.string.activity_pub_about_rule_title),
+                text = stringResource(Res.string.activity_pub_about_rule_title),
                 fontWeight = FontWeight.Bold,
                 style = MaterialTheme.typography.titleLarge,
             )

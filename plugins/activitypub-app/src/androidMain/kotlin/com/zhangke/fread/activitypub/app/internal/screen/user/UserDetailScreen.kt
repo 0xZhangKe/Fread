@@ -53,7 +53,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
@@ -83,7 +82,32 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.utils.decodeAsUri
 import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_favourites_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_filters_list_page_title
+import com.zhangke.fread.activitypub.app.activity_pub_followed_tags_screen_title
+import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_btn_mute
+import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role1
+import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role2
+import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role3
+import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_role4
+import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_title
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block_domain
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_follower_info
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_following_info
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_follows_you
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block_domain
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_private_note
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_private_note_dialog_hint
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_mute_user
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unblock_domain
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unmute_user
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_posts
+import com.zhangke.fread.activitypub.app.activity_pub_user_menu_blocked_user_list
+import com.zhangke.fread.activitypub.app.activity_pub_user_menu_muted_user_list
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
@@ -119,6 +143,8 @@ import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 @Destination(UserDetailRoute.ROUTE)
@@ -402,7 +428,7 @@ data class UserDetailScreen(
                                                 shape = RoundedCornerShape(2.dp),
                                             )
                                             .padding(horizontal = 4.dp),
-                                        text = stringResource(R.string.activity_pub_user_detail_follows_you),
+                                        text = stringResource(Res.string.activity_pub_user_detail_follows_you),
                                         style = MaterialTheme.typography.bodySmall,
                                     )
                                 }
@@ -492,7 +518,7 @@ data class UserDetailScreen(
         ) {
             CountInfoItem(
                 count = account?.followersCount,
-                descId = R.string.activity_pub_user_detail_follower_info,
+                descId = Res.string.activity_pub_user_detail_follower_info,
                 onClick = onFollowerClick,
             )
             Text(
@@ -503,7 +529,7 @@ data class UserDetailScreen(
             )
             CountInfoItem(
                 count = account?.followingCount,
-                descId = R.string.activity_pub_user_detail_following_info,
+                descId = Res.string.activity_pub_user_detail_following_info,
                 onClick = onFollowingClick,
             )
             Text(
@@ -514,7 +540,7 @@ data class UserDetailScreen(
             )
             CountInfoItem(
                 count = account?.statusesCount,
-                descId = R.string.activity_pub_user_detail_posts,
+                descId = Res.string.activity_pub_user_detail_posts,
             )
         }
     }
@@ -522,7 +548,7 @@ data class UserDetailScreen(
     @Composable
     private fun CountInfoItem(
         count: Int?,
-        descId: Int,
+        descId: StringResource,
         onClick: (() -> Unit)? = null,
     ) {
         val descSuffix = stringResource(descId)
@@ -679,7 +705,7 @@ data class UserDetailScreen(
         }
         if (showBlockUserConfirmDialog) {
             AlertConfirmDialog(
-                content = stringResource(R.string.activity_pub_user_detail_dialog_content_block),
+                content = stringResource(Res.string.activity_pub_user_detail_dialog_content_block),
                 onConfirm = {
                     showBlockUserConfirmDialog = false
                     onBlockClick()
@@ -689,7 +715,7 @@ data class UserDetailScreen(
         }
         if (showBlockDomainConfirmDialog) {
             AlertConfirmDialog(
-                content = stringResource(R.string.activity_pub_user_detail_dialog_content_block_domain),
+                content = stringResource(Res.string.activity_pub_user_detail_dialog_content_block_domain),
                 onConfirm = {
                     showBlockDomainConfirmDialog = false
                     onBlockDomainClick()
@@ -719,7 +745,7 @@ data class UserDetailScreen(
             mutableStateOf(false)
         }
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note),
+            text = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note),
             imageVector = Icons.Default.Edit,
             onClick = {
                 showEditDialog = true
@@ -732,7 +758,7 @@ data class UserDetailScreen(
                     onDismissRequest()
                     showEditDialog = false
                 },
-                title = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note),
+                title = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note),
                 content = {
                     OutlinedTextField(
                         modifier = Modifier
@@ -744,12 +770,12 @@ data class UserDetailScreen(
                         },
                         label = {
                             Text(
-                                text = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note)
+                                text = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note)
                             )
                         },
                         placeholder = {
                             Text(
-                                text = stringResource(R.string.activity_pub_user_detail_menu_edit_private_note_dialog_hint)
+                                text = stringResource(Res.string.activity_pub_user_detail_menu_edit_private_note_dialog_hint)
                             )
                         },
                     )
@@ -777,32 +803,32 @@ data class UserDetailScreen(
         onFilterClick: () -> Unit,
     ) {
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_favourites_list_title),
+            text = stringResource(Res.string.activity_pub_favourites_list_title),
             onClick = onFavouritesClick,
             imageVector = Icons.Default.Favorite,
         )
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_bookmarks_list_title),
+            text = stringResource(Res.string.activity_pub_bookmarks_list_title),
             onClick = onBookmarksClick,
             imageVector = Icons.Default.Bookmarks,
         )
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_followed_tags_screen_title),
+            text = stringResource(Res.string.activity_pub_followed_tags_screen_title),
             onClick = onFollowedHashtagsListClick,
             imageVector = Icons.Default.Tag,
         )
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_user_menu_muted_user_list),
+            text = stringResource(Res.string.activity_pub_user_menu_muted_user_list),
             imageVector = Icons.AutoMirrored.Filled.VolumeOff,
             onClick = onMuteUserListClick,
         )
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_user_menu_blocked_user_list),
+            text = stringResource(Res.string.activity_pub_user_menu_blocked_user_list),
             imageVector = Icons.Default.Block,
             onClick = onBlockedUserListClick,
         )
         ModalDropdownMenuItem(
-            text = stringResource(R.string.activity_pub_filters_list_page_title),
+            text = stringResource(Res.string.activity_pub_filters_list_page_title),
             imageVector = Icons.Default.FilterAlt,
             onClick = onFilterClick,
         )
@@ -828,9 +854,9 @@ data class UserDetailScreen(
         )
         val fixedName = account.account.displayName.take(10)
         val muteOrUnmuteText = if (relationship.muting) {
-            stringResource(R.string.activity_pub_user_detail_menu_unmute_user, fixedName)
+            stringResource(Res.string.activity_pub_user_detail_menu_unmute_user, fixedName)
         } else {
-            stringResource(R.string.activity_pub_user_detail_menu_mute_user, fixedName)
+            stringResource(Res.string.activity_pub_user_detail_menu_mute_user, fixedName)
         }
         ModalDropdownMenuItem(
             text = muteOrUnmuteText,
@@ -846,7 +872,7 @@ data class UserDetailScreen(
         )
         if (!relationship.blocking) {
             ModalDropdownMenuItem(
-                text = stringResource(R.string.activity_pub_user_detail_menu_block, fixedName),
+                text = stringResource(Res.string.activity_pub_user_detail_menu_block, fixedName),
                 imageVector = Icons.Default.Block,
                 onClick = {
                     onDismissMorePopupRequest()
@@ -858,9 +884,9 @@ data class UserDetailScreen(
         val host = uiState.userInsight!!.baseUrl.host
         if (domainBlocked != null) {
             val blockDomainLabel = if (domainBlocked) {
-                stringResource(R.string.activity_pub_user_detail_menu_unblock_domain, host)
+                stringResource(Res.string.activity_pub_user_detail_menu_unblock_domain, host)
             } else {
-                stringResource(R.string.activity_pub_user_detail_menu_block_domain, host)
+                stringResource(Res.string.activity_pub_user_detail_menu_block_domain, host)
             }
             ModalDropdownMenuItem(
                 text = blockDomainLabel,
@@ -897,7 +923,7 @@ data class UserDetailScreen(
             ) {
                 Text(
                     modifier = Modifier.align(Alignment.CenterHorizontally),
-                    text = stringResource(R.string.activity_pub_mute_user_bottom_sheet_title),
+                    text = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_title),
                     style = MaterialTheme.typography.titleLarge,
                 )
 
@@ -925,22 +951,22 @@ data class UserDetailScreen(
 
                 MuteUserRoleItem(
                     icon = Icons.Default.Campaign,
-                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role1)
+                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role1)
                 )
 
                 MuteUserRoleItem(
                     icon = Icons.Default.VisibilityOff,
-                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role2)
+                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role2)
                 )
 
                 MuteUserRoleItem(
                     icon = Icons.Default.AlternateEmail,
-                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role3)
+                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role3)
                 )
 
                 MuteUserRoleItem(
                     icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
-                    role = stringResource(R.string.activity_pub_mute_user_bottom_sheet_role4)
+                    role = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_role4)
                 )
 
                 Button(
@@ -950,7 +976,7 @@ data class UserDetailScreen(
                         .height(40.dp),
                     onClick = onConfirmClick,
                 ) {
-                    Text(text = stringResource(R.string.activity_pub_mute_user_bottom_sheet_btn_mute))
+                    Text(text = stringResource(Res.string.activity_pub_mute_user_bottom_sheet_btn_mute))
                 }
                 TextButton(
                     modifier = Modifier

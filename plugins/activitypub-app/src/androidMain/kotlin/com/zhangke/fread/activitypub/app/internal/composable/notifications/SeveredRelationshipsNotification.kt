@@ -10,12 +10,13 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_notification_severed_desc
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.status.author.BlogAuthor
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SeveredRelationshipsNotification(
@@ -35,7 +36,7 @@ fun SeveredRelationshipsNotification(
             icon = Icons.Default.WarningAmber,
             avatar = notification.account.avatar,
             accountName = notification.account.displayName,
-            interactionDesc = stringResource(R.string.activity_pub_notification_severed_desc),
+            interactionDesc = stringResource(Res.string.activity_pub_notification_severed_desc),
             style = style,
         )
 

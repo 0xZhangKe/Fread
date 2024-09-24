@@ -20,7 +20,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -34,6 +33,9 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_notification_tab_title_all
+import com.zhangke.fread.activitypub.app.activity_pub_notification_tab_title_mention
 import com.zhangke.fread.activitypub.app.internal.ApNotificationElements
 import com.zhangke.fread.activitypub.app.internal.composable.notifications.StatusNotificationUi
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
@@ -41,6 +43,7 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
+import org.jetbrains.compose.resources.stringResource
 
 class ActivityPubNotificationsScreen(
     private val userUriInsights: UserUriInsights,
@@ -160,7 +163,7 @@ class ActivityPubNotificationsScreen(
                 },
                 shape = SegmentedButtonDefaults.itemShape(index = 0, count = 2),
             ) {
-                Text(text = stringResource(R.string.activity_pub_notification_tab_title_all))
+                Text(text = stringResource(Res.string.activity_pub_notification_tab_title_all))
             }
 
             SegmentedButton(
@@ -179,7 +182,7 @@ class ActivityPubNotificationsScreen(
                 },
                 shape = SegmentedButtonDefaults.itemShape(index = 1, count = 2),
             ) {
-                Text(text = stringResource(R.string.activity_pub_notification_tab_title_mention))
+                Text(text = stringResource(Res.string.activity_pub_notification_tab_title_mention))
             }
         }
     }

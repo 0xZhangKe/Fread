@@ -29,7 +29,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
@@ -48,6 +47,9 @@ import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_active_month_label
+import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_language_label
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
@@ -64,6 +66,7 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteUri
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 @Destination(PlatformDetailRoute.ROUTE)
 class InstanceDetailScreen(
@@ -218,7 +221,7 @@ class InstanceDetailScreen(
                             .padding(top = 4.dp)
                             .freadPlaceholder(visible = loading),
                         text = stringResource(
-                            R.string.activity_pub_instance_detail_language_label,
+                            Res.string.activity_pub_instance_detail_language_label,
                             languageString
                         ),
                         maxLines = 3,
@@ -228,7 +231,7 @@ class InstanceDetailScreen(
                             .padding(top = 4.dp)
                             .freadPlaceholder(visible = loading),
                         text = stringResource(
-                            R.string.activity_pub_instance_detail_active_month_label,
+                            Res.string.activity_pub_instance_detail_active_month_label,
                             instance?.usage?.users?.activeMonth.toString()
                         ),
                     )

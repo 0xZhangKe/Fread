@@ -5,6 +5,8 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_edit_content_screen_config_not_found
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.model.ContentConfig
@@ -36,7 +38,7 @@ class EditContentConfigViewModel @Inject constructor(
             contentConfigRepo.getConfigFlowById(configId)
                 .collect { config ->
                     if (config !is ContentConfig.ActivityPubContent) {
-                        _snackbarMessageFlow.emit(textOf(R.string.activity_pub_edit_content_screen_config_not_found))
+                        _snackbarMessageFlow.emit(textOf(Res.string.activity_pub_edit_content_screen_config_not_found))
                         return@collect
                     }
                     _uiState.value = EditContentConfigUiState(config)

@@ -20,7 +20,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
-fun Modifier.blurhash(blurHash: String): Modifier = composed {
+fun Modifier.blurhash(blurHash: String?): Modifier = composed {
+    if (blurHash.isNullOrEmpty()) return@composed this
     var size: Size? by remember(blurHash) {
         mutableStateOf(null)
     }
@@ -45,6 +46,7 @@ fun Modifier.blurhash(blurHash: String): Modifier = composed {
             }
 
             onDispose {
+                // TODO: check is this bitmap need to recycler and earlier recycle
                 bitmap = null
             }
         }

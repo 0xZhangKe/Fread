@@ -1,54 +1,70 @@
 plugins {
-    id("fread.project.feature")
+    id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    alias(libs.plugins.room)
 }
 
 android {
     namespace = "com.zhangke.fread.rss"
 }
 
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(project(path = ":framework"))
+                implementation(project(path = ":commonbiz"))
+                implementation(project(path = ":bizframework:status-provider"))
+                implementation(project(path = ":commonbiz:status-ui"))
+                implementation(project(path = ":commonbiz:sharedscreen"))
+
+                implementation(compose.components.resources)
+
+                implementation(libs.jetbrains.lifecycle.viewmodel)
+
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.androidx.room)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.auto.service.annotations)
+                implementation(libs.bundles.voyager)
+                implementation(libs.uri.kmp)
+                implementation(libs.rssparser)
+                implementation(libs.okio)
+
+                implementation(libs.krouter.runtime)
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.core.ktx)
+            }
+        }
+    }
+}
+
 dependencies {
+    kspAll(libs.androidx.room.compiler)
+    kspAll(libs.kotlinInject.compiler)
+    kspAll(libs.auto.service.ksp)
+    kspAll(libs.krouter.collecting.compiler)
+}
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
+compose {
+    resources {
+        publicResClass = false
+        packageOfResClass = "com.zhangke.fread.rss"
+        generateResClass = always
+    }
+}
 
-    implementation(project(path = ":framework"))
-    implementation(project(path = ":commonbiz"))
-    implementation(project(path = ":bizframework:status-provider"))
-    implementation(project(path = ":commonbiz:status-ui"))
-    implementation(project(path = ":commonbiz:sharedscreen"))
-    api(project(path = ":ActivityPub-Kotlin"))
-
-    implementation(compose.components.resources)
-
-    implementation(libs.bundles.kotlin)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.annotation)
-    implementation(libs.bundles.androidx.fragment)
-    implementation(libs.bundles.androidx.activity)
-    implementation(libs.bundles.androidx.preference)
-    implementation(libs.bundles.androidx.datastore)
-    implementation(libs.bundles.androidx.collection)
-    implementation(libs.androidx.browser)
-    implementation(libs.androidx.room)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.kotlinInject.runtime)
-    ksp(libs.kotlinInject.compiler)
-    implementation(libs.okhttp3)
-    implementation(libs.okhttp3.logging)
-    implementation(libs.auto.service.annotations)
-    ksp(libs.auto.service.ksp)
-    implementation(libs.androidx.paging.common)
-    implementation(libs.bundles.voyager)
-
-    implementation(libs.krouter.runtime)
-    ksp(libs.krouter.collecting.compiler)
-
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.rssparser)
+room {
+    schemaDirectory("$projectDir/schemas")
 }

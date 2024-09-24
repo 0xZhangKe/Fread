@@ -6,7 +6,6 @@ import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.tab.Tab
 import cafe.adriel.voyager.navigator.tab.TabOptions
 import com.zhangke.fread.feature.message.screens.home.NotificationsHomeScreen
-import com.zhangke.fread.feature.notifications.R
 import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.ic_notification_tab
 import org.jetbrains.compose.resources.painterResource

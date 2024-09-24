@@ -32,6 +32,7 @@ import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.config.LocalStatusConfig
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
@@ -78,6 +79,7 @@ class FreadActivity : ComponentActivity() {
                     LocalActivityLanguageHelper provides activityComponent.activityLanguageHelper,
                     LocalActivityDayNightHelper provides activityComponent.activityDayNightHelper,
                     LocalActivityBrowserLauncher provides activityComponent.activityBrowserLauncher,
+                    LocalTextHandler provides component.textHandler,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {

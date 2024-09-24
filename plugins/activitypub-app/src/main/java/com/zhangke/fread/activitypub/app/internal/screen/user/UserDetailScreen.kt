@@ -105,7 +105,7 @@ import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
-import com.zhangke.fread.status.richtext.android.span.LinkSpan
+import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
@@ -305,7 +305,7 @@ data class UserDetailScreen(
         onFollowerClick: () -> Unit,
         onFollowingClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
-        onMaybeHashtagTargetClick: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit,
+        onMaybeHashtagTargetClick: (RichLinkTarget.MaybeHashtagTarget) -> Unit,
         onMuteUserListClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,

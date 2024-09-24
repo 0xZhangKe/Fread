@@ -18,7 +18,7 @@ import com.zhangke.fread.status.ui.image.decideAspect
 import com.zhangke.fread.status.ui.video.inline.InlineVideo
 
 @Composable
-fun BlogVideos(
+actual fun BlogVideos(
     mediaList: List<BlogMedia>,
     hideContent: Boolean,
     indexInList: Int,

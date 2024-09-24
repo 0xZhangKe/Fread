@@ -345,11 +345,3 @@ class FeedsViewModelController(
         return buildStatusUiState(roleResolver(this), this)
     }
 }
-
-data class CommonFeedsUiState(
-    val feeds: List<StatusUiState>,
-    val showPagingLoadingPlaceholder: Boolean,
-    val pageErrorContent: TextString?,
-    val refreshing: Boolean,
-    val loadMoreState: LoadState,
-)

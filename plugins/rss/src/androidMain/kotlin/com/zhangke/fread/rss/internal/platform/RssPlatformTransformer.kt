@@ -8,11 +8,9 @@ import com.zhangke.fread.rss.internal.uri.RssUriInsight
 import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 
-class RssPlatformTransformer @Inject constructor(
-    private val context: ApplicationContext,
-) {
+class RssPlatformTransformer @Inject constructor() {
 
-    fun create(
+    suspend fun create(
         uriInsight: RssUriInsight,
         source: RssSource,
     ): BlogPlatform {
@@ -21,7 +19,7 @@ class RssPlatformTransformer @Inject constructor(
             name = source.title,
             description = source.description.orEmpty(),
             baseUrl = FormalBaseUrl.parse(uriInsight.url)!!,
-            protocol = createRssProtocol(context),
+            protocol = createRssProtocol(),
             thumbnail = source.thumbnail,
         )
     }

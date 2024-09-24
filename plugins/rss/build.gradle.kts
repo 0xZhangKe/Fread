@@ -53,3 +53,11 @@ dependencies {
     kspAll(libs.auto.service.ksp)
     kspAll(libs.krouter.collecting.compiler)
 }
+
+compose {
+    resources {
+        publicResClass = false
+        packageOfResClass = "com.zhangke.fread.rss"
+        generateResClass = always
+    }
+}

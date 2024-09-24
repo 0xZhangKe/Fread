@@ -35,7 +35,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
@@ -49,7 +48,13 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_edit_content_config_hidden_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_edit_content_config_showing_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_edit_content_delete_dialog_content
+import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_hint
+import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_label
+import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_title
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.ContentConfig
@@ -60,6 +65,7 @@ import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
+import org.jetbrains.compose.resources.stringResource
 
 @Destination(EditContentConfigRoute.ROUTE)
 class EditContentConfigScreen(
@@ -143,7 +149,7 @@ class EditContentConfigScreen(
                 if (showDeleteConfirmDialog) {
                     FreadDialog(
                         onDismissRequest = { showDeleteConfirmDialog = false },
-                        contentText = stringResource(R.string.activity_pub_edit_content_delete_dialog_content),
+                        contentText = stringResource(Res.string.activity_pub_edit_content_delete_dialog_content),
                         onNegativeClick = {
                             showDeleteConfirmDialog = false
                         },
@@ -195,7 +201,7 @@ class EditContentConfigScreen(
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(R.string.activity_pub_edit_content_config_showing_list_title),
+            text = stringResource(Res.string.activity_pub_edit_content_config_showing_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
         var tabsInUi by remember(uiState.config.showingTabList) {
@@ -270,7 +276,7 @@ class EditContentConfigScreen(
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(R.string.activity_pub_edit_content_config_hidden_list_title),
+            text = stringResource(Res.string.activity_pub_edit_content_config_hidden_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
         uiState.config.hiddenTabList.forEach { tabItem ->
@@ -311,7 +317,7 @@ class EditContentConfigScreen(
             onDismissRequest = {
                 onDismissRequest()
             },
-            title = stringResource(R.string.activity_pub_edit_content_name_title),
+            title = stringResource(Res.string.activity_pub_edit_content_name_title),
             content = {
                 OutlinedTextField(
                     modifier = Modifier
@@ -323,12 +329,12 @@ class EditContentConfigScreen(
                     },
                     label = {
                         Text(
-                            text = stringResource(R.string.activity_pub_edit_content_name_label)
+                            text = stringResource(Res.string.activity_pub_edit_content_name_label)
                         )
                     },
                     placeholder = {
                         Text(
-                            text = stringResource(R.string.activity_pub_edit_content_name_hint)
+                            text = stringResource(Res.string.activity_pub_edit_content_name_hint)
                         )
                     },
                 )

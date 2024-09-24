@@ -26,18 +26,20 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
 
     fun observeAccount(baseUrl: FormalBaseUrl): Flow<ActivityPubLoggedAccount?> {
         return accountDao.observeAccount(baseUrl).map {
-            it?.let(adapter::adapt)
+            it?.let { adapter.adapt(it) }
         }
     }
 
     suspend fun queryAll(): List<ActivityPubLoggedAccount> =
-        accountDao.queryAll().map(adapter::adapt)
+        accountDao.queryAll().map {
+            adapter.adapt(it)
+        }
 
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccount? =
-        accountDao.queryByUri(uri)?.let(adapter::adapt)
+        accountDao.queryByUri(uri)?.let { adapter.adapt(it) }
 
     suspend fun queryByBaseUrl(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
-        return accountDao.queryByBaseUrl(baseUrl).firstOrNull()?.let(adapter::adapt)
+        return accountDao.queryByBaseUrl(baseUrl).firstOrNull()?.let { adapter.adapt(it) }
     }
 
     suspend fun insert(

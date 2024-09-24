@@ -2,18 +2,16 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubTagEntity
 import com.zhangke.framework.composable.textOf
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_trends_tag_description
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
-import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.model.Hashtag
 import me.tatarka.inject.annotations.Inject
 import java.util.Calendar
 
-class ActivityPubTagAdapter @Inject constructor(
-    private val context: ApplicationContext,
-) {
+class ActivityPubTagAdapter @Inject constructor() {
 
-    fun adapt(entity: ActivityPubTagEntity): Hashtag {
+    suspend fun adapt(entity: ActivityPubTagEntity): Hashtag {
         val yesterdayTimeInMillis = getYesterdayTimeInMillis()
         val pass2DayUses = entity.history
             .filter { it.day * 1000 >= yesterdayTimeInMillis }
@@ -24,10 +22,10 @@ class ActivityPubTagAdapter @Inject constructor(
         return Hashtag(
             name = "#${entity.name}",
             url = entity.url,
-            description = textOf(R.string.activity_pub_trends_tag_description, pass2DayUses),
+            description = textOf(Res.string.activity_pub_trends_tag_description, pass2DayUses),
             following = entity.following,
             history = convertHistoryList(entity.history),
-            protocol = createActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(),
         )
     }
 

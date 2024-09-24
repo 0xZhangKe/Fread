@@ -10,10 +10,9 @@ import me.tatarka.inject.annotations.Inject
 
 class ActivityPubInstanceAdapter @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
-    private val context: ApplicationContext,
 ) {
 
-    fun toPlatform(
+    suspend fun toPlatform(
         baseUrl: FormalBaseUrl,
         instance: ActivityPubInstanceEntity
     ): BlogPlatform {
@@ -26,7 +25,7 @@ class ActivityPubInstanceAdapter @Inject constructor(
             baseUrl = baseUrl,
             name = instance.title,
             description = instance.description,
-            protocol = createActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(),
             thumbnail = instance.thumbnail.url,
         )
     }

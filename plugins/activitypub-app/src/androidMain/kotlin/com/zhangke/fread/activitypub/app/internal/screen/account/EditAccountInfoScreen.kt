@@ -40,7 +40,6 @@ import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
@@ -58,10 +57,16 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.buildPickVisualImageRequest
 import com.zhangke.framework.utils.rememberSinglePickVisualMediaLauncher
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_input_name_hint
+import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_input_note_hint
+import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_about
+import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_name
+import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_note
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.SharedFlow
+import org.jetbrains.compose.resources.stringResource
 
 class EditAccountInfoScreen(
     private val accountUri: FormalUri,
@@ -179,11 +184,11 @@ class EditAccountInfoScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(id = R.string.activity_pub_edit_account_info_input_name_hint)
+                            text = stringResource(Res.string.activity_pub_edit_account_info_input_name_hint)
                         )
                     },
                     label = {
-                        Text(text = stringResource(R.string.activity_pub_edit_account_info_label_name))
+                        Text(text = stringResource(Res.string.activity_pub_edit_account_info_label_name))
                     },
                 )
                 OutlinedTextField(
@@ -195,11 +200,11 @@ class EditAccountInfoScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(id = R.string.activity_pub_edit_account_info_input_note_hint),
+                            text = stringResource(Res.string.activity_pub_edit_account_info_input_note_hint),
                         )
                     },
                     label = {
-                        Text(text = stringResource(R.string.activity_pub_edit_account_info_label_note))
+                        Text(text = stringResource(Res.string.activity_pub_edit_account_info_label_note))
                     },
                 )
                 AccountFieldListUi(
@@ -226,7 +231,7 @@ class EditAccountInfoScreen(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = stringResource(R.string.activity_pub_edit_account_info_label_about),
+                text = stringResource(Res.string.activity_pub_edit_account_info_label_about),
                 style = MaterialTheme.typography.headlineSmall,
             )
             Box(modifier = Modifier.weight(1F))

@@ -6,6 +6,8 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_hashtag_timeline_description
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
@@ -23,6 +25,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.getString
 import java.util.Calendar
 
 class HashtagTimelineViewModel(
@@ -89,7 +92,7 @@ class HashtagTimelineViewModel(
         return loadHashtagTimeline(maxId)
     }
 
-    private fun buildDescription(hashTag: ActivityPubTagEntity): String {
+    private suspend fun buildDescription(hashTag: ActivityPubTagEntity): String {
         val todayTimeInMillis = getTodayTimeInMillis()
         var posts = 0
         var participants = 0
@@ -101,8 +104,8 @@ class HashtagTimelineViewModel(
                 todayPosts += it.uses
             }
         }
-        return context.getString(
-            R.string.activity_pub_hashtag_timeline_description,
+        return getString(
+            Res.string.activity_pub_hashtag_timeline_description,
             posts.toString(),
             participants.toString(),
             todayPosts.toString(),
@@ -136,7 +139,7 @@ class HashtagTimelineViewModel(
         }
     }
 
-    private fun Result<ActivityPubTagEntity>.handle() {
+    private suspend fun Result<ActivityPubTagEntity>.handle() {
         this.onSuccess { newEntity ->
             _hashtagTimelineUiState.update { state ->
                 state.copy(

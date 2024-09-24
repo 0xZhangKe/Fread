@@ -37,7 +37,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -49,10 +49,12 @@ import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.getThumbnail
 import com.zhangke.framework.utils.prettyString
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.InputMediaDescriptionScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
+import com.zhangke.fread.activitypub.app.post_screen_media_descriptor_placeholder
 import com.zhangke.fread.commonbiz.image
 import com.zhangke.fread.commonbiz.video
 import kotlinx.coroutines.Dispatchers
@@ -182,7 +184,7 @@ private fun MediaFileContent(
 
             Text(
                 modifier = Modifier.padding(start = 16.dp, top = 4.dp, end = 16.dp),
-                text = file.description.ifNullOrEmpty { stringResource(R.string.post_screen_media_descriptor_placeholder) },
+                text = file.description.ifNullOrEmpty { stringResource(Res.string.post_screen_media_descriptor_placeholder) },
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

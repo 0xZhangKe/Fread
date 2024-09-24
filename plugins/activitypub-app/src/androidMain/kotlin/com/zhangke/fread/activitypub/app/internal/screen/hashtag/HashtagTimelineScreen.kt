@@ -23,7 +23,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.layoutId
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -44,6 +43,10 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_hashtag_unfollow_dialog_message
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_following
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_not_follow
 import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
@@ -53,6 +56,7 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
+import org.jetbrains.compose.resources.stringResource
 import java.net.URLDecoder
 
 @Destination(HashtagTimelineRoute.ROUTE)
@@ -313,14 +317,14 @@ data class HashtagTimelineScreen(
                 TextButtonStyle.ACTIVE
             },
             text = if (uiState.following) {
-                stringResource(R.string.activity_pub_user_detail_relationship_following)
+                stringResource(Res.string.activity_pub_user_detail_relationship_following)
             } else {
-                stringResource(R.string.activity_pub_user_detail_relationship_not_follow)
+                stringResource(Res.string.activity_pub_user_detail_relationship_not_follow)
             },
         )
         if (showUnfollowDialog) {
             AlertConfirmDialog(
-                content = stringResource(R.string.activity_pub_hashtag_unfollow_dialog_message),
+                content = stringResource(Res.string.activity_pub_hashtag_unfollow_dialog_message),
                 onConfirm = onUnfollowClick,
                 onDismissRequest = { showUnfollowDialog = false },
             )

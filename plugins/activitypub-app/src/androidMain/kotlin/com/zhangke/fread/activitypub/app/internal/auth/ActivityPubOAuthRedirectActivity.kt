@@ -4,7 +4,8 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.toast.toast
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_login_exception
 import com.zhangke.fread.activitypub.app.di.activityPubComponent
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -22,7 +23,7 @@ class ActivityPubOAuthRedirectActivity : ComponentActivity() {
         val code = intent.data?.getQueryParameter("code")
         lifecycleScope.launch {
             if (code.isNullOrEmpty()) {
-                toast(getString(R.string.activity_pub_login_exception))
+                toast(org.jetbrains.compose.resources.getString(Res.string.activity_pub_login_exception))
                 delay(2000)
             } else {
                 author.onOauthSuccess(code)

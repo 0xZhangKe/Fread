@@ -8,7 +8,6 @@ import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
-import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
@@ -32,7 +31,6 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    private val context: ApplicationContext,
 ) {
 
     suspend fun toStatus(
@@ -86,7 +84,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         return blog to supportActions
     }
 
-    private fun transformBlog(
+    private suspend fun transformBlog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
         author: BlogAuthor,
@@ -147,11 +145,11 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    private fun ActivityPubStatusEntity.Tag.toTag(): HashtagInStatus {
+    private suspend fun ActivityPubStatusEntity.Tag.toTag(): HashtagInStatus {
         return HashtagInStatus(
             name = name,
             url = url,
-            protocol = createActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(),
         )
     }
 
@@ -166,14 +164,14 @@ class ActivityPubStatusAdapter @Inject constructor(
         }
     }
 
-    private fun ActivityPubStatusEntity.Mention.toMention(): Mention? {
+    private suspend fun ActivityPubStatusEntity.Mention.toMention(): Mention? {
         val webFinger = WebFinger.create(acct) ?: WebFinger.create(this.url) ?: return null
         return Mention(
             id = id,
             username = username,
             url = url,
             webFinger = webFinger,
-            protocol = createActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(),
         )
     }
 

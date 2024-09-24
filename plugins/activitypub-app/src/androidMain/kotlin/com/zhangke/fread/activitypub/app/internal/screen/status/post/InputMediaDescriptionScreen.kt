@@ -26,7 +26,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -34,6 +34,9 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.input_media_desc_input_hint
+import com.zhangke.fread.activitypub.app.input_media_desc_page_title
 import com.zhangke.fread.common.page.BaseScreen
 
 class InputMediaDescriptionScreen(
@@ -52,7 +55,7 @@ class InputMediaDescriptionScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(R.string.input_media_desc_page_title),
+                    title = stringResource(Res.string.input_media_desc_page_title),
                     onBackClick = {
                         onDescriptionInputted(inputtedText)
                         navigator.pop()
@@ -104,7 +107,7 @@ class InputMediaDescriptionScreen(
                         unfocusedIndicatorColor = Color.Transparent,
                     ),
                     placeholder = {
-                        Text(text = stringResource(R.string.input_media_desc_input_hint))
+                        Text(text = stringResource(Res.string.input_media_desc_input_hint))
                     },
                     onValueChange = {
                         inputtedText = it

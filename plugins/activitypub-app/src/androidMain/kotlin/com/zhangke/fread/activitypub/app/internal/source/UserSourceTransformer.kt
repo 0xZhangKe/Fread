@@ -16,10 +16,9 @@ class UserSourceTransformer @Inject constructor(
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val mapCustomEmoji: MapCustomEmojiUseCase,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    private val context: ApplicationContext,
 ) {
 
-    fun createByUserEntity(entity: ActivityPubAccountEntity): StatusSource {
+    suspend fun createByUserEntity(entity: ActivityPubAccountEntity): StatusSource {
         val webFinger = accountEntityAdapter.toWebFinger(entity)
         val uri = userUriTransformer.build(webFinger, FormalBaseUrl.parse(entity.url)!!)
         val emojis = entity.emojis.map(emojiEntityAdapter::toEmoji)
@@ -28,7 +27,7 @@ class UserSourceTransformer @Inject constructor(
             name = entity.displayName,
             description = mapCustomEmoji(entity.note, emojis),
             thumbnail = entity.avatar,
-            protocol = createActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(),
         )
     }
 }

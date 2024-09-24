@@ -13,17 +13,18 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_notification_follow_request
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FollowRequestNotification(
@@ -41,7 +42,7 @@ fun FollowRequestNotification(
             icon = Icons.Default.PersonAddAlt1,
             avatar = null,
             accountName = null,
-            interactionDesc = stringResource(R.string.activity_pub_notification_follow_request),
+            interactionDesc = stringResource(Res.string.activity_pub_notification_follow_request),
             style = style,
         )
 

@@ -2,6 +2,7 @@ plugins {
     id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -66,4 +67,17 @@ dependencies {
     kspAll(libs.kotlinInject.compiler)
     kspAll(libs.auto.service.ksp)
     kspAll(libs.krouter.collecting.compiler)
+}
+
+
+compose {
+    resources {
+        publicResClass = false
+        packageOfResClass = "com.zhangke.fread.activitypub.app"
+        generateResClass = always
+    }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

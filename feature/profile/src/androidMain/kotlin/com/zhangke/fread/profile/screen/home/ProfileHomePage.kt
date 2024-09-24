@@ -35,7 +35,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -52,13 +51,16 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
-import com.zhangke.fread.profile.R
+import com.zhangke.fread.feature.profile.Res
+import com.zhangke.fread.feature.profile.profile_page_logout_dialog_content
+import com.zhangke.fread.feature.profile.profile_page_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import org.jetbrains.compose.resources.stringResource
 
 class ProfileHomePage : BaseScreen() {
 
@@ -139,7 +141,7 @@ class ProfileHomePage : BaseScreen() {
                 ) {
                     Text(
                         modifier = Modifier,
-                        text = stringResource(R.string.profile_page_title),
+                        text = stringResource(Res.string.profile_page_title),
                         style = MaterialTheme.typography.displayMedium,
                         color = MaterialTheme.colorScheme.onBackground,
                     )
@@ -313,7 +315,7 @@ class ProfileHomePage : BaseScreen() {
         if (showLogoutDialog) {
             FreadDialog(
                 onDismissRequest = { showLogoutDialog = false },
-                contentText = stringResource(id = R.string.profile_page_logout_dialog_content),
+                contentText = stringResource(Res.string.profile_page_logout_dialog_content),
                 onPositiveClick = {
                     showLogoutDialog = false
                     onLogoutClick()

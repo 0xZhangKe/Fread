@@ -28,7 +28,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -39,8 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -56,11 +53,35 @@ import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.profile.R
+import com.zhangke.fread.feature.profile.Res
+import com.zhangke.fread.feature.profile.ic_code
+import com.zhangke.fread.feature.profile.ic_ratting
+import com.zhangke.fread.feature.profile.profile_setting_about_title
+import com.zhangke.fread.feature.profile.profile_setting_dark_mode_dark
+import com.zhangke.fread.feature.profile.profile_setting_dark_mode_follow_system
+import com.zhangke.fread.feature.profile.profile_setting_dark_mode_light
+import com.zhangke.fread.feature.profile.profile_setting_dark_mode_title
+import com.zhangke.fread.feature.profile.profile_setting_font_size
+import com.zhangke.fread.feature.profile.profile_setting_font_size_large
+import com.zhangke.fread.feature.profile.profile_setting_font_size_medium
+import com.zhangke.fread.feature.profile.profile_setting_font_size_small
+import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play
+import com.zhangke.fread.feature.profile.profile_setting_language_en
+import com.zhangke.fread.feature.profile.profile_setting_language_system
+import com.zhangke.fread.feature.profile.profile_setting_language_title
+import com.zhangke.fread.feature.profile.profile_setting_language_zh
+import com.zhangke.fread.feature.profile.profile_setting_open_source_desc
+import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback
+import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_desc
+import com.zhangke.fread.feature.profile.profile_setting_open_source_title
+import com.zhangke.fread.feature.profile.profile_setting_ratting
+import com.zhangke.fread.feature.profile.profile_setting_ratting_desc
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 class SettingScreen : BaseScreen() {
 
@@ -162,9 +183,9 @@ class SettingScreen : BaseScreen() {
                 )
                 FeedbackItem()
                 SettingItem(
-                    icon = ImageVector.vectorResource(id = R.drawable.ic_code),
-                    title = stringResource(R.string.profile_setting_open_source_title),
-                    subtitle = stringResource(R.string.profile_setting_open_source_desc),
+                    icon = vectorResource(Res.drawable.ic_code),
+                    title = stringResource(Res.string.profile_setting_open_source_title),
+                    subtitle = stringResource(Res.string.profile_setting_open_source_desc),
                     onClick = onOpenSourceClick,
                 )
                 SettingItem(
@@ -173,17 +194,17 @@ class SettingScreen : BaseScreen() {
                             modifier = Modifier
                                 .size(24.dp)
                                 .padding(2.dp),
-                            imageVector = ImageVector.vectorResource(R.drawable.ic_ratting),
-                            contentDescription = stringResource(R.string.profile_setting_ratting),
+                            imageVector = vectorResource(Res.drawable.ic_ratting),
+                            contentDescription = stringResource(Res.string.profile_setting_ratting),
                         )
                     },
-                    title = stringResource(R.string.profile_setting_ratting),
-                    subtitle = stringResource(R.string.profile_setting_ratting_desc),
+                    title = stringResource(Res.string.profile_setting_ratting),
+                    subtitle = stringResource(Res.string.profile_setting_ratting_desc),
                     onClick = onRatingClick,
                 )
                 SettingItem(
                     icon = Icons.Outlined.Info,
-                    title = stringResource(R.string.profile_setting_about_title),
+                    title = stringResource(Res.string.profile_setting_about_title),
                     subtitle = uiState.settingInfo,
                     onClick = onAboutClick,
                 )
@@ -210,7 +231,7 @@ class SettingScreen : BaseScreen() {
             )
             Spacer(modifier = Modifier.width(16.dp))
             Text(
-                text = stringResource(R.string.profile_setting_inline_video_auto_play),
+                text = stringResource(Res.string.profile_setting_inline_video_auto_play),
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
             )
@@ -232,7 +253,7 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithPopup(
             icon = Icons.Default.Contrast,
-            title = stringResource(R.string.profile_setting_dark_mode_title),
+            title = stringResource(Res.string.profile_setting_dark_mode_title),
             subtitle = uiState.dayNightMode.modeName,
             dropDownItemCount = DayNightMode.entries.size,
             dropDownItemText = { DayNightMode.entries[it].modeName },
@@ -249,7 +270,7 @@ class SettingScreen : BaseScreen() {
     ) {
         SettingItemWithPopup(
             icon = Icons.Default.TextFields,
-            title = stringResource(R.string.profile_setting_font_size),
+            title = stringResource(Res.string.profile_setting_font_size),
             subtitle = contentSize.sizeName,
             dropDownItemCount = StatusContentSize.entries.size,
             dropDownItemText = { StatusContentSize.entries[it].sizeName },
@@ -266,7 +287,7 @@ class SettingScreen : BaseScreen() {
         val activityLanguageHelper = LocalActivityLanguageHelper.current
         SettingItemWithPopup(
             icon = Icons.Default.Language,
-            title = stringResource(R.string.profile_setting_language_title),
+            title = stringResource(Res.string.profile_setting_language_title),
             subtitle = activityLanguageHelper.currentType.typeName,
             dropDownItemCount = LanguageSettingType.entries.size,
             dropDownItemText = { LanguageSettingType.entries[it].typeName },
@@ -283,8 +304,8 @@ class SettingScreen : BaseScreen() {
         }
         SettingItem(
             icon = Icons.AutoMirrored.Outlined.Chat,
-            title = stringResource(R.string.profile_setting_open_source_feedback),
-            subtitle = stringResource(R.string.profile_setting_open_source_feedback_desc),
+            title = stringResource(Res.string.profile_setting_open_source_feedback),
+            subtitle = stringResource(Res.string.profile_setting_open_source_feedback_desc),
             onClick = {
                 reportClick(SettingElements.FEEDBACK)
                 showFeedbackBottomSheet = true
@@ -400,33 +421,30 @@ class SettingScreen : BaseScreen() {
     }
 
     private val LanguageSettingType.typeName: String
-        @ReadOnlyComposable
         @Composable
         get() {
             return when (this) {
-                LanguageSettingType.CN -> stringResource(R.string.profile_setting_language_zh)
-                LanguageSettingType.EN -> stringResource(R.string.profile_setting_language_en)
-                LanguageSettingType.SYSTEM -> stringResource(R.string.profile_setting_language_system)
+                LanguageSettingType.CN -> stringResource(Res.string.profile_setting_language_zh)
+                LanguageSettingType.EN -> stringResource(Res.string.profile_setting_language_en)
+                LanguageSettingType.SYSTEM -> stringResource(Res.string.profile_setting_language_system)
             }
         }
 
     private val DayNightMode.modeName: String
-        @ReadOnlyComposable
         @Composable
         get() {
             return when (this) {
-                DayNightMode.NIGHT -> stringResource(R.string.profile_setting_dark_mode_dark)
-                DayNightMode.DAY -> stringResource(R.string.profile_setting_dark_mode_light)
-                DayNightMode.FOLLOW_SYSTEM -> stringResource(R.string.profile_setting_dark_mode_follow_system)
+                DayNightMode.NIGHT -> stringResource(Res.string.profile_setting_dark_mode_dark)
+                DayNightMode.DAY -> stringResource(Res.string.profile_setting_dark_mode_light)
+                DayNightMode.FOLLOW_SYSTEM -> stringResource(Res.string.profile_setting_dark_mode_follow_system)
             }
         }
 
     private val StatusContentSize.sizeName: String
-        @ReadOnlyComposable
         @Composable
         get() = when (this) {
-            StatusContentSize.SMALL -> stringResource(R.string.profile_setting_font_size_small)
-            StatusContentSize.MEDIUM -> stringResource(R.string.profile_setting_font_size_medium)
-            StatusContentSize.LARGE -> stringResource(R.string.profile_setting_font_size_large)
+            StatusContentSize.SMALL -> stringResource(Res.string.profile_setting_font_size_small)
+            StatusContentSize.MEDIUM -> stringResource(Res.string.profile_setting_font_size_medium)
+            StatusContentSize.LARGE -> stringResource(Res.string.profile_setting_font_size_large)
         }
 }

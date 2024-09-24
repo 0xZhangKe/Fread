@@ -37,19 +37,18 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.utils.SystemPageUtils
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
+import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
@@ -99,7 +98,7 @@ class SettingScreen : BaseScreen() {
 
         val activityLanguageHelper = LocalActivityLanguageHelper.current
         val activityDayNightHelper = LocalActivityDayNightHelper.current
-        val context = LocalContext.current
+        val activityTextHandler = LocalActivityTextHandler.current
 
         SettingContent(
             uiState = uiState,
@@ -128,7 +127,7 @@ class SettingScreen : BaseScreen() {
             },
             onRatingClick = {
                 reportClick(SettingElements.RATTING)
-                SystemPageUtils.openAppMarket(context)
+                activityTextHandler.openAppMarket()
             },
             onAboutClick = {
                 reportClick(SettingElements.ABOUT)

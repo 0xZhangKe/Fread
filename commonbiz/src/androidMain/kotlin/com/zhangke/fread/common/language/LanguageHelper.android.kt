@@ -7,7 +7,6 @@ import android.os.Build.VERSION
 import android.os.Bundle
 import android.os.LocaleList
 import androidx.activity.ComponentActivity
-import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.ActivityLifecycleCallbacksAdapter
 import com.zhangke.fread.common.config.LocalConfigManager
@@ -89,13 +88,13 @@ class LanguageHelper @Inject constructor(
 }
 
 @ActivityScope
-class ActivityLanguageHelper @Inject constructor(
+actual class ActivityLanguageHelper @Inject constructor(
     private val languageHelper: LanguageHelper,
     private val activity: ComponentActivity,
 ) {
-    val currentType get() = languageHelper.currentType
+    actual val currentType get() = languageHelper.currentType
 
-    fun setLanguage(type: LanguageSettingType) {
+    actual fun setLanguage(type: LanguageSettingType) {
         languageHelper.setLanguage(type)
         activity.changeLanguage(type)
         activity.recreate()
@@ -117,21 +116,10 @@ private fun Context.changeLanguage(type: LanguageSettingType) {
     resources.updateConfiguration(configuration, metrics)
 }
 
-enum class LanguageSettingType(val value: Int) {
-
-    CN(1),
-    EN(2),
-    SYSTEM(3),
-
-    ;
-
-    fun toLocale(): Locale? {
-        return when (this) {
-            CN -> Locale.SIMPLIFIED_CHINESE
-            EN -> Locale.ENGLISH
-            SYSTEM -> null
-        }
+private fun LanguageSettingType.toLocale(): Locale? {
+    return when (this) {
+        LanguageSettingType.CN -> Locale.SIMPLIFIED_CHINESE
+        LanguageSettingType.EN -> Locale.ENGLISH
+        LanguageSettingType.SYSTEM -> null
     }
 }
-
-val LocalActivityLanguageHelper = staticCompositionLocalOf<ActivityLanguageHelper> { error("No ActivityLanguageHelper provided") }

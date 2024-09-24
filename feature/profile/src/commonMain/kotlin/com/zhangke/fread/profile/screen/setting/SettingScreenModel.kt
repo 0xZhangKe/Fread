@@ -1,19 +1,18 @@
 package com.zhangke.fread.profile.screen.setting
 
-import android.content.pm.PackageManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
-import com.zhangke.fread.common.di.ApplicationContext
+import com.zhangke.fread.common.handler.TextHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class SettingScreenModel @Inject constructor(
-    private val appContext: ApplicationContext,
+    private val textHandler: TextHandler,
     private val freadConfigManager: FreadConfigManager,
     private val dayNightHelper: DayNightHelper,
 ) : ViewModel() {
@@ -60,12 +59,6 @@ class SettingScreenModel @Inject constructor(
     }
 
     private fun getAppVersionInfo(): String {
-        return try {
-            val info = appContext.packageManager.getPackageInfo(appContext.packageName, 0)
-            @Suppress("DEPRECATION")
-            "${info.versionName}(${info.versionCode})"
-        } catch (e: PackageManager.NameNotFoundException) {
-            "unknown"
-        }
+        return "${textHandler.versionName}(${textHandler.versionCode})"
     }
 }

@@ -17,16 +17,15 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.toast.toast
-import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.ic_fread_logo
 import com.zhangke.fread.feature.profile.Res
@@ -57,7 +56,7 @@ class AboutScreen : BaseScreen() {
     private fun AboutScreenContent(
         onBackClick: () -> Unit,
     ) {
-        val context = LocalContext.current
+        val textHandler = LocalActivityTextHandler.current
         val browserLauncher = LocalActivityBrowserLauncher.current
         Scaffold(
             topBar = {
@@ -91,7 +90,7 @@ class AboutScreen : BaseScreen() {
                     modifier = Modifier
                         .padding(top = 8.dp)
                         .align(Alignment.CenterHorizontally),
-                    text = context.packageName,
+                    text = textHandler.packageName,
                     style = MaterialTheme.typography.bodyMedium,
                 )
                 Spacer(modifier = Modifier.height(32.dp))
@@ -105,8 +104,8 @@ class AboutScreen : BaseScreen() {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 val version = remember {
-                    val versionName = SystemUtils.getAppVersionName(context)
-                    val versionCode = SystemUtils.getAppVersionCode(context)
+                    val versionName = textHandler.versionName
+                    val versionCode = textHandler.versionCode
                     "$versionName($versionCode)"
                 }
                 AboutClickableItem(
@@ -130,7 +129,7 @@ class AboutScreen : BaseScreen() {
                     clickableText = AppCommonConfig.AUTHOR_EMAIL,
                     showUnderline = false,
                     onClick = {
-                        SystemUtils.copyText(context, AppCommonConfig.AUTHOR_EMAIL)
+                        textHandler.copyText(AppCommonConfig.AUTHOR_EMAIL)
                         toast("Copied to clipboard")
                     },
                 )
@@ -140,7 +139,7 @@ class AboutScreen : BaseScreen() {
                     clickableText = AppCommonConfig.TELEGRAM_GROUP,
                     showUnderline = false,
                     onClick = {
-                        SystemUtils.copyText(context, AppCommonConfig.TELEGRAM_GROUP)
+                        textHandler.copyText(AppCommonConfig.TELEGRAM_GROUP)
                         browserLauncher.launchBySystemBrowser(AppCommonConfig.TELEGRAM_GROUP)
                     },
                 )

@@ -2,10 +2,6 @@ package com.zhangke.fread.common.daynight
 
 import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatDelegate
-import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.ReadOnlyComposable
-import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.di.ActivityScope
@@ -18,7 +14,7 @@ import kotlinx.coroutines.runBlocking
 import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
-class DayNightHelper @Inject constructor(
+actual class DayNightHelper @Inject constructor(
     private val localConfigManager: LocalConfigManager,
 ) {
 
@@ -27,7 +23,7 @@ class DayNightHelper @Inject constructor(
     }
 
     private val _dayNightModeFlow: MutableStateFlow<DayNightMode>
-    val dayNightModeFlow: StateFlow<DayNightMode>
+    actual val dayNightModeFlow: StateFlow<DayNightMode>
 
     init {
         val modeValue = runBlocking {
@@ -62,7 +58,7 @@ class DayNightHelper @Inject constructor(
 }
 
 @ActivityScope
-class ActivityDayNightHelper @Inject constructor(
+actual class ActivityDayNightHelper @Inject constructor(
     private val dayNightHelper: DayNightHelper,
     private val activity: ComponentActivity,
 ) {
@@ -73,7 +69,7 @@ class ActivityDayNightHelper @Inject constructor(
         AppCompatDelegate.setDefaultNightMode(dayNightModeFlow.value.modeValue)
     }
 
-    fun setMode(mode: DayNightMode) {
+    actual fun setMode(mode: DayNightMode) {
         activity.lifecycleScope.launch {
             dayNightHelper.setMode(mode)
             activity.recreate()
@@ -81,24 +77,10 @@ class ActivityDayNightHelper @Inject constructor(
     }
 }
 
-val LocalActivityDayNightHelper = staticCompositionLocalOf<ActivityDayNightHelper> { error("No ActivityDayNightHelper provided") }
+private val DayNightMode.modeValue: Int
+    get() = when (this) {
+        DayNightMode.DAY -> AppCompatDelegate.MODE_NIGHT_NO
+        DayNightMode.NIGHT -> AppCompatDelegate.MODE_NIGHT_YES
+        DayNightMode.FOLLOW_SYSTEM -> AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM
+    }
 
-enum class DayNightMode(val modeValue: Int) {
-
-    DAY(AppCompatDelegate.MODE_NIGHT_NO),
-
-    NIGHT(AppCompatDelegate.MODE_NIGHT_YES),
-
-    FOLLOW_SYSTEM(AppCompatDelegate.MODE_NIGHT_FOLLOW_SYSTEM);
-
-    val isNight: Boolean
-        @ReadOnlyComposable
-        @Composable
-        get() {
-            return when (this) {
-                DAY -> false
-                NIGHT -> true
-                FOLLOW_SYSTEM -> isSystemInDarkTheme()
-            }
-        }
-}

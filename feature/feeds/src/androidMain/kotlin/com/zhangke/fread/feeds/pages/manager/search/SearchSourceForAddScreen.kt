@@ -10,9 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -22,9 +20,10 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SearchToolbar
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.feeds.R
 import com.zhangke.fread.feeds.composable.StatusSourceNode
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
+import com.zhangke.fread.feeds.search_feeds_title_hint
+import org.jetbrains.compose.resources.stringResource
 
 internal class SearchSourceForAddScreen : BaseScreen() {
 
@@ -68,7 +67,7 @@ internal class SearchSourceForAddScreen : BaseScreen() {
         }
         SearchToolbar(
             onBackClick = onBackClick,
-            placeholderText = stringResource(R.string.search_feeds_title_hint),
+            placeholderText = stringResource(com.zhangke.fread.feeds.Res.string.search_feeds_title_hint),
             onQueryChange = onQueryChanged,
             onSearch = {
                 onSearchClick(it)

@@ -9,8 +9,11 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.feeds.R
+import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
+import com.zhangke.fread.feeds.add_feeds_page_empty_name_exist
+import com.zhangke.fread.feeds.add_feeds_page_empty_name_tips
+import com.zhangke.fread.feeds.add_feeds_page_empty_source_tips
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
@@ -96,16 +99,16 @@ class AddMixedFeedsViewModel @Inject constructor(
         launchInViewModel {
             val currentState = viewModelState.value
             if (currentState.sourceName.isEmpty()) {
-                _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_name_tips))
+                _errorMessageFlow.emit(textOf(Res.string.add_feeds_page_empty_name_tips))
                 return@launchInViewModel
             }
             if (contentConfigRepo.checkNameExist(currentState.sourceName)) {
-                _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_name_exist))
+                _errorMessageFlow.emit(textOf(Res.string.add_feeds_page_empty_name_exist))
                 return@launchInViewModel
             }
             val sourceList = currentState.sourceList
             if (sourceList.isEmpty()) {
-                _errorMessageFlow.emit(textOf(R.string.add_feeds_page_empty_source_tips))
+                _errorMessageFlow.emit(textOf(Res.string.add_feeds_page_empty_source_tips))
                 return@launchInViewModel
             }
             performAddContent()

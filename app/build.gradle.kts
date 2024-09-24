@@ -133,6 +133,7 @@ dependencies {
     implementation(libs.kotlinx.serialization.json)
     implementation(libs.composeReorderable)
     implementation(libs.multiplatformsettings.coroutines)
+    implementation(libs.rssparser)
 
     implementation(libs.bundles.googlePlayReview)
 

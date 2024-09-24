@@ -2,6 +2,7 @@ plugins {
     id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -29,6 +30,9 @@ kotlin {
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.bundles.voyager)
+                implementation(libs.uri.kmp)
+                implementation(libs.rssparser)
+                implementation(libs.okio)
 
                 implementation(libs.krouter.runtime)
             }
@@ -41,7 +45,6 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.androidx.core.ktx)
-                implementation(libs.rssparser)
             }
         }
     }
@@ -60,4 +63,8 @@ compose {
         packageOfResClass = "com.zhangke.fread.rss"
         generateResClass = always
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

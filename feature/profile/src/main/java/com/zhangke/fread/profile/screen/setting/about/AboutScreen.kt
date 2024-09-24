@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
@@ -27,10 +26,12 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.SystemUtils
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.commonbiz.ic_fread_logo
 import com.zhangke.fread.profile.R
+import org.jetbrains.compose.resources.painterResource
 
 class AboutScreen : BaseScreen() {
 
@@ -50,6 +51,7 @@ class AboutScreen : BaseScreen() {
         onBackClick: () -> Unit,
     ) {
         val context = LocalContext.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         Scaffold(
             topBar = {
                 Toolbar(
@@ -68,7 +70,7 @@ class AboutScreen : BaseScreen() {
                         .align(Alignment.CenterHorizontally)
                         .padding(top = 32.dp)
                         .size(80.dp),
-                    painter = painterResource(com.zhangke.fread.commonbiz.R.drawable.ic_fread_logo),
+                    painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.ic_fread_logo),
                     contentDescription = "Logo",
                 )
                 Text(
@@ -91,7 +93,7 @@ class AboutScreen : BaseScreen() {
                     clickableText = AppCommonConfig.WEBSITE,
                     showUnderline = true,
                     onClick = {
-                        BrowserLauncher.launchFreadLandingPage(context)
+                        browserLauncher.launchFreadLandingPage()
                     },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -112,7 +114,7 @@ class AboutScreen : BaseScreen() {
                     clickableText = AppCommonConfig.AUTHOR,
                     showUnderline = true,
                     onClick = {
-                        BrowserLauncher.launchAuthorWebsite(context)
+                        browserLauncher.launchAuthorWebsite()
                     },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -132,10 +134,7 @@ class AboutScreen : BaseScreen() {
                     showUnderline = false,
                     onClick = {
                         SystemUtils.copyText(context, AppCommonConfig.TELEGRAM_GROUP)
-                        BrowserLauncher.launchBySystemBrowser(
-                            context,
-                            AppCommonConfig.TELEGRAM_GROUP
-                        )
+                        browserLauncher.launchBySystemBrowser(AppCommonConfig.TELEGRAM_GROUP)
                     },
                 )
                 Spacer(modifier = Modifier.height(16.dp))
@@ -144,7 +143,7 @@ class AboutScreen : BaseScreen() {
                     clickableText = AppCommonConfig.PRIVACY_POLICY,
                     showUnderline = false,
                     onClick = {
-                        BrowserLauncher.launchWebTabInApp(context, AppCommonConfig.PRIVACY_POLICY)
+                        browserLauncher.launchWebTabInApp(AppCommonConfig.PRIVACY_POLICY)
                     },
                 )
             }

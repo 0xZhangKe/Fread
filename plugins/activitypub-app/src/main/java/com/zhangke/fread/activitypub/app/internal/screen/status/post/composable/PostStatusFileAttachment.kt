@@ -53,6 +53,8 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.InputMediaD
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
+import com.zhangke.fread.commonbiz.image
+import com.zhangke.fread.commonbiz.video
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -187,9 +189,9 @@ private fun MediaFileContent(
             )
             if (file is PostStatusMediaAttachmentFile.LocalFile) {
                 val mediaType = if (file.file.isVideo) {
-                    stringResource(com.zhangke.fread.commonbiz.R.string.video)
+                    org.jetbrains.compose.resources.stringResource(com.zhangke.fread.commonbiz.Res.string.video)
                 } else {
-                    stringResource(com.zhangke.fread.commonbiz.R.string.image)
+                    org.jetbrains.compose.resources.stringResource(com.zhangke.fread.commonbiz.Res.string.image)
                 }
                 Text(
                     modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),

@@ -20,7 +20,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -31,7 +30,7 @@ import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.R
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
@@ -111,14 +110,14 @@ private fun ServerAboutAnnouncement(
     entity: ActivityPubAnnouncementEntity,
     baseUrl: FormalBaseUrl,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     FreadRichText(
         modifier = modifier,
         content = entity.content,
         textSelectable = true,
         onUrlClick = {
             val role = IdentityRole(null, baseUrl = baseUrl)
-            BrowserLauncher.launchWebTabInApp(context, it, role)
+            browserLauncher.launchWebTabInApp(it, role)
         },
     )
 }

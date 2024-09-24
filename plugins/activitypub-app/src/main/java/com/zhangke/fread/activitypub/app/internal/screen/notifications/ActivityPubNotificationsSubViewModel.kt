@@ -223,7 +223,7 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
-    private fun StatusNotification.toUiState(): NotificationUiState {
+    private suspend fun StatusNotification.toUiState(): NotificationUiState {
         return NotificationUiState(
             id = id,
             role = role,

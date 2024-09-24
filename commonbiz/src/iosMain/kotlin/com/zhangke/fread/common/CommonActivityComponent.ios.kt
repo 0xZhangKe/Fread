@@ -1,3 +1,51 @@
 package com.zhangke.fread.common
 
-actual interface CommonActivityPlatformComponent
+import androidx.room.Room
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
+import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
+import com.zhangke.fread.common.status.repo.db.StatusDatabase
+import kotlinx.cinterop.ExperimentalForeignApi
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import me.tatarka.inject.annotations.Provides
+import platform.Foundation.NSDocumentDirectory
+import platform.Foundation.NSFileManager
+import platform.Foundation.NSUserDomainMask
+
+actual interface CommonActivityPlatformComponent {
+
+    @ApplicationScope
+    @Provides
+    fun provideStatusDatabases(): StatusDatabase {
+        val dbFilePath = documentDirectory() + "/${StatusDatabase.DB_NAME}"
+        return Room.databaseBuilder<StatusDatabase>(
+            name = dbFilePath,
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
+            .build()
+    }
+
+    @Provides
+    fun provideContentConfigDatabases(): ContentConfigDatabases {
+        val dbFilePath = documentDirectory() + "/${ContentConfigDatabases.DB_NAME}"
+        return Room.databaseBuilder<ContentConfigDatabases>(
+            name = dbFilePath,
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
+            .build()
+    }
+}
+
+// From: https://developer.android.com/kotlin/multiplatform/room#ios
+@OptIn(ExperimentalForeignApi::class)
+private fun documentDirectory(): String {
+    val documentDirectory = NSFileManager.defaultManager.URLForDirectory(
+        directory = NSDocumentDirectory,
+        inDomain = NSUserDomainMask,
+        appropriateForURL = null,
+        create = false,
+        error = null,
+    )
+    return requireNotNull(documentDirectory?.path)
+}

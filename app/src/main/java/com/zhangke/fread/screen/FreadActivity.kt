@@ -27,9 +27,11 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
+import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
@@ -77,6 +79,8 @@ class FreadActivity : ComponentActivity() {
                     LocalFreadReviewManager provides component.freadReviewManager,
                     LocalActivityLanguageHelper provides activityComponent.activityLanguageHelper,
                     LocalActivityDayNightHelper provides activityComponent.activityDayNightHelper,
+                    LocalActivityBrowserLauncher provides activityComponent.activityBrowserLauncher,
+                    LocalTextHandler provides component.textHandler,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {
@@ -85,7 +89,7 @@ class FreadActivity : ComponentActivity() {
                                 sheetShape = RoundedCornerShape(12.dp),
                             ) {
                                 Navigator(
-                                    screen = FreadScreen(),
+                                    screen = remember { FreadScreen() },
                                     key = ROOT_NAVIGATOR_KEY,
                                 ) { navigator ->
                                     SlideTransition(

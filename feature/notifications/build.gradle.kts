@@ -20,12 +20,13 @@ dependencies {
     implementation(project(":commonbiz:sharedscreen"))
     implementation(project(":commonbiz:status-ui"))
 
+    implementation(compose.components.resources)
+
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.annotation)
-    implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.bundles.androidx.fragment)
     implementation(libs.bundles.androidx.activity)
     implementation(libs.bundles.androidx.preference)
@@ -33,7 +34,6 @@ dependencies {
     implementation(libs.bundles.androidx.collection)
     implementation(libs.androidx.browser)
     implementation(libs.androidx.room)
-    implementation(libs.androidx.room.ktx)
     ksp(libs.androidx.room.compiler)
     implementation(libs.kotlinInject.runtime)
     ksp(libs.kotlinInject.compiler)

@@ -26,10 +26,9 @@ class FreadConfigManager @Inject constructor(
     var autoPlayInlineVideo: Boolean = false
         private set
 
-    suspend fun initConfig() = withContext(Dispatchers.IO) {
+    suspend fun initConfig() {
         _statusConfigFlow.value = readLocalStatusConfig()
-        autoPlayInlineVideo =
-            localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
+        autoPlayInlineVideo = localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
     }
 
     private suspend fun readLocalStatusConfig(): StatusConfig {

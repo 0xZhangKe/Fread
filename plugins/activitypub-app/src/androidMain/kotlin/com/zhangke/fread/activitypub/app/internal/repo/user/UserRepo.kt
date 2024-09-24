@@ -26,7 +26,9 @@ class UserRepo @Inject constructor(
         return clientManager.getClient(role)
             .accountRepo
             .getAccount(userId)
-            .map(userSourceTransformer::createByUserEntity)
+            .map {
+                userSourceTransformer.createByUserEntity(it)
+            }
     }
 
     suspend fun lookupUserSource(
@@ -43,6 +45,6 @@ class UserRepo @Inject constructor(
                     }
                 }
             }
-            .map { it?.let(userSourceTransformer::createByUserEntity) }
+            .map { it?.let { userSourceTransformer.createByUserEntity(it) } }
     }
 }

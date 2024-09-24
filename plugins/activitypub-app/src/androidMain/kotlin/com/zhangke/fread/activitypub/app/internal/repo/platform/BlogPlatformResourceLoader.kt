@@ -31,7 +31,7 @@ class BlogPlatformResourceLoader @Inject constructor(
             ?: emptyList()
     }
 
-    private fun JsonObject.toPlatformSnapshot(): PlatformSnapshot? {
+    private suspend fun JsonObject.toPlatformSnapshot(): PlatformSnapshot? {
         val domain = getAsString("domain") ?: return null
         return PlatformSnapshot(
             domain = domain,
@@ -42,7 +42,7 @@ class BlogPlatformResourceLoader @Inject constructor(
             totalUsers = getAsInt("total_users") ?: 0,
             lastWeekUsers = getAsInt("last_week_users") ?: 0,
             category = getAsString("category").orEmpty(),
-            protocol = createActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(),
         )
     }
 

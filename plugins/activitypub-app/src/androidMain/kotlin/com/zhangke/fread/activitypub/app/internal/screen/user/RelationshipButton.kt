@@ -20,13 +20,22 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_relationship_btn_dialog_content_cancel_blocking
+import com.zhangke.fread.activitypub.app.activity_pub_relationship_btn_dialog_content_cancel_follow
+import com.zhangke.fread.activitypub.app.activity_pub_relationship_btn_dialog_content_cancel_follow_request
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_blocking
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_following
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_not_follow
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_requested
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_request_by_tip
 
 @Composable
 fun RelationshipStateButton(
@@ -47,14 +56,14 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.ALERT,
-                text = stringResource(R.string.activity_pub_user_detail_relationship_blocking),
+                text = stringResource(Res.string.activity_pub_user_detail_relationship_blocking),
                 onClick = {
                     showDialog = true
                 },
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(R.string.activity_pub_relationship_btn_dialog_content_cancel_blocking),
+                    content = stringResource(Res.string.activity_pub_relationship_btn_dialog_content_cancel_blocking),
                     onConfirm = onUnblockClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -65,7 +74,7 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.DISABLE,
-                text = stringResource(R.string.activity_pub_user_detail_relationship_not_follow),
+                text = stringResource(Res.string.activity_pub_user_detail_relationship_not_follow),
                 onClick = onUnfollowClick,
             )
         }
@@ -77,14 +86,14 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.STANDARD,
-                text = stringResource(R.string.activity_pub_user_detail_relationship_following),
+                text = stringResource(Res.string.activity_pub_user_detail_relationship_following),
                 onClick = {
                     showDialog = true
                 },
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(R.string.activity_pub_relationship_btn_dialog_content_cancel_follow),
+                    content = stringResource(Res.string.activity_pub_relationship_btn_dialog_content_cancel_follow),
                     onConfirm = onUnfollowClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -95,7 +104,7 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.ACTIVE,
-                text = stringResource(R.string.activity_pub_user_detail_relationship_not_follow),
+                text = stringResource(Res.string.activity_pub_user_detail_relationship_not_follow),
                 onClick = onFollowClick,
             )
         }
@@ -107,12 +116,12 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.STANDARD,
-                text = stringResource(R.string.activity_pub_user_detail_relationship_requested),
+                text = stringResource(Res.string.activity_pub_user_detail_relationship_requested),
                 onClick = { showDialog = true },
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(R.string.activity_pub_relationship_btn_dialog_content_cancel_follow_request),
+                    content = stringResource(Res.string.activity_pub_relationship_btn_dialog_content_cancel_follow_request),
                     onConfirm = onCancelFollowRequestClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -164,7 +173,7 @@ private fun FollowRequestBy(
             .padding(horizontal = 6.dp, vertical = 6.dp),
     ) {
         Text(
-            text = stringResource(R.string.activity_pub_user_detail_request_by_tip),
+            text = stringResource(Res.string.activity_pub_user_detail_request_by_tip),
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,
         )

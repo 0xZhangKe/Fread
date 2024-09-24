@@ -12,13 +12,14 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_notification_follow_desc
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FollowNotification(
@@ -58,7 +59,7 @@ fun FollowNotification(
 
         Text(
             modifier = Modifier.padding(start = 6.dp),
-            text = stringResource(R.string.activity_pub_notification_follow_desc),
+            text = stringResource(Res.string.activity_pub_notification_follow_desc),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

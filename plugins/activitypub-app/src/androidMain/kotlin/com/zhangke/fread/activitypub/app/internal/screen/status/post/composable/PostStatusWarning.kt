@@ -10,11 +10,12 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.post_status_content_warning
 import com.zhangke.fread.status.ui.drawSpoilerBackground
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PostStatusWarning(
@@ -33,7 +34,7 @@ fun PostStatusWarning(
             onValueChange = onValueChanged,
             placeholder = {
                 Text(
-                    text = stringResource(R.string.post_status_content_warning),
+                    text = stringResource(Res.string.post_status_content_warning),
                     style = MaterialTheme.typography.bodyMedium,
                     color = inverseOnSurfaceDark,
                 )

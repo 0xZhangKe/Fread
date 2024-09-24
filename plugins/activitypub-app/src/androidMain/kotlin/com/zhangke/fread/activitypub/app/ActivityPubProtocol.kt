@@ -1,12 +1,12 @@
 package com.zhangke.fread.activitypub.app
 
-import android.content.Context
 import com.zhangke.fread.status.model.ACTIVITY_PUB_PROTOCOL_ID
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import org.jetbrains.compose.resources.getString
 
-fun createActivityPubProtocol(context: Context): StatusProviderProtocol {
+suspend fun createActivityPubProtocol(): StatusProviderProtocol {
     return StatusProviderProtocol(
         id = ACTIVITY_PUB_PROTOCOL_ID,
-        name = context.getString(R.string.activity_pub_protocol_name),
+        name = getString(Res.string.activity_pub_protocol_name),
     )
 }

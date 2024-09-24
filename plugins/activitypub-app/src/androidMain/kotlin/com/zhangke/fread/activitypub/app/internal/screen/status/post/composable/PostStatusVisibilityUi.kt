@@ -23,11 +23,16 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.PopupProperties
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.post_status_scope_follower_only
+import com.zhangke.fread.activitypub.app.post_status_scope_mentioned_only
+import com.zhangke.fread.activitypub.app.post_status_scope_public
+import com.zhangke.fread.activitypub.app.post_status_scope_unlisted
 import com.zhangke.fread.status.model.StatusVisibility
+import org.jetbrains.compose.resources.StringResource
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun PostStatusVisibilityUi(
@@ -90,10 +95,10 @@ internal fun PostStatusVisibilityUi(
     }
 }
 
-private val StatusVisibility.describeStringId: Int
+private val StatusVisibility.describeStringId: StringResource
     get() = when (this) {
-        StatusVisibility.PUBLIC -> R.string.post_status_scope_public
-        StatusVisibility.UNLISTED -> R.string.post_status_scope_unlisted
-        StatusVisibility.PRIVATE -> R.string.post_status_scope_follower_only
-        StatusVisibility.DIRECT -> R.string.post_status_scope_mentioned_only
+        StatusVisibility.PUBLIC -> Res.string.post_status_scope_public
+        StatusVisibility.UNLISTED -> Res.string.post_status_scope_unlisted
+        StatusVisibility.PRIVATE -> Res.string.post_status_scope_follower_only
+        StatusVisibility.DIRECT -> Res.string.post_status_scope_mentioned_only
     }

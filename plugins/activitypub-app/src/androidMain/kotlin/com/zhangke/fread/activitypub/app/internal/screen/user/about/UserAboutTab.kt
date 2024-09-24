@@ -13,7 +13,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -24,6 +24,9 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_about
+import com.zhangke.fread.activitypub.app.activity_pub_user_detail_tab_about_joined
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.Emoji
@@ -38,7 +41,7 @@ class UserAboutTab(
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(
-            title = stringResource(R.string.activity_pub_user_detail_tab_about)
+            title = stringResource(Res.string.activity_pub_user_detail_tab_about)
         )
 
     @Composable
@@ -74,7 +77,7 @@ class UserAboutTab(
             if (!uiState.joinedDatetime.isNullOrEmpty()) {
                 Text(
                     text = stringResource(
-                        R.string.activity_pub_user_detail_tab_about_joined,
+                        Res.string.activity_pub_user_detail_tab_about_joined,
                         uiState.joinedDatetime
                     ),
                 )

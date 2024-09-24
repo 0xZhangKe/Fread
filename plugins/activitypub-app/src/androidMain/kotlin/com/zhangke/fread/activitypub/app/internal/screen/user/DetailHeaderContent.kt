@@ -21,7 +21,6 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,10 +29,12 @@ import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.freadPlaceholder
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.detail_page_banner_background
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun DetailHeaderContent(
@@ -229,7 +230,7 @@ private fun Banner(
     Box(modifier = modifier) {
         Image(
             modifier = Modifier.fillMaxSize(),
-            painter = painterResource(R.drawable.detail_page_banner_background),
+            painter = painterResource(Res.drawable.detail_page_banner_background),
             contentDescription = null,
             contentScale = ContentScale.Crop,
         )

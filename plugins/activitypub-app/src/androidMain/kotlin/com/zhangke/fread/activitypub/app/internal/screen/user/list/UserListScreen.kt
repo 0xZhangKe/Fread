@@ -18,7 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
@@ -31,7 +31,16 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_blocked_user_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_blocked_user_list_unblock
+import com.zhangke.fread.activitypub.app.activity_pub_muted_user_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_muted_user_list_unmute
+import com.zhangke.fread.activitypub.app.activity_pub_status_favourites_by_title
+import com.zhangke.fread.activitypub.app.activity_pub_status_reblog_by_title
+import com.zhangke.fread.activitypub.app.activity_pub_user_follower_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_user_following_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_user_list_empty
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.common.users.CommonUserPlaceHolder
 import com.zhangke.fread.activitypub.app.internal.screen.user.common.users.CommonUserUi
@@ -39,7 +48,6 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
-import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_follow
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteUri
@@ -156,7 +164,7 @@ class UserListScreen(
                     Box(modifier = Modifier.fillMaxSize()) {
                         Text(
                             modifier = Modifier.align(Alignment.Center),
-                            text = stringResource(R.string.activity_pub_user_list_empty),
+                            text = stringResource(Res.string.activity_pub_user_list_empty),
                         )
                     }
                 }
@@ -177,7 +185,7 @@ class UserListScreen(
                 Spacer(modifier = Modifier.width(6.dp))
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(R.string.activity_pub_blocked_user_list_unblock),
+                    text = stringResource(Res.string.activity_pub_blocked_user_list_unblock),
                     style = TextButtonStyle.STANDARD,
                     onClick = {
                         onUnblockClick(author)
@@ -189,7 +197,7 @@ class UserListScreen(
                 Spacer(modifier = Modifier.width(6.dp))
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(R.string.activity_pub_muted_user_list_unmute),
+                    text = stringResource(Res.string.activity_pub_muted_user_list_unmute),
                     style = TextButtonStyle.STANDARD,
                     onClick = {
                         onUnmuteClick(author)
@@ -202,7 +210,7 @@ class UserListScreen(
                     Spacer(modifier = Modifier.width(6.dp))
                     StyledTextButton(
                         modifier = Modifier.align(Alignment.CenterVertically),
-                        text = org.jetbrains.compose.resources.stringResource(Res.string.status_ui_follow),
+                        text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_follow),
                         style = TextButtonStyle.STANDARD,
                         onClick = {
                             onFollowClick(authorUiState)
@@ -217,11 +225,11 @@ class UserListScreen(
 
     private val UserListType.title: String
         @Composable get() = when (this) {
-            UserListType.FAVOURITES -> stringResource(R.string.activity_pub_status_favourites_by_title)
-            UserListType.REBLOGS -> stringResource(R.string.activity_pub_status_reblog_by_title)
-            UserListType.MUTED -> stringResource(R.string.activity_pub_muted_user_list_title)
-            UserListType.BLOCKED -> stringResource(R.string.activity_pub_blocked_user_list_title)
-            UserListType.FOLLOWERS -> stringResource(R.string.activity_pub_user_follower_list_title)
-            UserListType.FOLLOWING -> stringResource(R.string.activity_pub_user_following_list_title)
+            UserListType.FAVOURITES -> stringResource(Res.string.activity_pub_status_favourites_by_title)
+            UserListType.REBLOGS -> stringResource(Res.string.activity_pub_status_reblog_by_title)
+            UserListType.MUTED -> stringResource(Res.string.activity_pub_muted_user_list_title)
+            UserListType.BLOCKED -> stringResource(Res.string.activity_pub_blocked_user_list_title)
+            UserListType.FOLLOWERS -> stringResource(Res.string.activity_pub_user_follower_list_title)
+            UserListType.FOLLOWING -> stringResource(Res.string.activity_pub_user_following_list_title)
         }
 }

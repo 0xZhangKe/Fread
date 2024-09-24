@@ -10,7 +10,6 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEnt
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.report
-import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 
@@ -18,10 +17,9 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     private val instanceAdapter: ActivityPubInstanceAdapter,
     private val userUriTransformer: UserUriTransformer,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    private val context: ApplicationContext,
 ) {
 
-    fun adapt(
+    suspend fun adapt(
         entity: ActivityPubLoggedAccountEntity,
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
@@ -59,7 +57,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         )
     }
 
-    fun createFromAccount(
+    suspend fun createFromAccount(
         instance: ActivityPubInstanceEntity,
         account: ActivityPubAccountEntity,
         token: ActivityPubTokenEntity,
@@ -93,14 +91,14 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
         )
     }
 
-    private fun ActivityPubLoggedAccountEntity.BlogPlatformEntity.toPlatform(): BlogPlatform =
+    private suspend fun ActivityPubLoggedAccountEntity.BlogPlatformEntity.toPlatform(): BlogPlatform =
         BlogPlatform(
             uri = uri,
             name = name,
             description = description,
             baseUrl = baseUrl,
             thumbnail = thumbnail,
-            protocol = createActivityPubProtocol(context),
+            protocol = createActivityPubProtocol(),
         )
 
     private fun BlogPlatform.toEntity() = ActivityPubLoggedAccountEntity.BlogPlatformEntity(

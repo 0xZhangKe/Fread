@@ -8,6 +8,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.android.span.CustomEmojiSpan
 import com.zhangke.fread.status.richtext.android.span.InvisibleSpan
 import com.zhangke.fread.status.richtext.android.span.LinkSpan
+import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Element
 import org.jsoup.nodes.Node
@@ -88,22 +89,22 @@ object HtmlParser {
 
             "a" -> {
                 val href = element.attr("href")
-                var linkTarget: LinkSpan.LinkTarget? = null
+                var linkTarget: RichLinkTarget? = null
                 if (element.hasClass("hashtag")) {
                     val text = element.text()
                     if (text.startsWith("#")) {
                         if (parsePossibleHashtag) {
-                            linkTarget = LinkSpan.LinkTarget.MaybeHashtagTarget(text.substring(1))
+                            linkTarget = RichLinkTarget.MaybeHashtagTarget(text.substring(1))
                         } else {
                             val hashtagText = text.substring(1).lowercase()
                             val hashTag = hashTags.firstOrNull { it.name == hashtagText }
                             if (hashTag != null) {
-                                linkTarget = LinkSpan.LinkTarget.HashtagTarget(hashTag)
+                                linkTarget = RichLinkTarget.HashtagTarget(hashTag)
                             }
                         }
                     } else {
                         if (href.isNotEmpty()) {
-                            linkTarget = LinkSpan.LinkTarget.UrlTarget(href)
+                            linkTarget = RichLinkTarget.UrlTarget(href)
                         }
                     }
                 } else if (element.hasClass("mention")) {
@@ -111,15 +112,15 @@ object HtmlParser {
                     if (id != null) {
                         val mention = mentions.firstOrNull { it.id == id }
                         if (mention != null) {
-                            linkTarget = LinkSpan.LinkTarget.MentionTarget(mention)
+                            linkTarget = RichLinkTarget.MentionTarget(mention)
                         }
                     } else {
                         if (href.isNotEmpty()) {
-                            linkTarget = LinkSpan.LinkTarget.UrlTarget(href)
+                            linkTarget = RichLinkTarget.UrlTarget(href)
                         }
                     }
                 } else if (href.isNotEmpty()) {
-                    linkTarget = LinkSpan.LinkTarget.UrlTarget(href)
+                    linkTarget = RichLinkTarget.UrlTarget(href)
                 }
                 if (linkTarget != null) {
                     openSpans.add(

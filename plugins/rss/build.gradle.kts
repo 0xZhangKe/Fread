@@ -28,7 +28,6 @@ dependencies {
     implementation(libs.androidx.core.ktx)
     implementation(libs.androidx.appcompat)
     implementation(libs.androidx.annotation)
-    implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.bundles.androidx.fragment)
     implementation(libs.bundles.androidx.activity)
     implementation(libs.bundles.androidx.preference)

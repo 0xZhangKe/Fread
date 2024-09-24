@@ -29,6 +29,7 @@ kotlin {
                 implementation(libs.ktml)
 
                 implementation(libs.krouter.runtime)
+                implementation(libs.androidx.constraintlayout.compose.kmp)
             }
         }
         commonTest {
@@ -42,7 +43,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.appcompat)
                 implementation(libs.bundles.androidx.media3)
-                implementation(libs.androidx.compose.constraintlayout)
 
                 implementation(libs.okhttp3)
                 implementation(libs.okhttp3.logging)

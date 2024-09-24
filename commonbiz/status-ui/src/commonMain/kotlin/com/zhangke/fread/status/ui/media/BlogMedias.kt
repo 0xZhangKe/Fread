@@ -30,6 +30,7 @@ import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.ui.image.BlogImageMedias
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.video.BlogVideos
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_image_sensitive_label
@@ -50,8 +51,13 @@ fun BlogMedias(
     var containerWidth: Dp? by remember {
         mutableStateOf(cachedContainerWidth)
     }
-    var hideContent by rememberSaveable {
-        mutableStateOf(sensitive)
+    val statusConfig = LocalStatusUiConfig.current
+    var hideContent by rememberSaveable(
+        sensitive,
+        mediaList,
+        statusConfig.alwaysShowSensitiveContent,
+    ) {
+        mutableStateOf(sensitive && !statusConfig.alwaysShowSensitiveContent)
     }
     Box(
         modifier = modifier

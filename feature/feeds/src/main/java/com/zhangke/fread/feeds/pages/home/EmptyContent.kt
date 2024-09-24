@@ -12,11 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.commonbiz.illustration_inspiration
 import com.zhangke.fread.feeds.R
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun EmptyContent(
@@ -38,7 +39,7 @@ fun EmptyContent(
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp),
                 contentScale = ContentScale.Inside,
-                painter = painterResource(com.zhangke.fread.commonbiz.R.drawable.illustration_inspiration),
+                painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.illustration_inspiration),
                 contentDescription = null,
             )
 

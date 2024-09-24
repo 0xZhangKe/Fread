@@ -4,11 +4,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.status.blog.BlogPoll
@@ -65,7 +64,7 @@ fun WholeBlogUi(
     showDivider: Boolean = true,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
     val blog = statusUiState.status.intrinsicBlog
@@ -106,7 +105,7 @@ fun WholeBlogUi(
                 composedStatusInteraction.onMentionClick(statusUiState.role, it)
             },
             onUrlClick = {
-                BrowserLauncher.launchWebTabInApp(context, it, statusUiState.role)
+                browserLauncher.launchWebTabInApp(it, statusUiState.role)
             },
             onShowOriginalClick = {
                 composedStatusInteraction.onShowOriginalClick(statusUiState)

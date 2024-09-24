@@ -18,8 +18,12 @@ kotlin {
                 implementation(project(path = ":commonbiz:status-ui"))
                 implementation(project(":commonbiz:analytics"))
 
+                implementation(compose.components.resources)
+
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.jetbrains.lifecycle.viewmodel)
 
                 implementation(libs.bundles.voyager)
 
@@ -39,16 +43,12 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.androidx.appcompat)
                 implementation(libs.androidx.annotation)
-                implementation(libs.androidx.compose.constraintlayout)
                 implementation(libs.bundles.androidx.fragment)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.bundles.androidx.preference)
                 implementation(libs.bundles.androidx.datastore)
                 implementation(libs.bundles.androidx.collection)
                 implementation(libs.androidx.browser)
-
-                implementation(libs.androidx.room)
-                implementation(libs.androidx.room.ktx)
 
                 implementation(libs.androidx.paging.runtime)
                 implementation(libs.androidx.paging.compose)
@@ -67,4 +67,12 @@ dependencies {
     add("kspAndroid", libs.kotlinInject.compiler)
     add("kspAndroid", libs.auto.service.ksp)
     add("kspAndroid", libs.krouter.collecting.compiler)
+}
+
+compose {
+    resources {
+        publicResClass = true
+        packageOfResClass = "com.zhangke.fread.commonbiz.shared.screen"
+        generateResClass = always
+    }
 }

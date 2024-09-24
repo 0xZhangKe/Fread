@@ -98,14 +98,14 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.pushDestination
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.framework.cancel
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.RichText
-import com.zhangke.fread.status.richtext.android.span.LinkSpan
+import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
 import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
 import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
@@ -139,6 +139,7 @@ data class UserDetailScreen(
         val context = LocalContext.current
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val (role, userUri, webFinger) = remember(roleParam, userUriParam, role, webFinger) {
             if (role != null && webFinger != null) {
                 Triple(role, null, webFinger)
@@ -198,7 +199,7 @@ data class UserDetailScreen(
             },
             onOpenInBrowserClick = {
                 uiState.accountUiState?.account?.url?.let {
-                    BrowserLauncher.launchWebTabInApp(context, it)
+                    browserLauncher.launchWebTabInApp(it)
                 }
             },
             onCopyLinkClick = {
@@ -208,8 +209,7 @@ data class UserDetailScreen(
             },
             onOpenOriginalInstanceClick = {
                 uiState.accountUiState?.account?.url?.let { FormalBaseUrl.parse(it) }?.let {
-                    BrowserLauncher.launchWebTabInApp(
-                        context = context,
+                    browserLauncher.launchWebTabInApp(
                         url = it.toString(),
                         role = role,
                         checkAppSupportPage = true,
@@ -305,12 +305,13 @@ data class UserDetailScreen(
         onFollowerClick: () -> Unit,
         onFollowingClick: () -> Unit,
         onNewNoteSet: (String) -> Unit,
-        onMaybeHashtagTargetClick: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit,
+        onMaybeHashtagTargetClick: (RichLinkTarget.MaybeHashtagTarget) -> Unit,
         onMuteUserListClick: () -> Unit,
         onBlockedUserListClick: () -> Unit,
         onFollowedHashtagsListClick: () -> Unit,
         onFilterClick: () -> Unit,
     ) {
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
         }
@@ -425,7 +426,7 @@ data class UserDetailScreen(
                         onFollowAccountClick = onFollowAccountClick,
                         onUnfollowAccountClick = onUnfollowAccountClick,
                         onUrlClick = {
-                            BrowserLauncher.launchWebTabInApp(context, it, role)
+                            browserLauncher.launchWebTabInApp(it, role)
                         },
                         onMaybeHashtagTargetClick = onMaybeHashtagTargetClick,
                     )

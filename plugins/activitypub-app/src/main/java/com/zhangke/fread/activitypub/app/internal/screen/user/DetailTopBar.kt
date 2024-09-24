@@ -9,10 +9,9 @@ import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.utils.BlendColorUtil
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
@@ -30,7 +29,7 @@ fun DetailTopBar(
         startColor = MaterialTheme.colorScheme.inverseOnSurface,
         endColor = MaterialTheme.colorScheme.onSurface,
     )
-    val context = LocalContext.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     TopAppBar(
         title = {
             if (progress >= 1F) {
@@ -40,7 +39,7 @@ fun DetailTopBar(
                     fontSizeSp = 22F,
                     maxLines = 1,
                     onUrlClick = {
-                        BrowserLauncher.launchWebTabInApp(context, it)
+                        browserLauncher.launchWebTabInApp(it)
                     },
                 )
             }

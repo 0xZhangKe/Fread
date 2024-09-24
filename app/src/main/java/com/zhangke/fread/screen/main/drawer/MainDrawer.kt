@@ -36,7 +36,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.SpanStyle
@@ -54,6 +53,7 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.R
 import com.zhangke.fread.analytics.MainDrawerElements
 import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.commonbiz.mastodon_logo
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.status.model.ContentConfig
@@ -66,6 +66,7 @@ import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Screen.MainDrawer(
@@ -218,7 +219,7 @@ private fun ContentConfigItem(
                     Row (verticalAlignment = Alignment.CenterVertically){
                         Image(
                             modifier = Modifier.size(14.dp),
-                            painter = painterResource(com.zhangke.fread.commonbiz.R.drawable.mastodon_logo),
+                            painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.mastodon_logo),
                             contentDescription = null,
                         )
                         Text(

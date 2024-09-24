@@ -18,7 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -30,8 +29,16 @@ import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.ic_fread_logo
-import com.zhangke.fread.profile.R
+import com.zhangke.fread.feature.profile.Res
+import com.zhangke.fread.feature.profile.profile_about_contract_us
+import com.zhangke.fread.feature.profile.profile_about_developer
+import com.zhangke.fread.feature.profile.profile_about_privacy_policy
+import com.zhangke.fread.feature.profile.profile_about_telegram
+import com.zhangke.fread.feature.profile.profile_about_version
+import com.zhangke.fread.feature.profile.profile_about_website
+import com.zhangke.fread.feature.profile.profile_setting_about_title
 import org.jetbrains.compose.resources.painterResource
+import org.jetbrains.compose.resources.stringResource
 
 class AboutScreen : BaseScreen() {
 
@@ -55,7 +62,7 @@ class AboutScreen : BaseScreen() {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(R.string.profile_setting_about_title),
+                    title = stringResource(Res.string.profile_setting_about_title),
                     onBackClick = onBackClick,
                 )
             },
@@ -89,7 +96,7 @@ class AboutScreen : BaseScreen() {
                 )
                 Spacer(modifier = Modifier.height(32.dp))
                 AboutClickableItem(
-                    title = stringResource(R.string.profile_about_website),
+                    title = stringResource(Res.string.profile_about_website),
                     clickableText = AppCommonConfig.WEBSITE,
                     showUnderline = true,
                     onClick = {
@@ -103,14 +110,14 @@ class AboutScreen : BaseScreen() {
                     "$versionName($versionCode)"
                 }
                 AboutClickableItem(
-                    title = stringResource(R.string.profile_about_version),
+                    title = stringResource(Res.string.profile_about_version),
                     clickableText = version,
                     showUnderline = false,
                     onClick = {},
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 AboutClickableItem(
-                    title = stringResource(R.string.profile_about_developer),
+                    title = stringResource(Res.string.profile_about_developer),
                     clickableText = AppCommonConfig.AUTHOR,
                     showUnderline = true,
                     onClick = {
@@ -119,7 +126,7 @@ class AboutScreen : BaseScreen() {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 AboutClickableItem(
-                    title = stringResource(R.string.profile_about_contract_us),
+                    title = stringResource(Res.string.profile_about_contract_us),
                     clickableText = AppCommonConfig.AUTHOR_EMAIL,
                     showUnderline = false,
                     onClick = {
@@ -129,7 +136,7 @@ class AboutScreen : BaseScreen() {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 AboutClickableItem(
-                    title = stringResource(R.string.profile_about_telegram),
+                    title = stringResource(Res.string.profile_about_telegram),
                     clickableText = AppCommonConfig.TELEGRAM_GROUP,
                     showUnderline = false,
                     onClick = {
@@ -139,7 +146,7 @@ class AboutScreen : BaseScreen() {
                 )
                 Spacer(modifier = Modifier.height(16.dp))
                 AboutClickableItem(
-                    title = stringResource(R.string.profile_about_privacy_policy),
+                    title = stringResource(Res.string.profile_about_privacy_policy),
                     clickableText = AppCommonConfig.PRIVACY_POLICY,
                     showUnderline = false,
                     onClick = {

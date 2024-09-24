@@ -43,7 +43,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -65,7 +65,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.TextFieldUtils
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusImageAttachment
@@ -75,11 +75,15 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
+import com.zhangke.fread.activitypub.app.post_screen_input_hint
+import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content
+import com.zhangke.fread.activitypub.app.post_status_failed
+import com.zhangke.fread.activitypub.app.post_status_page_title
+import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
-import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_reply
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
@@ -165,7 +169,7 @@ class PostStatusScreen(
             )
         }
         if (postStatus is LoadableState.Success) {
-            val successMessage = stringResource(R.string.post_status_success)
+            val successMessage = stringResource(Res.string.post_status_success)
             LaunchedEffect(Unit) {
                 toast(successMessage)
                 navigator.pop()
@@ -178,7 +182,7 @@ class PostStatusScreen(
             FreadDialog(
                 onDismissRequest = { showExitDialog = false },
                 content = {
-                    Text(text = stringResource(R.string.post_status_exit_dialog_content))
+                    Text(text = stringResource(Res.string.post_status_exit_dialog_content))
                 },
                 onNegativeClick = {
                     showExitDialog = false
@@ -220,7 +224,7 @@ class PostStatusScreen(
         onDurationSelect: (Duration) -> Unit,
     ) {
         if (postStatus is LoadableState.Failed) {
-            var errorMessage = stringResource(R.string.post_status_failed)
+            var errorMessage = stringResource(Res.string.post_status_failed)
             if (postStatus.exception.message.isNullOrEmpty().not()) {
                 errorMessage += ": ${postStatus.exception.message?.take(180)}"
             }
@@ -270,7 +274,7 @@ class PostStatusScreen(
                     },
                     title = {
                         Text(
-                            text = stringResource(R.string.post_status_page_title),
+                            text = stringResource(Res.string.post_status_page_title),
                             style = MaterialTheme.typography.titleMedium,
                         )
                     },
@@ -333,8 +337,7 @@ class PostStatusScreen(
                             imageVector = Icons.Default.Reply,
                             contentDescription = null,
                         )
-                        val replyLabel =
-                            org.jetbrains.compose.resources.stringResource(Res.string.status_ui_reply)
+                        val replyLabel = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_reply)
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
                             text = "$replyLabel ${uiState.replyToAuthorInfo.replyAuthorName}",
@@ -452,7 +455,7 @@ class PostStatusScreen(
                     shape = GenericShape { _, _ -> },
                     placeholder = {
                         Text(
-                            text = stringResource(R.string.post_screen_input_hint),
+                            text = stringResource(Res.string.post_screen_input_hint),
                             style = MaterialTheme.typography.bodyLarge,
                         )
                     },

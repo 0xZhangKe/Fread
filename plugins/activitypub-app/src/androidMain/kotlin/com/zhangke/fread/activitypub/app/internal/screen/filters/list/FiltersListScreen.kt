@@ -24,7 +24,6 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
@@ -37,9 +36,12 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.textString
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_filters_list_page_title
 import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
+import org.jetbrains.compose.resources.stringResource
 
 class FiltersListScreen(
     private val role: IdentityRole,
@@ -86,7 +88,7 @@ class FiltersListScreen(
             },
             topBar = {
                 Toolbar(
-                    title = stringResource(R.string.activity_pub_filters_list_page_title),
+                    title = stringResource(Res.string.activity_pub_filters_list_page_title),
                     onBackClick = onBackClick,
                 )
             },

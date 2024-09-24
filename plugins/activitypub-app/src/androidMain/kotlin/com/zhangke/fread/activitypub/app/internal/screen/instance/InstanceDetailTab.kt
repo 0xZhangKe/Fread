@@ -8,6 +8,9 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_about
+import com.zhangke.fread.activitypub.app.activity_pub_trends_tag
 import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutPage
 import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTrendsTagsPage
 
@@ -21,14 +24,14 @@ internal enum class InstanceDetailTab(
 ) {
 
     ABOUT(
-        title = textOf(R.string.activity_pub_about),
+        title = textOf(Res.string.activity_pub_about),
         content = @Composable { baseUrl, rules, contentCanScrollBackward ->
             ServerAboutPage(baseUrl, rules, contentCanScrollBackward)
         },
     ),
 
     TRENDS_TAG(
-        title = textOf(R.string.activity_pub_trends_tag),
+        title = textOf(Res.string.activity_pub_trends_tag),
         content = @Composable { baseUrl, _, contentCanScrollBackward ->
             ServerTrendsTagsPage(baseUrl, contentCanScrollBackward)
         },

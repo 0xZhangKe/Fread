@@ -1,7 +1,10 @@
 package com.zhangke.fread.activitypub.app.internal.model
 
-import com.zhangke.framework.utils.appContext
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_home_timeline
+import com.zhangke.fread.activitypub.app.activity_pub_local_timeline
+import com.zhangke.fread.activitypub.app.activity_pub_public_timeline
+import org.jetbrains.compose.resources.getString
 
 enum class ActivityPubTimelineType {
 
@@ -9,12 +12,13 @@ enum class ActivityPubTimelineType {
     LOCAL,
     HOME;
 
-    val nickName: String
-        get() = when (this) {
-            HOME -> appContext.getString(R.string.activity_pub_home_timeline)
-            LOCAL -> appContext.getString(R.string.activity_pub_local_timeline)
-            PUBLIC -> appContext.getString(R.string.activity_pub_public_timeline)
+    suspend fun nickName(): String {
+        return when (this) {
+            HOME -> getString(Res.string.activity_pub_home_timeline)
+            LOCAL -> getString(Res.string.activity_pub_local_timeline)
+            PUBLIC -> getString(Res.string.activity_pub_public_timeline)
         }
+    }
 
     companion object {
 

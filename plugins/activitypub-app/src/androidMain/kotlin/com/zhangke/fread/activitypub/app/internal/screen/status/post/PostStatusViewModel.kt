@@ -22,6 +22,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.toContentProviderFile
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.GenerateInitPostStatusUiStateUseCase
@@ -30,6 +31,10 @@ import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUs
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.PostStatusUseCase
+import com.zhangke.fread.activitypub.app.post_status_content_is_empty
+import com.zhangke.fread.activitypub.app.post_status_failed
+import com.zhangke.fread.activitypub.app.post_status_media_is_not_upload
+import com.zhangke.fread.activitypub.app.post_status_poll_is_empty
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.status.model.IdentityRole
@@ -383,7 +388,7 @@ class PostStatusViewModel @Inject constructor(
         val account = currentUiState.account
         val attachment = currentUiState.attachment
         if (currentUiState.content.isEmpty() && currentUiState.attachment == null) {
-            _snackMessage.emitInViewModel(textOf(R.string.post_status_content_is_empty))
+            _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
             return
         }
         when (attachment) {
@@ -393,7 +398,7 @@ class PostStatusViewModel @Inject constructor(
                     .map { it.uploadJob.uploadState.value }
                     .all { it is UploadMediaJob.UploadState.Success }
                 if (!allSuccess) {
-                    _snackMessage.emitInViewModel(textOf(R.string.post_status_media_is_not_upload))
+                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_media_is_not_upload))
                     return
                 }
             }
@@ -403,19 +408,19 @@ class PostStatusViewModel @Inject constructor(
                     .let { it as? PostStatusMediaAttachmentFile.LocalFile }
                     ?.uploadJob
                 if (uploadJob != null && uploadJob.uploadState.value !is UploadMediaJob.UploadState.Success) {
-                    _snackMessage.emitInViewModel(textOf(R.string.post_status_media_is_not_upload))
+                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_media_is_not_upload))
                     return
                 }
             }
 
             is PostStatusAttachment.Poll -> {
                 if (currentUiState.content.isEmpty()) {
-                    _snackMessage.emitInViewModel(textOf(R.string.post_status_content_is_empty))
+                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
                     return
                 }
                 for (option in attachment.optionList) {
                     if (option.isEmpty()) {
-                        _snackMessage.emitInViewModel(textOf(R.string.post_status_poll_is_empty))
+                        _snackMessage.emitInViewModel(textOf(Res.string.post_status_poll_is_empty))
                         return
                     }
                 }
@@ -440,7 +445,7 @@ class PostStatusViewModel @Inject constructor(
             }.onFailure {
                 _postState.emit(LoadableState.idle())
                 val errorMessage = textOf(
-                    R.string.post_status_failed,
+                    Res.string.post_status_failed,
                     it.localizedMessage.ifNullOrEmpty { "unknown error" },
                 )
                 _snackMessage.emit(errorMessage)

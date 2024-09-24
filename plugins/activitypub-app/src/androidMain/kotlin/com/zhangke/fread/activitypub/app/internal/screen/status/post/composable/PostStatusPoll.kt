@@ -32,15 +32,22 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.DurationSelector
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.utils.formattedString
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostBlogRules
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
+import com.zhangke.fread.activitypub.app.post_status_poll_duration
+import com.zhangke.fread.activitypub.app.post_status_poll_function_title
+import com.zhangke.fread.activitypub.app.post_status_poll_item_hint
+import com.zhangke.fread.activitypub.app.post_status_poll_multiple
+import com.zhangke.fread.activitypub.app.post_status_poll_single
+import com.zhangke.fread.activitypub.app.post_status_poll_style_select_dialog_title
 import kotlin.time.Duration
 
 @Composable
@@ -75,7 +82,7 @@ internal fun PostStatusPoll(
                     singleLine = true,
                     placeholder = {
                         Text(
-                            text = stringResource(R.string.post_status_poll_item_hint, index + 1),
+                            text = stringResource(Res.string.post_status_poll_item_hint, index + 1),
                             style = MaterialTheme.typography.bodyMedium,
                         )
                     },
@@ -133,7 +140,7 @@ internal fun PostStatusPoll(
                     }
             ) {
                 Text(
-                    text = stringResource(R.string.post_status_poll_duration),
+                    text = stringResource(Res.string.post_status_poll_duration),
                     style = MaterialTheme.typography.labelMedium,
                 )
                 Box(modifier = Modifier.weight(1F))
@@ -168,16 +175,16 @@ internal fun PostStatusPoll(
                 .fillMaxHeight()
                 .clickable { showChooseStyleDialog = true }) {
                 Text(
-                    text = stringResource(R.string.post_status_poll_function_title),
+                    text = stringResource(Res.string.post_status_poll_function_title),
                     style = MaterialTheme.typography.labelSmall,
                 )
                 Box(modifier = Modifier.weight(1F))
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
                     text = if (poll.multiple) {
-                        stringResource(R.string.post_status_poll_multiple)
+                        stringResource(Res.string.post_status_poll_multiple)
                     } else {
-                        stringResource(R.string.post_status_poll_single)
+                        stringResource(Res.string.post_status_poll_single)
                     },
                     style = MaterialTheme.typography.labelLarge,
                     color = MaterialTheme.colorScheme.primary,
@@ -218,7 +225,7 @@ private fun ChoosePollStyleDialog(
     }
     FreadDialog(
         onDismissRequest = onDismissRequest,
-        title = stringResource(R.string.post_status_poll_style_select_dialog_title),
+        title = stringResource(Res.string.post_status_poll_style_select_dialog_title),
         onNegativeClick = onDismissRequest,
         onPositiveClick = {
             onDismissRequest()
@@ -233,7 +240,7 @@ private fun ChoosePollStyleDialog(
                 Row(modifier = Modifier.fillMaxWidth()) {
                     Text(
                         modifier = Modifier.align(Alignment.CenterVertically),
-                        text = stringResource(R.string.post_status_poll_single)
+                        text = stringResource(Res.string.post_status_poll_single)
                     )
                     Box(modifier = Modifier.weight(1F))
                     RadioButton(
@@ -249,7 +256,7 @@ private fun ChoosePollStyleDialog(
                 ) {
                     Text(
                         modifier = Modifier.align(Alignment.CenterVertically),
-                        text = stringResource(R.string.post_status_poll_multiple)
+                        text = stringResource(Res.string.post_status_poll_multiple)
                     )
                     Box(modifier = Modifier.weight(1F))
                     RadioButton(

@@ -1,24 +1,27 @@
 package com.zhangke.fread.activitypub.app.internal.composable
 
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.res.stringResource
-import com.zhangke.fread.activitypub.app.R
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_content_tab_home
+import com.zhangke.fread.activitypub.app.activity_pub_content_tab_local_timeline
+import com.zhangke.fread.activitypub.app.activity_pub_content_tab_public_timeline
+import com.zhangke.fread.activitypub.app.activity_pub_content_tab_trending
 import com.zhangke.fread.status.model.ContentConfig.ActivityPubContent.ContentTab
+import org.jetbrains.compose.resources.stringResource
 
 internal object ActivityPubTabNames {
 
     val homeTimeline: String
-        @Composable get() = stringResource(R.string.activity_pub_content_tab_home)
+        @Composable get() = stringResource(Res.string.activity_pub_content_tab_home)
 
     val publicTimeline: String
-        @Composable get() = stringResource(R.string.activity_pub_content_tab_public_timeline)
+        @Composable get() = stringResource(Res.string.activity_pub_content_tab_public_timeline)
 
     val localTimeline: String
-        @Composable get() = stringResource(R.string.activity_pub_content_tab_local_timeline)
+        @Composable get() = stringResource(Res.string.activity_pub_content_tab_local_timeline)
 
     val trending: String
-        @Composable get() = stringResource(R.string.activity_pub_content_tab_trending)
+        @Composable get() = stringResource(Res.string.activity_pub_content_tab_trending)
 }
 
 @Composable

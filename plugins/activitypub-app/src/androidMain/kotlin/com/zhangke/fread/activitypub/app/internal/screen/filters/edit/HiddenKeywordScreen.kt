@@ -25,7 +25,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -35,7 +34,13 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_dialog_hint
+import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_dialog_title
+import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_remove_keyword_dialog_content
+import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_title
 import com.zhangke.fread.common.page.BaseScreen
+import org.jetbrains.compose.resources.stringResource
 
 class HiddenKeywordScreen(
     private val addedKeywords: List<EditFilterUiState.Keyword>,
@@ -70,7 +75,7 @@ class HiddenKeywordScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(R.string.activity_pub_filter_edit_keyword_title),
+                    title = stringResource(Res.string.activity_pub_filter_edit_keyword_title),
                     onBackClick = {
                         resultNavigator.popWithResult(keywordsList)
                     },
@@ -121,7 +126,7 @@ class HiddenKeywordScreen(
                         )
                         if (showDeleteConfirmDialog) {
                             FreadDialog(
-                                contentText = stringResource(id = R.string.activity_pub_filter_edit_keyword_remove_keyword_dialog_content),
+                                contentText = stringResource(Res.string.activity_pub_filter_edit_keyword_remove_keyword_dialog_content),
                                 onDismissRequest = {
                                     showDeleteConfirmDialog = false
                                 },
@@ -171,7 +176,7 @@ class HiddenKeywordScreen(
             mutableStateOf(keyword?.keyword.orEmpty())
         }
         FreadDialog(
-            title = stringResource(id = R.string.activity_pub_filter_edit_keyword_dialog_title),
+            title = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_title),
             onDismissRequest = onDismissRequest,
             content = {
                 OutlinedTextField(
@@ -184,10 +189,10 @@ class HiddenKeywordScreen(
                     },
                     maxLines = 1,
                     label = {
-                        Text(text = stringResource(id = R.string.activity_pub_filter_edit_keyword_dialog_hint))
+                        Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
                     },
                     placeholder = {
-                        Text(text = stringResource(id = R.string.activity_pub_filter_edit_keyword_dialog_hint))
+                        Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
                     },
                 )
             },

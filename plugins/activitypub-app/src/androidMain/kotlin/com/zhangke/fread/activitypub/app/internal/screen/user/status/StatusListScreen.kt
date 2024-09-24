@@ -9,7 +9,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
+import org.jetbrains.compose.resources.stringResource
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -18,6 +18,9 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_favourites_list_title
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -86,7 +89,7 @@ class StatusListScreen(
 
     private val StatusListType.pageTitle: String
         @Composable get() = when (this) {
-            StatusListType.FAVOURITES -> stringResource(R.string.activity_pub_favourites_list_title)
-            StatusListType.BOOKMARKS -> stringResource(R.string.activity_pub_bookmarks_list_title)
+            StatusListType.FAVOURITES -> stringResource(Res.string.activity_pub_favourites_list_title)
+            StatusListType.BOOKMARKS -> stringResource(Res.string.activity_pub_bookmarks_list_title)
         }
 }

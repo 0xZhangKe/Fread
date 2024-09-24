@@ -7,10 +7,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_notification_unknown_desc
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun UnknownNotification(
@@ -25,7 +26,7 @@ fun UnknownNotification(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = stringResource(R.string.activity_pub_notification_unknown_desc),
+            text = stringResource(Res.string.activity_pub_notification_unknown_desc),
         )
         Text(
             modifier = Modifier

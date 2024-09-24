@@ -9,12 +9,15 @@ import androidx.compose.material.icons.filled.Poll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_notification_poll_count
+import com.zhangke.fread.activitypub.app.activity_pub_notification_poll_desc
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PollNotification(
@@ -43,7 +46,7 @@ fun PollNotification(
             icon = Icons.Default.Poll,
             avatar = null,
             accountName = null,
-            interactionDesc = stringResource(R.string.activity_pub_notification_poll_desc),
+            interactionDesc = stringResource(Res.string.activity_pub_notification_poll_desc),
             style = style,
         )
         Column(
@@ -76,7 +79,7 @@ fun PollNotification(
                 Text(
                     modifier = Modifier.padding(start = 8.dp),
                     text = stringResource(
-                        R.string.activity_pub_notification_poll_count,
+                        Res.string.activity_pub_notification_poll_count,
                         votesCount
                     ),
                 )

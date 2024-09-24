@@ -7,16 +7,17 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.R
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.login_dialog_target_title
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
+import org.jetbrains.compose.resources.stringResource
 
 class LoginToTargetPlatformScreen(val platform: BlogPlatform) : BaseScreen() {
 
@@ -34,7 +35,7 @@ class LoginToTargetPlatformScreen(val platform: BlogPlatform) : BaseScreen() {
                 .fillMaxWidth()
                 .padding(bottom = 24.dp)
         ) {
-            Toolbar(title = stringResource(R.string.login_dialog_target_title))
+            Toolbar(title = stringResource(Res.string.login_dialog_target_title))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()

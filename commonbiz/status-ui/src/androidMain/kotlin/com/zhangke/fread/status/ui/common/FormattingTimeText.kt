@@ -3,9 +3,10 @@ package com.zhangke.fread.status.ui.common
 import androidx.compose.material3.LocalTextStyle
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.produceState
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.TextLayoutResult
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
@@ -38,8 +39,9 @@ fun FormattingTimeText(
     onTextLayout: ((TextLayoutResult) -> Unit)? = null,
     style: TextStyle = LocalTextStyle.current
 ) {
-    val context = LocalContext.current
-    val timeText = DateTimeFormatter.format(context, date.time)
+    val timeText by produceState("") {
+        value = DateTimeFormatter.format(date.time)
+    }
     Text(
         text = timeText,
         modifier = modifier,

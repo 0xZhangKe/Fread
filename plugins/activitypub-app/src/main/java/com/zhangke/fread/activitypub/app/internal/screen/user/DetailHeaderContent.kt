@@ -32,7 +32,7 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.status.richtext.RichText
-import com.zhangke.fread.status.richtext.android.span.LinkSpan
+import com.zhangke.fread.status.richtext.model.RichLinkTarget
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
@@ -48,7 +48,7 @@ fun DetailHeaderContent(
     onBannerClick: () -> Unit,
     onAvatarClick: () -> Unit,
     onUrlClick: (String) -> Unit,
-    onMaybeHashtagTargetClick: (LinkSpan.LinkTarget.MaybeHashtagTarget) -> Unit,
+    onMaybeHashtagTargetClick: (RichLinkTarget.MaybeHashtagTarget) -> Unit,
     privateNote: String? = null,
     relationship: RelationshipUiState? = null,
     onUnblockClick: (() -> Unit)? = null,

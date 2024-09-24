@@ -15,14 +15,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.utils.LanguageUtil
 import com.zhangke.fread.common.page.BaseScreen
+import org.jetbrains.compose.resources.stringResource
 import java.util.Locale
 
 class SelectLanguageScreen(
@@ -39,7 +38,7 @@ class SelectLanguageScreen(
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(R.string.shared_select_language_title),
+                    title = stringResource(Res.string.shared_select_language_title),
                     onBackClick = navigator::pop,
                 )
             }

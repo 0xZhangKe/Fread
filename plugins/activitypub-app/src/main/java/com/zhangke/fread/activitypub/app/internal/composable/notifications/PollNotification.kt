@@ -9,12 +9,11 @@ import androidx.compose.material.icons.filled.Poll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 
 @Composable
@@ -24,7 +23,7 @@ fun PollNotification(
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val context = LocalContext.current
+    val browserLauncher = LocalActivityBrowserLauncher.current
     val status = notification.status
     if (status == null) {
         UnknownNotification(
@@ -68,7 +67,7 @@ fun PollNotification(
                     composedStatusInteraction.onHashtagInStatusClick(status.role, it)
                 },
                 onUrlClick = {
-                    BrowserLauncher.launchWebTabInApp(context, it, status.role)
+                    browserLauncher.launchWebTabInApp(it, status.role)
                 },
             )
             val poll = status.status.intrinsicBlog.poll

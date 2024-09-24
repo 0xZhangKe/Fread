@@ -66,10 +66,8 @@ class FreadApplication : Application(), ApplicationComponentProvider, ImageLoade
     }
 
     private fun initModuleStartups() {
-        ApplicationScope.launch {
-            component.moduleStartups.forEach {
-                it.onAppCreate()
-            }
+        component.moduleStartups.forEach {
+            it.onAppCreate()
         }
     }
 }

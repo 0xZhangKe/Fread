@@ -10,6 +10,7 @@ import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.ext.toJavaDate
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -141,7 +142,7 @@ class EditFilterViewModel @Inject constructor(
     private fun ActivityPubFilterEntity.toFilter(): EditFilterUiState {
         return EditFilterUiState(
             title = this.title,
-            expiresDate = expiresAt?.let(DateParser::parseAll),
+            expiresDate = expiresAt?.let(DateParser::parseAll)?.toJavaDate(),
             keywordList = this.keywords?.map { it.toKeyword() } ?: emptyList(),
             contextList = this.context.mapNotNull { FilterContext.fromContext(it) },
             filterByWarn = this.filterAction == ActivityPubFilterEntity.FILTER_ACTION_WARN,

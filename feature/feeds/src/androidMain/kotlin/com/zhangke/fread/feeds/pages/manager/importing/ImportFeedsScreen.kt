@@ -1,7 +1,6 @@
 package com.zhangke.fread.feeds.pages.manager.importing
 
 import android.net.Uri
-import androidx.activity.compose.BackHandler
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.compose.foundation.clickable
@@ -44,9 +43,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
@@ -60,6 +61,7 @@ import com.zhangke.fread.framework.alert
 
 class ImportFeedsScreen : BaseScreen() {
 
+    @OptIn(InternalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
@@ -93,7 +95,7 @@ class ImportFeedsScreen : BaseScreen() {
                 }
             )
         }
-        BackHandler {
+        BackHandler(true) {
             onBackRequest()
         }
         ImportFeedsContent(

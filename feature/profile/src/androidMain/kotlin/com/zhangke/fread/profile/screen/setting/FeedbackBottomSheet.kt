@@ -27,18 +27,22 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.res.vectorResource
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.SystemUtils
 import com.zhangke.framework.utils.extractActivity
 import com.zhangke.fread.analytics.report
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
-import com.zhangke.fread.profile.R
+import com.zhangke.fread.feature.profile.Res
+import com.zhangke.fread.feature.profile.ic_github_logo
+import com.zhangke.fread.feature.profile.ic_telegram
+import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_email
+import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_github
+import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_telegram
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -73,12 +77,12 @@ fun FeedbackBottomSheet(
                     modifier = Modifier
                         .size(24.dp)
                         .clip(CircleShape),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_telegram),
+                    imageVector = vectorResource(Res.drawable.ic_telegram),
                     contentDescription = null,
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(id = R.string.profile_setting_open_source_feedback_telegram),
+                    text = stringResource(Res.string.profile_setting_open_source_feedback_telegram),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -94,12 +98,12 @@ fun FeedbackBottomSheet(
             ) {
                 Icon(
                     modifier = Modifier.size(24.dp),
-                    imageVector = ImageVector.vectorResource(id = R.drawable.ic_github_logo),
+                    imageVector = vectorResource(Res.drawable.ic_github_logo),
                     contentDescription = null,
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(id = R.string.profile_setting_open_source_feedback_github),
+                    text = stringResource(Res.string.profile_setting_open_source_feedback_github),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }
@@ -120,7 +124,7 @@ fun FeedbackBottomSheet(
                 )
                 Spacer(modifier = Modifier.width(16.dp))
                 Text(
-                    text = stringResource(id = R.string.profile_setting_open_source_feedback_email),
+                    text = stringResource(Res.string.profile_setting_open_source_feedback_email),
                     style = MaterialTheme.typography.titleMedium,
                 )
             }

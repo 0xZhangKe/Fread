@@ -167,7 +167,6 @@ interface StatusContentDao {
     StatusTypeConverter::class,
     BlogMediaListConverter::class,
     BlogPollConverter::class,
-    // DateTypeConverter::class,
     WebFingerConverter::class,
     StatusConverter::class,
     ContentTypeConverter::class,

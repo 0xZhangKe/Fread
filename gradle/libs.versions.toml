@@ -19,8 +19,7 @@ androidx-sqlite = "2.5.0-alpha01"
 androidx-room = "2.7.0-alpha08"
 androidx-datastore = "1.1.1"
 androidx-browser = "1.4.0"
-androidx-paging = "3.2.1"
-androidx-paging-compose = "3.2.1"
+androidx-paging = "3.3.2"
 androidx-media3 = "1.0.0-rc01"
 
 jetbrains-lifecycle = "2.8.0"
@@ -108,8 +107,7 @@ androidx-datastore = { group = "androidx.datastore", name = "datastore", version
 androidx-datastore-preferences = { group = "androidx.datastore", name = "datastore-preferences", version.ref = "androidx-datastore" }
 androidx-browser = { group = "androidx.browser", name = "browser", version.ref = "androidx.browser" }
 androidx-constraintlayout-compose-kmp = { module = "tech.annexflow.compose:constraintlayout-compose-multiplatform", version = "0.3.0-alpha01" }
-androidx-paging-runtime = { group = "androidx.paging", name = "paging-runtime", version.ref = "androidx.paging" }
-androidx-paging-compose = { group = "androidx.paging", name = "paging-compose", version.ref = "androidx.paging.compose" }
+androidx-paging-common = { group = "androidx.paging", name = "paging-common", version.ref = "androidx-paging" }
 
 jetbrains-lifecycle-runtime = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-runtime", version.ref = "jetbrains-lifecycle" }
 jetbrains-lifecycle-viewmodel = { group = "org.jetbrains.androidx.lifecycle", name = "lifecycle-viewmodel", version.ref = "jetbrains-lifecycle" }

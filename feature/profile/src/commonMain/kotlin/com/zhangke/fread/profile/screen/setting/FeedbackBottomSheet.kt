@@ -1,9 +1,5 @@
 package com.zhangke.fread.profile.screen.setting
 
-import android.annotation.SuppressLint
-import android.content.Context
-import android.content.Intent
-import android.net.Uri
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -27,13 +23,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.utils.SystemUtils
-import com.zhangke.framework.utils.extractActivity
-import com.zhangke.fread.analytics.report
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_github_logo
 import com.zhangke.fread.feature.profile.ic_telegram
@@ -49,7 +42,7 @@ import org.jetbrains.compose.resources.vectorResource
 fun FeedbackBottomSheet(
     onDismissRequest: () -> Unit,
 ) {
-    val context = LocalContext.current
+    val textHandler = LocalActivityTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
     val sheetState = rememberModalBottomSheetState()
     val coroutineScope = rememberCoroutineScope()
@@ -111,7 +104,7 @@ fun FeedbackBottomSheet(
                 modifier = Modifier
                     .clickable {
                         onDismissRequest()
-                        openSendEmail(context)
+                        textHandler.openSendEmail()
                     }
                     .fillMaxWidth()
                     .padding(horizontal = 16.dp, vertical = 16.dp),
@@ -127,36 +120,6 @@ fun FeedbackBottomSheet(
                     text = stringResource(Res.string.profile_setting_open_source_feedback_email),
                     style = MaterialTheme.typography.titleMedium,
                 )
-            }
-        }
-    }
-}
-
-private fun openSendEmail(context: Context) {
-    SystemUtils.copyText(context, AppCommonConfig.AUTHOR_EMAIL)
-    val intent = Intent(Intent.ACTION_SEND)
-    intent.data = Uri.parse("mailto:")
-    intent.putExtra(Intent.EXTRA_EMAIL, AppCommonConfig.AUTHOR_EMAIL)
-    context.startActivityAsActivity(intent)
-}
-
-@SuppressLint("QueryPermissionsNeeded")
-private fun Context.startActivityAsActivity(intent: Intent) {
-    val activity = this.extractActivity()
-    if (activity != null) {
-        if (intent.resolveActivity(packageManager) != null) {
-            activity.startActivity(intent)
-        }
-    } else {
-        try {
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
-            if (intent.resolveActivity(packageManager) != null) {
-                this.startActivity(intent)
-            }
-        } catch (e: Throwable) {
-            report("StartActivityCrash") {
-                putString("message", e.message)
-                putString("stackTrace", e.stackTraceToString())
             }
         }
     }

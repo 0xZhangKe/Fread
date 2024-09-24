@@ -108,7 +108,6 @@ dependencies {
     implementation(compose.material)
     implementation(compose.material3)
     implementation(compose.preview)
-    implementation(libs.androidx.compose.constraintlayout)
     implementation(libs.bundles.androidx.fragment)
     implementation(libs.bundles.androidx.activity)
     implementation(libs.bundles.androidx.preference)

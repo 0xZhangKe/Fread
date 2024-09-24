@@ -41,21 +41,21 @@ actual class BrowserLauncher(
         customTabsIntent.launchUrl(context, uri.toAndroidUri())
     }
 
-    fun launchBySystemBrowser(url: String) {
+    actual fun launchBySystemBrowser(url: String) {
         launchBySystemBrowser(url.toPlatformUri())
     }
 
-    fun launchBySystemBrowser(uri: PlatformUri) {
+    actual fun launchBySystemBrowser(uri: PlatformUri) {
         val intent = Intent(Intent.ACTION_VIEW, uri.toAndroidUri())
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
 
-    fun launchFreadLandingPage() {
+    actual fun launchFreadLandingPage() {
         launchWebTabInApp(AppCommonConfig.WEBSITE)
     }
 
-    fun launchAuthorWebsite() {
+    actual fun launchAuthorWebsite() {
         launchWebTabInApp(AppCommonConfig.AUTHOR_WEBSITE)
     }
 }

@@ -8,6 +8,7 @@ import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.handler.TextHandler
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -23,6 +24,7 @@ class SettingScreenModel @Inject constructor(
             dayNightMode = dayNightHelper.dayNightModeFlow.value,
             settingInfo = getAppVersionInfo(),
             contentSize = StatusContentSize.default(),
+            alwaysShowSensitiveContent = false,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -34,13 +36,14 @@ class SettingScreenModel @Inject constructor(
             }
         }
         viewModelScope.launch {
-            freadConfigManager.getStatusContentSize()
-                .let {
-                    _uiState.value = _uiState.value.copy(contentSize = it)
-                }
             freadConfigManager.statusConfigFlow
-                .collect {
-                    _uiState.value = _uiState.value.copy(contentSize = it.contentSize)
+                .collect { config ->
+                    _uiState.update {
+                        it.copy(
+                            contentSize = config.contentSize,
+                            alwaysShowSensitiveContent = config.alwaysShowSensitiveContent,
+                        )
+                    }
                 }
         }
     }
@@ -55,6 +58,12 @@ class SettingScreenModel @Inject constructor(
     fun onContentSizeChanged(contentSize: StatusContentSize) {
         viewModelScope.launch {
             freadConfigManager.updateStatusContentSize(contentSize)
+        }
+    }
+
+    fun onAlwaysShowSensitiveContentChanged(always: Boolean) {
+        viewModelScope.launch {
+            freadConfigManager.updateAlwaysShowSensitiveContent(always)
         }
     }
 

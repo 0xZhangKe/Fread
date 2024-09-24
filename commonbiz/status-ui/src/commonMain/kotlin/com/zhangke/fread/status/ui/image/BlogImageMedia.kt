@@ -170,24 +170,18 @@ internal fun BlogImage(
             )
         }
     }
-    val mediaModifier = modifier.run {
-        if (media.blurhash.isNullOrEmpty().not()) {
-            blurhash(media.blurhash!!)
-        } else {
-            this
-        }
-    }
+    val mediaModifier = modifier.blurhash(media.blurhash)
     if (media.type == BlogMediaType.GIFV) {
         Box(modifier = mediaModifier) {
             AutoSizeImage(
-                remember {
+                request = remember(hideContent) {
                     ImageRequest {
                         if (!hideContent) {
                             data(media.previewUrl)
                         }
                     }
                 },
-                modifier = mediaModifier,
+                modifier = Modifier.fillMaxSize(),
                 contentScale = ContentScale.Crop,
                 contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
             )
@@ -202,18 +196,20 @@ internal fun BlogImage(
             )
         }
     } else {
-        AutoSizeImage(
-            remember {
-                ImageRequest {
-                    if (!hideContent) {
-                        data(media.previewUrl)
-                    }
-                }
-            },
-            modifier = mediaModifier,
-            contentScale = ContentScale.Crop,
-            contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
-        )
+        Box(modifier = mediaModifier) {
+            if (!hideContent) {
+                AutoSizeImage(
+                    request = remember {
+                        ImageRequest {
+                            data(media.previewUrl)
+                        }
+                    },
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = media.description.ifNullOrEmpty { "Blog Image Media" },
+                )
+            }
+        }
     }
 }
 

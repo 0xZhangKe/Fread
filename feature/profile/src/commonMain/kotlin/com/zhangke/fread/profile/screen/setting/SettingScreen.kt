@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -56,6 +55,8 @@ import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_code
 import com.zhangke.fread.feature.profile.ic_ratting
 import com.zhangke.fread.feature.profile.profile_setting_about_title
+import com.zhangke.fread.feature.profile.profile_setting_always_show_sensitive_content
+import com.zhangke.fread.feature.profile.profile_setting_always_show_sensitive_content_subtitle
 import com.zhangke.fread.feature.profile.profile_setting_dark_mode_dark
 import com.zhangke.fread.feature.profile.profile_setting_dark_mode_follow_system
 import com.zhangke.fread.feature.profile.profile_setting_dark_mode_light
@@ -65,6 +66,7 @@ import com.zhangke.fread.feature.profile.profile_setting_font_size_large
 import com.zhangke.fread.feature.profile.profile_setting_font_size_medium
 import com.zhangke.fread.feature.profile.profile_setting_font_size_small
 import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play
+import com.zhangke.fread.feature.profile.profile_setting_inline_video_auto_play_subtitle
 import com.zhangke.fread.feature.profile.profile_setting_language_en
 import com.zhangke.fread.feature.profile.profile_setting_language_system
 import com.zhangke.fread.feature.profile.profile_setting_language_title
@@ -136,7 +138,8 @@ class SettingScreen : BaseScreen() {
             onContentSizeChanged = {
                 reportClick(SettingElements.CONTENT_SIZE)
                 viewModel.onContentSizeChanged(it)
-            }
+            },
+            onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
         )
     }
 
@@ -151,6 +154,7 @@ class SettingScreen : BaseScreen() {
         onRatingClick: () -> Unit,
         onAboutClick: () -> Unit,
         onContentSizeChanged: (StatusContentSize) -> Unit,
+        onAlwaysShowSensitive: (Boolean) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -168,6 +172,10 @@ class SettingScreen : BaseScreen() {
                 AutoPlayInlineVideoItem(
                     autoPlay = uiState.autoPlayInlineVideo,
                     onSwitchClick = onSwitchAutoPlayClick,
+                )
+                AlwaysShowSensitiveContentItem(
+                    alwaysShowing = uiState.alwaysShowSensitiveContent,
+                    onAlwaysChanged = onAlwaysShowSensitive,
                 )
                 DarNightItem(
                     uiState = uiState,
@@ -216,33 +224,27 @@ class SettingScreen : BaseScreen() {
         autoPlay: Boolean,
         onSwitchClick: (on: Boolean) -> Unit,
     ) {
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .height(itemHeight)
-                .padding(horizontal = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            Icon(
-                modifier = Modifier.size(24.dp),
-                imageVector = Icons.Default.PlayCircleOutline,
-                contentDescription = "Auto play inline video",
-            )
-            Spacer(modifier = Modifier.width(16.dp))
-            Text(
-                text = stringResource(Res.string.profile_setting_inline_video_auto_play),
-                style = MaterialTheme.typography.titleMedium,
-                maxLines = 1,
-            )
-            Spacer(modifier = Modifier.weight(1F))
-            Switch(
-                modifier = Modifier,
-                checked = autoPlay,
-                onCheckedChange = {
-                    onSwitchClick(it)
-                },
-            )
-        }
+        SettingItemWithSwitch(
+            icon = Icons.Default.PlayCircleOutline,
+            title = stringResource(Res.string.profile_setting_inline_video_auto_play),
+            subtitle = stringResource(Res.string.profile_setting_inline_video_auto_play_subtitle),
+            checked = autoPlay,
+            onCheckedChangeRequest = onSwitchClick,
+        )
+    }
+
+    @Composable
+    private fun AlwaysShowSensitiveContentItem(
+        alwaysShowing: Boolean,
+        onAlwaysChanged: (on: Boolean) -> Unit,
+    ) {
+        SettingItemWithSwitch(
+            icon = Icons.Default.PlayCircleOutline,
+            title = stringResource(Res.string.profile_setting_always_show_sensitive_content),
+            subtitle = stringResource(Res.string.profile_setting_always_show_sensitive_content_subtitle),
+            checked = alwaysShowing,
+            onCheckedChangeRequest = onAlwaysChanged,
+        )
     }
 
     @Composable
@@ -314,6 +316,35 @@ class SettingScreen : BaseScreen() {
             FeedbackBottomSheet(
                 onDismissRequest = { showFeedbackBottomSheet = false },
             )
+        }
+    }
+
+    @Composable
+    private fun SettingItemWithSwitch(
+        icon: ImageVector,
+        title: String,
+        subtitle: String,
+        checked: Boolean,
+        onCheckedChangeRequest: (Boolean) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Box(modifier = Modifier.weight(1F)) {
+                SettingItem(
+                    icon = icon,
+                    title = title,
+                    subtitle = subtitle,
+                    onClick = {},
+                )
+            }
+            Switch(
+                modifier = Modifier,
+                checked = checked,
+                onCheckedChange = onCheckedChangeRequest,
+            )
+            Spacer(modifier = Modifier.width(16.dp))
         }
     }
 

@@ -30,7 +30,6 @@ import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
-import com.zhangke.fread.common.config.LocalStatusConfig
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
 import com.zhangke.fread.common.handler.LocalTextHandler
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
@@ -39,6 +38,8 @@ import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.di.ActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
+import com.zhangke.fread.status.ui.style.StatusUiConfig
 
 class FreadActivity : ComponentActivity() {
 
@@ -70,7 +71,7 @@ class FreadActivity : ComponentActivity() {
                 val statusConfig by component.freadConfigManager.statusConfigFlow.collectAsState()
                 CompositionLocalProvider(
                     LocalExoPlayerManager provides videoPlayerManager,
-                    LocalStatusConfig provides statusConfig,
+                    LocalStatusUiConfig provides StatusUiConfig.create(config = statusConfig),
                     LocalImageLoader provides applicationContext.imageLoader,
                     LocalViewModelProviderFactory provides component.viewModelProviderFactory,
                     LocalLocalConfigManager provides component.localConfigManager,

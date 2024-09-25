@@ -286,7 +286,7 @@ class ImageViewerScreen(
                                 .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 28.dp)
                                 .wrapContentHeight()
                         ) {
-                            Text(text = image.description.orEmpty())
+                            Text(text = image.description)
                         }
                     }
                 }

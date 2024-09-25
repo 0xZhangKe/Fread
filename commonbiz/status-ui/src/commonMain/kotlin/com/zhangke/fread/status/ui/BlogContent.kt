@@ -49,6 +49,7 @@ import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
 import com.zhangke.fread.status.ui.preview.StatusPreviewCardUi
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 
 /**
@@ -197,8 +198,9 @@ private fun BlogTextContentSection(
     }
     val spoilerText = blog.spoilerText
     if (spoilerText.isNotEmpty()) {
-        var hideContent by rememberSaveable(spoilerText) {
-            mutableStateOf(true)
+        val statusConfig = LocalStatusUiConfig.current
+        var hideContent by rememberSaveable(spoilerText, statusConfig.alwaysShowSensitiveContent) {
+            mutableStateOf(!statusConfig.alwaysShowSensitiveContent)
         }
         val humanizedSpoilerText = if (blogTranslationState.showingTranslation) {
             blogTranslationState.blogTranslation!!.getHumanizedSpoilerText(blog)

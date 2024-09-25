@@ -15,13 +15,6 @@ actual fun reportToFireBase(
     )
 }
 
-fun report(eventName: String, paramsBuilder: Bundle.() -> Unit) {
-    reportToFireBase(
-        eventName = eventName,
-        bundle = Bundle().apply(paramsBuilder),
-    )
-}
-
 private fun reportToFireBase(
     eventName: String,
     bundle: Bundle,

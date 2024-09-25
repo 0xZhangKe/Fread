@@ -10,7 +10,7 @@ import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.utils.BlendColorUtil
+import com.zhangke.framework.utils.BlendColorUtils
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -24,7 +24,7 @@ fun DetailTopBar(
     actions: @Composable RowScope.() -> Unit,
 ) {
     val topBarContainerColor = MaterialTheme.colorScheme.surface.copy(progress)
-    val onTopBarColor = BlendColorUtil.blend(
+    val onTopBarColor = BlendColorUtils.blend(
         fraction = progress,
         startColor = MaterialTheme.colorScheme.inverseOnSurface,
         endColor = MaterialTheme.colorScheme.onSurface,

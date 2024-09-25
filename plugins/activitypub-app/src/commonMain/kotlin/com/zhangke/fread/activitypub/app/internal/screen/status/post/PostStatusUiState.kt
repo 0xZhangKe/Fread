@@ -3,10 +3,11 @@ package com.zhangke.fread.activitypub.app.internal.screen.status.post
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.framework.utils.Locale
+import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
 import com.zhangke.fread.status.model.StatusVisibility
-import java.util.Locale
 import kotlin.time.Duration
 
 data class PostStatusUiState(
@@ -69,7 +70,7 @@ data class PostStatusUiState(
                 replyToAuthorInfo = replyToAuthorInfo,
                 warningContent = warningContent,
                 emojiList = emptyList(),
-                language = language ?: Locale.getDefault(),
+                language = language ?: getDefaultLocale(),
                 rules = PostBlogRules.default(),
                 accountChangeable = accountChangeable,
                 visibilityChangeable = visibilityChangeable,

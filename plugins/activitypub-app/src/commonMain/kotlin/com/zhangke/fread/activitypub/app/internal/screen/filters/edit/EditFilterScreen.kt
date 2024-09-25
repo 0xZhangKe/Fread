@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.filters.edit
 
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -36,10 +35,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
+import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DatePickerDialog
@@ -70,12 +70,11 @@ import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_keyword_list_t
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_title
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_desc
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_title
-import com.zhangke.fread.common.ext.toJavaDate
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.datetime.Clock
+import kotlinx.datetime.Instant
 import org.jetbrains.compose.resources.stringResource
-import java.util.Date
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.minutes
@@ -85,7 +84,7 @@ class EditFilterScreen(
     private val id: String?,
 ) : BaseScreen() {
 
-    @OptIn(ExperimentalVoyagerApi::class)
+    @OptIn(InternalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
@@ -113,7 +112,7 @@ class EditFilterScreen(
             }
         }
 
-        BackHandler {
+        BackHandler(true) {
             onBack()
         }
 
@@ -157,7 +156,7 @@ class EditFilterScreen(
         snackBarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onTitleChanged: (String) -> Unit,
-        onExpiredDateSelected: (Date?) -> Unit,
+        onExpiredDateSelected: (Instant?) -> Unit,
         onKeywordClick: () -> Unit,
         onContextChanged: (List<FilterContext>) -> Unit,
         onWarningCheckChanged: (Boolean) -> Unit,
@@ -239,7 +238,7 @@ class EditFilterScreen(
     @Composable
     private fun DurationItem(
         uiState: EditFilterUiState,
-        onExpiredDateSelected: (Date?) -> Unit,
+        onExpiredDateSelected: (Instant?) -> Unit,
     ) {
         val screenWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5F
         var showDurationPopup by remember {
@@ -275,42 +274,42 @@ class EditFilterScreen(
                     text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_thirty_minutes)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(Clock.System.now().plus(30.minutes).toJavaDate())
+                        onExpiredDateSelected(Clock.System.now().plus(30.minutes))
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_one_hour)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(Clock.System.now().plus(1.hours).toJavaDate())
+                        onExpiredDateSelected(Clock.System.now().plus(1.hours))
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_twelve_hours)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(Clock.System.now().plus(12.hours).toJavaDate())
+                        onExpiredDateSelected(Clock.System.now().plus(12.hours))
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_one_day)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(Clock.System.now().plus(1.days).toJavaDate())
+                        onExpiredDateSelected(Clock.System.now().plus(1.days))
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_three_day)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(Clock.System.now().plus(3.days).toJavaDate())
+                        onExpiredDateSelected(Clock.System.now().plus(3.days))
                     },
                 )
                 DropdownMenuItem(
                     text = { Text(text = stringResource(Res.string.activity_pub_filter_edit_duration_one_week)) },
                     onClick = {
                         showDurationPopup = false
-                        onExpiredDateSelected(Clock.System.now().plus(7.days).toJavaDate())
+                        onExpiredDateSelected(Clock.System.now().plus(7.days))
                     },
                 )
                 DropdownMenuItem(
@@ -330,7 +329,9 @@ class EditFilterScreen(
                 onDismissRequest = { showDurationSelector = false },
                 onConfirmClick = {
                     showDurationSelector = false
-                    pickerState.selectedDateMillis?.let { Date(it) }?.let(onExpiredDateSelected)
+                    pickerState.selectedDateMillis
+                        ?.let { Instant.fromEpochMilliseconds(it) }
+                        ?.let(onExpiredDateSelected)
                 },
             )
         }

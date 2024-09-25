@@ -10,7 +10,7 @@ import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.ext.toJavaDate
+import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -18,9 +18,9 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import java.util.Date
 
 class EditFilterViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
@@ -52,7 +52,7 @@ class EditFilterViewModel @Inject constructor(
         _uiState.update { it.copy(title = title, hasInputtedSomething = true) }
     }
 
-    fun onExpiredDateSelected(date: Date?) {
+    fun onExpiredDateSelected(date: Instant?) {
         _uiState.update { it.copy(expiresDate = date, hasInputtedSomething = true) }
     }
 
@@ -102,7 +102,7 @@ class EditFilterViewModel @Inject constructor(
         val expiresIn = if (expiresDate == null) {
             null
         } else {
-            (expiresDate.time - System.currentTimeMillis()) / 1000
+            (expiresDate.toEpochMilliseconds() - getCurrentTimeMillis()) / 1000
         }
         return ActivityPubCreateFilterEntity(
             title = this.title,
@@ -142,7 +142,7 @@ class EditFilterViewModel @Inject constructor(
     private fun ActivityPubFilterEntity.toFilter(): EditFilterUiState {
         return EditFilterUiState(
             title = this.title,
-            expiresDate = expiresAt?.let(DateParser::parseAll)?.toJavaDate(),
+            expiresDate = expiresAt?.let(DateParser::parseAll),
             keywordList = this.keywords?.map { it.toKeyword() } ?: emptyList(),
             contextList = this.context.mapNotNull { FilterContext.fromContext(it) },
             filterByWarn = this.filterAction == ActivityPubFilterEntity.FILTER_ACTION_WARN,

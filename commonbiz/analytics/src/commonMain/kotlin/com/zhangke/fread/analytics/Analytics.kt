@@ -26,7 +26,7 @@ fun reportInfo(
     reportToFireBase(EventNames.INFO, paramsBuilder)
 }
 
-internal expect fun reportToFireBase(
+expect fun reportToFireBase(
     eventName: String,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {},
 )

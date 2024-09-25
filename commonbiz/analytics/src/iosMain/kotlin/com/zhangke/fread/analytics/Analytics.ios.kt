@@ -1,6 +1,6 @@
 package com.zhangke.fread.analytics
 
-internal actual fun reportToFireBase(
+actual fun reportToFireBase(
     eventName: String,
     paramsBuilder: TrackingEventDataBuilder.() -> Unit,
 ) {

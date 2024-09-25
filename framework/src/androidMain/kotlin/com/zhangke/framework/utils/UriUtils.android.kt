@@ -1,6 +1,7 @@
 package com.zhangke.framework.utils
 
 import android.content.ContentResolver
+import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.media.ThumbnailUtils
@@ -11,11 +12,9 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import java.io.FileNotFoundException
-import java.net.URLDecoder
-import java.net.URLEncoder
 
-fun Uri.toContentProviderFile(): ContentProviderFile? {
-    val contentResolver = appContext.contentResolver
+fun Uri.toContentProviderFile(context: Context): ContentProviderFile? {
+    val contentResolver = context.contentResolver
     if (scheme.equals(ContentResolver.SCHEME_CONTENT)) {
         contentResolver?.queryNameAndSize(this)
             ?.use { cursor ->
@@ -96,10 +95,10 @@ private fun Cursor.getDisplayName(): String? {
     return null
 }
 
-fun Uri.getThumbnail(): Bitmap? {
+fun Uri.getThumbnail(context: Context): Bitmap? {
     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
     try {
-        appContext.contentResolver
+        context.contentResolver
             .query(this, filePathColumn, null, null, null)
             ?.use { cursor ->
                 cursor.moveToFirst()

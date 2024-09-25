@@ -5,7 +5,7 @@ import android.util.Log
 import com.google.firebase.Firebase
 import com.google.firebase.analytics.analytics
 
-internal actual fun reportToFireBase(
+actual fun reportToFireBase(
     eventName: String,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit),
 ) {

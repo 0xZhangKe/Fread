@@ -41,6 +41,7 @@ kotlin {
                 implementation(libs.auto.service.annotations)
                 implementation(libs.androidx.paging.common)
                 implementation(libs.bundles.voyager)
+                implementation(libs.leftright)
 
                 implementation(libs.krouter.runtime)
             }
@@ -55,8 +56,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.androidx.browser)
-
-                implementation(libs.composeReorderable)
             }
         }
     }

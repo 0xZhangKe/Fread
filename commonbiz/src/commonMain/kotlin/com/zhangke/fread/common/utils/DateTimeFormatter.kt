@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.utils
 
+import com.zhangke.fread.common.ext.getCurrentInstant
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.date_time_ago
 import com.zhangke.fread.commonbiz.date_time_day
@@ -37,7 +38,7 @@ object DateTimeFormatter {
         config: DatetimeFormatConfig,
     ): String {
         val instant = Instant.fromEpochMilliseconds(datetime)
-        val duration = Clock.System.now() - instant
+        val duration = getCurrentInstant() - instant
         if (duration > 3.days) {
             // TODO: format with locale
             return instant.format(

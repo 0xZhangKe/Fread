@@ -185,7 +185,7 @@ abstract class StatusDatabase : RoomDatabase() {
         const val DB_NAME = "StatusDatabase.db"
     }
 
-    class Status1to2Migration : Migration(1, 2) {
+    internal class Status1to2Migration : Migration(1, 2) {
         override fun migrate(connection: SQLiteConnection) {
             connection.execSQL("DELETE FROM $TABLE_NAME")
         }

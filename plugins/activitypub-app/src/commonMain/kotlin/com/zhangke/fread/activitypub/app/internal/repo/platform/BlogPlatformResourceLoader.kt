@@ -1,0 +1,64 @@
+package com.zhangke.fread.activitypub.app.internal.repo.platform
+
+import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper
+import com.zhangke.fread.status.platform.PlatformSnapshot
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
+import kotlinx.coroutines.withContext
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.JsonPrimitive
+import kotlinx.serialization.json.contentOrNull
+import kotlinx.serialization.json.intOrNull
+import me.tatarka.inject.annotations.Inject
+
+class BlogPlatformResourceLoader @Inject constructor(
+    private val mastodonHelper: MastodonHelper,
+) {
+
+    suspend fun loadLocalPlatforms(): List<PlatformSnapshot> = withContext(Dispatchers.IO) {
+        val json = getLocalMastodonJson()
+        if (json.isNullOrEmpty()) return@withContext emptyList()
+        return@withContext globalJson.decodeFromString<JsonArray?>(json)
+            ?.mapNotNull { it as? JsonObject }
+            ?.mapNotNull { it.toPlatformSnapshot() }
+            ?: emptyList()
+    }
+
+    private suspend fun JsonObject.toPlatformSnapshot(): PlatformSnapshot? {
+        val domain = getAsString("domain") ?: return null
+        return PlatformSnapshot(
+            domain = domain,
+            description = getAsString("description").orEmpty(),
+            version = getAsString("version").orEmpty(),
+            language = getAsString("language").orEmpty(),
+            thumbnail = getAsString("proxied_thumbnail").orEmpty(),
+            totalUsers = getAsInt("total_users") ?: 0,
+            lastWeekUsers = getAsInt("last_week_users") ?: 0,
+            category = getAsString("category").orEmpty(),
+            protocol = createActivityPubProtocol(),
+        )
+    }
+
+    private fun JsonObject.getAsString(key: String): String? {
+        val element = get(key)
+        if (element is JsonPrimitive) {
+            return element.contentOrNull
+        }
+        return null
+    }
+
+    private fun JsonObject.getAsInt(key: String): Int? {
+        val element = get(key)
+        if (element is JsonPrimitive) {
+            return element.intOrNull
+        }
+        return null
+    }
+
+    private fun getLocalMastodonJson(): String? {
+        return mastodonHelper.getLocalMastodonJson()
+    }
+}

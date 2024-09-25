@@ -19,10 +19,12 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.utils.LanguageUtil
+import com.zhangke.framework.utils.LanguageUtils
+import com.zhangke.framework.utils.Locale
+import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.fread.common.page.BaseScreen
 import org.jetbrains.compose.resources.stringResource
-import java.util.Locale
+import kotlin.jvm.Transient
 
 class SelectLanguageScreen(
     @Transient private val onSelected: (Locale) -> Unit,
@@ -32,7 +34,7 @@ class SelectLanguageScreen(
     override fun Content() {
         super.Content()
         val languageList = remember {
-            LanguageUtil().getAllLanguages()
+            LanguageUtils.getAllLanguages()
         }
         val navigator = LocalNavigator.currentOrThrow
         Scaffold(

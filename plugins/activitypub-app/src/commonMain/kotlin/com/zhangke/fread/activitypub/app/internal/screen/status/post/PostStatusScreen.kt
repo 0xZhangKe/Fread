@@ -1,7 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
-import android.net.Uri
-import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -43,7 +41,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -66,6 +63,7 @@ import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.toast.toast
+import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.TextFieldUtils
 import com.zhangke.fread.activitypub.app.Res
@@ -90,7 +88,7 @@ import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
 import com.zhangke.fread.statusui.status_ui_reply
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
-import java.util.Locale
+import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 
 @Destination(PostStatusScreenRoute.ROUTE)

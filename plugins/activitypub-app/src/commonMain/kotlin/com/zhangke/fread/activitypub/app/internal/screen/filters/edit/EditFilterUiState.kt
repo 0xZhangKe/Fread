@@ -1,20 +1,20 @@
 package com.zhangke.fread.activitypub.app.internal.screen.filters.edit
 
-import android.os.Parcelable
 import androidx.compose.runtime.Composable
+import com.zhangke.framework.utils.Parcelize
+import com.zhangke.framework.utils.PlatformParcelable
+import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_finish_subtitle
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_permanent
-import kotlinx.parcelize.Parcelize
+import com.zhangke.fread.common.ext.formatDefault
+import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
-import java.text.DateFormat
-import java.util.Date
-import java.util.Locale
 
 data class EditFilterUiState(
     val title: String,
-    val expiresDate: Date?,
+    val expiresDate: Instant?,
     val keywordList: List<Keyword>,
     val contextList: List<FilterContext>,
     val filterByWarn: Boolean,
@@ -26,9 +26,10 @@ data class EditFilterUiState(
 
     private val expiresDateString: String by lazy {
         if (expiresDate == null) return@lazy ""
-        val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
-        val timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault())
-        dateFormat.format(expiresDate) + " " + timeFormat.format(expiresDate)
+        // val dateFormat = DateFormat.getDateInstance(DateFormat.MEDIUM, Locale.getDefault())
+        // val timeFormat = DateFormat.getTimeInstance(DateFormat.MEDIUM, Locale.getDefault())
+        // dateFormat.format(expiresDate) + " " + timeFormat.format(expiresDate)
+        expiresDate.formatDefault()
     }
 
     @Composable
@@ -48,7 +49,7 @@ data class EditFilterUiState(
         val keyword: String,
         val id: String? = null,
         val deleted: Boolean = false,
-    ) : java.io.Serializable, Parcelable
+    ) : PlatformSerializable, PlatformParcelable
 
     companion object {
 

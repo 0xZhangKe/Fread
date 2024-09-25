@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.composable
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -49,6 +48,8 @@ import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.requireSuccessData
+import com.zhangke.framework.utils.Locale
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.buildPickVisualMediaRequest
 import com.zhangke.framework.utils.rememberPickVisualMediaLauncher
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
@@ -58,7 +59,6 @@ import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_post_status_spoiler
 import org.jetbrains.compose.resources.painterResource
-import java.util.Locale
 
 @OptIn(InternalVoyagerApi::class)
 @Composable
@@ -66,7 +66,7 @@ internal fun PostStatusBottomBar(
     uiState: PostStatusUiState,
     onSensitiveClick: () -> Unit,
     onPollClicked: () -> Unit,
-    onMediaSelected: (List<Uri>) -> Unit,
+    onMediaSelected: (List<PlatformUri>) -> Unit,
     onLanguageSelected: (Locale) -> Unit,
     onEmojiPick: (CustomEmoji) -> Unit,
     onMentionClick: (ActivityPubAccountEntity) -> Unit,
@@ -189,7 +189,7 @@ internal fun PostStatusBottomBar(
 private fun SelectedMediaIconButton(
     modifier: Modifier,
     allowedSelectCount: Int,
-    onMediaSelected: (List<Uri>) -> Unit,
+    onMediaSelected: (List<PlatformUri>) -> Unit,
 ) {
     val launcher = rememberPickVisualMediaLauncher(
         maxItems = allowedSelectCount,

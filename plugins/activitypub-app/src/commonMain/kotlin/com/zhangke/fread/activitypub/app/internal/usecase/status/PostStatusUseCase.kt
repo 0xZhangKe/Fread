@@ -2,6 +2,8 @@ package com.zhangke.fread.activitypub.app.internal.usecase.status
 
 import com.zhangke.activitypub.entities.ActivityPubEditStatusEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusVisibilityEntity
+import com.zhangke.framework.utils.Locale
+import com.zhangke.framework.utils.isO3LanguageCode
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -34,7 +36,7 @@ class PostStatusUseCase @Inject constructor(
         spoilerText: String? = null,
         replyToId: String? = null,
         visibility: StatusVisibility? = null,
-        language: String? = null,
+        language: Locale? = null,
     ): Result<Unit> {
         val role = IdentityRole(account.uri, null)
         val statusRepo = clientManager.getClient(role).statusRepo
@@ -60,7 +62,7 @@ class PostStatusUseCase @Inject constructor(
                 spoilerText = if (sensitive == true) spoilerText else null,
                 replyToId = replyToId,
                 visibility = visibility?.toEntityVisibility(),
-                language = language,
+                language = language?.isO3LanguageCode,
             ).map {
                 val status = statusEntityAdapter.toStatus(it, account.platform)
                 statusUpdater.update(buildStatusUiState(role, status))

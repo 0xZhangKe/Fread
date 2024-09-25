@@ -5,7 +5,8 @@ import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
-import com.zhangke.framework.utils.getDefaultLanguage
+import com.zhangke.framework.utils.getDefaultLocale
+import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiInteraction
@@ -283,7 +284,7 @@ class InteractiveHandler(
         coroutineScope.launch {
             onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translating()))
             statusProvider.statusResolver
-                .translate(role, status.status, getDefaultLanguage())
+                .translate(role, status.status, getDefaultLocale().languageCode)
                 .onFailure {
                     mutableErrorMessageFlow.emitTextMessageFromThrowable(it)
                     onInteractiveHandleResult(InteractiveHandleResult.UpdateStatus(status.translateFinish()))

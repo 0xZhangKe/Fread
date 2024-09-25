@@ -106,6 +106,7 @@ private fun Context.changeLanguage(type: LanguageSettingType) {
     val configuration = resources.configuration
 
     val targetLocale = type.toLocale() ?: Locale.getDefault()
+    Locale.setDefault(targetLocale)
     if (VERSION.SDK_INT >= 24) {
         configuration.setLocales(LocaleList(targetLocale))
     } else {

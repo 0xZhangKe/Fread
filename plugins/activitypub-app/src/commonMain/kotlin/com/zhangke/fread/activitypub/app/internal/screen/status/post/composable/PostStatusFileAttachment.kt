@@ -35,6 +35,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import org.jetbrains.compose.resources.stringResource
@@ -58,6 +59,7 @@ import com.zhangke.fread.activitypub.app.post_screen_media_descriptor_placeholde
 import com.zhangke.fread.commonbiz.image
 import com.zhangke.fread.commonbiz.video
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
 
 private const val MEDIA_ASPECT = 1.78F
@@ -149,7 +151,7 @@ private fun MediaFileContent(
                     .weight(1F)
             ) {
                 if (file is PostStatusMediaAttachmentFile.LocalFile && file.isVideo) {
-                    var bitmap: Bitmap? by remember(file) {
+                    var bitmap: ImageBitmap? by remember(file) {
                         mutableStateOf(null)
                     }
                     LaunchedEffect(file) {
@@ -160,7 +162,7 @@ private fun MediaFileContent(
                     if (bitmap != null) {
                         Image(
                             modifier = Modifier.fillMaxSize(),
-                            bitmap = bitmap!!.asImageBitmap(),
+                            bitmap = bitmap!!,
                             contentDescription = "preview",
                         )
                     } else {

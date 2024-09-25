@@ -217,13 +217,7 @@ class ImageViewerScreen(
                     url = image.url,
                     modifier = Modifier
                         .fillMaxSize()
-                        .run {
-                            if (!image.blurhash.isNullOrEmpty()) {
-                                blurhash(image.blurhash)
-                            } else {
-                                this
-                            }
-                        },
+                        .blurhash(image.blurhash),
                     contentScale = ContentScale.FillBounds,
                     contentDescription = image.description,
                 )
@@ -297,7 +291,7 @@ class ImageViewerScreen(
         val description: String? = null,
         val blurhash: String? = null,
         val aspect: Float? = null,
-    ): PlatformSerializable
+    ) : PlatformSerializable
 }
 
 fun BlogMedia.toImage(): ImageViewerScreen.Image {

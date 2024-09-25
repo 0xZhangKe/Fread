@@ -68,13 +68,7 @@ fun StatusPreviewCardUi(
                         modifier = Modifier
                             .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
                             .fillMaxSize()
-                            .let {
-                                if (card.blurhash.isNullOrEmpty()) {
-                                    it
-                                } else {
-                                    it.blurhash(card.blurhash!!)
-                                }
-                            },
+                            .blurhash(card.blurhash),
                         contentDescription = "Preview Image",
                     )
                     if (card.type == PreviewCard.CardType.VIDEO) {

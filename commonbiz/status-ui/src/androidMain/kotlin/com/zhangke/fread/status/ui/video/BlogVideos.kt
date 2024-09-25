@@ -40,12 +40,12 @@ private fun SingleBlogInlineVideo(
     indexInList: Int,
     onMediaClick: OnBlogMediaClick,
 ) {
-    var modifier = Modifier.clip(RoundedCornerShape(8.dp)).fillMaxWidth()
-    if (videoMedia.blurhash.isNullOrEmpty().not()) {
-        modifier = modifier.blurhash(videoMedia.blurhash!!)
-    }
     val aspect = videoMedia.meta.decideAspect(1.78F)
-    modifier = modifier.aspectRatio(aspect)
+    val modifier = Modifier
+        .clip(RoundedCornerShape(8.dp))
+        .fillMaxWidth()
+        .blurhash(videoMedia.blurhash)
+        .aspectRatio(aspect)
     Box(
         modifier = modifier
     ) {

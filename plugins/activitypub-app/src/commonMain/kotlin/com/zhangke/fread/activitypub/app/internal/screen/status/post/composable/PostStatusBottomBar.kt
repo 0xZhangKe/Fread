@@ -50,8 +50,7 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.framework.utils.buildPickVisualMediaRequest
-import com.zhangke.framework.utils.rememberPickVisualMediaLauncher
+import com.zhangke.fread.activitypub.app.internal.composable.PickVisualMediaLauncherContainer
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
 import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
@@ -191,18 +190,19 @@ private fun SelectedMediaIconButton(
     allowedSelectCount: Int,
     onMediaSelected: (List<PlatformUri>) -> Unit,
 ) {
-    val launcher = rememberPickVisualMediaLauncher(
-        maxItems = allowedSelectCount,
+    PickVisualMediaLauncherContainer(
         onResult = onMediaSelected,
-    )
-    SimpleIconButton(
-        modifier = modifier,
-        onClick = {
-            launcher?.launch(buildPickVisualMediaRequest())
-        },
-        imageVector = Icons.Default.Image,
-        contentDescription = "Add Image",
-    )
+        maxItems = allowedSelectCount,
+    ) {
+        SimpleIconButton(
+            modifier = modifier,
+            onClick = {
+                launchMedia()
+            },
+            imageVector = Icons.Default.Image,
+            contentDescription = "Add Image",
+        )
+    }
 }
 
 @Composable

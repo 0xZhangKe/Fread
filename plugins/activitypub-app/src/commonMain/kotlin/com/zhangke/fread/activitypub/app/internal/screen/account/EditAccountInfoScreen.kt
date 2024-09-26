@@ -41,7 +41,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -55,14 +54,13 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.framework.utils.buildPickVisualImageRequest
-import com.zhangke.framework.utils.rememberSinglePickVisualMediaLauncher
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_input_name_hint
 import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_input_note_hint
 import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_about
 import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_name
 import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_note
+import com.zhangke.fread.activitypub.app.internal.composable.PickVisualMediaLauncherContainer
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.SharedFlow
@@ -72,7 +70,6 @@ class EditAccountInfoScreen(
     private val accountUri: FormalUri,
 ) : BaseScreen() {
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
@@ -112,7 +109,7 @@ class EditAccountInfoScreen(
         onFieldDeleteClick: (Int) -> Unit,
         onFieldAddClick: () -> Unit,
         onAvatarSelected: (PlatformUri) -> Unit,
-        onHeaderSelected: (PlatformUri) -> Unit
+        onHeaderSelected: (PlatformUri) -> Unit,
     ) {
         val snackBarHost = rememberSnackbarHostState()
         ConsumeSnackbarFlow(snackBarHost, snackBarMessageFlow)
@@ -297,23 +294,24 @@ class EditAccountInfoScreen(
     private fun HeaderInEdit(
         uiState: EditAccountUiState,
         headerHeight: Dp,
-        onHeaderSelected: (PlatformUri) -> Unit
+        onHeaderSelected: (PlatformUri) -> Unit,
     ) {
-        val launcher = rememberSinglePickVisualMediaLauncher(
-            onResult = { onHeaderSelected(it) },
-        )
-        AutoSizeImage(
-            uiState.header,
-            modifier = Modifier
-                .height(headerHeight)
-                .fillMaxWidth()
-                .freadPlaceholder(uiState.header.isEmpty())
-                .clickable {
-                    launcher.launch(buildPickVisualImageRequest())
-                },
-            contentScale = ContentScale.Crop,
-            contentDescription = null,
-        )
+        PickVisualMediaLauncherContainer(
+            onResult = { it.firstOrNull()?.let(onHeaderSelected) },
+        ) {
+            AutoSizeImage(
+                uiState.header,
+                modifier = Modifier
+                    .height(headerHeight)
+                    .fillMaxWidth()
+                    .freadPlaceholder(uiState.header.isEmpty())
+                    .clickable {
+                        launchImage()
+                    },
+                contentScale = ContentScale.Crop,
+                contentDescription = null,
+            )
+        }
     }
 
     @Composable
@@ -337,23 +335,24 @@ class EditAccountInfoScreen(
                 contentScale = ContentScale.Crop,
                 contentDescription = "avatar",
             )
-            val launcher = rememberSinglePickVisualMediaLauncher(
-                onResult = { onAvatarSelected(it) },
-            )
-            SimpleIconButton(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5F))
-                    .padding(10.dp),
-                onClick = {
-                    launcher.launch(
-                        buildPickVisualImageRequest()
-                    )
+            PickVisualMediaLauncherContainer(
+                onResult = {
+                    it.firstOrNull()?.let(onAvatarSelected)
                 },
-                imageVector = Icons.Default.Edit,
-                tint = Color.White,
-                contentDescription = "Edit Avatar",
-            )
+            ) {
+                SimpleIconButton(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .background(Color.Black.copy(alpha = 0.5F))
+                        .padding(10.dp),
+                    onClick = {
+                        launchImage()
+                    },
+                    imageVector = Icons.Default.Edit,
+                    tint = Color.White,
+                    contentDescription = "Edit Avatar",
+                )
+            }
         }
     }
 }

@@ -1,7 +1,5 @@
 package com.zhangke.fread.feeds.pages.manager.importing
 
-import android.content.Context
-import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.collections.container
@@ -9,11 +7,14 @@ import com.zhangke.framework.collections.remove
 import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.opml.OpmlOutline
 import com.zhangke.framework.opml.OpmlParser
-import com.zhangke.fread.analytics.report
+import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.fread.analytics.reportToFireBase
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
+import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -30,6 +31,7 @@ import me.tatarka.inject.annotations.Inject
 class ImportFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val configRepo: ContentConfigRepo,
+    private val platformUriHelper: PlatformUriHelper,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ImportFeedsUiState.default)
@@ -40,19 +42,19 @@ class ImportFeedsViewModel @Inject constructor(
 
     private var importingJob: Job? = null
 
-    fun onFileSelected(uri: Uri) {
+    fun onFileSelected(uri: PlatformUri) {
         _uiState.value = _uiState.value.copy(
             selectedFileUri = uri,
             sourceList = emptyList(),
         )
     }
 
-    fun onImportClick(context: Context) {
+    fun onImportClick() {
         if (importingJob?.isActive == true) return
         if (uiState.value.sourceList.isNotEmpty()) return
         _uiState.update { it.copy(errorMessage = null) }
         importingJob = viewModelScope.launch {
-            val sourceGroup = parseOpmlToGroup(context, uiState.value.selectedFileUri!!)
+            val sourceGroup = parseOpmlToGroup(uiState.value.selectedFileUri!!)
             _uiState.update { it.copy(sourceList = sourceGroup) }
             sourceGroup.forEach {
                 importGroup(it)
@@ -172,8 +174,8 @@ class ImportFeedsViewModel @Inject constructor(
         )
     }
 
-    private suspend fun parseOpmlToGroup(context: Context, uri: Uri): List<ImportSourceGroup> {
-        return parseOpml(context, uri).groupBy { it.title.ifEmpty { "Unknown" } }
+    private suspend fun parseOpmlToGroup(uri: PlatformUri): List<ImportSourceGroup> {
+        return parseOpml(uri).groupBy { it.title.ifEmpty { "Unknown" } }
             .map { entry ->
                 ImportSourceGroup(
                     title = entry.key,
@@ -206,22 +208,18 @@ class ImportFeedsViewModel @Inject constructor(
     }
 
     private suspend fun parseOpml(
-        context: Context,
-        uri: Uri,
+        uri: PlatformUri,
     ): List<OpmlOutline> = withContext(Dispatchers.IO) {
         var xmlDocument = ""
         return@withContext try {
-            xmlDocument = context.contentResolver
-                .openInputStream(uri)!!.use { inputStream ->
-                    String(inputStream.readBytes())
-                }
+            xmlDocument = platformUriHelper.readBytes(uri)?.contentToString() ?: ""
             OpmlParser.parse(xmlDocument)
         } catch (e: Throwable) {
             _uiState.update { it.copy(errorMessage = e.message) }
-            report("OPML_IMPORT_ERROR") {
-                putString("errorMessage", e.message)
-                putString("trace", e.stackTraceToString())
-                putString("document", xmlDocument)
+            reportToFireBase("OPML_IMPORT_ERROR") {
+                put("errorMessage", e.message.orEmpty())
+                put("trace", e.stackTraceToString())
+                put("document", xmlDocument)
             }
             emptyList<OpmlOutline>()
         }

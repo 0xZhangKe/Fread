@@ -1,10 +1,11 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
-import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -14,7 +15,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 class UploadMediaJob(
-    private val file: ContentProviderFile,
+    private val fileUri: PlatformUri,
     private val role: IdentityRole,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val scope: CoroutineScope,
@@ -32,7 +33,7 @@ class UploadMediaJob(
             _uploadState.value = uploadState
             val result = uploadMediaAttachment(
                 role = role,
-                fileUri = file.uri,
+                fileUri = fileUri,
                 onProgress = {
                     scope.launch {
                         uploadState.onProgressChanged(it)

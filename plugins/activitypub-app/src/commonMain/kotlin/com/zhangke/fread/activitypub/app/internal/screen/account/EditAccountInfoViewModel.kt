@@ -169,9 +169,9 @@ class EditAccountInfoViewModel @Inject constructor(
                 name = newName,
                 note = newNote,
                 avatarFileName = newAvatar?.fileName,
-                avatarByteArray = newAvatar?.use { it },
+                avatarByteArray = newAvatar?.readBytes(),
                 headerFileName = newHeader?.fileName,
-                headerByteArray = newHeader?.use { it },
+                headerByteArray = newHeader?.readBytes(),
                 fieldList = newFieldList?.map { it.toUpdateFieldRequestEntity() },
             ).onSuccess {
                 updateUiStateByEntity(it)

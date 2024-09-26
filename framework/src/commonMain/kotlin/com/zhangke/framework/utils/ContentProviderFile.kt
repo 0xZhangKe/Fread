@@ -1,18 +1,14 @@
 package com.zhangke.framework.utils
 
-import android.net.Uri
-import java.io.InputStream
-
 data class ContentProviderFile(
-    val uri: Uri,
+    val uri: PlatformUri,
     val fileName: String,
     val size: StorageSize,
     val mimeType: String,
-    private val inputStreamProvider: () -> InputStream?,
+    private val streamProvider: () -> ByteArray?,
 ) {
-
-    fun openInputStream(): InputStream? {
-        return inputStreamProvider()
+    fun readBytes(): ByteArray? {
+        return streamProvider()
     }
 
     val isVideo: Boolean get() = mimeType.contains("video")

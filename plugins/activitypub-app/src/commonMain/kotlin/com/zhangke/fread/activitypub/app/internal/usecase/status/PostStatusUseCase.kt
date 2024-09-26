@@ -94,7 +94,7 @@ class PostStatusUseCase @Inject constructor(
                 poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
                 sensitive = sensitive,
                 spoilerText = if (sensitive == true) spoilerText else null,
-                language = language,
+                language = language?.isO3LanguageCode,
             ).map {
                 val status = statusEntityAdapter.toStatus(it, account.platform)
                 statusUpdater.update(buildStatusUiState(role, status))

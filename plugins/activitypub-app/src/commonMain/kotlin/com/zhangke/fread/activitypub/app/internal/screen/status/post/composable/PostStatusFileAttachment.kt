@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.composable
 
-import android.graphics.Bitmap
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -36,9 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
-import androidx.compose.ui.graphics.asImageBitmap
 import androidx.compose.ui.layout.ContentScale
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -47,20 +44,20 @@ import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.framework.utils.getThumbnail
 import com.zhangke.framework.utils.prettyString
-import com.zhangke.fread.activitypub.app.R
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.InputMediaDescriptionScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
 import com.zhangke.fread.activitypub.app.post_screen_media_descriptor_placeholder
+import com.zhangke.fread.common.utils.LocalThumbnailHelper
 import com.zhangke.fread.commonbiz.image
 import com.zhangke.fread.commonbiz.video
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.launch
+import org.jetbrains.compose.resources.stringResource
 
 private const val MEDIA_ASPECT = 1.78F
 
@@ -151,12 +148,13 @@ private fun MediaFileContent(
                     .weight(1F)
             ) {
                 if (file is PostStatusMediaAttachmentFile.LocalFile && file.isVideo) {
+                    val thumbnailHelper = LocalThumbnailHelper.current
                     var bitmap: ImageBitmap? by remember(file) {
                         mutableStateOf(null)
                     }
                     LaunchedEffect(file) {
                         launch(Dispatchers.IO) {
-                            bitmap = file.file.uri.getThumbnail()
+                            bitmap = thumbnailHelper.getThumbnail(file.file.uri)
                         }
                     }
                     if (bitmap != null) {
@@ -193,9 +191,9 @@ private fun MediaFileContent(
             )
             if (file is PostStatusMediaAttachmentFile.LocalFile) {
                 val mediaType = if (file.file.isVideo) {
-                    org.jetbrains.compose.resources.stringResource(com.zhangke.fread.commonbiz.Res.string.video)
+                    stringResource(com.zhangke.fread.commonbiz.Res.string.video)
                 } else {
-                    org.jetbrains.compose.resources.stringResource(com.zhangke.fread.commonbiz.Res.string.image)
+                    stringResource(com.zhangke.fread.commonbiz.Res.string.image)
                 }
                 Text(
                     modifier = Modifier.padding(start = 16.dp, top = 2.dp, end = 16.dp),

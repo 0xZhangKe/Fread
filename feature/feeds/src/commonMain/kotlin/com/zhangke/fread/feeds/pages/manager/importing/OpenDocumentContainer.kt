@@ -4,11 +4,11 @@ import androidx.compose.runtime.Composable
 import com.zhangke.framework.utils.PlatformUri
 
 @Composable
-expect fun OpenDocumentWrapper(
+expect fun OpenDocumentContainer(
     onResult: (PlatformUri) -> Unit,
-    content: @Composable OpenDocumentWrapperScope.() -> Unit
+    content: @Composable OpenDocumentContainerScope.() -> Unit
 )
 
-expect class OpenDocumentWrapperScope {
+expect class OpenDocumentContainerScope {
     fun launch()
 }

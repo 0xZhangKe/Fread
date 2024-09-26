@@ -5,19 +5,19 @@ import androidx.compose.runtime.remember
 import com.zhangke.framework.utils.PlatformUri
 
 @Composable
-actual fun OpenDocumentWrapper(
+actual fun OpenDocumentContainer(
     onResult: (PlatformUri) -> Unit,
-    content: @Composable OpenDocumentWrapperScope.() -> Unit,
+    content: @Composable OpenDocumentContainerScope.() -> Unit,
 ) {
     val scope = remember {
-        OpenDocumentWrapperScope()
+        OpenDocumentContainerScope()
     }
     with(scope) {
         content()
     }
 }
 
-actual class OpenDocumentWrapperScope {
+actual class OpenDocumentContainerScope {
     actual fun launch() {
         TODO("Not yet implemented")
     }

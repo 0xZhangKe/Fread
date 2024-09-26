@@ -10,23 +10,23 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toPlatformUri
 
 @Composable
-actual fun OpenDocumentWrapper(
+actual fun OpenDocumentContainer(
     onResult: (PlatformUri) -> Unit,
-    content: @Composable OpenDocumentWrapperScope.() -> Unit,
+    content: @Composable OpenDocumentContainerScope.() -> Unit,
 ) {
     val selectedFileLauncher =
         rememberLauncherForActivityResult(ActivityResultContracts.OpenDocument()) { uri ->
             uri?.toPlatformUri()?.let { onResult(it) }
         }
     val scope = remember {
-        OpenDocumentWrapperScope(selectedFileLauncher)
+        OpenDocumentContainerScope(selectedFileLauncher)
     }
     with(scope) {
         content()
     }
 }
 
-actual class OpenDocumentWrapperScope(
+actual class OpenDocumentContainerScope(
     private val launcher: ManagedActivityResultLauncher<Array<String>, Uri?>
 ) {
     actual fun launch() {

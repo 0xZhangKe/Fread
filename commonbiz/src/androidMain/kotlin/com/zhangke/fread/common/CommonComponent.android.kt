@@ -75,6 +75,12 @@ actual interface CommonPlatformComponent {
         return module
     }
 
+    @IntoSet
+    @Provides
+    fun bindCommonModuleStartup(module: CommonModuleStartup): ModuleStartup {
+        return module
+    }
+
     @ApplicationScope
     @Provides
     fun provideBrowserLauncher(

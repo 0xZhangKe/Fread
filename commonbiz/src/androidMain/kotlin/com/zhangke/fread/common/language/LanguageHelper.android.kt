@@ -30,7 +30,7 @@ class LanguageHelper @Inject constructor(
     var currentType = readLocalFromStorage() ?: LanguageSettingType.SYSTEM
         private set
 
-    init {
+    fun init() {
         application.changeLanguage(currentType)
         application.registerActivityLifecycleCallbacks(object :
             ActivityLifecycleCallbacksAdapter() {

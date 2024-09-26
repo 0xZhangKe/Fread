@@ -1,5 +1,7 @@
 package com.zhangke.framework.utils
 
+import kotlin.jvm.JvmInline
+
 @Suppress("PropertyName")
 @JvmInline
 value class StorageSize(val length: Long) {
@@ -14,10 +16,10 @@ value class StorageSize(val length: Long) {
 val StorageSize.prettyString: String
     get() {
         if (GB >= 1) {
-            return "%.2f GB".format(GB)
+            return "${GB.decimal(2)} GB"
         }
         if (MB >= 1) {
-            return "%.2f MB".format(MB)
+            return "${MB.decimal(2)} MB"
         }
-        return "%.2f KB".format(KB)
+        return "${KB.decimal(2)} KB"
     }

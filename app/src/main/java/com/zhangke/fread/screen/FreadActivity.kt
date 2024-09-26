@@ -36,6 +36,9 @@ import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.common.utils.LocalMediaFileHelper
+import com.zhangke.fread.common.utils.LocalPlatformUriHelper
+import com.zhangke.fread.common.utils.LocalThumbnailHelper
+import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.di.ActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
@@ -83,6 +86,9 @@ class FreadActivity : ComponentActivity() {
                     LocalActivityBrowserLauncher provides activityComponent.activityBrowserLauncher,
                     LocalActivityTextHandler provides activityComponent.activityTextHandler,
                     LocalMediaFileHelper provides component.mediaFileHelper,
+                    LocalThumbnailHelper provides component.thumbnailHelper,
+                    LocalToastHelper provides activityComponent.toastHelper,
+                    LocalPlatformUriHelper provides component.platformUriHelper,
                 ) {
                     ProvideNavigatorLifecycleKMPSupport {
                         TransparentNavigator {

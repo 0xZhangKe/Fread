@@ -20,20 +20,17 @@ class UploadMediaAttachmentUseCase @Inject constructor(
         return try {
             val stream = platformUriHelper.read(fileUri)
                 ?: return Result.failure(RuntimeException("File invalid!"))
-            stream.use { bytes ->
-                if (bytes == null) {
-                    return@use Result.failure(RuntimeException("File invalid!"))
-                }
-                client.mediaRepo.postFile(
-                    fileName = stream.fileName,
-                    fileSize = stream.fileSize,
-                    byteArray = bytes,
-                    fileMediaType = stream.mimeType,
-                    onProgress = {
-                        onProgress(it)
-                    },
-                ).map { it.id }
-            }
+            val bytes = stream.readBytes()
+                ?: return Result.failure(RuntimeException("File invalid!"))
+            client.mediaRepo.postFile(
+                fileName = stream.fileName,
+                fileSize = stream.size.length,
+                byteArray = bytes,
+                fileMediaType = stream.mimeType,
+                onProgress = {
+                    onProgress(it)
+                },
+            ).map { it.id }
         } catch (e: Throwable) {
             Result.failure(RuntimeException("File invalid!"))
         }

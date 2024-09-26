@@ -32,7 +32,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
@@ -72,6 +71,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_desc
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_warning_title
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.ui.utils.getScreenWidth
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import org.jetbrains.compose.resources.stringResource
@@ -240,7 +240,7 @@ class EditFilterScreen(
         uiState: EditFilterUiState,
         onExpiredDateSelected: (Instant?) -> Unit,
     ) {
-        val screenWidth = LocalConfiguration.current.screenWidthDp.dp * 0.5F
+        val screenWidth = getScreenWidth() * 0.5F
         var showDurationPopup by remember {
             mutableStateOf(false)
         }
@@ -321,7 +321,7 @@ class EditFilterScreen(
                 )
             }
             val pickerState = rememberFutureDatePickerState(
-                initialSelectedDateMillis = uiState.expiresDate?.time
+                initialSelectedDateMillis = uiState.expiresDate?.toEpochMilliseconds()
             )
             DatePickerDialog(
                 datePickerState = pickerState,

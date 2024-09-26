@@ -21,12 +21,14 @@ fun Uri.toContentProviderFile(context: Context): ContentProviderFile? {
                 val size = cursor.getSize() ?: StorageSize(0L)
                 val name = cursor.getDisplayName().orEmpty()
                 return ContentProviderFile(
-                    uri = this,
+                    uri = this.toPlatformUri(),
                     fileName = name,
                     size = size,
                     mimeType = contentResolver.getType(this).orEmpty(),
-                    inputStreamProvider = {
-                        contentResolver.openInputStream(this)
+                    streamProvider = {
+                        contentResolver.openInputStream(this)?.use {
+                            it.readBytes()
+                        }
                     }
                 )
             }
@@ -38,12 +40,16 @@ fun Uri.toContentProviderFile(context: Context): ContentProviderFile? {
                 val fileName = getAssetFileNameFromUri(this).orEmpty()
                 val extension = getExtensionFromFileName(fileName)
                 ContentProviderFile(
-                    uri = this,
+                    uri = this.toPlatformUri(),
                     fileName = fileName,
                     size = size,
                     mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
                         .orEmpty(),
-                    inputStreamProvider = { descriptor.createInputStream() }
+                    streamProvider = {
+                        descriptor.createInputStream()?.use {
+                            it.readBytes()
+                        }
+                    }
                 )
             }
     } catch (_: FileNotFoundException) {

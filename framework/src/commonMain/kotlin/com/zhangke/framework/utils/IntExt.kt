@@ -16,7 +16,13 @@ fun Int.formatToHumanReadable(): String {
     }
 }
 
-private fun Float.decimal(digits: Int): String {
+fun Float.decimal(digits: Int): String {
+    return this.toBigDecimal()
+        .scale(digits.toLong())
+        .toStringExpanded()
+}
+
+fun Double.decimal(digits: Int): String {
     return this.toBigDecimal()
         .scale(digits.toLong())
         .toStringExpanded()

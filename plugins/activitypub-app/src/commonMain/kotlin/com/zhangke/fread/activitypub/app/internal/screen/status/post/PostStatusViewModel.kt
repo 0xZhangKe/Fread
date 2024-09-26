@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
-import android.net.Uri
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -20,8 +19,8 @@ import com.zhangke.framework.coroutines.invokeOnCancel
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
-import com.zhangke.framework.utils.toContentProviderFile
-import com.zhangke.fread.activitypub.app.R
+import com.zhangke.framework.utils.Locale
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
@@ -37,10 +36,13 @@ import com.zhangke.fread.activitypub.app.post_status_media_is_not_upload
 import com.zhangke.fread.activitypub.app.post_status_poll_is_empty
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
+import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -49,9 +51,9 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
-import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.days
 
@@ -64,6 +66,7 @@ class PostStatusViewModel @Inject constructor(
     private val postStatus: PostStatusUseCase,
     private val platformUriTransformer: PlatformUriTransformer,
     @Assisted private val screenParams: PostStatusScreenParams,
+    private val platformUriHelper: PlatformUriHelper,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
@@ -179,14 +182,18 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
-    fun onMediaSelected(list: List<Uri>) {
+    fun onMediaSelected(list: List<PlatformUri>) {
         if (list.isEmpty()) return
-        val fileList = list.mapNotNull { it.toContentProviderFile() }
-        val videoFile = fileList.firstOrNull { it.isVideo }
-        if (videoFile != null) {
-            onAddVideo(videoFile)
-        } else {
-            onAddImageList(fileList)
+        viewModelScope.launch {
+            val fileList = list.map {
+                async { platformUriHelper.read(it) }
+            }.awaitAll().filterNotNull()
+            val videoFile = fileList.firstOrNull { it.isVideo }
+            if (videoFile != null) {
+                onAddVideo(videoFile)
+            } else {
+                onAddImageList(fileList)
+            }
         }
     }
 
@@ -217,7 +224,7 @@ class PostStatusViewModel @Inject constructor(
     }
 
     private fun buildUploadFileJob(file: ContentProviderFile) = UploadMediaJob(
-        file = file,
+        fileUri = file.uri,
         role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null),
         uploadMediaAttachment = uploadMediaAttachment,
         scope = viewModelScope,
@@ -446,7 +453,7 @@ class PostStatusViewModel @Inject constructor(
                 _postState.emit(LoadableState.idle())
                 val errorMessage = textOf(
                     Res.string.post_status_failed,
-                    it.localizedMessage.ifNullOrEmpty { "unknown error" },
+                    it.message.ifNullOrEmpty { "unknown error" },
                 )
                 _snackMessage.emit(errorMessage)
             }

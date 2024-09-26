@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.utils
 
+import com.zhangke.framework.media.MediaFileUtil
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toAndroidUri
@@ -14,27 +15,20 @@ import me.tatarka.inject.annotations.Inject
 actual class PlatformUriHelper @Inject constructor(
     private val context: ApplicationContext,
 ) {
-    actual suspend fun read(uri: PlatformUri): PlatformUriStream? {
+    actual suspend fun read(uri: PlatformUri): ContentProviderFile? {
         val contentFile = withContext(Dispatchers.IO) {
             uri.toAndroidUri().toContentProviderFile(context)
         }
-        return contentFile?.let { PlatformUriStream(it) }
+        return contentFile
     }
-}
 
-actual class PlatformUriStream internal constructor(
-    private val contentFile: ContentProviderFile,
-) {
-    actual val fileName: String
-        get() = contentFile.fileName
-    actual val fileSize: Long
-        get() = contentFile.size.length
-    actual val mimeType: String
-        get() = contentFile.mimeType
-
-    actual suspend fun <R> use(block: suspend (ByteArray?) -> R): R {
-        return contentFile.openInputStream().use {
-            block(it?.readBytes())
+    actual suspend fun readBytes(uri: PlatformUri): ByteArray? {
+        return context.contentResolver.openInputStream(uri.toAndroidUri())?.use {
+            it.readBytes()
         }
+    }
+
+    actual fun queryFileName(uri: PlatformUri): String? {
+        return MediaFileUtil.queryFileName(context, uri.toAndroidUri())
     }
 }

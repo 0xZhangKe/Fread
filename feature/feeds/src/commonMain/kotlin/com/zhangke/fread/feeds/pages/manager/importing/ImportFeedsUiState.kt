@@ -1,10 +1,10 @@
 package com.zhangke.fread.feeds.pages.manager.importing
 
-import android.net.Uri
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.status.uri.FormalUri
 
 data class ImportFeedsUiState(
-    val selectedFileUri: Uri?,
+    val selectedFileUri: PlatformUri?,
     val sourceList: List<ImportSourceGroup>,
     val errorMessage: String? = null,
 ) {

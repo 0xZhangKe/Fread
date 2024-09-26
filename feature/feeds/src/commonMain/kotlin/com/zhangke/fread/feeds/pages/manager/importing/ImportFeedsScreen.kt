@@ -1,8 +1,5 @@
 package com.zhangke.fread.feeds.pages.manager.importing
 
-import android.net.Uri
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts.OpenDocument
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -37,7 +34,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,15 +47,19 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.media.MediaFileUtil
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.LocalPlatformUriHelper
+import com.zhangke.fread.common.utils.LocalToastHelper
+import com.zhangke.fread.feeds.Res
+import com.zhangke.fread.feeds.add_content_success_snackbar
 import com.zhangke.fread.feeds.feeds_delete_confirm_content
 import com.zhangke.fread.feeds.feeds_import_back_dialog_message
 import com.zhangke.fread.feeds.feeds_import_button
 import com.zhangke.fread.feeds.feeds_import_page_hint
 import com.zhangke.fread.feeds.feeds_import_page_title
-import com.zhangke.fread.feeds.pages.manager.add.showAddContentSuccessToast
 import com.zhangke.fread.framework.alert
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 class ImportFeedsScreen : BaseScreen() {
@@ -68,10 +68,10 @@ class ImportFeedsScreen : BaseScreen() {
     @Composable
     override fun Content() {
         super.Content()
+        val toastHelper = LocalToastHelper.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<ImportFeedsViewModel>()
         val uiState by viewModel.uiState.collectAsState()
-        val context = LocalContext.current
         var showBackDialog by remember {
             mutableStateOf(false)
         }
@@ -106,7 +106,7 @@ class ImportFeedsScreen : BaseScreen() {
             onBackClick = ::onBackRequest,
             onFileSelected = viewModel::onFileSelected,
             onImportClick = {
-                viewModel.onImportClick(context)
+                viewModel.onImportClick()
             },
             onGroupDelete = viewModel::onGroupDelete,
             onSourceDelete = viewModel::onSourceDelete,
@@ -114,7 +114,7 @@ class ImportFeedsScreen : BaseScreen() {
             retryImportClick = viewModel::retryImportClick,
         )
         ConsumeFlow(viewModel.saveSuccessFlow) {
-            showAddContentSuccessToast(context)
+            toastHelper.showToast(getString(Res.string.add_content_success_snackbar))
             navigator.pop()
         }
     }
@@ -122,7 +122,7 @@ class ImportFeedsScreen : BaseScreen() {
     @Composable
     private fun ImportFeedsContent(
         uiState: ImportFeedsUiState,
-        onFileSelected: (Uri) -> Unit,
+        onFileSelected: (PlatformUri) -> Unit,
         onBackClick: () -> Unit,
         onImportClick: () -> Unit,
         onGroupDelete: (ImportSourceGroup) -> Unit,
@@ -130,11 +130,11 @@ class ImportFeedsScreen : BaseScreen() {
         retryImportClick: (ImportSourceGroup, ImportingSource) -> Unit,
         onSaveClick: () -> Unit,
     ) {
-        val context = LocalContext.current
+        val platformUriHelper = LocalPlatformUriHelper.current
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_page_title),
+                    title = stringResource(Res.string.feeds_import_page_title),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
@@ -155,39 +155,35 @@ class ImportFeedsScreen : BaseScreen() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    val selectedFileLauncher =
-                        rememberLauncherForActivityResult(OpenDocument()) { uri ->
-                            if (uri != null) {
-                                onFileSelected(uri)
-                            }
-                        }
-                    Card(
-                        modifier = Modifier
-                            .weight(1F)
-                            .clickable {
-                                selectedFileLauncher.launch(arrayOf("*/*"))
-                            },
+                    OpenDocumentWrapper(
+                        onResult = onFileSelected,
                     ) {
-                        Box(
+                        Card(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(vertical = 8.dp),
+                                .weight(1F)
+                                .clickable {
+                                    launch()
+                                },
                         ) {
-                            val prettyFileUri = remember(uiState.selectedFileUri) {
-                                if (uiState.selectedFileUri == null) {
-                                    null
-                                } else {
-                                    MediaFileUtil.queryFileName(context, uiState.selectedFileUri)
+                            Box(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(vertical = 8.dp),
+                            ) {
+                                val prettyFileUri = remember(uiState.selectedFileUri) {
+                                    uiState.selectedFileUri?.let {
+                                        platformUriHelper.queryFileName(it)
+                                    }
                                 }
+                                Text(
+                                    modifier = Modifier.align(Alignment.Center),
+                                    text = prettyFileUri
+                                        ?: stringResource(Res.string.feeds_import_page_hint),
+                                    overflow = TextOverflow.Clip,
+                                    maxLines = 1,
+                                    fontSize = 12.sp,
+                                )
                             }
-                            Text(
-                                modifier = Modifier.align(Alignment.Center),
-                                text = prettyFileUri
-                                    ?: stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_page_hint),
-                                overflow = TextOverflow.Clip,
-                                maxLines = 1,
-                                fontSize = 12.sp,
-                            )
                         }
                     }
                     Button(
@@ -196,7 +192,7 @@ class ImportFeedsScreen : BaseScreen() {
                         enabled = uiState.selectedFileUri != null,
                     ) {
                         Text(
-                            text = stringResource(com.zhangke.fread.feeds.Res.string.feeds_import_button)
+                            text = stringResource(Res.string.feeds_import_button)
                         )
                     }
                 }

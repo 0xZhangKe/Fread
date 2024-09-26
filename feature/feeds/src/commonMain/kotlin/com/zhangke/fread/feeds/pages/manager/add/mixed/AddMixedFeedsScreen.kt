@@ -25,9 +25,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -43,17 +41,19 @@ import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.analytics.AddMixedFeedsElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.feeds.Res
+import com.zhangke.fread.feeds.add_content_success_snackbar
 import com.zhangke.fread.feeds.add_feeds_page_feeds_empty
 import com.zhangke.fread.feeds.add_feeds_page_feeds_name_hint
 import com.zhangke.fread.feeds.add_feeds_page_feeds_name_label
 import com.zhangke.fread.feeds.add_feeds_page_title
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
-import com.zhangke.fread.feeds.pages.manager.add.showAddContentSuccessToast
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
+import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
 /**
@@ -63,11 +63,10 @@ internal class AddMixedFeedsScreen(
     private val statusSource: StatusSource? = null
 ) : BaseScreen() {
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
-        val context = LocalContext.current
+        val toastHelper = LocalToastHelper.current
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<AddMixedFeedsViewModel, AddMixedFeedsViewModel.Factory> {
             it.create(statusSource)
@@ -93,7 +92,7 @@ internal class AddMixedFeedsScreen(
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.addContentSuccessFlow) {
-            showAddContentSuccessToast(context)
+            toastHelper.showToast(getString(Res.string.add_content_success_snackbar))
             navigator.pop()
         }
         val resultNavigator = navigator.navigationResult

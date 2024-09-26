@@ -10,7 +10,7 @@ import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusRea
 import com.zhangke.fread.common.di.ApplicationContext
 import me.tatarka.inject.annotations.Provides
 
-interface ActivityPubPlatformComponent {
+actual interface ActivityPubPlatformComponent {
 
     @Provides
     fun provideActivityPubDatabases(

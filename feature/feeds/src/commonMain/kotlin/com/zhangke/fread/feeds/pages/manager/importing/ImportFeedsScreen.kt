@@ -155,7 +155,7 @@ class ImportFeedsScreen : BaseScreen() {
                         .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
-                    OpenDocumentWrapper(
+                    OpenDocumentContainer(
                         onResult = onFileSelected,
                     ) {
                         Card(

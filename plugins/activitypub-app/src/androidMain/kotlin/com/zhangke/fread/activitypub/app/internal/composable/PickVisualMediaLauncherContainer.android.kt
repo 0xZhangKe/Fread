@@ -32,7 +32,7 @@ actual fun PickVisualMediaLauncherContainer(
             },
         )
     }
-    val scope = remember {
+    val scope = remember(launcher) {
         PickVisualMediaLauncherContainerScope(launcher)
     }
     with(scope) {

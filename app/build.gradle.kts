@@ -92,26 +92,9 @@ dependencies {
     implementation(compose.material3)
     implementation(compose.components.resources)
 
-    // implementation(libs.bundles.androidx.fragment)
     implementation(libs.bundles.androidx.activity)
     implementation(libs.bundles.voyager)
     implementation(libs.imageLoader)
-    // implementation(libs.bundles.androidx.preference)
-
-    // implementation(libs.bundles.androidx.collection)
-    // implementation(libs.androidx.browser)
-    // implementation(libs.accompanist.permissions)
-    // implementation(libs.androidx.room)
-
-
-
-
-    // implementation(libs.okhttp3)
-    // implementation(libs.okhttp3.logging)
-    // implementation(libs.auto.service.annotations)
-    // ksp(libs.auto.service.ksp)
-    // implementation(libs.androidx.paging.common)
-
 
     implementation(libs.bundles.androidx.media3)
 }

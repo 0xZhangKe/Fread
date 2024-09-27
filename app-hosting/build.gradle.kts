@@ -60,8 +60,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.bundles.androidx.datastore)
-                // implementation(libs.androidx.appcompat)
-                // implementation(libs.androidx.annotation)
 
                 implementation(libs.bundles.googlePlayReview)
                 implementation(project.dependencies.platform(libs.firebase.bom))

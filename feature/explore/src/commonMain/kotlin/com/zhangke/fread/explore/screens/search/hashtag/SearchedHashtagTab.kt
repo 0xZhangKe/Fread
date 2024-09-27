@@ -31,7 +31,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
 
-class SearchedHashtagTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
+internal class SearchedHashtagTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(

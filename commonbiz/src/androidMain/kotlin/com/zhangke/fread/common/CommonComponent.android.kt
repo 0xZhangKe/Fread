@@ -11,10 +11,8 @@ import com.russhwolf.settings.datastore.DataStoreSettings
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
 import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.repo.db.StatusDatabase
@@ -28,10 +26,6 @@ actual interface CommonPlatformComponent {
     val moduleStartups: Set<ModuleStartup>
 
     val browserInterceptorSet: Set<BrowserInterceptor>
-
-    val dayNightHelper: DayNightHelper
-
-    val freadReviewManager: FreadReviewManager
 
     val browserLauncher: BrowserLauncher
 

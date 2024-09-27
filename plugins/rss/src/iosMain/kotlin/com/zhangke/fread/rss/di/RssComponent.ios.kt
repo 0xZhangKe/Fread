@@ -1,7 +1,6 @@
 package com.zhangke.fread.rss.di
 
 import androidx.room.Room
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.prof18.rssparser.RssParser
 import com.prof18.rssparser.RssParserBuilder
 import com.zhangke.fread.common.di.ApplicationScope
@@ -19,8 +18,7 @@ actual interface RssPlatformComponent {
         val dbFilePath = documentDirectory() + "/${RssDatabases.DB_NAME}"
         return Room.databaseBuilder<RssDatabases>(
             name = dbFilePath,
-        ).setDriver(BundledSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
+        ).setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
 

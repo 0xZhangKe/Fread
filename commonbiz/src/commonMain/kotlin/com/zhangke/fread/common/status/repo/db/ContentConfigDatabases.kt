@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.status.repo.db
 
+import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -9,6 +10,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.common.status.repo.db.converts.ContentTabConverter
@@ -94,6 +96,7 @@ interface ContentConfigDao {
     version = DB_VERSION,
     exportSchema = false,
 )
+@ConstructedBy(ContentConfigDatabasesConstructor::class)
 abstract class ContentConfigDatabases : RoomDatabase() {
 
     abstract fun getContentConfigDao(): ContentConfigDao
@@ -101,4 +104,10 @@ abstract class ContentConfigDatabases : RoomDatabase() {
     companion object {
         const val DB_NAME = "ContentConfig.db"
     }
+}
+
+// The Room compiler generates the `actual` implementations.
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object ContentConfigDatabasesConstructor : RoomDatabaseConstructor<ContentConfigDatabases> {
+    override fun initialize(): ContentConfigDatabases
 }

@@ -40,6 +40,7 @@ kotlin {
 
                 implementation(libs.kotlinInject.runtime)
 
+                implementation(libs.androidx.sqlite.bundled)
                 implementation(libs.androidx.room)
                 implementation(libs.bundles.voyager)
                 implementation(libs.uri.kmp)

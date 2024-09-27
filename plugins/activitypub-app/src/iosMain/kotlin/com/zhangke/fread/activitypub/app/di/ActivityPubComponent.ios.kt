@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app.di
 
 import androidx.room.Room
+import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.db.notifications.Notification1to2Migration
 import com.zhangke.fread.activitypub.app.internal.db.notifications.NotificationsDatabase
@@ -17,7 +18,8 @@ actual interface ActivityPubPlatformComponent {
         val dbFilePath = documentDirectory() + "/${ActivityPubDatabases.DB_NAME}"
         return Room.databaseBuilder<ActivityPubDatabases>(
             name = dbFilePath,
-        ).setQueryCoroutineContext(Dispatchers.IO)
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
 
@@ -26,7 +28,8 @@ actual interface ActivityPubPlatformComponent {
         val dbFilePath = documentDirectory() + "/${NotificationsDatabase.DB_NAME}"
         return Room.databaseBuilder<NotificationsDatabase>(
             name = dbFilePath,
-        ).setQueryCoroutineContext(Dispatchers.IO)
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
             .addMigrations(
                 Notification1to2Migration(),
             )
@@ -38,7 +41,8 @@ actual interface ActivityPubPlatformComponent {
         val dbFilePath = documentDirectory() + "/${ActivityPubStatusDatabases.DB_NAME}"
         return Room.databaseBuilder<ActivityPubStatusDatabases>(
             name = dbFilePath,
-        ).setQueryCoroutineContext(Dispatchers.IO)
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
             .addMigrations(
                 Notification1to2Migration(),
             )
@@ -50,7 +54,8 @@ actual interface ActivityPubPlatformComponent {
         val dbFilePath = documentDirectory() + "/${ActivityPubStatusReadStateDatabases.DB_NAME}"
         return Room.databaseBuilder<ActivityPubStatusReadStateDatabases>(
             name = dbFilePath,
-        ).setQueryCoroutineContext(Dispatchers.IO)
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
 }

@@ -4,6 +4,7 @@ import androidx.compose.animation.core.Animatable
 import androidx.compose.animation.core.FastOutSlowInEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.Canvas
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -43,11 +44,15 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.seiko.imageloader.EmptyPainter
 import com.seiko.imageloader.LocalImageLoader
+import com.seiko.imageloader.model.ImageAction
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
 import com.seiko.imageloader.option.SizeResolver
-import com.seiko.imageloader.ui.AutoSizeImage
+import com.seiko.imageloader.rememberImageAction
+import com.seiko.imageloader.rememberImagePainter
+import com.seiko.imageloader.rememberImageSuccessPainter
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.composable.HorizontalPageIndicator
 import com.zhangke.framework.composable.SimpleIconButton
@@ -213,8 +218,26 @@ class ImageViewerScreen(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
             ) {
-                AutoSizeImage(
-                    url = image.url,
+                val imageAction by rememberImageAction(image.url)
+                val painter = when (imageAction) {
+                    is ImageAction.Loading -> {
+                        if (image.previewUrl.isNullOrEmpty()) {
+                            remember { EmptyPainter }
+                        } else {
+                            rememberImagePainter(url = image.previewUrl)
+                        }
+                    }
+
+                    is ImageAction.Success -> {
+                        rememberImageSuccessPainter(imageAction as ImageAction.Success)
+                    }
+
+                    is ImageAction.Failure -> {
+                        remember { EmptyPainter }
+                    }
+                }
+                Image(
+                    painter = painter,
                     modifier = Modifier
                         .fillMaxSize()
                         .blurhash(image.blurhash),
@@ -288,6 +311,7 @@ class ImageViewerScreen(
 
     data class Image(
         val url: String,
+        val previewUrl: String? = null,
         val description: String? = null,
         val blurhash: String? = null,
         val aspect: Float? = null,
@@ -297,6 +321,7 @@ class ImageViewerScreen(
 fun BlogMedia.toImage(): ImageViewerScreen.Image {
     return ImageViewerScreen.Image(
         url = this.url,
+        previewUrl = this.previewUrl,
         description = this.description,
         blurhash = this.blurhash,
         aspect = this.meta?.asImageMetaOrNull()?.original?.aspect,

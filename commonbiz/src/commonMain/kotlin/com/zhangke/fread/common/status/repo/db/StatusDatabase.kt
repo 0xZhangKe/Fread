@@ -1,5 +1,6 @@
 package com.zhangke.fread.common.status.repo.db
 
+import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -9,6 +10,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
@@ -177,6 +179,7 @@ interface StatusContentDao {
     version = DB_VERSION,
     exportSchema = false,
 )
+@ConstructedBy(StatusDatabaseConstructor::class)
 abstract class StatusDatabase : RoomDatabase() {
 
     abstract fun getStatusContentDao(): StatusContentDao
@@ -192,3 +195,9 @@ abstract class StatusDatabase : RoomDatabase() {
     }
 }
 
+// The Room compiler generates the `actual` implementations.
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object StatusDatabaseConstructor :
+    RoomDatabaseConstructor<StatusDatabase> {
+    override fun initialize(): StatusDatabase
+}

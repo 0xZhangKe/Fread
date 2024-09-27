@@ -1,7 +1,6 @@
 package com.zhangke.fread.common
 
 import androidx.room.Room
-import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
@@ -25,8 +24,7 @@ actual interface CommonPlatformComponent {
         val dbFilePath = documentDirectory() + "/${StatusDatabase.DB_NAME}"
         return Room.databaseBuilder<StatusDatabase>(
             name = dbFilePath,
-        ).setDriver(BundledSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
+        ).setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
 
@@ -36,8 +34,7 @@ actual interface CommonPlatformComponent {
         val dbFilePath = documentDirectory() + "/${ContentConfigDatabases.DB_NAME}"
         return Room.databaseBuilder<ContentConfigDatabases>(
             name = dbFilePath,
-        ).setDriver(BundledSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
+        ).setQueryCoroutineContext(Dispatchers.IO)
             .build()
     }
 

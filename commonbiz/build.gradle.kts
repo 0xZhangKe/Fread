@@ -40,7 +40,6 @@ kotlin {
 
                 implementation(libs.kotlinInject.runtime)
 
-                implementation(libs.androidx.sqlite.bundled)
                 implementation(libs.androidx.room)
                 implementation(libs.bundles.voyager)
                 implementation(libs.uri.kmp)
@@ -73,6 +72,11 @@ kotlin {
                 implementation(libs.bundles.googlePlayReview)
 
                 implementation(libs.multiplatformsettings.datastore)
+            }
+        }
+        iosMain {
+            dependencies {
+                implementation(libs.androidx.sqlite.bundled)
             }
         }
     }

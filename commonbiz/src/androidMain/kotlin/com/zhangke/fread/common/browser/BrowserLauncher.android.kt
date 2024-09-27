@@ -61,4 +61,3 @@ actual class BrowserLauncher(
 }
 
 typealias ActivityBrowserLauncher = BrowserLauncher
-

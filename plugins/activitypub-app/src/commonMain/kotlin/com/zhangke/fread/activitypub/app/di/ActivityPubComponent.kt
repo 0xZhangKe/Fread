@@ -4,10 +4,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.ActivityPubProvider
 import com.zhangke.fread.activitypub.app.ActivityPubUrlInterceptor
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
-import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
-import com.zhangke.fread.activitypub.app.internal.db.notifications.NotificationsDatabase
-import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusDatabases
-import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigViewModel
@@ -31,7 +27,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListV
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineContainerViewModel
 import com.zhangke.fread.common.browser.BrowserInterceptor
-import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey

@@ -33,7 +33,7 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.common.ObserveMinReadItem
 
-class ActivityPubTimelineTab(
+internal class ActivityPubTimelineTab(
     private val role: IdentityRole,
     private val type: ActivityPubStatusSourceType,
     private val listId: String? = null,

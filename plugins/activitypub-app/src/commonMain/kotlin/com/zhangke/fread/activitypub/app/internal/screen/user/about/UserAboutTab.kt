@@ -32,7 +32,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
 
-class UserAboutTab(
+internal class UserAboutTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
     private val userWebFinger: WebFinger,

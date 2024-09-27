@@ -44,7 +44,7 @@ import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import org.jetbrains.compose.resources.stringResource
 
-class ActivityPubNotificationsScreen(
+internal class ActivityPubNotificationsScreen(
     private val userUriInsights: UserUriInsights,
 ) : BasePagerTab() {
 

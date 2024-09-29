@@ -1,11 +1,17 @@
 package com.zhangke.fread.common.daynight
 
 import com.zhangke.fread.common.di.ActivityScope
+import kotlinx.coroutines.flow.StateFlow
 import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-actual class ActivityDayNightHelper @Inject constructor() {
+actual class ActivityDayNightHelper @Inject constructor(
+    private val dayNightHelper: DayNightHelper,
+) {
+    actual val dayNightModeFlow: StateFlow<DayNightMode> get() = dayNightHelper.dayNightModeFlow
+
     actual fun setMode(mode: DayNightMode) {
+        // dayNightHelper.setMode(mode)
         TODO("Not yet implemented")
     }
 }

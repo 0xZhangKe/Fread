@@ -80,6 +80,7 @@ internal expect fun setDefaultNightMode(modeValue: Int)
 internal expect val DayNightMode.modeValue: Int
 
 expect class ActivityDayNightHelper {
+    val dayNightModeFlow: StateFlow<DayNightMode>
     fun setMode(mode: DayNightMode)
 }
 

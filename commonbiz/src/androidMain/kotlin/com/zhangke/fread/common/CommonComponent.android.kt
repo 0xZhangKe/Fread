@@ -14,6 +14,7 @@ import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
+import com.zhangke.fread.common.startup.LanguageModuleStartup
 import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import me.tatarka.inject.annotations.IntoSet
@@ -22,8 +23,6 @@ import me.tatarka.inject.annotations.Provides
 private val Context.localConfig: DataStore<Preferences> by preferencesDataStore(name = "local_config")
 
 actual interface CommonPlatformComponent {
-
-    val moduleStartups: Set<ModuleStartup>
 
     val browserInterceptorSet: Set<BrowserInterceptor>
 
@@ -65,13 +64,13 @@ actual interface CommonPlatformComponent {
 
     @IntoSet
     @Provides
-    fun bindCommonBizModuleStartup(module: FeedsRepoModuleStartup): ModuleStartup {
+    fun bindFeedsRepoModuleStartup(module: FeedsRepoModuleStartup): ModuleStartup {
         return module
     }
 
     @IntoSet
     @Provides
-    fun bindCommonModuleStartup(module: CommonModuleStartup): ModuleStartup {
+    fun bindLanguageModuleStartup(module: LanguageModuleStartup): ModuleStartup {
         return module
     }
 

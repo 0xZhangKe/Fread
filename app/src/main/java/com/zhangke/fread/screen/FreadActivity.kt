@@ -37,9 +37,7 @@ class FreadActivity : ComponentActivity() {
             CompositionLocalProvider(
                 LocalExoPlayerManager provides videoPlayerManager,
             ) {
-                AndroidFreadApp(
-                    activityComponent = activityComponent,
-                )
+                activityComponent.freadContent()
             }
         }
     }

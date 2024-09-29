@@ -4,8 +4,10 @@ import com.zhangke.fread.common.di.ActivityScope
 import me.tatarka.inject.annotations.Inject
 
 @ActivityScope
-actual class ActivityHelper @Inject constructor() {
+actual class ActivityHelper @Inject constructor(
+    // private val viewController: Lazy<UIViewController>,
+) {
     actual fun goHome() {
-        TODO("Not yet implemented")
+        // viewController.value.dismissViewControllerAnimated(false, null)
     }
 }

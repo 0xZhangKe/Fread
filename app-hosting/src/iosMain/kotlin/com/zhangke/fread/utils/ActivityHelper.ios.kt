@@ -1,13 +1,12 @@
 package com.zhangke.fread.utils
 
-import com.zhangke.fread.common.di.ActivityScope
 import me.tatarka.inject.annotations.Inject
+import platform.UIKit.UIViewController
 
-@ActivityScope
 actual class ActivityHelper @Inject constructor(
-    // private val viewController: Lazy<UIViewController>,
+    private val viewController: Lazy<UIViewController>,
 ) {
     actual fun goHome() {
-        // viewController.value.dismissViewControllerAnimated(false, null)
+        viewController.value.dismissViewControllerAnimated(false, null)
     }
 }

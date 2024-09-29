@@ -14,6 +14,7 @@ import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
+import com.zhangke.fread.common.startup.StartupManager
 import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.ThumbnailHelper
@@ -24,21 +25,9 @@ expect interface CommonPlatformComponent
 
 interface CommonComponent : CommonPlatformComponent {
 
-    val localConfigManager: LocalConfigManager
-
-    val freadConfigManager: FreadConfigManager
-
-    val mediaFileHelper: MediaFileHelper
-
-    val thumbnailHelper: ThumbnailHelper
-
-    val platformUriHelper: PlatformUriHelper
-
-    val viewModelProviderFactory: ViewModelProvider.Factory
-
     val dayNightHelper: DayNightHelper
 
-    val freadReviewManager: FreadReviewManager
+    val startupManager: StartupManager
 
     @ApplicationScope
     @Provides

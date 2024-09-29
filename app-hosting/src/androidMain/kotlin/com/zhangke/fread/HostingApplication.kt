@@ -32,8 +32,6 @@ abstract class HostingApplication : Application(),
     }
 
     private fun initModuleStartups() {
-        component.moduleStartups.forEach {
-            it.onAppCreate()
-        }
+        component.startupManager.initialize()
     }
 }

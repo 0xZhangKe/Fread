@@ -7,8 +7,6 @@ import com.zhangke.fread.common.di.ActivityScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface CommonActivityPlatformComponent {
-    val activityBrowserLauncher: ActivityBrowserLauncher
-
     @ActivityScope
     @Provides
     fun provideActivityBrowserLauncher(activity: Activity): ActivityBrowserLauncher {

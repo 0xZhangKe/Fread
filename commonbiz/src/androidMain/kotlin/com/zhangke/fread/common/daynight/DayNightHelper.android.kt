@@ -13,7 +13,7 @@ actual class ActivityDayNightHelper @Inject constructor(
     private val activity: ComponentActivity,
 ) {
 
-    val dayNightModeFlow get() = dayNightHelper.dayNightModeFlow
+    actual val dayNightModeFlow get() = dayNightHelper.dayNightModeFlow
 
     fun setDefaultMode() {
         AppCompatDelegate.setDefaultNightMode(dayNightModeFlow.value.modeValue)

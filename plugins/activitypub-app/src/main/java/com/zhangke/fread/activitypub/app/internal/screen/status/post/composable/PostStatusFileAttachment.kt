@@ -26,11 +26,12 @@ import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,8 +43,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.ui.AutoSizeImage
+import com.seiko.imageloader.rememberImagePainter
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.getThumbnail
@@ -150,9 +150,13 @@ private fun MediaFileContent(
                     var bitmap: Bitmap? by remember(file) {
                         mutableStateOf(null)
                     }
-                    LaunchedEffect(file) {
-                        launch(Dispatchers.IO) {
+                    val coroutineScope = rememberCoroutineScope()
+                    DisposableEffect(file) {
+                        coroutineScope.launch(Dispatchers.IO) {
                             bitmap = file.file.uri.getThumbnail()
+                        }
+                        onDispose {
+                            bitmap?.recycle()
                         }
                     }
                     if (bitmap != null) {
@@ -169,13 +173,11 @@ private fun MediaFileContent(
                         )
                     }
                 } else {
-                    AutoSizeImage(
-                        remember(file.previewUri) {
-                            ImageRequest(file.previewUri)
-                        },
+                    Image(
+                        painter = rememberImagePainter(url = file.previewUri),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
-                        contentDescription = "Media",
+                        contentDescription = "Selected Media",
                     )
                 }
             }

@@ -76,6 +76,7 @@ class BlogPollTestScreen : Screen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
+                    isSelf = false,
                     poll = mockPoll(poll1),
                     blogTranslationState = BlogTranslationUiState(support = false),
                     onVoted = {
@@ -94,6 +95,7 @@ class BlogPollTestScreen : Screen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
+                    isSelf = false,
                     blogTranslationState = BlogTranslationUiState(support = false),
                     poll = mockPoll(poll2),
                     onVoted = {
@@ -113,6 +115,7 @@ class BlogPollTestScreen : Screen {
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = 6.dp),
+                    isSelf = true,
                     blogTranslationState = BlogTranslationUiState(support = false),
                     poll = mockPoll(
                         listOf(

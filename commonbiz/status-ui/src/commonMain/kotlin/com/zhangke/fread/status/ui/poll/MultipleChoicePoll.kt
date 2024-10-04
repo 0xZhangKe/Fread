@@ -27,6 +27,7 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 internal fun MultipleChoicePoll(
     poll: BlogPoll,
+    isSelf: Boolean,
     blogTranslationState: BlogTranslationUiState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
@@ -38,7 +39,7 @@ internal fun MultipleChoicePoll(
         mutableStateMapOf(*map.map { it.key to it.value }.toTypedArray())
     }
     val translatedPoll = blogTranslationState.blogTranslation?.poll
-    val pollIsInVotable = !poll.expired && poll.voted == false
+    val pollIsInVotable = !poll.expired && poll.voted == false && !isSelf
     val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
     poll.options.forEachIndexed { index, option ->
         val votesCount = option.votesCount?.toFloat() ?: 0F
@@ -49,12 +50,13 @@ internal fun MultipleChoicePoll(
                 optionContent = it
             }
         }
+        val selected = indexToSelected[index] ?: false
         BlogPollOption(
             modifier = Modifier.fillMaxWidth(),
             optionContent = optionContent,
-            selected = indexToSelected[index] ?: false,
+            selected = selected,
             votable = pollIsInVotable,
-            showProgress = poll.voted == true || poll.expired,
+            showProgress = isSelf || selected || poll.expired,
             progress = progress,
             onClick = {
                 indexToSelected[index] = indexToSelected[index]?.not() ?: false

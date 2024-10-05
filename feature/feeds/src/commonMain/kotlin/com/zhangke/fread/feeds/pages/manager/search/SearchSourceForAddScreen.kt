@@ -88,7 +88,7 @@ internal class SearchSourceForAddScreen : BaseScreen() {
                                 modifier = Modifier.clickable {
                                     onAddClick(item)
                                 },
-                                item,
+                                source = item,
                             )
                         }
                     }

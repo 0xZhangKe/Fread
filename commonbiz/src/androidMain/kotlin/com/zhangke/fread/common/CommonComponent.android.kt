@@ -1,7 +1,6 @@
 package com.zhangke.fread.common
 
 import android.content.Context
-import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.preferencesDataStore
@@ -68,9 +67,7 @@ actual interface CommonPlatformComponent {
             context,
             ContentConfigDatabases::class.java,
             ContentConfigDatabases.DB_NAME,
-        ).build().also {
-            Log.d("F_TEST", "create ContentConfigDatabases@${it.hashCode()}")
-        }
+        ).build()
     }
 
     @IntoSet

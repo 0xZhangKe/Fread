@@ -30,6 +30,8 @@ kotlin {
                 implementation(libs.kotlinx.serialization.json)
 
                 implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.serialization.kotlinx.json)
+                implementation(libs.ktor.client.content.negotiation)
 
                 implementation(libs.imageLoader)
                 implementation(libs.okio)

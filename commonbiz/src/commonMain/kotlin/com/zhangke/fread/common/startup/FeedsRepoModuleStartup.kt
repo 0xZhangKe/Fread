@@ -16,8 +16,6 @@ class FeedsRepoModuleStartup @Inject constructor(
 ) : ModuleStartup {
 
     override fun onAppCreate() {
-        applicationCoroutineScope.launch(Dispatchers.IO) {
-            feedsRepo.onAppCreate()
-        }
+        feedsRepo.onAppCreate(applicationCoroutineScope)
     }
 }

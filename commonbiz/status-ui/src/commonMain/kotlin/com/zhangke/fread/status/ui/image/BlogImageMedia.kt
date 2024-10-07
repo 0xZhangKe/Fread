@@ -171,12 +171,13 @@ internal fun BlogImage(
     media: BlogMedia,
     hideContent: Boolean,
 ) {
+    val imageUrl = if (media.type == BlogMediaType.GIFV) media.previewUrl else media.url
     if (hideContent) {
         val imageLoader = LocalImageLoader.current
         LaunchedEffect(media) {
             imageLoader.execute(
                 ImageRequest {
-                    data(media.previewUrl)
+                    data(imageUrl)
                     size(SizeResolver(Size(50f, 50f)))
                 }
             )
@@ -188,7 +189,7 @@ internal fun BlogImage(
             AutoSizeImage(
                 request = remember {
                     ImageRequest {
-                        data(media.previewUrl)
+                        data(imageUrl)
                     }
                 },
                 modifier = Modifier.fillMaxSize(),

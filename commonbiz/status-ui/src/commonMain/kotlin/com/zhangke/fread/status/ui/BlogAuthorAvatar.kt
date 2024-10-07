@@ -64,7 +64,7 @@ fun BlogAuthorAvatar(
     onClick: (() -> Unit)? = null,
 ) {
     AutoSizeBox(
-        remember(imageUrl) {
+        request = remember(imageUrl) {
             ImageRequest(imageUrl.orEmpty())
         },
     ) { action ->

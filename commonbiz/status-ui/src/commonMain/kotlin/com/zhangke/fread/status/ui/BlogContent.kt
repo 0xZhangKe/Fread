@@ -108,6 +108,7 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 poll = blog.poll!!,
+                isSelf = blog.isSelf,
                 blogTranslationState = blogTranslationState,
                 onVoted = {
                     reportClick(StatusDataElements.VOTE)

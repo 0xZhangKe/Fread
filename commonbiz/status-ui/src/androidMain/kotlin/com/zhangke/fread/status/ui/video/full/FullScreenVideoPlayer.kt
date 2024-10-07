@@ -44,9 +44,9 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
-import com.zhangke.framework.media.MediaFileHelper
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.fread.common.utils.LocalMediaFileHelper
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
 
 @androidx.annotation.OptIn(androidx.media3.common.util.UnstableApi::class)
@@ -135,10 +135,10 @@ private fun FullScreenPlayerToolBar(
 
         var needSaveImage by remember { mutableStateOf(false) }
         if (needSaveImage) {
-            val context = LocalContext.current
+            val mediaFileHelper = LocalMediaFileHelper.current
             RequireLocalStoragePermission(
                 onPermissionGranted = {
-                    MediaFileHelper.saveVideoToGallery(context, videoUrl)
+                    mediaFileHelper.saveVideoToGallery(videoUrl)
                     needSaveImage = false
                 },
                 onPermissionDenied = {

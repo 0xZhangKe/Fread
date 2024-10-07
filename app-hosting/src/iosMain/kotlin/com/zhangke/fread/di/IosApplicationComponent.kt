@@ -6,13 +6,10 @@ import com.seiko.imageloader.intercept.bitmapMemoryCacheConfig
 import com.seiko.imageloader.intercept.imageMemoryCacheConfig
 import com.seiko.imageloader.intercept.painterMemoryCacheConfig
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.utils.StorageHelper
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
-import okio.Path.Companion.toPath
-import platform.Foundation.NSCachesDirectory
-import platform.Foundation.NSSearchPathForDirectoriesInDomains
 import platform.Foundation.NSUserDefaults
-import platform.Foundation.NSUserDomainMask
 import platform.UIKit.UIApplicationDelegateProtocol
 
 @Component
@@ -28,7 +25,7 @@ abstract class IosApplicationComponent(
 
     @ApplicationScope
     @Provides
-    fun provideImageLoader(): ImageLoader {
+    fun provideImageLoader(storageHelper: StorageHelper): ImageLoader {
         return ImageLoader {
             components {
                 setupDefaultComponents()
@@ -47,7 +44,7 @@ abstract class IosApplicationComponent(
                     maxSize(50)
                 }
                 diskCacheConfig {
-                    directory(getCacheDir().toPath().resolve("image_cache"))
+                    directory(storageHelper.cacheDir.resolve("image_cache"))
                     maxSizeBytes(512L * 1024 * 1024) // 512MB
                 }
             }
@@ -55,12 +52,4 @@ abstract class IosApplicationComponent(
     }
 
     companion object
-}
-
-private fun getCacheDir(): String {
-    return NSSearchPathForDirectoriesInDomains(
-        NSCachesDirectory,
-        NSUserDomainMask,
-        true,
-    ).first() as String
 }

@@ -58,7 +58,7 @@ class BlogPlatformResourceLoader @Inject constructor(
         return null
     }
 
-    private fun getLocalMastodonJson(): String? {
+    private suspend fun getLocalMastodonJson(): String? {
         return mastodonHelper.getLocalMastodonJson()
     }
 }

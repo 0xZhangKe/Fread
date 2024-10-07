@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.edit
 
+import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,7 +38,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -71,7 +71,6 @@ class EditContentConfigScreen(
         private val TAB_ITEM_HEIGHT = 56.dp
     }
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
@@ -201,6 +200,12 @@ class EditContentConfigScreen(
         var tabsInUi by remember(uiState.config.showingTabList) {
             mutableStateOf(uiState.config.showingTabList)
         }
+        tabsInUi.joinToString().let {
+            Log.d("F_TEST", "ShowingUserList: $it")
+        }
+        tabsInUi.joinToString { it.uiKey }.let {
+            Log.d("F_TEST", "ShowingUserList hash code: $it")
+        }
         key(uiState.config.showingTabList) {
             val state = rememberReorderableLazyListState(
                 onMove = { from, to ->
@@ -223,9 +228,9 @@ class EditContentConfigScreen(
             ) {
                 itemsIndexed(
                     items = tabsInUi,
-                    key = { _, item -> item.hashCode() }
+                    key = { _, item -> item.uiKey }
                 ) { _, tabItem ->
-                    ReorderableItem(state, tabItem.hashCode()) { dragging ->
+                    ReorderableItem(state, tabItem.uiKey) { dragging ->
                         val elevation by animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
                         Surface(
                             modifier = Modifier
@@ -344,4 +349,7 @@ class EditContentConfigScreen(
             },
         )
     }
+
+    private val ContentConfig.ActivityPubContent.ContentTab.uiKey: String
+        get() = "${this::class.simpleName}@${hashCode()}"
 }

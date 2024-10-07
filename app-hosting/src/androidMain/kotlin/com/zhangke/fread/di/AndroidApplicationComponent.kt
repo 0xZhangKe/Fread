@@ -13,9 +13,9 @@ import com.zhangke.fread.activitypub.app.di.ActivityPubComponentProvider
 import com.zhangke.fread.common.CommonComponentProvider
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.utils.StorageHelper
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
-import okio.Path.Companion.toOkioPath
 
 
 @Component
@@ -30,7 +30,7 @@ abstract class AndroidApplicationComponent(
 
     @ApplicationScope
     @Provides
-    fun provideImageLoader(): ImageLoader {
+    fun provideImageLoader(storageHelper: StorageHelper): ImageLoader {
         return ImageLoader {
             options {
                 androidContext(application)
@@ -52,7 +52,7 @@ abstract class AndroidApplicationComponent(
                     maxSize(50)
                 }
                 diskCacheConfig {
-                    directory(application.cacheDir.resolve("image_cache").toOkioPath())
+                    directory(storageHelper.cacheDir.resolve("image_cache"))
                     maxSizeBytes(512L * 1024 * 1024) // 512MB
                 }
             }

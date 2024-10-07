@@ -41,21 +41,26 @@ class RssStatusResolver @Inject constructor(
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri)
             ?: return Result.failure(IllegalArgumentException("Unknown uri: $uri"))
-        if (!maxId.isNullOrEmpty()) {
-            return Result.success(emptyList())
-        }
         val fetchResult = rssStatusRepo.getStatus(uriInsight)
+            .map { it.sortedByDescending { status -> status.datetime } }
         if (fetchResult.isFailure) {
             return Result.failure(fetchResult.exceptionOrThrow())
         }
         var finalReturnItems = fetchResult.getOrThrow()
+        if (finalReturnItems.isEmpty()) return Result.success(emptyList())
         if (!minId.isNullOrEmpty()) {
             val sinceIndex = finalReturnItems.indexOfFirst { it.id == minId }
             if (sinceIndex >= 0) {
                 finalReturnItems = finalReturnItems.subList(0, sinceIndex)
             }
         }
-        return Result.success(finalReturnItems.takeLast(limit))
+        if (!maxId.isNullOrEmpty()){
+            val maxIndex = finalReturnItems.indexOfFirst { it.id == maxId }
+            if (maxIndex >= 0){
+                finalReturnItems = finalReturnItems.subList(maxIndex, finalReturnItems.size)
+            }
+        }
+        return Result.success(finalReturnItems.take(limit))
     }
 
     override suspend fun interactive(

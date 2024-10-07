@@ -10,6 +10,8 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -30,13 +32,15 @@ class FeedsRepo @Inject constructor(
     private val _feedsInfoChangedFlow = MutableSharedFlow<Unit>()
     val feedsInfoChangedFlow = _feedsInfoChangedFlow.asSharedFlow()
 
-    suspend fun onAppCreate() {
-        statusProvider.statusSourceResolver
-            .getAuthorUpdateFlow()
-            .collect {
-                statusContentRepo.updateAuthor(it)
-                _feedsInfoChangedFlow.emit(Unit)
-            }
+    fun onAppCreate(coroutineScope: CoroutineScope) {
+        coroutineScope.launch(Dispatchers.IO) {
+            statusProvider.statusSourceResolver
+                .getAuthorUpdateFlow()
+                .collect {
+                    statusContentRepo.updateAuthor(it)
+                    _feedsInfoChangedFlow.emit(Unit)
+                }
+        }
     }
 
     suspend fun getLocalFirstPageStatus(

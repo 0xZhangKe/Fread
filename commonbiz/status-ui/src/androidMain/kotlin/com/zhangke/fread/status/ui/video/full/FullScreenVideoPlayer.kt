@@ -21,6 +21,7 @@ import androidx.compose.material.icons.filled.Pause
 import androidx.compose.material.icons.filled.PlayArrow
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Slider
 import androidx.compose.material3.SliderDefaults
 import androidx.compose.material3.Text
@@ -34,6 +35,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.zhangke.framework.composable.SimpleIconButton
@@ -42,6 +44,8 @@ import com.zhangke.framework.composable.ToolbarTokens
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.framework.media.MediaFileHelper
+import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.status.ui.video.VideoDurationFormatter
 
@@ -103,6 +107,7 @@ fun FullScreenVideoPlayer(
                 )
                 FullScreenPlayerToolBar(
                     modifier = Modifier.align(Alignment.TopStart),
+                    videoUrl = uri.toString(),
                     onBackClick = onBackClick,
                 )
             }
@@ -113,6 +118,7 @@ fun FullScreenVideoPlayer(
 @Composable
 private fun FullScreenPlayerToolBar(
     modifier: Modifier,
+    videoUrl: String,
     onBackClick: () -> Unit,
 ) {
     Box(
@@ -120,11 +126,32 @@ private fun FullScreenPlayerToolBar(
             .fillMaxWidth()
             .statusBarsPadding()
             .padding(horizontal = ToolbarTokens.TopAppBarHorizontalPadding)
-            .height(ToolbarTokens.ContainerHeight)
+            .height(ToolbarTokens.ContainerHeight),
     ) {
         Toolbar.BackButton(
             onBackClick = onBackClick,
             tint = Color.White,
+        )
+
+        var needSaveImage by remember { mutableStateOf(false) }
+        if (needSaveImage) {
+            val context = LocalContext.current
+            RequireLocalStoragePermission(
+                onPermissionGranted = {
+                    MediaFileHelper.saveVideoToGallery(context, videoUrl)
+                    needSaveImage = false
+                },
+                onPermissionDenied = {
+                    needSaveImage = false
+                },
+            )
+        }
+        Toolbar.DownloadButton(
+            modifier = Modifier.align(Alignment.CenterEnd),
+            onClick = {
+                needSaveImage = true
+            },
+            tint = MaterialTheme.colorScheme.inverseOnSurface,
         )
     }
 }

@@ -178,7 +178,6 @@ internal fun BlogImage(
             imageLoader.execute(
                 ImageRequest {
                     data(imageUrl)
-                    size(SizeResolver(Size(50f, 50f)))
                 }
             )
         }

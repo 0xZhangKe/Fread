@@ -33,6 +33,7 @@ class ActivityPubAccountManager @Inject constructor(
         ApplicationScope.launch {
             accountRepo.getAllAccountFlow()
                 .collect {
+                    clientManager.clearCache()
                     loggedAccountProvider.updateAccounts(it)
                 }
         }

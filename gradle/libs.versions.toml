@@ -22,6 +22,8 @@ androidx-browser = "1.4.0"
 androidx-paging = "3.3.2"
 androidx-media3 = "1.0.0-rc01"
 
+compose-runtime-tracing = "1.7.3"
+
 jetbrains-lifecycle = "2.8.0"
 
 accompanist = "0.34.0"
@@ -206,6 +208,8 @@ placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3",
 
 googlePlayReview = { group = "com.google.android.play", name = "review", version.ref = "goolgePlayReview" }
 googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "goolgePlayReview" }
+
+composeRuntimeTracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "compose-runtime-tracing" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

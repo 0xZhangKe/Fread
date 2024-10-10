@@ -5,7 +5,11 @@ import me.tatarka.inject.annotations.Inject
 
 @ApplicationScope
 actual class MediaFileHelper @Inject constructor() {
-    actual suspend fun saveImageToGallery(url: String) {
+    actual fun saveImageToGallery(url: String) {
+        TODO("Not yet implemented")
+    }
+
+    actual fun saveVideoToGallery(url: String) {
         TODO("Not yet implemented")
     }
 }

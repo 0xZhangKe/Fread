@@ -12,6 +12,9 @@ import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
+import com.zhangke.fread.common.utils.MediaFileHelper
+import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.common.utils.ThumbnailHelper
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -22,6 +25,12 @@ interface CommonComponent : CommonPlatformComponent {
     val localConfigManager: LocalConfigManager
 
     val freadConfigManager: FreadConfigManager
+
+    val mediaFileHelper: MediaFileHelper
+
+    val thumbnailHelper: ThumbnailHelper
+
+    val platformUriHelper: PlatformUriHelper
 
     val viewModelProviderFactory: ViewModelProvider.Factory
 

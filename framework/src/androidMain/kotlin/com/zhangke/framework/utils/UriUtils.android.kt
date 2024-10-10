@@ -1,6 +1,7 @@
 package com.zhangke.framework.utils
 
 import android.content.ContentResolver
+import android.content.Context
 import android.database.Cursor
 import android.graphics.Bitmap
 import android.media.ThumbnailUtils
@@ -11,23 +12,23 @@ import android.webkit.MimeTypeMap
 import androidx.core.database.getLongOrNull
 import androidx.core.database.getStringOrNull
 import java.io.FileNotFoundException
-import java.net.URLDecoder
-import java.net.URLEncoder
 
-fun Uri.toContentProviderFile(): ContentProviderFile? {
-    val contentResolver = appContext.contentResolver
+fun Uri.toContentProviderFile(context: Context): ContentProviderFile? {
+    val contentResolver = context.contentResolver
     if (scheme.equals(ContentResolver.SCHEME_CONTENT)) {
         contentResolver?.queryNameAndSize(this)
             ?.use { cursor ->
                 val size = cursor.getSize() ?: StorageSize(0L)
                 val name = cursor.getDisplayName().orEmpty()
                 return ContentProviderFile(
-                    uri = this,
+                    uri = this.toPlatformUri(),
                     fileName = name,
                     size = size,
                     mimeType = contentResolver.getType(this).orEmpty(),
-                    inputStreamProvider = {
-                        contentResolver.openInputStream(this)
+                    streamProvider = {
+                        contentResolver.openInputStream(this)?.use {
+                            it.readBytes()
+                        }
                     }
                 )
             }
@@ -39,12 +40,16 @@ fun Uri.toContentProviderFile(): ContentProviderFile? {
                 val fileName = getAssetFileNameFromUri(this).orEmpty()
                 val extension = getExtensionFromFileName(fileName)
                 ContentProviderFile(
-                    uri = this,
+                    uri = this.toPlatformUri(),
                     fileName = fileName,
                     size = size,
                     mimeType = MimeTypeMap.getSingleton().getMimeTypeFromExtension(extension)
                         .orEmpty(),
-                    inputStreamProvider = { descriptor.createInputStream() }
+                    streamProvider = {
+                        descriptor.createInputStream()?.use {
+                            it.readBytes()
+                        }
+                    }
                 )
             }
     } catch (_: FileNotFoundException) {
@@ -96,10 +101,10 @@ private fun Cursor.getDisplayName(): String? {
     return null
 }
 
-fun Uri.getThumbnail(): Bitmap? {
+fun Uri.getThumbnail(context: Context): Bitmap? {
     val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
     try {
-        appContext.contentResolver
+        context.contentResolver
             .query(this, filePathColumn, null, null, null)
             ?.use { cursor ->
                 cursor.moveToFirst()

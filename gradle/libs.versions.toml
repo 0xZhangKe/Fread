@@ -31,7 +31,7 @@ accompanist = "0.34.0"
 kotlinInject = "0.7.1"
 
 okhttp3 = "4.12.0"
-ktor = "3.0.0-beta-2"
+ktor = "3.0.0-rc-1"
 ktorfit = "2.0.1"
 
 auto_service = "1.0.1"

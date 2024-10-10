@@ -34,6 +34,7 @@ class ActivityPubAccountManager @Inject constructor(
         applicationCoroutineScope.launch {
             accountRepo.getAllAccountFlow()
                 .collect {
+                    clientManager.clearCache()
                     loggedAccountProvider.updateAccounts(it)
                 }
         }

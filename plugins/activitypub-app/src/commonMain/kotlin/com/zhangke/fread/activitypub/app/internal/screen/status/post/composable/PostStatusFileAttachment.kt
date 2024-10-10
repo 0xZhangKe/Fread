@@ -40,8 +40,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.ui.AutoSizeImage
+import com.seiko.imageloader.rememberImagePainter
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.prettyString
@@ -171,13 +170,11 @@ private fun MediaFileContent(
                         )
                     }
                 } else {
-                    AutoSizeImage(
-                        remember(file.previewUri) {
-                            ImageRequest(file.previewUri)
-                        },
+                    Image(
+                        painter = rememberImagePainter(url = file.previewUri),
                         modifier = Modifier.fillMaxSize(),
                         contentScale = ContentScale.Crop,
-                        contentDescription = "Media",
+                        contentDescription = "Selected Media",
                     )
                 }
             }

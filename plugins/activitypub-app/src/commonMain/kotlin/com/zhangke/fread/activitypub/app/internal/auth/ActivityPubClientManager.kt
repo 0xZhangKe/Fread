@@ -22,6 +22,10 @@ class ActivityPubClientManager @Inject constructor(
         createHttpClientEngine()
     }
 
+    fun clearCache() {
+        cachedClient.clear()
+    }
+
     fun getClient(role: IdentityRole): ActivityPubClient {
         cachedClient[role]?.let { return it }
         val baseUrl = resolveBaseUrl(role)

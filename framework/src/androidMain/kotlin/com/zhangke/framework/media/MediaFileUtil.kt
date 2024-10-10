@@ -11,6 +11,7 @@ import com.seiko.imageloader.imageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
 import com.zhangke.framework.architect.http.sharedHttpClient
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.permission.hasWriteStoragePermission
 import com.zhangke.framework.utils.ifDebugging
 import com.zhangke.framework.utils.throwInDebug
@@ -91,7 +92,7 @@ object MediaFileUtil {
                     isBitmap = true
                 }
             }
-            when (val result = context.imageLoader.execute(request)) {
+            when (val result = context.imageLoader.executeSafety(request)) {
                 is ImageResult.OfBitmap -> result.bitmap
                 is ImageResult.OfImage -> result.image.drawable.let { it as? BitmapDrawable }?.bitmap
                 else -> null

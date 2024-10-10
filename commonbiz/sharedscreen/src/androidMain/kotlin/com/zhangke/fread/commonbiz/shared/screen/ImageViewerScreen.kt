@@ -57,6 +57,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.media.MediaFileHelper
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
@@ -191,7 +192,7 @@ class ImageViewerScreen(
                     data(image.url)
                     size(SizeResolver(Size(50f, 50f)))
                 }
-                    .let { imageLoader.execute(it) }
+                    .let { imageLoader.executeSafety(it) }
                     .let {
                         when (it) {
                             is ImageResult.OfImage -> it.image.drawable.aspectRatio()

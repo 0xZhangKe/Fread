@@ -45,6 +45,7 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
+import com.zhangke.fread.status.ui.utils.getScreenHeight
 import org.jetbrains.compose.resources.stringResource
 
 class LoginBottomSheetScreen : BaseScreen() {
@@ -94,13 +95,11 @@ class LoginBottomSheetScreen : BaseScreen() {
         onSnapshotClick: (PlatformSnapshot) -> Unit,
         onPlatformClick: (BlogPlatform) -> Unit,
     ) {
-        // FIXME: get root screen height
-        // val configuration = LocalConfiguration.current
-        // val screenHeight = configuration.screenHeightDp.dp * 0.9F
+        val screenHeight = getScreenHeight() * 0.9F
         Surface(
             modifier = Modifier
                 .fillMaxWidth()
-                .fillMaxHeight(0.9f)
+                .height(screenHeight)
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
                 Column(modifier = Modifier.fillMaxSize()) {

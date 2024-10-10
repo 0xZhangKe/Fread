@@ -52,8 +52,6 @@ material = "1.11.0"
 
 rssparser = "6.0.8"
 
-composeReorderable = "0.9.0"
-
 ktml = "0.0.6"
 halilibo-richtext = "0.20.0"
 
@@ -192,8 +190,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 
 rssparser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rssparser" }
 
-composeReorderable = { group = "org.burnoutcrew.composereorderable", name = "reorderable", version.ref = "composeReorderable" }
-
 ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
 halilibo-richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "halilibo-richtext" }
 halilibo-richtext-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "halilibo-richtext" }
@@ -205,6 +201,7 @@ uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
 bignum = { module = "com.ionspin.kotlin:bignum", version = "0.3.10" }
 kermit = { module = "co.touchlab:kermit", version = "2.0.4" }
 placeholder-material3 = { module = "com.eygraber:compose-placeholder-material3", version = "1.0.8" }
+leftright = { module = "io.github.charlietap:leftright", version = "0.2.4" }
 
 googlePlayReview = { group = "com.google.android.play", name = "review", version.ref = "goolgePlayReview" }
 googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "goolgePlayReview" }

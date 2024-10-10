@@ -7,6 +7,12 @@ plugins {
 
 android {
     namespace = "com.zhangke.fread.commonbiz"
+    sourceSets {
+        getByName("main") {
+            res.srcDirs("src/androidMain/res")
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        }
+    }
 }
 
 kotlin {

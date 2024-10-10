@@ -29,6 +29,7 @@ kotlin {
                 implementation(libs.androidx.room)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
                 implementation(libs.auto.service.annotations)
+                implementation(libs.uri.kmp)
 
                 implementation(libs.androidx.paging.common)
             }
@@ -43,7 +44,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.androidx.browser)
-                implementation(libs.composeReorderable)
             }
         }
     }

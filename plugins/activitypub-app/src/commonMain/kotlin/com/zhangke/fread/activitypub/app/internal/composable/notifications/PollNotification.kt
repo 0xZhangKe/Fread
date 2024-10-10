@@ -1,0 +1,88 @@
+package com.zhangke.fread.activitypub.app.internal.composable.notifications
+
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Poll
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_notification_poll_count
+import com.zhangke.fread.activitypub.app.activity_pub_notification_poll_desc
+import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import org.jetbrains.compose.resources.stringResource
+
+@Composable
+fun PollNotification(
+    notification: NotificationUiState,
+    indexInList: Int,
+    style: NotificationStyle,
+    composedStatusInteraction: ComposedStatusInteraction,
+) {
+    val browserLauncher = LocalActivityBrowserLauncher.current
+    val status = notification.status
+    if (status == null) {
+        UnknownNotification(
+            notification = notification,
+        )
+        return
+    }
+    Column(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable {
+                composedStatusInteraction.onStatusClick(status)
+            },
+    ) {
+        NotificationHeadLine(
+            modifier = Modifier,
+            icon = Icons.Default.Poll,
+            avatar = null,
+            accountName = null,
+            interactionDesc = stringResource(Res.string.activity_pub_notification_poll_desc),
+            style = style,
+        )
+        Column(
+            modifier = Modifier
+                .padding(top = style.headLineToContentPadding)
+                .fillMaxWidth()
+                .statusBorder()
+        ) {
+            OnlyBlogContentUi(
+                modifier = Modifier.padding(style.internalBlogPadding),
+                statusUiState = status,
+                indexInList = indexInList,
+                style = style,
+                onVoted = {
+                    composedStatusInteraction.onVoted(status, it)
+                },
+                onMentionClick = {
+                    composedStatusInteraction.onMentionClick(status.role, it)
+                },
+                onHashtagInStatusClick = {
+                    composedStatusInteraction.onHashtagInStatusClick(status.role, it)
+                },
+                onUrlClick = {
+                    browserLauncher.launchWebTabInApp(it, status.role)
+                },
+            )
+            val poll = status.status.intrinsicBlog.poll
+            if (poll != null) {
+                val votesCount = poll.votesCount
+                Text(
+                    modifier = Modifier.padding(start = 8.dp),
+                    text = stringResource(
+                        Res.string.activity_pub_notification_poll_count,
+                        votesCount
+                    ),
+                )
+            }
+        }
+    }
+}

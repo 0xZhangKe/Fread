@@ -58,6 +58,7 @@ actual interface CommonPlatformComponent {
         ).build()
     }
 
+    @ApplicationScope
     @Provides
     fun provideContentConfigDatabases(
         context: ApplicationContext,

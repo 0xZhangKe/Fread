@@ -85,7 +85,6 @@ class ExplorerFeedsTab(
         )
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun ExplorerFeedsTabContent(
         uiState: CommonLoadableUiState<ExplorerItem>,

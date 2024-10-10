@@ -7,18 +7,13 @@ import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
@@ -34,32 +29,20 @@ fun CardInfoSection(
     Card(
         modifier = modifier,
     ) {
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            val (avatarRef, contentRef, actionsRef) = createRefs()
             BlogAuthorAvatar(
                 modifier = Modifier
-                    .size(40.dp)
-                    .clip(CircleShape)
-                    .constrainAs(avatarRef) {
-                        start.linkTo(parent.start, 16.dp)
-                        end.linkTo(contentRef.start)
-                        top.linkTo(parent.top, 12.dp)
-                    },
+                    .padding(start = 16.dp, top = 16.dp, bottom = 16.dp)
+                    .size(40.dp),
                 imageUrl = avatar,
             )
             Column(
                 modifier = Modifier
-                    .wrapContentHeight()
-                    .constrainAs(contentRef) {
-                        start.linkTo(avatarRef.end, 16.dp)
-                        top.linkTo(parent.top, 12.dp)
-                        end.linkTo(actionsRef.start)
-                        bottom.linkTo(parent.bottom, 12.dp)
-                        width = Dimension.fillToConstraints
-                    },
+                    .weight(1F)
+                    .padding(start = 16.dp, top = 16.dp, bottom = 16.dp),
                 horizontalAlignment = Alignment.Start,
             ) {
                 Text(
@@ -82,15 +65,11 @@ fun CardInfoSection(
                     )
                 }
             }
-            Box(modifier = Modifier.constrainAs(actionsRef) {
-                end.linkTo(parent.end)
-                top.linkTo(parent.top)
-                bottom.linkTo(parent.bottom)
-            }) {
+            Box(modifier = Modifier) {
                 if (actions != null) {
                     Row(
-                        modifier = Modifier
-                            .padding(start = 16.dp, top = 12.dp, end = 16.dp)
+                        modifier = Modifier.padding(start = 8.dp, end = 8.dp),
+                        verticalAlignment = Alignment.CenterVertically,
                     ) {
                         actions()
                     }

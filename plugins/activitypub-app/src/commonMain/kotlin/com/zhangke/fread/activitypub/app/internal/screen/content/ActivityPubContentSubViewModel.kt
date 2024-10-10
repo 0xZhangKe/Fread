@@ -62,12 +62,15 @@ class ActivityPubContentSubViewModel(
                 .distinctUntilChanged()
                 .collect { account ->
                     _uiState.update { it.copy(account = account) }
+                    userCreatedListUpdated = false
+                    updateUserCreateList()
                 }
         }
     }
 
     private fun updateUserCreateList() {
         if (userCreatedListUpdated) return
+        if (_uiState.value.account == null) return
         userCreatedListUpdated = true
         updateUserListJob?.cancel()
         val role = _uiState.value.role ?: return

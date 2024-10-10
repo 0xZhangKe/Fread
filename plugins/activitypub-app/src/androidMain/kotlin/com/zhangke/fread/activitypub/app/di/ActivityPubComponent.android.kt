@@ -8,10 +8,12 @@ import com.zhangke.fread.activitypub.app.internal.db.notifications.Notifications
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.common.di.ApplicationContext
+import com.zhangke.fread.common.di.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface ActivityPubPlatformComponent {
 
+    @ApplicationScope
     @Provides
     fun provideActivityPubDatabases(
         context: ApplicationContext,
@@ -23,6 +25,7 @@ actual interface ActivityPubPlatformComponent {
         ).build()
     }
 
+    @ApplicationScope
     @Provides
     fun provideNotificationsDatabase(
         context: ApplicationContext,
@@ -36,6 +39,7 @@ actual interface ActivityPubPlatformComponent {
         ).build()
     }
 
+    @ApplicationScope
     @Provides
     fun provideActivityPubStatusDatabase(
         context: ApplicationContext,
@@ -49,6 +53,7 @@ actual interface ActivityPubPlatformComponent {
         ).build()
     }
 
+    @ApplicationScope
     @Provides
     fun provideActivityPubStatusReadStateDatabases(
         context: ApplicationContext,

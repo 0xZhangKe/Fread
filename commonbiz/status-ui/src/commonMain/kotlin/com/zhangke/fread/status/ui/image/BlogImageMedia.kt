@@ -39,6 +39,7 @@ import com.seiko.imageloader.cache.CachePolicy
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
@@ -174,7 +175,7 @@ internal fun BlogImage(
     if (hideContent) {
         val imageLoader = LocalImageLoader.current
         LaunchedEffect(media) {
-            imageLoader.execute(
+            imageLoader.executeSafety(
                 ImageRequest {
                     data(imageUrl)
                     options { memoryCachePolicy = CachePolicy.DISABLED }

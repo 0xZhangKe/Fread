@@ -12,6 +12,7 @@ import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.analytics.report
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubLoggedAccountAdapter @Inject constructor(
@@ -26,7 +27,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     ): ActivityPubLoggedAccount {
         return ActivityPubLoggedAccount(
             userId = entity.userId,
-            uri = userUriTransformer.build(entity.webFinger, FormalBaseUrl.parse(entity.url)!!),
+            uri = FormalUri.from(entity.uri)!!,
             webFinger = entity.webFinger,
             platform = entity.platform.toPlatform(),
             baseUrl = entity.baseUrl,

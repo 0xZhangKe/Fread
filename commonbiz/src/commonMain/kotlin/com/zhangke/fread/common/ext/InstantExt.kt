@@ -6,6 +6,10 @@ import kotlinx.datetime.format
 import kotlinx.datetime.format.DateTimeComponents
 import kotlinx.datetime.format.char
 
+fun getCurrentInstant(): Instant {
+    return Clock.System.now()
+}
+
 fun getCurrentTimeMillis(): Long {
     return Clock.System.now().toEpochMilliseconds()
 }

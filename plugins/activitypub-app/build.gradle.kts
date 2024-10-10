@@ -1,57 +1,82 @@
 plugins {
-    id("fread.project.feature")
+    id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    alias(libs.plugins.room)
 }
 
 android {
     namespace = "com.zhangke.fread.activitypub.app"
+    sourceSets {
+        getByName("main") {
+            assets.srcDirs("src/androidMain/assets")
+            res.srcDirs("src/androidMain/res")
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        }
+    }
+}
+
+kotlin {
+    sourceSets {
+        commonMain {
+            dependencies {
+                implementation(project(path = ":framework"))
+                implementation(project(path = ":commonbiz"))
+                implementation(project(path = ":bizframework:status-provider"))
+                implementation(project(path = ":commonbiz:status-ui"))
+                implementation(project(path = ":commonbiz:sharedscreen"))
+                implementation(project(":commonbiz:analytics"))
+                implementation(project(path = ":ActivityPub-Kotlin"))
+
+                implementation(compose.components.resources)
+
+                implementation(libs.kotlinx.serialization.core)
+                implementation(libs.kotlinx.serialization.json)
+
+                implementation(libs.jetbrains.lifecycle.viewmodel)
+                implementation(libs.androidx.constraintlayout.compose.kmp)
+                implementation(libs.imageLoader)
+                implementation(libs.kotlinInject.runtime)
+                implementation(libs.androidx.room)
+                implementation(libs.auto.service.annotations)
+                implementation(libs.androidx.paging.common)
+                implementation(libs.bundles.voyager)
+                implementation(libs.leftright)
+
+                implementation(libs.krouter.runtime)
+            }
+        }
+        commonTest {
+            dependencies {
+                implementation(kotlin("test"))
+            }
+        }
+        androidMain {
+            dependencies {
+                implementation(libs.androidx.core.ktx)
+                implementation(libs.bundles.androidx.activity)
+                implementation(libs.androidx.browser)
+            }
+        }
+    }
 }
 
 dependencies {
+    kspAll(libs.androidx.room.compiler)
+    kspAll(libs.kotlinInject.compiler)
+    kspAll(libs.auto.service.ksp)
+    kspAll(libs.krouter.collecting.compiler)
+}
 
-    testImplementation("junit:junit:4.13.2")
-    androidTestImplementation("androidx.test.ext:junit:1.1.4")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.0")
 
-    implementation(project(path = ":framework"))
-    implementation(project(path = ":commonbiz"))
-    implementation(project(path = ":bizframework:status-provider"))
-    implementation(project(path = ":commonbiz:status-ui"))
-    implementation(project(path = ":commonbiz:sharedscreen"))
-    implementation(project(":commonbiz:analytics"))
-    api(project(path = ":ActivityPub-Kotlin"))
+compose {
+    resources {
+        publicResClass = false
+        packageOfResClass = "com.zhangke.fread.activitypub.app"
+        generateResClass = always
+    }
+}
 
-    implementation(compose.components.resources)
-
-    implementation(libs.bundles.kotlin)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.annotation)
-    implementation(libs.androidx.constraintlayout.compose.kmp)
-    implementation(libs.bundles.androidx.fragment)
-    implementation(libs.bundles.androidx.activity)
-    implementation(libs.bundles.androidx.preference)
-    implementation(libs.bundles.androidx.datastore)
-    implementation(libs.bundles.androidx.collection)
-    implementation(libs.androidx.browser)
-    implementation(libs.androidx.room)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.kotlinInject.runtime)
-    ksp(libs.kotlinInject.compiler)
-    implementation(libs.imageLoader)
-    implementation(libs.okhttp3)
-    implementation(libs.okhttp3.logging)
-    implementation(libs.auto.service.annotations)
-    ksp(libs.auto.service.ksp)
-    implementation(libs.androidx.paging.common)
-    implementation(libs.bundles.voyager)
-
-    implementation(libs.krouter.runtime)
-    ksp(libs.krouter.collecting.compiler)
-
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.composeReorderable)
+room {
+    schemaDirectory("$projectDir/schemas")
 }

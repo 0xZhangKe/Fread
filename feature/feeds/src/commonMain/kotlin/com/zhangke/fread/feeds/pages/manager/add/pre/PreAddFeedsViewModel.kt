@@ -99,7 +99,7 @@ class PreAddFeedsViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             searching = false,
-                            searchErrorMessage = e.localizedMessage.ifNullOrEmpty { e.message.orEmpty() },
+                            searchErrorMessage = e.message.ifNullOrEmpty { e.message.orEmpty() },
                         )
                     }
                 }

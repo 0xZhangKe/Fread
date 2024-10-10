@@ -65,6 +65,7 @@
 -dontwarn io.ktor.utils.io.core.Output
 -dontwarn io.ktor.utils.io.core.OutputPrimitivesKt
 -dontwarn io.ktor.utils.io.core.PreviewKt
+-dontwarn io.ktor.client.network.sockets.SocketTimeoutException
 
 # Parcelable
 -keep class * implements android.os.Parcelable {

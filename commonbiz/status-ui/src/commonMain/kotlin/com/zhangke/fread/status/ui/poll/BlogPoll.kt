@@ -18,14 +18,16 @@ import org.jetbrains.compose.resources.stringResource
 fun BlogPoll(
     modifier: Modifier,
     poll: BlogPoll,
+    isSelf: Boolean,
     blogTranslationState: BlogTranslationUiState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
+    // 显示投票占比，满足任意条件：发帖人、投票结束、已投票
     Column(modifier = modifier) {
         if (poll.multiple) {
-            MultipleChoicePoll(poll, blogTranslationState, onVoted)
+            MultipleChoicePoll(poll, isSelf, blogTranslationState, onVoted)
         } else {
-            SingleChoicePoll(poll, blogTranslationState, onVoted)
+            SingleChoicePoll(poll, isSelf, blogTranslationState, onVoted)
         }
         if (poll.expired) {
             val count = poll.votesCount

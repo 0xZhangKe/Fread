@@ -9,6 +9,7 @@ import androidx.core.graphics.drawable.toDrawable
 import com.seiko.imageloader.imageLoader
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.status.model.Emoji
 import kotlinx.coroutines.Dispatchers
@@ -24,7 +25,7 @@ class CustomEmojiSpan(private val emoji: Emoji) : ReplacementSpan() {
     suspend fun loadDrawable(context: Context): Boolean = withContext(Dispatchers.IO) {
         loading = true
         val request = ImageRequest(emoji.url)
-        val result = context.imageLoader.execute(request)
+        val result = context.imageLoader.executeSafety(request)
         loading = false
 
         var success = false

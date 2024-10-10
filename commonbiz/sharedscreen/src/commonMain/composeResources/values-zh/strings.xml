@@ -10,7 +10,7 @@
     <string name="login_dialog_input_label">服务器地址</string>
 
     <string name="login_dialog_target_title">请登录</string>
-    <string name="profile_description"> 支持添加多个账号，添加进来的账号可以用来发帖、点赞、转发、评论等操作，还可以查看已添加账号创建的列表。</string>
+    <string name="profile_description">Fread 支持添加多个账号，添加进来的账号可以用来发帖、点赞、转发、评论等操作，还可以查看已添加账号创建的列表。</string>
 
     <string name="list_content_empty_placeholder">暂无内容</string>
 </resources>

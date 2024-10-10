@@ -64,16 +64,16 @@ fun BlogAuthorAvatar(
     onClick: (() -> Unit)? = null,
 ) {
     AutoSizeBox(
-        remember(imageUrl) {
+        request = remember(imageUrl) {
             ImageRequest(imageUrl.orEmpty())
         },
     ) { action ->
         Image(
-            rememberImageActionPainter(action),
+            painter = rememberImageActionPainter(action),
             contentDescription = "Avatar",
             modifier = modifier
                 .clip(CircleShape)
-                .freadPlaceholder(action is ImageAction.Loading)
+                .freadPlaceholder(action !is ImageAction.Success)
                 .let {
                     if (onClick == null) {
                         it

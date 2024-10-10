@@ -9,7 +9,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -34,7 +33,6 @@ class StatusListScreen(
     private val type: StatusListType? = null,
 ) : BaseScreen() {
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
@@ -44,7 +42,7 @@ class StatusListScreen(
                 it.create(role!!, type!!)
             } else {
                 val role = IdentityRole.decodeFromString(roleString)!!
-                val type = StatusListType.valueOf(roleString)
+                val type = StatusListType.valueOf(typeString)
                 it.create(role, type)
             }
         }

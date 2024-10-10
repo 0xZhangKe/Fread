@@ -65,8 +65,15 @@
 -dontwarn io.ktor.utils.io.core.Output
 -dontwarn io.ktor.utils.io.core.OutputPrimitivesKt
 -dontwarn io.ktor.utils.io.core.PreviewKt
+-dontwarn io.ktor.client.network.sockets.SocketTimeoutException
 
 # Parcelable
 -keep class * implements android.os.Parcelable {
   public static final android.os.Parcelable$Creator *;
+}
+
+-keep class com.zhangke.activitypub.entities.** { *; }
+
+-keepnames class <1>$$serializer { # -keepnames suffices; class is kept when serializer() is kept.
+    static <1>$$serializer INSTANCE;
 }

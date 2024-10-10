@@ -12,15 +12,18 @@ import com.zhangke.fread.status.blog.BlogPoll
 @Composable
 internal fun SingleChoicePoll(
     poll: BlogPoll,
+    isSelf: Boolean,
     blogTranslationState: BlogTranslationUiState,
     onVoted: (List<BlogPoll.Option>) -> Unit,
 ) {
     val sum = poll.options.sumOf { it.votesCount ?: 0 }.toFloat()
     val translatedPoll = blogTranslationState.blogTranslation?.poll
+    val pollIsInVotable = !poll.expired && poll.voted == false && !isSelf
     poll.options.forEachIndexed { index, option ->
         val votesCount = option.votesCount?.toFloat() ?: 0F
         val progress = if (votesCount > 0) votesCount / sum else 0F
         val selected = poll.ownVotes.contains(index)
+        val showProgress = isSelf || poll.expired || selected
         var optionContent: String = option.title
         if (blogTranslationState.showingTranslation) {
             translatedPoll?.options?.getOrNull(index)?.title?.let {
@@ -31,8 +34,8 @@ internal fun SingleChoicePoll(
             modifier = Modifier.fillMaxWidth(),
             optionContent = optionContent,
             selected = selected,
-            votable = !poll.expired && poll.voted == false,
-            showProgress = selected,
+            votable = pollIsInVotable,
+            showProgress = showProgress,
             progress = progress,
             onClick = {
                 onVoted(listOf(option))

@@ -19,7 +19,6 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Download
 import androidx.compose.material.icons.filled.Info
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.MaterialTheme
@@ -44,21 +43,20 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.toSize
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.seiko.imageloader.EmptyPainter
 import com.seiko.imageloader.LocalImageLoader
-import com.seiko.imageloader.model.ImageAction
+import com.seiko.imageloader.cache.CachePolicy
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
 import com.seiko.imageloader.option.SizeResolver
-import com.seiko.imageloader.rememberImageAction
 import com.seiko.imageloader.rememberImagePainter
-import com.seiko.imageloader.rememberImageSuccessPainter
 import com.zhangke.framework.blurhash.blurhash
 import com.zhangke.framework.composable.HorizontalPageIndicator
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.page.BaseScreen
@@ -193,7 +191,7 @@ class ImageViewerScreen(
                     data(image.url)
                     size(SizeResolver(Size(50f, 50f)))
                 }
-                aspectRatio = imageLoader.execute(request).aspectRatio() ?: 1F
+                aspectRatio = imageLoader.executeSafety(request).aspectRatio() ?: 1F
             }
         }
         if (aspectRatio != null) {
@@ -218,26 +216,15 @@ class ImageViewerScreen(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
             ) {
-                val imageAction by rememberImageAction(image.url)
-                val painter = when (imageAction) {
-                    is ImageAction.Loading -> {
-                        if (image.previewUrl.isNullOrEmpty()) {
-                            remember { EmptyPainter }
-                        } else {
-                            rememberImagePainter(url = image.previewUrl)
+                val request = remember(image.url) {
+                    ImageRequest(image.url) {
+                        options {
+                            memoryCachePolicy = CachePolicy.DISABLED
                         }
-                    }
-
-                    is ImageAction.Success -> {
-                        rememberImageSuccessPainter(imageAction as ImageAction.Success)
-                    }
-
-                    is ImageAction.Failure -> {
-                        remember { EmptyPainter }
                     }
                 }
                 Image(
-                    painter = painter,
+                    painter = rememberImagePainter(request = request),
                     modifier = Modifier
                         .fillMaxSize()
                         .blurhash(image.blurhash),
@@ -273,13 +260,11 @@ class ImageViewerScreen(
                     },
                 )
             }
-            SimpleIconButton(
+            Toolbar.DownloadButton(
                 onClick = {
                     needSaveImage = true
                 },
                 tint = MaterialTheme.colorScheme.inverseOnSurface,
-                imageVector = Icons.Default.Download,
-                contentDescription = "Download",
             )
             if (image.description != null) {
                 Spacer(modifier = Modifier.width(16.dp))

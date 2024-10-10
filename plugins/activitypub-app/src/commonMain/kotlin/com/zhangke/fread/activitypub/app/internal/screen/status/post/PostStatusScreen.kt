@@ -47,7 +47,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -101,7 +100,7 @@ class PostStatusScreen(
     @RouteParam(PostStatusScreenRoute.PARAMS_REPLY_VISIBILITY) private val replyVisibility: String? = null,
 ) : BaseScreen() {
 
-    @OptIn(ExperimentalVoyagerApi::class, InternalVoyagerApi::class)
+    @OptIn(InternalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()

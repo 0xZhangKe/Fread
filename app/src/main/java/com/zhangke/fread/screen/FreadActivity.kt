@@ -106,7 +106,7 @@ class FreadActivity : ComponentActivity() {
                                     )
                                     LaunchedEffect(Unit) {
                                         GlobalScreenNavigation.openScreenFlow.collect { screen ->
-                                            it.push(screen)
+                                            navigator.push(screen)
                                         }
                                     }
                                 }

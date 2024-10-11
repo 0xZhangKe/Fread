@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.notifications
 
+import com.zhangke.activitypub.api.MarkersRepo
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
@@ -55,6 +56,7 @@ class ActivityPubNotificationsSubViewModel(
             refreshing = false,
             loadMoreState = LoadState.Idle,
             errorMessage = null,
+            lastReadId = null,
         ),
         onPostSnackMessage = {
             launchInViewModel {
@@ -68,7 +70,6 @@ class ActivityPubNotificationsSubViewModel(
     val uiState = loadableController.uiState
 
     private var loggedAccount: ActivityPubLoggedAccount? = null
-    private var lastReadRecentNotificationId: String? = null
 
     init {
         initInteractiveHandler(
@@ -125,6 +126,50 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
+    fun onPageResume() {
+        val firstNotificationId = uiState.value
+            .dataList
+            .firstOrNull()
+            ?.takeIf { it.unread }
+            ?.id ?: return
+        launchInViewModel {
+            clientManager.getClient(role)
+                .markerRepo
+                .saveMarkers(notificationLastReadId = firstNotificationId)
+        }
+    }
+
+    private suspend fun loadNotifications(onlyMentions: Boolean): Result<List<NotificationUiState>> {
+        val account = getLoggedAccount() ?: return Result.failure(
+            IllegalStateException("Account not found: ${userUriInsights.uri}")
+        )
+        val client = clientManager.getClient(role)
+        val lastReadId: String? = if (onlyMentions) {
+            null
+        } else {
+            client.markerRepo
+                .getMarkers(timeline = listOf(MarkersRepo.TIMELINE_NOTIFICATIONS))
+                .map { it.notifications }
+                .getOrNull()
+                ?.lastReadId
+        }
+        return notificationsRepo.getRemoteNotifications(
+            account = account,
+            onlyMentions = onlyMentions,
+        ).map { notifications ->
+            val lastReadIndex: Int = if (lastReadId != null) {
+                notifications.indexOfFirst { it.id == lastReadId }
+                    .takeIf { it >= 0 } ?: Int.MAX_VALUE
+            } else {
+                -1
+            }
+            notifications.mapIndexed { index, notification ->
+                val unread = index < lastReadIndex
+                notification.toUiState(unread = unread)
+            }
+        }
+    }
+
     fun onNotificationShown(notification: NotificationUiState) {
         if (!notification.unread) return
         _uiState.update { state ->
@@ -137,31 +182,6 @@ class ActivityPubNotificationsSubViewModel(
                     }
                 }
             )
-        }
-        maybeReportReadPosition(notification)
-    }
-
-    private fun maybeReportReadPosition(notification: NotificationUiState) {
-        if (!notification.unread) return
-        if (lastReadRecentNotificationId == notification.id) return
-        var needReport = false
-        if (lastReadRecentNotificationId == null) {
-            needReport = true
-        } else {
-            val dataList = uiState.value.dataList
-            val lastIndex = dataList.indexOfFirst { it.id == lastReadRecentNotificationId }
-            val currentIndex = dataList.indexOfFirst { it.id == notification.id }
-            if (currentIndex in 0..<lastIndex) {
-                needReport = true
-            }
-        }
-        lastReadRecentNotificationId = notification.id
-        if (needReport) {
-            launchInViewModel {
-                clientManager.getClient(role)
-                    .markerRepo
-                    .saveMarkers(notificationLastReadId = notification.id)
-            }
         }
     }
 
@@ -264,7 +284,9 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
-    private suspend fun StatusNotification.toUiState(): NotificationUiState {
+    private suspend fun StatusNotification.toUiState(
+        unread: Boolean = false,
+    ): NotificationUiState {
         return NotificationUiState(
             id = id,
             role = role,
@@ -274,7 +296,7 @@ class ActivityPubNotificationsSubViewModel(
             author = accountEntityAdapter.toAuthor(account),
             displayTime = formatStatusDisplayTime(createdAt.toEpochMilliseconds()),
             status = status?.let { buildStatusUiState(role, it) },
-            unread = false,
+            unread = unread,
             relationshipSeveranceEvent = relationshipSeveranceEvent,
         )
     }

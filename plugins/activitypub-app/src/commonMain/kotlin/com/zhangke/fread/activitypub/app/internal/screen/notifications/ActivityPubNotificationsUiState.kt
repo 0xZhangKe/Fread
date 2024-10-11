@@ -52,6 +52,7 @@ data class NotificationUiState(
      * Converted by account
      */
     val author: BlogAuthor,
+    val unread: Boolean,
     val status: StatusUiState?,
     val relationshipSeveranceEvent: RelationshipSeveranceEvent?,
 )

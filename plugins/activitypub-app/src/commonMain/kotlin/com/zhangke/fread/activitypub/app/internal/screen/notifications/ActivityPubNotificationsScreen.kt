@@ -55,7 +55,7 @@ class ActivityPubNotificationsScreen(
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
-        val snackbarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackbarHostState.current
         val viewModel = screen.getViewModel<ActivityPubNotificationsViewModel>()
             .getSubViewModel(userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
@@ -76,7 +76,7 @@ class ActivityPubNotificationsScreen(
             composedStatusInteraction = viewModel.composedStatusInteraction,
             nestedScrollConnection = nestedScrollConnection,
         )
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
         }

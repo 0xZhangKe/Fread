@@ -68,6 +68,7 @@ class ActivityPubNotificationsSubViewModel(
     val uiState = loadableController.uiState
 
     private var loggedAccount: ActivityPubLoggedAccount? = null
+    private var lastReadRecentNotificationId: String? = null
 
     init {
         initInteractiveHandler(
@@ -121,6 +122,46 @@ class ActivityPubNotificationsSubViewModel(
                 onlyMentions = _uiState.value.inMentionsTab,
                 maxId = latestId,
             )
+        }
+    }
+
+    fun onNotificationShown(notification: NotificationUiState) {
+        if (!notification.unread) return
+        _uiState.update { state ->
+            state.copy(
+                dataList = state.dataList.map {
+                    if (it.id == notification.id) {
+                        it.copy(unread = false)
+                    } else {
+                        it
+                    }
+                }
+            )
+        }
+        maybeReportReadPosition(notification)
+    }
+
+    private fun maybeReportReadPosition(notification: NotificationUiState) {
+        if (!notification.unread) return
+        if (lastReadRecentNotificationId == notification.id) return
+        var needReport = false
+        if (lastReadRecentNotificationId == null) {
+            needReport = true
+        } else {
+            val dataList = uiState.value.dataList
+            val lastIndex = dataList.indexOfFirst { it.id == lastReadRecentNotificationId }
+            val currentIndex = dataList.indexOfFirst { it.id == notification.id }
+            if (currentIndex in 0..<lastIndex) {
+                needReport = true
+            }
+        }
+        lastReadRecentNotificationId = notification.id
+        if (needReport) {
+            launchInViewModel {
+                clientManager.getClient(role)
+                    .markerRepo
+                    .saveMarkers(notificationLastReadId = notification.id)
+            }
         }
     }
 
@@ -233,6 +274,7 @@ class ActivityPubNotificationsSubViewModel(
             author = accountEntityAdapter.toAuthor(account),
             displayTime = formatStatusDisplayTime(createdAt.toEpochMilliseconds()),
             status = status?.let { buildStatusUiState(role, it) },
+            unread = false,
             relationshipSeveranceEvent = relationshipSeveranceEvent,
         )
     }

@@ -7,6 +7,7 @@ import kotlinx.coroutines.cancel
 
 import kotlin.coroutines.CoroutineContext
 
+@OptIn(ExperimentalStdlibApi::class)
 abstract class SubViewModel : AutoCloseable, CoroutineScope {
 
     final override val coroutineContext: CoroutineContext = SupervisorJob() + Dispatchers.Main.immediate

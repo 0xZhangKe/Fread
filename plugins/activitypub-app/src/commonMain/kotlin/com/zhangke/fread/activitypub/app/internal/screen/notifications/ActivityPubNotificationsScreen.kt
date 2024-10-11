@@ -15,6 +15,7 @@ import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
@@ -42,6 +43,7 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
 class ActivityPubNotificationsScreen(
@@ -80,6 +82,11 @@ class ActivityPubNotificationsScreen(
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
         }
+//        LaunchedEffect(Unit) {
+//            // 停留1秒表示已读
+//            delay(1000)
+//            viewModel.onPageResume()
+//        }
     }
 
     @Composable

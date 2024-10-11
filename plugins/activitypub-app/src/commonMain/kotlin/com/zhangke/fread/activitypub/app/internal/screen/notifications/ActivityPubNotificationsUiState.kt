@@ -14,6 +14,7 @@ import kotlinx.datetime.Instant
 data class ActivityPubNotificationsUiState(
     val inMentionsTab: Boolean,
     val role: IdentityRole,
+    val lastReadId: String?,
     override val initializing: Boolean,
     override val dataList: List<NotificationUiState>,
     override val refreshing: Boolean,

@@ -6,6 +6,7 @@ import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -56,7 +57,6 @@ class ActivityPubNotificationsSubViewModel(
             refreshing = false,
             loadMoreState = LoadState.Idle,
             errorMessage = null,
-            lastReadId = null,
         ),
         onPostSnackMessage = {
             launchInViewModel {
@@ -69,7 +69,9 @@ class ActivityPubNotificationsSubViewModel(
 
     val uiState = loadableController.uiState
 
+    private var lastReadId: String? = null
     private var loggedAccount: ActivityPubLoggedAccount? = null
+    private var reportedNotificationId: String? = null
 
     init {
         initInteractiveHandler(
@@ -130,8 +132,11 @@ class ActivityPubNotificationsSubViewModel(
         val firstNotificationId = uiState.value
             .dataList
             .firstOrNull()
-            ?.takeIf { it.unread }
+            ?.takeIf { !it.fromLocal }
             ?.id ?: return
+        if (firstNotificationId == reportedNotificationId) return
+        reportedNotificationId = firstNotificationId
+        Log.i("F_TEST") { "report notification read: $firstNotificationId" }
         launchInViewModel {
             clientManager.getClient(role)
                 .markerRepo
@@ -139,44 +144,13 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
-    private suspend fun loadNotifications(onlyMentions: Boolean): Result<List<NotificationUiState>> {
-        val account = getLoggedAccount() ?: return Result.failure(
-            IllegalStateException("Account not found: ${userUriInsights.uri}")
-        )
-        val client = clientManager.getClient(role)
-        val lastReadId: String? = if (onlyMentions) {
-            null
-        } else {
-            client.markerRepo
-                .getMarkers(timeline = listOf(MarkersRepo.TIMELINE_NOTIFICATIONS))
-                .map { it.notifications }
-                .getOrNull()
-                ?.lastReadId
-        }
-        return notificationsRepo.getRemoteNotifications(
-            account = account,
-            onlyMentions = onlyMentions,
-        ).map { notifications ->
-            val lastReadIndex: Int = if (lastReadId != null) {
-                notifications.indexOfFirst { it.id == lastReadId }
-                    .takeIf { it >= 0 } ?: Int.MAX_VALUE
-            } else {
-                -1
-            }
-            notifications.mapIndexed { index, notification ->
-                val unread = index < lastReadIndex
-                notification.toUiState(unread = unread)
-            }
-        }
-    }
-
     fun onNotificationShown(notification: NotificationUiState) {
-        if (!notification.unread) return
+        if (!notification.unreadState) return
         _uiState.update { state ->
             state.copy(
                 dataList = state.dataList.map {
                     if (it.id == notification.id) {
-                        it.copy(unread = false)
+                        it.copy(unreadState = false)
                     } else {
                         it
                     }
@@ -191,10 +165,28 @@ class ActivityPubNotificationsSubViewModel(
         val account = getLoggedAccount() ?: return Result.failure(
             IllegalStateException("Account not found: ${userUriInsights.uri}")
         )
+        if (!onlyMentions) {
+            lastReadId = getLastReadId()
+        }
+        Log.i("F_TEST") { "load lastReadId: $lastReadId" }
         return notificationsRepo.getRemoteNotifications(
             account = account,
             onlyMentions = onlyMentions,
-        ).map { it.map { notification -> notification.toUiState() } }
+        ).map { notifications ->
+            notifications.take(5).joinToString { it.id }.let {
+                Log.i("F_TEST") { "load notification from server: $it" }
+            }
+            notifications.toUiStateList(onlyMentions, lastReadId)
+        }
+    }
+
+    private suspend fun getLastReadId(): String? {
+        val result = clientManager.getClient(role)
+            .markerRepo
+            .getMarkers(timeline = listOf(MarkersRepo.TIMELINE_NOTIFICATIONS))
+        return result.map { it.notifications }
+            .getOrNull()
+            ?.lastReadId
     }
 
     private suspend fun loadMoreDataFromServer(
@@ -208,8 +200,8 @@ class ActivityPubNotificationsSubViewModel(
             account = account,
             maxId = maxId,
             onlyMentions = onlyMentions,
-        ).map {
-            it.map { notification -> notification.toUiState() }
+        ).map { notifications ->
+            notifications.map { it.toUiState() }
         }
     }
 
@@ -218,7 +210,7 @@ class ActivityPubNotificationsSubViewModel(
         return notificationsRepo.getLocalNotifications(
             accountOwnershipUri = account.uri,
             onlyMentions = _uiState.value.inMentionsTab,
-        ).map { it.toUiState() }
+        ).map { it.toUiState(fromLocal = true) }
     }
 
     private suspend fun getLoggedAccount(): ActivityPubLoggedAccount? {
@@ -284,12 +276,30 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
+    private suspend fun List<StatusNotification>.toUiStateList(
+        onlyMentions: Boolean,
+        lastReadId: String?,
+    ): List<NotificationUiState> {
+        if (onlyMentions || lastReadId == null) {
+            return this.map { it.toUiState() }
+        }
+        // TODO 改成时间判断
+//        val lastReadIndex: Int = this.indexOfFirst { it.id == lastReadId }
+//            .takeIf { it >= 0 } ?: -1
+        Log.i("F_TEST") { "toUiStateList lastReadIndex: $lastReadIndex" }
+        return this.mapIndexed { index, notification ->
+            notification.toUiState(unread = index < lastReadIndex)
+        }
+    }
+
     private suspend fun StatusNotification.toUiState(
         unread: Boolean = false,
+        fromLocal: Boolean = false,
     ): NotificationUiState {
         return NotificationUiState(
             id = id,
             role = role,
+            fromLocal = fromLocal,
             type = type,
             createdAt = createdAt,
             account = account,
@@ -297,6 +307,7 @@ class ActivityPubNotificationsSubViewModel(
             displayTime = formatStatusDisplayTime(createdAt.toEpochMilliseconds()),
             status = status?.let { buildStatusUiState(role, it) },
             unread = unread,
+            unreadState = unread,
             relationshipSeveranceEvent = relationshipSeveranceEvent,
         )
     }

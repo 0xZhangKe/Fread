@@ -26,12 +26,14 @@ fun StatusNotificationUi(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     if (notification.type == StatusNotificationType.MENTION) {
-        MentionNotification(
-            notification = notification,
-            indexInList = indexInList,
-            style = style,
-            composedStatusInteraction = composedStatusInteraction,
-        )
+        Box(modifier = modifier) {
+            MentionNotification(
+                notification = notification,
+                indexInList = indexInList,
+                style = style,
+                composedStatusInteraction = composedStatusInteraction,
+            )
+        }
         return
     }
     Column(modifier = modifier) {

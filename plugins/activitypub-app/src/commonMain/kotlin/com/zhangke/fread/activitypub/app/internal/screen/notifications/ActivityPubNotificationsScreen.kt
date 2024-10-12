@@ -1,5 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.notifications
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,6 +12,7 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
@@ -20,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -75,6 +79,7 @@ class ActivityPubNotificationsScreen(
             onLoadMore = viewModel::onLoadMore,
             onRejectClick = viewModel::onRejectClick,
             onAcceptClick = viewModel::onAcceptClick,
+            onNotificationShown = viewModel::onNotificationShown,
             composedStatusInteraction = viewModel.composedStatusInteraction,
             nestedScrollConnection = nestedScrollConnection,
         )
@@ -82,11 +87,14 @@ class ActivityPubNotificationsScreen(
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
         }
-//        LaunchedEffect(Unit) {
-//            // 停留1秒表示已读
-//            delay(1000)
-//            viewModel.onPageResume()
-//        }
+        if (uiState.dataList.isNotEmpty()) {
+            val first = uiState.dataList.first()
+            LaunchedEffect(first.id, first.fromLocal) {
+                // 停留1秒表示已读
+                delay(1000)
+                viewModel.onPageResume()
+            }
+        }
     }
 
     @Composable
@@ -97,6 +105,7 @@ class ActivityPubNotificationsScreen(
         onLoadMore: () -> Unit,
         onRejectClick: (NotificationUiState) -> Unit,
         onAcceptClick: (NotificationUiState) -> Unit,
+        onNotificationShown: (NotificationUiState) -> Unit,
         composedStatusInteraction: ComposedStatusInteraction,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
@@ -130,14 +139,28 @@ class ActivityPubNotificationsScreen(
                     itemsIndexed(
                         items = uiState.dataList,
                     ) { index, notification ->
+                        val backgroundColor by animateColorAsState(
+                            if (notification.unreadState) {
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2F)
+                            } else {
+                                Color.Transparent
+                            }
+                        )
                         StatusNotificationUi(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth()
+                                .background(backgroundColor),
                             notification = notification,
                             composedStatusInteraction = composedStatusInteraction,
                             indexInList = index,
                             onAcceptClick = onAcceptClick,
                             onRejectClick = onRejectClick,
                         )
+                        if (notification.unread) {
+                            LaunchedEffect(notification) {
+                                delay(1000)
+                                onNotificationShown(notification)
+                            }
+                        }
                     }
                 }
             }

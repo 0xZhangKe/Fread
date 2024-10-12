@@ -14,6 +14,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.NotificationsRepo
+import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -25,6 +26,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Instant
 
 class ActivityPubNotificationsSubViewModel(
     private val statusProvider: StatusProvider,
@@ -37,6 +39,7 @@ class ActivityPubNotificationsSubViewModel(
     private val clientManager: ActivityPubClientManager,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -69,9 +72,9 @@ class ActivityPubNotificationsSubViewModel(
 
     val uiState = loadableController.uiState
 
-    private var lastReadId: String? = null
     private var loggedAccount: ActivityPubLoggedAccount? = null
     private var reportedNotificationId: String? = null
+    private var lastReadTime: Instant? = null
 
     init {
         initInteractiveHandler(
@@ -165,28 +168,27 @@ class ActivityPubNotificationsSubViewModel(
         val account = getLoggedAccount() ?: return Result.failure(
             IllegalStateException("Account not found: ${userUriInsights.uri}")
         )
-        if (!onlyMentions) {
-            lastReadId = getLastReadId()
-        }
-        Log.i("F_TEST") { "load lastReadId: $lastReadId" }
+        lastReadTime = getLastReadInstant()
+        Log.i("F_TEST") { "load lastReadId: $lastReadTime" }
         return notificationsRepo.getRemoteNotifications(
             account = account,
             onlyMentions = onlyMentions,
         ).map { notifications ->
-            notifications.take(5).joinToString { it.id }.let {
+            notifications.take(5).joinToString { it.createdAt.toString() }.let {
                 Log.i("F_TEST") { "load notification from server: $it" }
             }
-            notifications.toUiStateList(onlyMentions, lastReadId)
+            notifications.toUiStateList()
         }
     }
 
-    private suspend fun getLastReadId(): String? {
+    private suspend fun getLastReadInstant(): Instant? {
         val result = clientManager.getClient(role)
             .markerRepo
             .getMarkers(timeline = listOf(MarkersRepo.TIMELINE_NOTIFICATIONS))
         return result.map { it.notifications }
             .getOrNull()
-            ?.lastReadId
+            ?.updatedAt
+            ?.let { formatDatetimeToDate(it) }
     }
 
     private suspend fun loadMoreDataFromServer(
@@ -201,7 +203,7 @@ class ActivityPubNotificationsSubViewModel(
             maxId = maxId,
             onlyMentions = onlyMentions,
         ).map { notifications ->
-            notifications.map { it.toUiState() }
+            notifications.toUiStateList()
         }
     }
 
@@ -276,19 +278,11 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
-    private suspend fun List<StatusNotification>.toUiStateList(
-        onlyMentions: Boolean,
-        lastReadId: String?,
-    ): List<NotificationUiState> {
-        if (onlyMentions || lastReadId == null) {
-            return this.map { it.toUiState() }
-        }
-        // TODO 改成时间判断
-//        val lastReadIndex: Int = this.indexOfFirst { it.id == lastReadId }
-//            .takeIf { it >= 0 } ?: -1
-        Log.i("F_TEST") { "toUiStateList lastReadIndex: $lastReadIndex" }
-        return this.mapIndexed { index, notification ->
-            notification.toUiState(unread = index < lastReadIndex)
+    private suspend fun List<StatusNotification>.toUiStateList(): List<NotificationUiState> {
+        val lastReadTime = lastReadTime ?: return this.map { it.toUiState() }
+        Log.i("F_TEST") { "toUiStateList lastReadIndex: $lastReadTime" }
+        return this.map { notification ->
+            notification.toUiState(unread = notification.createdAt > lastReadTime)
         }
     }
 

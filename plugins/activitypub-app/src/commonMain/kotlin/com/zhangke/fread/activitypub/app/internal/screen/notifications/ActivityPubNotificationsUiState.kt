@@ -14,7 +14,6 @@ import kotlinx.datetime.Instant
 data class ActivityPubNotificationsUiState(
     val inMentionsTab: Boolean,
     val role: IdentityRole,
-    val lastReadId: String?,
     override val initializing: Boolean,
     override val dataList: List<NotificationUiState>,
     override val refreshing: Boolean,
@@ -42,6 +41,7 @@ data class ActivityPubNotificationsUiState(
 data class NotificationUiState(
     val id: String,
     val type: StatusNotificationType,
+    val fromLocal: Boolean,
     val role: IdentityRole,
     val createdAt: Instant,
     val displayTime: String,
@@ -54,6 +54,8 @@ data class NotificationUiState(
      */
     val author: BlogAuthor,
     val unread: Boolean,
+    // Just for UI shown, will changed to false when shown.
+    val unreadState: Boolean,
     val status: StatusUiState?,
     val relationshipSeveranceEvent: RelationshipSeveranceEvent?,
 )

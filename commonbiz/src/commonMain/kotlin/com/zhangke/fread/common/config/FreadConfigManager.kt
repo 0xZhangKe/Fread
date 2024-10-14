@@ -2,6 +2,7 @@ package com.zhangke.fread.common.config
 
 import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.utils.RandomIdGenerator
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,6 +19,7 @@ class FreadConfigManager @Inject constructor(
         private const val LOCAL_KEY_STATUS_CONTENT_SIZE = "fread_status_content_size"
         private const val LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE =
             "fread_status_always_show_sensitive"
+        private const val LOCAL_KEY_DEVICE_ID = "device_id"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -28,7 +30,8 @@ class FreadConfigManager @Inject constructor(
 
     suspend fun initConfig() {
         _statusConfigFlow.value = readLocalStatusConfig()
-        autoPlayInlineVideo = localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
+        autoPlayInlineVideo =
+            localConfigManager.getBoolean(LOCAL_KEY_AUTO_PLAY_INLINE_VIDEO) ?: false
     }
 
     private suspend fun readLocalStatusConfig(): StatusConfig {
@@ -76,6 +79,12 @@ class FreadConfigManager @Inject constructor(
         _statusConfigFlow.value = _statusConfigFlow.value.copy(alwaysShowSensitiveContent = always)
         withContext(Dispatchers.IO) {
             localConfigManager.putBoolean(LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE, always)
+        }
+    }
+
+    suspend fun getDeviceId(): String {
+        return localConfigManager.getStringOrPut(LOCAL_KEY_DEVICE_ID) {
+            RandomIdGenerator().generateId()
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.zhangke.fread.feature.message.crypto
+package com.zhangke.fread.activitypub.app.internal.push
 
 import android.util.Base64
 import java.security.KeyPairGenerator
@@ -8,13 +8,13 @@ import java.security.interfaces.ECPublicKey
 import java.security.spec.ECGenParameterSpec
 import java.util.Arrays
 
-actual class CryptoUtil {
+class CryptoUtil {
 
     companion object {
         private const val EC_CURVE_NAME = "prime256v1"
     }
 
-    actual fun generate(): CryptoKeys {
+    fun generate(): CryptoKeys {
         val base64Flag = Base64.URL_SAFE or Base64.NO_WRAP or Base64.NO_PADDING
         val generator = KeyPairGenerator.getInstance("EC")
         val spec = ECGenParameterSpec(EC_CURVE_NAME)
@@ -45,3 +45,9 @@ actual class CryptoUtil {
         return result
     }
 }
+
+data class CryptoKeys(
+    val publicKey: String,
+    val authKey: String,
+)
+

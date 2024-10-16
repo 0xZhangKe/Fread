@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.push.PushManager
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
@@ -17,6 +18,7 @@ class UserDetailContainerViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
+    private val pushManager: PushManager,
 ) : ContainerViewModel<UserDetailViewModel, UserDetailContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): UserDetailViewModel {
@@ -26,6 +28,7 @@ class UserDetailContainerViewModel @Inject constructor(
             clientManager = clientManager,
             emojiEntityAdapter = emojiEntityAdapter,
             accountEntityAdapter = accountEntityAdapter,
+            pushManager = pushManager,
             role = params.role,
             userUri = params.userUri,
             webFinger = params.webFinger,

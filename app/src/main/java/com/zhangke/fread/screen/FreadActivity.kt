@@ -1,9 +1,14 @@
 package com.zhangke.fread.screen
 
+import android.Manifest
+import android.app.AlertDialog
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.CompositionLocalProvider
@@ -14,6 +19,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.core.content.ContextCompat
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
 import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
@@ -27,6 +33,7 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.R
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
@@ -47,6 +54,10 @@ import com.zhangke.fread.status.ui.style.StatusUiConfig
 
 class FreadActivity : ComponentActivity() {
 
+    private val requestPermissionLauncher = registerForActivityResult(
+        ActivityResultContracts.RequestPermission(),
+    ) { }
+
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
         val component = applicationContext.component
@@ -58,6 +69,8 @@ class FreadActivity : ComponentActivity() {
         enableEdgeToEdge()
 
         super.onCreate(savedInstanceState)
+
+        askNotificationPermission()
 
         setContent {
             val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
@@ -115,6 +128,28 @@ class FreadActivity : ComponentActivity() {
                     }
                 }
             }
+        }
+    }
+
+    private fun askNotificationPermission() {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+        val selfPermissionState =
+            ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
+        if (selfPermissionState == PackageManager.PERMISSION_GRANTED) return
+        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
+            AlertDialog.Builder(this)
+                .setTitle(getString(R.string.main_request_notification_dialog_title))
+                .setMessage(R.string.main_request_notification_dialog_content)
+                .setNegativeButton(R.string.main_request_notification_dialog_reject_button) { dialog, _ ->
+                    dialog.dismiss()
+                }
+                .setPositiveButton(R.string.main_request_notification_dialog_allow_button) { dialog, _ ->
+                    dialog.dismiss()
+                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+                }
+                .show()
+        } else {
+            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
         }
     }
 }

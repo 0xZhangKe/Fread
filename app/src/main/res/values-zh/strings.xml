@@ -9,4 +9,9 @@
 
     <string name="main_drawer_mixed_item_subtitle_1">混合内容 ·</string>
     <string name="main_drawer_mixed_item_subtitle_2">条订阅源</string>
+
+    <string name="main_request_notification_dialog_reject_button">拒绝</string>
+    <string name="main_request_notification_dialog_allow_button">允许</string>
+    <string name="main_request_notification_dialog_title">通知权限</string>
+    <string name="main_request_notification_dialog_content">为了接收互动消息，请允许通知权限。</string>
 </resources>

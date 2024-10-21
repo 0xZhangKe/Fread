@@ -15,6 +15,7 @@ import kotlin.io.encoding.ExperimentalEncodingApi
 actual class PushManager @Inject constructor(
     private val freadConfigManager: FreadConfigManager,
     private val clientManager: ActivityPubClientManager,
+    private val pushInfoRepo: PushInfoRepo,
 ) {
 
     companion object {
@@ -60,6 +61,13 @@ actual class PushManager @Inject constructor(
             .pushRepo
             .subscribePush(subscribeRequest)
             .onSuccess {
+                val pushInfo = PushInfo(
+                    accountId = accountId,
+                    publicKey = keys.publicKey,
+                    privateKey = keys.privateKey,
+                    authKey = keys.authKey,
+                )
+                pushInfoRepo.insert(pushInfo)
                 Log.d("F_TEST", "subscribe success: $it")
             }.onFailure {
                 Log.d("F_TEST", "subscribe failed: $it")

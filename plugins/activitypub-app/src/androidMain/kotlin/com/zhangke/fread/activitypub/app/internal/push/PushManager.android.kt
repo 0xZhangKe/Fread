@@ -16,6 +16,7 @@ actual class PushManager @Inject constructor(
     private val freadConfigManager: FreadConfigManager,
     private val clientManager: ActivityPubClientManager,
     private val pushInfoRepo: PushInfoRepo,
+    private val pushRelayRepo: FreadPushRelayRepo,
 ) {
 
     companion object {
@@ -23,15 +24,16 @@ actual class PushManager @Inject constructor(
         private const val ENDPOINT_URL = "https://api.fread.xyz/push/relay/send"
     }
 
-    @OptIn(ExperimentalEncodingApi::class)
-    suspend fun getEndpointUrl(accountId: String): String {
+    private suspend fun getEndpointUrl(encodedAccountId: String): String {
         val deviceId = freadConfigManager.getDeviceId()
-        return "$ENDPOINT_URL/$deviceId/${Base64.UrlSafe.encode(accountId.encodeToByteArray())}"
+        return "$ENDPOINT_URL/$deviceId/$encodedAccountId"
     }
 
+    @OptIn(ExperimentalEncodingApi::class)
     actual suspend fun subscribe(role: IdentityRole, accountId: String) {
         Log.d("F_TEST", "subscribe for ${role.accountUri}")
-        val endpointUrl = getEndpointUrl(accountId)
+        val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
+        val endpointUrl = getEndpointUrl(encodedAccountId)
         val keys = CryptoUtil().generate()
         val subscribeRequest = SubscribePushRequestEntity(
             subscription = SubscribePushRequestEntity.Subscription(
@@ -61,6 +63,17 @@ actual class PushManager @Inject constructor(
             .pushRepo
             .subscribePush(subscribeRequest)
             .onSuccess {
+                Log.d("F_TEST", "subscribe success: $it")
+                registerRelay(encodedAccountId, keys)
+            }.onFailure {
+                Log.d("F_TEST", "subscribe failed: $it")
+            }
+    }
+
+    private suspend fun registerRelay(accountId: String, keys: CryptoKeys) {
+        pushRelayRepo.registerToRelay(accountId)
+            .onSuccess {
+                Log.d("F_TEST", "registerRelay success")
                 val pushInfo = PushInfo(
                     accountId = accountId,
                     publicKey = keys.publicKey,
@@ -68,9 +81,8 @@ actual class PushManager @Inject constructor(
                     authKey = keys.authKey,
                 )
                 pushInfoRepo.insert(pushInfo)
-                Log.d("F_TEST", "subscribe success: $it")
             }.onFailure {
-                Log.d("F_TEST", "subscribe failed: $it")
+                Log.d("F_TEST", "registerRelay failed: $it")
             }
     }
 }

@@ -1,4 +1,4 @@
-package com.zhangke.fread.push
+package com.zhangke.fread.activitypub.app.internal.push
 
 import android.util.Log
 import com.google.firebase.messaging.FirebaseMessagingService
@@ -25,16 +25,14 @@ class FreadPushService : FirebaseMessagingService() {
         Log.d("F_TEST", "onNewToken: $token")
     }
 
-    override fun onSendError(msgId: String, exception: Exception) {
-        super.onSendError(msgId, exception)
-        Log.d("F_TEST", "onSendError: $msgId, $exception")
-    }
-
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
         Log.d("F_TEST", "onMessageReceived: $message")
         message.data.entries.forEach {
             Log.d("F_TEST", "onMessageReceived: ${it.key}: ${it.value}")
         }
+        val accountId = message.data["a"]
+        val messageData = message.data["d"]
+
     }
 }

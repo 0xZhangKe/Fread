@@ -8,7 +8,6 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
-import me.tatarka.inject.annotations.Inject
 
 private const val DB_VERSION = 1
 private const val TABLE_NAME = "PushInfo"
@@ -49,9 +48,7 @@ abstract class PushInfoDatabase : RoomDatabase() {
     }
 }
 
-class PushInfoRepo @Inject constructor(
-    private val database: PushInfoDatabase,
-) {
+class PushInfoRepo(database: PushInfoDatabase) {
 
     private val pushDao = database.pushInfoDao()
 

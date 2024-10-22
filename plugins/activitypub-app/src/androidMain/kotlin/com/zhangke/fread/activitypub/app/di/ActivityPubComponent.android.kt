@@ -8,6 +8,7 @@ import com.zhangke.fread.activitypub.app.internal.db.notifications.Notifications
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.activitypub.app.internal.push.PushInfoDatabase
+import com.zhangke.fread.activitypub.app.internal.push.PushInfoRepo
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import me.tatarka.inject.annotations.Provides
@@ -76,6 +77,12 @@ actual interface ActivityPubPlatformComponent {
             PushInfoDatabase::class.java,
             PushInfoDatabase.DB_NAME,
         ).build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun providePushInfoRepo(database: PushInfoDatabase): PushInfoRepo {
+        return PushInfoRepo(database)
     }
 }
 

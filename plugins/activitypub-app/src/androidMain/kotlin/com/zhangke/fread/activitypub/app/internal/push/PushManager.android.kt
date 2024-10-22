@@ -39,7 +39,7 @@ actual class PushManager @Inject constructor(
             subscription = SubscribePushRequestEntity.Subscription(
                 endpoint = endpointUrl,
                 keys = SubscribePushRequestEntity.Subscription.Keys(
-                    p256dh = keys.publicKey,
+                    p256dh = keys.encodedPublicKey,
                     auth = keys.authKey,
                 ),
             ),

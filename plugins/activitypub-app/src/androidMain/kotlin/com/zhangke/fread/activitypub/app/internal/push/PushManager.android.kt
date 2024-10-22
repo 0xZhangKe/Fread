@@ -31,10 +31,10 @@ actual class PushManager @Inject constructor(
 
     @OptIn(ExperimentalEncodingApi::class)
     actual suspend fun subscribe(role: IdentityRole, accountId: String) {
-        Log.d("F_TEST", "subscribe for ${role.accountUri}")
+        Log.d("F_TEST", "subscribe for ${role.accountUri}, $accountId")
         val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
         val endpointUrl = getEndpointUrl(encodedAccountId)
-        val keys = CryptoUtil().generate()
+        val keys = CryptoUtil.generate()
         val subscribeRequest = SubscribePushRequestEntity(
             subscription = SubscribePushRequestEntity.Subscription(
                 endpoint = endpointUrl,
@@ -64,16 +64,23 @@ actual class PushManager @Inject constructor(
             .subscribePush(subscribeRequest)
             .onSuccess {
                 Log.d("F_TEST", "subscribe success: $it")
-                registerRelay(encodedAccountId, keys)
+                registerRelay(accountId, encodedAccountId, keys)
             }.onFailure {
                 Log.d("F_TEST", "subscribe failed: $it")
             }
     }
 
-    private suspend fun registerRelay(accountId: String, keys: CryptoKeys) {
+    private suspend fun registerRelay(
+        accountId: String,
+        encodedAccountId: String,
+        keys: CryptoKeys,
+    ) {
         pushRelayRepo.registerToRelay(accountId)
             .onSuccess {
-                Log.d("F_TEST", "registerRelay success")
+                Log.d(
+                    "F_TEST",
+                    "registerRelay success, account id is $accountId, encoded: $encodedAccountId"
+                )
                 val pushInfo = PushInfo(
                     accountId = accountId,
                     publicKey = keys.publicKey,

@@ -20,6 +20,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.rememberDrawerState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableLongStateOf
@@ -41,6 +42,8 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
 import com.zhangke.framework.utils.extractActivity
+import com.zhangke.fread.common.action.LocalComposableActions
+import com.zhangke.fread.common.action.OpenNotificationPageAction
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.explore.ExploreTab
 import com.zhangke.fread.feature.message.NotificationsTab
@@ -97,8 +100,8 @@ fun Screen.MainPage() {
                     tab = tabs.first(),
                 ) {
                     val tabNavigator = LocalTabNavigator.current
+                    RegisterNotificationAction(tabs, tabNavigator)
                     inFeedsTab = tabNavigator.current.key == tabs.first().key
-                    tabNavigator.current
                     BackHandler {
                         if (inFeedsTab) {
                             goHome(context)
@@ -196,4 +199,22 @@ private fun goHome(context: Context) {
         addCategory(Intent.CATEGORY_HOME)
     }
     context.extractActivity()?.startActivity(intent)
+}
+
+@Composable
+private fun RegisterNotificationAction(
+    tabs: List<Tab>,
+    tabNavigator: TabNavigator,
+) {
+    val composableActions = LocalComposableActions.current
+    LaunchedEffect(tabs, composableActions) {
+        composableActions.actionFlow.collect { action ->
+            if (!action.startsWith(OpenNotificationPageAction.URI)) return@collect
+            val notificationTab =
+                tabs.firstNotNullOfOrNull { it as? NotificationsTab } ?: return@collect
+            if (tabNavigator.current != notificationTab) {
+                tabNavigator.current = notificationTab
+            }
+        }
+    }
 }

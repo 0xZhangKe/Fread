@@ -2,6 +2,7 @@ package com.zhangke.fread.screen
 
 import android.Manifest
 import android.app.AlertDialog
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -20,6 +21,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.core.content.ContextCompat
+import androidx.lifecycle.lifecycleScope
 import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.LocalViewModelProviderFactory
 import cafe.adriel.voyager.jetpack.ProvideNavigatorLifecycleKMPSupport
@@ -34,6 +36,8 @@ import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.R
+import com.zhangke.fread.common.action.ComposableActions
+import com.zhangke.fread.common.action.RouteAction
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 import com.zhangke.fread.common.config.LocalLocalConfigManager
@@ -51,12 +55,19 @@ import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
+import com.zhangke.krouter.KRouter
+import kotlinx.coroutines.launch
 
 class FreadActivity : ComponentActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
     ) { }
+
+    override fun onNewIntent(intent: Intent?) {
+        super.onNewIntent(intent)
+        intent?.let(::handleIntent)
+    }
 
     @OptIn(ExperimentalMaterialApi::class, ExperimentalVoyagerApi::class)
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -71,6 +82,8 @@ class FreadActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         askNotificationPermission()
+
+        intent?.let(::handleIntent)
 
         setContent {
             val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
@@ -150,6 +163,14 @@ class FreadActivity : ComponentActivity() {
                 .show()
         } else {
             requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }
+
+    private fun handleIntent(intent: Intent) {
+        val uri = intent.data?.toString() ?: return
+        KRouter.route<RouteAction>(uri)?.execute()
+        lifecycleScope.launch {
+            ComposableActions.post(uri)
         }
     }
 }

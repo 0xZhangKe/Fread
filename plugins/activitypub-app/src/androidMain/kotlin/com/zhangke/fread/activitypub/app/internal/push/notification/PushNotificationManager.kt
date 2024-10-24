@@ -5,13 +5,19 @@ import android.app.NotificationChannel
 import android.app.NotificationManager
 import android.app.PendingIntent
 import android.content.Context
+import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import androidx.core.app.NotificationCompat
 import androidx.core.app.NotificationManagerCompat
+import androidx.core.graphics.drawable.IconCompat
+import androidx.core.net.toUri
+import com.zhangke.fread.activitypub.app.R
+import com.zhangke.fread.common.action.OpenNotificationPageAction
 import kotlin.random.Random
 
-class PushNotificationManager() {
+
+class PushNotificationManager {
 
     companion object {
 
@@ -22,7 +28,7 @@ class PushNotificationManager() {
         if (!checkSelfPushPermission(context)) return
         createNotificationChannel(context)
         val builder = NotificationCompat.Builder(context, CHANNEL_ID)
-//            .setSmallIcon(R.drawable.notification_icon)
+            .setSmallIcon(com.zhangke.fread.commonbiz.R.drawable.ic_fread_logo)
             .setContentTitle(message.title)
             .setContentText(message.body)
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
@@ -32,7 +38,10 @@ class PushNotificationManager() {
     }
 
     private fun buildNotificationIntent(context: Context, message: FcmPushMessage): PendingIntent {
-
+        val openNavigationUri = OpenNotificationPageAction.buildOpenNotificationPageRoute()
+        val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!
+        intent.data = openNavigationUri.toUri()
+        return PendingIntent.getActivity(context, 0, intent, PendingIntent.FLAG_IMMUTABLE)
     }
 
     private fun checkSelfPushPermission(context: Context): Boolean {

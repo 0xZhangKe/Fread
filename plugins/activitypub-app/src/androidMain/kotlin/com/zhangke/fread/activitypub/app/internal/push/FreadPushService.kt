@@ -29,6 +29,7 @@ class FreadPushService : FirebaseMessagingService() {
     @OptIn(ExperimentalEncodingApi::class)
     override fun onMessageReceived(message: RemoteMessage) {
         super.onMessageReceived(message)
+        Log.d("F_TEST", "onMessageReceived: $message")
         val encodedAccountId = message.data["a"] ?: return
         val messageData = message.data["d"] ?: return
         val serverPublicKeyEncoded =
@@ -50,8 +51,10 @@ class FreadPushService : FirebaseMessagingService() {
                 Log.d("F_TEST", "decrypted data error: ${e.stackTraceToString()}")
                 null
             }
+            Log.d("F_TEST", "pushMessage: $pushMessage")
             if (pushMessage != null) {
-                activityPubComponent.provideNotificationManager().onReceiveNewMessage(pushMessage)
+                activityPubComponent.provideNotificationManager()
+                    .onReceiveNewMessage(this@FreadPushService, pushMessage)
             }
         }
     }

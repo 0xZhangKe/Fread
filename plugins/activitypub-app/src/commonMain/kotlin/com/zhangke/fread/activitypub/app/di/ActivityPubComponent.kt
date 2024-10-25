@@ -4,6 +4,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.ActivityPubProvider
 import com.zhangke.fread.activitypub.app.ActivityPubUrlInterceptor
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
+import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigViewModel
@@ -42,6 +43,8 @@ expect interface ActivityPubPlatformComponent
 interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     val author: ActivityPubOAuthor
+
+    val accountRepo: ActivityPubLoggedAccountRepo
 
     @IntoSet
     @Provides

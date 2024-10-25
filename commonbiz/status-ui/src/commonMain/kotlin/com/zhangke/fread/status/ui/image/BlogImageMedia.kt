@@ -35,7 +35,6 @@ import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.LocalImageLoader
-import com.seiko.imageloader.cache.CachePolicy
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
@@ -178,7 +177,6 @@ internal fun BlogImage(
             imageLoader.executeSafety(
                 ImageRequest {
                     data(imageUrl)
-                    options { memoryCachePolicy = CachePolicy.DISABLED }
                 }
             )
         }

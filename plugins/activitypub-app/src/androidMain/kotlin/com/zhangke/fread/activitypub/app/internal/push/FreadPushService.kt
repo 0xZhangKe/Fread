@@ -9,6 +9,8 @@ import com.zhangke.framework.architect.json.getStringOrNull
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.activitypub.app.di.activityPubComponent
 import com.zhangke.fread.activitypub.app.internal.push.notification.FcmPushMessage
+import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
+import com.zhangke.fread.status.account.LoggedAccount
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -37,8 +39,10 @@ class FreadPushService : FirebaseMessagingService() {
         val contentEncoding = message.data["Content-Encoding"] ?: return
         val encryptionSalt = message.data["Encryption"]?.split("=")?.lastOrNull() ?: return
         val accountId = String(Base64.UrlSafe.decode(encodedAccountId))
+        Log.d("F_TEST", "onMessageReceived: $message, $accountId")
         coroutineScope.launch {
             val info = getPushRepo().getPushInfo(accountId) ?: return@launch
+            val account = getAccountRepo().queryById(accountId) ?: return@launch
             val pushMessage = try {
                 CryptoUtil.decryptData(
                     keys = info,
@@ -46,20 +50,23 @@ class FreadPushService : FirebaseMessagingService() {
                     data = Base64.decode(messageData),
                     encryptionSalt = encryptionSalt,
                     contentEncoding = contentEncoding,
-                ).let { convertDataToNotification(it) }
+                ).let { convertDataToNotification(it, account) }
             } catch (e: Throwable) {
                 Log.d("F_TEST", "decrypted data error: ${e.stackTraceToString()}")
                 null
             }
             Log.d("F_TEST", "pushMessage: $pushMessage")
             if (pushMessage != null) {
-                activityPubComponent.provideNotificationManager()
+                activityPubComponent.pushNotificationManager
                     .onReceiveNewMessage(this@FreadPushService, pushMessage)
             }
         }
     }
 
-    private fun convertDataToNotification(data: String): FcmPushMessage? {
+    private fun convertDataToNotification(
+        data: String,
+        account: LoggedAccount,
+    ): FcmPushMessage? {
         val jsonObject = globalJson.fromJson<JsonObject>(data)
         return FcmPushMessage(
             accessToken = jsonObject.getStringOrNull("access_token"),
@@ -71,7 +78,13 @@ class FreadPushService : FirebaseMessagingService() {
             icon = jsonObject.getStringOrNull("icon") ?: return null,
             title = jsonObject.getStringOrNull("title") ?: return null,
             body = jsonObject.getStringOrNull("body") ?: return null,
+            account = account,
         )
+    }
+
+    private fun getAccountRepo(): ActivityPubLoggedAccountRepo {
+        val activityPubComponent = activityPubComponent
+        return activityPubComponent.accountRepo
     }
 
     private fun getPushRepo(): PushInfoRepo {

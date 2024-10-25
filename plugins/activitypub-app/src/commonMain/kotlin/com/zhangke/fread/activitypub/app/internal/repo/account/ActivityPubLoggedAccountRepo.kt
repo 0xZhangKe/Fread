@@ -5,12 +5,14 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccou
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggerAccountDao
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
+@ApplicationScope
 class ActivityPubLoggedAccountRepo @Inject constructor(
     private val databases: ActivityPubDatabases,
     private val adapter: ActivityPubLoggedAccountAdapter,
@@ -35,6 +37,9 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
         accountDao.queryAll().map {
             adapter.adapt(it)
         }
+
+    suspend fun queryById(id: String): ActivityPubLoggedAccount? =
+        accountDao.queryById(id)?.let { adapter.adapt(it) }
 
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccount? =
         accountDao.queryByUri(uri)?.let { adapter.adapt(it) }

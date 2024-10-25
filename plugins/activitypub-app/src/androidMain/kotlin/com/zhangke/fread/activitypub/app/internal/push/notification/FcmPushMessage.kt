@@ -1,9 +1,12 @@
 package com.zhangke.fread.activitypub.app.internal.push.notification
 
+import com.zhangke.fread.status.account.LoggedAccount
+
 data class FcmPushMessage(
     val accessToken: String?,
     val preferredLocale: String?,
     val notificationId: Long?,
+    val account: LoggedAccount?,
     val notificationType: Type,
     val icon: String,
     val title: String,

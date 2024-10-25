@@ -44,7 +44,6 @@ import androidx.compose.ui.unit.toSize
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.LocalImageLoader
-import com.seiko.imageloader.cache.CachePolicy
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.model.ImageResult
 import com.seiko.imageloader.option.SizeResolver
@@ -217,11 +216,7 @@ class ImageViewerScreen(
                 modifier = Modifier.fillMaxSize(),
             ) {
                 val request = remember(image.url) {
-                    ImageRequest(image.url) {
-                        options {
-                            memoryCachePolicy = CachePolicy.DISABLED
-                        }
-                    }
+                    ImageRequest(image.url)
                 }
                 Image(
                     painter = rememberImagePainter(request = request),

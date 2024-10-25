@@ -10,11 +10,14 @@ import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusRea
 import com.zhangke.fread.activitypub.app.internal.push.PushInfoDatabase
 import com.zhangke.fread.activitypub.app.internal.push.PushInfoRepo
 import com.zhangke.fread.activitypub.app.internal.push.notification.PushNotificationManager
+import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import me.tatarka.inject.annotations.Provides
 
 actual interface ActivityPubPlatformComponent {
+
+    val pushNotificationManager: PushNotificationManager
 
     @ApplicationScope
     @Provides
@@ -84,12 +87,6 @@ actual interface ActivityPubPlatformComponent {
     @Provides
     fun providePushInfoRepo(database: PushInfoDatabase): PushInfoRepo {
         return PushInfoRepo(database)
-    }
-
-    @ApplicationScope
-    @Provides
-    fun provideNotificationManager(): PushNotificationManager {
-        return PushNotificationManager()
     }
 }
 

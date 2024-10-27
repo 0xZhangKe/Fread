@@ -37,4 +37,6 @@ class RssAccountManager @Inject constructor() : IAccountManager {
     override suspend fun logout(uri: FormalUri): Boolean {
         return false
     }
+
+    override fun subscribeNotification() {}
 }

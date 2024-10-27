@@ -19,7 +19,7 @@ import kotlinx.serialization.json.Json
 @Serializable
 data class IdentityRole(
     val accountUri: FormalUri?,
-    val baseUrl: FormalBaseUrl?,
+    val baseUrl: FormalBaseUrl? = null,
 ) : PlatformParcelable, PlatformSerializable {
 
     val nonRole: Boolean

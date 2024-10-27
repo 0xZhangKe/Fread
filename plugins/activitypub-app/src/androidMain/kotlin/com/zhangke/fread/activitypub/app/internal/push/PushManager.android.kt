@@ -75,7 +75,7 @@ actual class PushManager @Inject constructor(
         encodedAccountId: String,
         keys: CryptoKeys,
     ) {
-        pushRelayRepo.registerToRelay(accountId)
+        pushRelayRepo.registerToRelay(encodedAccountId)
             .onSuccess {
                 Log.d(
                     "F_TEST",

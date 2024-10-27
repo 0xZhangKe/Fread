@@ -70,6 +70,19 @@ actual class PushManager @Inject constructor(
             }
     }
 
+    actual suspend fun unsubscribe(role: IdentityRole, accountId: String) {
+        Log.d("F_TEST", "unsubscribe for ${role.accountUri}, $accountId")
+        clientManager.getClient(role)
+            .pushRepo
+            .removeSubscription()
+            .onSuccess {
+                Log.d("F_TEST", "unsubscribe success.")
+            }.onFailure {
+                Log.d("F_TEST", "unsubscribe failed: $it")
+            }
+        unregisterRelay(accountId)
+    }
+
     private suspend fun registerRelay(
         accountId: String,
         encodedAccountId: String,
@@ -90,6 +103,18 @@ actual class PushManager @Inject constructor(
                 pushInfoRepo.insert(pushInfo)
             }.onFailure {
                 Log.d("F_TEST", "registerRelay failed: $it")
+            }
+    }
+
+    @OptIn(ExperimentalEncodingApi::class)
+    private suspend fun unregisterRelay(accountId: String) {
+        Log.d("F_TEST", "unregisterRelay: $accountId")
+        val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
+        pushRelayRepo.unregisterToRelay(encodedAccountId)
+            .onSuccess {
+                Log.d("F_TEST", "unregisterRelay success")
+            }.onFailure {
+                Log.d("F_TEST", "unregisterRelay failed: $it")
             }
     }
 }

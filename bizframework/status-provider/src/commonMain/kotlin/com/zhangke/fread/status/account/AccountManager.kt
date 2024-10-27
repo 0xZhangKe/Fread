@@ -52,6 +52,12 @@ class AccountManager(
             if (it.logout(uri)) return@forEach
         }
     }
+
+    fun subscribeNotification() {
+        for (manager in accountManagerList) {
+            manager.subscribeNotification()
+        }
+    }
 }
 
 interface IAccountManager {
@@ -67,4 +73,6 @@ interface IAccountManager {
     suspend fun refreshAllAccountInfo(): Result<Unit>
 
     suspend fun logout(uri: FormalUri): Boolean
+
+    fun subscribeNotification()
 }

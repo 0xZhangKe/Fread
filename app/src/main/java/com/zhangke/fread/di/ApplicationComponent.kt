@@ -37,6 +37,8 @@ abstract class ApplicationComponent(
     ActivityPubComponent,
     RssComponent {
 
+    abstract val statusProvider: StatusProvider
+
     @Provides
     fun provideApplicationContext(): ApplicationContext {
         return application

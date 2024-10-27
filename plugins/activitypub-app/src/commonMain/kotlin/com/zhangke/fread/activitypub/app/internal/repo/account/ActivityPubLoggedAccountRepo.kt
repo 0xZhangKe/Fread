@@ -9,6 +9,7 @@ import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject
 
@@ -17,6 +18,9 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
     private val databases: ActivityPubDatabases,
     private val adapter: ActivityPubLoggedAccountAdapter,
 ) {
+
+    private val _onNewAccountFlow = MutableSharedFlow<ActivityPubLoggedAccount>()
+    val onNewAccountFlow: Flow<ActivityPubLoggedAccount> = _onNewAccountFlow
 
     private val accountDao: ActivityPubLoggerAccountDao
         get() = databases.getLoggedAccountDao()
@@ -51,9 +55,13 @@ class ActivityPubLoggedAccountRepo @Inject constructor(
     suspend fun insert(
         entry: ActivityPubLoggedAccount,
         addedTimestamp: Long,
-    ) = accountDao.insert(adapter.recovery(entry, addedTimestamp))
+    ) {
+        val account = adapter.recovery(entry, addedTimestamp)
+        accountDao.insert(account)
+        _onNewAccountFlow.emit(entry)
+    }
 
-    suspend fun update(account: ActivityPubLoggedAccount){
+    suspend fun update(account: ActivityPubLoggedAccount) {
         val entity = accountDao.queryByUri(account.uri.toString())
         val addedTimestamp = entity?.addedTimestamp ?: getCurrentTimeMillis()
         accountDao.insert(adapter.recovery(account, addedTimestamp))

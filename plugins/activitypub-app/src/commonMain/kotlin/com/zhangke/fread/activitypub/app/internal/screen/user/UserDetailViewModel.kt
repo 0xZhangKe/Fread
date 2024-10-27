@@ -14,7 +14,6 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEnti
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
-import com.zhangke.fread.activitypub.app.internal.push.PushManager
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.buildRichText
@@ -31,7 +30,6 @@ class UserDetailViewModel(
     private val userUriTransformer: UserUriTransformer,
     private val clientManager: ActivityPubClientManager,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
-    private val pushManager: PushManager,
     val role: IdentityRole,
     val userUri: FormalUri?,
     val webFinger: WebFinger?,
@@ -69,7 +67,6 @@ class UserDetailViewModel(
                 return@launchInViewModel
             }
             val account = accountResult.getOrThrow()!!
-            pushManager.subscribe(role, account.id)
             val userInsight = accountEntityAdapter.toUri(account).let(userUriTransformer::parse)!!
             val isAccountOwner = accountManager.getAllLoggedAccount()
                 .any { loggedAccount ->

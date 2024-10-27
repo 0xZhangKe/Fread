@@ -1,7 +1,6 @@
 package com.zhangke.fread.screen
 
 import android.Manifest
-import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
@@ -35,7 +34,6 @@ import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.R
 import com.zhangke.fread.common.action.ComposableActions
 import com.zhangke.fread.common.action.RouteAction
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
@@ -62,7 +60,11 @@ class FreadActivity : ComponentActivity() {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
-    ) { }
+    ) {
+        if (it) {
+            subscribeNotification()
+        }
+    }
 
     override fun onNewIntent(intent: Intent?) {
         super.onNewIntent(intent)
@@ -81,7 +83,7 @@ class FreadActivity : ComponentActivity() {
 
         super.onCreate(savedInstanceState)
 
-        askNotificationPermission()
+        initNotification()
 
         intent?.let(::handleIntent)
 
@@ -144,26 +146,26 @@ class FreadActivity : ComponentActivity() {
         }
     }
 
-    private fun askNotificationPermission() {
-        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return
+    private fun initNotification() {
+        if (checkNotificationPermission()) {
+            subscribeNotification()
+        }
+    }
+
+    private fun subscribeNotification() {
+        lifecycleScope.launch {
+            application.component.statusProvider.accountManager.subscribeNotification()
+        }
+    }
+
+    private fun checkNotificationPermission(): Boolean {
+        if (Build.VERSION.SDK_INT < Build.VERSION_CODES.TIRAMISU) return true
         val selfPermissionState =
             ContextCompat.checkSelfPermission(this, Manifest.permission.POST_NOTIFICATIONS)
-        if (selfPermissionState == PackageManager.PERMISSION_GRANTED) return
-        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) {
-            AlertDialog.Builder(this)
-                .setTitle(getString(R.string.main_request_notification_dialog_title))
-                .setMessage(R.string.main_request_notification_dialog_content)
-                .setNegativeButton(R.string.main_request_notification_dialog_reject_button) { dialog, _ ->
-                    dialog.dismiss()
-                }
-                .setPositiveButton(R.string.main_request_notification_dialog_allow_button) { dialog, _ ->
-                    dialog.dismiss()
-                    requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-                }
-                .show()
-        } else {
-            requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
-        }
+        if (selfPermissionState == PackageManager.PERMISSION_GRANTED) return true
+//        if (shouldShowRequestPermissionRationale(Manifest.permission.POST_NOTIFICATIONS)) return false
+        requestPermissionLauncher.launch(Manifest.permission.POST_NOTIFICATIONS)
+        return false
     }
 
     private fun handleIntent(intent: Intent) {

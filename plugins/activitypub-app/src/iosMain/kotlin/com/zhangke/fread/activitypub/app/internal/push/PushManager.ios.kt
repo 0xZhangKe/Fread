@@ -7,4 +7,8 @@ actual class PushManager {
     actual suspend fun subscribe(role: IdentityRole, accountId: String) {
         throw NotImplementedError("Not implemented for iOS")
     }
+
+    actual suspend fun unsubscribe(role: IdentityRole, accountId: String) {
+        throw NotImplementedError("Not implemented for iOS")
+    }
 }

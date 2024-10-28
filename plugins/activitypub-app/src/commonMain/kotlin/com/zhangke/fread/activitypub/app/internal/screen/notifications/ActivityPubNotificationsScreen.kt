@@ -155,7 +155,7 @@ class ActivityPubNotificationsScreen(
                             onAcceptClick = onAcceptClick,
                             onRejectClick = onRejectClick,
                         )
-                        if (notification.unread) {
+                        if (notification.unreadState) {
                             LaunchedEffect(notification) {
                                 delay(1000)
                                 onNotificationShown(notification)

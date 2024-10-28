@@ -169,14 +169,10 @@ class ActivityPubNotificationsSubViewModel(
             IllegalStateException("Account not found: ${userUriInsights.uri}")
         )
         lastReadTime = getLastReadInstant()
-        Log.i("F_TEST") { "load lastReadId: $lastReadTime" }
         return notificationsRepo.getRemoteNotifications(
             account = account,
             onlyMentions = onlyMentions,
         ).map { notifications ->
-            notifications.take(5).joinToString { it.createdAt.toString() }.let {
-                Log.i("F_TEST") { "load notification from server: $it" }
-            }
             notifications.toUiStateList()
         }
     }
@@ -280,7 +276,6 @@ class ActivityPubNotificationsSubViewModel(
 
     private suspend fun List<StatusNotification>.toUiStateList(): List<NotificationUiState> {
         val lastReadTime = lastReadTime ?: return this.map { it.toUiState() }
-        Log.i("F_TEST") { "toUiStateList lastReadIndex: $lastReadTime" }
         return this.map { notification ->
             notification.toUiState(unread = notification.createdAt > lastReadTime)
         }

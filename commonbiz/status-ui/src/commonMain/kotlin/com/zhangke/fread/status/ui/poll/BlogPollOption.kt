@@ -111,7 +111,6 @@ internal fun BlogPollOption(
                     .align(Alignment.CenterEnd)
                     .padding(end = 20.dp),
                 text = "${(progress * 100).roundToInt()} %",
-                color = Color.Black,
             )
         }
     }

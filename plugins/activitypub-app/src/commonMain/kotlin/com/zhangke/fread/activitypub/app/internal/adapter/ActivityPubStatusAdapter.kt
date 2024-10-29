@@ -134,7 +134,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         val mediaType = convertMediaType(type)
         return BlogMedia(
             id = id,
-            url = url,
+            url = url.orEmpty(),
             type = mediaType,
             previewUrl = previewUrl,
             remoteUrl = remoteUrl,

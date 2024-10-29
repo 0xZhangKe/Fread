@@ -78,6 +78,10 @@ class ImageViewerScreen(
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        if (imageList.isEmpty()) {
+            navigator.pop()
+            return
+        }
         val coroutineScope = rememberCoroutineScope()
         var backgroundColorAlpha by remember {
             mutableFloatStateOf(0F)

@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
@@ -98,7 +99,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             content = entity.content.orEmpty(),
             sensitive = entity.sensitive,
             spoilerText = entity.spoilerText,
-            date = formatDatetimeToDate(entity.createdAt),
+            date = Instant(formatDatetimeToDate(entity.createdAt)),
             url = entity.url.ifNullOrEmpty { entity.uri },
             language = entity.language,
             forwardCount = entity.reblogsCount,
@@ -115,7 +116,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),
             card = entity.card?.toCard(),
-            editedAt = entity.editedAt?.let { formatDatetimeToDate(it) },
+            editedAt = entity.editedAt?.let { formatDatetimeToDate(it) }?.let { Instant(it) },
             application = entity.application?.toApplication(),
         )
     }

@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubNotificationsEntity
 import com.zhangke.activitypub.entities.ActivityPubRelationshipSeveranceEventEntity
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
@@ -30,7 +31,7 @@ class ActivityPubNotificationEntityAdapter @Inject constructor(
         return RelationshipSeveranceEvent(
             id = this.id,
             type = this.type.convertToEventType(),
-            createdAt = formatDatetimeToDate(this.createdAt),
+            createdAt = Instant(formatDatetimeToDate(this.createdAt)),
             purged = this.purged,
             targetName = this.targetName,
             relationshipsCount = this.relationshipsCount,

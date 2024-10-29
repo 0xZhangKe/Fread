@@ -79,7 +79,7 @@ class BlogDetailScreen(
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
                 val displayTime by produceState("", blog.date) {
-                    value = DateTimeFormatter.format(blog.date.toEpochMilliseconds())
+                    value = DateTimeFormatter.format(blog.date.instant.toEpochMilliseconds())
                 }
                 StatusInfoLine(
                     modifier = Modifier.fillMaxWidth(),
@@ -95,7 +95,7 @@ class BlogDetailScreen(
                         browserLauncher.launchWebTabInApp(it)
                     },
                     blogTranslationState = BlogTranslationUiState(support = false),
-                    editedAt = blog.editedAt,
+                    editedAt = blog.editedAt?.instant,
                     showFollowButton = false,
                     onTranslateClick = {},
                 )

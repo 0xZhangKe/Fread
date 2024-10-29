@@ -46,7 +46,7 @@ sealed class Status: PlatformSerializable {
 
         override val id: String get() = blog.id
 
-        override val datetime: Long get() = blog.date.toEpochMilliseconds()
+        override val datetime: Long get() = blog.date.instant.toEpochMilliseconds()
 
         override val platform: BlogPlatform
             get() = blog.platform

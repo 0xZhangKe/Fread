@@ -109,7 +109,7 @@ fun BlogUi(
             onFollowClick = onFollowClick,
             style = style,
             reblogAuthor = reblogAuthor,
-            editedAt = blog.editedAt,
+            editedAt = blog.editedAt?.instant,
             onTranslateClick = onTranslateClick,
         )
         BlogContent(

@@ -1,6 +1,6 @@
 package com.zhangke.fread.status.blog
 
-import com.zhangke.framework.serialize.TimestampAsInstantSerializer
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Emoji
@@ -10,7 +10,6 @@ import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.buildRichText
-import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -21,7 +20,7 @@ data class Blog(
     val description: String?,
     val content: String,
     val url: String,
-    @Serializable(with = TimestampAsInstantSerializer::class) val date: Instant,
+    val date: Instant,
     val forwardCount: Int?,
     val likeCount: Int?,
     val repliesCount: Int?,
@@ -42,7 +41,7 @@ data class Blog(
     val card: PreviewCard? = null,
     val isSelf: Boolean = false,
     val supportTranslate: Boolean = false,
-    @Serializable(with = TimestampAsInstantSerializer::class) val editedAt: Instant? = null,
+    val editedAt: Instant? = null,
     val application: PostingApplication? = null,
 ) : PlatformSerializable {
 

@@ -5,6 +5,8 @@
     <string name="profile_page_logout_dialog_content">Are you sure you want to log out?</string>
 
     <string name="profile_setting_about_title">About</string>
+    <string name="profile_setting_donate_title">Donate</string>
+    <string name="profile_setting_donate_desc">Buy me a coffee to support this project.</string>
     <string name="profile_setting_inline_video_auto_play">Inline Video Autoplay</string>
     <string name="profile_setting_inline_video_auto_play_subtitle">If enabled, videos in the Feeds will autoplay.</string>
     <string name="profile_setting_always_show_sensitive_content">Sensitive content is displayed by default</string>
@@ -25,7 +27,7 @@
     <string name="profile_setting_language_en">English</string>
     <string name="profile_setting_language_system">Follow System</string>
     <string name="profile_setting_ratting">Rating us</string>
-    <string name="profile_setting_ratting_desc">"If you like it, please give us a good rating."</string>
+    <string name="profile_setting_ratting_desc">If you like it, please give us a good rating.</string>
     <string name="profile_setting_font_size">Content Font Size</string>
     <string name="profile_setting_font_size_desc">Adjust the content’s font and icon size</string>
     <string name="profile_setting_font_size_small">Small</string>

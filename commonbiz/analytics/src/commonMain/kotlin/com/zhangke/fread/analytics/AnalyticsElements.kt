@@ -44,6 +44,7 @@ object SettingElements {
     const val OPEN_SOURCE = "settingOpenSource"
     const val RATTING = "settingRatting"
     const val ABOUT = "settingAbout"
+    const val DONATE = "settingDonate"
     const val FEEDBACK = "settingFeedback"
     const val CONTENT_SIZE = "settingContentSize"
     const val AUTO_PLAY_INLINE_VIDEO = "settingAutoPlayInlineVideo"

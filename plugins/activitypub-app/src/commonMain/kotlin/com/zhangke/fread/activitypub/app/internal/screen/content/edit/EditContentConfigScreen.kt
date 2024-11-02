@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.edit
 
-import android.util.Log
 import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -205,12 +204,6 @@ class EditContentConfigScreen(
         )
         var tabsInUi by remember(uiState.config.showingTabList) {
             mutableStateOf(uiState.config.showingTabList)
-        }
-        tabsInUi.joinToString().let {
-            Log.d("F_TEST", "ShowingUserList: $it")
-        }
-        tabsInUi.joinToString { it.uiKey }.let {
-            Log.d("F_TEST", "ShowingUserList hash code: $it")
         }
         key(uiState.config.showingTabList) {
             val state = rememberReorderableLazyListState(

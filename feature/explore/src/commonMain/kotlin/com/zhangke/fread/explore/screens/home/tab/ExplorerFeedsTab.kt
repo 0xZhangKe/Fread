@@ -121,7 +121,6 @@ class ExplorerFeedsTab(
             ) {
                 itemsIndexed(
                     items = uiState.dataList,
-                    key = { _, item -> item.id },
                 ) { index, item ->
                     ExplorerItemUi(
                         modifier = Modifier.fillMaxWidth(),

@@ -18,9 +18,10 @@ class ActivityPubTagAdapter @Inject constructor() {
     suspend fun adapt(entity: ActivityPubTagEntity): Hashtag {
         val yesterdayTimeInMillis = getYesterdayTimeInMillis()
         val pass2DayUses = entity.history
-            .filter { it.day * 1000 >= yesterdayTimeInMillis }
-            .map { it.accounts }
-            .reduce { acc, i -> acc + i }
+            .takeIf { it.isNotEmpty() }
+            ?.filter { it.day * 1000 >= yesterdayTimeInMillis }
+            ?.map { it.accounts }
+            ?.reduce { acc, i -> acc + i }
             .toString()
 
         return Hashtag(

@@ -97,6 +97,10 @@ dependencies {
 
     implementation(compose.components.resources)
 
+    implementation(compose.material)
+    implementation(compose.materialIconsExtended)
+    implementation(compose.material3)
+
     implementation(libs.bundles.kotlin)
     implementation(libs.androidx.core)
     implementation(libs.androidx.core.ktx)

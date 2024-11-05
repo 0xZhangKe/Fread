@@ -17,6 +17,8 @@ object MainDrawerElements {
     const val ADD_CONTENT = "drawerAddContent"
     const val ITEM_EDIT = "drawerListItemEdit"
     const val CONTENT = "drawerContent"
+    const val SETTING = "drawerSetting"
+    const val DONATE = "drawerDonate"
 }
 
 object HomeTabElements {

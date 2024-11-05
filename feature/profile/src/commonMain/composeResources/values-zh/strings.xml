@@ -5,7 +5,6 @@
     <string name="profile_page_logout_dialog_content">你确定要退出登录吗？</string>
 
     <string name="profile_setting_about_title">关于</string>
-    <string name="profile_setting_donate_title">捐赠</string>
     <string name="profile_setting_donate_desc">给我买杯咖啡以此支持这个项目</string>
     <string name="profile_setting_inline_video_auto_play">Inline 视频自动播放</string>
     <string name="profile_setting_inline_video_auto_play_subtitle">开启后，Feeds 流中的视频将会自动播放。</string>

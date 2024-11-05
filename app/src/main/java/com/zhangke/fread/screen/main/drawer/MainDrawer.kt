@@ -17,6 +17,8 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.outlined.Coffee
+import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -53,9 +55,12 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.R
 import com.zhangke.fread.analytics.MainDrawerElements
 import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.commonbiz.mastodon_logo
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
+import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.statusui.Res
@@ -77,6 +82,7 @@ fun Screen.MainDrawer(
     val uiState by viewModel.uiState.collectAsState()
     val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()
+    val browserLauncher = LocalActivityBrowserLauncher.current
     MainDrawerContent(
         uiState = uiState,
         onContentConfigClick = {
@@ -97,6 +103,19 @@ fun Screen.MainDrawer(
             reportClick(MainDrawerElements.ITEM_EDIT)
             viewModel.onContentConfigEditClick(it)
         },
+        onSettingClick = {
+            onDismissRequest()
+            reportClick(MainDrawerElements.SETTING)
+            navigator.push(SettingScreen())
+        },
+        onDonateClick = {
+            onDismissRequest()
+            reportClick(MainDrawerElements.DONATE)
+            browserLauncher.launchWebTabInApp(
+                AppCommonConfig.DONATE_LINK,
+                checkAppSupportPage = false,
+            )
+        },
     )
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)
 }
@@ -109,6 +128,8 @@ private fun MainDrawerContent(
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
     onEditClick: (ContentConfig) -> Unit,
+    onSettingClick: () -> Unit,
+    onDonateClick: () -> Unit,
 ) {
     val contentConfigList = uiState.contentConfigList
     Surface(modifier = Modifier.fillMaxSize()) {
@@ -181,6 +202,41 @@ private fun MainDrawerContent(
                         }
                     }
                 }
+                HorizontalDivider(modifier = Modifier.padding(horizontal = 16.dp))
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(58.dp)
+                        .clickable {
+                            onSettingClick()
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.Settings,
+                        contentDescription = "Settings",
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(text = stringResource(R.string.main_drawer_settings))
+                }
+                Row(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
+                        .clickable {
+                            onDonateClick()
+                        },
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Icon(
+                        imageVector = Icons.Outlined.Coffee,
+                        contentDescription = "Donate",
+                    )
+                    Spacer(modifier = Modifier.width(16.dp))
+                    Text(text = stringResource(R.string.main_drawer_donate))
+                }
             }
         }
     }
@@ -216,7 +272,7 @@ private fun ContentConfigItem(
             val context = LocalContext.current
             when (contentConfig) {
                 is ContentConfig.ActivityPubContent -> {
-                    Row (verticalAlignment = Alignment.CenterVertically){
+                    Row(verticalAlignment = Alignment.CenterVertically) {
                         Image(
                             modifier = Modifier.size(14.dp),
                             painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.mastodon_logo),

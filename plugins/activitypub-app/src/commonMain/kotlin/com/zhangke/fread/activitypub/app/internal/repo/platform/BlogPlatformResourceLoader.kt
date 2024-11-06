@@ -27,6 +27,8 @@ class BlogPlatformResourceLoader @Inject constructor(
             ?: emptyList()
     }
 
+
+
     private suspend fun JsonObject.toPlatformSnapshot(): PlatformSnapshot? {
         val domain = getAsString("domain") ?: return null
         return PlatformSnapshot(

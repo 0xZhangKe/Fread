@@ -8,6 +8,9 @@ import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.utils.collect
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.merge
 
 class SearchEngine(
     private val engineList: List<ISearchEngine>,
@@ -48,7 +51,7 @@ class SearchEngine(
         return engineList.map { it.searchPlatform(query, offset) }.collect()
     }
 
-    suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot>{
+    suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot> {
         return engineList.map { it.searchPlatformSnapshot(query) }.flatten()
     }
 
@@ -56,12 +59,13 @@ class SearchEngine(
         return engineList.map { it.searchSource(role, query.trim()) }.collect()
     }
 
-    suspend fun searchContent(
+    fun searchContent(
         role: IdentityRole,
         query: String,
-    ): Result<List<SearchContentResult>> {
-        return engineList.map { it.searchContent(role, query) }.flatten()
-            .let { Result.success(it) }
+    ): Flow<Pair<String, List<SearchContentResult>>> {
+        return engineList.map { it.searchContent(role, query) }
+            .merge()
+            .map { query to it }
     }
 }
 
@@ -96,5 +100,8 @@ interface ISearchEngine {
 
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>>
 
-    suspend fun searchContent(role: IdentityRole, query: String): List<SearchContentResult>
+    fun searchContent(
+        role: IdentityRole,
+        query: String
+    ): Flow<List<SearchContentResult>>
 }

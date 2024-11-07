@@ -19,6 +19,8 @@ import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.status.model.Status
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class RssSearchEngine @Inject constructor(
@@ -99,22 +101,25 @@ class RssSearchEngine @Inject constructor(
         )
     }
 
-    override suspend fun searchContent(
+    override fun searchContent(
         role: IdentityRole,
         query: String,
-    ): List<SearchContentResult> {
-        return queryWithChannelByUrl(
-            query = query,
-            defaultResult = null,
-            block = { source, uriInsight ->
-                rssSourceTransformer.createSource(uriInsight, source)
+    ): Flow<List<SearchContentResult>> {
+        return flow {
+            val list = queryWithChannelByUrl(
+                query = query,
+                defaultResult = null,
+                block = { source, uriInsight ->
+                    rssSourceTransformer.createSource(uriInsight, source)
+                }
+            ).getOrNull().let {
+                if (it == null) {
+                    emptyList()
+                } else {
+                    listOf(SearchContentResult.Source(it))
+                }
             }
-        ).getOrNull().let {
-            if (it == null) {
-                emptyList()
-            } else {
-                listOf(SearchContentResult.Source(it))
-            }
+            emit(list)
         }
     }
 

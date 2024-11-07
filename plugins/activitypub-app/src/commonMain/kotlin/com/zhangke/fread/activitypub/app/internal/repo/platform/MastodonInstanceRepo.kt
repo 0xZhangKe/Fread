@@ -9,9 +9,12 @@ import io.ktor.client.request.get
 import io.ktor.client.request.header
 import io.ktor.client.request.parameter
 import io.ktor.client.request.url
+import io.ktor.http.takeFrom
 import kotlinx.serialization.SerialName
+import kotlinx.serialization.Serializable
+import me.tatarka.inject.annotations.Inject
 
-class MastodonInstanceRepo {
+class MastodonInstanceRepo @Inject constructor() {
 
     private companion object {
 
@@ -39,7 +42,8 @@ class MastodonInstanceRepo {
     suspend fun searchWithName(name: String): Result<List<PlatformSnapshot>> {
         return runCatching {
             sharedHttpClient.get {
-                url(PATH_SEARCH) {
+                url {
+                    takeFrom(PATH_SEARCH)
                     parameter("q", name)
                     parameter("name", true)
                     parameter("count", 20)
@@ -58,36 +62,39 @@ class MastodonInstanceRepo {
     private suspend fun MastodonInstance.toPlatformSnapshot(): PlatformSnapshot {
         return PlatformSnapshot(
             domain = name,
-            description = info.shortDescription,
-            version = version,
-            language = info.languages.firstOrNull().orEmpty(),
-            thumbnail = thumbnail,
-            totalUsers = users,
-            lastWeekUsers = activeUsers,
-            category = info.categories.firstOrNull().orEmpty(),
+            description = info?.shortDescription.orEmpty(),
+            version = version.orEmpty(),
+            language = info?.languages?.firstOrNull().orEmpty(),
+            thumbnail = thumbnail.orEmpty(),
+            totalUsers = users ?: 0,
+            lastWeekUsers = activeUsers ?: 0,
+            category = info?.categories?.firstOrNull().orEmpty(),
             protocol = createActivityPubProtocol(),
         )
     }
 
+    @Serializable
     data class QueryResult(
         val instances: List<MastodonInstance>,
     )
 
+    @Serializable
     data class MastodonInstance(
         val name: String,
-        val info: Info,
-        val thumbnail: String,
-        val version: String,
-        val users: Int,
+        val info: Info?,
+        val thumbnail: String?,
+        val version: String?,
+        val users: Int?,
         @SerialName("active_users")
-        val activeUsers: Int,
+        val activeUsers: Int?,
     ) {
 
+        @Serializable
         data class Info(
             @SerialName("short_description")
-            val shortDescription: String,
-            val languages: List<String>,
-            val categories: List<String>,
+            val shortDescription: String?,
+            val languages: List<String>?,
+            val categories: List<String>?,
         )
     }
 }

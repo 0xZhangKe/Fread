@@ -53,8 +53,10 @@ interface ExploreComponent {
 
     @IntoMap
     @Provides
-    fun provideSearchPlatformViewModel(creator: () -> SearchPlatformViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return SearchPlatformViewModel::class to creator
+    fun provideSearchPlatformViewModel(creator: (IdentityRole, String) -> SearchPlatformViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return SearchPlatformViewModel::class to SearchPlatformViewModel.Factory { role, query ->
+            creator(role, query)
+        }
     }
 
     @IntoMap

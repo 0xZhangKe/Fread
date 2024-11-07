@@ -19,6 +19,7 @@ class ActivityPubPlatformRepo @Inject constructor(
     private val activityPubInstanceAdapter: ActivityPubInstanceAdapter,
     private val resolveBaseUrl: ResolveBaseUrlUseCase,
     private val platformResourceLoader: BlogPlatformResourceLoader,
+    private val mastodonInstanceRepo: MastodonInstanceRepo,
 ) {
 
     private val localPlatformSnapshotList = mutableListOf<PlatformSnapshot>()
@@ -48,6 +49,10 @@ class ActivityPubPlatformRepo @Inject constructor(
         return localPlatforms.filter {
             it.domain.contains(query, true) || it.description.contains(query, true)
         }.distinctBy { it.domain }
+    }
+
+    suspend fun searchPlatformFromServer(query: String): Result<List<PlatformSnapshot>> {
+        return mastodonInstanceRepo.searchWithName(query)
     }
 
     private suspend fun getAllLocalPlatformSnapshot(): List<PlatformSnapshot> {

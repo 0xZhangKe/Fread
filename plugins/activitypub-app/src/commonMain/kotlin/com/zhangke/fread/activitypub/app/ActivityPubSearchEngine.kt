@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app
 
 import com.zhangke.activitypub.api.SearchRepo
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubSearchAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -19,6 +20,8 @@ import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.status.model.Status
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubSearchEngine @Inject constructor(
@@ -125,21 +128,28 @@ class ActivityPubSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchContent(
+    override fun searchContent(
         role: IdentityRole,
         query: String,
-    ): List<SearchContentResult> {
-        val searchResultList = mutableListOf<SearchContentResult>()
-        searchUserSource(role, query).getOrNull()
-            ?.let { searchResultList += SearchContentResult.Source(it) }
-        platformRepo.searchPlatformSnapshot(query)
-            .takeIf { it.isNotEmpty() }
-            ?.map {
-                searchResultList += SearchContentResult.ActivityPubPlatformSnapshot(it)
-            }
-        FormalBaseUrl.parse(query)
-            ?.let { platformRepo.getPlatform(it).getOrNull() }
-            ?.let { searchResultList += SearchContentResult.ActivityPubPlatform(it) }
-        return searchResultList
+    ): Flow<List<SearchContentResult>> {
+        return flow {
+            searchUserSource(role, query).getOrNull()
+                ?.let { emit(listOf(SearchContentResult.Source(it))) }
+            platformRepo.searchPlatformSnapshot(query)
+                .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                .takeIf { it.isNotEmpty() }
+                ?.let { emit(it) }
+            FormalBaseUrl.parse(query)
+                ?.let { platformRepo.getPlatform(it).getOrNull() }
+                ?.let { emit(listOf(SearchContentResult.ActivityPubPlatform(it))) }
+            platformRepo.searchPlatformFromServer(query)
+                .also {
+                    Log.i("F_TEST"){ it.toString() }
+                }
+                .getOrNull()
+                ?.map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                ?.takeIf { it.isNotEmpty() }
+                ?.let { emit(it) }
+        }
     }
 }

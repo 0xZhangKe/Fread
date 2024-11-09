@@ -63,12 +63,7 @@ class MastodonInstanceRepo @Inject constructor() {
         return PlatformSnapshot(
             domain = name,
             description = info?.shortDescription.orEmpty(),
-            version = version.orEmpty(),
-            language = info?.languages?.firstOrNull().orEmpty(),
             thumbnail = thumbnail.orEmpty(),
-            totalUsers = users ?: 0,
-            lastWeekUsers = activeUsers ?: 0,
-            category = info?.categories?.firstOrNull().orEmpty(),
             protocol = createActivityPubProtocol(),
         )
     }

@@ -34,12 +34,7 @@ class BlogPlatformResourceLoader @Inject constructor(
         return PlatformSnapshot(
             domain = domain,
             description = getAsString("description").orEmpty(),
-            version = getAsString("version").orEmpty(),
-            language = getAsString("language").orEmpty(),
             thumbnail = getAsString("proxied_thumbnail").orEmpty(),
-            totalUsers = getAsInt("total_users") ?: 0,
-            lastWeekUsers = getAsInt("last_week_users") ?: 0,
-            category = getAsString("category").orEmpty(),
             protocol = createActivityPubProtocol(),
         )
     }

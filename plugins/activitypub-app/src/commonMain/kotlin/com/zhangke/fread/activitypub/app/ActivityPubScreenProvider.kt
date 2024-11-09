@@ -1,11 +1,14 @@
 package com.zhangke.fread.activitypub.app
 
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
+import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
+import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailRoute
@@ -143,5 +146,13 @@ class ActivityPubScreenProvider @Inject constructor(
     ): String? {
         if (protocol.notActivityPub) return null
         return TagListScreenRoute.buildRoute(role)
+    }
+
+    override fun getInstanceDetailScreen(
+        protocol: StatusProviderProtocol,
+        baseUrl: FormalBaseUrl
+    ): String? {
+        if (protocol.notActivityPub) return null
+        return PlatformDetailRoute.buildRoute(baseUrl)
     }
 }

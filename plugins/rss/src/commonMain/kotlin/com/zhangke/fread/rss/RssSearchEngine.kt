@@ -71,21 +71,10 @@ class RssSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchPlatform(
+    override fun searchAuthablePlatform(
         query: String,
-        offset: Int?,
-    ): Result<List<BlogPlatform>> {
-        return queryWithChannelByUrl(
-            query = query,
-            defaultResult = emptyList(),
-            block = { channel, uriInsight ->
-                listOf(rssPlatformTransformer.create(uriInsight, channel))
-            }
-        )
-    }
-
-    override suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot> {
-        return emptyList()
+    ): Flow<List<PlatformSnapshot>>? {
+        return null
     }
 
     override suspend fun searchSource(

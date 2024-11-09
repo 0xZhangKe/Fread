@@ -87,19 +87,8 @@ class ActivityPubSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchPlatform(
-        query: String,
-        offset: Int?,
-    ): Result<List<BlogPlatform>> {
-        if (offset != null && offset > 0) {
-            return Result.success(emptyList())
-        }
-        val baseUrl = FormalBaseUrl.parse(query) ?: return Result.success(emptyList())
-        return platformRepo.getPlatform(baseUrl).map { listOf(it) }
-    }
-
-    override suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot> {
-        return platformRepo.searchPlatformSnapshot(query)
+    override fun searchAuthablePlatform(query: String): Flow<List<PlatformSnapshot>>? {
+        return platformRepo.searchAuthablePlatform(query)
     }
 
     private suspend fun <T> doSearch(
@@ -135,7 +124,7 @@ class ActivityPubSearchEngine @Inject constructor(
         return flow {
             searchUserSource(role, query).getOrNull()
                 ?.let { emit(listOf(SearchContentResult.Source(it))) }
-            platformRepo.searchPlatformSnapshot(query)
+            platformRepo.searchPlatformSnapshotFromLocal(query)
                 .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
                 .takeIf { it.isNotEmpty() }
                 ?.let { emit(it) }
@@ -144,7 +133,7 @@ class ActivityPubSearchEngine @Inject constructor(
                 ?.let { emit(listOf(SearchContentResult.ActivityPubPlatform(it))) }
             platformRepo.searchPlatformFromServer(query)
                 .also {
-                    Log.i("F_TEST"){ it.toString() }
+                    Log.i("F_TEST") { it.toString() }
                 }
                 .getOrNull()
                 ?.map { SearchContentResult.ActivityPubPlatformSnapshot(it) }

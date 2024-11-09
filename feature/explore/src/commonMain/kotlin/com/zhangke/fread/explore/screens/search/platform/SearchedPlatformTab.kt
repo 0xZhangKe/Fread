@@ -11,12 +11,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.DefaultLoading
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_tab_title_server
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.ui.source.SearchContentResultUi
 import org.jetbrains.compose.resources.stringResource
 
@@ -36,12 +38,17 @@ class SearchedPlatformTab(private val role: IdentityRole, private val query: Str
             }
         }
         val uiState by viewModel.uiState.collectAsState()
-        SearchedSourcesContent(uiState)
+        SearchedSourcesContent(
+            uiState = uiState,
+            onContentClick = viewModel::onContentClick,
+        )
+        ConsumeOpenScreenFlow(viewModel.openScreenFlow)
     }
 
     @Composable
     private fun SearchedSourcesContent(
-        uiState: SearchedPlatformUiState
+        uiState: SearchedPlatformUiState,
+        onContentClick: (SearchContentResult) -> Unit,
     ) {
         Box(modifier = Modifier.fillMaxSize()) {
             if (uiState.searching && uiState.searchedList.isEmpty()) {
@@ -49,7 +56,7 @@ class SearchedPlatformTab(private val role: IdentityRole, private val query: Str
             } else {
                 LazyColumn(modifier = Modifier.fillMaxSize()) {
                     items(uiState.searchedList) {
-                        SearchContentResultUi(content = it, onContentClick = {})
+                        SearchContentResultUi(content = it, onContentClick = onContentClick)
                     }
                 }
             }

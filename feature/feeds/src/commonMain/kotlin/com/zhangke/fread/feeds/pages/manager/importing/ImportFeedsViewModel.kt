@@ -219,7 +219,7 @@ class ImportFeedsViewModel @Inject constructor(
             reportToFireBase("OPML_IMPORT_ERROR") {
                 put("errorMessage", e.message.orEmpty())
                 put("trace", e.stackTraceToString())
-                put("document", xmlDocument)
+                put("document", xmlDocument.take(90000))
             }
             emptyList<OpmlOutline>()
         }

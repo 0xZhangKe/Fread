@@ -14,8 +14,10 @@ dependencyResolutionManagement {
         google()
         mavenCentral()
         mavenLocal()
-        maven { setUrl("https://jitpack.io") }
-        maven { setUrl("https://plugins.gradle.org/m2/") }
+        maven("https://jitpack.io")
+        maven("https://plugins.gradle.org/m2/")
+        maven("https://s01.oss.sonatype.org/content/repositories/snapshots/")
+        maven("https://oss.sonatype.org/content/repositories/snapshots/")
     }
 }
 rootProject.name = "Fread"

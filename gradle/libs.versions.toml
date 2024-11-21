@@ -64,6 +64,8 @@ firebaseCrashlyticsPlugin = "3.0.2"
 goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
+bluesky = "0.1.1-SNAPSHOT"
+
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
 androidx-activity = ["androidx.activity", "androidx.activity.ktx", "androidx.activity.compose"]
@@ -208,6 +210,8 @@ googlePlayReview = { group = "com.google.android.play", name = "review", version
 googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "goolgePlayReview" }
 
 composeRuntimeTracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "compose-runtime-tracing" }
+
+bluesky = { module = "moe.tlaster.ozone:bluesky", version.ref = "bluesky" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

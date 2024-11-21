@@ -1,3 +1,5 @@
+import org.gradle.kotlin.dsl.api
+
 plugins {
     id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
@@ -43,6 +45,7 @@ kotlin {
                 implementation(libs.leftright)
 
                 implementation(libs.krouter.runtime)
+                api(libs.bluesky)
             }
         }
         commonTest {

@@ -1,4 +1,5 @@
 import org.gradle.kotlin.dsl.api
+import org.gradle.kotlin.dsl.implementation
 
 plugins {
     id("fread.project.feature.kmp")
@@ -34,6 +35,8 @@ kotlin {
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
 
+                implementation(libs.ktor.client.content.negotiation)
+                implementation(libs.ktor.client.serialization.kotlinx.json)
                 implementation(libs.jetbrains.lifecycle.viewmodel)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
                 implementation(libs.imageLoader)

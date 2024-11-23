@@ -37,6 +37,7 @@ kotlin {
 
                 implementation(libs.ktor.client.content.negotiation)
                 implementation(libs.ktor.client.serialization.kotlinx.json)
+                implementation(libs.ktor.client.logging)
                 implementation(libs.jetbrains.lifecycle.viewmodel)
                 implementation(libs.androidx.constraintlayout.compose.kmp)
                 implementation(libs.imageLoader)

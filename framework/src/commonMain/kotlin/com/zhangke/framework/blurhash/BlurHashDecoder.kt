@@ -1,6 +1,5 @@
 package com.zhangke.framework.blurhash
 
-import androidx.collection.SparseArrayCompat
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.toArgb
@@ -17,8 +16,8 @@ object BlurHashDecoder {
     // cache Math.cos() calculations to improve performance.
     // The number of calculations can be huge for many bitmaps: width * height * numCompX * numCompY * 2 * nBitmaps
     // the cache is enabled by default, it is recommended to disable it only when just a few images are displayed
-    private val cacheCosinesX = SparseArrayCompat<DoubleArray>()
-    private val cacheCosinesY = SparseArrayCompat<DoubleArray>()
+    private val cacheCosinesX = mutableMapOf<Int, DoubleArray>()
+    private val cacheCosinesY = mutableMapOf<Int, DoubleArray>()
 
     /**
      * Clear calculations stored in memory cache.

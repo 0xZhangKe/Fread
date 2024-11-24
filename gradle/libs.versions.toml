@@ -1,12 +1,12 @@
 [versions]
-kotlin = "2.0.10"
-ksp = "2.0.10-1.0.24"
+kotlin = "2.0.21"
+ksp = "2.0.21-1.0.28"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
-kotlinx-serialization = "1.7.1"
+kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
 
-compose-multiplatform = "1.6.11"
+compose-multiplatform = "1.7.1"
 
 androidx-core = "1.13.1"
 androidx-fragment = "1.7.1"
@@ -24,15 +24,15 @@ androidx-media3 = "1.0.0-rc01"
 
 compose-runtime-tracing = "1.7.3"
 
-jetbrains-lifecycle = "2.8.0"
+jetbrains-lifecycle = "2.8.4"
 
-accompanist = "0.34.0"
+accompanist = "0.36.0"
 
 kotlinInject = "0.7.1"
 
 okhttp3 = "4.12.0"
-ktor = "3.0.0"
-ktorfit = "2.0.1"
+ktor = "3.0.1"
+ktorfit = "2.2.0"
 
 auto_service = "1.0.1"
 
@@ -42,13 +42,13 @@ krouter = "1.0.2"
 
 multiplatformsettings = "1.2.0"
 
-androidGradlePlugin = "8.2.2"
+androidGradlePlugin = "8.7.2"
 
 mockk = "1.13.8"
 junit = "4.13.2"
 androidx-test-ext-junit = "1.1.5"
 espresso-core = "3.5.1"
-material = "1.11.0"
+material = "1.12.0"
 
 rssparser = "6.0.8"
 
@@ -58,10 +58,10 @@ halilibo-richtext = "0.20.0"
 jsoup = "1.15.3"
 
 google-service-version = "4.4.2"
-firebaseBom = "33.1.1"
+firebaseBom = "33.6.0"
 firebaseCrashlyticsPlugin = "3.0.2"
 
-goolgePlayReview = "2.0.1"
+goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
 [bundles]

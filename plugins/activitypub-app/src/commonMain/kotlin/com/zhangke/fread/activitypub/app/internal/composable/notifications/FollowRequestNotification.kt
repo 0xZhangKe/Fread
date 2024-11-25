@@ -2,8 +2,12 @@ package com.zhangke.fread.activitypub.app.internal.composable.notifications
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Clear
@@ -12,12 +16,11 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_notification_follow_request
@@ -46,57 +49,41 @@ fun FollowRequestNotification(
             style = style,
         )
 
-        ConstraintLayout(
-            modifier = Modifier
-                .fillMaxWidth()
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = style.headLineToContentPadding),
+            verticalAlignment = Alignment.CenterVertically,
         ) {
-            val (avatarRef, nameRef, webFingerRef, rejectRef, acceptRef) = createRefs()
             BlogAuthorAvatar(
                 modifier = Modifier
-                    .size(style.statusStyle.infoLineStyle.avatarSize)
-                    .constrainAs(avatarRef) {
-                        top.linkTo(nameRef.top)
-                        start.linkTo(parent.start)
-                    },
+                    .size(style.statusStyle.infoLineStyle.avatarSize),
                 imageUrl = notification.account.avatar,
             )
 
-            Text(
-                modifier = Modifier
-                    .constrainAs(nameRef) {
-                        top.linkTo(parent.top, style.headLineToContentPadding)
-                        start.linkTo(avatarRef.end, margin = 6.dp)
-                        end.linkTo(rejectRef.start, margin = 6.dp)
-                        width = Dimension.fillToConstraints
-                    },
-                textAlign = TextAlign.Left,
-                text = notification.account.displayName.take(style.nameMaxLength),
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Column(
+                modifier = Modifier.weight(1F).padding(start = 6.dp, end = 6.dp),
+            ) {
+                Text(
+                    modifier = Modifier,
+                    textAlign = TextAlign.Left,
+                    text = notification.account.displayName.take(style.nameMaxLength),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
 
-            Text(
-                modifier = Modifier
-                    .constrainAs(webFingerRef) {
-                        top.linkTo(nameRef.bottom, 2.dp)
-                        start.linkTo(nameRef.start)
-                        end.linkTo(nameRef.end)
-                        width = Dimension.fillToConstraints
-                    },
-                textAlign = TextAlign.Left,
-                text = notification.account.acct,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    textAlign = TextAlign.Left,
+                    text = notification.account.acct,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+            }
+
 
             SimpleIconButton(
                 modifier = Modifier
-                    .size(32.dp)
-                    .constrainAs(rejectRef) {
-                        top.linkTo(avatarRef.top)
-                        bottom.linkTo(avatarRef.bottom)
-                        end.linkTo(acceptRef.start, margin = 16.dp)
-                    },
+                    .size(32.dp),
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),
@@ -107,14 +94,9 @@ fun FollowRequestNotification(
                 contentDescription = "Reject",
             )
 
+            Spacer(Modifier.width(8.dp))
             SimpleIconButton(
-                modifier = Modifier
-                    .size(32.dp)
-                    .constrainAs(acceptRef) {
-                        top.linkTo(avatarRef.top)
-                        bottom.linkTo(avatarRef.bottom)
-                        end.linkTo(parent.end)
-                    },
+                modifier = Modifier.size(32.dp),
                 colors = IconButtonDefaults.iconButtonColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer,
                 ),

@@ -20,9 +20,6 @@ class BlueskyClient(
     val json: Json,
 ) : BlueskyApi by XrpcBlueskyApi(createBlueskyHttpClient(engine, json, baseUrl.toString())) {
 
-    init {
-
-    }
 }
 
 private fun createBlueskyHttpClient(

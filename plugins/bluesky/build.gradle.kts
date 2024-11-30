@@ -1,6 +1,3 @@
-import org.gradle.kotlin.dsl.api
-import org.gradle.kotlin.dsl.implementation
-
 plugins {
     id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
@@ -31,6 +28,8 @@ kotlin {
                 implementation(project(":commonbiz:analytics"))
 
                 implementation(compose.components.resources)
+
+                implementation(libs.arrow.core)
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)

@@ -4,6 +4,7 @@ import android.app.Application
 import android.content.Context
 import com.zhangke.fread.activitypub.app.di.ActivityPubComponent
 import com.zhangke.fread.activitypub.app.di.ActivityPubComponentProvider
+import com.zhangke.fread.bluesky.BlueskyComponent
 import com.zhangke.fread.common.CommonComponent
 import com.zhangke.fread.common.CommonComponentProvider
 import com.zhangke.fread.common.di.ApplicationContext
@@ -35,7 +36,8 @@ abstract class ApplicationComponent(
     NotificationsComponent,
     ProfileComponent,
     ActivityPubComponent,
-    RssComponent {
+    RssComponent,
+    BlueskyComponent {
 
     abstract val statusProvider: StatusProvider
 

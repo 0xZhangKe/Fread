@@ -6,6 +6,7 @@ import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyStatusSourceResolver @Inject constructor(): IStatusSourceResolver {
@@ -18,7 +19,7 @@ class BlueskyStatusSourceResolver @Inject constructor(): IStatusSourceResolver {
     }
 
     override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
-        TODO("Not yet implemented")
+        return flow {  }
     }
 
     override suspend fun resolveRssSource(rssUrl: String): Result<StatusSource>? {

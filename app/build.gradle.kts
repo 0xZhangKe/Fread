@@ -81,6 +81,7 @@ dependencies {
     implementation(project(path = ":framework"))
     implementation(project(path = ":plugins:activitypub-app"))
     implementation(project(path = ":plugins:rss"))
+    implementation(project(path = ":plugins:bluesky"))
     implementation(project(path = ":bizframework:status-provider"))
     implementation(project(path = ":commonbiz"))
     implementation(project(path = ":commonbiz:status-ui"))
@@ -96,6 +97,8 @@ dependencies {
     androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
 
     implementation(compose.components.resources)
+
+    implementation(libs.arrow.core)
 
     implementation(compose.material)
     implementation(compose.materialIconsExtended)

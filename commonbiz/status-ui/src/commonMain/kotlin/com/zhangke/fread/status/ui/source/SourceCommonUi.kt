@@ -1,8 +1,10 @@
 package com.zhangke.fread.status.ui.source
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,16 +21,19 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import arrow.core.Either
 import com.seiko.imageloader.model.ImageAction
 import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import org.jetbrains.compose.resources.DrawableResource
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SourceCommonUi(
-    thumbnail: String,
+    thumbnail: Either<String, DrawableResource>,
     title: String,
     subtitle: String?,
     description: String,
@@ -44,8 +49,7 @@ fun SourceCommonUi(
                 .padding(bottom = 8.dp)
         ) {
             val (avatarRef, protocolRef, subtitleRef, nameRef, descRef) = createRefs()
-            AutoSizeBox(
-                thumbnail,
+            Box(
                 modifier = Modifier
                     .constrainAs(avatarRef) {
                         start.linkTo(parent.start, 16.dp)
@@ -53,16 +57,32 @@ fun SourceCommonUi(
                         width = Dimension.value(48.dp)
                         height = Dimension.value(48.dp)
                     },
-            ) { action ->
-                Image(
-                    rememberImageActionPainter(action),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .freadPlaceholder(action is ImageAction.Loading)
-                        .matchParentSize()
-                        .clip(CircleShape),
-                )
+            ) {
+                thumbnail.onLeft { url ->
+                    AutoSizeBox(
+                        url = url,
+                        modifier = Modifier.fillMaxSize(),
+                    ) { action ->
+                        Image(
+                            modifier = Modifier
+                                .freadPlaceholder(action is ImageAction.Loading)
+                                .matchParentSize()
+                                .clip(CircleShape),
+                            painter = rememberImageActionPainter(action),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
+                        )
+                    }
+                }.onRight { resource ->
+                    Image(
+                        modifier = Modifier
+                            .matchParentSize()
+                            .clip(CircleShape),
+                        contentScale = ContentScale.Crop,
+                        painter = painterResource(resource),
+                        contentDescription = null,
+                    )
+                }
             }
             Text(
                 modifier = Modifier.constrainAs(nameRef) {

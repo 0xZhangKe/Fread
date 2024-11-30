@@ -10,13 +10,11 @@ import com.seiko.imageloader.intercept.imageMemoryCacheConfig
 import com.seiko.imageloader.intercept.painterMemoryCacheConfig
 import com.seiko.imageloader.option.androidContext
 import com.zhangke.framework.activity.TopActivityManager
-import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
 import com.zhangke.fread.di.ApplicationComponent
 import com.zhangke.fread.di.ApplicationComponentProvider
 import com.zhangke.fread.di.create
-import kotlinx.coroutines.launch
 import okio.Path.Companion.toOkioPath
 
 /**

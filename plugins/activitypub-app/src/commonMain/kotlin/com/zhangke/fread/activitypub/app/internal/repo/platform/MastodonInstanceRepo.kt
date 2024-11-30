@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
+import arrow.core.Either
 import com.zhangke.framework.architect.http.sharedHttpClient
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.status.platform.PlatformSnapshot
@@ -63,7 +64,7 @@ class MastodonInstanceRepo @Inject constructor() {
         return PlatformSnapshot(
             domain = name,
             description = info?.shortDescription.orEmpty(),
-            thumbnail = thumbnail.orEmpty(),
+            thumbnail = Either.Left(thumbnail.orEmpty()),
             protocol = createActivityPubProtocol(),
         )
     }

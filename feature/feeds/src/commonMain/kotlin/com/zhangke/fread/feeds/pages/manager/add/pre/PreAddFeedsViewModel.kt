@@ -181,6 +181,7 @@ class PreAddFeedsViewModel @Inject constructor(
     private suspend fun getSuggestedPlatformSnapshots(): List<SearchContentResult.ActivityPubPlatformSnapshot> {
         return statusProvider.platformResolver
             .getSuggestedPlatformList()
+            .sortedBy { it.priority }
             .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
     }
 }

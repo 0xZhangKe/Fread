@@ -6,6 +6,8 @@ kotlin-coroutine-test = "1.8.1"
 kotlinx-serialization = "1.7.3"
 kotlinx-datetime = "0.6.1"
 
+arrow = "1.2.4"
+
 compose-multiplatform = "1.7.1"
 
 androidx-core = "1.13.1"
@@ -158,6 +160,8 @@ ktorfit-converters-response = { module = "de.jensklingenberg.ktorfit:ktorfit-con
 
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
+
+arrow-core= {group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow"}
 
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 

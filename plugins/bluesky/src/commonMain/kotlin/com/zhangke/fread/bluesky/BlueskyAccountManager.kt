@@ -35,6 +35,6 @@ class BlueskyAccountManager @Inject constructor(): IAccountManager {
     }
 
     override fun subscribeNotification() {
-        TODO("Not yet implemented")
+
     }
 }

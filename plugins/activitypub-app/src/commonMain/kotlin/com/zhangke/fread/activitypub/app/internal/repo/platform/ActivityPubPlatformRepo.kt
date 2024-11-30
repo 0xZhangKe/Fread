@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
+import arrow.core.Either
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubInstanceAdapter
@@ -75,7 +76,7 @@ class ActivityPubPlatformRepo @Inject constructor(
         return PlatformSnapshot(
             domain = baseUrl.toString(),
             description = this.description,
-            thumbnail = this.thumbnail.orEmpty(),
+            thumbnail = Either.Left(this.thumbnail.orEmpty()),
             protocol = this.protocol,
         )
     }

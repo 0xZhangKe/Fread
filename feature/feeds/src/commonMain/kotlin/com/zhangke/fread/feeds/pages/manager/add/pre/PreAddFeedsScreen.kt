@@ -1,6 +1,5 @@
 package com.zhangke.fread.feeds.pages.manager.add.pre
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,10 +60,7 @@ import com.zhangke.fread.feeds.pre_add_feeds_input_label_1
 import com.zhangke.fread.feeds.pre_add_feeds_input_label_2
 import com.zhangke.fread.feeds.pre_add_feeds_no_result
 import com.zhangke.fread.status.search.SearchContentResult
-import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
-import com.zhangke.fread.status.ui.source.BlogPlatformUi
 import com.zhangke.fread.status.ui.source.SearchContentResultUi
-import com.zhangke.fread.status.ui.source.StatusSourceUi
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -217,20 +213,22 @@ class PreAddFeedsScreen : BaseScreen() {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                         ) {
-                            item {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            start = 16.dp,
-                                            top = 12.dp,
-                                            end = 16.dp,
-                                            bottom = 8.dp,
-                                        ),
-                                    lineHeight = 22.sp,
-                                    text = buildInputLabelText(),
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
+                            if (uiState.query.isEmpty()) {
+                                item {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                start = 16.dp,
+                                                top = 12.dp,
+                                                end = 16.dp,
+                                                bottom = 8.dp,
+                                            ),
+                                        lineHeight = 22.sp,
+                                        text = buildInputLabelText(),
+                                        style = MaterialTheme.typography.labelMedium,
+                                    )
+                                }
                             }
                             items(uiState.allSearchedResult) { content ->
                                 SearchContentResultUi(content, onContentClick)

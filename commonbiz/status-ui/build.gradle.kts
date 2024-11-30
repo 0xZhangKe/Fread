@@ -24,6 +24,8 @@ kotlin {
 
                 implementation(compose.components.resources)
 
+                implementation(libs.arrow.core)
+
                 implementation(libs.bundles.voyager)
                 implementation(libs.imageLoader)
                 implementation(libs.ktml)

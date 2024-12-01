@@ -11,6 +11,8 @@ sealed interface SearchContentResult {
 
     data class ActivityPubPlatformSnapshot(val platform: PlatformSnapshot) : SearchContentResult
 
+    data class Bluesky(val platform: BlogPlatform) : SearchContentResult
+
     data class Source(val source: StatusSource) : SearchContentResult
 
     val protocol: StatusProviderProtocol
@@ -18,5 +20,6 @@ sealed interface SearchContentResult {
             is ActivityPubPlatform -> platform.protocol
             is ActivityPubPlatformSnapshot -> platform.protocol
             is Source -> source.protocol
+            is Bluesky -> platform.protocol
         }
 }

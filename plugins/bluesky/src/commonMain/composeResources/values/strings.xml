@@ -1,3 +1,7 @@
 <resources>
     <string name="bluesky_protocol_name">Bluesky</string>
+
+    <string name="bsky_add_content_title">Add content</string>
+    <string name="bsky_add_content_user_name">Username or email address</string>
+    <string name="bsky_add_content_password">Password</string>
 </resources>

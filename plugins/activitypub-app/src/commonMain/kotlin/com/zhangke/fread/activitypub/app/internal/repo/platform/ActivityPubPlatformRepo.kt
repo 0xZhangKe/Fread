@@ -76,7 +76,7 @@ class ActivityPubPlatformRepo @Inject constructor(
         return PlatformSnapshot(
             domain = baseUrl.toString(),
             description = this.description,
-            thumbnail = Either.Left(this.thumbnail.orEmpty()),
+            thumbnail = this.thumbnail.orEmpty(),
             protocol = this.protocol,
         )
     }

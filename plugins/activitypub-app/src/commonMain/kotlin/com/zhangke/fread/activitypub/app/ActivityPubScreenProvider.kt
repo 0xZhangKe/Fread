@@ -23,6 +23,7 @@ import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notActivityPub
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -154,5 +155,9 @@ class ActivityPubScreenProvider @Inject constructor(
     ): String? {
         if (protocol.notActivityPub) return null
         return PlatformDetailRoute.buildRoute(baseUrl)
+    }
+
+    override fun getBlueskyAddContentScreen(platform: BlogPlatform): String? {
+        return null
     }
 }

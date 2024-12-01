@@ -2,7 +2,6 @@ package com.zhangke.fread.status.ui.source
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import arrow.core.Either
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 
@@ -14,7 +13,7 @@ fun BlogPlatformUi(
 ) {
     SourceCommonUi(
         modifier = modifier,
-        thumbnail = Either.Left(platform.thumbnail.orEmpty()),
+        thumbnail = platform.thumbnail.orEmpty(),
         title = platform.name,
         subtitle = platform.baseUrl.host,
         description = platform.description,

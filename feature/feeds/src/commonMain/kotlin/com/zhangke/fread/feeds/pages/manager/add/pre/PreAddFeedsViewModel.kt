@@ -16,6 +16,7 @@ import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchContentResult
+import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -131,6 +132,12 @@ class PreAddFeedsViewModel @Inject constructor(
                             _uiState.update { state -> state.copy(loading = false) }
                             onAddActivityPubContent(it)
                         }
+                }
+
+                is SearchContentResult.Bluesky -> {
+                    statusProvider.screenProvider.getBlueskyAddContentScreen(result.platform)
+                        ?.let { KRouter.route<Screen>(it) }
+                        ?.let { _openScreenFlow.emit(it) }
                 }
             }
         }

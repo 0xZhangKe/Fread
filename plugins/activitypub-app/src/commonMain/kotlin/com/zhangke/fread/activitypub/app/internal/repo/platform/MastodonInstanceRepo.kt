@@ -64,7 +64,7 @@ class MastodonInstanceRepo @Inject constructor() {
         return PlatformSnapshot(
             domain = name,
             description = info?.shortDescription.orEmpty(),
-            thumbnail = Either.Left(thumbnail.orEmpty()),
+            thumbnail = thumbnail.orEmpty(),
             protocol = createActivityPubProtocol(),
         )
     }

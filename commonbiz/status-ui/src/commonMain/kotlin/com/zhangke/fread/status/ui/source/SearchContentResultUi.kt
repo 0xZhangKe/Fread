@@ -34,5 +34,12 @@ fun SearchContentResultUi(
                 .clickable { onContentClick(content) },
             platform = content.platform,
         )
+
+        is SearchContentResult.Bluesky -> BlogPlatformUi(
+            modifier = Modifier
+                .fillMaxWidth()
+                .clickable { onContentClick(content) },
+            platform = content.platform,
+        )
     }
 }

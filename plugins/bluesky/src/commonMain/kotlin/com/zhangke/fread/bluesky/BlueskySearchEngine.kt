@@ -2,9 +2,11 @@ package com.zhangke.fread.bluesky
 
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
@@ -17,6 +19,7 @@ import me.tatarka.inject.annotations.Inject
 
 class BlueskySearchEngine @Inject constructor(
     private val clientManager: BlueskyClientManager,
+    private val blueskyPlatformRepo: BlueskyPlatformRepo,
 ) : ISearchEngine {
 
     override suspend fun search(
@@ -71,6 +74,21 @@ class BlueskySearchEngine @Inject constructor(
         role: IdentityRole,
         query: String
     ): Flow<List<SearchContentResult>> {
-        TODO("Not yet implemented")
+        return flow {
+            blueskyPlatformRepo.getAllPlatform()
+                .filter { it.compareWithQuery(query) }
+                .map { it.toContentResult() }
+                .let { emit(it) }
+        }
+    }
+
+    private fun BlogPlatform.compareWithQuery(query: String): Boolean {
+        if (this.name.contains(query)) return true
+        if (this.baseUrl.toString().contains(query)) return true
+        return uri.contains(query)
+    }
+
+    private fun BlogPlatform.toContentResult(): SearchContentResult {
+        return SearchContentResult.Bluesky(this)
     }
 }

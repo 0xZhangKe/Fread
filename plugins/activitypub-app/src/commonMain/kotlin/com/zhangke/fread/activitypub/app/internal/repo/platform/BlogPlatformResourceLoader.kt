@@ -35,7 +35,7 @@ class BlogPlatformResourceLoader @Inject constructor(
         return PlatformSnapshot(
             domain = domain,
             description = getAsString("description").orEmpty(),
-            thumbnail = Either.Left(getAsString("proxied_thumbnail").orEmpty()),
+            thumbnail = getAsString("proxied_thumbnail").orEmpty(),
             protocol = createActivityPubProtocol(),
         )
     }

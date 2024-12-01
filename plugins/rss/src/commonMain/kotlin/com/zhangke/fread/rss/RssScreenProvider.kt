@@ -11,6 +11,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -103,6 +104,10 @@ class RssScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl
     ): String? {
+        return null
+    }
+
+    override fun getBlueskyAddContentScreen(platform: BlogPlatform): String? {
         return null
     }
 }

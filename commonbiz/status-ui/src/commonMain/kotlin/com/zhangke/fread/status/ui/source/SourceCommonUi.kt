@@ -21,19 +21,16 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import arrow.core.Either
 import com.seiko.imageloader.model.ImageAction
 import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import org.jetbrains.compose.resources.DrawableResource
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun SourceCommonUi(
-    thumbnail: Either<String, DrawableResource>,
+    thumbnail: String,
     title: String,
     subtitle: String?,
     description: String,
@@ -58,29 +55,18 @@ fun SourceCommonUi(
                         height = Dimension.value(48.dp)
                     },
             ) {
-                thumbnail.onLeft { url ->
-                    AutoSizeBox(
-                        url = url,
-                        modifier = Modifier.fillMaxSize(),
-                    ) { action ->
-                        Image(
-                            modifier = Modifier
-                                .freadPlaceholder(action is ImageAction.Loading)
-                                .matchParentSize()
-                                .clip(CircleShape),
-                            painter = rememberImageActionPainter(action),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                        )
-                    }
-                }.onRight { resource ->
+                AutoSizeBox(
+                    url = thumbnail,
+                    modifier = Modifier.fillMaxSize(),
+                ) { action ->
                     Image(
                         modifier = Modifier
+                            .freadPlaceholder(action is ImageAction.Loading)
                             .matchParentSize()
                             .clip(CircleShape),
-                        contentScale = ContentScale.Crop,
-                        painter = painterResource(resource),
+                        painter = rememberImageActionPainter(action),
                         contentDescription = null,
+                        contentScale = ContentScale.Crop,
                     )
                 }
             }

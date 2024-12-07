@@ -14,6 +14,7 @@ import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.krouter.KRouter
@@ -122,7 +123,7 @@ class PreAddFeedsViewModel @Inject constructor(
                     onAddActivityPubContent(result.platform)
                 }
 
-                is SearchContentResult.ActivityPubPlatformSnapshot -> {
+                is SearchContentResult.SearchedPlatformSnapshot -> {
                     _uiState.update { it.copy(loading = true) }
                     statusProvider.platformResolver.resolve(result.platform)
                         .onFailure {
@@ -130,14 +131,16 @@ class PreAddFeedsViewModel @Inject constructor(
                             _snackBarMessageFlow.tryEmitException(it)
                         }.onSuccess {
                             _uiState.update { state -> state.copy(loading = false) }
-                            onAddActivityPubContent(it)
+                            if (it.protocol.isBluesky) {
+                                onAddBlueskyContent(it)
+                            } else {
+                                onAddActivityPubContent(it)
+                            }
                         }
                 }
 
                 is SearchContentResult.Bluesky -> {
-                    statusProvider.screenProvider.getBlueskyAddContentScreen(result.platform)
-                        ?.let { KRouter.route<Screen>(it) }
-                        ?.let { _openScreenFlow.emit(it) }
+                    onAddBlueskyContent(result.platform)
                 }
             }
         }
@@ -185,10 +188,16 @@ class PreAddFeedsViewModel @Inject constructor(
             }
     }
 
-    private suspend fun getSuggestedPlatformSnapshots(): List<SearchContentResult.ActivityPubPlatformSnapshot> {
+    private suspend fun onAddBlueskyContent(platform: BlogPlatform) {
+        statusProvider.screenProvider.getBlueskyAddContentScreen(platform)
+            ?.let { KRouter.route<Screen>(it) }
+            ?.let { _openScreenFlow.emit(it) }
+    }
+
+    private suspend fun getSuggestedPlatformSnapshots(): List<SearchContentResult> {
         return statusProvider.platformResolver
             .getSuggestedPlatformList()
             .sortedBy { it.priority }
-            .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+            .map { SearchContentResult.SearchedPlatformSnapshot(it) }
     }
 }

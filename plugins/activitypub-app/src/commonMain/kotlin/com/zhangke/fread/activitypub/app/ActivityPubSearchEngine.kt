@@ -125,7 +125,7 @@ class ActivityPubSearchEngine @Inject constructor(
             searchUserSource(role, query).getOrNull()
                 ?.let { emit(listOf(SearchContentResult.Source(it))) }
             platformRepo.searchPlatformSnapshotFromLocal(query)
-                .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                .map { SearchContentResult.SearchedPlatformSnapshot(it) }
                 .takeIf { it.isNotEmpty() }
                 ?.let { emit(it) }
             FormalBaseUrl.parse(query)
@@ -136,7 +136,7 @@ class ActivityPubSearchEngine @Inject constructor(
                     Log.i("F_TEST") { it.toString() }
                 }
                 .getOrNull()
-                ?.map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                ?.map { SearchContentResult.SearchedPlatformSnapshot(it) }
                 ?.takeIf { it.isNotEmpty() }
                 ?.let { emit(it) }
         }

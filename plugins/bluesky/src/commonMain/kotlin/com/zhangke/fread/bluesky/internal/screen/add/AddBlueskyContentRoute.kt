@@ -11,6 +11,6 @@ object AddBlueskyContentRoute {
     const val PARAMS_BASE_URL = "baseUrl"
 
     fun buildRoute(baseUrl: FormalBaseUrl): String {
-        return "${ROUTE}?$PARAMS_BASE_URL=${baseUrl.encode()}}"
+        return "${ROUTE}?$PARAMS_BASE_URL=${baseUrl.encode()}"
     }
 }

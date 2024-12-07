@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
-import arrow.core.Either
 import com.zhangke.framework.architect.http.sharedHttpClient
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.status.platform.PlatformSnapshot

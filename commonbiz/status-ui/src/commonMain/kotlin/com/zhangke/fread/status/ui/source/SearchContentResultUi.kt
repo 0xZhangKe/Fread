@@ -28,7 +28,7 @@ fun SearchContentResultUi(
             platform = content.platform,
         )
 
-        is SearchContentResult.ActivityPubPlatformSnapshot -> BlogPlatformSnapshotUi(
+        is SearchContentResult.SearchedPlatformSnapshot -> BlogPlatformSnapshotUi(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onContentClick(content) },

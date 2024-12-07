@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
-import arrow.core.Either
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.utils.MastodonHelper

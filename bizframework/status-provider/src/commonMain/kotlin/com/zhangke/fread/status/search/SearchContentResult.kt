@@ -7,9 +7,9 @@ import com.zhangke.fread.status.source.StatusSource
 
 sealed interface SearchContentResult {
 
-    data class ActivityPubPlatform(val platform: BlogPlatform) : SearchContentResult
+    data class SearchedPlatformSnapshot(val platform: PlatformSnapshot) : SearchContentResult
 
-    data class ActivityPubPlatformSnapshot(val platform: PlatformSnapshot) : SearchContentResult
+    data class ActivityPubPlatform(val platform: BlogPlatform) : SearchContentResult
 
     data class Bluesky(val platform: BlogPlatform) : SearchContentResult
 
@@ -18,7 +18,7 @@ sealed interface SearchContentResult {
     val protocol: StatusProviderProtocol
         get() = when (this) {
             is ActivityPubPlatform -> platform.protocol
-            is ActivityPubPlatformSnapshot -> platform.protocol
+            is SearchContentResult.SearchedPlatformSnapshot -> platform.protocol
             is Source -> source.protocol
             is Bluesky -> platform.protocol
         }

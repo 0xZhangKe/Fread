@@ -2,7 +2,6 @@ package com.zhangke.fread.status.ui.source
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import arrow.core.Either
 import com.zhangke.fread.status.source.StatusSource
 
 @Composable
@@ -12,7 +11,7 @@ fun StatusSourceUi(
 ) {
     SourceCommonUi(
         modifier = modifier,
-        thumbnail = Either.Left(source.thumbnail.orEmpty()),
+        thumbnail = source.thumbnail.orEmpty(),
         title = source.name,
         subtitle = null,
         description = source.description,

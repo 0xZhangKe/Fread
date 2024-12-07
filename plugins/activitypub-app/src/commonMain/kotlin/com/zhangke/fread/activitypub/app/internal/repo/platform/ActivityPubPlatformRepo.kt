@@ -1,6 +1,5 @@
 package com.zhangke.fread.activitypub.app.internal.repo.platform
 
-import arrow.core.Either
 import com.zhangke.activitypub.entities.ActivityPubInstanceEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubInstanceAdapter

@@ -8,17 +8,22 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.decodeAsUri
 import com.zhangke.fread.bluesky.Res
@@ -41,6 +46,7 @@ class AddBlueskyContentScreen(
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val snackBarHostState = rememberSnackbarHostState()
         val viewModel =
             getViewModel<AddBlueskyContentViewModel, AddBlueskyContentViewModel.Factory> {
                 it.create(FormalBaseUrl.parse(baseUrl.decodeAsUri())!!)
@@ -48,18 +54,23 @@ class AddBlueskyContentScreen(
         val uiState by viewModel.uiState.collectAsState()
         AddBlueskyContentContent(
             uiState = uiState,
+            snackBarHostState = snackBarHostState,
             onHostingChange = viewModel::onHostingChange,
+            onUserNameChange = viewModel::onUserNameChange,
+            onPasswordChange = viewModel::onPasswordChange,
             onBackClick = navigator::pop,
-            onLoginClick = {
-
-            },
+            onLoginClick = viewModel::onLoginClick,
         )
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessage)
     }
 
     @Composable
     private fun AddBlueskyContentContent(
         uiState: AddBlueskyContentUiState,
+        snackBarHostState: SnackbarHostState,
         onHostingChange: (String) -> Unit,
+        onUserNameChange: (String) -> Unit,
+        onPasswordChange: (String) -> Unit,
         onBackClick: () -> Unit,
         onLoginClick: () -> Unit,
     ) {
@@ -70,7 +81,10 @@ class AddBlueskyContentScreen(
                     title = stringResource(Res.string.bsky_add_content_title),
                     onBackClick = onBackClick,
                 )
-            }
+            },
+            snackbarHost = {
+                SnackbarHost(snackBarHostState)
+            },
         ) { innerPadding ->
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -93,7 +107,7 @@ class AddBlueskyContentScreen(
                         .fillMaxWidth()
                         .padding(top = 16.dp),
                     value = uiState.username,
-                    onValueChange = onHostingChange,
+                    onValueChange = onUserNameChange,
                     label = {
                         Text(stringResource(Res.string.bsky_add_content_user_name))
                     },
@@ -104,8 +118,9 @@ class AddBlueskyContentScreen(
                         .fillMaxWidth()
                         .padding(top = 16.dp),
                     value = uiState.password,
+                    visualTransformation = PasswordVisualTransformation(),
                     keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Password),
-                    onValueChange = onHostingChange,
+                    onValueChange = onPasswordChange,
                     label = {
                         Text(stringResource(Res.string.bsky_add_content_password))
                     },
@@ -116,6 +131,7 @@ class AddBlueskyContentScreen(
                         .fillMaxWidth()
                         .padding(top = 16.dp),
                     onClick = onLoginClick,
+                    enabled = uiState.canLogin,
                 ) {
                     Text(stringResource(com.zhangke.fread.commonbiz.Res.string.login))
                 }

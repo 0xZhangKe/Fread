@@ -6,6 +6,9 @@ data class AddBlueskyContentUiState(
     val password: String,
 ) {
 
+    val canLogin: Boolean
+        get() = hosting.isNotBlank() && username.isNotBlank() && password.isNotBlank()
+
     companion object {
 
         fun default(

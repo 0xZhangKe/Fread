@@ -1,6 +1,9 @@
-package com.zhangke.fread.bluesky.internal.uri
+package com.zhangke.fread.bluesky.internal.uri.platform
 
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.bluesky.internal.uri.BlueskyUriPath
+import com.zhangke.fread.bluesky.internal.uri.createBlueskyUri
+import com.zhangke.fread.bluesky.internal.uri.isBlueskyUri
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 

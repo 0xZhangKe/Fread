@@ -1,4 +1,4 @@
-package com.zhangke.fread.bluesky.internal.uri
+package com.zhangke.fread.bluesky.internal.uri.platform
 
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.status.uri.FormalUri

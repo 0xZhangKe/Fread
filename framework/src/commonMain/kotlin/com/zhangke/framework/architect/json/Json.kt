@@ -40,3 +40,5 @@ inline fun JsonObject.getIntOrNull(key: String): Int? {
 inline fun JsonObject.getJsonPrimitiveOrNull(key: String): JsonPrimitive? {
     return this[key]?.let { it as? JsonPrimitive }
 }
+
+val JsonObject.Companion.Empty get() = JsonObject(emptyMap())

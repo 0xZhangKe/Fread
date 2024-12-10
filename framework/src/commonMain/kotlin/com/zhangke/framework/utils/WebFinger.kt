@@ -16,6 +16,10 @@ import kotlinx.serialization.json.Json
  * - https://m.cmx.im/@AtomZ
  * - m.cmx.im/@jw@jakewharton.com
  * - jakewharton.com/@jw
+ *
+ * For Bluesky Workaround: @bsky@did
+ * name is bsky
+ * host is did
  */
 @Parcelize
 @Serializable
@@ -51,6 +55,8 @@ class WebFinger private constructor(
 
     companion object {
 
+        private const val NAME_DID = "did"
+
         fun create(content: String, baseUrl: FormalBaseUrl? = null): WebFinger? {
             if (content.isBlank()) return null
             return createAsAcct(content, baseUrl) ?: createAsUrl(content)
@@ -58,6 +64,10 @@ class WebFinger private constructor(
 
         fun build(name: String, host: String): WebFinger {
             return WebFinger(name, host)
+        }
+
+        fun createFromDid(did: String): WebFinger {
+            return WebFinger(NAME_DID, did)
         }
 
         fun decodeFromUrlString(text: String): WebFinger? {
@@ -105,7 +115,7 @@ class WebFinger private constructor(
         }
 
         private fun hostValidate(host: String): Boolean {
-            return RegexFactory.getDomainRegex().matches(host)
+            return RegexFactory.domainRegex.matches(host)
         }
     }
 }

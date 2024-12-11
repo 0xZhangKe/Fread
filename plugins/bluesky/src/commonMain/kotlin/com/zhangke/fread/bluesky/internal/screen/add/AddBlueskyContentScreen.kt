@@ -4,7 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Button
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
@@ -21,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -62,6 +65,9 @@ class AddBlueskyContentScreen(
             onLoginClick = viewModel::onLoginClick,
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessage)
+        ConsumeFlow(viewModel.finishPageFlow) {
+            navigator.pop()
+        }
     }
 
     @Composable
@@ -133,7 +139,11 @@ class AddBlueskyContentScreen(
                     onClick = onLoginClick,
                     enabled = uiState.canLogin,
                 ) {
-                    Text(stringResource(com.zhangke.fread.commonbiz.Res.string.login))
+                    if (uiState.logging) {
+                        CircularProgressIndicator(modifier = Modifier.size(16.dp))
+                    } else {
+                        Text(stringResource(com.zhangke.fread.commonbiz.Res.string.login))
+                    }
                 }
             }
         }

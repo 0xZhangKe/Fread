@@ -9,7 +9,9 @@ import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
-interface BlueskyComponent {
+expect interface BlueskyPlatformComponent
+
+interface BlueskyComponent: BlueskyPlatformComponent {
 
     @IntoSet
     @Provides

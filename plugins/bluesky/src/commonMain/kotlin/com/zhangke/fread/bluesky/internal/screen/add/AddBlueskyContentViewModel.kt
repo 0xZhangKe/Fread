@@ -5,7 +5,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -19,7 +18,6 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 class AddBlueskyContentViewModel @Inject constructor(
-    private val clientManager: BlueskyClientManager,
     private val loginToBsky: LoginToBskyUseCase,
     @Assisted private val baseUrl: FormalBaseUrl,
 ) : ViewModel() {
@@ -39,31 +37,38 @@ class AddBlueskyContentViewModel @Inject constructor(
     val uiState: StateFlow<AddBlueskyContentUiState> = _uiState.asStateFlow()
 
     private val _snackBarMessage = MutableSharedFlow<TextString>()
-    val snackBarMessage: SharedFlow<TextString> = _snackBarMessage.asSharedFlow()
+    val snackBarMessage: SharedFlow<TextString> = _snackBarMessage
+
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow: SharedFlow<Unit> = _finishPageFlow.asSharedFlow()
 
     fun onHostingChange(hosting: String) {
         _uiState.update { it.copy(hosting = hosting) }
     }
 
-    fun onUserNameChange(username: String){
+    fun onUserNameChange(username: String) {
         _uiState.update { it.copy(username = username) }
     }
 
-    fun onPasswordChange(password: String){
+    fun onPasswordChange(password: String) {
         _uiState.update { it.copy(password = password) }
     }
 
     fun onLoginClick() {
+        if (_uiState.value.logging) return
         val hosting = uiState.value.hosting.trim()
         val username = uiState.value.username.trim()
         val password = uiState.value.password.trim()
         launchInViewModel {
+            _uiState.update { it.copy(logging = true) }
             loginToBsky(hosting, username, password)
                 .onSuccess {
-                    _snackBarMessage.tryEmit(textOf("Login success"))
+                    _uiState.update { it.copy(logging = false) }
+                    _finishPageFlow.emit(Unit)
                 }
                 .onFailure {
-                    _snackBarMessage.tryEmit(textOf("Login failed"))
+                    _uiState.update { it.copy(logging = false) }
+                    _snackBarMessage.emit(textOf(it.message ?: "Login Failed!"))
                 }
         }
     }

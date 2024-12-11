@@ -14,6 +14,7 @@ sealed interface ContentConfig {
         get() = when (this) {
             is MixedContent -> name
             is ActivityPubContent -> name
+            is BlueskyContent -> name
         }
 
     @Serializable
@@ -94,11 +95,21 @@ sealed interface ContentConfig {
             }
         }
     }
+
+    @Serializable
+    data class BlueskyContent(
+        override val id: Long,
+        override val order: Int,
+        val name: String,
+        val baseUrl: FormalBaseUrl,
+    ) : ContentConfig {
+
+    }
 }
 
 fun List<ContentConfig.ActivityPubContent.ContentTab>.dropNotExistListTab(
     allListId: Set<String>
-): List<ContentConfig.ActivityPubContent.ContentTab>{
+): List<ContentConfig.ActivityPubContent.ContentTab> {
     return this.filter {
         if (it is ContentConfig.ActivityPubContent.ContentTab.ListTimeline) {
             it.listId in allListId

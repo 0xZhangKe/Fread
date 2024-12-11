@@ -57,6 +57,10 @@ class MainDrawerViewModel @Inject constructor(
                         ?.let { KRouter.routeScreen(it) }
                         ?.let { _openScreenFlow.emit(it) }
                 }
+
+                is ContentConfig.BlueskyContent -> {
+
+                }
             }
         }
     }

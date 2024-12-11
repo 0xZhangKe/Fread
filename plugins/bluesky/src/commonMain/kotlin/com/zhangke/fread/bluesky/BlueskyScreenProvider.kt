@@ -4,6 +4,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentRoute
+import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.ContentConfig
@@ -34,7 +35,7 @@ class BlueskyScreenProvider @Inject constructor() : IStatusScreenProvider {
         contentConfig: ContentConfig,
         isLatestTab: Boolean
     ): PagerTab? {
-        TODO("Not yet implemented")
+        return BlueskyHomeTab(contentConfig.id, isLatestTab)
     }
 
     override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {

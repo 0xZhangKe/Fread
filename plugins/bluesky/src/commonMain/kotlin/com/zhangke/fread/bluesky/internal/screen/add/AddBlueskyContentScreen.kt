@@ -1,13 +1,15 @@
 package com.zhangke.fread.bluesky.internal.screen.add
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.material.CircularProgressIndicator
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -16,6 +18,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
@@ -25,6 +28,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
@@ -36,6 +40,7 @@ import com.zhangke.fread.bluesky.bsky_add_content_title
 import com.zhangke.fread.bluesky.bsky_add_content_user_name
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.login
+import com.zhangke.fread.framework.skip
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
 import org.jetbrains.compose.resources.stringResource
@@ -62,8 +67,10 @@ class AddBlueskyContentScreen(
             onUserNameChange = viewModel::onUserNameChange,
             onPasswordChange = viewModel::onPasswordChange,
             onBackClick = navigator::pop,
+            onSkipClick = viewModel::onSkipClick,
             onLoginClick = viewModel::onLoginClick,
         )
+        LoadingDialog(loading = uiState.logging, onDismissRequest = viewModel::onCancelLogin)
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessage)
         ConsumeFlow(viewModel.finishPageFlow) {
             navigator.pop()
@@ -78,6 +85,7 @@ class AddBlueskyContentScreen(
         onUserNameChange: (String) -> Unit,
         onPasswordChange: (String) -> Unit,
         onBackClick: () -> Unit,
+        onSkipClick: () -> Unit,
         onLoginClick: () -> Unit,
     ) {
         Scaffold(
@@ -132,16 +140,24 @@ class AddBlueskyContentScreen(
                     },
                     singleLine = true,
                 )
-                Button(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(top = 16.dp),
-                    onClick = onLoginClick,
-                    enabled = uiState.canLogin,
-                ) {
-                    if (uiState.logging) {
-                        CircularProgressIndicator(modifier = Modifier.size(16.dp))
-                    } else {
+                Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
+                    Button(
+                        modifier = Modifier.align(Alignment.CenterStart),
+                        onClick = onSkipClick,
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                            contentColor = MaterialTheme.colorScheme.onSurface,
+                        ),
+                        shape = RoundedCornerShape(6.dp),
+                    ) {
+                        Text(stringResource(com.zhangke.fread.framework.Res.string.skip))
+                    }
+                    Button(
+                        modifier = Modifier.align(Alignment.CenterEnd),
+                        onClick = onLoginClick,
+                        shape = RoundedCornerShape(6.dp),
+                        enabled = uiState.canLogin,
+                    ) {
                         Text(stringResource(com.zhangke.fread.commonbiz.Res.string.login))
                     }
                 }

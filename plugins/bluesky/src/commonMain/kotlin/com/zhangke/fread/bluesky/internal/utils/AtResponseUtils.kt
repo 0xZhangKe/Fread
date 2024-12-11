@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.utils
 
+import kotlinx.serialization.json.Json
 import sh.christian.ozone.api.response.AtpResponse
 
 fun <T : Any> AtpResponse<T>.toResult(): Result<T> {
@@ -28,5 +29,12 @@ data class AtRequestException(
                 headers = response.headers,
             )
         }
+    }
+}
+
+internal val bskyJson by lazy {
+    Json {
+        ignoreUnknownKeys = true
+        classDiscriminator = "${'$'}type"
     }
 }

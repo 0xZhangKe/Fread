@@ -27,3 +27,5 @@ data class BlueskyApiException(
         }
     }
 }
+
+val AtpErrorDescription.expired: Boolean get() = error == "ExpiredToken"

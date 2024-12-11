@@ -7,8 +7,10 @@ import com.zhangke.fread.common.status.repo.db.ContentConfigEntity
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentConfig.ActivityPubContent
 import com.zhangke.fread.status.model.ContentConfig.ActivityPubContent.ContentTab
+import com.zhangke.fread.status.model.ContentConfig.BlueskyContent
 import com.zhangke.fread.status.model.dropNotExistListTab
 import com.zhangke.fread.status.model.notActivityPub
+import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -66,6 +68,17 @@ class ContentConfigRepo @Inject constructor(
         tabList += ContentTab.PublicTimeline(2)
         tabList += ContentTab.Trending(3)
         return tabList
+    }
+
+    suspend fun insertBlueskyContent(platform: BlogPlatform) {
+        if (platform.protocol.notBluesky) return
+        val contentConfig = BlueskyContent(
+            id = 0,
+            order = generateNextOrder(),
+            name = platform.name,
+            baseUrl = platform.baseUrl,
+        )
+        insert(contentConfig)
     }
 
     suspend fun insert(config: ContentConfig) {

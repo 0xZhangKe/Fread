@@ -5,8 +5,11 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.status.repo.ContentConfigRepo
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,7 +21,9 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 class AddBlueskyContentViewModel @Inject constructor(
-    private val loginToBsky: LoginToBskyUseCase,
+    private val loginToBluesky: LoginToBskyUseCase,
+    private val contentRepo: ContentConfigRepo,
+    private val platformRepo: BlueskyPlatformRepo,
     @Assisted private val baseUrl: FormalBaseUrl,
 ) : ViewModel() {
 
@@ -42,6 +47,8 @@ class AddBlueskyContentViewModel @Inject constructor(
     private val _finishPageFlow = MutableSharedFlow<Unit>()
     val finishPageFlow: SharedFlow<Unit> = _finishPageFlow.asSharedFlow()
 
+    private var loggingJob: Job? = null
+
     fun onHostingChange(hosting: String) {
         _uiState.update { it.copy(hosting = hosting) }
     }
@@ -54,15 +61,24 @@ class AddBlueskyContentViewModel @Inject constructor(
         _uiState.update { it.copy(password = password) }
     }
 
+    fun onSkipClick() {
+        launchInViewModel {
+            saveBlueskyContent()
+            _finishPageFlow.emit(Unit)
+        }
+    }
+
     fun onLoginClick() {
         if (_uiState.value.logging) return
+        if (loggingJob?.isActive == true) return
         val hosting = uiState.value.hosting.trim()
         val username = uiState.value.username.trim()
         val password = uiState.value.password.trim()
-        launchInViewModel {
+        loggingJob = launchInViewModel {
             _uiState.update { it.copy(logging = true) }
-            loginToBsky(hosting, username, password)
+            loginToBluesky(hosting, username, password)
                 .onSuccess {
+                    saveBlueskyContent()
                     _uiState.update { it.copy(logging = false) }
                     _finishPageFlow.emit(Unit)
                 }
@@ -71,5 +87,15 @@ class AddBlueskyContentViewModel @Inject constructor(
                     _snackBarMessage.emit(textOf(it.message ?: "Login Failed!"))
                 }
         }
+    }
+
+    fun onCancelLogin() {
+        loggingJob?.cancel()
+        _uiState.update { it.copy(logging = false) }
+    }
+
+    private suspend fun saveBlueskyContent() {
+        val platform = platformRepo.getPlatform(baseUrl)
+        contentRepo.insertBlueskyContent(platform)
     }
 }

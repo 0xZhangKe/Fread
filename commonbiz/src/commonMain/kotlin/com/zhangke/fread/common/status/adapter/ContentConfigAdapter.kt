@@ -24,6 +24,13 @@ class ContentConfigAdapter @Inject constructor() {
                 showingTabList = entity.showingTabList,
                 hiddenTabList = entity.hiddenTabList,
             )
+
+            ContentType.BLUESKY -> ContentConfig.BlueskyContent(
+                id = entity.id,
+                order = entity.order,
+                name = entity.name,
+                baseUrl = entity.baseUrl!!,
+            )
         }
     }
 
@@ -49,6 +56,17 @@ class ContentConfigAdapter @Inject constructor() {
                 baseUrl = config.baseUrl,
                 showingTabList = config.showingTabList,
                 hiddenTabList = config.hiddenTabList,
+            )
+
+            is ContentConfig.BlueskyContent -> ContentConfigEntity(
+                id = config.id,
+                name = config.name,
+                order = config.order,
+                type = ContentType.BLUESKY,
+                sourceUriList = null,
+                baseUrl = config.baseUrl,
+                showingTabList = emptyList(),
+                hiddenTabList = emptyList(),
             )
         }
     }

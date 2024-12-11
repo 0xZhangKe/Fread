@@ -57,6 +57,7 @@ import com.zhangke.fread.analytics.MainDrawerElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.commonbiz.bluesky_logo
 import com.zhangke.fread.commonbiz.mastodon_logo
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
@@ -276,6 +277,25 @@ private fun ContentConfigItem(
                         Image(
                             modifier = Modifier.size(14.dp),
                             painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.mastodon_logo),
+                            contentDescription = null,
+                        )
+                        Text(
+                            modifier = Modifier
+                                .padding(start = 4.dp)
+                                .align(Alignment.Bottom),
+                            text = contentConfig.baseUrl.host,
+                            style = MaterialTheme.typography.labelMedium,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
+                }
+
+                is ContentConfig.BlueskyContent -> {
+                    Row(verticalAlignment = Alignment.CenterVertically) {
+                        Image(
+                            modifier = Modifier.size(14.dp),
+                            painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.bluesky_logo),
                             contentDescription = null,
                         )
                         Text(

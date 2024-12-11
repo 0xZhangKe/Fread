@@ -15,7 +15,7 @@ import androidx.compose.ui.window.DialogProperties
 fun LoadingDialog(
     loading: Boolean,
     properties: DialogProperties = DialogProperties(),
-    onDismissRequest: () -> Unit,
+    onDismissRequest: () -> Unit = {},
 ) {
     if (loading) {
         Dialog(

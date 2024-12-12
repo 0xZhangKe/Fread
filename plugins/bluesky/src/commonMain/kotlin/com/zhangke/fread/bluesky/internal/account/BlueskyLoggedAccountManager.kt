@@ -4,6 +4,7 @@ import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
 import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClient
@@ -14,6 +15,10 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.filter
+import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
+import kotlinx.coroutines.flow.mapNotNull
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 
@@ -68,6 +73,10 @@ class BlueskyLoggedAccountManager @Inject constructor(
 
     fun getAllAccountFlow(): Flow<List<BlueskyLoggedAccount>> {
         return accountRepo.queryAllFlow()
+    }
+
+    fun getAccountFlow(baseUrl: FormalBaseUrl): Flow<BlueskyLoggedAccount> {
+        return getAllAccountFlow().mapNotNull { it.firstOrNull { it.platform.baseUrl == baseUrl } }
     }
 
     suspend fun refreshAccountProfile() {

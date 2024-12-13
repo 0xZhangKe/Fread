@@ -5,7 +5,7 @@ import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 
 data class BlueskyHomeUiState(
-    val role: IdentityRole?,
+    val role: IdentityRole,
     val config: ContentConfig.BlueskyContent?,
     val account: BlueskyLoggedAccount?,
     val errorMessage: String? = null,
@@ -14,7 +14,7 @@ data class BlueskyHomeUiState(
     companion object {
 
         fun default(
-            role: IdentityRole? = null,
+            role: IdentityRole = IdentityRole.nonIdentityRole,
             config: ContentConfig.BlueskyContent? = null,
             account: BlueskyLoggedAccount? = null,
             errorMessage: String? = null

@@ -3,7 +3,10 @@ package com.zhangke.fread.bluesky.internal.screen.home
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
+import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
@@ -17,7 +20,9 @@ import kotlinx.coroutines.flow.update
 class BlueskyHomeViewModel(
     private val configId: Long,
     private val contentConfigRepo: ContentConfigRepo,
+    private val clientManager: BlueskyClientManager,
     private val accountManager: BlueskyLoggedAccountManager,
+    private val getFollowingFeeds: GetFollowingFeedsUseCase,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(BlueskyHomeUiState.default())
@@ -30,6 +35,7 @@ class BlueskyHomeViewModel(
             contentConfigRepo.getConfigFlowById(configId)
                 .map { it as? ContentConfig.BlueskyContent }
                 .collect { config ->
+                    Log.i("F_TEST") { "config: $config" }
                     if (config != null) {
                         _uiState.update { state ->
                             state.copy(
@@ -53,6 +59,8 @@ class BlueskyHomeViewModel(
             accountManager.getAccountFlow(baseUrl)
                 .distinctUntilChanged()
                 .collect { account ->
+                    Log.i("F_TEST") { "account: $account" }
+                    getBlueskyList()
                     _uiState.update {
                         it.copy(
                             account = account,
@@ -63,4 +71,12 @@ class BlueskyHomeViewModel(
         }
     }
 
+    private suspend fun getBlueskyList() {
+        getFollowingFeeds(_uiState.value.role)
+            .onSuccess {
+                Log.i("F_TEST") { "getFollowedFeeds: $it" }
+            }.onFailure {
+                Log.i("F_TEST") { "getFollowedFeeds error: $it" }
+            }
+    }
 }

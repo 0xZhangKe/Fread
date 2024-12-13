@@ -2,6 +2,8 @@ package com.zhangke.fread.bluesky
 
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentViewModel
+import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeContainerViewModel
+import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.status.IStatusProvider
@@ -11,7 +13,7 @@ import me.tatarka.inject.annotations.Provides
 
 expect interface BlueskyPlatformComponent
 
-interface BlueskyComponent: BlueskyPlatformComponent {
+interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoSet
     @Provides
@@ -25,5 +27,11 @@ interface BlueskyComponent: BlueskyPlatformComponent {
         return AddBlueskyContentViewModel::class to AddBlueskyContentViewModel.Factory { baseUrl ->
             creator(baseUrl)
         }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideBlueskyHomeContainerViewModel(creator: () -> BlueskyHomeContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return BlueskyHomeContainerViewModel::class to creator
     }
 }

@@ -1,7 +1,20 @@
 package com.zhangke.fread.bluesky.internal.client
 
+import app.bsky.actor.GetPreferencesResponse
 import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
+import app.bsky.feed.GetActorFeedsQueryParams
+import app.bsky.feed.GetActorFeedsResponse
+import app.bsky.feed.GetAuthorFeedQueryParams
+import app.bsky.feed.GetAuthorFeedResponse
+import app.bsky.feed.GetFeedGeneratorsQueryParams
+import app.bsky.feed.GetFeedGeneratorsResponse
+import app.bsky.feed.GetTimelineQueryParams
+import app.bsky.feed.GetTimelineResponse
+import app.bsky.graph.GetListsQueryParams
+import app.bsky.graph.GetListsResponse
+import app.bsky.unspecced.GetPopularFeedGeneratorsQueryParams
+import app.bsky.unspecced.GetPopularFeedGeneratorsResponse
 import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
@@ -53,9 +66,37 @@ class BlueskyClient(
     suspend fun createSessionCatching(request: CreateSessionRequest): Result<CreateSessionResponse> {
         return runCatching { createSession(request) }.toResult()
     }
-    
-    suspend fun getProfileCatching(request: GetProfileQueryParams): Result<ProfileViewDetailed>{
+
+    suspend fun getProfileCatching(request: GetProfileQueryParams): Result<ProfileViewDetailed> {
         return runCatching { getProfile(request) }.toResult()
+    }
+
+    suspend fun getTimelineCatching(request: GetTimelineQueryParams): Result<GetTimelineResponse> {
+        return runCatching { getTimeline(request) }.toResult()
+    }
+
+    suspend fun getPreferencesCatching(): Result<GetPreferencesResponse> {
+        return runCatching { getPreferences() }.toResult()
+    }
+
+    suspend fun getFeedGeneratorsCatching(params: GetFeedGeneratorsQueryParams): Result<GetFeedGeneratorsResponse> {
+        return runCatching { getFeedGenerators(params) }.toResult()
+    }
+
+    suspend fun getPopularFeedGeneratorsCatching(params: GetPopularFeedGeneratorsQueryParams): Result<GetPopularFeedGeneratorsResponse> {
+        return runCatching { getPopularFeedGenerators(params) }.toResult()
+    }
+
+    suspend fun getActorFeedsCatching(request: GetActorFeedsQueryParams): Result<GetActorFeedsResponse> {
+        return runCatching { getActorFeeds(request) }.toResult()
+    }
+
+    suspend fun getAuthorFeedCatching(request: GetAuthorFeedQueryParams): Result<GetAuthorFeedResponse> {
+        return runCatching { getAuthorFeed(request) }.toResult()
+    }
+
+    suspend fun getListsCatching(request: GetListsQueryParams): Result<GetListsResponse> {
+        return runCatching { getLists(request) }.toResult()
     }
 
     fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

@@ -14,11 +14,15 @@ actual interface BlueskyPlatformComponent {
     @ApplicationScope
     @Provides
     fun provideBskyLoggedAccountDatabases(): BlueskyLoggedAccountDatabase {
-        val dbFilePath = documentDirectory() + "/${BlueskyLoggedAccountDatabase.DB_NAME}"
+        val dbFilePath = getDBFilePath(BlueskyLoggedAccountDatabase.DB_NAME)
         return Room.databaseBuilder<BlueskyLoggedAccountDatabase>(
             name = dbFilePath,
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)
             .build()
+    }
+
+    private fun getDBFilePath(dbName: String): String {
+        return documentDirectory() + "/$dbName"
     }
 }

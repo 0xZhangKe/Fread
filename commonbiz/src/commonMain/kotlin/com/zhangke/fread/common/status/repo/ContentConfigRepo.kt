@@ -77,6 +77,7 @@ class ContentConfigRepo @Inject constructor(
             order = generateNextOrder(),
             name = platform.name,
             baseUrl = platform.baseUrl,
+            tabList = listOf(BlueskyContent.BlueskyTab.FollowingTab.default())
         )
         insert(contentConfig)
     }

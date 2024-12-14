@@ -9,6 +9,8 @@ import app.bsky.feed.GetAuthorFeedQueryParams
 import app.bsky.feed.GetAuthorFeedResponse
 import app.bsky.feed.GetFeedGeneratorsQueryParams
 import app.bsky.feed.GetFeedGeneratorsResponse
+import app.bsky.feed.GetFeedQueryParams
+import app.bsky.feed.GetFeedResponse
 import app.bsky.feed.GetTimelineQueryParams
 import app.bsky.feed.GetTimelineResponse
 import app.bsky.graph.GetListsQueryParams
@@ -81,6 +83,10 @@ class BlueskyClient(
 
     suspend fun getFeedGeneratorsCatching(params: GetFeedGeneratorsQueryParams): Result<GetFeedGeneratorsResponse> {
         return runCatching { getFeedGenerators(params) }.toResult()
+    }
+
+    suspend fun getFeedCatching(params: GetFeedQueryParams): Result<GetFeedResponse> {
+        return runCatching { getFeed(params) }.toResult()
     }
 
     suspend fun getPopularFeedGeneratorsCatching(params: GetPopularFeedGeneratorsQueryParams): Result<GetPopularFeedGeneratorsResponse> {

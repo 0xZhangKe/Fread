@@ -12,7 +12,7 @@ import kotlinx.collections.immutable.toImmutableList
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 
-class GetFollowingFeedsUseCase @Inject constructor(
+class GetFeedsUseCase @Inject constructor(
     private val clientManager: BlueskyClientManager,
 ) {
 

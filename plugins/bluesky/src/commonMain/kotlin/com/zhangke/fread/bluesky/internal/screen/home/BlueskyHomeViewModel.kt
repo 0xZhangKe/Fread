@@ -1,12 +1,13 @@
 package com.zhangke.fread.bluesky.internal.screen.home
 
+import app.bsky.feed.GetFeedQueryParams
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.Log
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
-import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
+import com.zhangke.fread.bluesky.internal.usecase.GetFeedsUseCase
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
@@ -16,13 +17,14 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
+import sh.christian.ozone.api.AtUri
 
 class BlueskyHomeViewModel(
     private val configId: Long,
     private val contentConfigRepo: ContentConfigRepo,
     private val clientManager: BlueskyClientManager,
     private val accountManager: BlueskyLoggedAccountManager,
-    private val getFollowingFeeds: GetFollowingFeedsUseCase,
+    private val getFollowingFeeds: GetFeedsUseCase,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(BlueskyHomeUiState.default())
@@ -78,5 +80,14 @@ class BlueskyHomeViewModel(
             }.onFailure {
                 Log.i("F_TEST") { "getFollowedFeeds error: $it" }
             }
+        val atUri = AtUri("at://did:plc:gekdk2nd47gkk3utfz2xf7cn/app.bsky.feed.generator/aaap4tbjcfe5y")
+        clientManager.getClient(_uiState.value.role)
+            .getFeedCatching(GetFeedQueryParams(atUri))
+            .onSuccess {
+                Log.i("F_TEST") { "getFeedCatching: $it" }
+            }.onFailure {
+                Log.i("F_TEST") { "getFeedCatching error: $it" }
+            }
+//        clientManager.getClient(_uiState.value.role).getList()
     }
 }

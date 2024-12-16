@@ -32,7 +32,6 @@ import com.zhangke.framework.composable.LoadingDialog
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.utils.decodeAsUri
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_add_content_hosting_provider
 import com.zhangke.fread.bluesky.bsky_add_content_password
@@ -41,14 +40,9 @@ import com.zhangke.fread.bluesky.bsky_add_content_user_name
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.login
 import com.zhangke.fread.framework.skip
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(AddBlueskyContentRoute.ROUTE)
-class AddBlueskyContentScreen(
-    @RouteParam(AddBlueskyContentRoute.PARAMS_BASE_URL) private val baseUrl: String,
-) : BaseScreen() {
+class AddBlueskyContentScreen(private val baseUrl: FormalBaseUrl) : BaseScreen() {
 
     @Composable
     override fun Content() {
@@ -57,7 +51,7 @@ class AddBlueskyContentScreen(
         val snackBarHostState = rememberSnackbarHostState()
         val viewModel =
             getViewModel<AddBlueskyContentViewModel, AddBlueskyContentViewModel.Factory> {
-                it.create(FormalBaseUrl.parse(baseUrl.decodeAsUri())!!)
+                it.create(baseUrl)
             }
         val uiState by viewModel.uiState.collectAsState()
         AddBlueskyContentContent(

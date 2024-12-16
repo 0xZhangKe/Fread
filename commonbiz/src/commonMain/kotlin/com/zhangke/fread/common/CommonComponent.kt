@@ -15,6 +15,7 @@ import com.zhangke.fread.common.startup.FreadConfigModuleStartup
 import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.ThumbnailHelper
+import com.zhangke.fread.status.StatusProvider
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -33,6 +34,8 @@ interface CommonComponent : CommonPlatformComponent {
     val platformUriHelper: PlatformUriHelper
 
     val viewModelProviderFactory: ViewModelProvider.Factory
+
+    val statusProvider: StatusProvider
 
     @ApplicationScope
     @Provides
@@ -62,3 +65,5 @@ interface CommonComponent : CommonPlatformComponent {
 interface CommonComponentProvider {
     val component: CommonComponent
 }
+
+lateinit var commonComponentProvider: CommonComponentProvider

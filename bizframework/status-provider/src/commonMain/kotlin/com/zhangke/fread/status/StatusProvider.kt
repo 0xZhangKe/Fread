@@ -2,6 +2,8 @@ package com.zhangke.fread.status
 
 import com.zhangke.fread.status.account.AccountManager
 import com.zhangke.fread.status.account.IAccountManager
+import com.zhangke.fread.status.content.ContentManager
+import com.zhangke.fread.status.content.IContentManager
 import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.platform.PlatformResolver
 import com.zhangke.fread.status.screen.IStatusScreenProvider
@@ -20,6 +22,8 @@ class StatusProvider constructor(
     providers: Set<IStatusProvider>,
 ) {
 
+    val contentManager = ContentManager(providers.map { it.contentManager })
+
     val screenProvider = StatusScreenProvider(providers.map { it.screenProvider })
 
     val searchEngine = SearchEngine(providers.map { it.searchEngine })
@@ -34,6 +38,8 @@ class StatusProvider constructor(
 }
 
 interface IStatusProvider {
+
+    val contentManager: IContentManager
 
     val screenProvider: IStatusScreenProvider
 

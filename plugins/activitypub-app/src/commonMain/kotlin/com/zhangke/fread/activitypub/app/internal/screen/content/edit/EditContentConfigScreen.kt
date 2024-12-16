@@ -55,8 +55,8 @@ import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_hint
 import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_label
 import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_title
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
@@ -68,7 +68,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Destination(EditContentConfigRoute.ROUTE)
 class EditContentConfigScreen(
-    @RouteParam(EditContentConfigRoute.PARAM_CONTENT_ID) private val contentId: Long,
+    @RouteParam(EditContentConfigRoute.PARAM_CONTENT_ID) private val contentId: String,
 ) : BaseScreen() {
 
     companion object {
@@ -106,8 +106,8 @@ class EditContentConfigScreen(
         snackbarMessageFlow: Flow<TextString>,
         onBackClick: () -> Unit,
         onShowingTabMove: (from: Int, to: Int) -> Unit,
-        onShowingTabMoveDown: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
-        onHiddenTabMoveUp: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onShowingTabMoveDown: (ActivityPubContent.ContentTab) -> Unit,
+        onHiddenTabMoveUp: (ActivityPubContent.ContentTab) -> Unit,
         onEditNameClick: (String) -> Unit,
         onDeleteClick: () -> Unit,
     ) {
@@ -125,7 +125,7 @@ class EditContentConfigScreen(
                     mutableStateOf(false)
                 }
                 Toolbar(
-                    title = uiState?.config?.configName.orEmpty(),
+                    title = uiState?.content?.name.orEmpty(),
                     onBackClick = onBackClick,
                     actions = {
                         SimpleIconButton(
@@ -159,7 +159,7 @@ class EditContentConfigScreen(
                 }
                 if (showEditNameDialog && uiState != null) {
                     EditContentNameDialog(
-                        name = uiState.config.name,
+                        name = uiState.content.name,
                         onConfirmClick = onEditNameClick,
                         onDismissRequest = {
                             showEditNameDialog = false
@@ -195,17 +195,17 @@ class EditContentConfigScreen(
     private fun ShowingUserList(
         uiState: EditContentConfigUiState,
         onShowingTabMove: (from: Int, to: Int) -> Unit,
-        onMoveDown: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onMoveDown: (ActivityPubContent.ContentTab) -> Unit,
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
             text = stringResource(Res.string.activity_pub_edit_content_config_showing_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
-        var tabsInUi by remember(uiState.config.showingTabList) {
-            mutableStateOf(uiState.config.showingTabList)
+        var tabsInUi by remember(uiState.content.showingTabList) {
+            mutableStateOf(uiState.content.showingTabList)
         }
-        key(uiState.config.showingTabList) {
+        key(uiState.content.showingTabList) {
             val state = rememberReorderableLazyListState(
                 onMove = { from, to ->
                     if (tabsInUi.isEmpty()) return@rememberReorderableLazyListState
@@ -270,14 +270,14 @@ class EditContentConfigScreen(
     @Composable
     private fun HiddenUserList(
         uiState: EditContentConfigUiState,
-        onMoveUp: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onMoveUp: (ActivityPubContent.ContentTab) -> Unit,
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
             text = stringResource(Res.string.activity_pub_edit_content_config_hidden_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
-        uiState.config.hiddenTabList.forEach { tabItem ->
+        uiState.content.hidingTabList.forEach { tabItem ->
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -349,6 +349,12 @@ class EditContentConfigScreen(
         )
     }
 
-    private val ContentConfig.ActivityPubContent.ContentTab.uiKey: String
+    private val ActivityPubContent.showingTabList: List<ActivityPubContent.ContentTab>
+        get() = tabList.filter { !it.hide }
+
+    private val ActivityPubContent.hidingTabList: List<ActivityPubContent.ContentTab>
+        get() = tabList.filter { it.hide }
+
+    private val ActivityPubContent.ContentTab.uiKey: String
         get() = "${this::class.simpleName}@${hashCode()}"
 }

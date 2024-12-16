@@ -23,12 +23,19 @@
 
     <string name="donate">捐赠</string>
 
-    <string name="status_provider_type_mixed">混合内容</string>
     <string name="status_provider_type_activity_pub">长毛象</string>
+
+    <string name="add_content_title">添加内容</string>
+    <string name="add_content_success_with_account">添加成功，当前账号：</string>
+    <string name="add_content_success_with_login_reminder">添加成功，是否登录？</string>
 
     <string name="date_time_ago">前</string>
     <string name="date_time_day">天</string>
     <string name="date_time_hour">小时</string>
     <string name="date_time_minute">分</string>
     <string name="date_time_second">秒</string>
+
+    <string name="content_exist_tips">该内容已存在</string>
+
+    <string name="add_feeds_page_empty_name_exist">该名字已存在</string>
 </resources>

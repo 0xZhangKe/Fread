@@ -52,7 +52,7 @@ open class SearchPlatformViewModel @Inject constructor(
     }
 
     fun onContentClick(result: SearchContentResult) {
-        val baseUrl = if (result is SearchContentResult.ActivityPubPlatform) {
+        val baseUrl = if (result is SearchContentResult.Platform) {
             result.platform.baseUrl
         } else if (result is SearchContentResult.SearchedPlatformSnapshot) {
             FormalBaseUrl.parse(result.platform.domain) ?: return

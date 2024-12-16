@@ -1,8 +1,8 @@
 package com.zhangke.fread.common.status.usecase.previous
 
+import com.zhangke.fread.common.db.StatusContentEntity
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.repo.StatusContentRepo
-import com.zhangke.fread.common.status.repo.db.StatusContentEntity
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 

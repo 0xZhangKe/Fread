@@ -105,7 +105,7 @@ class PreAddFeedsScreen : BaseScreen() {
             },
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.replace(it)
+            navigator.push(it)
         }
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
         val bottomSheetIsVisible = bottomSheetNavigator.isVisible

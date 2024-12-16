@@ -39,8 +39,6 @@ abstract class ApplicationComponent(
     RssComponent,
     BlueskyComponent {
 
-    abstract val statusProvider: StatusProvider
-
     @Provides
     fun provideApplicationContext(): ApplicationContext {
         return application

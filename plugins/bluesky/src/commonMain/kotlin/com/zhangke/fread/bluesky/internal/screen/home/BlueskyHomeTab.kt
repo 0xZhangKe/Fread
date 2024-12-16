@@ -45,7 +45,7 @@ import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 
 class BlueskyHomeTab(
-    private val configId: Long,
+    private val contentId: String,
     private val isLatestContent: Boolean,
 ) : BasePagerTab() {
 
@@ -60,7 +60,7 @@ class BlueskyHomeTab(
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
-            screen.getViewModel<BlueskyHomeContainerViewModel>().getSubViewModel(configId)
+            screen.getViewModel<BlueskyHomeContainerViewModel>().getSubViewModel(contentId)
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
         BlueskyHomeContent(
@@ -135,7 +135,7 @@ class BlueskyHomeTab(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackBarHostState,
                 ) {
-                    if (uiState.role != null && uiState.config != null) {
+                    if (uiState.role != null && uiState.content != null) {
 
                     } else if (uiState.errorMessage != null) {
                         Box(modifier = Modifier.fillMaxSize()) {

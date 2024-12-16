@@ -2,33 +2,36 @@ package com.zhangke.fread.activitypub.app.internal.screen.content
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
+import com.zhangke.fread.activitypub.app.internal.usecase.UpdateActivityPubUserListUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
+import com.zhangke.fread.common.content.FreadContentRepo
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubContentViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     private val accountManager: ActivityPubAccountManager,
     private val getUserCreatedList: GetUserCreatedListUseCase,
+    private val updateActivityPubUserList: UpdateActivityPubUserListUseCase,
 ) : ContainerViewModel<ActivityPubContentSubViewModel, ActivityPubContentViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubContentSubViewModel {
         return ActivityPubContentSubViewModel(
-            contentConfigRepo = contentConfigRepo,
+            contentRepo = contentRepo,
             getUserCreatedList = getUserCreatedList,
             accountManager = accountManager,
-            configId = params.configId,
+            contentId = params.contentId,
+            updateActivityPubUserList = updateActivityPubUserList,
         )
     }
 
-    fun getSubViewModel(configId: Long): ActivityPubContentSubViewModel {
-        val params = Params(configId)
+    fun getSubViewModel(contentId: String): ActivityPubContentSubViewModel {
+        val params = Params(contentId)
         return obtainSubViewModel(params)
     }
 
-    class Params(val configId: Long) : SubViewModelParams() {
+    class Params(val contentId: String) : SubViewModelParams() {
 
         override val key: String
-            get() = configId.toString()
+            get() = contentId.toString()
     }
 }

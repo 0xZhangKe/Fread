@@ -1,8 +1,8 @@
 package com.zhangke.fread.common.status.usecase.previous
 
+import com.zhangke.fread.common.db.StatusContentEntity
 import com.zhangke.fread.common.status.adapter.StatusContentEntityAdapter
 import com.zhangke.fread.common.status.repo.StatusContentRepo
-import com.zhangke.fread.common.status.repo.db.StatusContentEntity
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri

@@ -4,10 +4,10 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
-import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
@@ -19,7 +19,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreen
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notActivityPub
@@ -62,14 +62,14 @@ class ActivityPubScreenProvider @Inject constructor(
         )
     }
 
-    override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
-        if (contentConfig !is ContentConfig.ActivityPubContent) return null
-        return ActivityPubContentScreen(contentConfig.id, isLatestTab)
+    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
+        if (content !is ActivityPubContent) return null
+        return ActivityPubContentScreen(content.id, isLatestTab)
     }
 
-    override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
-        if (contentConfig !is ContentConfig.ActivityPubContent) return null
-        return EditContentConfigRoute.buildRoute(contentConfig.id)
+    override fun getEditContentConfigScreenRoute(content: FreadContent): String? {
+        if (content !is ActivityPubContent) return null
+        return EditContentConfigRoute.buildRoute(content.id)
     }
 
     override fun getNotificationScreen(account: LoggedAccount): PagerTab? {

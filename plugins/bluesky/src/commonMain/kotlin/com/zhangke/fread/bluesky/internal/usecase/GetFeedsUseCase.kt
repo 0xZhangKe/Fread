@@ -28,9 +28,7 @@ class GetFeedsUseCase @Inject constructor(
             ?.filter { it.type == Type.FEED } ?: emptyList<SavedFeed>()
         if (feeds.isEmpty()) return Result.success(emptyList())
         return client.getFeedGeneratorsCatching(
-            GetFeedGeneratorsQueryParams(
-                feeds = feeds.map { AtUri(it.value) }.toImmutableList()
-            )
+            GetFeedGeneratorsQueryParams(feeds = feeds.map { AtUri(it.value) }.toImmutableList())
         ).map { it.feeds }
     }
 }

@@ -13,8 +13,6 @@ import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.model.notActivityPub
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -77,14 +75,6 @@ class ActivityPubAccountManager @Inject constructor(
             return results.first()
         }
         return successResult
-    }
-
-    override suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>? {
-        if (platform.protocol.notActivityPub) return null
-        val account = getAllLoggedAccount().firstOrNull {
-            it.baseUrl == platform.baseUrl
-        }
-        return Result.success(account != null)
     }
 
     override fun triggerLaunchAuth(baseUrl: FormalBaseUrl) {

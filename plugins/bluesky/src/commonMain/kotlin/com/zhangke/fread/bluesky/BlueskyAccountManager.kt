@@ -4,8 +4,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.notBluesky
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import me.tatarka.inject.annotations.Inject
@@ -20,11 +18,6 @@ class BlueskyAccountManager @Inject constructor(
 
     override fun getAllAccountFlow(): Flow<List<LoggedAccount>>? {
         return accountManager.getAllAccountFlow()
-    }
-
-    override suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>? {
-        if (platform.protocol.notBluesky) return null
-        return Result.success(false)
     }
 
     override fun triggerLaunchAuth(baseUrl: FormalBaseUrl) {

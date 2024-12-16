@@ -1,8 +1,6 @@
 package com.zhangke.fread.status.account
 
-import com.zhangke.framework.collections.mapFirst
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -21,12 +19,6 @@ class AccountManager(
         }
         return combine(*flowList.toTypedArray()) {
             it.flatMap { list -> list }
-        }
-    }
-
-    suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean> {
-        return accountManagerList.mapFirst {
-            it.checkPlatformLogged(platform)
         }
     }
 
@@ -65,8 +57,6 @@ interface IAccountManager {
     suspend fun getAllLoggedAccount(): List<LoggedAccount>
 
     fun getAllAccountFlow(): Flow<List<LoggedAccount>>?
-
-    suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>?
 
     fun triggerLaunchAuth(baseUrl: FormalBaseUrl)
 

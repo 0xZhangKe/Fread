@@ -3,11 +3,12 @@ package com.zhangke.fread.screen.main.drawer
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.routeScreen
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.content.MixedContent
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +19,7 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class MainDrawerViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
@@ -30,7 +31,7 @@ class MainDrawerViewModel @Inject constructor(
 
     init {
         viewModelScope.launch {
-            contentConfigRepo.getAllConfigFlow()
+            contentRepo.getAllContentFlow()
                 .collect { list ->
                     _uiState.update { it.copy(contentConfigList = list) }
                 }
@@ -41,26 +42,18 @@ class MainDrawerViewModel @Inject constructor(
         viewModelScope.launch {
             val configList = _uiState.value.contentConfigList
             if (configList.isEmpty()) return@launch
-            contentConfigRepo.reorderConfig(configList[from], configList[to])
+            contentRepo.reorderConfig(configList[from], configList[to])
         }
     }
 
-    fun onContentConfigEditClick(contentConfig: ContentConfig) {
+    fun onContentConfigEditClick(content: FreadContent) {
         viewModelScope.launch {
-            when (contentConfig) {
-                is ContentConfig.MixedContent -> {
-                    _openScreenFlow.emit(EditMixedContentScreen(contentConfig.id))
-                }
-
-                is ContentConfig.ActivityPubContent -> {
-                    statusProvider.screenProvider.getEditContentConfigScreenRoute(contentConfig)
-                        ?.let { KRouter.routeScreen(it) }
-                        ?.let { _openScreenFlow.emit(it) }
-                }
-
-                is ContentConfig.BlueskyContent -> {
-
-                }
+            if (content is MixedContent) {
+                _openScreenFlow.emit(EditMixedContentScreen(content.id))
+            } else {
+                statusProvider.screenProvider.getEditContentConfigScreenRoute(content)
+                    ?.let { KRouter.routeScreen(it) }
+                    ?.let { _openScreenFlow.emit(it) }
             }
         }
     }

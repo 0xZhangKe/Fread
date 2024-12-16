@@ -12,12 +12,13 @@ import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.daynight.DayNightHelper
+import com.zhangke.fread.common.db.ContentConfigDatabases
+import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.StatusDatabase
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
-import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
-import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -67,6 +68,18 @@ actual interface CommonPlatformComponent {
             context,
             ContentConfigDatabases::class.java,
             ContentConfigDatabases.DB_NAME,
+        ).build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideFreadContentDatabases(
+        context: ApplicationContext,
+    ): FreadContentDatabase {
+        return Room.databaseBuilder(
+            context,
+            FreadContentDatabase::class.java,
+            FreadContentDatabase.DB_NAME,
         ).build()
     }
 

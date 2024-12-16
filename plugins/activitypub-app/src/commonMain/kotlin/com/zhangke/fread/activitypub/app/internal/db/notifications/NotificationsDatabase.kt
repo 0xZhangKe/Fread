@@ -19,7 +19,7 @@ import com.zhangke.fread.activitypub.app.internal.db.converter.RelationshipSever
 import com.zhangke.fread.activitypub.app.internal.db.converter.StatusNotificationTypeConverter
 import com.zhangke.fread.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
-import com.zhangke.fread.common.status.repo.db.converts.StatusConverter
+import com.zhangke.fread.common.db.converts.StatusConverter
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 

@@ -2,11 +2,13 @@ package com.zhangke.fread.activitypub.app
 
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.account.IAccountManager
+import com.zhangke.fread.status.content.IContentManager
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.status.IStatusResolver
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubProvider @Inject constructor(
+    internalContentManager: ActivityPubContentManager,
     internalScreenProvider: ActivityPubScreenProvider,
     internalPlatformResolver: ActivityPubPlatformResolver,
     internalSearchEngine: ActivityPubSearchEngine,
@@ -14,6 +16,8 @@ class ActivityPubProvider @Inject constructor(
     internalSourceResolver: ActivityPubSourceResolver,
     internalAccountManager: ActivityPubAccountManager,
 ) : IStatusProvider {
+
+    override val contentManager: IContentManager = internalContentManager
 
     override val screenProvider: IStatusScreenProvider = internalScreenProvider
 

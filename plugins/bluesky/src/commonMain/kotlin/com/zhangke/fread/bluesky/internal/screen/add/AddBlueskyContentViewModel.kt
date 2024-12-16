@@ -5,10 +5,11 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -22,7 +23,7 @@ import me.tatarka.inject.annotations.Inject
 
 class AddBlueskyContentViewModel @Inject constructor(
     private val loginToBluesky: LoginToBskyUseCase,
-    private val contentRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     private val platformRepo: BlueskyPlatformRepo,
     @Assisted private val baseUrl: FormalBaseUrl,
 ) : ViewModel() {
@@ -96,6 +97,13 @@ class AddBlueskyContentViewModel @Inject constructor(
 
     private suspend fun saveBlueskyContent() {
         val platform = platformRepo.getPlatform(baseUrl)
-        contentRepo.insertBlueskyContent(platform)
+        val content = BlueskyContent(
+            id = platform.baseUrl.toString(),
+            order = contentRepo.getMaxOrder() + 1,
+            name = platform.name,
+            baseUrl = platform.baseUrl,
+            tabList = listOf(BlueskyContent.BlueskyTab.FollowingTab.default())
+        )
+        contentRepo.insertContent(content)
     }
 }

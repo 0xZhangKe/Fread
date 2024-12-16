@@ -9,10 +9,10 @@ import com.zhangke.framework.opml.OpmlOutline
 import com.zhangke.framework.opml.OpmlParser
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.analytics.reportToFireBase
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.content.MixedContent
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
@@ -27,10 +27,12 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
 import kotlinx.coroutines.withContext
 import me.tatarka.inject.annotations.Inject
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class ImportFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val configRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     private val platformUriHelper: PlatformUriHelper,
 ) : ViewModel() {
 
@@ -141,7 +143,7 @@ class ImportFeedsViewModel @Inject constructor(
                 .sourceList
                 .mapNotNull { it.toMixedContent() }
             if (mixedContentList.isEmpty()) return@launch
-            configRepo.insert(mixedContentList)
+            contentRepo.insertAll(mixedContentList)
             _saveSuccessFlow.emit(Unit)
         }
     }
@@ -163,12 +165,13 @@ class ImportFeedsViewModel @Inject constructor(
         return !existGroup.children.container { it.url == source.url }
     }
 
-    private suspend fun ImportSourceGroup.toMixedContent(): ContentConfig.MixedContent? {
+    @OptIn(ExperimentalUuidApi::class)
+    private suspend fun ImportSourceGroup.toMixedContent(): MixedContent? {
         val successChildren = this.children.filterIsInstance<ImportingSource.Success>()
         if (successChildren.isEmpty()) return null
-        return ContentConfig.MixedContent(
-            id = 0,
-            order = configRepo.generateNextOrder(),
+        return MixedContent(
+            id = Uuid.random().toHexString(),
+            order = contentRepo.getMaxOrder() + 1,
             name = this.title,
             sourceUriList = successChildren.map { it.formalUri },
         )

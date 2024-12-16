@@ -4,17 +4,13 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.coroutines.invokeOnCancel
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.add_feeds_page_empty_content_exist
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.content.AddContentAction
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.krouter.KRouter
@@ -28,8 +24,8 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class PreAddFeedsViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
+    private val contentRepo: FreadContentRepo,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PreAddFeedsUiState.default)
@@ -119,8 +115,8 @@ class PreAddFeedsViewModel @Inject constructor(
                     _openScreenFlow.emit(AddMixedFeedsScreen(result.source))
                 }
 
-                is SearchContentResult.ActivityPubPlatform -> {
-                    onAddActivityPubContent(result.platform)
+                is SearchContentResult.Platform -> {
+                    onPlatformContentAdd(result.platform)
                 }
 
                 is SearchContentResult.SearchedPlatformSnapshot -> {
@@ -131,16 +127,8 @@ class PreAddFeedsViewModel @Inject constructor(
                             _snackBarMessageFlow.tryEmitException(it)
                         }.onSuccess {
                             _uiState.update { state -> state.copy(loading = false) }
-                            if (it.protocol.isBluesky) {
-                                onAddBlueskyContent(it)
-                            } else {
-                                onAddActivityPubContent(it)
-                            }
+                            onPlatformContentAdd(it)
                         }
-                }
-
-                is SearchContentResult.Bluesky -> {
-                    onAddBlueskyContent(result.platform)
                 }
             }
         }
@@ -163,29 +151,21 @@ class PreAddFeedsViewModel @Inject constructor(
         }
     }
 
-    private suspend fun onAddActivityPubContent(platform: BlogPlatform) {
-        val existsConfig = contentConfigRepo.getAllConfig()
-            .filterIsInstance<ContentConfig.ActivityPubContent>()
-            .firstOrNull { it.baseUrl == platform.baseUrl }
-        if (existsConfig != null) {
-            _snackBarMessageFlow.emit(textOf(Res.string.add_feeds_page_empty_content_exist))
-            return
-        }
-        contentConfigRepo.insertActivityPubContent(platform)
-        statusProvider.accountManager
-            .checkPlatformLogged(platform)
-            .onFailure {
-                _exitScreenFlow.emit(Unit)
-            }.onSuccess {
-                if (it) {
+    private suspend fun onPlatformContentAdd(platform: BlogPlatform) {
+        statusProvider.contentManager.addContent(
+            platform = platform,
+            action = AddContentAction(
+                onShowSnackBarMessage = {
+                    _snackBarMessageFlow.emit(it)
+                },
+                onFinishPage = {
                     _exitScreenFlow.emit(Unit)
-                } else {
-                    selectedContentPlatform = platform
-                    _uiState.update { state ->
-                        state.copy(showLoginDialog = true)
-                    }
-                }
-            }
+                },
+                onOpenNewPage = {
+                    _openScreenFlow.emit(it)
+                },
+            )
+        )
     }
 
     private suspend fun onAddBlueskyContent(platform: BlogPlatform) {

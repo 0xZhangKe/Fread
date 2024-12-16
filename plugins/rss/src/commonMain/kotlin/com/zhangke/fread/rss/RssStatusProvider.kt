@@ -2,6 +2,7 @@ package com.zhangke.fread.rss
 
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.account.IAccountManager
+import com.zhangke.fread.status.content.IContentManager
 import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.search.ISearchEngine
@@ -10,6 +11,7 @@ import com.zhangke.fread.status.status.IStatusResolver
 import me.tatarka.inject.annotations.Inject
 
 class RssStatusProvider @Inject constructor(
+    contentManager: RssContentManager,
     rssScreenProvider: RssScreenProvider,
     rssSearchEngine: RssSearchEngine,
     rssAccountManager: RssAccountManager,
@@ -17,6 +19,8 @@ class RssStatusProvider @Inject constructor(
     rssStatusSourceResolver: RssStatusSourceResolver,
     rssPlatformResolver: RssPlatformResolver,
 ) : IStatusProvider {
+
+    override val contentManager: IContentManager = contentManager
 
     override val screenProvider: IStatusScreenProvider = rssScreenProvider
 

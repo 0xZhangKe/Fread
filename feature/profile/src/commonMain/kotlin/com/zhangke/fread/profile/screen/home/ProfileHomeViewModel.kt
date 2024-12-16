@@ -3,14 +3,11 @@ package com.zhangke.fread.profile.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.analytics.reportInfo
 import com.zhangke.fread.common.routeScreen
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.Job
@@ -25,7 +22,6 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class ProfileHomeViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
@@ -42,28 +38,14 @@ class ProfileHomeViewModel @Inject constructor(
     }
 
     private fun observeAccountFlow() {
-        var latestAccountList: List<LoggedAccount>? = null
         viewModelScope.launch {
             statusProvider.accountManager
                 .getAllAccountFlow()
                 .map { list -> list.groupBy(LoggedAccount::platform).map { it.key to it.value } }
                 .collect { list ->
-                    _uiState.update {
-                        it.copy(accountDataList = list)
-                    }
-                    val newAccountList = list.flatMap { it.second }
-                    if (latestAccountList != null && latestAccountList!!.size < newAccountList.size) {
-                        // has new added account
-                        val newAccount = newAccountList.firstOrNull { account ->
-                            !latestAccountList!!.container { it.uri == account.uri }
-                        }
-                        newAccount?.let {
-                            onNewAccountAdded(it)
-                        }
-                    }
-                    latestAccountList = newAccountList
+                    _uiState.update { it.copy(accountDataList = list) }
                     reportInfo {
-                        put("accountCount", newAccountList.size.toString())
+                        put("accountCount", list.size.toString())
                     }
                 }
         }
@@ -74,14 +56,6 @@ class ProfileHomeViewModel @Inject constructor(
         refreshAccountJob = launchInViewModel {
             statusProvider.accountManager.refreshAllAccountInfo()
         }
-    }
-
-    private suspend fun onNewAccountAdded(account: LoggedAccount) {
-        val hasContentOfThisAccountPlatform = contentConfigRepo.getAllConfig()
-            .filterIsInstance<ContentConfig.ActivityPubContent>()
-            .firstOrNull { it.baseUrl == account.platform.baseUrl } != null
-        if (hasContentOfThisAccountPlatform) return
-        contentConfigRepo.insertActivityPubContent(account.platform)
     }
 
     fun onLogoutClick(account: LoggedAccount) {

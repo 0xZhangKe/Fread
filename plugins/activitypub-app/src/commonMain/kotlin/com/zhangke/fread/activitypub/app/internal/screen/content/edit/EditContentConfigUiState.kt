@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.content.edit
 
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 
 data class EditContentConfigUiState (
-    val config: ContentConfig.ActivityPubContent,
+    val content: ActivityPubContent,
 )

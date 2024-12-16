@@ -1,7 +1,7 @@
 package com.zhangke.fread.feeds.pages.home.feeds
 
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.content.MixedContent
 
 data class MixedContentUiState(
-    val config: ContentConfig.MixedContent? = null,
+    val config: MixedContent? = null,
 )

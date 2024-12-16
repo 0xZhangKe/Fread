@@ -33,7 +33,7 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 class MixedContentScreen(
-    private val configId: Long,
+    private val configId: String,
     private val isLatestTab: Boolean,
 ) : BasePagerTab() {
 

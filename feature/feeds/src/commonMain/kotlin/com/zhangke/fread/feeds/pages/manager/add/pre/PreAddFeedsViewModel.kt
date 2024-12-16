@@ -6,14 +6,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.coroutines.invokeOnCancel
-import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.AddContentAction
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchContentResult
-import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -25,7 +23,6 @@ import me.tatarka.inject.annotations.Inject
 
 class PreAddFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val contentRepo: FreadContentRepo,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(PreAddFeedsUiState.default)
@@ -166,12 +163,6 @@ class PreAddFeedsViewModel @Inject constructor(
                 },
             )
         )
-    }
-
-    private suspend fun onAddBlueskyContent(platform: BlogPlatform) {
-        statusProvider.screenProvider.getBlueskyAddContentScreen(platform)
-            ?.let { KRouter.route<Screen>(it) }
-            ?.let { _openScreenFlow.emit(it) }
     }
 
     private suspend fun getSuggestedPlatformSnapshots(): List<SearchContentResult> {

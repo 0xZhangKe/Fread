@@ -1,14 +1,12 @@
 package com.zhangke.fread.bluesky.internal.screen.home
 
-import app.bsky.feed.GetFeedQueryParams
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.framework.utils.Log
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
-import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
-import com.zhangke.fread.bluesky.internal.usecase.GetFeedsUseCase
+import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
@@ -17,14 +15,12 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
-import sh.christian.ozone.api.AtUri
 
 class BlueskyHomeViewModel(
     private val contentId: String,
     private val contentRepo: FreadContentRepo,
-    private val clientManager: BlueskyClientManager,
+    private val updateHomeTab: UpdateHomeTabUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
-    private val getFollowingFeeds: GetFeedsUseCase,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(BlueskyHomeUiState.default())
@@ -37,7 +33,6 @@ class BlueskyHomeViewModel(
             contentRepo.getContentFlow(contentId)
                 .map { it as? BlueskyContent }
                 .collect { config ->
-                    Log.i("F_TEST") { "config: $config" }
                     if (config != null) {
                         _uiState.update { state ->
                             state.copy(
@@ -61,8 +56,7 @@ class BlueskyHomeViewModel(
             accountManager.getAccountFlow(baseUrl)
                 .distinctUntilChanged()
                 .collect { account ->
-                    Log.i("F_TEST") { "account: $account" }
-                    getBlueskyList()
+                    getBlueskyList(account)
                     _uiState.update {
                         it.copy(
                             account = account,
@@ -73,21 +67,7 @@ class BlueskyHomeViewModel(
         }
     }
 
-    private suspend fun getBlueskyList() {
-        getFollowingFeeds(_uiState.value.role)
-            .onSuccess {
-                Log.i("F_TEST") { "getFollowedFeeds: $it" }
-            }.onFailure {
-                Log.i("F_TEST") { "getFollowedFeeds error: $it" }
-            }
-        val atUri = AtUri("at://did:plc:gekdk2nd47gkk3utfz2xf7cn/app.bsky.feed.generator/aaap4tbjcfe5y")
-        clientManager.getClient(_uiState.value.role)
-            .getFeedCatching(GetFeedQueryParams(atUri))
-            .onSuccess {
-                Log.i("F_TEST") { "getFeedCatching: $it" }
-            }.onFailure {
-                Log.i("F_TEST") { "getFeedCatching error: $it" }
-            }
-//        clientManager.getClient(_uiState.value.role).getList()
+    private suspend fun getBlueskyList(account: BlueskyLoggedAccount) {
+        updateHomeTab(contentId, _uiState.value.role, account.did)
     }
 }

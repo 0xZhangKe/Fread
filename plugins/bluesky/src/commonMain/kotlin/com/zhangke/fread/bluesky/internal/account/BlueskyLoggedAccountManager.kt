@@ -15,9 +15,6 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.filter
-import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.mapNotNull
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
@@ -77,6 +74,19 @@ class BlueskyLoggedAccountManager @Inject constructor(
 
     fun getAccountFlow(baseUrl: FormalBaseUrl): Flow<BlueskyLoggedAccount> {
         return getAllAccountFlow().mapNotNull { it.firstOrNull { it.platform.baseUrl == baseUrl } }
+    }
+
+    suspend fun getAccount(role: IdentityRole): BlueskyLoggedAccount? {
+        if (role.nonRole) return null
+        val allAccount = getAllAccount()
+        if (role.accountUri != null) {
+            allAccount.firstOrNull { it.uri == role.accountUri }?.let { return it }
+        }
+        return if (role.baseUrl != null) {
+            allAccount.firstOrNull { it.platform.baseUrl == role.baseUrl }
+        } else {
+            null
+        }
     }
 
     suspend fun refreshAccountProfile() {

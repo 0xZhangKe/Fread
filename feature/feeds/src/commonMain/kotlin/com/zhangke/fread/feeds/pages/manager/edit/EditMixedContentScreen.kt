@@ -50,14 +50,14 @@ import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.fread.status.uri.FormalUri
 import org.jetbrains.compose.resources.stringResource
 
-class EditMixedContentScreen(private val configId: Long) : BaseScreen() {
+class EditMixedContentScreen(private val contentId: String) : BaseScreen() {
 
     @Composable
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<EditMixedContentViewModel, EditMixedContentViewModel.Factory> {
-            it.create(configId)
+            it.create(contentId)
         }
         val uiState by viewModel.uiState.collectAsState()
         EditFeedsScreenContent(

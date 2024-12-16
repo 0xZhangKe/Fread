@@ -1,4 +1,4 @@
-package com.zhangke.fread.common.status.repo.db
+package com.zhangke.fread.common.db
 
 import androidx.room.Dao
 import androidx.room.Database
@@ -11,11 +11,11 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.common.status.repo.db.converts.ContentTabConverter
-import com.zhangke.fread.common.status.repo.db.converts.ContentTypeConverter
-import com.zhangke.fread.common.status.repo.db.converts.FormalBaseUrlConverter
-import com.zhangke.fread.common.status.repo.db.converts.StatusProviderUriConverter
-import com.zhangke.fread.common.status.repo.db.converts.StatusProviderUriListConverter
+import com.zhangke.fread.common.db.converts.ContentTabConverter
+import com.zhangke.fread.common.db.converts.ContentTypeConverter
+import com.zhangke.fread.common.db.converts.FormalBaseUrlConverter
+import com.zhangke.fread.common.db.converts.StatusProviderUriConverter
+import com.zhangke.fread.common.db.converts.StatusProviderUriListConverter
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentType
 import com.zhangke.fread.status.uri.FormalUri
@@ -77,6 +77,9 @@ interface ContentConfigDao {
 
     @Delete
     suspend fun delete(entity: ContentConfigEntity)
+
+    @Query("DELETE FROM $TABLE_NAME")
+    suspend fun deleteTable()
 
     @Query("DELETE FROM $TABLE_NAME WHERE id=:id")
     suspend fun deleteById(id: Long)

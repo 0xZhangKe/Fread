@@ -5,7 +5,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -27,15 +27,15 @@ class StatusScreenProvider(
         }
     }
 
-    fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
+    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
         return providerList.firstNotNullOfOrNull {
-            it.getContentScreen(contentConfig, isLatestTab)
+            it.getContentScreen(content, isLatestTab)
         }
     }
 
-    fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
+    fun getEditContentConfigScreenRoute(content: FreadContent): String? {
         return providerList.firstNotNullOfOrNull {
-            it.getEditContentConfigScreenRoute(contentConfig)
+            it.getEditContentConfigScreenRoute(content)
         }
     }
 
@@ -138,9 +138,9 @@ interface IStatusScreenProvider {
 
     suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String?
 
-    fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab?
+    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab?
 
-    fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String?
+    fun getEditContentConfigScreenRoute(content: FreadContent): String?
 
     fun getNotificationScreen(account: LoggedAccount): PagerTab?
 

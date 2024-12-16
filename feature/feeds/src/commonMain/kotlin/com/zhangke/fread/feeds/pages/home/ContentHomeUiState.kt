@@ -1,11 +1,11 @@
 package com.zhangke.fread.feeds.pages.home
 
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 
 data class ContentHomeUiState(
     val currentPageIndex: Int,
     val loading: Boolean,
-    val contentConfigList: List<ContentConfig>,
+    val contentConfigList: List<FreadContent>,
 ) {
 
     companion object {

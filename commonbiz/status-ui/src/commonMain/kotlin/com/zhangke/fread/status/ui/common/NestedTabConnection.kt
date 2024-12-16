@@ -4,7 +4,7 @@ import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -37,8 +37,8 @@ class NestedTabConnection {
     private val _inImmersiveFlow = MutableStateFlow(false)
     val inImmersiveFlow: StateFlow<Boolean> get() = _inImmersiveFlow.asStateFlow()
 
-    private val _scrollToContentTabFlow = MutableSharedFlow<ContentConfig>()
-    val scrollToContentTabFlow: SharedFlow<ContentConfig> get() = _scrollToContentTabFlow.asSharedFlow()
+    private val _scrollToContentTabFlow = MutableSharedFlow<FreadContent>()
+    val scrollToContentTabFlow: SharedFlow<FreadContent> get() = _scrollToContentTabFlow.asSharedFlow()
 
     private val _scrollToTopFlow = MutableSharedFlow<Unit>()
     val scrollToTopFlow: SharedFlow<Unit> get() = _scrollToTopFlow.asSharedFlow()
@@ -79,7 +79,7 @@ class NestedTabConnection {
         _contentScrollInpProgress.value = scrollInProgress
     }
 
-    suspend fun scrollToContentTab(contentConfig: ContentConfig) {
+    suspend fun scrollToContentTab(contentConfig: FreadContent) {
         _scrollToContentTabFlow.emit(contentConfig)
     }
 

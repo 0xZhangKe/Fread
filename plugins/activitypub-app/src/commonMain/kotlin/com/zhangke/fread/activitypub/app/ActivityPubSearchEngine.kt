@@ -130,7 +130,7 @@ class ActivityPubSearchEngine @Inject constructor(
                 ?.let { emit(it) }
             FormalBaseUrl.parse(query)
                 ?.let { platformRepo.getPlatform(it).getOrNull() }
-                ?.let { emit(listOf(SearchContentResult.ActivityPubPlatform(it))) }
+                ?.let { emit(listOf(SearchContentResult.Platform(it))) }
             platformRepo.searchPlatformFromServer(query)
                 .also {
                     Log.i("F_TEST") { it.toString() }

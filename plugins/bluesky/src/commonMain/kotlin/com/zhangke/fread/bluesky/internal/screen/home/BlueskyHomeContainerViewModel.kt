@@ -5,11 +5,11 @@ import com.zhangke.framework.lifecycle.ContainerViewModel.SubViewModelParams
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.usecase.GetFeedsUseCase
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
+import com.zhangke.fread.common.content.FreadContentRepo
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyHomeContainerViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     private val accountManager: BlueskyLoggedAccountManager,
     private val clientManager: BlueskyClientManager,
     private val getFollowingFeeds: GetFeedsUseCase,
@@ -17,20 +17,20 @@ class BlueskyHomeContainerViewModel @Inject constructor(
 
     override fun createSubViewModel(params: Params): BlueskyHomeViewModel {
         return BlueskyHomeViewModel(
-            configId = params.configId,
-            contentConfigRepo = contentConfigRepo,
+            contentId = params.contentId,
+            contentRepo = contentRepo,
             clientManager = clientManager,
             accountManager = accountManager,
             getFollowingFeeds = getFollowingFeeds,
         )
     }
 
-    fun getSubViewModel(configId: Long): BlueskyHomeViewModel {
-        return obtainSubViewModel(Params(configId))
+    fun getSubViewModel(contentId: String): BlueskyHomeViewModel {
+        return obtainSubViewModel(Params(contentId))
     }
 
-    class Params(val configId: Long) : SubViewModelParams() {
+    class Params(val contentId: String) : SubViewModelParams() {
 
-        override val key: String get() = configId.toString()
+        override val key: String get() = contentId.toString()
     }
 }

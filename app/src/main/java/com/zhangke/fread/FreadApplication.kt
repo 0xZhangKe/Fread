@@ -12,6 +12,7 @@ import com.seiko.imageloader.option.androidContext
 import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.utils.initApplication
 import com.zhangke.framework.utils.initDebuggable
+import com.zhangke.fread.common.commonComponentProvider
 import com.zhangke.fread.di.ApplicationComponent
 import com.zhangke.fread.di.ApplicationComponentProvider
 import com.zhangke.fread.di.create
@@ -30,6 +31,7 @@ class FreadApplication : Application(), ApplicationComponentProvider, ImageLoade
         super.onCreate()
         initDebuggable(BuildConfig.DEBUG)
         initApplication(this)
+        commonComponentProvider = this
         initModuleStartups()
         TopActivityManager.init(this)
     }

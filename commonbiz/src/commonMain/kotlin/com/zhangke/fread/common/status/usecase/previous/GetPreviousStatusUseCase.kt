@@ -1,7 +1,7 @@
 package com.zhangke.fread.common.status.usecase.previous
 
+import com.zhangke.fread.common.db.StatusContentEntity
 import com.zhangke.fread.common.status.adapter.StatusContentEntityAdapter
-import com.zhangke.fread.common.status.repo.db.StatusContentEntity
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.async

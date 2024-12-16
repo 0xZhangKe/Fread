@@ -11,7 +11,7 @@ import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.fread.common.status.repo.db.converts.IdentityRoleConverter
+import com.zhangke.fread.common.db.converts.IdentityRoleConverter
 import com.zhangke.fread.status.model.IdentityRole
 
 private const val DB_VERSION = 1

@@ -5,12 +5,12 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,14 +23,14 @@ import me.tatarka.inject.annotations.Inject
 
 class EditMixedContentViewModel @Inject constructor(
     private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
-    private val configRepo: ContentConfigRepo,
+    private val configRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
-    @Assisted private val configId: Long,
+    @Assisted private val configId: String,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
-        fun create(configId: Long): EditMixedContentViewModel
+        fun create(configId: String): EditMixedContentViewModel
     }
 
     private val _uiState = MutableStateFlow(LoadableState.loading<EditMixedContentUiState>())
@@ -49,7 +49,7 @@ class EditMixedContentViewModel @Inject constructor(
                 .requireSuccessData()
                 .sourceList
                 .filter { it != source }
-            configRepo.updateSourceList(configId, newSourceList.map { it.uri })
+            updateSourceList(newSourceList)
             _uiState.updateOnSuccess {
                 it.copy(sourceList = newSourceList)
             }
@@ -58,7 +58,7 @@ class EditMixedContentViewModel @Inject constructor(
 
     fun onDeleteFeeds() {
         launchInViewModel {
-            configRepo.deleteById(configId)
+            configRepo.delete(configId)
             _finishScreenFlow.emit(Unit)
         }
     }
@@ -77,19 +77,24 @@ class EditMixedContentViewModel @Inject constructor(
                         )
                     }?.let { sourceList += it }
                 }
-            configRepo.updateSourceList(configId, sourceList.map { it.uri })
+            updateSourceList(sourceList)
             loadFeedsDetail()
         }
     }
 
+    private suspend fun updateSourceList(sourceList: List<StatusSourceUiState>) {
+        getMixedContent()?.copy(sourceUriList = sourceList.map { it.uri })
+            ?.let { configRepo.insertContent(it) }
+    }
+
     private fun loadFeedsDetail() {
         launchInViewModel {
-            val contentConfig = configRepo.getConfigById(configId)
+            val contentConfig = configRepo.getContent(configId)
             if (contentConfig == null) {
                 _uiState.emit(LoadableState.failed(IllegalArgumentException("Unknown Content of $configId")))
                 return@launchInViewModel
             }
-            if (contentConfig !is ContentConfig.MixedContent) {
+            if (contentConfig !is MixedContent) {
                 _uiState.emit(LoadableState.failed(IllegalArgumentException("Only for Mixed Content")))
                 return@launchInViewModel
             }
@@ -118,11 +123,15 @@ class EditMixedContentViewModel @Inject constructor(
                 }
                 return@launchInViewModel
             }
-            configRepo.updateContentName(configId, newName)
+            getMixedContent()?.copy(name = newName)?.let { configRepo.insertContent(it) }
             _uiState.updateOnSuccess {
                 it.copy(name = newName)
             }
         }
+    }
+
+    private suspend fun getMixedContent(): MixedContent? {
+        return configRepo.getContent(configId) as? MixedContent
     }
 
     private fun MutableStateFlow<LoadableState<EditMixedContentUiState>>.getUriList(): List<FormalUri> {

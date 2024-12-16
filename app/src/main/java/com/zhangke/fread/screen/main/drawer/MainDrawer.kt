@@ -1,8 +1,6 @@
 package com.zhangke.fread.screen.main.drawer
 
-import android.content.Context
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -37,15 +35,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -57,12 +49,10 @@ import com.zhangke.fread.analytics.MainDrawerElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
-import com.zhangke.fread.commonbiz.bluesky_logo
-import com.zhangke.fread.commonbiz.mastodon_logo
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.profile.screen.setting.SettingScreen
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_drag_indicator
@@ -72,7 +62,6 @@ import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Screen.MainDrawer(
@@ -125,10 +114,10 @@ fun Screen.MainDrawer(
 @Composable
 private fun MainDrawerContent(
     uiState: MainDrawerUiState,
-    onContentConfigClick: (ContentConfig) -> Unit,
+    onContentConfigClick: (FreadContent) -> Unit,
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
-    onEditClick: (ContentConfig) -> Unit,
+    onEditClick: (FreadContent) -> Unit,
     onSettingClick: () -> Unit,
     onDonateClick: () -> Unit,
 ) {
@@ -246,9 +235,9 @@ private fun MainDrawerContent(
 @Composable
 private fun ContentConfigItem(
     modifier: Modifier,
-    contentConfig: ContentConfig,
+    contentConfig: FreadContent,
     onClick: () -> Unit,
-    onEditClick: (ContentConfig) -> Unit,
+    onEditClick: (FreadContent) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -264,62 +253,13 @@ private fun ContentConfigItem(
         ) {
             Text(
                 modifier = Modifier,
-                text = contentConfig.configName,
+                text = contentConfig.name,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            val context = LocalContext.current
-            when (contentConfig) {
-                is ContentConfig.ActivityPubContent -> {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.size(14.dp),
-                            painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.mastodon_logo),
-                            contentDescription = null,
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .align(Alignment.Bottom),
-                            text = contentConfig.baseUrl.host,
-                            style = MaterialTheme.typography.labelMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-
-                is ContentConfig.BlueskyContent -> {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.size(14.dp),
-                            painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.bluesky_logo),
-                            contentDescription = null,
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .align(Alignment.Bottom),
-                            text = contentConfig.baseUrl.host,
-                            style = MaterialTheme.typography.labelMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-
-                is ContentConfig.MixedContent -> {
-                    Text(
-                        modifier = Modifier,
-                        text = buildSubtitle(context, contentConfig),
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
+            contentConfig.Subtitle()
         }
         SimpleIconButton(
             modifier = Modifier
@@ -341,27 +281,5 @@ private fun ContentConfigItem(
             painter = org.jetbrains.compose.resources.painterResource(Res.drawable.ic_drag_indicator),
             contentDescription = "Edit Content Config",
         )
-    }
-}
-
-private fun buildSubtitle(
-    context: Context,
-    config: ContentConfig.MixedContent,
-): AnnotatedString {
-    return buildAnnotatedString {
-        val prefix = context.getString(R.string.main_drawer_mixed_item_subtitle_1)
-        val suffix = context.getString(R.string.main_drawer_mixed_item_subtitle_2)
-        append(prefix)
-        val sizeString = " " + config.sourceUriList.size.toString() + " "
-        append(sizeString)
-        addStyle(
-            style = SpanStyle(
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-            start = prefix.length,
-            end = prefix.length + sizeString.length,
-        )
-        append(suffix)
     }
 }

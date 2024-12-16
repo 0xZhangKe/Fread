@@ -32,9 +32,7 @@
     <string name="feeds_pre_add_login_dialog_content">Content Successfully Added. Would You Like to Log In Now?</string>
 
     <string name="add_feeds_page_empty_name_tips">Please enter a name</string>
-    <string name="add_feeds_page_empty_name_exist">This username is already taken.</string>
     <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>
-    <string name="add_feeds_page_empty_content_exist">This content already exists</string>
 
     <string name="add_feeds_choose_auth_dialog_title">Please select login server</string>
 

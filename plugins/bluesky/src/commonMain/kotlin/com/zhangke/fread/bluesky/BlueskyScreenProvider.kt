@@ -7,7 +7,7 @@ import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentRoute
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -32,13 +32,13 @@ class BlueskyScreenProvider @Inject constructor() : IStatusScreenProvider {
     }
 
     override fun getContentScreen(
-        contentConfig: ContentConfig,
+        contentConfig: FreadContent,
         isLatestTab: Boolean
     ): PagerTab? {
         return BlueskyHomeTab(contentConfig.id, isLatestTab)
     }
 
-    override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
+    override fun getEditContentConfigScreenRoute(content: FreadContent): String? {
         TODO("Not yet implemented")
     }
 

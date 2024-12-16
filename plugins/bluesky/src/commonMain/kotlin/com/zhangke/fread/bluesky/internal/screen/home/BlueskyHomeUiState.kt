@@ -1,12 +1,12 @@
 package com.zhangke.fread.bluesky.internal.screen.home
 
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.status.model.IdentityRole
 
 data class BlueskyHomeUiState(
     val role: IdentityRole,
-    val config: ContentConfig.BlueskyContent?,
+    val content: BlueskyContent?,
     val account: BlueskyLoggedAccount?,
     val errorMessage: String? = null,
 ) {
@@ -15,13 +15,13 @@ data class BlueskyHomeUiState(
 
         fun default(
             role: IdentityRole = IdentityRole.nonIdentityRole,
-            config: ContentConfig.BlueskyContent? = null,
+            config: BlueskyContent? = null,
             account: BlueskyLoggedAccount? = null,
             errorMessage: String? = null
         ): BlueskyHomeUiState {
             return BlueskyHomeUiState(
                 role = role,
-                config = config,
+                content = config,
                 account = account,
                 errorMessage = errorMessage,
             )

@@ -8,7 +8,7 @@ object EditContentConfigRoute {
 
     const val PARAM_CONTENT_ID = "contentId"
 
-    fun buildRoute(contentId: Long): String {
+    fun buildRoute(contentId: String): String {
         return "$ROUTE?$PARAM_CONTENT_ID=$contentId"
     }
 }

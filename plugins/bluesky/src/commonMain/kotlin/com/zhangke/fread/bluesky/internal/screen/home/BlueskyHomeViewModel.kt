@@ -7,9 +7,9 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.Log
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.usecase.GetFeedsUseCase
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -20,8 +20,8 @@ import kotlinx.coroutines.flow.update
 import sh.christian.ozone.api.AtUri
 
 class BlueskyHomeViewModel(
-    private val configId: Long,
-    private val contentConfigRepo: ContentConfigRepo,
+    private val contentId: String,
+    private val contentRepo: FreadContentRepo,
     private val clientManager: BlueskyClientManager,
     private val accountManager: BlueskyLoggedAccountManager,
     private val getFollowingFeeds: GetFeedsUseCase,
@@ -34,21 +34,21 @@ class BlueskyHomeViewModel(
 
     init {
         launchInViewModel {
-            contentConfigRepo.getConfigFlowById(configId)
-                .map { it as? ContentConfig.BlueskyContent }
+            contentRepo.getContentFlow(contentId)
+                .map { it as? BlueskyContent }
                 .collect { config ->
                     Log.i("F_TEST") { "config: $config" }
                     if (config != null) {
                         _uiState.update { state ->
                             state.copy(
                                 role = IdentityRole(accountUri = null, baseUrl = config.baseUrl),
-                                config = config,
+                                content = config,
                             )
                         }
                         startObserveAccount(config.baseUrl)
                     } else {
                         _uiState.update { state ->
-                            state.copy(errorMessage = "Cant find validate config by id: $configId")
+                            state.copy(errorMessage = "Cant find validate config by id: $contentId")
                         }
                     }
                 }

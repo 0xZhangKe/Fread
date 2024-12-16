@@ -1,8 +1,8 @@
 package com.zhangke.fread.common.status.repo
 
-import com.zhangke.fread.common.status.repo.db.StatusContentDao
-import com.zhangke.fread.common.status.repo.db.StatusContentEntity
-import com.zhangke.fread.common.status.repo.db.StatusDatabase
+import com.zhangke.fread.common.db.StatusContentDao
+import com.zhangke.fread.common.db.StatusContentEntity
+import com.zhangke.fread.common.db.StatusDatabase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri

@@ -1,7 +1,7 @@
 package com.zhangke.fread.common.status.adapter
 
+import com.zhangke.fread.common.db.StatusContentEntity
 import com.zhangke.fread.common.status.StatusIdGenerator
-import com.zhangke.fread.common.status.repo.db.StatusContentEntity
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject

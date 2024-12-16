@@ -89,6 +89,6 @@ class BlueskySearchEngine @Inject constructor(
     }
 
     private fun BlogPlatform.toContentResult(): SearchContentResult {
-        return SearchContentResult.Bluesky(this)
+        return SearchContentResult.Platform(this)
     }
 }

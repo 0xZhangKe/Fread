@@ -1,4 +1,4 @@
-package com.zhangke.fread.common.status.repo.db.converts
+package com.zhangke.fread.common.db.converts
 
 import androidx.room.TypeConverter
 import com.zhangke.fread.status.model.IdentityRole

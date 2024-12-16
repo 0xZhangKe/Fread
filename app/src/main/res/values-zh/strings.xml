@@ -7,9 +7,6 @@
 
     <string name="main_drawer_title">内容列表</string>
 
-    <string name="main_drawer_mixed_item_subtitle_1">混合内容 ·</string>
-    <string name="main_drawer_mixed_item_subtitle_2">条订阅源</string>
-
     <string name="main_drawer_settings">设置</string>
     <string name="main_drawer_donate">捐赠</string>
 

@@ -23,13 +23,19 @@
 
     <string name="donate">Donate</string>
 
-    <string name="status_provider_type_mixed">Mixed Content</string>
     <string name="status_provider_type_activity_pub">Mastodon</string>
 
+    <string name="add_content_title">Add Content</string>
+    <string name="add_content_success_with_account">Added successfully. Current account:</string>
+    <string name="add_content_success_with_login_reminder">Added successfully. Log in now?</string>
 
     <string name="date_time_ago">&#160;ago</string>
     <string name="date_time_day">day</string>
     <string name="date_time_hour">hour</string>
     <string name="date_time_minute">min</string>
     <string name="date_time_second">sec</string>
+
+    <string name="content_exist_tips">This content already exists</string>
+
+    <string name="add_feeds_page_empty_name_exist">This username is already taken.</string>
 </resources>

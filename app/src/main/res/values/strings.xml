@@ -7,9 +7,6 @@
 
     <string name="main_drawer_title">Content List</string>
 
-    <string name="main_drawer_mixed_item_subtitle_1">Mixed Content ·</string>
-    <string name="main_drawer_mixed_item_subtitle_2">Sources</string>
-    
     <string name="main_drawer_settings">Settings</string>
     <string name="main_drawer_donate">Donate</string>
 

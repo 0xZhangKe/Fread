@@ -44,7 +44,7 @@ interface FeedsComponent {
 
     @IntoMap
     @Provides
-    fun provideEditMixedContentViewModel(creator: (Long) -> EditMixedContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideEditMixedContentViewModel(creator: (String) -> EditMixedContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return EditMixedContentViewModel::class to EditMixedContentViewModel.Factory { configId ->
             creator(configId)
         }

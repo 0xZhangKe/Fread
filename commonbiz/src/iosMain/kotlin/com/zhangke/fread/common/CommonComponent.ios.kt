@@ -5,9 +5,10 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
+import com.zhangke.fread.common.db.ContentConfigDatabases
+import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.StatusDatabase
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
-import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.IO
@@ -35,6 +36,17 @@ actual interface CommonPlatformComponent {
     fun provideContentConfigDatabases(): ContentConfigDatabases {
         val dbFilePath = documentDirectory() + "/${ContentConfigDatabases.DB_NAME}"
         return Room.databaseBuilder<ContentConfigDatabases>(
+            name = dbFilePath,
+        ).setDriver(BundledSQLiteDriver())
+            .setQueryCoroutineContext(Dispatchers.IO)
+            .build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideFreadContentDatabases(): FreadContentDatabase {
+        val dbFilePath = documentDirectory() + "/${FreadContentDatabase.DB_NAME}"
+        return Room.databaseBuilder<FreadContentDatabase>(
             name = dbFilePath,
         ).setDriver(BundledSQLiteDriver())
             .setQueryCoroutineContext(Dispatchers.IO)

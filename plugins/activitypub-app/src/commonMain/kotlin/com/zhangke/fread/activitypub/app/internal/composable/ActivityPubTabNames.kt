@@ -6,7 +6,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_content_tab_home
 import com.zhangke.fread.activitypub.app.activity_pub_content_tab_local_timeline
 import com.zhangke.fread.activitypub.app.activity_pub_content_tab_public_timeline
 import com.zhangke.fread.activitypub.app.activity_pub_content_tab_trending
-import com.zhangke.fread.status.model.ContentConfig.ActivityPubContent.ContentTab
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import org.jetbrains.compose.resources.stringResource
 
 internal object ActivityPubTabNames {
@@ -25,12 +25,12 @@ internal object ActivityPubTabNames {
 }
 
 @Composable
-internal fun ContentTab.tabName(): String {
+internal fun ActivityPubContent.ContentTab.tabName(): String {
     return when (this) {
-        is ContentTab.HomeTimeline -> ActivityPubTabNames.homeTimeline
-        is ContentTab.PublicTimeline -> ActivityPubTabNames.publicTimeline
-        is ContentTab.LocalTimeline -> ActivityPubTabNames.localTimeline
-        is ContentTab.Trending -> ActivityPubTabNames.trending
-        is ContentTab.ListTimeline -> this.name
+        is ActivityPubContent.ContentTab.HomeTimeline -> ActivityPubTabNames.homeTimeline
+        is ActivityPubContent.ContentTab.PublicTimeline -> ActivityPubTabNames.publicTimeline
+        is ActivityPubContent.ContentTab.LocalTimeline -> ActivityPubTabNames.localTimeline
+        is ActivityPubContent.ContentTab.Trending -> ActivityPubTabNames.trending
+        is ActivityPubContent.ContentTab.ListTimeline -> this.name
     }
 }

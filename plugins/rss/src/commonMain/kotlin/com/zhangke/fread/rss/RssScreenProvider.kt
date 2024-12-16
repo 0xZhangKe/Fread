@@ -8,7 +8,7 @@ import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -28,11 +28,11 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
+    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
         return null
     }
 
-    override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
+    override fun getEditContentConfigScreenRoute(content: FreadContent): String? {
         return null
     }
 

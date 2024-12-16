@@ -3,14 +3,12 @@ package com.zhangke.fread.bluesky
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentRoute
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -111,9 +109,5 @@ class BlueskyScreenProvider @Inject constructor() : IStatusScreenProvider {
         baseUrl: FormalBaseUrl
     ): String? {
         TODO("Not yet implemented")
-    }
-
-    override fun getBlueskyAddContentScreen(platform: BlogPlatform): String? {
-        return AddBlueskyContentRoute.buildRoute(platform.baseUrl)
     }
 }

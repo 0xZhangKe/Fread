@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.content
 
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
 import com.zhangke.fread.status.content.AddContentAction
 import com.zhangke.fread.status.content.IContentManager
 import com.zhangke.fread.status.model.ContentConfig
@@ -15,7 +16,7 @@ class BlueskyContentManager @Inject constructor() : IContentManager {
         platform: BlogPlatform,
         action: AddContentAction
     ) {
-
+        action.onOpenNewPage(AddBlueskyContentScreen(platform.baseUrl))
     }
 
     override fun SerializersModuleBuilder.buildSerializersModule() {

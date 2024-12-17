@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.pager.HorizontalPager
+import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -35,14 +39,20 @@ import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
+import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.analytics.HomeTabElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.screen.feeds.FeedsTab
 import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import kotlinx.coroutines.launch
 
 class BlueskyHomeTab(
     private val contentId: String,
@@ -65,21 +75,23 @@ class BlueskyHomeTab(
         val snackBarHostState = rememberSnackbarHostState()
         BlueskyHomeContent(
             screen = screen,
-            nestedScrollConnection = nestedScrollConnection,
             uiState = uiState,
             snackBarHostState = snackBarHostState,
             onPostBlogClick = {},
-        )
+            onTitleClick = {
 
+            },
+        )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun BlueskyHomeContent(
         screen: Screen,
-        nestedScrollConnection: NestedScrollConnection?,
         uiState: BlueskyHomeUiState,
         snackBarHostState: SnackbarHostState,
         onPostBlogClick: (BlueskyLoggedAccount) -> Unit,
+        onTitleClick: (BlueskyContent) -> Unit,
     ) {
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
@@ -135,8 +147,75 @@ class BlueskyHomeTab(
                 CompositionLocalProvider(
                     LocalSnackbarHostState provides snackBarHostState,
                 ) {
-                    if (uiState.role != null && uiState.content != null) {
-
+                    if (uiState.content != null) {
+                        val tabList = remember(uiState) { createTabList(uiState.content) }
+                        val pagerState = rememberPagerState(0) {
+                            tabList.size
+                        }
+                        TopBarWithTabLayout(
+                            topBarContent = {
+                                ContentToolbar(
+                                    title = uiState.content.name,
+                                    showNextIcon = !isLatestContent,
+                                    onMenuClick = {
+                                        reportClick(HomeTabElements.SHOW_DRAWER)
+                                        coroutineScope.launch {
+                                            mainTabConnection.openDrawer()
+                                        }
+                                    },
+                                    onNextClick = {
+                                        reportClick(HomeTabElements.NEXT)
+                                        coroutineScope.launch {
+                                            mainTabConnection.switchToNextTab()
+                                        }
+                                    },
+                                    onRefreshClick = {
+                                        reportClick(HomeTabElements.REFRESH)
+                                        coroutineScope.launch {
+                                            mainTabConnection.scrollToTop()
+                                            mainTabConnection.refresh()
+                                        }
+                                    },
+                                    onTitleClick = {
+                                        reportClick(HomeTabElements.TITLE)
+                                        onTitleClick(uiState.content)
+                                    },
+                                    onDoubleClick = {
+                                        reportClick(HomeTabElements.TITLE_DOUBLE_CLICK)
+                                        coroutineScope.launch {
+                                            mainTabConnection.scrollToTop()
+                                        }
+                                    },
+                                )
+                            },
+                            tabContent = {
+                                FreadTabRow(
+                                    modifier = Modifier.fillMaxWidth(),
+                                    selectedTabIndex = pagerState.currentPage,
+                                    tabCount = tabList.size,
+                                    tabContent = {
+                                        Text(
+                                            text = tabList[it].options.title,
+                                            maxLines = 1,
+                                        )
+                                    },
+                                    onTabClick = {
+                                        coroutineScope.launch {
+                                            pagerState.scrollToPage(it)
+                                        }
+                                    }
+                                )
+                            },
+                        ) {
+                            val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
+                            HorizontalPager(
+                                modifier = Modifier.fillMaxSize(),
+                                state = pagerState,
+                                userScrollEnabled = !contentScrollInProgress,
+                            ) { pageIndex ->
+                                tabList[pageIndex].TabContent(screen, null)
+                            }
+                        }
                     } else if (uiState.errorMessage != null) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Text(
@@ -154,5 +233,11 @@ class BlueskyHomeTab(
                 }
             }
         }
+    }
+
+    private fun createTabList(content: BlueskyContent): List<FeedsTab> {
+        return content.tabList.filter { !it.hide }
+            .sortedBy { it.order }
+            .map { FeedsTab(it) }
     }
 }

@@ -35,6 +35,7 @@ import io.ktor.client.plugins.HttpSend
 import io.ktor.client.plugins.logging.LogLevel
 import io.ktor.client.plugins.logging.Logging
 import io.ktor.client.plugins.plugin
+import io.ktor.client.request.HttpRequestBuilder
 import io.ktor.client.request.HttpRequestPipeline
 import io.ktor.client.request.bearerAuth
 import io.ktor.client.request.post
@@ -55,13 +56,15 @@ class BlueskyClient(
     val json: Json,
     val loggedAccountProvider: suspend () -> BlueskyLoggedAccount?,
     val newSessionUpdater: suspend (RefreshSessionResponse) -> Unit,
+    val onLoginRequest: suspend () -> Unit,
 ) : BlueskyApi by XrpcBlueskyApi(
     createBlueskyHttpClient(
         engine,
         json,
         baseUrl.toString(),
         loggedAccountProvider,
-        newSessionUpdater
+        newSessionUpdater,
+        onLoginRequest,
     )
 ) {
 
@@ -117,6 +120,7 @@ private fun createBlueskyHttpClient(
     baseUrl: String,
     accountProvider: suspend () -> BlueskyLoggedAccount?,
     newSessionUpdater: suspend (RefreshSessionResponse) -> Unit,
+    onLoginRequest: suspend () -> Unit,
 ): HttpClient {
     return HttpClient(engine) {
         install(Logging) {
@@ -132,6 +136,7 @@ private fun createBlueskyHttpClient(
             this.json = json
             this.accountProvider = accountProvider
             this.newSessionUpdater = newSessionUpdater
+            this.onLoginRequest = onLoginRequest
         }
         install(AtProtoProxyPlugin)
 
@@ -166,21 +171,31 @@ private class XrpcAuthPlugin(
     private val json: Json,
     private val accountProvider: suspend () -> BlueskyLoggedAccount?,
     private val newSessionUpdater: suspend (RefreshSessionResponse) -> Unit,
+    private val onLoginRequest: suspend () -> Unit,
 ) {
 
     class Config(
         var json: Json? = null,
         var accountProvider: suspend () -> BlueskyLoggedAccount? = { null },
         var newSessionUpdater: suspend (RefreshSessionResponse) -> Unit = {},
+        var onLoginRequest: suspend () -> Unit = {},
     )
 
     companion object : HttpClientPlugin<Config, XrpcAuthPlugin> {
+
+        private const val REFRESH_TOKEN_METHOD = "com.atproto.server.refreshSession"
+        private const val REFRESH_TOKEN_PATH = "/xrpc/$REFRESH_TOKEN_METHOD"
 
         override val key = AttributeKey<XrpcAuthPlugin>("XrpcAuthPlugin")
 
         override fun prepare(block: Config.() -> Unit): XrpcAuthPlugin {
             val config = Config().apply(block)
-            return XrpcAuthPlugin(config.json!!, config.accountProvider, config.newSessionUpdater)
+            return XrpcAuthPlugin(
+                config.json!!,
+                config.accountProvider,
+                config.newSessionUpdater,
+                config.onLoginRequest,
+            )
         }
 
         override fun install(plugin: XrpcAuthPlugin, scope: HttpClient) {
@@ -203,8 +218,8 @@ private class XrpcAuthPlugin(
                 val response = runCatching<AtpErrorDescription> {
                     plugin.json.decodeFromString(result.response.bodyAsText())
                 }
-                if (response.getOrNull()?.expired == true) {
-                    val account = plugin.accountProvider.invoke()
+                if (response.getOrNull()?.expired == true && !context.isRefreshTokenRequest) {
+                    val account = plugin.accountProvider()
                     if (account != null) {
                         refreshToken(scope, account.refreshJwt)?.let { response ->
                             plugin.newSessionUpdater(response)
@@ -218,12 +233,15 @@ private class XrpcAuthPlugin(
             }
         }
 
+        private val HttpRequestBuilder.isRefreshTokenRequest: Boolean
+            get() = url.pathSegments.contains(REFRESH_TOKEN_METHOD)
+
         private suspend fun refreshToken(
             scope: HttpClient,
             refreshToken: String,
         ): RefreshSessionResponse? {
             return runCatching {
-                scope.post("/xrpc/com.atproto.server.refreshSession") {
+                scope.post(REFRESH_TOKEN_PATH) {
                     bearerAuth(refreshToken)
                 }.body<RefreshSessionResponse>()
             }.getOrNull()

@@ -52,6 +52,9 @@ class BlueskyClientManager @Inject constructor(
             json = globalJson,
             loggedAccountProvider = loggedAccountProvider,
             newSessionUpdater = { updateNewSession(role, it) },
+            onLoginRequest = {
+
+            },
         )
     }
 

@@ -3,7 +3,6 @@ package com.zhangke.fread.bluesky.internal.screen.home
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
@@ -56,18 +55,14 @@ class BlueskyHomeViewModel(
             accountManager.getAccountFlow(baseUrl)
                 .distinctUntilChanged()
                 .collect { account ->
-                    getBlueskyList(account)
                     _uiState.update {
                         it.copy(
                             account = account,
                             role = IdentityRole(accountUri = account.uri, baseUrl = baseUrl),
                         )
                     }
+                    updateHomeTab(contentId, _uiState.value.role, account.did)
                 }
         }
-    }
-
-    private suspend fun getBlueskyList(account: BlueskyLoggedAccount) {
-        updateHomeTab(contentId, _uiState.value.role, account.did)
     }
 }

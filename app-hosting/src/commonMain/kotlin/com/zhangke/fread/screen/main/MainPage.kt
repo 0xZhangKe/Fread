@@ -99,7 +99,6 @@ fun Screen.MainPage() {
                     val tabNavigator = LocalTabNavigator.current
                     RegisterNotificationAction(tabs, tabNavigator)
                     inFeedsTab = tabNavigator.current.key == tabs.first().key
-                    tabNavigator.current
                     BackHandler(true) {
                         if (inFeedsTab) {
                             activityHelper.goHome()

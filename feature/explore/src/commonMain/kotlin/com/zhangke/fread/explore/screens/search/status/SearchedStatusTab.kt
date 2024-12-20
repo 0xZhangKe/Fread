@@ -34,7 +34,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import org.jetbrains.compose.resources.stringResource
 
-class SearchedStatusTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
+internal class SearchedStatusTab(private val role: IdentityRole, private val query: String) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(

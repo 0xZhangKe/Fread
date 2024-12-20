@@ -11,11 +11,10 @@ import com.russhwolf.settings.datastore.DataStoreSettings
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
+import com.zhangke.fread.common.startup.LanguageModuleStartup
 import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import me.tatarka.inject.annotations.IntoSet
@@ -25,13 +24,7 @@ private val Context.localConfig: DataStore<Preferences> by preferencesDataStore(
 
 actual interface CommonPlatformComponent {
 
-    val moduleStartups: Set<ModuleStartup>
-
     val browserInterceptorSet: Set<BrowserInterceptor>
-
-    val dayNightHelper: DayNightHelper
-
-    val freadReviewManager: FreadReviewManager
 
     val browserLauncher: BrowserLauncher
 
@@ -72,13 +65,13 @@ actual interface CommonPlatformComponent {
 
     @IntoSet
     @Provides
-    fun bindCommonBizModuleStartup(module: FeedsRepoModuleStartup): ModuleStartup {
+    fun bindFeedsRepoModuleStartup(module: FeedsRepoModuleStartup): ModuleStartup {
         return module
     }
 
     @IntoSet
     @Provides
-    fun bindCommonModuleStartup(module: CommonModuleStartup): ModuleStartup {
+    fun bindLanguageModuleStartup(module: LanguageModuleStartup): ModuleStartup {
         return module
     }
 

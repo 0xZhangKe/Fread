@@ -74,7 +74,7 @@ kotlin {
                 implementation(libs.multiplatformsettings.datastore)
             }
         }
-        iosMain{
+        iosMain {
             dependencies {
                 implementation(libs.androidx.sqlite.bundled)
             }

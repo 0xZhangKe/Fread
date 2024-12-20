@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app
 
 import com.zhangke.activitypub.api.SearchRepo
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubSearchAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -19,6 +20,8 @@ import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.status.model.Status
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubSearchEngine @Inject constructor(
@@ -84,19 +87,8 @@ class ActivityPubSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchPlatform(
-        query: String,
-        offset: Int?,
-    ): Result<List<BlogPlatform>> {
-        if (offset != null && offset > 0) {
-            return Result.success(emptyList())
-        }
-        val baseUrl = FormalBaseUrl.parse(query) ?: return Result.success(emptyList())
-        return platformRepo.getPlatform(baseUrl).map { listOf(it) }
-    }
-
-    override suspend fun searchPlatformSnapshot(query: String): List<PlatformSnapshot> {
-        return platformRepo.searchPlatformSnapshot(query)
+    override fun searchAuthablePlatform(query: String): Flow<List<PlatformSnapshot>>? {
+        return platformRepo.searchAuthablePlatform(query)
     }
 
     private suspend fun <T> doSearch(
@@ -125,21 +117,28 @@ class ActivityPubSearchEngine @Inject constructor(
         }
     }
 
-    override suspend fun searchContent(
+    override fun searchContent(
         role: IdentityRole,
         query: String,
-    ): List<SearchContentResult> {
-        val searchResultList = mutableListOf<SearchContentResult>()
-        searchUserSource(role, query).getOrNull()
-            ?.let { searchResultList += SearchContentResult.Source(it) }
-        platformRepo.searchPlatformSnapshot(query)
-            .takeIf { it.isNotEmpty() }
-            ?.map {
-                searchResultList += SearchContentResult.ActivityPubPlatformSnapshot(it)
-            }
-        FormalBaseUrl.parse(query)
-            ?.let { platformRepo.getPlatform(it).getOrNull() }
-            ?.let { searchResultList += SearchContentResult.ActivityPubPlatform(it) }
-        return searchResultList
+    ): Flow<List<SearchContentResult>> {
+        return flow {
+            searchUserSource(role, query).getOrNull()
+                ?.let { emit(listOf(SearchContentResult.Source(it))) }
+            platformRepo.searchPlatformSnapshotFromLocal(query)
+                .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                .takeIf { it.isNotEmpty() }
+                ?.let { emit(it) }
+            FormalBaseUrl.parse(query)
+                ?.let { platformRepo.getPlatform(it).getOrNull() }
+                ?.let { emit(listOf(SearchContentResult.ActivityPubPlatform(it))) }
+            platformRepo.searchPlatformFromServer(query)
+                .also {
+                    Log.i("F_TEST") { it.toString() }
+                }
+                .getOrNull()
+                ?.map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                ?.takeIf { it.isNotEmpty() }
+                ?.let { emit(it) }
+        }
     }
 }

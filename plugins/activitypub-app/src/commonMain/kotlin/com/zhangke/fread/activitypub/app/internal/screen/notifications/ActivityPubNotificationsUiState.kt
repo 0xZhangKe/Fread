@@ -41,6 +41,7 @@ data class ActivityPubNotificationsUiState(
 data class NotificationUiState(
     val id: String,
     val type: StatusNotificationType,
+    val fromLocal: Boolean,
     val role: IdentityRole,
     val createdAt: Instant,
     val displayTime: String,
@@ -52,6 +53,9 @@ data class NotificationUiState(
      * Converted by account
      */
     val author: BlogAuthor,
+    val unread: Boolean,
+    // Just for UI shown, will changed to false when shown.
+    val unreadState: Boolean,
     val status: StatusUiState?,
     val relationshipSeveranceEvent: RelationshipSeveranceEvent?,
 )

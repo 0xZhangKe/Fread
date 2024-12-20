@@ -23,6 +23,7 @@ import androidx.compose.ui.geometry.isSpecified
 import androidx.compose.ui.geometry.isUnspecified
 import androidx.compose.ui.unit.Velocity
 import com.zhangke.framework.composable.Bounds
+import com.zhangke.framework.composable.aspectRatio
 import com.zhangke.framework.composable.toOffset
 import com.zhangke.framework.utils.equalsExactly
 
@@ -89,6 +90,12 @@ class ImageViewerState(
 
     val exceed: Boolean get() = !_currentWidthPixel.floatValue.equalsExactly(layoutSize.width)
 
+    internal val isBigVerticalImage: Boolean
+        get() {
+            if (layoutSize == Size.Zero) return false
+            return aspectRatio <= layoutSize.aspectRatio()
+        }
+
     private var alreadyAnimationIn = false
 
     private var flingAnimation: AnimationScope<Offset, AnimationVector2D>? = null
@@ -121,11 +128,16 @@ class ImageViewerState(
     }
 
     private suspend fun onLayoutSizeChanged() {
+        val offsetY = if (isBigVerticalImage){
+            0F
+        }else{
+            layoutSize.height / 2F - standardHeight / 2F
+        }
         if (initialSize.isUnspecified || initialOffset.isUnspecified) {
             _currentWidthPixel.floatValue = standardWidth
             _currentHeightPixel.floatValue = standardHeight
             _currentOffsetXPixel.floatValue = 0F
-            _currentOffsetYPixel.floatValue = layoutSize.height / 2F - standardHeight / 2F
+            _currentOffsetYPixel.floatValue = offsetY
         } else {
             if (needAnimateIn && !alreadyAnimationIn) {
                 alreadyAnimationIn = true
@@ -134,7 +146,7 @@ class ImageViewerState(
                 _currentWidthPixel.floatValue = standardWidth
                 _currentHeightPixel.floatValue = standardHeight
                 _currentOffsetXPixel.floatValue = 0F
-                _currentOffsetYPixel.floatValue = layoutSize.height / 2F - standardHeight / 2F
+                _currentOffsetYPixel.floatValue = offsetY
             }
         }
     }
@@ -183,7 +195,7 @@ class ImageViewerState(
 
     fun drag(dragAmount: Offset) {
         cancelAnimation()
-        if (exceed) {
+        if (exceed || isBigVerticalImage) {
             dragForVisit(dragAmount)
         } else {
             dragForExit(dragAmount)
@@ -211,7 +223,7 @@ class ImageViewerState(
 
     suspend fun dragStop(initialVelocity: Velocity) {
         cancelAnimation()
-        if (!exceed) {
+        if (!exceed && !isBigVerticalImage) {
             dragStopForExit()
             return
         }

@@ -28,7 +28,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.layout.LayoutCoordinates
@@ -37,9 +36,9 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.LocalImageLoader
 import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.option.SizeResolver
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
@@ -175,10 +174,9 @@ internal fun BlogImage(
     if (hideContent) {
         val imageLoader = LocalImageLoader.current
         LaunchedEffect(media) {
-            imageLoader.execute(
+            imageLoader.executeSafety(
                 ImageRequest {
                     data(imageUrl)
-                    size(SizeResolver(Size(50f, 50f)))
                 }
             )
         }

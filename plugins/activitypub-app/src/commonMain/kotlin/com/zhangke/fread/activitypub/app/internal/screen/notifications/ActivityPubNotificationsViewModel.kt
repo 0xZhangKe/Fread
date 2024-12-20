@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEnti
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.NotificationsRepo
+import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.common.status.usecase.FormatStatusDisplayTimeUseCase
@@ -23,6 +24,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
 ) : ContainerViewModel<ActivityPubNotificationsSubViewModel, ActivityPubNotificationsViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ActivityPubNotificationsSubViewModel {
@@ -37,6 +39,7 @@ class ActivityPubNotificationsViewModel @Inject constructor(
             clientManager = clientManager,
             accountEntityAdapter = accountEntityAdapter,
             refactorToNewBlog = refactorToNewBlog,
+            formatDatetimeToDate = formatDatetimeToDate,
         )
     }
 

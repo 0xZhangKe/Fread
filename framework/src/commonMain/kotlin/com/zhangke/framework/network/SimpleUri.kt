@@ -25,15 +25,17 @@ data class SimpleUri(
             if (uri.isEmpty()) return null
             val formalUri = try {
                 uri.toPlatformUri()
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 null
             } ?: return null
             val scheme = formalUri.scheme
             val host = formalUri.host
             val path = formalUri.path
-            val queries = formalUri.getQueryParameterNames().associateWith {
-                formalUri.getQueryParameter(it).orEmpty()
-            }
+            val queries = runCatching {
+                formalUri.getQueryParameterNames().associateWith {
+                    formalUri.getQueryParameter(it).orEmpty()
+                }
+            }.getOrNull() ?: return null
             return SimpleUri(scheme, host, path, queries)
         }
     }

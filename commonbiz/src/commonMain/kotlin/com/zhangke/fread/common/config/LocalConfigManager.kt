@@ -15,6 +15,11 @@ class LocalConfigManager @Inject constructor(
         return configSettings.getStringOrNull(key)
     }
 
+    suspend fun getStringOrPut(key: String, block: () -> String): String {
+        val value = configSettings.getStringOrNull(key)
+        return value ?: block().also { configSettings.putString(key, it) }
+    }
+
     suspend fun putString(key: String, value: String) {
         configSettings.putString(key, value)
     }
@@ -36,4 +41,5 @@ class LocalConfigManager @Inject constructor(
     }
 }
 
-val LocalLocalConfigManager = staticCompositionLocalOf<LocalConfigManager> { error("No LocalConfigManager provided") }
+val LocalLocalConfigManager =
+    staticCompositionLocalOf<LocalConfigManager> { error("No LocalConfigManager provided") }

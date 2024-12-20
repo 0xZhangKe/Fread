@@ -18,24 +18,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Error
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.Card
 import androidx.compose.material3.LinearProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.rememberCoroutineScope
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -51,12 +44,8 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusA
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.UploadMediaJob
 import com.zhangke.fread.activitypub.app.post_screen_media_descriptor_placeholder
-import com.zhangke.fread.common.utils.LocalThumbnailHelper
 import com.zhangke.fread.commonbiz.image
 import com.zhangke.fread.commonbiz.video
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.IO
-import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.stringResource
 
 private const val MEDIA_ASPECT = 1.78F
@@ -147,42 +136,12 @@ private fun MediaFileContent(
                     .fillMaxWidth()
                     .weight(1F)
             ) {
-                if (file is PostStatusMediaAttachmentFile.LocalFile && file.isVideo) {
-                    val thumbnailHelper = LocalThumbnailHelper.current
-                    var bitmap: ImageBitmap? by remember(file) {
-                        mutableStateOf(null)
-                    }
-                    val coroutineScope = rememberCoroutineScope()
-                    DisposableEffect(file) {
-                        coroutineScope.launch(Dispatchers.IO) {
-                            bitmap = thumbnailHelper.getThumbnail(file.file.uri)
-                        }
-                        onDispose {
-                            // TODO: recycle ImageBitmap
-                            // bitmap?.recycle()
-                        }
-                    }
-                    if (bitmap != null) {
-                        Image(
-                            modifier = Modifier.fillMaxSize(),
-                            bitmap = bitmap!!,
-                            contentDescription = "preview",
-                        )
-                    } else {
-                        Image(
-                            modifier = Modifier.fillMaxSize(),
-                            imageVector = Icons.Default.Error,
-                            contentDescription = "preview",
-                        )
-                    }
-                } else {
-                    Image(
-                        painter = rememberImagePainter(url = file.previewUri),
-                        modifier = Modifier.fillMaxSize(),
-                        contentScale = ContentScale.Crop,
-                        contentDescription = "Selected Media",
-                    )
-                }
+                Image(
+                    painter = rememberImagePainter(url = file.previewUri),
+                    modifier = Modifier.fillMaxSize(),
+                    contentScale = ContentScale.Crop,
+                    contentDescription = "Selected Media",
+                )
             }
 
             Text(
@@ -220,6 +179,7 @@ private fun MediaFileContent(
                         is UploadMediaJob.UploadState.Failed -> {
                             ImageAttachmentBottomFailed(
                                 onRetryClick = onRetryClick,
+                                onDeleteClick = onDeleteClick,
                             )
                         }
 
@@ -278,6 +238,7 @@ private fun BoxScope.ImageAttachmentBottomLoading(
 @Composable
 private fun BoxScope.ImageAttachmentBottomFailed(
     onRetryClick: () -> Unit,
+    onDeleteClick: () -> Unit,
 ) {
     Row(
         modifier = Modifier
@@ -297,6 +258,12 @@ private fun BoxScope.ImageAttachmentBottomFailed(
             onClick = onRetryClick,
             imageVector = Icons.Default.Refresh,
             contentDescription = "Retry",
+        )
+        SimpleIconButton(
+            modifier = Modifier.align(Alignment.CenterVertically),
+            onClick = onDeleteClick,
+            imageVector = Icons.Default.Delete,
+            contentDescription = "Delete",
         )
     }
 }

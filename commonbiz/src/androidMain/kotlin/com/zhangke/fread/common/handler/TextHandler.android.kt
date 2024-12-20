@@ -52,7 +52,9 @@ actual class ActivityTextHandler @Inject constructor(
         val intent = Intent(Intent.ACTION_SEND)
         intent.data = Uri.parse("mailto:")
         intent.putExtra(Intent.EXTRA_EMAIL, AppCommonConfig.AUTHOR_EMAIL)
-        activity.startActivity(intent)
+        if (intent.resolveActivity(activity.packageManager) != null) {
+            activity.startActivity(intent)
+        }
     }
 
     actual fun openAppMarket() {

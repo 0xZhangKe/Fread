@@ -7,9 +7,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
-import com.zhangke.framework.serialize.TimestampAsInstantSerializer
-import kotlinx.datetime.Instant
-import kotlinx.serialization.Serializable
+import com.zhangke.framework.datetime.Instant
 
 private const val TABLE_NAME = "channels"
 
@@ -20,11 +18,8 @@ data class RssChannelEntity(
     val title: String,
     val description: String?,
     val displayName: String,
-    @Serializable(with = TimestampAsInstantSerializer::class)
     val addDate: Instant,
-    @Serializable(with = TimestampAsInstantSerializer::class)
     val lastUpdateDate: Instant,
-    @Serializable(with = TimestampAsInstantSerializer::class)
     val lastBuildDate: Instant?,
     val updatePeriod: String?,
     val thumbnail: String?,

@@ -28,7 +28,7 @@ class BuildStatusUiStateUseCase @Inject constructor(
             // TODO: maybe set date time format
             specificTime = Instant.fromEpochMilliseconds(createdDate).formatDefault(),
             // TODO: maybe set date time format
-            editedTime = status.intrinsicBlog.editedAt?.formatDefault(),
+            editedTime = status.intrinsicBlog.editedAt?.instant?.formatDefault(),
             blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,
                 translating = false,

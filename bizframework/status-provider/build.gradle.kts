@@ -12,6 +12,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(path = ":framework"))
+                implementation(libs.bundles.voyager)
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)

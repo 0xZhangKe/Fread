@@ -9,10 +9,10 @@
 
     <string name="activity_pub_protocol_name">Mastodon</string>
 
-    <string name="activity_pub_search_timeline_name">%s`s %s</string>
+    <string name="activity_pub_search_timeline_name">%1$s`s %1$s</string>
 
-    <string name="activity_pub_instance_detail_language_label">Language: %s</string>
-    <string name="activity_pub_instance_detail_active_month_label">Active month: %s</string>
+    <string name="activity_pub_instance_detail_language_label">Language: %1$s</string>
+    <string name="activity_pub_instance_detail_active_month_label">Active month: %1$s</string>
 
     <string name="activity_pub_user_detail_relationship_blocking">Blocked</string>
     <string name="activity_pub_user_detail_relationship_following">Following</string>
@@ -30,7 +30,7 @@
     <string name="activity_pub_about">About</string>
     <string name="activity_pub_about_rule_title">Rules</string>
     <string name="activity_pub_trends_tag">Trends Tags</string>
-    <string name="activity_pub_trends_tag_description">%s people in the past 2 days</string>
+    <string name="activity_pub_trends_tag_description">%1$s people in the past 2 days</string>
     <string name="activity_pub_trends_status">Hot</string>
 
     <string name="input_media_desc_page_title">Image description text</string>
@@ -39,7 +39,7 @@
     <string name="post_status_page_title">New Blog</string>
     <string name="post_screen_input_hint">Please input your blog</string>
     <string name="post_screen_media_descriptor_placeholder">Description text</string>
-    <string name="post_status_poll_item_hint">Option %s</string>
+    <string name="post_status_poll_item_hint">Option %1$s</string>
     <string name="post_status_poll_duration">Voting duration</string>
     <string name="post_status_poll_function_title">Function</string>
     <string name="post_status_poll_single">Single</string>
@@ -51,24 +51,24 @@
     <string name="post_status_scope_follower_only">Followers only</string>
     <string name="post_status_scope_mentioned_only">Only people mentioned</string>
     <string name="post_status_success">Sent successfully</string>
-    <string name="post_status_failed">Post failed: %s</string>
+    <string name="post_status_failed">Post failed: %1$s</string>
     <string name="post_status_exit_dialog_content">Unsaved changes will be lost. Are you sure you want to exit?</string>
     <string name="post_status_content_is_empty">Please enter content</string>
     <string name="post_status_poll_is_empty">Please enter the content for the vote</string>
     <string name="post_status_media_is_not_upload">Media not uploaded yet</string>
 
-    <string name="activity_pub_user_detail_tab_about_joined">Joined on %s</string>
-    <string name="activity_pub_user_detail_menu_block">Block %s</string>
-    <string name="activity_pub_user_detail_menu_block_domain">Block %s</string>
-    <string name="activity_pub_user_detail_menu_unblock_domain">Unblock %s</string>
+    <string name="activity_pub_user_detail_tab_about_joined">Joined on %1$s</string>
+    <string name="activity_pub_user_detail_menu_block">Block %1$s</string>
+    <string name="activity_pub_user_detail_menu_block_domain">Block %1$s</string>
+    <string name="activity_pub_user_detail_menu_unblock_domain">Unblock %1$s</string>
     <string name="activity_pub_user_detail_menu_edit_private_note">Edit Note</string>
     <string name="activity_pub_user_detail_menu_edit_private_note_dialog_hint">Enter Private Note</string>
     <string name="activity_pub_user_detail_dialog_content_block">Do you want to block this user?</string>
     <string name="activity_pub_user_detail_dialog_content_block_domain">Do you want to block this domain?</string>
     <string name="activity_pub_user_menu_blocked_user_list">Blocked users</string>
     <string name="activity_pub_user_menu_muted_user_list">Muted Users</string>
-    <string name="activity_pub_user_detail_menu_mute_user">Mute %s</string>
-    <string name="activity_pub_user_detail_menu_unmute_user">Unmute %s</string>
+    <string name="activity_pub_user_detail_menu_mute_user">Mute %1$s</string>
+    <string name="activity_pub_user_detail_menu_unmute_user">Unmute %1$s</string>
     <string name="activity_pub_mute_user_bottom_sheet_title">Mute User?</string>
     <string name="activity_pub_mute_user_bottom_sheet_role1">They won\'t know they\'ve been muted.</string>
     <string name="activity_pub_mute_user_bottom_sheet_role2">They can still see your posts, but you won\'t see theirs.</string>
@@ -91,7 +91,7 @@
     <string name="activity_pub_notification_reblog_desc">reblog your post</string>
     <string name="activity_pub_notification_unknown_desc">Unknown Notification</string>
     <string name="activity_pub_notification_poll_desc">View previous voting results</string>
-    <string name="activity_pub_notification_poll_count">%s votes · Closed</string>
+    <string name="activity_pub_notification_poll_count">%1$s votes · Closed</string>
     <string name="activity_pub_notification_follow_desc">followed you</string>
     <string name="activity_pub_notification_update_desc">edited a post</string>
     <string name="activity_pub_notification_follow_request">You have received a follow request</string>
@@ -102,7 +102,7 @@
     <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">Do you want to withdraw your follow request?</string>
     <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">Are you sure you want to unblock this user?</string>
 
-    <string name="activity_pub_hashtag_timeline_description">%s posts · %s participants · %s post today</string>
+    <string name="activity_pub_hashtag_timeline_description">%1$s posts · %1$s participants · %1$s post today</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">Are you sure you want to unfollow this hashtag?</string>
 
     <string name="activity_pub_edit_account_info_name_empty">Please enter your username</string>
@@ -121,7 +121,7 @@
 
     <string name="activity_pub_user_follower_list_title">Followers</string>
     <string name="activity_pub_user_following_list_title">Following</string>
-    <string name="activity_pub_user_list_empty">No users for now”</string>
+    <string name="activity_pub_user_list_empty">No users for now</string>
 
     <string name="activity_pub_user_detail_follows_you">Follows you</string>
 
@@ -157,14 +157,14 @@
     <string name="activity_pub_filter_edit_duration_three_day">3 days</string>
     <string name="activity_pub_filter_edit_duration_one_week">1 week</string>
     <string name="activity_pub_filter_edit_duration_custom">Custom</string>
-    <string name="activity_pub_filter_edit_duration_finish_subtitle">Expires on %s</string>
+    <string name="activity_pub_filter_edit_duration_finish_subtitle">Expires on %1$s</string>
 
     <string name="activity_pub_filter_edit_keyword_title">Hidden Keywords</string>
     <string name="activity_pub_filter_edit_keyword_dialog_title">Edit Keyword</string>
     <string name="activity_pub_filter_edit_keyword_dialog_hint">Keyword</string>
     <string name="activity_pub_filter_edit_keyword_remove_keyword_dialog_content">Are you sure you want to delete this keyword?</string>
     <string name="activity_pub_filter_edit_keyword_list_title">Muted words</string>
-    <string name="activity_pub_filter_edit_keyword_list_desc">%s muted word or phrase</string>
+    <string name="activity_pub_filter_edit_keyword_list_desc">%1$s muted word or phrase</string>
     <string name="activity_pub_filter_edit_context_title">Mute from</string>
     <string name="activity_pub_filter_edit_context_selector_title">Please select sources to hide</string>
     <string name="activity_pub_filter_edit_context_home">Home &amp; List</string>

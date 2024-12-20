@@ -3,12 +3,12 @@ package com.zhangke.fread.commonbiz.shared.screen.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.SearchEngine
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -22,7 +22,7 @@ class LoginViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow(LoginUiState("", emptyList(), false))
+    private val _uiState = MutableStateFlow(LoginUiState("", emptyList()))
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
@@ -32,6 +32,7 @@ class LoginViewModel @Inject constructor(
     val hideScreenFlow = _hideScreenFlow.asSharedFlow()
 
     private val searchEngine: SearchEngine get() = statusProvider.searchEngine
+    private var searchJob: Job? = null
 
     init {
         launchInViewModel {
@@ -48,12 +49,9 @@ class LoginViewModel @Inject constructor(
         searchByCurrentQuery()
     }
 
-    fun onDismissRequest() {
-        _uiState.update { it.copy(loading = false) }
-    }
-
     private fun searchByCurrentQuery() {
-        viewModelScope.launch {
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
             val query = _uiState.value.query
             if (query.isEmpty()) {
                 _uiState.update {
@@ -61,47 +59,26 @@ class LoginViewModel @Inject constructor(
                 }
                 return@launch
             }
-            val snapshotList = searchEngine.searchPlatformSnapshot(query)
-                .map { SearchPlatformForLogin.Snapshot(it) }
-            _uiState.update { it.copy(platformList = snapshotList) }
-            searchEngine.searchPlatform(query, 0)
-                .onSuccess { list ->
-                    val platformList = list.map { SearchPlatformForLogin.Platform(it) }
-                    val currentList = _uiState.value.platformList.toMutableList()
-                    currentList.addAll(0, platformList)
-                    _uiState.update {
-                        it.copy(platformList = currentList)
+            _uiState.update { it.copy(platformList = emptyList()) }
+            searchEngine.searchAuthablePlatform(query)
+                .collect { (q, list) ->
+                    if (q == query) {
+                        _uiState.update { it.copy(platformList = list) }
                     }
                 }
         }
     }
 
     fun onSnapshotClick(snapshot: PlatformSnapshot) {
-        launchInViewModel {
-            _uiState.update { it.copy(loading = true) }
-            statusProvider.platformResolver
-                .resolve(snapshot)
-                .onFailure {
-                    _uiState.update { state -> state.copy(loading = false) }
-                    _snackBarMessageFlow.tryEmitException(it)
-                }.onSuccess {
-                    _uiState.update { state -> state.copy(loading = false) }
-                    _hideScreenFlow.emit(Unit)
-                    statusProvider.accountManager.triggerAuthBySource(it.baseUrl)
-                }
-        }
-    }
-
-    fun onPlatformClick(platform: BlogPlatform) {
+        val baseUrl = FormalBaseUrl.parse(snapshot.domain) ?: return
         launchInViewModel {
             _hideScreenFlow.emit(Unit)
-            statusProvider.accountManager.triggerAuthBySource(platform.baseUrl)
+            statusProvider.accountManager.triggerAuthBySource(baseUrl)
         }
     }
 
-    private suspend fun getSuggestedPlatformSnapshots(): List<SearchPlatformForLogin.Snapshot> {
+    private suspend fun getSuggestedPlatformSnapshots(): List<PlatformSnapshot> {
         return statusProvider.platformResolver
             .getSuggestedPlatformList()
-            .map { SearchPlatformForLogin.Snapshot(it) }
     }
 }

@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.screen
 
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
@@ -100,22 +101,29 @@ class StatusScreenProvider(
     fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String?{
+    ): String? {
         return providerList.firstNotNullOfOrNull { it.getBookmarkedScreen(role, protocol) }
     }
 
     fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String?{
+    ): String? {
         return providerList.firstNotNullOfOrNull { it.getFavouritedScreen(role, protocol) }
     }
 
     fun getFollowedHashtagScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String?{
+    ): String? {
         return providerList.firstNotNullOfOrNull { it.getFollowedHashtagScreen(role, protocol) }
+    }
+
+    fun getInstanceDetailScreen(
+        baseUrl: FormalBaseUrl,
+        protocol: StatusProviderProtocol,
+    ): String? {
+        return providerList.firstNotNullOfOrNull { it.getInstanceDetailScreen(protocol, baseUrl) }
     }
 }
 
@@ -170,5 +178,10 @@ interface IStatusScreenProvider {
     fun getFollowedHashtagScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
+    ): String?
+
+    fun getInstanceDetailScreen(
+        protocol: StatusProviderProtocol,
+        baseUrl: FormalBaseUrl,
     ): String?
 }

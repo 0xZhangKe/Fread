@@ -212,14 +212,14 @@ class ImportFeedsViewModel @Inject constructor(
     ): List<OpmlOutline> = withContext(Dispatchers.IO) {
         var xmlDocument = ""
         return@withContext try {
-            xmlDocument = platformUriHelper.readBytes(uri)?.contentToString() ?: ""
+            xmlDocument = platformUriHelper.readBytes(uri)?.decodeToString() ?: ""
             OpmlParser.parse(xmlDocument)
         } catch (e: Throwable) {
             _uiState.update { it.copy(errorMessage = e.message) }
             reportToFireBase("OPML_IMPORT_ERROR") {
                 put("errorMessage", e.message.orEmpty())
                 put("trace", e.stackTraceToString())
-                put("document", xmlDocument)
+                put("document", xmlDocument.take(90000))
             }
             emptyList<OpmlOutline>()
         }

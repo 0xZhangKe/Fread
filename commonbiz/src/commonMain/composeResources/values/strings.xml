@@ -19,6 +19,10 @@
 
     <string name="logout">Logout</string>
 
+    <string name="settings">Settings</string>
+
+    <string name="donate">Donate</string>
+
     <string name="status_provider_type_mixed">Mixed Content</string>
     <string name="status_provider_type_activity_pub">Mastodon</string>
 

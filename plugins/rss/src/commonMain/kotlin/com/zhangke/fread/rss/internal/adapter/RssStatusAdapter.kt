@@ -1,5 +1,6 @@
 package com.zhangke.fread.rss.internal.adapter
 
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.rss.internal.model.RssChannelItem
 import com.zhangke.fread.rss.internal.model.RssSource
@@ -46,7 +47,7 @@ class RssStatusAdapter @Inject constructor(
             url = this.link.ifNullOrEmpty { uriInsight.url },
             content = this.content.ifNullOrEmpty { this.description.ifNullOrEmpty { this.link.orEmpty() } },
             description = this.description,
-            date = this.pubDate,
+            date = Instant(this.pubDate),
             forwardCount = null,
             likeCount = null,
             repliesCount = null,

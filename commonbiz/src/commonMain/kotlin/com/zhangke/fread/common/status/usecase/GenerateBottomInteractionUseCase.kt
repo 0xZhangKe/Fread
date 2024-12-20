@@ -12,6 +12,7 @@ class GenerateBottomInteractionUseCase @Inject constructor() {
             obtainCommentInteraction(interactions),
             obtainForwardInteraction(interactions),
             obtainLikeInteraction(interactions),
+            obtainBookmarkInteraction(interactions),
             StatusUiInteraction.Share,
         )
     }
@@ -49,5 +50,17 @@ class GenerateBottomInteractionUseCase @Inject constructor() {
             )
         }
         return StatusUiInteraction.Like(likeInteraction)
+    }
+
+    private fun obtainBookmarkInteraction(interactions: List<StatusInteraction>): StatusUiInteraction {
+        var bookmarkInteraction = interactions.mapFirstOrNull { it as? StatusInteraction.Bookmark }
+        if (bookmarkInteraction == null) {
+            bookmarkInteraction = StatusInteraction.Bookmark(
+                bookmarkCount = null,
+                bookmarked = false,
+                enable = false,
+            )
+        }
+        return StatusUiInteraction.Bookmark(bookmarkInteraction)
     }
 }

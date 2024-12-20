@@ -55,6 +55,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.image.viewer.ImageViewer
 import com.zhangke.framework.composable.image.viewer.ImageViewerDefault
 import com.zhangke.framework.composable.image.viewer.rememberImageViewerState
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.permission.RequireLocalStoragePermission
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.common.page.BaseScreen
@@ -77,6 +78,10 @@ class ImageViewerScreen(
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        if (imageList.isEmpty()) {
+            navigator.pop()
+            return
+        }
         val coroutineScope = rememberCoroutineScope()
         var backgroundColorAlpha by remember {
             mutableFloatStateOf(0F)
@@ -189,7 +194,7 @@ class ImageViewerScreen(
                     data(image.url)
                     size(SizeResolver(Size(50f, 50f)))
                 }
-                aspectRatio = imageLoader.execute(request).aspectRatio() ?: 1F
+                aspectRatio = imageLoader.executeSafety(request).aspectRatio() ?: 1F
             }
         }
         if (aspectRatio != null) {
@@ -214,8 +219,11 @@ class ImageViewerScreen(
                 state = viewerState,
                 modifier = Modifier.fillMaxSize(),
             ) {
+                val request = remember(image.url) {
+                    ImageRequest(image.url)
+                }
                 Image(
-                    painter = rememberImagePainter(url = image.url),
+                    painter = rememberImagePainter(request = request),
                     modifier = Modifier
                         .fillMaxSize()
                         .blurhash(image.blurhash),

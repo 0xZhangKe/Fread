@@ -9,7 +9,7 @@ object SystemUtils {
 
     fun getAppVersionName(context: Context): String {
         val pInfo = context.packageManager.getPackageInfo(context.packageName, 0)
-        return pInfo.versionName
+        return pInfo.versionName.orEmpty()
     }
 
     fun getAppVersionCode(context: Context): String {

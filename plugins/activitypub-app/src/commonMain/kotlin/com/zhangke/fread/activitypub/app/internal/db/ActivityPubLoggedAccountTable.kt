@@ -17,13 +17,7 @@ private const val TABLE_NAME = "logged_accounts"
 
 @Entity(tableName = TABLE_NAME)
 data class ActivityPubLoggedAccountEntity(
-    /**
-     * it will container account id
-     */
     @PrimaryKey val uri: String,
-    /**
-     * Not ActivityPub accountId, it`s WebFinger.
-     */
     val userId: String,
     val webFinger: WebFinger,
     val platform: BlogPlatformEntity,
@@ -58,6 +52,9 @@ interface ActivityPubLoggerAccountDao {
 
     @Query("SELECT * FROM $TABLE_NAME ORDER BY addedTimestamp")
     suspend fun queryAll(): List<ActivityPubLoggedAccountEntity>
+
+    @Query("SELECT * FROM $TABLE_NAME WHERE userId=:userId")
+    suspend fun queryById(userId: String): ActivityPubLoggedAccountEntity?
 
     @Query("SELECT * FROM $TABLE_NAME WHERE uri=:uri")
     suspend fun queryByUri(uri: String): ActivityPubLoggedAccountEntity?

@@ -74,7 +74,7 @@ object PostStatusScreenRoute {
                 accountUri = formalAccountUri,
                 replyToBlogWebFinger = formalReplyToBlogAcct,
                 replyToBlogId = replyBlogId,
-                replyAuthorName = replyAuthorName,
+                replyAuthorName = replyAuthorName.decodeAsUri(),
                 replyVisibility = formalReplyVisibility ?: StatusVisibility.PUBLIC,
             )
         }

@@ -1,6 +1,7 @@
 package com.zhangke.fread.rss
 
 import com.zhangke.framework.composable.PagerTab
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.rss.internal.screen.source.RssSourceScreenRoute
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
@@ -94,6 +95,13 @@ class RssScreenProvider @Inject constructor(
     override fun getFollowedHashtagScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
+    ): String? {
+        return null
+    }
+
+    override fun getInstanceDetailScreen(
+        protocol: StatusProviderProtocol,
+        baseUrl: FormalBaseUrl
     ): String? {
         return null
     }

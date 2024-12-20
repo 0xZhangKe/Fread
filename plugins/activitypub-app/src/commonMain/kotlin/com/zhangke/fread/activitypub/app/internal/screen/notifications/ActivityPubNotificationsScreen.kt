@@ -1,5 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.screen.notifications
 
+import androidx.compose.animation.animateColorAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -10,15 +12,18 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
 import androidx.compose.material3.SegmentedButton
 import androidx.compose.material3.SegmentedButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -42,6 +47,7 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
+import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
 internal class ActivityPubNotificationsScreen(
@@ -55,7 +61,7 @@ internal class ActivityPubNotificationsScreen(
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
-        val snackbarHostState = LocalSnackbarHostState.current
+        val snackBarHostState = LocalSnackbarHostState.current
         val viewModel = screen.getViewModel<ActivityPubNotificationsViewModel>()
             .getSubViewModel(userUriInsights)
         val uiState by viewModel.uiState.collectAsState()
@@ -73,12 +79,21 @@ internal class ActivityPubNotificationsScreen(
             onLoadMore = viewModel::onLoadMore,
             onRejectClick = viewModel::onRejectClick,
             onAcceptClick = viewModel::onAcceptClick,
+            onNotificationShown = viewModel::onNotificationShown,
             composedStatusInteraction = viewModel.composedStatusInteraction,
             nestedScrollConnection = nestedScrollConnection,
         )
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
+        }
+        if (uiState.dataList.isNotEmpty()) {
+            val first = uiState.dataList.first()
+            LaunchedEffect(first.id, first.fromLocal) {
+                // 停留1秒表示已读
+                delay(1000)
+                viewModel.onPageResume()
+            }
         }
     }
 
@@ -90,6 +105,7 @@ internal class ActivityPubNotificationsScreen(
         onLoadMore: () -> Unit,
         onRejectClick: (NotificationUiState) -> Unit,
         onAcceptClick: (NotificationUiState) -> Unit,
+        onNotificationShown: (NotificationUiState) -> Unit,
         composedStatusInteraction: ComposedStatusInteraction,
         nestedScrollConnection: NestedScrollConnection?,
     ) {
@@ -123,14 +139,28 @@ internal class ActivityPubNotificationsScreen(
                     itemsIndexed(
                         items = uiState.dataList,
                     ) { index, notification ->
+                        val backgroundColor by animateColorAsState(
+                            if (notification.unreadState) {
+                                MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.2F)
+                            } else {
+                                Color.Transparent
+                            }
+                        )
                         StatusNotificationUi(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth()
+                                .background(backgroundColor),
                             notification = notification,
                             composedStatusInteraction = composedStatusInteraction,
                             indexInList = index,
                             onAcceptClick = onAcceptClick,
                             onRejectClick = onRejectClick,
                         )
+                        if (notification.unreadState) {
+                            LaunchedEffect(notification) {
+                                delay(1000)
+                                onNotificationShown(notification)
+                            }
+                        }
                     }
                 }
             }

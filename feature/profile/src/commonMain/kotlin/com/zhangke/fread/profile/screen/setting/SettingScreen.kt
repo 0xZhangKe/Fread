@@ -18,6 +18,7 @@ import androidx.compose.material.icons.filled.Contrast
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.PlayCircleOutline
 import androidx.compose.material.icons.filled.TextFields
+import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Info
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -44,6 +45,8 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
@@ -51,6 +54,8 @@ import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.language.LanguageSettingType
 import com.zhangke.fread.common.language.LocalActivityLanguageHelper
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.commonbiz.donate
+import com.zhangke.fread.commonbiz.settings
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.ic_code
 import com.zhangke.fread.feature.profile.ic_ratting
@@ -61,6 +66,7 @@ import com.zhangke.fread.feature.profile.profile_setting_dark_mode_dark
 import com.zhangke.fread.feature.profile.profile_setting_dark_mode_follow_system
 import com.zhangke.fread.feature.profile.profile_setting_dark_mode_light
 import com.zhangke.fread.feature.profile.profile_setting_dark_mode_title
+import com.zhangke.fread.feature.profile.profile_setting_donate_desc
 import com.zhangke.fread.feature.profile.profile_setting_font_size
 import com.zhangke.fread.feature.profile.profile_setting_font_size_large
 import com.zhangke.fread.feature.profile.profile_setting_font_size_medium
@@ -98,6 +104,7 @@ class SettingScreen : BaseScreen() {
         val viewModel = getViewModel<SettingScreenModel>()
         val uiState by viewModel.uiState.collectAsState()
 
+        val browserLauncher = LocalActivityBrowserLauncher.current
         val activityLanguageHelper = LocalActivityLanguageHelper.current
         val activityDayNightHelper = LocalActivityDayNightHelper.current
         val activityTextHandler = LocalActivityTextHandler.current
@@ -135,6 +142,13 @@ class SettingScreen : BaseScreen() {
                 reportClick(SettingElements.ABOUT)
                 navigator.push(AboutScreen())
             },
+            onDonateClick = {
+                reportClick(SettingElements.DONATE)
+                browserLauncher.launchWebTabInApp(
+                    AppCommonConfig.DONATE_LINK,
+                    checkAppSupportPage = false,
+                )
+            },
             onContentSizeChanged = {
                 reportClick(SettingElements.CONTENT_SIZE)
                 viewModel.onContentSizeChanged(it)
@@ -153,13 +167,14 @@ class SettingScreen : BaseScreen() {
         onLanguageClick: (LanguageSettingType) -> Unit,
         onRatingClick: () -> Unit,
         onAboutClick: () -> Unit,
+        onDonateClick: () -> Unit,
         onContentSizeChanged: (StatusContentSize) -> Unit,
         onAlwaysShowSensitive: (Boolean) -> Unit,
     ) {
         Scaffold(
             topBar = {
                 Toolbar(
-                    title = "Setting",
+                    title = stringResource(com.zhangke.fread.commonbiz.Res.string.settings),
                     onBackClick = onBackClick,
                 )
             },
@@ -208,6 +223,12 @@ class SettingScreen : BaseScreen() {
                     title = stringResource(Res.string.profile_setting_ratting),
                     subtitle = stringResource(Res.string.profile_setting_ratting_desc),
                     onClick = onRatingClick,
+                )
+                SettingItem(
+                    icon = Icons.Outlined.Coffee,
+                    title = stringResource(com.zhangke.fread.commonbiz.Res.string.donate),
+                    subtitle = stringResource(Res.string.profile_setting_donate_desc),
+                    onClick = onDonateClick,
                 )
                 SettingItem(
                     icon = Icons.Outlined.Info,

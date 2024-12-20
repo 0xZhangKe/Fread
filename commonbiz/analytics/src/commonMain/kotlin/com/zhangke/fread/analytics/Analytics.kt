@@ -1,5 +1,8 @@
 package com.zhangke.fread.analytics
 
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.analytics.analytics
+
 fun reportPageShow(
     pageName: String,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit),
@@ -21,12 +24,14 @@ fun reportClick(
 }
 
 fun reportInfo(
-    paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {},
+    paramsBuilder: (TrackingEventDataBuilder.() -> Unit),
 ) {
     reportToFireBase(EventNames.INFO, paramsBuilder)
 }
 
-expect fun reportToFireBase(
+fun reportToFireBase(
     eventName: String,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {},
-)
+) {
+    Firebase.analytics.logEvent(eventName, TrackingEventDataBuilder().apply(paramsBuilder).build())
+}

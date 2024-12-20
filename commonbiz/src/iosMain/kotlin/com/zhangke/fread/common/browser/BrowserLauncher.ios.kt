@@ -3,9 +3,12 @@ package com.zhangke.fread.common.browser
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.IdentityRole
+import me.tatarka.inject.annotations.Inject
 
-actual class BrowserLauncher {
+@ApplicationScope
+actual class BrowserLauncher @Inject constructor() {
     actual fun launchWebTabInApp(
         url: String,
         role: IdentityRole?,
@@ -42,3 +45,5 @@ actual class BrowserLauncher {
         launchWebTabInApp(AppCommonConfig.AUTHOR_WEBSITE)
     }
 }
+
+typealias ActivityBrowserLauncher = BrowserLauncher

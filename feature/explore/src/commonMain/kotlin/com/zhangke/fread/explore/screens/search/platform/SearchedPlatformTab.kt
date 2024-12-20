@@ -22,7 +22,7 @@ import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.ui.source.SearchContentResultUi
 import org.jetbrains.compose.resources.stringResource
 
-class SearchedPlatformTab(private val role: IdentityRole, private val query: String) :
+internal class SearchedPlatformTab(private val role: IdentityRole, private val query: String) :
     BasePagerTab() {
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(

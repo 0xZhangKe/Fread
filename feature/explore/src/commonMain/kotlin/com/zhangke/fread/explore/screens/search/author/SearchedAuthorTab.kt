@@ -32,7 +32,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.BlogAuthorUi
 import org.jetbrains.compose.resources.stringResource
 
-class SearchedAuthorTab(
+internal class SearchedAuthorTab(
     private val role: IdentityRole,
     private val query: String,
 ) : BasePagerTab() {

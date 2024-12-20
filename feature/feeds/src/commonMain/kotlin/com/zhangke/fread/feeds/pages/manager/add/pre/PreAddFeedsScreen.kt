@@ -232,7 +232,23 @@ class PreAddFeedsScreen : BaseScreen() {
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             }
-                            items(uiState.allSearchedResult) { content ->
+                            items(
+                                uiState.allSearchedResult,
+                                key = {
+                                    when (it) {
+                                        is SearchContentResult.Source -> it.source.uri
+                                        is SearchContentResult.ActivityPubPlatform -> it.platform.uri
+                                        is SearchContentResult.ActivityPubPlatformSnapshot -> it.platform.domain
+                                    }
+                                },
+                                contentType = {
+                                    when (it) {
+                                        is SearchContentResult.Source -> 1
+                                        is SearchContentResult.ActivityPubPlatform -> 2
+                                        is SearchContentResult.ActivityPubPlatformSnapshot -> 3
+                                    }
+                                },
+                            ) { content ->
                                 SearchContentResultUi(content, onContentClick)
                             }
                         }

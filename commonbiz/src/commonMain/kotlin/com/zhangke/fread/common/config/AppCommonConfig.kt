@@ -6,7 +6,7 @@ object AppCommonConfig {
 
     const val WEBSITE = "https://fread.xyz"
 
-    const val AUTHOR = "张可（Zhang Ke）"
+    const val AUTHOR = "Zhang Ke"
 
     const val AUTHOR_WEBSITE = "https://zhangke.space"
 
@@ -17,4 +17,6 @@ object AppCommonConfig {
     const val FEEDBACK_URL = "https://github.com/0xZhangKe/FreadIssueTracker/issues/new"
 
     const val TELEGRAM_GROUP = "https://t.me/+-SlbKcNbJSphNWI1"
+
+    const val DONATE_LINK = "https://ko-fi.com/zhangke"
 }

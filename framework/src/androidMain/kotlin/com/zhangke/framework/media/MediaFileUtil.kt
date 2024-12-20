@@ -3,15 +3,15 @@ package com.zhangke.framework.media
 import android.content.ContentValues
 import android.content.Context
 import android.graphics.Bitmap
-import android.graphics.drawable.BitmapDrawable
 import android.net.Uri
 import android.os.Environment
 import android.provider.MediaStore
 import com.seiko.imageloader.imageLoader
 import com.seiko.imageloader.model.ImageRequest
-import com.seiko.imageloader.model.ImageResult
 import com.zhangke.framework.architect.http.sharedHttpClient
+import com.zhangke.framework.imageloader.executeSafety
 import com.zhangke.framework.permission.hasWriteStoragePermission
+import com.zhangke.framework.utils.asBitmapOrNull
 import com.zhangke.framework.utils.ifDebugging
 import com.zhangke.framework.utils.throwInDebug
 import io.ktor.client.request.prepareRequest
@@ -91,11 +91,7 @@ object MediaFileUtil {
                     isBitmap = true
                 }
             }
-            when (val result = context.imageLoader.execute(request)) {
-                is ImageResult.OfBitmap -> result.bitmap
-                is ImageResult.OfImage -> result.image.drawable.let { it as? BitmapDrawable }?.bitmap
-                else -> null
-            }
+            context.imageLoader.executeSafety(request).asBitmapOrNull()
         } catch (e: Throwable) {
             ifDebugging {
                 e.printStackTrace()

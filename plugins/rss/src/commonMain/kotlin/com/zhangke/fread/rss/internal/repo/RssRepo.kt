@@ -1,5 +1,6 @@
 package com.zhangke.fread.rss.internal.repo
 
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.rss.internal.adapter.BlogAuthorAdapter
 import com.zhangke.fread.rss.internal.db.RssChannelEntity
@@ -79,10 +80,11 @@ class RssRepo @Inject constructor(
     }
 
     private suspend fun mapRemoteSource(url: String, source: RssSource): RssSource {
-        val localSource = channelDao.queryByUrl(url) ?: return source.copy(thumbnail = processThumbnail(source))
+        val localSource =
+            channelDao.queryByUrl(url) ?: return source.copy(thumbnail = processThumbnail(source))
         return source.copy(
             displayName = localSource.displayName,
-            addDate = localSource.addDate,
+            addDate = localSource.addDate.instant,
             thumbnail = processThumbnail(localSource.toRssSource()),
         )
     }
@@ -104,11 +106,11 @@ class RssRepo @Inject constructor(
             homePage = this.homePage,
             title = this.title,
             description = this.description,
-            lastBuildDate = this.lastUpdateDate,
+            lastBuildDate = Instant(this.lastUpdateDate),
             updatePeriod = this.updatePeriod,
             thumbnail = this.thumbnail,
-            addDate = this.addDate,
-            lastUpdateDate = this.lastUpdateDate,
+            addDate = Instant(this.addDate),
+            lastUpdateDate = Instant(this.lastUpdateDate),
             displayName = this.displayName,
         )
     }
@@ -119,8 +121,8 @@ class RssRepo @Inject constructor(
             homePage = this.homePage,
             title = this.title,
             displayName = this.displayName,
-            addDate = this.addDate,
-            lastUpdateDate = this.lastUpdateDate,
+            addDate = this.addDate.instant,
+            lastUpdateDate = this.lastUpdateDate.instant,
             description = this.description,
             thumbnail = this.thumbnail,
             updatePeriod = this.updatePeriod,

@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.fread.activitypub.app.internal.push.PushManager
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
@@ -27,13 +28,15 @@ class ActivityPubAccountManager @Inject constructor(
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val userUriTransformer: UserUriTransformer,
     private val accountAdapter: ActivityPubLoggedAccountAdapter,
-    applicationCoroutineScope: ApplicationCoroutineScope,
+    private val pushManager: PushManager,
+    private val applicationCoroutineScope: ApplicationCoroutineScope,
 ) : IAccountManager {
 
     init {
         applicationCoroutineScope.launch {
             accountRepo.getAllAccountFlow()
                 .collect {
+                    clientManager.clearCache()
                     loggedAccountProvider.updateAccounts(it)
                 }
         }
@@ -90,6 +93,11 @@ class ActivityPubAccountManager @Inject constructor(
 
     override suspend fun logout(uri: FormalUri): Boolean {
         userUriTransformer.parse(uri) ?: return false
+        val account = accountRepo.queryByUri(uri.toString())
+        if (account != null) {
+            val role = IdentityRole(accountUri = account.uri)
+            pushManager.unsubscribe(role, account.userId)
+        }
         accountRepo.deleteByUri(uri)
         loggedAccountProvider.removeAccount(uri)
         return true
@@ -97,5 +105,21 @@ class ActivityPubAccountManager @Inject constructor(
 
     suspend fun getAccount(baseUrl: FormalBaseUrl): ActivityPubLoggedAccount? {
         return accountRepo.queryByBaseUrl(baseUrl)
+    }
+
+    override fun subscribeNotification() {
+        applicationCoroutineScope.launch {
+            accountRepo.queryAll().forEach { account ->
+                subscribeNotificationForAccount(account)
+            }
+            accountRepo.onNewAccountFlow.collect {
+                subscribeNotificationForAccount(it)
+            }
+        }
+    }
+
+    private suspend fun subscribeNotificationForAccount(account: ActivityPubLoggedAccount) {
+        val role = IdentityRole(accountUri = account.uri)
+        pushManager.subscribe(role, account.userId)
     }
 }

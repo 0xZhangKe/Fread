@@ -43,14 +43,12 @@ fun TransparentNavigator(
         ) {
             Box(modifier = Modifier.fillMaxSize()) {
                 content(transparentNavigator)
-                val lastItem = transparentNavigator.lastItemOrNull
-                if (lastItem != null) {
+                if (transparentNavigator.items.size > 1) {
                     BackHandler(true) {
                         transparentNavigator.pop()
                     }
                     Box(
-                        modifier = Modifier
-                            .noRippleClick {}
+                        modifier = Modifier.noRippleClick {}
                     ) {
                         transparentContent(transparentNavigator)
                     }

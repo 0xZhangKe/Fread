@@ -7,7 +7,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.tryEmitException
 import com.zhangke.framework.coroutines.invokeOnCancel
-import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.add_feeds_page_empty_content_exist
@@ -83,26 +82,24 @@ class PreAddFeedsViewModel @Inject constructor(
                 it.copy(
                     searching = true,
                     searchErrorMessage = null,
+                    allSearchedResult = emptyList(),
                 )
             }
             statusProvider.searchEngine
                 .searchContent(IdentityRole.nonIdentityRole, _uiState.value.query)
-                .onSuccess { list ->
-                    _uiState.update {
-                        it.copy(
-                            allSearchedResult = list,
-                            searching = false,
-                            searchErrorMessage = null,
-                        )
-                    }
-                }.onFailure { e ->
-                    _uiState.update {
-                        it.copy(
-                            searching = false,
-                            searchErrorMessage = e.message.ifNullOrEmpty { e.message.orEmpty() },
-                        )
+                .collect { (query, results) ->
+                    if (query == _uiState.value.query) {
+                        _uiState.update {
+                            val allResult = it.allSearchedResult + results
+                            it.copy(
+                                allSearchedResult = allResult,
+                                searching = allResult.isEmpty(),
+                                searchErrorMessage = null,
+                            )
+                        }
                     }
                 }
+            _uiState.update { it.copy(searching = false) }
         }
         searchJob?.invokeOnCancel {
             _uiState.update {

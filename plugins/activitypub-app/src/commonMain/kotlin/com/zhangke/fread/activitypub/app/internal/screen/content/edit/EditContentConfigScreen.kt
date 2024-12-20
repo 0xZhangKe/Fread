@@ -36,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -77,7 +76,6 @@ class EditContentConfigScreen(
         private val TAB_ITEM_HEIGHT = 56.dp
     }
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
@@ -229,9 +227,9 @@ class EditContentConfigScreen(
             ) {
                 itemsIndexed(
                     items = tabsInUi,
-                    key = { _, item -> item.hashCode() }
+                    key = { _, item -> item.uiKey }
                 ) { _, tabItem ->
-                    ReorderableItem(state, tabItem.hashCode()) { dragging ->
+                    ReorderableItem(state, tabItem.uiKey) { dragging ->
                         val elevation by animateDpAsState(if (dragging) 16.dp else 0.dp, label = "")
                         Surface(
                             modifier = Modifier
@@ -350,4 +348,7 @@ class EditContentConfigScreen(
             },
         )
     }
+
+    private val ContentConfig.ActivityPubContent.ContentTab.uiKey: String
+        get() = "${this::class.simpleName}@${hashCode()}"
 }

@@ -63,6 +63,7 @@ import com.zhangke.fread.feeds.pre_add_feeds_no_result
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
 import com.zhangke.fread.status.ui.source.BlogPlatformUi
+import com.zhangke.fread.status.ui.source.SearchContentResultUi
 import com.zhangke.fread.status.ui.source.StatusSourceUi
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
@@ -289,37 +290,6 @@ class PreAddFeedsScreen : BaseScreen() {
                     highLightSize = 14.sp,
                     highLightColor = MaterialTheme.colorScheme.tertiary,
                 )
-            )
-        }
-    }
-
-    @Composable
-    private fun SearchContentResultUi(
-        content: SearchContentResult,
-        onContentClick: (SearchContentResult) -> Unit,
-    ) {
-        when (content) {
-            is SearchContentResult.Source -> StatusSourceUi(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable {
-                        onContentClick(content)
-                    },
-                source = content.source,
-            )
-
-            is SearchContentResult.ActivityPubPlatform -> BlogPlatformUi(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onContentClick(content) },
-                platform = content.platform,
-            )
-
-            is SearchContentResult.ActivityPubPlatformSnapshot -> BlogPlatformSnapshotUi(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clickable { onContentClick(content) },
-                platform = content.platform,
             )
         }
     }

@@ -1,6 +1,6 @@
 package com.zhangke.framework.serialize
 
-import kotlinx.datetime.Instant
+import com.zhangke.framework.datetime.Instant
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.PrimitiveKind
 import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
@@ -14,10 +14,10 @@ object TimestampAsInstantSerializer : KSerializer<Instant> {
 
     override fun deserialize(decoder: Decoder): Instant {
         val timestamp = decoder.decodeLong()
-        return Instant.fromEpochMilliseconds(timestamp)
+        return Instant(kotlinx.datetime.Instant.fromEpochMilliseconds(timestamp))
     }
 
     override fun serialize(encoder: Encoder, value: Instant) {
-        encoder.encodeLong(value.toEpochMilliseconds())
+        encoder.encodeLong(value.instant.toEpochMilliseconds())
     }
 }

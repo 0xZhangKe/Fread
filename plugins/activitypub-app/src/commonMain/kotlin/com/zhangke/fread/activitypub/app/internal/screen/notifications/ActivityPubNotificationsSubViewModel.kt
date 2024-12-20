@@ -1,10 +1,12 @@
 package com.zhangke.fread.activitypub.app.internal.screen.notifications
 
+import com.zhangke.activitypub.api.MarkersRepo
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -12,6 +14,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotification
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.NotificationsRepo
+import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
@@ -23,6 +26,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.flow.update
+import kotlinx.datetime.Instant
 
 class ActivityPubNotificationsSubViewModel(
     private val statusProvider: StatusProvider,
@@ -35,6 +39,7 @@ class ActivityPubNotificationsSubViewModel(
     private val clientManager: ActivityPubClientManager,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -68,6 +73,8 @@ class ActivityPubNotificationsSubViewModel(
     val uiState = loadableController.uiState
 
     private var loggedAccount: ActivityPubLoggedAccount? = null
+    private var reportedNotificationId: String? = null
+    private var lastReadTime: Instant? = null
 
     init {
         initInteractiveHandler(
@@ -124,16 +131,60 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
+    fun onPageResume() {
+        val firstNotificationId = uiState.value
+            .dataList
+            .firstOrNull()
+            ?.takeIf { !it.fromLocal }
+            ?.id ?: return
+        if (firstNotificationId == reportedNotificationId) return
+        reportedNotificationId = firstNotificationId
+        Log.i("F_TEST") { "report notification read: $firstNotificationId" }
+        launchInViewModel {
+            clientManager.getClient(role)
+                .markerRepo
+                .saveMarkers(notificationLastReadId = firstNotificationId)
+        }
+    }
+
+    fun onNotificationShown(notification: NotificationUiState) {
+        if (!notification.unreadState) return
+        _uiState.update { state ->
+            state.copy(
+                dataList = state.dataList.map {
+                    if (it.id == notification.id) {
+                        it.copy(unreadState = false)
+                    } else {
+                        it
+                    }
+                }
+            )
+        }
+    }
+
     private suspend fun getDataFromServer(
         onlyMentions: Boolean,
     ): Result<List<NotificationUiState>> {
         val account = getLoggedAccount() ?: return Result.failure(
             IllegalStateException("Account not found: ${userUriInsights.uri}")
         )
+        lastReadTime = getLastReadInstant()
         return notificationsRepo.getRemoteNotifications(
             account = account,
             onlyMentions = onlyMentions,
-        ).map { it.map { notification -> notification.toUiState() } }
+        ).map { notifications ->
+            notifications.toUiStateList()
+        }
+    }
+
+    private suspend fun getLastReadInstant(): Instant? {
+        val result = clientManager.getClient(role)
+            .markerRepo
+            .getMarkers(timeline = listOf(MarkersRepo.TIMELINE_NOTIFICATIONS))
+        return result.map { it.notifications }
+            .getOrNull()
+            ?.updatedAt
+            ?.let { formatDatetimeToDate(it) }
     }
 
     private suspend fun loadMoreDataFromServer(
@@ -147,8 +198,8 @@ class ActivityPubNotificationsSubViewModel(
             account = account,
             maxId = maxId,
             onlyMentions = onlyMentions,
-        ).map {
-            it.map { notification -> notification.toUiState() }
+        ).map { notifications ->
+            notifications.toUiStateList()
         }
     }
 
@@ -157,7 +208,7 @@ class ActivityPubNotificationsSubViewModel(
         return notificationsRepo.getLocalNotifications(
             accountOwnershipUri = account.uri,
             onlyMentions = _uiState.value.inMentionsTab,
-        ).map { it.toUiState() }
+        ).map { it.toUiState(fromLocal = true) }
     }
 
     private suspend fun getLoggedAccount(): ActivityPubLoggedAccount? {
@@ -223,16 +274,29 @@ class ActivityPubNotificationsSubViewModel(
         }
     }
 
-    private suspend fun StatusNotification.toUiState(): NotificationUiState {
+    private suspend fun List<StatusNotification>.toUiStateList(): List<NotificationUiState> {
+        val lastReadTime = lastReadTime ?: return this.map { it.toUiState() }
+        return this.map { notification ->
+            notification.toUiState(unread = notification.createdAt > lastReadTime)
+        }
+    }
+
+    private suspend fun StatusNotification.toUiState(
+        unread: Boolean = false,
+        fromLocal: Boolean = false,
+    ): NotificationUiState {
         return NotificationUiState(
             id = id,
             role = role,
+            fromLocal = fromLocal,
             type = type,
             createdAt = createdAt,
             account = account,
             author = accountEntityAdapter.toAuthor(account),
             displayTime = formatStatusDisplayTime(createdAt.toEpochMilliseconds()),
             status = status?.let { buildStatusUiState(role, it) },
+            unread = unread,
+            unreadState = unread,
             relationshipSeveranceEvent = relationshipSeveranceEvent,
         )
     }

@@ -87,27 +87,22 @@ internal fun FreadApp(
         LocalActivityHelper provides activityHelper,
     ) {
         ProvideNavigatorLifecycleKMPSupport {
-            val dayNightMode by activityDayNightHelper.dayNightModeFlow.collectAsState()
-            FreadTheme(
-                darkTheme = dayNightMode.isNight,
-            ) {
-                TransparentNavigator {
-                    BottomSheetNavigator(
-                        modifier = Modifier,
-                        sheetShape = RoundedCornerShape(12.dp),
-                    ) {
-                        Navigator(
-                            screen = remember { FreadScreen() },
-                            key = ROOT_NAVIGATOR_KEY,
-                        ) { navigator ->
-                            SlideTransition(
-                                navigator = navigator,
-                                disposeScreenAfterTransitionEnd = false,
-                            )
-                            LaunchedEffect(Unit) {
-                                GlobalScreenNavigation.openScreenFlow.collect { screen ->
-                                    it.push(screen)
-                                }
+            TransparentNavigator {
+                BottomSheetNavigator(
+                    modifier = Modifier,
+                    sheetShape = RoundedCornerShape(12.dp),
+                ) {
+                    Navigator(
+                        screen = remember { FreadScreen() },
+                        key = ROOT_NAVIGATOR_KEY,
+                    ) { navigator ->
+                        SlideTransition(
+                            navigator = navigator,
+                            disposeScreenAfterTransitionEnd = false,
+                        )
+                        LaunchedEffect(Unit) {
+                            GlobalScreenNavigation.openScreenFlow.collect { screen ->
+                                it.push(screen)
                             }
                         }
                     }

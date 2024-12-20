@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.db.notifications
 
+import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -8,6 +9,7 @@ import androidx.room.OnConflictStrategy
 import androidx.room.PrimaryKey
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
@@ -69,6 +71,7 @@ interface NotificationsDao {
     StatusConverter::class,
 )
 @Database(entities = [NotificationsEntity::class], version = DB_VERSION, exportSchema = false)
+@ConstructedBy(NotificationsDatabaseConstructor::class)
 abstract class NotificationsDatabase : RoomDatabase() {
 
     abstract fun notificationsDao(): NotificationsDao
@@ -83,4 +86,10 @@ internal class Notification1to2Migration : Migration(1, 2) {
     override fun migrate(connection: SQLiteConnection) {
         connection.execSQL("DELETE FROM $TABLE_NAME")
     }
+}
+
+// The Room compiler generates the `actual` implementations.
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object NotificationsDatabaseConstructor : RoomDatabaseConstructor<NotificationsDatabase> {
+    override fun initialize(): NotificationsDatabase
 }

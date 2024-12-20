@@ -1,7 +1,9 @@
 package com.zhangke.fread.activitypub.app.internal.db
 
+import androidx.room.ConstructedBy
 import androidx.room.Database
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubInstanceEntityConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubUserTokenConverter
@@ -30,6 +32,7 @@ private const val DB_VERSION = 1
     version = DB_VERSION,
     exportSchema = false
 )
+@ConstructedBy(ActivityPubDatabasesConstructor::class)
 abstract class ActivityPubDatabases : RoomDatabase() {
 
     abstract fun getLoggedAccountDao(): ActivityPubLoggerAccountDao
@@ -43,4 +46,10 @@ abstract class ActivityPubDatabases : RoomDatabase() {
     companion object {
         internal const val DB_NAME = "ActivityPubStatusProvider"
     }
+}
+
+// The Room compiler generates the `actual` implementations.
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object ActivityPubDatabasesConstructor : RoomDatabaseConstructor<ActivityPubDatabases> {
+    override fun initialize(): ActivityPubDatabases
 }

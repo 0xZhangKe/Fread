@@ -19,8 +19,8 @@ class BlogPlatformResourceLoader @Inject constructor(
 ) {
 
     suspend fun loadLocalPlatforms(): List<PlatformSnapshot> = withContext(Dispatchers.IO) {
-        val json = getLocalMastodonJson()
-        if (json.isNullOrEmpty()) return@withContext emptyList()
+        val json = mastodonHelper.getLocalMastodonJson()
+        if (json.isEmpty()) return@withContext emptyList()
         return@withContext globalJson.decodeFromString<JsonArray?>(json)
             ?.mapNotNull { it as? JsonObject }
             ?.mapNotNull { it.toPlatformSnapshot() }
@@ -53,9 +53,5 @@ class BlogPlatformResourceLoader @Inject constructor(
             return element.intOrNull
         }
         return null
-    }
-
-    private fun getLocalMastodonJson(): String? {
-        return mastodonHelper.getLocalMastodonJson()
     }
 }

@@ -50,7 +50,7 @@ import com.zhangke.fread.status.ui.StatusListPlaceholder
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
-class ActivityPubNotificationsScreen(
+internal class ActivityPubNotificationsScreen(
     private val userUriInsights: UserUriInsights,
 ) : BasePagerTab() {
 

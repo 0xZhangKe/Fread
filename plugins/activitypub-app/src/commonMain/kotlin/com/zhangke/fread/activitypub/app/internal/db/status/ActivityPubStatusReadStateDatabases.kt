@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.db.status
 
+import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Delete
@@ -8,6 +9,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
@@ -58,6 +60,7 @@ interface ActivityPubStatusReadStateDao {
     version = DB_VERSION,
     exportSchema = false,
 )
+@ConstructedBy(ActivityPubStatusReadStateDatabasesConstructor::class)
 abstract class ActivityPubStatusReadStateDatabases : RoomDatabase() {
 
     abstract fun getDao(): ActivityPubStatusReadStateDao
@@ -65,4 +68,10 @@ abstract class ActivityPubStatusReadStateDatabases : RoomDatabase() {
     companion object {
         internal const val DB_NAME = "activity_pub_status_read_state.db"
     }
+}
+
+// The Room compiler generates the `actual` implementations.
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object ActivityPubStatusReadStateDatabasesConstructor : RoomDatabaseConstructor<ActivityPubStatusReadStateDatabases> {
+    override fun initialize(): ActivityPubStatusReadStateDatabases
 }

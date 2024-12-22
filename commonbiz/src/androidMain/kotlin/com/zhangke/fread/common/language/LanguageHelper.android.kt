@@ -18,8 +18,6 @@ import me.tatarka.inject.annotations.Inject
 import java.lang.ref.WeakReference
 import java.util.Locale
 
-private const val LANGUAGE_SETTING = "app_language_setting"
-
 @ApplicationScope
 class LanguageHelper @Inject constructor(
     private val localConfigManager: LocalConfigManager,

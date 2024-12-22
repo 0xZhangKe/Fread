@@ -4,10 +4,9 @@ import java.util.Properties
 plugins {
     id("fread.android.application")
     id("fread.compose.multiplatform")
-    id("com.google.devtools.ksp")
-    id("kotlin-parcelize")
     id("com.google.gms.google-services")
     id("com.google.firebase.crashlytics")
+    id("com.google.devtools.ksp")
 }
 
 val keystorePropertiesFile: File = rootProject.file("keystore.properties")
@@ -77,80 +76,30 @@ android {
 }
 
 dependencies {
-    implementation(project(path = ":commonbiz"))
     implementation(project(path = ":framework"))
-    implementation(project(path = ":plugins:activitypub-app"))
-    implementation(project(path = ":plugins:rss"))
-    implementation(project(path = ":plugins:bluesky"))
     implementation(project(path = ":bizframework:status-provider"))
     implementation(project(path = ":commonbiz"))
+    implementation(project(path = ":commonbiz:analytics"))
     implementation(project(path = ":commonbiz:status-ui"))
     implementation(project(path = ":commonbiz:sharedscreen"))
     implementation(project(path = ":feature:feeds"))
     implementation(project(path = ":feature:explore"))
     implementation(project(path = ":feature:profile"))
     implementation(project(path = ":feature:notifications"))
-    implementation(project(":commonbiz:analytics"))
+    implementation(project(path = ":plugins:activitypub-app"))
+    implementation(project(path = ":plugins:rss"))
+    implementation(project(path = ":plugins:bluesky"))
+    implementation(project(path = ":app-hosting"))
 
-    testImplementation("junit:junit:4.+")
-    androidTestImplementation("androidx.test.ext:junit:1.1.5")
-    androidTestImplementation("androidx.test.espresso:espresso-core:3.5.1")
-
+    implementation(compose.material3)
     implementation(compose.components.resources)
 
-    implementation(libs.arrow.core)
-
-    implementation(compose.material)
-    implementation(compose.materialIconsExtended)
-    implementation(compose.material3)
-
-    implementation(libs.bundles.kotlin)
-    implementation(libs.androidx.core)
-    implementation(libs.androidx.core.ktx)
-    implementation(libs.androidx.appcompat)
-    implementation(libs.androidx.annotation)
-    implementation(compose.runtime)
-    implementation(compose.ui)
-    implementation(compose.foundation)
-    implementation(compose.material)
-    implementation(compose.material3)
-    implementation(compose.preview)
-    implementation(libs.bundles.androidx.fragment)
     implementation(libs.bundles.androidx.activity)
-    implementation(libs.bundles.androidx.preference)
-    implementation(libs.bundles.androidx.datastore)
-    implementation(libs.bundles.androidx.collection)
-    implementation(libs.androidx.browser)
-    implementation(libs.accompanist.permissions)
-    implementation(libs.androidx.room)
-    ksp(libs.androidx.room.compiler)
-    implementation(libs.kotlinInject.runtime)
-    ksp(libs.kotlinInject.compiler)
-    implementation(libs.imageLoader)
-    implementation(libs.okhttp3)
-    implementation(libs.okhttp3.logging)
-    implementation(libs.auto.service.annotations)
-    ksp(libs.auto.service.ksp)
-    implementation(libs.androidx.paging.common)
     implementation(libs.bundles.voyager)
+    implementation(libs.imageLoader)
+
     implementation(libs.krouter.runtime)
     ksp(libs.krouter.reducing.compiler)
+
     implementation(libs.bundles.androidx.media3)
-    implementation(libs.kotlinx.serialization.core)
-    implementation(libs.kotlinx.serialization.json)
-    implementation(libs.multiplatformsettings.coroutines)
-    implementation(libs.rssparser)
-
-    implementation(libs.bundles.googlePlayReview)
-
-    implementation(platform(libs.firebase.bom))
-    implementation(libs.firebase.analytics)
-    implementation(libs.firebase.crashlytics)
-    implementation(libs.firebase.messaging)
-
-    debugImplementation(libs.composeRuntimeTracing)
-}
-
-ksp {
-    arg("me.tatarka.inject.generateCompanionExtensions", "true")
 }

@@ -32,7 +32,7 @@ import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
-class MixedContentScreen(
+internal class MixedContentScreen(
     private val configId: String,
     private val isLatestTab: Boolean,
 ) : BasePagerTab() {

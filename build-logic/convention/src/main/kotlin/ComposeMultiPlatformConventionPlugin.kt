@@ -43,7 +43,6 @@ class ComposeMultiPlatformConventionPlugin : Plugin<Project> {
             composeCompiler {
                 // Enable 'strong skipping'
                 // https://medium.com/androiddevelopers/jetpack-compose-strong-skipping-mode-explained-cbdb2aa4b900
-                enableStrongSkippingMode.set(true)
 
                 if (project.providers.gradleProperty("myapp.enableComposeCompilerReports").isPresent) {
                     val composeReports = layout.buildDirectory.map { it.dir("reports").dir("compose") }

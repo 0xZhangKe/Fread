@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.Application
 import android.content.Context
 import android.content.ContextWrapper
+import android.content.pm.ApplicationInfo
 import androidx.lifecycle.LifecycleOwner
 
 @Volatile
@@ -30,4 +31,8 @@ fun Context.extractActivity(): Activity? {
 
 fun Context.extractLifecycleOwner(): LifecycleOwner? {
     return extractTarget()
+}
+
+fun Context.isDebugMode(): Boolean {
+    return (applicationInfo.flags and ApplicationInfo.FLAG_DEBUGGABLE) != 0
 }

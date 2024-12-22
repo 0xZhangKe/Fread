@@ -1,8 +1,11 @@
 package com.zhangke.fread.activitypub.app.internal.push
 
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.IdentityRole
+import me.tatarka.inject.annotations.Inject
 
-actual class PushManager {
+@ApplicationScope
+actual class PushManager @Inject constructor() {
 
     actual suspend fun subscribe(role: IdentityRole, accountId: String) {
         throw NotImplementedError("Not implemented for iOS")

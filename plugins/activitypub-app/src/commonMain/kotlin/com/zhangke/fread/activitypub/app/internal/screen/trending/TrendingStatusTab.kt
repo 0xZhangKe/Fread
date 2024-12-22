@@ -17,7 +17,7 @@ import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 
-class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab() {
+internal class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab() {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(

@@ -61,7 +61,7 @@ import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.uri.encode
 import kotlinx.coroutines.launch
 
-class ActivityPubContentScreen(
+internal class ActivityPubContentScreen(
     private val configId: String,
     private val isLatestContent: Boolean,
 ) : BasePagerTab() {

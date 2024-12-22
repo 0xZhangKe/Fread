@@ -25,7 +25,7 @@ kotlin {
                 implementation(project(path = ":bizframework:status-provider"))
                 implementation(project(path = ":commonbiz:status-ui"))
                 implementation(project(path = ":commonbiz:sharedscreen"))
-                implementation(project(":commonbiz:analytics"))
+                implementation(project(path = ":commonbiz:analytics"))
                 implementation(project(path = ":ActivityPub-Kotlin"))
 
                 implementation(compose.components.resources)

@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.db.status
 
+import androidx.room.ConstructedBy
 import androidx.room.Dao
 import androidx.room.Database
 import androidx.room.Entity
@@ -7,6 +8,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.RoomDatabase
+import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
 import androidx.room.migration.Migration
 import androidx.sqlite.SQLiteConnection
@@ -99,6 +101,7 @@ interface ActivityPubStatusDao {
     version = DB_VERSION,
     exportSchema = false,
 )
+@ConstructedBy(ActivityPubStatusDatabasesConstructor::class)
 abstract class ActivityPubStatusDatabases : RoomDatabase() {
 
     abstract fun getDao(): ActivityPubStatusDao
@@ -114,4 +117,9 @@ abstract class ActivityPubStatusDatabases : RoomDatabase() {
     }
 }
 
+// The Room compiler generates the `actual` implementations.
+@Suppress("NO_ACTUAL_FOR_EXPECT")
+expect object ActivityPubStatusDatabasesConstructor : RoomDatabaseConstructor<ActivityPubStatusDatabases> {
+    override fun initialize(): ActivityPubStatusDatabases
+}
 

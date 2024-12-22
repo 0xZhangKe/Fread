@@ -20,7 +20,7 @@ import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
 import org.jetbrains.compose.resources.stringResource
 
-class UserTimelineTab(
+internal class UserTimelineTab(
     private val tabType: UserTimelineTabType,
     private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,

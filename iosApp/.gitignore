@@ -1,0 +1,45 @@
+# Xcode
+.DS_Store
+build/
+DerivedData/
+*.pbxuser
+!default.pbxuser
+*.mode1v3
+!default.mode1v3
+*.mode2v3
+!default.mode2v3
+*.perspectivev3
+!default.perspectivev3
+xcuserdata/
+*.xccheckout
+*.moved-aside
+*.xcuserstate
+*.xcscmblueprint
+
+# Swift Package Manager
+.build/
+.swiftpm/xcode/package.xcworkspace/
+.swiftpm/xcode/package.xcworkspace/xcuserdata
+
+# CocoaPods
+Pods/
+Podfile.lock
+Podfile.swp
+podfile.swp
+podfile.lock
+
+# Carthage
+Carthage/Build/
+
+# Xcode Patch
+*.xcodeproj/*
+!*.xcodeproj/project.pbxproj
+!*.xcodeproj/xcshareddata/xcschemes/*.xcscheme
+!*.xcworkspace/contents.xcworkspacedata
+!*.xcworkspace/xcshareddata/xcschemes/*.xcscheme
+
+# SPM
+Packages/
+Package.pins
+Package.resolved
+.swiftpm/

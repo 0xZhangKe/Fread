@@ -50,7 +50,7 @@ import com.zhangke.fread.status.ui.common.ObserveScrollInProgressForConnection
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
 import org.jetbrains.compose.resources.stringResource
 
-class ExplorerFeedsTab(
+internal class ExplorerFeedsTab(
     private val type: ExplorerFeedsTabType,
     private val role: IdentityRole,
 ) : BasePagerTab() {

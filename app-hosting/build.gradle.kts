@@ -62,9 +62,6 @@ kotlin {
                 implementation(libs.bundles.androidx.datastore)
 
                 implementation(libs.bundles.googlePlayReview)
-                implementation(project.dependencies.platform(libs.firebase.bom))
-                implementation(libs.firebase.analytics)
-                implementation(libs.firebase.crashlytics)
             }
         }
     }

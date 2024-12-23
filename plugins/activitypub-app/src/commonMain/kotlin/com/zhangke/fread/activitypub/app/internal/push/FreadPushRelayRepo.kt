@@ -1,14 +1,14 @@
 package com.zhangke.fread.activitypub.app.internal.push
 
-import android.util.Log
-import com.google.firebase.messaging.FirebaseMessaging
 import com.zhangke.framework.architect.http.sharedHttpClient
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.common.config.FreadConfigManager
+import dev.gitlive.firebase.Firebase
+import dev.gitlive.firebase.messaging.messaging
 import io.ktor.client.call.body
 import io.ktor.client.request.delete
 import io.ktor.client.request.post
 import io.ktor.http.takeFrom
-import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.json.JsonObject
 import me.tatarka.inject.annotations.Inject
 import kotlin.io.encoding.Base64
@@ -26,8 +26,8 @@ class FreadPushRelayRepo @Inject constructor(
 
     suspend fun registerToRelay(accountId: String): Result<Unit> = runCatching {
         val deviceId = freadConfigManager.getDeviceId()
-        val token = FirebaseMessaging.getInstance().token.await()
-        Log.d("F_TEST", "registerToRelay: $accountId, $deviceId, $token")
+        val token =  Firebase.messaging.getToken()
+        Log.d("F_TEST") { "registerToRelay: $accountId, $deviceId, $token" }
         sharedHttpClient.post {
             url {
                 takeFrom(API_RELAY_TOKEN)

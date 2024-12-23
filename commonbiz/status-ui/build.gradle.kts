@@ -29,7 +29,6 @@ kotlin {
                 implementation(libs.ktml)
 
                 implementation(libs.krouter.runtime)
-                implementation(libs.androidx.constraintlayout.compose.kmp)
             }
         }
         commonTest {

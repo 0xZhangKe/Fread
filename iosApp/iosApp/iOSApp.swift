@@ -3,13 +3,13 @@ import SwiftUI
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
 
-    lazy var applicationCompoent: IosApplicationComponent = createApplicationComponent(
+    lazy var applicationComponent: IosApplicationComponent = createApplicationComponent(
         appDelegate: self
     )
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         
-        applicationCompoent.startupManager.initialize()
+        applicationComponent.startupManager.initialize()
 
         return true
     }
@@ -22,10 +22,10 @@ struct iOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            let activityComonent = createActivityComponent(
-                applicationComponent: delegate.applicationCompoent
+            let activityComponent = createActivityComponent(
+                applicationComponent: delegate.applicationComponent
             )
-            ContentView(component: activityComonent)
+            ContentView(component: activityComponent)
         }
     }
 }

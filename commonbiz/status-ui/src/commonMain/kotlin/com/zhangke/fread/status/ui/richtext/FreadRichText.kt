@@ -32,8 +32,8 @@ expect fun FreadRichText(
 
 @Composable
 fun FreadRichText(
-    modifier: Modifier,
     content: String,
+    modifier: Modifier = Modifier,
     mentions: List<Mention> = emptyList(),
     emojis: List<Emoji> = emptyList(),
     tags: List<HashtagInStatus> = emptyList(),

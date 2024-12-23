@@ -58,8 +58,7 @@ halilibo-richtext = "0.20.0"
 jsoup = "1.15.3"
 
 google-service-version = "4.4.2"
-firebaseBom = "33.6.0"
-firebaseCrashlyticsPlugin = "3.0.2"
+firebaseKmp = "2.1.0"
 
 goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
@@ -124,10 +123,9 @@ androidx-media3-common = { group = "androidx.media3", name = "media3-common", ve
 
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
-firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.ref = "firebaseBom" }
-firebase-analytics = { group = "com.google.firebase", name = "firebase-analytics" }
-firebase-crashlytics = { group = "com.google.firebase", name = "firebase-crashlytics" }
-firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging" }
+firebase-kmp-analytics = { module = "dev.gitlive:firebase-analytics", version.ref = "firebaseKmp"}
+firebase-kmp-crashlytics = { module = "dev.gitlive:firebase-crashlytics", version.ref = "firebaseKmp"}
+firebase-kmp-messaging = { module = "dev.gitlive:firebase-messaging", version.ref = "firebaseKmp"}
 
 kotlin-stdlib = { group = "org.jetbrains.kotlin", name = "kotlin-stdlib", version.ref = "kotlin" }
 kotlin-coroutine-core = { group = "org.jetbrains.kotlinx", name = "kotlinx-coroutines-core", version.ref = "kotlin.coroutine" }
@@ -220,6 +218,6 @@ kotlinx-serialization = { id = "org.jetbrains.kotlin.plugin.serialization", vers
 jetbrains-compose = { id = "org.jetbrains.compose", version.ref = "compose-multiplatform" }
 jetbrains-compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-service = { id = "com.google.gms.google-services",  version.ref = "google.service.version"}
-firebase-crashlytics = { id = "com.google.firebase.crashlytics",  version.ref = "firebaseCrashlyticsPlugin"}
+firebase-crashlytics = { id = "com.google.firebase.crashlytics",  version = "3.0.2"}
 ktorfit = { id = "de.jensklingenberg.ktorfit", version.ref = "ktorfit" }
 room = { id = "androidx.room", version.ref = "androidx-room" }

@@ -46,6 +46,8 @@ kotlin {
                 implementation(libs.leftright)
 
                 implementation(libs.krouter.runtime)
+
+                implementation(libs.firebase.kmp.messaging)
             }
         }
         commonTest {
@@ -58,7 +60,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.androidx.browser)
-                implementation(libs.firebase.messaging)
             }
         }
     }

@@ -1,15 +1,18 @@
 import FreadKit 
 import SwiftUI
+import FirebaseCore
 
 class AppDelegate : UIResponder, UIApplicationDelegate {
 
-    lazy var applicationCompoent: IosApplicationComponent = createApplicationComponent(
+    lazy var applicationComponent: IosApplicationComponent = createApplicationComponent(
         appDelegate: self
     )
 
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
+        // Use Firebase library to configure APIs
+        FirebaseApp.configure()
         
-        applicationCompoent.startupManager.initialize()
+        applicationComponent.startupManager.initialize()
 
         return true
     }
@@ -22,10 +25,10 @@ struct iOSApp: App {
     
     var body: some Scene {
         WindowGroup {
-            let activityComonent = createActivityComponent(
-                applicationComponent: delegate.applicationCompoent
+            let activityComponent = createActivityComponent(
+                applicationComponent: delegate.applicationComponent
             )
-            ContentView(component: activityComonent)
+            ContentView(component: activityComponent)
         }
     }
 }

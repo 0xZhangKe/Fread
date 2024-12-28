@@ -16,6 +16,9 @@ kotlin {
                 implementation(project(path = ":commonbiz"))
 
                 implementation(libs.bundles.voyager)
+
+                implementation(libs.firebase.kmp.analytics)
+                implementation(libs.firebase.kmp.crashlytics)
             }
         }
         commonTest {
@@ -27,8 +30,6 @@ kotlin {
             dependencies {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.auto.service.annotations)
-                implementation(libs.firebase.analytics)
-                implementation(libs.firebase.crashlytics)
             }
         }
     }
@@ -36,6 +37,4 @@ kotlin {
 
 dependencies {
     add("kspAndroid", libs.auto.service.ksp)
-
-    implementation(platform(libs.firebase.bom))
 }

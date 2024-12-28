@@ -3,7 +3,7 @@ import FreadKit
 import SwiftUI
 
 struct ContentView: View {
-    
+
     private let component: IosActivityComponent
 
     init(component: IosActivityComponent) {
@@ -17,7 +17,7 @@ struct ContentView: View {
 }
 
 struct ComposeView: UIViewControllerRepresentable {
-    
+
     private let component: IosActivityComponent
 
     init(component: IosActivityComponent) {

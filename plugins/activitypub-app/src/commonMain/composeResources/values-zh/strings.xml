@@ -113,13 +113,6 @@
 
     <string name="activity_pub_edit_content_screen_config_not_found">配置未找到</string>
 
-    <string name="activity_pub_edit_content_config_showing_list_title">显示在首页中的列表</string>
-    <string name="activity_pub_edit_content_config_hidden_list_title">可添加到首页的列表</string>
-    <string name="activity_pub_edit_content_delete_dialog_content">确定删除这个内容？</string>
-    <string name="activity_pub_edit_content_name_title">修改内容名字</string>
-    <string name="activity_pub_edit_content_name_label">编辑内容名</string>
-    <string name="activity_pub_edit_content_name_hint">请输入内容的名字</string>
-
     <string name="activity_pub_user_follower_list_title">关注者</string>
     <string name="activity_pub_user_following_list_title">已关注</string>
 

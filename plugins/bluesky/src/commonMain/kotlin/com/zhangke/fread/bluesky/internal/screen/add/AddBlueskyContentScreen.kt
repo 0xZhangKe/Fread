@@ -42,7 +42,10 @@ import com.zhangke.fread.commonbiz.login
 import com.zhangke.fread.framework.skip
 import org.jetbrains.compose.resources.stringResource
 
-class AddBlueskyContentScreen(private val baseUrl: FormalBaseUrl) : BaseScreen() {
+class AddBlueskyContentScreen(
+    private val baseUrl: FormalBaseUrl,
+    private val loginMode: Boolean = false,
+) : BaseScreen() {
 
     @Composable
     override fun Content() {
@@ -51,7 +54,7 @@ class AddBlueskyContentScreen(private val baseUrl: FormalBaseUrl) : BaseScreen()
         val snackBarHostState = rememberSnackbarHostState()
         val viewModel =
             getViewModel<AddBlueskyContentViewModel, AddBlueskyContentViewModel.Factory> {
-                it.create(baseUrl)
+                it.create(baseUrl, loginMode)
             }
         val uiState by viewModel.uiState.collectAsState()
         AddBlueskyContentContent(
@@ -104,6 +107,7 @@ class AddBlueskyContentScreen(private val baseUrl: FormalBaseUrl) : BaseScreen()
                         .fillMaxWidth()
                         .padding(top = 18.dp),
                     value = uiState.hosting,
+                    readOnly = loginMode,
                     onValueChange = onHostingChange,
                     label = {
                         Text(stringResource(Res.string.bsky_add_content_hosting_provider))
@@ -135,16 +139,18 @@ class AddBlueskyContentScreen(private val baseUrl: FormalBaseUrl) : BaseScreen()
                     singleLine = true,
                 )
                 Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
-                    Button(
-                        modifier = Modifier.align(Alignment.CenterStart),
-                        onClick = onSkipClick,
-                        colors = ButtonDefaults.buttonColors(
-                            containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                            contentColor = MaterialTheme.colorScheme.onSurface,
-                        ),
-                        shape = RoundedCornerShape(6.dp),
-                    ) {
-                        Text(stringResource(com.zhangke.fread.framework.Res.string.skip))
+                    if (!loginMode) {
+                        Button(
+                            modifier = Modifier.align(Alignment.CenterStart),
+                            onClick = onSkipClick,
+                            colors = ButtonDefaults.buttonColors(
+                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
+                                contentColor = MaterialTheme.colorScheme.onSurface,
+                            ),
+                            shape = RoundedCornerShape(6.dp),
+                        ) {
+                            Text(stringResource(com.zhangke.fread.framework.Res.string.skip))
+                        }
                     }
                     Button(
                         modifier = Modifier.align(Alignment.CenterEnd),

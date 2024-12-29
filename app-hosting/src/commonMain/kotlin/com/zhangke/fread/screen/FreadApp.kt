@@ -20,6 +20,7 @@ import cafe.adriel.voyager.transitions.SlideTransition
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.architect.theme.FreadTheme
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.config.FreadConfigManager
@@ -47,6 +48,8 @@ import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
 import com.zhangke.fread.utils.LocalActivityHelper
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import me.tatarka.inject.annotations.Inject
 
 typealias FreadApp = @Composable () -> Unit
@@ -101,9 +104,12 @@ internal fun FreadApp(
                             disposeScreenAfterTransitionEnd = false,
                         )
                         LaunchedEffect(Unit) {
-                            GlobalScreenNavigation.openScreenFlow.collect { screen ->
-                                it.push(screen)
-                            }
+                            GlobalScreenNavigation.openScreenFlow
+                                .debounce(300)
+                                .distinctUntilChanged()
+                                .collect { screen ->
+                                    navigator.push(screen)
+                                }
                         }
                     }
                 }

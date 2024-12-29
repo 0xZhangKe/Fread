@@ -26,12 +26,14 @@ class AddBlueskyContentViewModel @Inject constructor(
     private val contentRepo: FreadContentRepo,
     private val platformRepo: BlueskyPlatformRepo,
     @Assisted private val baseUrl: FormalBaseUrl,
+    @Assisted private val loginMode: Boolean,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
             baseUrl: FormalBaseUrl,
+            loginMode: Boolean,
         ): AddBlueskyContentViewModel
     }
 
@@ -96,7 +98,10 @@ class AddBlueskyContentViewModel @Inject constructor(
     }
 
     private suspend fun saveBlueskyContent() {
+        if (loginMode) return
         val platform = platformRepo.getPlatform(baseUrl)
+        val id = platform.baseUrl.toString()
+        if (contentRepo.getContent(id) != null) return
         val content = BlueskyContent(
             id = platform.baseUrl.toString(),
             order = contentRepo.getMaxOrder() + 1,

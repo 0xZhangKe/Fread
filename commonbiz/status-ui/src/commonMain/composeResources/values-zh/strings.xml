@@ -44,4 +44,13 @@
 
     <string name="status_ui_translating">翻译中…</string>
     <string name="status_ui_translate_show_original">显示原文</string>
+
+    <string name="status_ui_edit_content_delete_dialog_content">确定删除这个内容？</string>
+    <string name="status_ui_edit_content_name_title">修改内容名字</string>
+    <string name="status_ui_edit_content_name_label">编辑内容名</string>
+    <string name="status_ui_edit_content_name_hint">请输入内容的名字</string>
+
+    <string name="status_ui_edit_content_config_showing_list_title">显示在首页中的列表</string>
+    <string name="status_ui_edit_content_config_hidden_list_title">可添加到首页的列表</string>
+
 </resources>

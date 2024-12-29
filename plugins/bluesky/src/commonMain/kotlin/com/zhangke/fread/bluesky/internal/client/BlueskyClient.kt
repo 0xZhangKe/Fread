@@ -218,14 +218,18 @@ private class XrpcAuthPlugin(
                 val response = runCatching<AtpErrorDescription> {
                     plugin.json.decodeFromString(result.response.bodyAsText())
                 }
-                if (response.getOrNull()?.expired == true && !context.isRefreshTokenRequest) {
-                    val account = plugin.accountProvider()
-                    if (account != null) {
-                        refreshToken(scope, account.refreshJwt)?.let { response ->
-                            plugin.newSessionUpdater(response)
-                            context.headers.remove(Authorization)
-                            context.bearerAuth(response.accessJwt)
-                            result = execute(context)
+                if (response.getOrNull()?.expired == true) {
+                    if (context.isRefreshTokenRequest) {
+                        plugin.onLoginRequest()
+                    } else {
+                        val account = plugin.accountProvider()
+                        if (account != null) {
+                            refreshToken(scope, account.refreshJwt)?.let { response ->
+                                plugin.newSessionUpdater(response)
+                                context.headers.remove(Authorization)
+                                context.bearerAuth(response.accessJwt)
+                                result = execute(context)
+                            }
                         }
                     }
                 }

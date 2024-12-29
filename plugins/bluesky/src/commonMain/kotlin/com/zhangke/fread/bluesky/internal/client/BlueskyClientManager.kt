@@ -7,7 +7,9 @@ import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
@@ -53,7 +55,7 @@ class BlueskyClientManager @Inject constructor(
             loggedAccountProvider = loggedAccountProvider,
             newSessionUpdater = { updateNewSession(role, it) },
             onLoginRequest = {
-
+                GlobalScreenNavigation.navigate(AddBlueskyContentScreen(role.baseUrl!!, true))
             },
         )
     }

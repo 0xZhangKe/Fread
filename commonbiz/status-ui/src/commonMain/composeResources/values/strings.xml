@@ -44,4 +44,12 @@
 
     <string name="status_ui_translating">Translating…</string>
     <string name="status_ui_translate_show_original">Show Original</string>
+
+    <string name="status_ui_edit_content_delete_dialog_content">Confirm to delete this content?</string>
+    <string name="status_ui_edit_content_name_title">Edit Content Name</string>
+    <string name="status_ui_edit_content_name_label">Edit Content Name</string>
+    <string name="status_ui_edit_content_name_hint">Please enter the name of the content</string>
+
+    <string name="status_ui_edit_content_config_showing_list_title">Feeds on the Home Page</string>
+    <string name="status_ui_edit_content_config_hidden_list_title">Feeds Can Add to the Home Page</string>
 </resources>

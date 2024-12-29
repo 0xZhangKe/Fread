@@ -14,14 +14,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
@@ -41,22 +38,16 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
-import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_config_hidden_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_config_showing_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_delete_dialog_content
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_hint
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_label
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_title
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.status.ui.bar.EditContentTopBar
+import com.zhangke.fread.statusui.status_ui_edit_content_config_hidden_list_title
+import com.zhangke.fread.statusui.status_ui_edit_content_config_showing_list_title
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
@@ -118,54 +109,12 @@ class EditContentConfigScreen(
                 SnackbarHost(snackbarHostState)
             },
             topBar = {
-                var showDeleteConfirmDialog by remember {
-                    mutableStateOf(false)
-                }
-                var showEditNameDialog by remember {
-                    mutableStateOf(false)
-                }
-                Toolbar(
-                    title = uiState?.content?.name.orEmpty(),
+                EditContentTopBar(
+                    contentName = uiState?.content?.name.orEmpty(),
                     onBackClick = onBackClick,
-                    actions = {
-                        SimpleIconButton(
-                            onClick = {
-                                showEditNameDialog = true
-                            },
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit content name",
-                        )
-                        SimpleIconButton(
-                            onClick = {
-                                showDeleteConfirmDialog = true
-                            },
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete content",
-                        )
-                    }
+                    onNameEdit = onEditNameClick,
+                    onDeleteClick = onDeleteClick,
                 )
-                if (showDeleteConfirmDialog) {
-                    FreadDialog(
-                        onDismissRequest = { showDeleteConfirmDialog = false },
-                        contentText = stringResource(Res.string.activity_pub_edit_content_delete_dialog_content),
-                        onNegativeClick = {
-                            showDeleteConfirmDialog = false
-                        },
-                        onPositiveClick = {
-                            showDeleteConfirmDialog = false
-                            onDeleteClick()
-                        },
-                    )
-                }
-                if (showEditNameDialog && uiState != null) {
-                    EditContentNameDialog(
-                        name = uiState.content.name,
-                        onConfirmClick = onEditNameClick,
-                        onDismissRequest = {
-                            showEditNameDialog = false
-                        },
-                    )
-                }
             }
         ) { innerPaddings ->
             Column(
@@ -199,7 +148,7 @@ class EditContentConfigScreen(
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(Res.string.activity_pub_edit_content_config_showing_list_title),
+            text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_config_showing_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
         var tabsInUi by remember(uiState.content.showingTabList) {
@@ -274,7 +223,7 @@ class EditContentConfigScreen(
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(Res.string.activity_pub_edit_content_config_hidden_list_title),
+            text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_config_hidden_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
         uiState.content.hidingTabList.forEach { tabItem ->
@@ -302,51 +251,6 @@ class EditContentConfigScreen(
                 }
             }
         }
-    }
-
-    @Composable
-    private fun EditContentNameDialog(
-        name: String,
-        onConfirmClick: (String) -> Unit,
-        onDismissRequest: () -> Unit,
-    ) {
-        var inputtingNote by remember { mutableStateOf(name) }
-        FreadDialog(
-            onDismissRequest = {
-                onDismissRequest()
-            },
-            title = stringResource(Res.string.activity_pub_edit_content_name_title),
-            content = {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
-                    value = inputtingNote,
-                    onValueChange = {
-                        inputtingNote = it
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(Res.string.activity_pub_edit_content_name_label)
-                        )
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(Res.string.activity_pub_edit_content_name_hint)
-                        )
-                    },
-                )
-            },
-            onNegativeClick = {
-                onDismissRequest()
-            },
-            onPositiveClick = {
-                if (inputtingNote.isNotEmpty()) {
-                    onDismissRequest()
-                    onConfirmClick(inputtingNote)
-                }
-            },
-        )
     }
 
     private val ActivityPubContent.showingTabList: List<ActivityPubContent.ContentTab>

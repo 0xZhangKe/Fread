@@ -23,9 +23,9 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideAddBlueskyContentViewModel(creator: (FormalBaseUrl) -> AddBlueskyContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return AddBlueskyContentViewModel::class to AddBlueskyContentViewModel.Factory { baseUrl ->
-            creator(baseUrl)
+    fun provideAddBlueskyContentViewModel(creator: (FormalBaseUrl, Boolean) -> AddBlueskyContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return AddBlueskyContentViewModel::class to AddBlueskyContentViewModel.Factory { baseUrl, loginMode ->
+            creator(baseUrl, loginMode)
         }
     }
 

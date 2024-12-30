@@ -15,7 +15,7 @@ import sh.christian.ozone.api.Did
 
 class UpdateHomeTabUseCase @Inject constructor(
     private val clientManager: BlueskyClientManager,
-    private val getFeeds: GetFeedsUseCase,
+    private val getFeeds: GetFollowingFeedsUseCase,
     private val contentRepo: FreadContentRepo,
 ) {
 

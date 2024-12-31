@@ -1,49 +1,43 @@
 package com.zhangke.fread.common.browser
 
+import com.eygraber.uri.toNSURL
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.framework.utils.toPlatformUri
-import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.common.di.ActivityScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
+import platform.SafariServices.SFSafariViewController
+import platform.UIKit.UIApplication
+import platform.UIKit.UIModalPresentationPageSheet
+import platform.UIKit.UIViewController
 
 @ApplicationScope
-actual class BrowserLauncher @Inject constructor() {
-    actual fun launchWebTabInApp(
-        url: String,
-        role: IdentityRole?,
-        checkAppSupportPage: Boolean,
-    ) {
-        launchWebTabInApp(
-            uri = url.toPlatformUri(),
-            role = role,
-            checkAppSupportPage = checkAppSupportPage,
-        )
+class IosBrowserLauncher @Inject constructor(
+    private val application: UIApplication,
+) : BrowserLauncher {
+    override fun launchBySystemBrowser(uri: PlatformUri) {
+        application.openURL(uri.toNSURL()!!)
     }
+}
 
-    actual fun launchWebTabInApp(
+@ActivityScope
+class IosActivityBrowserLauncher @Inject constructor(
+    private val viewController: Lazy<UIViewController>,
+    private val browserLauncher: BrowserLauncher,
+) : ActivityBrowserLauncher, BrowserLauncher by browserLauncher {
+    override fun launchWebTabInApp(
         uri: PlatformUri,
         role: IdentityRole?,
         checkAppSupportPage: Boolean,
     ) {
-        TODO("Not yet implemented")
-    }
+        try {
+            val safari = SFSafariViewController(uri.toNSURL()!!)
+            safari.modalPresentationStyle = UIModalPresentationPageSheet
 
-    actual fun launchBySystemBrowser(url: String) {
-        launchBySystemBrowser(url.toPlatformUri())
-    }
-
-    actual fun launchBySystemBrowser(uri: PlatformUri) {
-        TODO("Not yet implemented")
-    }
-
-    actual fun launchFreadLandingPage() {
-        launchWebTabInApp(AppCommonConfig.WEBSITE)
-    }
-
-    actual fun launchAuthorWebsite() {
-        launchWebTabInApp(AppCommonConfig.AUTHOR_WEBSITE)
+            viewController.value.presentViewController(safari, animated = true, completion = null)
+        } catch (e: Exception) {
+            e.printStackTrace()
+            launchBySystemBrowser(uri)
+        }
     }
 }
-
-typealias ActivityBrowserLauncher = BrowserLauncher

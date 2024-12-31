@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.screen
 
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
@@ -44,7 +45,7 @@ class StatusScreenProvider(
         }
     }
 
-    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String? {
+    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
         return providerList.firstNotNullOfOrNull { it.getUserDetailRoute(role, uri) }
     }
 
@@ -52,7 +53,7 @@ class StatusScreenProvider(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull {
             it.getUserDetailRoute(
                 role,
@@ -139,13 +140,13 @@ interface IStatusScreenProvider {
 
     fun getNotificationScreen(account: LoggedAccount): PagerTab?
 
-    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String?
+    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen?
 
     fun getUserDetailRoute(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol
-    ): String?
+    ): Screen?
 
     fun getTagTimelineScreenRoute(
         role: IdentityRole,

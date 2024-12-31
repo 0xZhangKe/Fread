@@ -14,14 +14,6 @@
     <string name="activity_pub_instance_detail_language_label">语言: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">月活: %1$s</string>
 
-    <string name="activity_pub_user_detail_relationship_blocking">已屏蔽</string>
-    <string name="activity_pub_user_detail_relationship_following">已关注</string>
-    <string name="activity_pub_user_detail_relationship_not_follow">关注</string>
-    <string name="activity_pub_user_detail_relationship_requested">请求中</string>
-    <string name="activity_pub_user_detail_request_by_tip">对方正在请求关注你</string>
-    <string name="activity_pub_user_detail_posts">帖子</string>
-    <string name="activity_pub_user_detail_follower_info">关注者</string>
-    <string name="activity_pub_user_detail_following_info">正在关注</string>
     <string name="activity_pub_user_detail_tab_post">帖子</string>
     <string name="activity_pub_user_detail_tab_replies">回复</string>
     <string name="activity_pub_user_detail_tab_media">媒体</string>
@@ -97,10 +89,6 @@
     <string name="activity_pub_notification_new_status_desc">发布了新博客</string>
     <string name="activity_pub_notification_severed_desc">和你中断了关系</string>
 
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow">您确认要取消关注对方吗？</string>
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">您确定要撤回关注请求吗？</string>
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">您确定要取消屏蔽对方吗？</string>
-
     <string name="activity_pub_hashtag_timeline_description">%1$s 条帖子 · %1$s 参与 · %1$s 条今日帖子</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
 
@@ -117,8 +105,6 @@
     <string name="activity_pub_user_following_list_title">已关注</string>
 
     <string name="activity_pub_user_list_empty">暂无用户</string>
-
-    <string name="activity_pub_user_detail_follows_you">关注了你</string>
 
     <string name="activity_pub_muted_user_list_title">隐藏的用户</string>
     <string name="activity_pub_muted_user_list_empty">暂无隐藏的用户</string>

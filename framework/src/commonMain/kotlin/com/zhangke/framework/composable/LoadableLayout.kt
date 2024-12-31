@@ -1,8 +1,11 @@
 package com.zhangke.framework.composable
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -93,13 +96,25 @@ fun BoxScope.DefaultLoading(modifier: Modifier = Modifier) {
 fun BoxScope.DefaultFailed(
     modifier: Modifier = Modifier,
     exception: Throwable,
+    onRetryClick: (() -> Unit)? = null,
 ) {
-    Text(
-        modifier = modifier
-            .align(Alignment.Center),
-        fontSize = 18.sp,
-        text = exception.message.orEmpty(),
-    )
+    Column(
+        modifier = modifier.align(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            fontSize = 18.sp,
+            text = exception.message.orEmpty(),
+        )
+        if (onRetryClick != null) {
+            Button(
+                onClick = onRetryClick,
+            ) {
+                Text("Retry")
+            }
+        }
+    }
 }
 
 @Composable

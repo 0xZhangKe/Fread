@@ -38,6 +38,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.FreadTabRow
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.textString
@@ -48,7 +49,6 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_active_month_label
 import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_language_label
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
-import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen

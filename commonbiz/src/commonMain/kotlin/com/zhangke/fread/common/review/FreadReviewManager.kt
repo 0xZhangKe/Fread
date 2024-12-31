@@ -1,8 +1,8 @@
 package com.zhangke.fread.common.review
 
 import androidx.compose.runtime.staticCompositionLocalOf
-import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.fread.common.config.LocalConfigManager
+import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import kotlinx.coroutines.launch
@@ -14,6 +14,7 @@ import kotlin.time.Duration.Companion.milliseconds
 @ApplicationScope
 class FreadReviewManager @Inject constructor(
     private val localConfigManager: LocalConfigManager,
+    private val applicationCoroutineScope: ApplicationCoroutineScope,
 ) {
 
     companion object {
@@ -27,7 +28,7 @@ class FreadReviewManager @Inject constructor(
         if (forceShow) {
             showPlayReviewPopup(this)
         } else {
-            ApplicationScope.launch {
+            applicationCoroutineScope.launch {
                 maybeShowPlayReviewPopup()
             }
         }
@@ -58,13 +59,13 @@ class FreadReviewManager @Inject constructor(
     }
 
     internal fun onReviewSuccess() {
-        ApplicationScope.launch {
+        applicationCoroutineScope.launch {
             setReviewed()
         }
     }
 
     internal fun onReviewCancel() {
-        ApplicationScope.launch {
+        applicationCoroutineScope.launch {
             increasePlayReviewPopCount()
             setLatestShowPlayReviewTime()
         }

@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app
 
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
@@ -11,7 +12,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
-import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
@@ -77,18 +78,18 @@ class ActivityPubScreenProvider @Inject constructor(
         return ActivityPubNotificationsScreen(userInsights)
     }
 
-    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String? {
+    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
         userUriTransformer.parse(uri) ?: return null
-        return UserDetailRoute.buildRoute(role, uri)
+        return UserDetailScreen(role = role, userUri = uri)
     }
 
     override fun getUserDetailRoute(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return UserDetailRoute.buildRoute(role, webFinger)
+        return UserDetailScreen(role = role, webFinger = webFinger)
     }
 
     override fun getTagTimelineScreenRoute(

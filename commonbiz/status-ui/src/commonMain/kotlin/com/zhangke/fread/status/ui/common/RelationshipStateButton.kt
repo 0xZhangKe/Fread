@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user
+package com.zhangke.fread.status.ui.common
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -25,15 +25,15 @@ import com.zhangke.framework.composable.AlertConfirmDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_relationship_btn_dialog_content_cancel_blocking
-import com.zhangke.fread.activitypub.app.activity_pub_relationship_btn_dialog_content_cancel_follow
-import com.zhangke.fread.activitypub.app.activity_pub_relationship_btn_dialog_content_cancel_follow_request
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_blocking
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_following
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_not_follow
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_relationship_requested
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_request_by_tip
+import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_blocking
+import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow
+import com.zhangke.fread.statusui.status_ui_relationship_btn_dialog_content_cancel_follow_request
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_blocking
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
+import com.zhangke.fread.statusui.status_ui_user_detail_relationship_requested
+import com.zhangke.fread.statusui.status_ui_user_detail_request_by_tip
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -43,9 +43,9 @@ fun RelationshipStateButton(
     onUnblockClick: () -> Unit,
     onFollowClick: () -> Unit,
     onUnfollowClick: () -> Unit,
-    onCancelFollowRequestClick: () -> Unit,
-    onAcceptClick: () -> Unit,
-    onRejectClick: () -> Unit,
+    onCancelFollowRequestClick: () -> Unit = {},
+    onAcceptClick: () -> Unit = {},
+    onRejectClick: () -> Unit = {},
 ) {
     when (relationship) {
         RelationshipUiState.BLOCKING -> {
@@ -55,14 +55,14 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.ALERT,
-                text = stringResource(Res.string.activity_pub_user_detail_relationship_blocking),
+                text = stringResource(Res.string.status_ui_user_detail_relationship_blocking),
                 onClick = {
                     showDialog = true
                 },
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(Res.string.activity_pub_relationship_btn_dialog_content_cancel_blocking),
+                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_blocking),
                     onConfirm = onUnblockClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -73,7 +73,7 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.DISABLE,
-                text = stringResource(Res.string.activity_pub_user_detail_relationship_not_follow),
+                text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow),
                 onClick = onUnfollowClick,
             )
         }
@@ -85,14 +85,14 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.activity_pub_user_detail_relationship_following),
+                text = stringResource(Res.string.status_ui_user_detail_relationship_following),
                 onClick = {
                     showDialog = true
                 },
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(Res.string.activity_pub_relationship_btn_dialog_content_cancel_follow),
+                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow),
                     onConfirm = onUnfollowClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -103,7 +103,7 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.ACTIVE,
-                text = stringResource(Res.string.activity_pub_user_detail_relationship_not_follow),
+                text = stringResource(Res.string.status_ui_user_detail_relationship_not_follow),
                 onClick = onFollowClick,
             )
         }
@@ -115,12 +115,12 @@ fun RelationshipStateButton(
             RelationshipTextButton(
                 modifier = modifier,
                 style = TextButtonStyle.STANDARD,
-                text = stringResource(Res.string.activity_pub_user_detail_relationship_requested),
+                text = stringResource(Res.string.status_ui_user_detail_relationship_requested),
                 onClick = { showDialog = true },
             )
             if (showDialog) {
                 AlertConfirmDialog(
-                    content = stringResource(Res.string.activity_pub_relationship_btn_dialog_content_cancel_follow_request),
+                    content = stringResource(Res.string.status_ui_relationship_btn_dialog_content_cancel_follow_request),
                     onConfirm = onCancelFollowRequestClick,
                     onDismissRequest = { showDialog = false }
                 )
@@ -172,7 +172,7 @@ private fun FollowRequestBy(
             .padding(horizontal = 6.dp, vertical = 6.dp),
     ) {
         Text(
-            text = stringResource(Res.string.activity_pub_user_detail_request_by_tip),
+            text = stringResource(Res.string.status_ui_user_detail_request_by_tip),
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,
         )

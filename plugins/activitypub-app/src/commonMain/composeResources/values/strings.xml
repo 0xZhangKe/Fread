@@ -14,14 +14,6 @@
     <string name="activity_pub_instance_detail_language_label">Language: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">Active month: %1$s</string>
 
-    <string name="activity_pub_user_detail_relationship_blocking">Blocked</string>
-    <string name="activity_pub_user_detail_relationship_following">Following</string>
-    <string name="activity_pub_user_detail_relationship_not_follow">Follow</string>
-    <string name="activity_pub_user_detail_relationship_requested">Pending</string>
-    <string name="activity_pub_user_detail_request_by_tip">They are requesting to follow you</string>
-    <string name="activity_pub_user_detail_posts">Posts</string>
-    <string name="activity_pub_user_detail_follower_info">Followers</string>
-    <string name="activity_pub_user_detail_following_info">Following</string>
     <string name="activity_pub_user_detail_tab_post">Posts</string>
     <string name="activity_pub_user_detail_tab_replies">Replies</string>
     <string name="activity_pub_user_detail_tab_media">Media</string>
@@ -98,10 +90,6 @@
     <string name="activity_pub_notification_new_status_desc">post a new blog</string>
     <string name="activity_pub_notification_severed_desc">has severed ties with you</string>
 
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow">Do you want to unfollow this user?</string>
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">Do you want to withdraw your follow request?</string>
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">Are you sure you want to unblock this user?</string>
-
     <string name="activity_pub_hashtag_timeline_description">%1$s posts · %1$s participants · %1$s post today</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">Are you sure you want to unfollow this hashtag?</string>
 
@@ -116,8 +104,6 @@
     <string name="activity_pub_user_follower_list_title">Followers</string>
     <string name="activity_pub_user_following_list_title">Following</string>
     <string name="activity_pub_user_list_empty">No users for now</string>
-
-    <string name="activity_pub_user_detail_follows_you">Follows you</string>
 
     <string name="activity_pub_muted_user_list_title">Muted Users</string>
     <string name="activity_pub_muted_user_list_empty">No muted users</string>

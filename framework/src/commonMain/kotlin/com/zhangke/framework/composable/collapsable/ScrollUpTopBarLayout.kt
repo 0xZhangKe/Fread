@@ -1,4 +1,5 @@
-package com.zhangke.fread.activitypub.app.internal.composable
+package com.zhangke.framework.composable.collapsable
+
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -16,7 +17,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.layout.Layout
-import com.zhangke.framework.composable.collapsable.rememberCollapsableTopBarLayoutConnection
 
 @Composable
 fun ScrollUpTopBarLayout(

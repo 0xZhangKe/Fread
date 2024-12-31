@@ -5,6 +5,7 @@ import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.list.BskyFeedsExplorerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentViewModel
+import com.zhangke.fread.bluesky.internal.screen.user.BskyUserDetailViewModel
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
@@ -51,6 +52,14 @@ interface BlueskyComponent : BlueskyPlatformComponent {
     fun provideBskyFeedsExplorerViewModel(creator: (IdentityRole) -> BskyFeedsExplorerViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return BskyFeedsExplorerViewModel::class to BskyFeedsExplorerViewModel.Factory { role ->
             creator(role)
+        }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideUserDetailViewModel(creator: (IdentityRole, String) -> BskyUserDetailViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return BskyUserDetailViewModel::class to BskyUserDetailViewModel.Factory { role, did ->
+            creator(role, did)
         }
     }
 }

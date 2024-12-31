@@ -1,11 +1,28 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.list
 
-data class BskyFeedsExplorerUiState(){
+import com.zhangke.framework.utils.LoadState
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 
-    companion object{
+data class BskyFeedsExplorerUiState(
+    val initializing: Boolean,
+    val pageError: Throwable?,
+    val refreshing: Boolean,
+    val loadMoreState: LoadState,
+    val followingFeeds: List<BlueskyFeeds>,
+    val suggestedFeeds: List<BlueskyFeeds>,
+) {
 
-        fun default(): BskyFeedsExplorerUiState{
-            return BskyFeedsExplorerUiState()
+    companion object {
+
+        fun default(): BskyFeedsExplorerUiState {
+            return BskyFeedsExplorerUiState(
+                initializing = false,
+                loadMoreState = LoadState.Idle,
+                refreshing = false,
+                pageError = null,
+                followingFeeds = emptyList(),
+                suggestedFeeds = emptyList(),
+            )
         }
     }
 }

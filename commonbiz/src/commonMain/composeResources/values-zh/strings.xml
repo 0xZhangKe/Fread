@@ -23,6 +23,8 @@
 
     <string name="donate">捐赠</string>
 
+    <string name="feeds">Feeds</string>
+
     <string name="status_provider_type_activity_pub">长毛象</string>
 
     <string name="add_content_title">添加内容</string>

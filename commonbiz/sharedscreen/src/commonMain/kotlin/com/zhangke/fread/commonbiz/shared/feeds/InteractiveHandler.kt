@@ -157,7 +157,7 @@ class InteractiveHandler(
     override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
         coroutineScope.launch {
             screenProvider.getUserDetailRoute(role, blogAuthor.uri)
-                ?.let(::tryOpenScreenByRoute)
+                ?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
 
@@ -232,7 +232,7 @@ class InteractiveHandler(
                 role = role,
                 webFinger = mention.webFinger,
                 protocol = mention.protocol,
-            )?.let(::tryOpenScreenByRoute)
+            )?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
 

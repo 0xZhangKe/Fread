@@ -33,6 +33,7 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.login_dialog_input_hint
@@ -53,11 +54,22 @@ class LoginBottomSheetScreen : BaseScreen() {
         val uiState by viewModel.uiState.collectAsState()
 
         val snackbarHostState = rememberSnackbarHostState()
+        val activityBrowserLauncher = LocalActivityBrowserLauncher.current
         LoginContent(
             uiState = uiState,
             snackbarHostState = snackbarHostState,
             onQueryChanged = viewModel::onQueryChanged,
-            onSnapshotClick = viewModel::onSnapshotClick,
+            onSnapshotClick = {
+                viewModel.onSnapshotClick(
+                    snapshot = it,
+                    openOauthPage = { oauthUrl ->
+                        activityBrowserLauncher.launchWebTabInApp(
+                            url = oauthUrl,
+                            checkAppSupportPage = false,
+                        )
+                    },
+                )
+            },
             onSearchClick = viewModel::onSearchClick,
         )
 

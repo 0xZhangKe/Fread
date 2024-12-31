@@ -69,11 +69,14 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun onSnapshotClick(snapshot: PlatformSnapshot) {
+    fun onSnapshotClick(
+        snapshot: PlatformSnapshot,
+        openOauthPage: (String) -> Unit,
+    ) {
         val baseUrl = FormalBaseUrl.parse(snapshot.domain) ?: return
         launchInViewModel {
             _hideScreenFlow.emit(Unit)
-            statusProvider.accountManager.triggerAuthBySource(baseUrl)
+            statusProvider.accountManager.triggerAuthBySource(baseUrl, openOauthPage)
         }
     }
 

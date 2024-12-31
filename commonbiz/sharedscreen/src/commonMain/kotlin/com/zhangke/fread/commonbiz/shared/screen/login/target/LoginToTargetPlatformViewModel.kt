@@ -18,10 +18,10 @@ class LoginToTargetPlatformViewModel @Inject constructor(
         fun create(platform: BlogPlatform): LoginToTargetPlatformViewModel
     }
 
-    fun onServerHostConfirmClick() {
+    fun onServerHostConfirmClick(openOauthPage: (String) -> Unit) {
         launchInViewModel {
             statusProvider.accountManager
-                .triggerAuthBySource(platform.baseUrl)
+                .triggerAuthBySource(platform.baseUrl, openOauthPage)
         }
     }
 }

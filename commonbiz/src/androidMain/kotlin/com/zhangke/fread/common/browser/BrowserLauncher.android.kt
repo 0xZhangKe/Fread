@@ -21,13 +21,20 @@ class AndroidBrowserLauncher @Inject constructor(
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         context.startActivity(intent)
     }
+
+
 }
 
 @ActivityScope
 class AndroidActivityBrowserLauncher @Inject constructor(
     private val activity: Activity,
-    private val browserLauncher: BrowserLauncher,
-) : ActivityBrowserLauncher, BrowserLauncher by browserLauncher {
+) : ActivityBrowserLauncher {
+
+    override fun launchBySystemBrowser(uri: PlatformUri) {
+        val intent = Intent(Intent.ACTION_VIEW, uri.toAndroidUri())
+        activity.startActivity(intent)
+    }
+
     override fun launchWebTabInApp(
         uri: PlatformUri,
         role: IdentityRole?,
@@ -39,7 +46,6 @@ class AndroidActivityBrowserLauncher @Inject constructor(
         }
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
-        customTabsIntent.intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         customTabsIntent.launchUrl(activity, uri.toAndroidUri())
     }
 }

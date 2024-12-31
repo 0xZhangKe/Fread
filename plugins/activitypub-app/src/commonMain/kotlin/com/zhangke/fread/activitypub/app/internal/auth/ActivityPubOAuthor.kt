@@ -74,6 +74,8 @@ class ActivityPubOAuthor @Inject constructor(
     }
 
     private fun openOauthPage(oauthUrl: String) {
-        browserLauncher.launchWebTabInApp(oauthUrl, checkAppSupportPage = false)
+        // FIXME: support in-app browser
+        // browserLauncher.launchWebTabInApp(oauthUrl, checkAppSupportPage = false)
+        browserLauncher.launchBySystemBrowser(oauthUrl)
     }
 }

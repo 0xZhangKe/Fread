@@ -65,7 +65,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
         }
 
         commonComponent = appContext.commonComponent
-        val activityComponent = BrowserBridgeDialogActivityComponent.create(commonComponent, this)
+        val activityComponent = BrowserBridgeDialogActivityComponent.create(this)
 
         setContent {
             val dayNightMode by commonComponent.dayNightHelper.dayNightModeFlow.collectAsState()

@@ -2,7 +2,7 @@ package com.zhangke.framework.utils
 
 import com.ionspin.kotlin.bignum.decimal.toBigDecimal
 
-fun Int.formatToHumanReadable(): String {
+fun Long.formatToHumanReadable(): String {
     return if (this >= 1_000_000) {
         (this / 1_000_000F).decimal(1)
             .removeSuffix(".0")
@@ -14,6 +14,10 @@ fun Int.formatToHumanReadable(): String {
     } else {
         this.toString()
     }
+}
+
+fun Int.formatToHumanReadable(): String {
+    return this.toLong().formatToHumanReadable()
 }
 
 fun Float.decimal(digits: Int): String {

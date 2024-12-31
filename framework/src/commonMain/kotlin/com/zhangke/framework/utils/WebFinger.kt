@@ -28,6 +28,8 @@ class WebFinger private constructor(
     val host: String,
 ) : PlatformParcelable, PlatformSerializable {
 
+    val did: String? = if (name == NAME_DID) host else null
+
     override fun toString(): String {
         return "@$name@$host"
     }

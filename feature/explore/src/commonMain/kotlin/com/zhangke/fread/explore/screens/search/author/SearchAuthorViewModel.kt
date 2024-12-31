@@ -60,9 +60,10 @@ open class SearchAuthorViewModel @Inject constructor(
     }
 
     fun onUserInfoClick(blogAuthor: BlogAuthor) {
-        val route = statusProvider.screenProvider.getUserDetailRoute(role, blogAuthor.uri) ?: return
         launchInViewModel {
-            _openScreenFlow.emit(route)
+            statusProvider.screenProvider
+                .getUserDetailRoute(role, blogAuthor.uri)
+                ?.let { _openScreenFlow.emit(it) }
         }
     }
 }

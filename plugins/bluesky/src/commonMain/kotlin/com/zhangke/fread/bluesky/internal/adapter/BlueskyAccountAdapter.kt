@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.adapter
 
+import app.bsky.actor.ProfileView
 import app.bsky.actor.ProfileViewDetailed
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
@@ -52,6 +53,19 @@ class BlueskyAccountAdapter @Inject constructor(
             name = profileViewDetailed?.displayName.orEmpty(),
             avatar = profileViewDetailed?.avatar?.uri,
             description = profileViewDetailed?.description.orEmpty(),
+            emojis = emptyList(),
+        )
+    }
+
+    fun convertToBlogAuthor(
+        profile: ProfileView
+    ): BlogAuthor {
+        return BlogAuthor(
+            uri = userUriTransformer.createUserUri(profile.did.did),
+            webFinger = WebFinger.createFromDid(profile.did.did),
+            name = profile.displayName.orEmpty(),
+            avatar = profile.avatar?.uri,
+            description = profile.description.orEmpty(),
             emojis = emptyList(),
         )
     }

@@ -4,7 +4,10 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.screen.feeds.list.BskyFeedsExplorerPage
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
+import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentScreen
 import com.zhangke.fread.bluesky.internal.screen.user.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
@@ -42,15 +45,16 @@ class BlueskyScreenProvider @Inject constructor(
         return BlueskyHomeTab(content.id, isLatestTab)
     }
 
-    override fun getEditContentConfigScreenRoute(content: FreadContent): String? {
-        TODO("Not yet implemented")
+    override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
+        if (content !is BlueskyContent) return null
+        return BlueskyEditContentScreen(content.id)
     }
 
     override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
         TODO("Not yet implemented")
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         uri: FormalUri
     ): Screen? {
@@ -58,7 +62,7 @@ class BlueskyScreenProvider @Inject constructor(
         return BskyUserDetailScreen(role = role, did = did)
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol

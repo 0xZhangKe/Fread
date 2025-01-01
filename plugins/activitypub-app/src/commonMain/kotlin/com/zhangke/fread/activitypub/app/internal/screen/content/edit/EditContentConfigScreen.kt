@@ -48,8 +48,6 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.bar.EditContentTopBar
 import com.zhangke.fread.statusui.status_ui_edit_content_config_hidden_list_title
 import com.zhangke.fread.statusui.status_ui_edit_content_config_showing_list_title
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -57,9 +55,8 @@ import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(EditContentConfigRoute.ROUTE)
 class EditContentConfigScreen(
-    @RouteParam(EditContentConfigRoute.PARAM_CONTENT_ID) private val contentId: String,
+    private val contentId: String,
 ) : BaseScreen() {
 
     companion object {

@@ -156,7 +156,7 @@ class InteractiveHandler(
 
     override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
         coroutineScope.launch {
-            screenProvider.getUserDetailRoute(role, blogAuthor.uri)
+            screenProvider.getUserDetailScreen(role, blogAuthor.uri)
                 ?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
@@ -228,7 +228,7 @@ class InteractiveHandler(
 
     override fun onMentionClick(role: IdentityRole, mention: Mention) {
         coroutineScope.launch {
-            screenProvider.getUserDetailRoute(
+            screenProvider.getUserDetailScreen(
                 role = role,
                 webFinger = mention.webFinger,
                 protocol = mention.protocol,

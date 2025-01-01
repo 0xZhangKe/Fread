@@ -4,12 +4,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.FreadContent
-import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -51,8 +49,7 @@ class MainDrawerViewModel @Inject constructor(
             if (content is MixedContent) {
                 _openScreenFlow.emit(EditMixedContentScreen(content.id))
             } else {
-                statusProvider.screenProvider.getEditContentConfigScreenRoute(content)
-                    ?.let { KRouter.routeScreen(it) }
+                statusProvider.screenProvider.getEditContentConfigScreenScreen(content)
                     ?.let { _openScreenFlow.emit(it) }
             }
         }

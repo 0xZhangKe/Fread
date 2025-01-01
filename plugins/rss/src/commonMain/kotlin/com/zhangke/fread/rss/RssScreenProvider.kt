@@ -33,7 +33,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getEditContentConfigScreenRoute(content: FreadContent): String? {
+    override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         return null
     }
 
@@ -41,14 +41,14 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
+    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val url = uriInsight.url
         return RssSourceScreen(url)
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,

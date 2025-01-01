@@ -67,7 +67,7 @@ class ProfileHomeViewModel @Inject constructor(
     fun onAccountClick(account: LoggedAccount) {
         launchInViewModel {
             statusProvider.screenProvider
-                .getUserDetailRoute(
+                .getUserDetailScreen(
                     role = IdentityRole(account.uri, account.platform.baseUrl),
                     uri = account.uri,
                 )?.let { _openPageFlow.emit(it) }

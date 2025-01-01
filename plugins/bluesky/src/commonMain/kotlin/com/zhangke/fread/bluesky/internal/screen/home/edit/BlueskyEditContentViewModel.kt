@@ -6,9 +6,7 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.composable.updateToLoading
 import com.zhangke.framework.composable.updateToSuccess
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
-import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentViewModel
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
 import kotlinx.coroutines.flow.MutableStateFlow

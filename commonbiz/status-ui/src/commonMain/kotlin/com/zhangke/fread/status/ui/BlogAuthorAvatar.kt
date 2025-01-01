@@ -19,7 +19,6 @@ import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
 
-
 @Composable
 fun BlogAuthorAvatar(
     modifier: Modifier,

@@ -1,15 +1,19 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.list
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -17,10 +21,14 @@ import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
+import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
+import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import org.jetbrains.compose.resources.stringResource
 
 class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
@@ -40,6 +48,9 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
+            onFollowingFeedsClick = {},
+            onAddFeedsClick = {},
+            onSuggestedFeedsClick = {},
         )
     }
 
@@ -49,6 +60,9 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
+        onFollowingFeedsClick: (BlueskyFeeds) -> Unit,
+        onAddFeedsClick: (BlueskyFeeds) -> Unit,
+        onSuggestedFeedsClick: (BlueskyFeeds) -> Unit,
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -60,7 +74,7 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
             },
         ) { innerPadding ->
             if (uiState.initializing) {
-                InitializingPlaceholder()
+                InitializingPlaceholder(modifier = Modifier.padding(innerPadding))
             } else {
                 val loadableState = rememberLoadableLazyColumnState(
                     refreshing = uiState.refreshing,
@@ -88,13 +102,28 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
                                 Text("Following Feeds:")
                             }
                             items(uiState.followingFeeds) {
-
+                                BlueskyFollowingFeeds(
+                                    modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                                    feeds = it,
+                                    onFeedsClick = onFollowingFeedsClick,
+                                )
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                                )
                             }
                         }
                         if (uiState.suggestedFeeds.isNotEmpty()) {
                             item { Text("Suggested Feeds:") }
                             items(uiState.suggestedFeeds) {
-
+                                BlueskyExploringFeeds(
+                                    modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                                    feeds = it,
+                                    onAddClick = onAddFeedsClick,
+                                    onFeedsClick = onSuggestedFeedsClick,
+                                )
+                                HorizontalDivider(
+                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
+                                )
                             }
                         }
                     }
@@ -104,7 +133,13 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
     }
 
     @Composable
-    private fun InitializingPlaceholder() {
-
+    private fun InitializingPlaceholder(modifier: Modifier) {
+        Column(
+            modifier = modifier.fillMaxSize(),
+        ) {
+            repeat(30) {
+                TitleWithAvatarItemPlaceholder(Modifier.fillMaxWidth())
+            }
+        }
     }
 }

@@ -5,7 +5,7 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyFeedsAdapter @Inject constructor(
-    private val accountAdapter: BlueskyAccountAdapter,
+    private val profileAdapter: BlueskyProfileAdapter,
 ) {
 
     fun convertToFeeds(generatorView: GeneratorView): BlueskyFeeds {
@@ -17,7 +17,7 @@ class BlueskyFeedsAdapter @Inject constructor(
             description = generatorView.description,
             avatar = generatorView.avatar?.uri,
             likeCount = generatorView.likeCount,
-            creator = accountAdapter.convertToBlogAuthor(generatorView.creator),
+            creator = profileAdapter.convertToProfile(generatorView.creator),
         )
     }
 }

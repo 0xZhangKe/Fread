@@ -33,9 +33,9 @@ class StatusScreenProvider(
         }
     }
 
-    fun getEditContentConfigScreenRoute(content: FreadContent): String? {
+    fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getEditContentConfigScreenRoute(content)
+            it.getEditContentConfigScreenScreen(content)
         }
     }
 
@@ -45,17 +45,17 @@ class StatusScreenProvider(
         }
     }
 
-    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
-        return providerList.firstNotNullOfOrNull { it.getUserDetailRoute(role, uri) }
+    fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getUserDetailScreen(role, uri) }
     }
 
-    fun getUserDetailRoute(
+    fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
     ): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getUserDetailRoute(
+            it.getUserDetailScreen(
                 role,
                 webFinger,
                 protocol
@@ -136,13 +136,13 @@ interface IStatusScreenProvider {
 
     fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab?
 
-    fun getEditContentConfigScreenRoute(content: FreadContent): String?
+    fun getEditContentConfigScreenScreen(content: FreadContent): Screen?
 
     fun getNotificationScreen(account: LoggedAccount): PagerTab?
 
-    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen?
+    fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen?
 
-    fun getUserDetailRoute(
+    fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol

@@ -7,7 +7,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
-import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
+import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
@@ -67,9 +67,9 @@ class ActivityPubScreenProvider @Inject constructor(
         return ActivityPubContentScreen(content.id, isLatestTab)
     }
 
-    override fun getEditContentConfigScreenRoute(content: FreadContent): String? {
+    override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is ActivityPubContent) return null
-        return EditContentConfigRoute.buildRoute(content.id)
+        return EditContentConfigScreen(content.id)
     }
 
     override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
@@ -78,12 +78,12 @@ class ActivityPubScreenProvider @Inject constructor(
         return ActivityPubNotificationsScreen(userInsights)
     }
 
-    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
+    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
         userUriTransformer.parse(uri) ?: return null
         return UserDetailScreen(role = role, userUri = uri)
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,

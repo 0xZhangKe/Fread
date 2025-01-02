@@ -5,8 +5,6 @@ import androidx.sqlite.driver.bundled.BundledSQLiteDriver
 import com.russhwolf.settings.NSUserDefaultsSettings
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.coroutines.toFlowSettings
-import com.zhangke.fread.common.browser.BrowserLauncher
-import com.zhangke.fread.common.browser.IosBrowserLauncher
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
 import com.zhangke.fread.common.status.repo.db.StatusDatabase
@@ -48,9 +46,6 @@ actual interface CommonPlatformComponent {
     fun provideFlowSettings(delegate: NSUserDefaults): FlowSettings {
         return NSUserDefaultsSettings(delegate).toFlowSettings()
     }
-
-    @Provides
-    fun IosBrowserLauncher.binds(): BrowserLauncher = this
 }
 
 // From: https://developer.android.com/kotlin/multiplatform/room#ios

@@ -3,21 +3,11 @@ package com.zhangke.fread.common.browser
 import com.eygraber.uri.toNSURL
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.di.ActivityScope
-import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 import platform.SafariServices.SFSafariViewController
 import platform.UIKit.UIApplication
 import platform.UIKit.UIViewController
-
-@ApplicationScope
-class IosBrowserLauncher @Inject constructor(
-    private val application: UIApplication,
-) : BrowserLauncher {
-    override fun launchBySystemBrowser(uri: PlatformUri) {
-        application.openURL(uri.toNSURL()!!)
-    }
-}
 
 @ActivityScope
 class IosActivityBrowserLauncher @Inject constructor(

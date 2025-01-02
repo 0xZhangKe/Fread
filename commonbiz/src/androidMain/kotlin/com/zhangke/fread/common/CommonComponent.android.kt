@@ -9,9 +9,7 @@ import com.russhwolf.settings.ExperimentalSettingsImplementation
 import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.datastore.DataStoreSettings
 import com.zhangke.framework.module.ModuleStartup
-import com.zhangke.fread.common.browser.AndroidBrowserLauncher
 import com.zhangke.fread.common.browser.BrowserInterceptor
-import com.zhangke.fread.common.browser.BrowserLauncher
 import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
@@ -76,9 +74,6 @@ actual interface CommonPlatformComponent {
     fun bindLanguageModuleStartup(module: LanguageModuleStartup): ModuleStartup {
         return module
     }
-
-    @Provides
-    fun AndroidBrowserLauncher.binds(): BrowserLauncher = this
 }
 
 val Context.commonComponent get() = (applicationContext as CommonComponentProvider).component

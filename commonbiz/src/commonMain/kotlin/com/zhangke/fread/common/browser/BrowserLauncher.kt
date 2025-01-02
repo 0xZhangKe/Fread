@@ -6,16 +6,13 @@ import com.zhangke.framework.utils.toPlatformUri
 import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.status.model.IdentityRole
 
-interface BrowserLauncher {
+interface ActivityBrowserLauncher {
 
     fun launchBySystemBrowser(url: String) {
         launchBySystemBrowser(url.toPlatformUri())
     }
 
     fun launchBySystemBrowser(uri: PlatformUri)
-}
-
-interface ActivityBrowserLauncher : BrowserLauncher {
 
     fun launchWebTabInApp(
         url: String,

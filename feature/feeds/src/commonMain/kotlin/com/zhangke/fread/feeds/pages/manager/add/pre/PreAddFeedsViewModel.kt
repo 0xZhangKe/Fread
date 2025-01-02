@@ -144,10 +144,11 @@ class PreAddFeedsViewModel @Inject constructor(
         _uiState.update { it.copy(showLoginDialog = false) }
     }
 
-    fun onLoginClick(openOauthPage: (String) -> Unit) {
+    fun onLoginClick() {
         val platform = selectedContentPlatform ?: return
         viewModelScope.launch {
-            statusProvider.accountManager.triggerAuthBySource(platform.baseUrl, openOauthPage)
+            statusProvider.accountManager
+                .triggerAuthBySource(platform.baseUrl)
             _exitScreenFlow.emit(Unit)
         }
     }

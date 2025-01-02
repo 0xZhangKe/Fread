@@ -12,7 +12,6 @@ import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.login_dialog_target_title
@@ -31,7 +30,6 @@ class LoginToTargetPlatformScreen(val platform: BlogPlatform) : BaseScreen() {
             getViewModel<LoginToTargetPlatformViewModel, LoginToTargetPlatformViewModel.Factory> {
                 it.create(platform)
             }
-        val activityBrowserLauncher = LocalActivityBrowserLauncher.current
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -46,14 +44,7 @@ class LoginToTargetPlatformScreen(val platform: BlogPlatform) : BaseScreen() {
                     modifier = Modifier
                         .clickable {
                             navigator.hide()
-                            viewModel.onServerHostConfirmClick(
-                                openOauthPage = { oauthUrl ->
-                                    activityBrowserLauncher.launchWebTabInApp(
-                                        url = oauthUrl,
-                                        checkAppSupportPage = false,
-                                    )
-                                },
-                            )
+                            viewModel.onServerHostConfirmClick()
                         },
                     platform = platform,
                     showDivider = false,

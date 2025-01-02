@@ -26,7 +26,7 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         return null
     }
 
-    override fun triggerLaunchAuth(baseUrl: FormalBaseUrl, openOauthPage: (String) -> Unit) {
+    override fun triggerLaunchAuth(baseUrl: FormalBaseUrl) {
         // no-op
     }
 

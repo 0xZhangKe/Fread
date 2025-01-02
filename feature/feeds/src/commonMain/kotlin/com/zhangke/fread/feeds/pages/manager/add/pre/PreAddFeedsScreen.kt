@@ -50,7 +50,6 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.fread.analytics.PreAddContentElements
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.add_feeds_page_title
@@ -82,7 +81,6 @@ class PreAddFeedsScreen : BaseScreen() {
         val viewModel = getViewModel<PreAddFeedsViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
-        val activityBrowserLauncher = LocalActivityBrowserLauncher.current
         PreAddFeedsContent(
             uiState = uiState,
             snackBarHostState = snackBarHostState,
@@ -107,14 +105,7 @@ class PreAddFeedsScreen : BaseScreen() {
             },
             onLoginClick = {
                 reportClick(PreAddContentElements.LOGIN)
-                viewModel.onLoginClick(
-                    openOauthPage = { oauthUrl ->
-                        activityBrowserLauncher.launchWebTabInApp(
-                            url = oauthUrl,
-                            checkAppSupportPage = false,
-                        )
-                    },
-                )
+                viewModel.onLoginClick()
             },
         )
         ConsumeFlow(viewModel.openScreenFlow) {

@@ -30,12 +30,9 @@ class AccountManager(
         }
     }
 
-    fun triggerAuthBySource(
-        baseUrl: FormalBaseUrl,
-        openOauthPage: (String) -> Unit
-    ) {
+    fun triggerAuthBySource(baseUrl: FormalBaseUrl) {
         for (manager in accountManagerList) {
-            manager.triggerLaunchAuth(baseUrl, openOauthPage)
+            manager.triggerLaunchAuth(baseUrl)
         }
     }
 
@@ -71,7 +68,7 @@ interface IAccountManager {
 
     suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>?
 
-    fun triggerLaunchAuth(baseUrl: FormalBaseUrl, openOauthPage: (String) -> Unit)
+    fun triggerLaunchAuth(baseUrl: FormalBaseUrl)
 
     suspend fun refreshAllAccountInfo(): Result<Unit>
 

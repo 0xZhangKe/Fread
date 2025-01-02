@@ -8,7 +8,6 @@ import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 import platform.SafariServices.SFSafariViewController
 import platform.UIKit.UIApplication
-import platform.UIKit.UIModalPresentationPageSheet
 import platform.UIKit.UIViewController
 
 @ApplicationScope
@@ -23,8 +22,13 @@ class IosBrowserLauncher @Inject constructor(
 @ActivityScope
 class IosActivityBrowserLauncher @Inject constructor(
     private val viewController: Lazy<UIViewController>,
-    private val browserLauncher: BrowserLauncher,
-) : ActivityBrowserLauncher, BrowserLauncher by browserLauncher {
+    private val application: UIApplication,
+) : ActivityBrowserLauncher {
+
+    override fun launchBySystemBrowser(uri: PlatformUri) {
+        application.openURL(uri.toNSURL()!!)
+    }
+
     override fun launchWebTabInApp(
         uri: PlatformUri,
         role: IdentityRole?,
@@ -32,7 +36,7 @@ class IosActivityBrowserLauncher @Inject constructor(
     ) {
         try {
             val safari = SFSafariViewController(uri.toNSURL()!!)
-            safari.modalPresentationStyle = UIModalPresentationPageSheet
+            // safari.modalPresentationStyle = UIModalPresentationPageSheet
 
             viewController.value.presentViewController(safari, animated = true, completion = null)
         } catch (e: Exception) {

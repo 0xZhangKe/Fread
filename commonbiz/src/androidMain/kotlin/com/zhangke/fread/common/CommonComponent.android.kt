@@ -12,6 +12,7 @@ import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.AndroidBrowserLauncher
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
@@ -27,7 +28,7 @@ actual interface CommonPlatformComponent {
 
     val browserInterceptorSet: Set<BrowserInterceptor>
 
-    val browserLauncher: BrowserLauncher
+    val oauthHandler: OAuthHandler
 
     @OptIn(ExperimentalSettingsImplementation::class)
     @ApplicationScope

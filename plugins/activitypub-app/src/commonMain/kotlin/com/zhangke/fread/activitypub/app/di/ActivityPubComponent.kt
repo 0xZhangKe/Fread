@@ -42,8 +42,6 @@ expect interface ActivityPubPlatformComponent
 
 interface ActivityPubComponent : ActivityPubPlatformComponent {
 
-    val author: ActivityPubOAuthor
-
     val accountRepo: ActivityPubLoggedAccountRepo
 
     @IntoSet

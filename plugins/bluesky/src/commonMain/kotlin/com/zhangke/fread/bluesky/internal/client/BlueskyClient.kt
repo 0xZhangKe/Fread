@@ -3,6 +3,7 @@ package com.zhangke.fread.bluesky.internal.client
 import app.bsky.actor.GetPreferencesResponse
 import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
+import app.bsky.actor.PutPreferencesRequest
 import app.bsky.feed.GetActorFeedsQueryParams
 import app.bsky.feed.GetActorFeedsResponse
 import app.bsky.feed.GetAuthorFeedQueryParams
@@ -84,6 +85,10 @@ class BlueskyClient(
 
     suspend fun getPreferencesCatching(): Result<GetPreferencesResponse> {
         return runCatching { getPreferences() }.toResult()
+    }
+
+    suspend fun putPreferencesCatching(request: PutPreferencesRequest): Result<Unit>{
+        return runCatching { putPreferences(request) }.toResult()
     }
 
     suspend fun getFeedGeneratorsCatching(params: GetFeedGeneratorsQueryParams): Result<GetFeedGeneratorsResponse> {

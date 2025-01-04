@@ -12,6 +12,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -42,7 +43,8 @@ fun BlueskyFollowingFeeds(
     onFeedsClick: (BlueskyFeeds) -> Unit,
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.clickable { onFeedsClick(feeds) }
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FeedsAvatar(feeds.avatar.orEmpty(), Modifier)
@@ -68,11 +70,12 @@ fun BlueskyFollowingFeeds(
 fun BlueskyExploringFeeds(
     modifier: Modifier,
     feeds: BlueskyFeeds,
+    loading: Boolean = false,
     onFeedsClick: (BlueskyFeeds) -> Unit,
     onAddClick: ((BlueskyFeeds) -> Unit)? = null,
 ) {
     Column(
-        modifier = modifier.clickable { onFeedsClick(feeds) },
+        modifier = modifier.clickable { onFeedsClick(feeds) }.padding(horizontal = 16.dp),
     ) {
         Spacer(modifier = Modifier.size(8.dp))
         Row(
@@ -100,18 +103,20 @@ fun BlueskyExploringFeeds(
                     ),
                     style = MaterialTheme.typography.labelMedium,
                     maxLines = 1,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7F),
+                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6F),
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-            if (onAddClick != null) {
+            if (onAddClick != null && !loading) {
                 IconButton(onClick = { onAddClick(feeds) }) {
                     Icon(
                         imageVector = Icons.Default.Add,
                         contentDescription = "Add Feeds",
                     )
                 }
+            } else if (loading) {
+                CircularProgressIndicator(modifier = Modifier.size(18.dp))
             }
         }
         if (feeds.description != null) {
@@ -133,7 +138,7 @@ fun BlueskyExploringFeeds(
             ),
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.7F),
+            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6F),
             textAlign = TextAlign.Start,
             overflow = TextOverflow.Ellipsis,
         )

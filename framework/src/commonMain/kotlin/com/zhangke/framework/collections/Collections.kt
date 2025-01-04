@@ -26,6 +26,16 @@ fun <T> Iterable<T>.removeIndex(index: Int): List<T> {
     return filterIndexed { i, _ -> i != index }
 }
 
+fun <T> List<T>.updateItem(item: T, predicate: (T) -> T): List<T> {
+    return map {
+        if (it == item) {
+            predicate(it)
+        } else {
+            it
+        }
+    }
+}
+
 inline fun <T> Iterable<T>.updateIndex(index: Int, predicate: (T) -> T): List<T> {
     return mapIndexed { i, t ->
         if (i == index) {

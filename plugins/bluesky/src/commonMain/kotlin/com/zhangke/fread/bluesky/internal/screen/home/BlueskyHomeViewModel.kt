@@ -29,9 +29,12 @@ class BlueskyHomeViewModel(
 
     init {
         launchInViewModel {
+            var lastConfig: BlueskyContent? = null
             contentRepo.getContentFlow(contentId)
+                .distinctUntilChanged()
                 .map { it as? BlueskyContent }
                 .collect { config ->
+                    lastConfig = config
                     if (config != null) {
                         _uiState.update { state ->
                             state.copy(

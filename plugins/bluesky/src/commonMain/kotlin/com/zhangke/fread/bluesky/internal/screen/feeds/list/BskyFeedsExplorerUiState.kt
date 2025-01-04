@@ -9,7 +9,7 @@ data class BskyFeedsExplorerUiState(
     val refreshing: Boolean,
     val loadMoreState: LoadState,
     val followingFeeds: List<BlueskyFeeds>,
-    val suggestedFeeds: List<BlueskyFeeds>,
+    val suggestedFeeds: List<BlueskyFeedsUiState>,
 ) {
 
     companion object {
@@ -26,3 +26,8 @@ data class BskyFeedsExplorerUiState(
         }
     }
 }
+
+data class BlueskyFeedsUiState(
+    val loading: Boolean,
+    val feeds: BlueskyFeeds,
+)

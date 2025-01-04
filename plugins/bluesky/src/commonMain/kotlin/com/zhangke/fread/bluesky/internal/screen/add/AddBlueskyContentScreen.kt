@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.input.PasswordVisualTransformation
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -46,6 +47,9 @@ class AddBlueskyContentScreen(
     private val baseUrl: FormalBaseUrl,
     private val loginMode: Boolean = false,
 ) : BaseScreen() {
+
+    override val key: ScreenKey
+        get() = baseUrl.toString() + loginMode
 
     @Composable
     override fun Content() {

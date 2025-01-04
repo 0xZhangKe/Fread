@@ -34,6 +34,7 @@ class ActivityPubContentSubViewModel(
     init {
         launchInViewModel {
             contentRepo.getContentFlow(contentId)
+                .distinctUntilChanged()
                 .map { it as? ActivityPubContent }
                 .collect { contentConfig ->
                     if (contentConfig != null) {

@@ -8,6 +8,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -17,8 +19,10 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
@@ -42,26 +46,31 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
                 it.create(role)
             }
         val uiState by viewModel.uiState.collectAsState()
+        val snackbarState = rememberSnackbarHostState()
 
         BskyFeedsExplorerContent(
             uiState = uiState,
+            snackbarState = snackbarState,
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
             onFollowingFeedsClick = {},
-            onAddFeedsClick = {},
+            onAddFeedsClick = viewModel::onAddFeedsClick,
             onSuggestedFeedsClick = {},
         )
+
+        ConsumeSnackbarFlow(snackbarState, viewModel.snackBarMessage)
     }
 
     @Composable
     private fun BskyFeedsExplorerContent(
         uiState: BskyFeedsExplorerUiState,
+        snackbarState: SnackbarHostState,
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
         onFollowingFeedsClick: (BlueskyFeeds) -> Unit,
-        onAddFeedsClick: (BlueskyFeeds) -> Unit,
+        onAddFeedsClick: (BlueskyFeedsUiState) -> Unit,
         onSuggestedFeedsClick: (BlueskyFeeds) -> Unit,
     ) {
         Scaffold(
@@ -71,6 +80,9 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
                     title = stringResource(Res.string.feeds),
                     onBackClick = onBackClick,
                 )
+            },
+            snackbarHost = {
+                SnackbarHost(hostState = snackbarState)
             },
         ) { innerPadding ->
             if (uiState.initializing) {
@@ -103,7 +115,7 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
                             }
                             items(uiState.followingFeeds) {
                                 BlueskyFollowingFeeds(
-                                    modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
+                                    modifier = Modifier.fillMaxSize(),
                                     feeds = it,
                                     onFeedsClick = onFollowingFeedsClick,
                                 )
@@ -114,11 +126,12 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
                         }
                         if (uiState.suggestedFeeds.isNotEmpty()) {
                             item { Text("Suggested Feeds:") }
-                            items(uiState.suggestedFeeds) {
+                            items(uiState.suggestedFeeds) { item ->
                                 BlueskyExploringFeeds(
-                                    modifier = Modifier.fillMaxSize().padding(horizontal = 16.dp),
-                                    feeds = it,
-                                    onAddClick = onAddFeedsClick,
+                                    modifier = Modifier.fillMaxSize(),
+                                    feeds = item.feeds,
+                                    loading = item.loading,
+                                    onAddClick = { onAddFeedsClick(item) },
                                     onFeedsClick = onSuggestedFeedsClick,
                                 )
                                 HorizontalDivider(

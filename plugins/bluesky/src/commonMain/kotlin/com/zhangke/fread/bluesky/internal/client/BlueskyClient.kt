@@ -16,6 +16,8 @@ import app.bsky.feed.GetSuggestedFeedsQueryParams
 import app.bsky.feed.GetSuggestedFeedsResponse
 import app.bsky.feed.GetTimelineQueryParams
 import app.bsky.feed.GetTimelineResponse
+import app.bsky.graph.GetListQueryParams
+import app.bsky.graph.GetListResponse
 import app.bsky.graph.GetListsQueryParams
 import app.bsky.graph.GetListsResponse
 import app.bsky.unspecced.GetPopularFeedGeneratorsQueryParams
@@ -87,7 +89,7 @@ class BlueskyClient(
         return runCatching { getPreferences() }.toResult()
     }
 
-    suspend fun putPreferencesCatching(request: PutPreferencesRequest): Result<Unit>{
+    suspend fun putPreferencesCatching(request: PutPreferencesRequest): Result<Unit> {
         return runCatching { putPreferences(request) }.toResult()
     }
 
@@ -117,6 +119,10 @@ class BlueskyClient(
 
     suspend fun getListsCatching(request: GetListsQueryParams): Result<GetListsResponse> {
         return runCatching { getLists(request) }.toResult()
+    }
+
+    suspend fun getListCatching(params: GetListQueryParams): Result<GetListResponse> {
+        return runCatching { getList(params) }.toResult()
     }
 
     fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

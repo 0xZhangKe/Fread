@@ -76,7 +76,6 @@ class BskyFeedsExplorerViewModel @Inject constructor(
                 )
             }
             getFollowingFeeds(role)
-                .map { list -> list.map { feedsAdapter.convertToFeeds(it) } }
                 .onSuccess { list ->
                     _uiState.update {
                         it.copy(
@@ -128,7 +127,7 @@ class BskyFeedsExplorerViewModel @Inject constructor(
             }
             .map {
                 it.feeds.map { item ->
-                    BlueskyFeedsUiState(false, feedsAdapter.convertToFeeds(item))
+                    BlueskyFeedsUiState(false, feedsAdapter.convert(item, false, false))
                 }
             }
     }
@@ -147,7 +146,6 @@ class BskyFeedsExplorerViewModel @Inject constructor(
                         state.copy(suggestedFeeds = state.suggestedFeeds.filter { it.feeds != feeds.feeds })
                     }
                     getFollowingFeeds(role)
-                        .map { list -> list.map { feedsAdapter.convertToFeeds(it) } }
                         .onSuccess { followingFeeds ->
                             _uiState.update { it.copy(followingFeeds = followingFeeds) }
                         }

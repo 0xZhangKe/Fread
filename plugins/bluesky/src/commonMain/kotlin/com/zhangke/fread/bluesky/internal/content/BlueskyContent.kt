@@ -12,6 +12,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.commonbiz.bluesky_logo
 import com.zhangke.fread.status.model.FreadContent
 import kotlinx.serialization.Serializable
@@ -23,7 +24,7 @@ data class BlueskyContent(
     override val name: String,
     override val order: Int,
     val baseUrl: FormalBaseUrl,
-    val tabList: List<BlueskyTab>,
+    val feedsList: List<BlueskyFeeds>,
 ) : FreadContent {
 
     override fun newOrder(newOrder: Int): FreadContent {
@@ -48,48 +49,5 @@ data class BlueskyContent(
                 overflow = TextOverflow.Ellipsis,
             )
         }
-    }
-
-    @Serializable
-    sealed interface BlueskyTab {
-
-        val order: Int
-        val title: String
-        val hide: Boolean
-
-        @Serializable
-        data class FollowingTab(
-            override val title: String,
-            override val order: Int,
-            override val hide: Boolean,
-        ) : BlueskyTab {
-
-            companion object {
-
-                fun default(): FollowingTab {
-                    return FollowingTab(
-                        title = "Following",
-                        order = 0,
-                        hide = false,
-                    )
-                }
-            }
-        }
-
-        @Serializable
-        data class FeedsTab(
-            val feedUri: String,
-            override val title: String,
-            override val order: Int,
-            override val hide: Boolean,
-        ) : BlueskyTab
-
-        @Serializable
-        data class ListTab(
-            val listUri: String,
-            override val title: String,
-            override val order: Int,
-            override val hide: Boolean,
-        ) : BlueskyTab
     }
 }

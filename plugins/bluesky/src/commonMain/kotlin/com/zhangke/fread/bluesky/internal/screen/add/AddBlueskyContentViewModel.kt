@@ -107,7 +107,7 @@ class AddBlueskyContentViewModel @Inject constructor(
             order = contentRepo.getMaxOrder() + 1,
             name = platform.name,
             baseUrl = platform.baseUrl,
-            tabList = listOf(BlueskyContent.BlueskyTab.FollowingTab.default())
+            feedsList = emptyList(),
         )
         contentRepo.insertContent(content)
     }

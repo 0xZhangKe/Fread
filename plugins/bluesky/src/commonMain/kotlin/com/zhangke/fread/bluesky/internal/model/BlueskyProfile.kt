@@ -1,5 +1,8 @@
 package com.zhangke.fread.bluesky.internal.model
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class BlueskyProfile(
     val did: String,
     val handle: String,

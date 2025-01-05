@@ -48,7 +48,7 @@ import com.zhangke.fread.analytics.HomeTabElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
-import com.zhangke.fread.bluesky.internal.screen.feeds.FeedsTab
+import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -235,9 +235,9 @@ class BlueskyHomeTab(
         }
     }
 
-    private fun createTabList(content: BlueskyContent): List<FeedsTab> {
+    private fun createTabList(content: BlueskyContent): List<HomeFeedsTab> {
         return content.tabList.filter { !it.hide }
             .sortedBy { it.order }
-            .map { FeedsTab(it) }
+            .map { HomeFeedsTab(it) }
     }
 }

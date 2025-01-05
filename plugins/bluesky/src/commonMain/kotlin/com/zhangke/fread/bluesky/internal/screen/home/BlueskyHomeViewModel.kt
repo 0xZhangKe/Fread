@@ -64,7 +64,7 @@ class BlueskyHomeViewModel(
                             role = IdentityRole(accountUri = account.uri, baseUrl = baseUrl),
                         )
                     }
-                    updateHomeTab(contentId, _uiState.value.role, account.did)
+                    updateHomeTab(contentId, _uiState.value.role)
                 }
         }
     }

@@ -1,4 +1,4 @@
-package com.zhangke.fread.bluesky.internal.screen.feeds
+package com.zhangke.fread.bluesky.internal.screen.feeds.home
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,7 +12,7 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 
-class FeedsTab(private val tab: BlueskyContent.BlueskyTab) : PagerTab {
+class HomeFeedsTab(private val tab: BlueskyContent.BlueskyTab) : PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(title = tab.title)

@@ -46,11 +46,11 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
                 it.create(role)
             }
         val uiState by viewModel.uiState.collectAsState()
-        val snackbarState = rememberSnackbarHostState()
+        val snackBarState = rememberSnackbarHostState()
 
         BskyFeedsExplorerContent(
             uiState = uiState,
-            snackbarState = snackbarState,
+            snackBarState = snackBarState,
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
@@ -59,13 +59,13 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
             onSuggestedFeedsClick = {},
         )
 
-        ConsumeSnackbarFlow(snackbarState, viewModel.snackBarMessage)
+        ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
     }
 
     @Composable
     private fun BskyFeedsExplorerContent(
         uiState: BskyFeedsExplorerUiState,
-        snackbarState: SnackbarHostState,
+        snackBarState: SnackbarHostState,
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
@@ -82,7 +82,7 @@ class BskyFeedsExplorerPage(private val role: IdentityRole) : BaseScreen() {
                 )
             },
             snackbarHost = {
-                SnackbarHost(hostState = snackbarState)
+                SnackbarHost(hostState = snackBarState)
             },
         ) { innerPadding ->
             if (uiState.initializing) {

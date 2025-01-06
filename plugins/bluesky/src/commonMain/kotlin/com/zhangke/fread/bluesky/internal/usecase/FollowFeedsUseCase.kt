@@ -19,7 +19,7 @@ class FollowFeedsUseCase @Inject constructor(
 
     suspend operator fun invoke(
         role: IdentityRole,
-        feeds: BlueskyFeeds,
+        feeds: BlueskyFeeds.Feeds,
     ): Result<Unit> {
         val client = clientManager.getClient(role)
         val preferenceResult = client.getPreferencesCatching()
@@ -41,7 +41,7 @@ class FollowFeedsUseCase @Inject constructor(
     }
 
     @OptIn(ExperimentalUuidApi::class)
-    private fun BlueskyFeeds.toSaveFeeds(): SavedFeed {
+    private fun BlueskyFeeds.Feeds.toSaveFeeds(): SavedFeed {
         return SavedFeed(
             id = Uuid.random().toString(),
             type = Type.FEED,

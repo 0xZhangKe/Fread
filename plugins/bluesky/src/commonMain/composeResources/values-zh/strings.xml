@@ -11,4 +11,6 @@
 
     <string name="bsky_feeds_explorer_creator_label">创建者  %1$s</string>
     <string name="bsky_feeds_explorer_liked_by">%1$s 个用户喜欢</string>
+
+    <string name="bsky_feeds_following_name">关注中</string>
 </resources>

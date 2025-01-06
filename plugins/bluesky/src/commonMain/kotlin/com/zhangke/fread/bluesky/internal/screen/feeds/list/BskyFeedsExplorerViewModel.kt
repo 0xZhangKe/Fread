@@ -10,6 +10,7 @@ import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyFeedsAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.FollowFeedsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
@@ -127,13 +128,14 @@ class BskyFeedsExplorerViewModel @Inject constructor(
             }
             .map {
                 it.feeds.map { item ->
-                    BlueskyFeedsUiState(false, feedsAdapter.convert(item, false, false))
+                    BlueskyFeedsUiState(false, feedsAdapter.convertToFeeds(item, false, false))
                 }
             }
     }
 
     fun onAddFeedsClick(feeds: BlueskyFeedsUiState) {
         if (feeds.loading) return
+        if (feeds.feeds !is BlueskyFeeds.Feeds) return
         viewModelScope.launch {
             _uiState.update { state ->
                 state.copy(suggestedFeeds = state.suggestedFeeds.updateItem(feeds) {

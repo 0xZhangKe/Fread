@@ -11,11 +11,12 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 
-class HomeFeedsTab(private val tab: BlueskyContent.BlueskyTab) : PagerTab {
+class HomeFeedsTab(private val feeds: BlueskyFeeds) : PagerTab {
 
     override val options: PagerTabOptions
-        @Composable get() = PagerTabOptions(title = tab.title)
+        @Composable get() = PagerTabOptions(title = feeds.displayName())
 
     @Composable
     override fun TabContent(
@@ -25,7 +26,7 @@ class HomeFeedsTab(private val tab: BlueskyContent.BlueskyTab) : PagerTab {
         Box(modifier = Modifier.fillMaxSize()) {
             Text(
                 modifier = Modifier.align(Alignment.Center),
-                text = tab.title,
+                text = feeds.displayName(),
             )
         }
     }

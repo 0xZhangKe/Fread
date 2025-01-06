@@ -1,18 +1,10 @@
 package com.zhangke.fread.bluesky.internal.model
 
 import androidx.compose.runtime.Composable
+import com.zhangke.fread.bluesky.Res
+import com.zhangke.fread.bluesky.bsky_feeds_following_name
 import kotlinx.serialization.Serializable
-
-data class BlueskyFeedsS(
-    val uri: String,
-    val cid: String,
-    val did: String,
-    val displayName: String,
-    val description: String?,
-    val avatar: String?,
-    val likeCount: Long?,
-    val creator: BlueskyProfile,
-)
+import org.jetbrains.compose.resources.stringResource
 
 /**
  * Feeds 一词包含两个含义，一是广义上的 Feeds 信息流。
@@ -40,7 +32,7 @@ sealed interface BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            TODO("Not yet implemented")
+            return stringResource(Res.string.bsky_feeds_following_name)
         }
     }
 
@@ -60,7 +52,7 @@ sealed interface BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            TODO("Not yet implemented")
+            return displayName
         }
     }
 
@@ -68,14 +60,16 @@ sealed interface BlueskyFeeds {
     data class List(
         val id: String,
         val uri: String,
+        val name: String,
         val description: String?,
+        val avatar: String?,
         override val following: Boolean,
         override val pinned: Boolean,
     ) : BlueskyFeeds {
 
         @Composable
         override fun displayName(): String {
-            TODO("Not yet implemented")
+            return name
         }
     }
 }

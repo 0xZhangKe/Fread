@@ -1,7 +1,9 @@
 package com.zhangke.fread.bluesky.internal.composable
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.CircularProgressIndicator
@@ -47,11 +50,11 @@ fun BlueskyFollowingFeeds(
             .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        FeedsAvatar(feeds.avatar.orEmpty(), Modifier)
+        FeedsAvatar(feeds.avatar, Modifier)
 
         Text(
             modifier = Modifier.weight(1F).padding(horizontal = 16.dp),
-            text = feeds.displayName,
+            text = feeds.displayName(),
             style = MaterialTheme.typography.titleMedium,
             maxLines = 1,
             textAlign = TextAlign.Start,
@@ -82,31 +85,34 @@ fun BlueskyExploringFeeds(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-            FeedsAvatar(feeds.avatar.orEmpty(), Modifier)
+            FeedsAvatar(feeds.avatar, Modifier)
             Column(
                 modifier = Modifier.weight(1F).padding(horizontal = 16.dp),
+                verticalArrangement = Arrangement.Center,
             ) {
                 Text(
                     modifier = Modifier.fillMaxWidth(),
-                    text = feeds.displayName,
+                    text = feeds.displayName(),
                     style = MaterialTheme.typography.titleMedium,
                     maxLines = 1,
                     textAlign = TextAlign.Start,
                     overflow = TextOverflow.Ellipsis,
                 )
 
-                Text(
-                    modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
-                    text = stringResource(
-                        Res.string.bsky_feeds_explorer_creator_label,
-                        feeds.creator.displayName.orEmpty()
-                    ),
-                    style = MaterialTheme.typography.labelMedium,
-                    maxLines = 1,
-                    color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6F),
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                )
+                if (!feeds.creatorName.isNullOrEmpty()) {
+                    Text(
+                        modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
+                        text = stringResource(
+                            Res.string.bsky_feeds_explorer_creator_label,
+                            feeds.creatorName!!,
+                        ),
+                        style = MaterialTheme.typography.labelMedium,
+                        maxLines = 1,
+                        color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6F),
+                        textAlign = TextAlign.Start,
+                        overflow = TextOverflow.Ellipsis,
+                    )
+                }
             }
             if (onAddClick != null && !loading) {
                 IconButton(onClick = { onAddClick(feeds) }) {
@@ -122,7 +128,7 @@ fun BlueskyExploringFeeds(
         if (feeds.description != null) {
             Text(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                text = feeds.description,
+                text = feeds.description!!,
                 style = MaterialTheme.typography.bodyMedium,
                 maxLines = 8,
                 textAlign = TextAlign.Start,
@@ -148,22 +154,69 @@ fun BlueskyExploringFeeds(
 
 @Composable
 private fun FeedsAvatar(
-    url: String,
+    url: String?,
     modifier: Modifier,
 ) {
-    AutoSizeBox(
-        modifier = modifier,
-        request = remember(url) {
-            ImageRequest(url)
-        },
-    ) { action ->
-        Image(
-            painter = rememberImageActionPainter(action),
-            contentDescription = "Avatar",
-            modifier = Modifier
+    if (url.isNullOrEmpty()) {
+        Icon(
+            modifier = modifier
                 .size(42.dp)
                 .clip(RoundedCornerShape(6.dp))
-                .freadPlaceholder(action !is ImageAction.Success),
+                .background(MaterialTheme.colorScheme.primary),
+            imageVector = Icons.AutoMirrored.Filled.ListAlt,
+            contentDescription = "Avatar",
         )
+    } else {
+        AutoSizeBox(
+            modifier = modifier,
+            request = remember(url) {
+                ImageRequest(url)
+            },
+        ) { action ->
+            Image(
+                painter = rememberImageActionPainter(action),
+                contentDescription = "Avatar",
+                modifier = Modifier
+                    .size(42.dp)
+                    .clip(RoundedCornerShape(6.dp))
+                    .freadPlaceholder(action !is ImageAction.Success),
+            )
+        }
     }
 }
+
+private val BlueskyFeeds.avatar: String?
+    get() {
+        return when (this) {
+            is BlueskyFeeds.Feeds -> avatar
+            is BlueskyFeeds.List -> avatar
+            is BlueskyFeeds.Following -> null
+        }
+    }
+
+private val BlueskyFeeds.description: String?
+    get() {
+        return when (this) {
+            is BlueskyFeeds.Feeds -> description
+            is BlueskyFeeds.List -> description
+            is BlueskyFeeds.Following -> null
+        }
+    }
+
+private val BlueskyFeeds.likeCount: Long?
+    get() {
+        return when (this) {
+            is BlueskyFeeds.Feeds -> likeCount
+            is BlueskyFeeds.List -> null
+            is BlueskyFeeds.Following -> null
+        }
+    }
+
+private val BlueskyFeeds.creatorName: String?
+    get() {
+        return when (this) {
+            is BlueskyFeeds.Feeds -> creator.displayName
+            is BlueskyFeeds.List -> null
+            is BlueskyFeeds.Following -> null
+        }
+    }

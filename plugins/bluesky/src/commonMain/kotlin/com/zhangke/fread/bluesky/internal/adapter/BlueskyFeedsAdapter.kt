@@ -2,6 +2,7 @@ package com.zhangke.fread.bluesky.internal.adapter
 
 import app.bsky.actor.SavedFeed
 import app.bsky.feed.GeneratorView
+import app.bsky.graph.ListView
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import me.tatarka.inject.annotations.Inject
 
@@ -9,7 +10,7 @@ class BlueskyFeedsAdapter @Inject constructor(
     private val profileAdapter: BlueskyProfileAdapter,
 ) {
 
-    fun convert(
+    fun convertToFeeds(
         savedFeed: SavedFeed,
         generator: GeneratorView,
     ): BlueskyFeeds.Feeds {
@@ -27,7 +28,7 @@ class BlueskyFeedsAdapter @Inject constructor(
         )
     }
 
-    fun convert(
+    fun convertToFeeds(
         generator: GeneratorView,
         following: Boolean,
         pinned: Boolean,
@@ -48,14 +49,17 @@ class BlueskyFeedsAdapter @Inject constructor(
 
     fun convertToList(
         feed: SavedFeed,
+        listView: ListView,
         following: Boolean,
     ): BlueskyFeeds.List {
         return BlueskyFeeds.List(
             id = feed.id,
             uri = feed.value,
+            name = listView.name,
+            description = listView.description,
+            avatar = listView.avatar?.uri,
             following = following,
             pinned = feed.pinned,
-            description = null,
         )
     }
 }

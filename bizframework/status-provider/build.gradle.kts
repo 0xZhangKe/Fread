@@ -19,6 +19,7 @@ kotlin {
 
                 implementation(libs.androidx.room)
 
+                implementation(libs.ksoup)
                 implementation(libs.ktml)
                 implementation(libs.imageLoader)
 
@@ -33,8 +34,6 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.androidx.core.ktx)
-
-                api(libs.jsoup)
             }
         }
     }

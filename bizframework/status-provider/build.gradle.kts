@@ -21,6 +21,8 @@ kotlin {
 
                 implementation(libs.ktml)
                 implementation(libs.imageLoader)
+
+                implementation(project(":thirds:halilibo-richtext-ui"))
             }
         }
         commonTest {
@@ -31,9 +33,6 @@ kotlin {
         androidMain {
             dependencies {
                 implementation(libs.androidx.core.ktx)
-
-                implementation(libs.halilibo.richtext)
-                implementation(libs.halilibo.richtext.material3)
 
                 api(libs.jsoup)
             }

@@ -12,6 +12,8 @@ import app.bsky.feed.GetFeedGeneratorsQueryParams
 import app.bsky.feed.GetFeedGeneratorsResponse
 import app.bsky.feed.GetFeedQueryParams
 import app.bsky.feed.GetFeedResponse
+import app.bsky.feed.GetListFeedQueryParams
+import app.bsky.feed.GetListFeedResponse
 import app.bsky.feed.GetSuggestedFeedsQueryParams
 import app.bsky.feed.GetSuggestedFeedsResponse
 import app.bsky.feed.GetTimelineQueryParams
@@ -125,7 +127,11 @@ class BlueskyClient(
         return runCatching { getList(params) }.toResult()
     }
 
-    fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {
+    suspend fun getListFeedCatching(params: GetListFeedQueryParams): Result<GetListFeedResponse>{
+        return runCatching { getListFeed(params) }.toResult()
+    }
+
+    private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {
         if (this.isFailure) return Result.failure(this.exceptionOrThrow())
         return this.getOrThrow().toResult()
     }

@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.content
 
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.FreadContent
@@ -15,7 +16,7 @@ class ContentManager(
 ) {
 
     val contentJson by lazy {
-        Json {
+        Json(globalJson) {
             serializersModule = SerializersModule {
                 providerList.forEach {
                     with(it) { buildSerializersModule() }

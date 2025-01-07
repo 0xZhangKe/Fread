@@ -49,7 +49,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
         }
     }
 
-    private lateinit var commonModule: CommonComponent
+    private lateinit var commonComponent: CommonComponent
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -64,10 +64,11 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
             return
         }
 
-        commonModule = appContext.commonComponent
+        commonComponent = appContext.commonComponent
+        val activityComponent = BrowserBridgeDialogActivityComponent.create(this)
 
         setContent {
-            val dayNightMode by commonModule.dayNightHelper.dayNightModeFlow.collectAsState()
+            val dayNightMode by commonComponent.dayNightHelper.dayNightModeFlow.collectAsState()
             FreadTheme(
                 darkTheme = dayNightMode.isNight,
             ) {
@@ -93,7 +94,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
                 finish()
                 return@launch
             }
-            commonModule.browserLauncher.launchWebTabInApp(
+            activityComponent.activityBrowserLauncher.launchWebTabInApp(
                 url = url,
                 checkAppSupportPage = false,
             )
@@ -102,7 +103,7 @@ class BrowserBridgeDialogActivity : AppCompatActivity() {
     }
 
     private suspend fun intercept(role: IdentityRole, url: String): Boolean {
-        commonModule.browserInterceptorSet.forEach {
+        commonComponent.browserInterceptorSet.forEach {
             if (it.intercept(role, url)) {
                 return true
             }

@@ -98,3 +98,7 @@ compose {
 room {
     schemaDirectory("$projectDir/schemas")
 }
+
+ksp {
+    arg("me.tatarka.inject.generateCompanionExtensions", "true")
+}

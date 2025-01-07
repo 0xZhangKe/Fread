@@ -53,7 +53,6 @@ material = "1.12.0"
 rssparser = "6.0.8"
 
 ktml = "0.0.6"
-halilibo-richtext = "0.20.0"
 
 jsoup = "1.15.3"
 
@@ -190,9 +189,6 @@ material = { group = "com.google.android.material", name = "material", version.r
 rssparser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rssparser" }
 
 ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
-halilibo-richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "halilibo-richtext" }
-halilibo-richtext-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "halilibo-richtext" }
-jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
 imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "1.9.0" }
 okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
 ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }

@@ -10,6 +10,7 @@ import com.zhangke.fread.common.utils.StorageHelper
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSUserDefaults
+import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationDelegateProtocol
 
 @Component
@@ -17,6 +18,11 @@ import platform.UIKit.UIApplicationDelegateProtocol
 abstract class IosApplicationComponent(
     @get:Provides val applicationDelegate: UIApplicationDelegateProtocol,
 ) : HostingApplicationComponent {
+
+    @Provides
+    fun provideApplication(): UIApplication {
+        return UIApplication.sharedApplication
+    }
 
     @Provides
     fun provideNsUserDefaults(): NSUserDefaults {

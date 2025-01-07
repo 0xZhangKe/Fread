@@ -25,6 +25,7 @@ sealed interface BlueskyFeeds {
     @Composable
     fun displayName(): String
 
+    @Serializable
     data class Following(
         override val following: Boolean,
         override val pinned: Boolean,

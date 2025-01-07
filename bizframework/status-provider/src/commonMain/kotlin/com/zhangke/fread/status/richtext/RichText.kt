@@ -1,10 +1,11 @@
 package com.zhangke.fread.status.richtext
 
+import androidx.compose.ui.text.AnnotatedString
 import com.zhangke.framework.utils.PlatformSerializable
-import com.zhangke.framework.utils.PlatformTransient
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.richtext.parser.HtmlParser
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -16,20 +17,14 @@ class RichText(
     private val emojis: List<Emoji>,
     private val parsePossibleHashtag: Boolean = false,
 ) : PlatformSerializable {
-
-    @PlatformTransient
-    private var charSequence: CharSequence? = null
-
-    fun parse(): CharSequence {
-        charSequence?.let { return it }
+    fun parse(onLinkTargetClick: OnLinkTargetClick): AnnotatedString {
         return parse(
             mentions = mentions,
             hashTags = hashTags,
             emojis = emojis,
             parsePossibleHashtag = parsePossibleHashtag,
-        ).also {
-            charSequence = it
-        }
+            onLinkTargetClick = onLinkTargetClick,
+        )
     }
 
     companion object {
@@ -37,9 +32,19 @@ class RichText(
     }
 }
 
-internal expect fun RichText.parse(
+internal fun RichText.parse(
     mentions: List<Mention>,
     hashTags: List<HashtagInStatus>,
     emojis: List<Emoji>,
     parsePossibleHashtag: Boolean,
-): CharSequence
+    onLinkTargetClick: OnLinkTargetClick,
+): AnnotatedString {
+    return HtmlParser.parse(
+        document = document,
+        emojis = emojis,
+        mentions = mentions,
+        hashTags = hashTags,
+        parsePossibleHashtag = parsePossibleHashtag,
+        onLinkTargetClick = onLinkTargetClick,
+    )
+}

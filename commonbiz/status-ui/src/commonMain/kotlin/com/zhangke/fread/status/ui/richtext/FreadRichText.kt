@@ -1,34 +1,27 @@
 package com.zhangke.fread.status.ui.richtext
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalLayoutDirection
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.LayoutDirection
+import androidx.compose.ui.unit.em
+import androidx.compose.ui.unit.sp
+import com.seiko.imageloader.rememberImagePainter
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.buildRichText
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
-
-@Composable
-expect fun FreadRichText(
-    modifier: Modifier,
-    richText: RichText,
-    color: Color = Color.Unspecified,
-    onMentionClick: (Mention) -> Unit = {},
-    onHashtagClick: (HashtagInStatus) -> Unit = {},
-    onMaybeHashtagTarget: (RichLinkTarget.MaybeHashtagTarget) -> Unit = {},
-    onUrlClick: (url: String) -> Unit = {},
-    layoutDirection: LayoutDirection = LocalLayoutDirection.current,
-    overflow: TextOverflow = TextOverflow.Ellipsis,
-    maxLines: Int = Int.MAX_VALUE,
-    textSelectable: Boolean = false,
-    fontSizeSp: Float = 14F,
-)
 
 @Composable
 fun FreadRichText(
@@ -40,7 +33,7 @@ fun FreadRichText(
     onMentionClick: (Mention) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
     onUrlClick: (url: String) -> Unit = {},
-    layoutDirection: LayoutDirection = LocalLayoutDirection.current,
+    // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
     textSelectable: Boolean = false,
@@ -57,7 +50,7 @@ fun FreadRichText(
     FreadRichText(
         modifier = modifier,
         richText = richText,
-        layoutDirection = layoutDirection,
+        // layoutDirection = layoutDirection,
         overflow = overflow,
         maxLines = maxLines,
         onMentionClick = onMentionClick,
@@ -65,5 +58,79 @@ fun FreadRichText(
         fontSizeSp = fontSizeSp,
         onUrlClick = onUrlClick,
         textSelectable = textSelectable,
+    )
+}
+
+@Composable
+fun FreadRichText(
+    modifier: Modifier,
+    richText: RichText,
+    color: Color = Color.Unspecified,
+    onMentionClick: (Mention) -> Unit = {},
+    onHashtagClick: (HashtagInStatus) -> Unit = {},
+    onMaybeHashtagTarget: (RichLinkTarget.MaybeHashtagTarget) -> Unit = {},
+    onUrlClick: (url: String) -> Unit = {},
+    // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = Int.MAX_VALUE,
+    textSelectable: Boolean = false,
+    fontSizeSp: Float = 14F,
+) {
+    val text =
+        remember(richText, onUrlClick, onMentionClick, onHashtagClick, onMaybeHashtagTarget) {
+            richText.parse(
+                onLinkTargetClick = {
+                    when (it) {
+                        is RichLinkTarget.UrlTarget -> onUrlClick(it.url)
+                        is RichLinkTarget.MentionTarget -> onMentionClick(it.mention)
+                        is RichLinkTarget.HashtagTarget -> onHashtagClick(it.hashtag)
+                        is RichLinkTarget.MaybeHashtagTarget -> onMaybeHashtagTarget(it)
+                    }
+                }
+            )
+        }
+    TextSelectionContainer(textSelectable) {
+        Text(
+            text = text,
+            modifier = modifier,
+            color = color,
+            overflow = overflow,
+            maxLines = maxLines,
+            fontSize = fontSizeSp.sp,
+            inlineContent = customInlineContent,
+        )
+    }
+}
+
+@Composable
+private fun TextSelectionContainer(
+    enabled: Boolean = false,
+    content: @Composable () -> Unit,
+) {
+    if (enabled) {
+        SelectionContainer(content = content)
+    } else {
+        content()
+    }
+}
+
+private val customInlineContent by lazy(LazyThreadSafetyMode.NONE) {
+    mapOf(
+        "emoji" to InlineTextContent(
+            Placeholder(
+                width = 1.em,
+                height = 1.em,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline
+            ),
+        ) { emojiUrl ->
+            Image(
+                rememberImagePainter(emojiUrl),
+                contentDescription = null,
+                modifier = Modifier
+                    // FIXME: remove it
+                    .background(Color.Red)
+                    .fillMaxSize(),
+            )
+        }
     )
 }

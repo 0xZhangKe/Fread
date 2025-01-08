@@ -39,4 +39,8 @@
     <string name="profile_about_contract_us">Contact me at:&#160;</string>
     <string name="profile_about_telegram">Telegram Group:&#160;</string>
     <string name="profile_about_privacy_policy">Privacy Policy:&#160;</string>
+
+    <string name="profile_setting_check_for_update">Check for update</string>
+    <string name="profile_setting_already_latest_version">Your app is already up to date</string>
+    <string name="profile_setting_have_new_version">New version available, click to update.</string>
 </resources>

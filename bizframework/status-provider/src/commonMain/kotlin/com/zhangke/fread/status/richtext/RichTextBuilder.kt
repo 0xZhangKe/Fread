@@ -23,14 +23,14 @@ fun buildRichText(
 }
 
 fun Blog.preParseRichText() {
-    author.humanizedName.parseRichText
-    humanizedContent.parseRichText
-    humanizedSpoilerText.parseRichText
-    humanizedDescription.parseRichText
+    author.humanizedName.parse()
+    humanizedContent.parse()
+    humanizedSpoilerText.parse()
+    humanizedDescription.parse()
 }
 
 fun Status.preParseRichText() {
-    triggerAuthor.humanizedName.parseRichText
+    triggerAuthor.humanizedName.parse()
     intrinsicBlog.preParseRichText()
 }
 

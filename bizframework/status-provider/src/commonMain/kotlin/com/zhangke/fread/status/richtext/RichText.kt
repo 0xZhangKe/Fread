@@ -7,6 +7,7 @@ import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.parser.HtmlParser
+import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
 @Serializable
@@ -27,16 +28,22 @@ class RichText(
     @PlatformTransient
     var onLinkTargetClick: OnLinkTargetClick? = null
 
+    @Contextual
     @PlatformTransient
-    val parseRichText: AnnotatedString by lazy {
-        HtmlParser.parse(
+    private var richText: AnnotatedString? = null
+
+    fun parse(): AnnotatedString {
+        richText?.let { return it }
+        return HtmlParser.parse(
             document = document,
             emojis = emojis,
             mentions = mentions,
             hashTags = hashTags,
             parsePossibleHashtag = parsePossibleHashtag,
             onLinkTargetClick = clickableDelegate,
-        )
+        ).also {
+            richText = it
+        }
     }
 
     companion object {

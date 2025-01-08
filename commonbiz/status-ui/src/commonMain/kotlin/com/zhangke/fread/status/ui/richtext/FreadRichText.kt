@@ -120,16 +120,13 @@ private val customInlineContent by lazy(LazyThreadSafetyMode.NONE) {
             Placeholder(
                 width = 1.em,
                 height = 1.em,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.AboveBaseline
+                placeholderVerticalAlign = PlaceholderVerticalAlign.TextBottom,
             ),
         ) { emojiUrl ->
             Image(
                 rememberImagePainter(emojiUrl),
                 contentDescription = null,
-                modifier = Modifier
-                    // FIXME: remove it
-                    .background(Color.Red)
-                    .fillMaxSize(),
+                modifier = Modifier.fillMaxSize(),
             )
         }
     )

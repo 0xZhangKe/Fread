@@ -18,10 +18,11 @@ class RichText(
     private val parsePossibleHashtag: Boolean = false,
 ) : PlatformSerializable {
     fun parse(onLinkTargetClick: OnLinkTargetClick): AnnotatedString {
-        return parse(
+        return HtmlParser.parse(
+            document = document,
+            emojis = emojis,
             mentions = mentions,
             hashTags = hashTags,
-            emojis = emojis,
             parsePossibleHashtag = parsePossibleHashtag,
             onLinkTargetClick = onLinkTargetClick,
         )
@@ -30,21 +31,4 @@ class RichText(
     companion object {
         val empty by lazy { buildRichText("") }
     }
-}
-
-internal fun RichText.parse(
-    mentions: List<Mention>,
-    hashTags: List<HashtagInStatus>,
-    emojis: List<Emoji>,
-    parsePossibleHashtag: Boolean,
-    onLinkTargetClick: OnLinkTargetClick,
-): AnnotatedString {
-    return HtmlParser.parse(
-        document = document,
-        emojis = emojis,
-        mentions = mentions,
-        hashTags = hashTags,
-        parsePossibleHashtag = parsePossibleHashtag,
-        onLinkTargetClick = onLinkTargetClick,
-    )
 }

@@ -6,3 +6,8 @@ fun DependencyHandlerScope.kspAll(dependencyNotation: Any) {
     add("kspIosX64", dependencyNotation)
     add("kspIosArm64", dependencyNotation)
 }
+
+fun DependencyHandlerScope.kspAllAndMeta(dependencyNotation: Any) {
+    add("kspCommonMainMetadata", dependencyNotation)
+    kspAll(dependencyNotation)
+}

@@ -21,6 +21,7 @@ kotlin {
     }
     sourceSets {
         commonMain {
+            kotlin.srcDirs("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation(project(path = ":framework"))
                 implementation(project(path = ":bizframework:status-provider"))
@@ -69,7 +70,7 @@ kotlin {
 
 dependencies {
     kspAll(libs.kotlinInject.compiler)
-    kspAll(libs.krouter.reducing.compiler)
+    kspAllAndMeta(libs.krouter.reducing.compiler)
 }
 
 ksp {

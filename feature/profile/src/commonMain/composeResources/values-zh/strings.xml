@@ -40,4 +40,7 @@
     <string name="profile_about_telegram">Telegram 群组：</string>
     <string name="profile_about_privacy_policy">隐私协议：</string>
 
+    <string name="profile_setting_check_for_update">检查更新</string>
+    <string name="profile_setting_already_latest_version">当前版本已经是最新了</string>
+    <string name="profile_setting_have_new_version">有新版本，点击更新。</string>
 </resources>

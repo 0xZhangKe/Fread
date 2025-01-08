@@ -20,6 +20,7 @@ class FreadConfigManager @Inject constructor(
         private const val LOCAL_KEY_STATUS_ALWAYS_SHOW_SENSITIVE =
             "fread_status_always_show_sensitive"
         private const val LOCAL_KEY_DEVICE_ID = "device_id"
+        private const val LOCAL_KEY_IGNORE_UPDATE_VERSION = "ignore_update_version"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -85,6 +86,16 @@ class FreadConfigManager @Inject constructor(
     suspend fun getDeviceId(): String {
         return localConfigManager.getStringOrPut(LOCAL_KEY_DEVICE_ID) {
             RandomIdGenerator().generateId()
+        }
+    }
+
+    suspend fun getIgnoreUpdateVersion(): Long? {
+        return localConfigManager.getLong(LOCAL_KEY_IGNORE_UPDATE_VERSION)
+    }
+
+    suspend fun updateIgnoreUpdateVersion(version: Long) {
+        withContext(Dispatchers.IO) {
+            localConfigManager.putLong(LOCAL_KEY_IGNORE_UPDATE_VERSION, version)
         }
     }
 }

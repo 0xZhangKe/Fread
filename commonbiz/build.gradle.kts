@@ -49,6 +49,9 @@ kotlin {
 
                 implementation(libs.multiplatformsettings.core)
                 implementation(libs.multiplatformsettings.coroutines)
+
+                implementation(libs.ktor.client.core)
+                implementation(libs.ktor.client.serialization.kotlinx.json)
             }
         }
         commonTest {

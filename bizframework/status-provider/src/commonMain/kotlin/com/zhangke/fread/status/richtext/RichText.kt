@@ -2,6 +2,7 @@ package com.zhangke.fread.status.richtext
 
 import androidx.compose.ui.text.AnnotatedString
 import com.zhangke.framework.utils.PlatformSerializable
+import com.zhangke.framework.utils.PlatformTransient
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
@@ -17,14 +18,24 @@ class RichText(
     private val emojis: List<Emoji>,
     private val parsePossibleHashtag: Boolean = false,
 ) : PlatformSerializable {
-    fun parse(onLinkTargetClick: OnLinkTargetClick): AnnotatedString {
-        return HtmlParser.parse(
+
+    @PlatformTransient
+    private var clickableDelegate: OnLinkTargetClick = { target ->
+        onLinkTargetClick?.invoke(target)
+    }
+
+    @PlatformTransient
+    var onLinkTargetClick: OnLinkTargetClick? = null
+
+    @PlatformTransient
+    val parseRichText: AnnotatedString by lazy {
+        HtmlParser.parse(
             document = document,
             emojis = emojis,
             mentions = mentions,
             hashTags = hashTags,
             parsePossibleHashtag = parsePossibleHashtag,
-            onLinkTargetClick = onLinkTargetClick,
+            onLinkTargetClick = clickableDelegate,
         )
     }
 

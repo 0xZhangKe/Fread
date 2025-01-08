@@ -1,12 +1,12 @@
 package com.zhangke.fread.status.ui.richtext
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -76,22 +76,23 @@ fun FreadRichText(
     textSelectable: Boolean = false,
     fontSizeSp: Float = 14F,
 ) {
-    val text =
-        remember(richText, onUrlClick, onMentionClick, onHashtagClick, onMaybeHashtagTarget) {
-            richText.parse(
-                onLinkTargetClick = {
-                    when (it) {
-                        is RichLinkTarget.UrlTarget -> onUrlClick(it.url)
-                        is RichLinkTarget.MentionTarget -> onMentionClick(it.mention)
-                        is RichLinkTarget.HashtagTarget -> onHashtagClick(it.hashtag)
-                        is RichLinkTarget.MaybeHashtagTarget -> onMaybeHashtagTarget(it)
-                    }
-                }
-            )
+    DisposableEffect(richText) {
+        richText.onLinkTargetClick = { target ->
+            when (target) {
+                is RichLinkTarget.UrlTarget -> onUrlClick(target.url)
+                is RichLinkTarget.MentionTarget -> onMentionClick(target.mention)
+                is RichLinkTarget.HashtagTarget -> onHashtagClick(target.hashtag)
+                is RichLinkTarget.MaybeHashtagTarget -> onMaybeHashtagTarget(target)
+            }
         }
+        onDispose {
+            richText.onLinkTargetClick = null
+        }
+    }
+
     TextSelectionContainer(textSelectable) {
         Text(
-            text = text,
+            text = richText.parseRichText,
             modifier = modifier,
             color = color,
             overflow = overflow,

@@ -102,7 +102,7 @@ internal fun FreadApp(
                         )
                         LaunchedEffect(Unit) {
                             GlobalScreenNavigation.openScreenFlow.collect { screen ->
-                                it.push(screen)
+                                navigator.push(screen)
                             }
                         }
                     }

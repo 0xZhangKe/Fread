@@ -9,8 +9,6 @@
 
     <string name="activity_pub_protocol_name">长毛象</string>
 
-    <string name="activity_pub_search_timeline_name">%1$s的%1$s</string>
-
     <string name="activity_pub_instance_detail_language_label">语言: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">月活: %1$s</string>
 
@@ -101,7 +99,7 @@
     <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">您确定要撤回关注请求吗？</string>
     <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">您确定要取消屏蔽对方吗？</string>
 
-    <string name="activity_pub_hashtag_timeline_description">%1$s 条帖子 · %1$s 参与 · %1$s 条今日帖子</string>
+    <string name="activity_pub_hashtag_timeline_description">%1$s 条帖子 · %2$s 参与 · %3$s 条今日帖子</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
 
     <string name="activity_pub_edit_account_info_name_empty">请输入用户名</string>

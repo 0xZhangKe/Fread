@@ -1,7 +1,8 @@
 package com.zhangke.fread.profile.screen.setting.about
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -10,18 +11,37 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.LocalContentColor
+import androidx.compose.material3.Button
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.config.AppCommonConfig
@@ -36,6 +56,9 @@ import com.zhangke.fread.feature.profile.profile_about_telegram
 import com.zhangke.fread.feature.profile.profile_about_version
 import com.zhangke.fread.feature.profile.profile_about_website
 import com.zhangke.fread.feature.profile.profile_setting_about_title
+import com.zhangke.fread.feature.profile.profile_setting_check_for_update
+import com.zhangke.fread.feature.profile.profile_setting_have_new_version
+import com.zhangke.fread.status.ui.update.AppUpdateDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -45,16 +68,45 @@ class AboutScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val viewModel = getViewModel<AboutViewModel>()
+        val uiState by viewModel.uiState.collectAsState()
+        val snackBarState = rememberSnackbarHostState()
         AboutScreenContent(
+            uiState = uiState,
+            snackBarState = snackBarState,
             onBackClick = {
                 navigator.pop()
             },
+            onUpdateClick = viewModel::onUpdateClick,
+            onCheckUpdateClick = viewModel::onCheckForUpdateClick,
         )
+        ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
+        var showUpdateDialog by rememberSaveable { mutableStateOf(false) }
+        LaunchedEffect(uiState) {
+            showUpdateDialog = uiState.newReleaseInfo != null
+        }
+        if (showUpdateDialog && uiState.newReleaseInfo != null) {
+            AppUpdateDialog(
+                appReleaseInfo = uiState.newReleaseInfo!!,
+                onCancel = {
+                    showUpdateDialog = false
+                    viewModel.onCancelClick()
+                },
+                onUpdateClick = {
+                    showUpdateDialog = false
+                    viewModel.onUpdateClick()
+                },
+            )
+        }
     }
 
     @Composable
     private fun AboutScreenContent(
+        uiState: AboutUiState,
+        snackBarState: SnackbarHostState,
         onBackClick: () -> Unit,
+        onUpdateClick: () -> Unit,
+        onCheckUpdateClick: () -> Unit,
     ) {
         val textHandler = LocalActivityTextHandler.current
         val browserLauncher = LocalActivityBrowserLauncher.current
@@ -65,108 +117,152 @@ class AboutScreen : BaseScreen() {
                     onBackClick = onBackClick,
                 )
             },
+            snackbarHost = {
+                SnackbarHost(snackBarState)
+            },
         ) { innerPadding ->
-            Column(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(innerPadding),
-            ) {
-                Image(
+            SelectionContainer {
+                Column(
                     modifier = Modifier
-                        .align(Alignment.CenterHorizontally)
-                        .padding(top = 32.dp)
-                        .size(80.dp),
-                    painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.ic_fread_logo),
-                    contentDescription = "Logo",
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 16.dp)
-                        .align(Alignment.CenterHorizontally),
-                    text = AppCommonConfig.APP_NAME,
-                    style = MaterialTheme.typography.headlineMedium,
-                )
-                Text(
-                    modifier = Modifier
-                        .padding(top = 8.dp)
-                        .align(Alignment.CenterHorizontally),
-                    text = textHandler.packageName,
-                    style = MaterialTheme.typography.bodyMedium,
-                )
-                Spacer(modifier = Modifier.height(32.dp))
-                AboutClickableItem(
-                    title = stringResource(Res.string.profile_about_website),
-                    clickableText = AppCommonConfig.WEBSITE,
-                    showUnderline = true,
-                    onClick = {
-                        browserLauncher.launchFreadLandingPage()
-                    },
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                val version = remember {
-                    val versionName = textHandler.versionName
-                    val versionCode = textHandler.versionCode
-                    "$versionName($versionCode)"
+                        .fillMaxSize()
+                        .padding(innerPadding)
+                        .padding(horizontal = 16.dp),
+                ) {
+                    Image(
+                        modifier = Modifier
+                            .align(Alignment.CenterHorizontally)
+                            .padding(top = 32.dp)
+                            .size(80.dp),
+                        painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.ic_fread_logo),
+                        contentDescription = "Logo",
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 16.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = AppCommonConfig.APP_NAME,
+                        style = MaterialTheme.typography.headlineMedium,
+                    )
+                    Text(
+                        modifier = Modifier
+                            .padding(top = 8.dp)
+                            .align(Alignment.CenterHorizontally),
+                        text = textHandler.packageName,
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    Spacer(modifier = Modifier.height(32.dp))
+                    AboutClickableItem(
+                        title = stringResource(Res.string.profile_about_website),
+                        clickableText = AppCommonConfig.WEBSITE,
+                        showUnderline = true,
+                        onClick = {
+                            browserLauncher.launchFreadLandingPage()
+                        },
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    val version = remember {
+                        val versionName = textHandler.versionName
+                        val versionCode = textHandler.versionCode
+                        "$versionName($versionCode)"
+                    }
+                    Row(
+                        modifier = Modifier.fillMaxWidth().noRippleClick { onUpdateClick() },
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        AboutClickableItem(
+                            modifier = Modifier,
+                            title = stringResource(Res.string.profile_about_version),
+                            clickableText = version,
+                            showUnderline = false,
+                            onClick = {},
+                        )
+                        if (uiState.newReleaseInfo != null) {
+                            Text(
+                                modifier = Modifier.padding(start = 6.dp),
+                                text = stringResource(Res.string.profile_setting_have_new_version),
+                                style = MaterialTheme.typography.labelMedium,
+                                color = LocalContentColor.current.copy(alpha = 0.7F),
+                                maxLines = 1,
+                            )
+                            Box(
+                                modifier = Modifier.size(4.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Red.copy(alpha = 0.8F)),
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AboutClickableItem(
+                        title = stringResource(Res.string.profile_about_developer),
+                        clickableText = AppCommonConfig.AUTHOR,
+                        showUnderline = true,
+                        onClick = {
+                            browserLauncher.launchAuthorWebsite()
+                        },
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AboutClickableItem(
+                        title = stringResource(Res.string.profile_about_contract_us),
+                        clickableText = AppCommonConfig.AUTHOR_EMAIL,
+                        showUnderline = false,
+                        onClick = {
+                            textHandler.copyText(AppCommonConfig.AUTHOR_EMAIL)
+                            toast("Copied to clipboard")
+                        },
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AboutClickableItem(
+                        title = stringResource(Res.string.profile_about_telegram),
+                        clickableText = AppCommonConfig.TELEGRAM_GROUP,
+                        showUnderline = false,
+                        onClick = {
+                            textHandler.copyText(AppCommonConfig.TELEGRAM_GROUP)
+                            browserLauncher.launchBySystemBrowser(AppCommonConfig.TELEGRAM_GROUP)
+                        },
+                    )
+                    Spacer(modifier = Modifier.height(16.dp))
+                    AboutClickableItem(
+                        title = stringResource(Res.string.profile_about_privacy_policy),
+                        clickableText = AppCommonConfig.PRIVACY_POLICY,
+                        showUnderline = false,
+                        onClick = {
+                            browserLauncher.launchWebTabInApp(AppCommonConfig.PRIVACY_POLICY)
+                        },
+                    )
+
+                    Spacer(modifier = Modifier.height(24.dp))
+
+                    Button(
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .padding(horizontal = 42.dp),
+                        onClick = onCheckUpdateClick,
+                    ) {
+                        if (uiState.checkingUpdate) {
+                            CircularProgressIndicator(
+                                modifier = Modifier.size(18.dp),
+                                color = Color.White,
+                            )
+                        } else {
+                            Text(
+                                text = stringResource(Res.string.profile_setting_check_for_update),
+                            )
+                        }
+                    }
                 }
-                AboutClickableItem(
-                    title = stringResource(Res.string.profile_about_version),
-                    clickableText = version,
-                    showUnderline = false,
-                    onClick = {},
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                AboutClickableItem(
-                    title = stringResource(Res.string.profile_about_developer),
-                    clickableText = AppCommonConfig.AUTHOR,
-                    showUnderline = true,
-                    onClick = {
-                        browserLauncher.launchAuthorWebsite()
-                    },
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                AboutClickableItem(
-                    title = stringResource(Res.string.profile_about_contract_us),
-                    clickableText = AppCommonConfig.AUTHOR_EMAIL,
-                    showUnderline = false,
-                    onClick = {
-                        textHandler.copyText(AppCommonConfig.AUTHOR_EMAIL)
-                        toast("Copied to clipboard")
-                    },
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                AboutClickableItem(
-                    title = stringResource(Res.string.profile_about_telegram),
-                    clickableText = AppCommonConfig.TELEGRAM_GROUP,
-                    showUnderline = false,
-                    onClick = {
-                        textHandler.copyText(AppCommonConfig.TELEGRAM_GROUP)
-                        browserLauncher.launchBySystemBrowser(AppCommonConfig.TELEGRAM_GROUP)
-                    },
-                )
-                Spacer(modifier = Modifier.height(16.dp))
-                AboutClickableItem(
-                    title = stringResource(Res.string.profile_about_privacy_policy),
-                    clickableText = AppCommonConfig.PRIVACY_POLICY,
-                    showUnderline = false,
-                    onClick = {
-                        browserLauncher.launchWebTabInApp(AppCommonConfig.PRIVACY_POLICY)
-                    },
-                )
             }
         }
     }
 
     @Composable
     private fun AboutClickableItem(
+        modifier: Modifier = Modifier,
         title: String,
         clickableText: String,
         showUnderline: Boolean,
         onClick: () -> Unit,
     ) {
         Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 4.dp),
+            modifier = modifier.padding(vertical = 4.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
@@ -175,7 +271,7 @@ class AboutScreen : BaseScreen() {
                         if (showUnderline) {
                             it
                         } else {
-                            it.clickable {
+                            it.noRippleClick {
                                 onClick()
                             }
                         }
@@ -183,7 +279,7 @@ class AboutScreen : BaseScreen() {
                 text = title,
             )
             Text(
-                modifier = Modifier.clickable {
+                modifier = Modifier.noRippleClick {
                     onClick()
                 },
                 text = clickableText,

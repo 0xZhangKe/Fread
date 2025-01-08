@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import cafe.adriel.voyager.navigator.tab.CurrentTab
 import cafe.adriel.voyager.navigator.tab.LocalTabNavigator
@@ -36,9 +37,9 @@ import cafe.adriel.voyager.navigator.tab.TabNavigator
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.NavigationBar
 import com.zhangke.framework.composable.NavigationBarItem
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import com.zhangke.fread.common.action.LocalComposableActions
 import com.zhangke.fread.common.action.OpenNotificationPageAction
+import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import com.zhangke.fread.common.review.LocalFreadReviewManager
 import com.zhangke.fread.explore.ExploreTab
 import com.zhangke.fread.feature.message.NotificationsTab
@@ -47,6 +48,7 @@ import com.zhangke.fread.profile.ProfileTab
 import com.zhangke.fread.screen.main.drawer.MainDrawer
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
+import com.zhangke.fread.status.ui.update.AppUpdateDialog
 import com.zhangke.fread.status.ui.utils.getScreenWidth
 import com.zhangke.fread.utils.LocalActivityHelper
 import kotlinx.coroutines.launch
@@ -55,6 +57,8 @@ import kotlinx.coroutines.launch
 @Composable
 fun Screen.MainPage() {
     val activityHelper = LocalActivityHelper.current
+    val viewModel = getViewModel<MainViewModel>()
+    val uiState by viewModel.uiState.collectAsState()
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
     val coroutineScope = rememberCoroutineScope()
     val nestedTabConnection = remember {
@@ -145,6 +149,13 @@ fun Screen.MainPage() {
                 }
             }
         }
+    }
+    if (uiState.newAppReleaseInfo != null) {
+        AppUpdateDialog(
+            appReleaseInfo = uiState.newAppReleaseInfo!!,
+            onCancel = viewModel::onCancelClick,
+            onUpdateClick = viewModel::onUpdateClick,
+        )
     }
 }
 

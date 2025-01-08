@@ -44,4 +44,7 @@
 
     <string name="status_ui_translating">Translating…</string>
     <string name="status_ui_translate_show_original">Show Original</string>
+
+    <string name="status_ui_update_dialog_title">Update</string>
+    <string name="status_ui_update_dialog_release_note">Version %1$s Update Log:\n%2$s</string>
 </resources>

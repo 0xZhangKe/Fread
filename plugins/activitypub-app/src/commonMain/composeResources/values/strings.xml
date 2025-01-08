@@ -9,8 +9,6 @@
 
     <string name="activity_pub_protocol_name">Mastodon</string>
 
-    <string name="activity_pub_search_timeline_name">%1$s`s %1$s</string>
-
     <string name="activity_pub_instance_detail_language_label">Language: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">Active month: %1$s</string>
 
@@ -102,7 +100,7 @@
     <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">Do you want to withdraw your follow request?</string>
     <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">Are you sure you want to unblock this user?</string>
 
-    <string name="activity_pub_hashtag_timeline_description">%1$s posts · %1$s participants · %1$s post today</string>
+    <string name="activity_pub_hashtag_timeline_description">%1$s posts · %2$s participants · %3$s post today</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">Are you sure you want to unfollow this hashtag?</string>
 
     <string name="activity_pub_edit_account_info_name_empty">Please enter your username</string>

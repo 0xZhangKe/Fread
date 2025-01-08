@@ -92,7 +92,7 @@ fun FreadRichText(
 
     TextSelectionContainer(textSelectable) {
         Text(
-            text = richText.parseRichText,
+            text = richText.parse(),
             modifier = modifier,
             color = color,
             overflow = overflow,

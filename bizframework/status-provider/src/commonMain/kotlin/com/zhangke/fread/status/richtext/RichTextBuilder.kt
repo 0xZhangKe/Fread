@@ -23,16 +23,14 @@ fun buildRichText(
 }
 
 fun Blog.preParseRichText() {
-    // FIXME: support pre parse
-    // author.humanizedName.parse()
-    // humanizedContent.parse()
-    // humanizedSpoilerText.parse()
-    // humanizedDescription.parse()
+    author.humanizedName.parseRichText
+    humanizedContent.parseRichText
+    humanizedSpoilerText.parseRichText
+    humanizedDescription.parseRichText
 }
 
 fun Status.preParseRichText() {
-    // FIXME: support pre parse
-    // triggerAuthor.humanizedName.parse()
+    triggerAuthor.humanizedName.parseRichText
     intrinsicBlog.preParseRichText()
 }
 

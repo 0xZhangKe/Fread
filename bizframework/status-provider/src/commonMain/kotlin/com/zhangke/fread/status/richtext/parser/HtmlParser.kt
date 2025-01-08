@@ -5,6 +5,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.TextLinkStyles
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextDecoration
 import com.fleeksoft.ksoup.Ksoup
@@ -18,11 +19,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
 
-private val linkColor = Color(0xFF0000FF)
-
 object HtmlParser {
-
-    private val EMOJI_CODE_PATTERN = (":(\\w+):").toRegex()
 
     fun parse(
         document: String,
@@ -33,8 +30,6 @@ object HtmlParser {
         parsePossibleHashtag: Boolean = false,
     ): AnnotatedString {
         return buildAnnotatedString {
-            //<p>Hey hey it&#39;s the last <a href="https://mastodon.social/tags/AlternateFridayMusic" class="mention hashtag" rel="tag">#<span>AlternateFridayMusic</span></a> for  2024. <br /><a href="https://mastodon.social/tags/Zen" class="mention hashtag" rel="tag">#<span>Zen</span></a> &amp; the art of posting songs to random hashtags: Jump onboard!</p><p><a href="https://www.youtube.com/watch?v=0Ijoxcwg1Lo" target="_blank" rel="nofollow noopener" translate="no"><span class="invisible">https://www.</span><span class="">youtube.com/watch?v=0Ijoxcwg1Lo</span><span class="invisible"></span></a></p>
-
             Ksoup.parseBodyFragment(document)
                 .body()
                 .traverse(
@@ -68,7 +63,7 @@ object HtmlParser {
                 return
             }
             if (node is TextNode) {
-                appendText(node.text())
+                spanBuilder.appendWithEmoji(node.text(), emojis)
                 return
             }
             if (node is Element) {
@@ -124,17 +119,13 @@ object HtmlParser {
                                             is RichLinkTarget.HashtagTarget -> linkTarget.hashtag.name
                                             is RichLinkTarget.MaybeHashtagTarget -> linkTarget.hashtag
                                         },
+                                        styles = TextLinkStyles(
+                                            style = SpanStyle(color = Color.Blue),
+                                            hoveredStyle = SpanStyle(textDecoration = TextDecoration.Underline),
+                                        ),
                                         linkInteractionListener = {
                                             onLinkTargetClick(linkTarget)
                                         }
-                                    )
-                                )
-                            )
-                            popQueue.addLast(
-                                spanBuilder.pushStyle(
-                                    SpanStyle(
-                                        color = linkColor,
-                                        textDecoration = TextDecoration.Underline,
                                     )
                                 )
                             )
@@ -159,9 +150,6 @@ object HtmlParser {
                         if (popQueue.isNotEmpty()) {
                             spanBuilder.pop(popQueue.removeLast())
                         }
-                        if (popQueue.isNotEmpty()) {
-                            spanBuilder.pop(popQueue.removeLast())
-                        }
                     }
                     "span" -> {
                         skip = false
@@ -169,34 +157,44 @@ object HtmlParser {
                 }
             }
         }
-
-        private fun appendText(text: String) {
-            if (text.isEmpty()) {
-                return
-            }
-            if (emojis.isEmpty()) {
-                spanBuilder.append(text)
-                return
-            }
-            val results = EMOJI_CODE_PATTERN.findAll(spanBuilder.toString())
-
-            var index = 0
-            results.iterator().forEach {
-                if (it.range.first > index) {
-                    spanBuilder.append(text.substring(index, it.range.first))
-                }
-                val emoji = emojis[it.value]
-                if (emoji != null) {
-                    spanBuilder.appendInlineContent("emoji", emoji.url)
-                } else {
-                    spanBuilder.append(it.value)
-                }
-                index = it.range.last + 1
-            }
-            if (index < text.length) {
-                spanBuilder.append(text.substring(index))
-            }
-        }
     }
 }
 
+private val EMOJI_CODE_PATTERN = (":(\\w+):").toRegex()
+
+internal fun AnnotatedString.Builder.appendWithEmoji(
+    text: String,
+    emojis: Map<String, Emoji>,
+) {
+    if (text.isEmpty()) {
+        return
+    }
+    if (emojis.isEmpty()) {
+        append(text)
+        return
+    }
+    val results = EMOJI_CODE_PATTERN.findAll(text)
+
+    var index = 0
+    results.iterator().forEach {
+        if (it.range.first > index) {
+            append(text.substring(index, it.range.first))
+        }
+
+        val emojiCode = it.groups[1]?.value
+        if (emojiCode != null) {
+            val emoji = emojis[emojiCode]
+            if (emoji != null) {
+                appendInlineContent("emoji", emoji.url)
+            } else {
+                append(it.value)
+            }
+        } else {
+            append(it.value)
+        }
+        index = it.range.last + 1
+    }
+    if (index < text.length) {
+        append(text.substring(index))
+    }
+}

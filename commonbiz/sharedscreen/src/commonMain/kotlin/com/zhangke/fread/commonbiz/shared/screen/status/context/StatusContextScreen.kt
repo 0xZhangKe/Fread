@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -166,16 +167,17 @@ data class StatusContextScreen(
                 composedStatusInteraction = composedStatusInteraction,
             )
 
-            StatusInContextType.ANCHOR -> StatusUi(
-                modifier = modifier,
-                status = statusInContext.status,
-                textSelectable = true,
-                indexInList = indexInList,
-                threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
-                onMediaClick = onMediaClick,
-                detailModel = true,
-                composedStatusInteraction = composedStatusInteraction,
-            )
+            StatusInContextType.ANCHOR -> SelectionContainer {
+                StatusUi(
+                    modifier = modifier,
+                    status = statusInContext.status,
+                    indexInList = indexInList,
+                    threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
+                    onMediaClick = onMediaClick,
+                    detailModel = true,
+                    composedStatusInteraction = composedStatusInteraction,
+                )
+            }
 
             StatusInContextType.DESCENDANT -> StatusUi(
                 modifier = modifier.clickable {

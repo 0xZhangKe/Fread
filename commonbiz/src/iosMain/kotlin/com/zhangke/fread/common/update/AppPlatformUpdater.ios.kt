@@ -6,7 +6,7 @@ import platform.Foundation.NSBundle
 
 actual class AppPlatformUpdater {
 
-    actual val platformName: String = "iOS"
+    actual val platformName: String = "ios"
 
     actual fun getAppVersionCode(): Long {
         val versionCode =

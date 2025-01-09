@@ -125,22 +125,23 @@ fun DetailHeaderContent(
         }
 
         // title
-        FreadRichText(
-            modifier = Modifier
-                .freadPlaceholder(loading)
-                .constrainAs(nameRef) {
-                    top.linkTo(avatarRef.bottom, 16.dp)
-                    start.linkTo(parent.start, 16.dp)
-                    end.linkTo(parent.end, 16.dp)
-                    width = Dimension.fillToConstraints
-                },
-            richText = title ?: RichText.empty,
-            maxLines = 1,
-            textSelectable = true,
-            overflow = TextOverflow.Ellipsis,
-            fontSizeSp = 18F,
-            onUrlClick = onUrlClick,
-        )
+        SelectionContainer {
+            FreadRichText(
+                modifier = Modifier
+                    .freadPlaceholder(loading)
+                    .constrainAs(nameRef) {
+                        top.linkTo(avatarRef.bottom, 16.dp)
+                        start.linkTo(parent.start, 16.dp)
+                        end.linkTo(parent.end, 16.dp)
+                        width = Dimension.fillToConstraints
+                    },
+                richText = title ?: RichText.empty,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontSizeSp = 18F,
+                onUrlClick = onUrlClick,
+            )
+        }
 
         // acct line
         Box(
@@ -190,21 +191,22 @@ fun DetailHeaderContent(
         }
 
         // description
-        FreadRichText(
-            modifier = Modifier
-                .freadPlaceholder(loading)
-                .fillMaxWidth()
-                .constrainAs(noteRef) {
-                    top.linkTo(privateNoteRef.bottom, 6.dp)
-                    start.linkTo(nameRef.start)
-                    end.linkTo(parent.end, 16.dp)
-                    width = Dimension.fillToConstraints
-                },
-            richText = description ?: RichText.empty,
-            textSelectable = true,
-            onUrlClick = onUrlClick,
-            onMaybeHashtagTarget = onMaybeHashtagTargetClick,
-        )
+        SelectionContainer {
+            FreadRichText(
+                modifier = Modifier
+                    .freadPlaceholder(loading)
+                    .fillMaxWidth()
+                    .constrainAs(noteRef) {
+                        top.linkTo(privateNoteRef.bottom, 6.dp)
+                        start.linkTo(nameRef.start)
+                        end.linkTo(parent.end, 16.dp)
+                        width = Dimension.fillToConstraints
+                    },
+                richText = description ?: RichText.empty,
+                onUrlClick = onUrlClick,
+                onMaybeHashtagTarget = onMaybeHashtagTargetClick,
+            )
+        }
 
         // follow info line
         Box(

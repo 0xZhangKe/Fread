@@ -36,7 +36,6 @@ fun FreadRichText(
     // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
-    textSelectable: Boolean = false,
     fontSizeSp: Float = 14F,
 ) {
     val richText = remember(content, mentions) {
@@ -57,7 +56,6 @@ fun FreadRichText(
         onHashtagClick = onHashtagClick,
         fontSizeSp = fontSizeSp,
         onUrlClick = onUrlClick,
-        textSelectable = textSelectable,
     )
 }
 
@@ -73,7 +71,6 @@ fun FreadRichText(
     // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
-    textSelectable: Boolean = false,
     fontSizeSp: Float = 14F,
 ) {
     DisposableEffect(richText) {
@@ -90,29 +87,15 @@ fun FreadRichText(
         }
     }
 
-    TextSelectionContainer(textSelectable) {
-        Text(
-            text = richText.parse(),
-            modifier = modifier,
-            color = color,
-            overflow = overflow,
-            maxLines = maxLines,
-            fontSize = fontSizeSp.sp,
-            inlineContent = customInlineContent,
-        )
-    }
-}
-
-@Composable
-private fun TextSelectionContainer(
-    enabled: Boolean = false,
-    content: @Composable () -> Unit,
-) {
-    if (enabled) {
-        SelectionContainer(content = content)
-    } else {
-        content()
-    }
+    Text(
+        text = richText.parse(),
+        modifier = modifier,
+        color = color,
+        overflow = overflow,
+        maxLines = maxLines,
+        fontSize = fontSizeSp.sp,
+        inlineContent = customInlineContent,
+    )
 }
 
 private val customInlineContent by lazy(LazyThreadSafetyMode.NONE) {

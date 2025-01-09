@@ -125,16 +125,18 @@ fun DetailHeaderContent(
         }
 
         // title
-        SelectionContainer {
+        SelectionContainer(
+            modifier = Modifier
+                .constrainAs(nameRef) {
+                    top.linkTo(avatarRef.bottom, 16.dp)
+                    start.linkTo(parent.start, 16.dp)
+                    end.linkTo(parent.end, 16.dp)
+                    width = Dimension.fillToConstraints
+                },
+        ) {
             FreadRichText(
                 modifier = Modifier
-                    .freadPlaceholder(loading)
-                    .constrainAs(nameRef) {
-                        top.linkTo(avatarRef.bottom, 16.dp)
-                        start.linkTo(parent.start, 16.dp)
-                        end.linkTo(parent.end, 16.dp)
-                        width = Dimension.fillToConstraints
-                    },
+                    .freadPlaceholder(loading),
                 richText = title ?: RichText.empty,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -191,17 +193,19 @@ fun DetailHeaderContent(
         }
 
         // description
-        SelectionContainer {
+        SelectionContainer(
+            modifier = Modifier
+                .fillMaxWidth()
+                .constrainAs(noteRef) {
+                    top.linkTo(privateNoteRef.bottom, 6.dp)
+                    start.linkTo(nameRef.start)
+                    end.linkTo(parent.end, 16.dp)
+                    width = Dimension.fillToConstraints
+                },
+        ) {
             FreadRichText(
                 modifier = Modifier
-                    .freadPlaceholder(loading)
-                    .fillMaxWidth()
-                    .constrainAs(noteRef) {
-                        top.linkTo(privateNoteRef.bottom, 6.dp)
-                        start.linkTo(nameRef.start)
-                        end.linkTo(parent.end, 16.dp)
-                        width = Dimension.fillToConstraints
-                    },
+                    .freadPlaceholder(loading),
                 richText = description ?: RichText.empty,
                 onUrlClick = onUrlClick,
                 onMaybeHashtagTarget = onMaybeHashtagTargetClick,

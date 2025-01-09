@@ -112,15 +112,16 @@ private fun ServerAboutAnnouncement(
     baseUrl: FormalBaseUrl,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
-    FreadRichText(
-        modifier = modifier,
-        content = entity.content,
-        textSelectable = true,
-        onUrlClick = {
-            val role = IdentityRole(null, baseUrl = baseUrl)
-            browserLauncher.launchWebTabInApp(it, role)
-        },
-    )
+    SelectionContainer {
+        FreadRichText(
+            modifier = modifier,
+            content = entity.content,
+            onUrlClick = {
+                val role = IdentityRole(null, baseUrl = baseUrl)
+                browserLauncher.launchWebTabInApp(it, role)
+            },
+        )
+    }
 }
 
 @Composable

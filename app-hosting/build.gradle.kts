@@ -21,7 +21,6 @@ kotlin {
     }
     sourceSets {
         commonMain {
-            kotlin.srcDirs("build/generated/ksp/metadata/commonMain/kotlin")
             dependencies {
                 implementation(project(path = ":framework"))
                 implementation(project(path = ":bizframework:status-provider"))
@@ -66,11 +65,12 @@ kotlin {
             }
         }
     }
+    configureCommonMainKsp()
 }
 
 dependencies {
     kspAll(libs.kotlinInject.compiler)
-    kspAllAndMeta(libs.krouter.reducing.compiler)
+    kspCommonMainMetadata(libs.krouter.reducing.compiler)
 }
 
 ksp {

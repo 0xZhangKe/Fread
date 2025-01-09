@@ -22,7 +22,6 @@ fun StatusUi(
     style: StatusStyle = LocalStatusUiConfig.current.contentStyle,
     onMediaClick: OnBlogMediaClick,
     composedStatusInteraction: ComposedStatusInteraction,
-    textSelectable: Boolean = false,
     detailModel: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
@@ -47,7 +46,6 @@ fun StatusUi(
             onInteractive = {
                 composedStatusInteraction.onStatusInteractive(status, it)
             },
-            textSelectable = textSelectable,
             showDivider = threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
             onMediaClick = onMediaClick,
             onUserInfoClick = {

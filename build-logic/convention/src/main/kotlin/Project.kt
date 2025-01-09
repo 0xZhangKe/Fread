@@ -1,4 +1,6 @@
 import org.gradle.kotlin.dsl.DependencyHandlerScope
+import org.jetbrains.kotlin.gradle.dsl.KotlinMultiplatformExtension
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompilationTask
 
 fun DependencyHandlerScope.kspAll(dependencyNotation: Any) {
     add("kspAndroid", dependencyNotation)
@@ -7,7 +9,15 @@ fun DependencyHandlerScope.kspAll(dependencyNotation: Any) {
     add("kspIosArm64", dependencyNotation)
 }
 
-fun DependencyHandlerScope.kspAllAndMeta(dependencyNotation: Any) {
-    add("kspCommonMainMetadata", dependencyNotation)
-    kspAll(dependencyNotation)
+fun KotlinMultiplatformExtension.configureCommonMainKsp() {
+    sourceSets.named("commonMain").configure {
+        kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
+
+    }
+
+    project.tasks.withType(KotlinCompilationTask::class.java).configureEach {
+        if(name != "kspCommonMainKotlinMetadata") {
+            dependsOn("kspCommonMainKotlinMetadata")
+        }
+    }
 }

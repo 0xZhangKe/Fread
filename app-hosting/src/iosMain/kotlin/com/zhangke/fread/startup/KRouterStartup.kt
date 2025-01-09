@@ -6,7 +6,7 @@ import me.tatarka.inject.annotations.Inject
 
 class KRouterStartup @Inject constructor() : ModuleStartup {
     override fun onAppCreate() {
-        // @Suppress("UNRESOLVED_REFERENCE")
+		@Suppress("UNRESOLVED_REFERENCE")
         KRouter.addRouterModule(com.zhangke.krouter.generated.AutoReducingModule())
     }
 }

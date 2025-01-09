@@ -1,4 +1,4 @@
-import FreadKit 
+import FreadKit
 import SwiftUI
 import FirebaseCore
 
@@ -11,7 +11,7 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
     func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey : Any]? = nil) -> Bool {
         // Use Firebase library to configure APIs
         FirebaseApp.configure()
-        
+
         applicationComponent.startupManager.initialize()
 
         return true
@@ -20,9 +20,9 @@ class AppDelegate : UIResponder, UIApplicationDelegate {
 
 @main
 struct iOSApp: App {
-    
+
     @UIApplicationDelegateAdaptor(AppDelegate.self) var delegate
-    
+
     var body: some Scene {
         WindowGroup {
             let activityComponent = createActivityComponent(

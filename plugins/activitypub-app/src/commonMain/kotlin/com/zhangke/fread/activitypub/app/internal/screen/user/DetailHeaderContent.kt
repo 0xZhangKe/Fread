@@ -125,22 +125,25 @@ fun DetailHeaderContent(
         }
 
         // title
-        FreadRichText(
+        SelectionContainer(
             modifier = Modifier
-                .freadPlaceholder(loading)
                 .constrainAs(nameRef) {
                     top.linkTo(avatarRef.bottom, 16.dp)
                     start.linkTo(parent.start, 16.dp)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-            richText = title ?: RichText.empty,
-            maxLines = 1,
-            textSelectable = true,
-            overflow = TextOverflow.Ellipsis,
-            fontSizeSp = 18F,
-            onUrlClick = onUrlClick,
-        )
+        ) {
+            FreadRichText(
+                modifier = Modifier
+                    .freadPlaceholder(loading),
+                richText = title ?: RichText.empty,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+                fontSizeSp = 18F,
+                onUrlClick = onUrlClick,
+            )
+        }
 
         // acct line
         Box(
@@ -190,9 +193,8 @@ fun DetailHeaderContent(
         }
 
         // description
-        FreadRichText(
+        SelectionContainer(
             modifier = Modifier
-                .freadPlaceholder(loading)
                 .fillMaxWidth()
                 .constrainAs(noteRef) {
                     top.linkTo(privateNoteRef.bottom, 6.dp)
@@ -200,11 +202,15 @@ fun DetailHeaderContent(
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-            richText = description ?: RichText.empty,
-            textSelectable = true,
-            onUrlClick = onUrlClick,
-            onMaybeHashtagTarget = onMaybeHashtagTargetClick,
-        )
+        ) {
+            FreadRichText(
+                modifier = Modifier
+                    .freadPlaceholder(loading),
+                richText = description ?: RichText.empty,
+                onUrlClick = onUrlClick,
+                onMaybeHashtagTarget = onMaybeHashtagTargetClick,
+            )
+        }
 
         // follow info line
         Box(

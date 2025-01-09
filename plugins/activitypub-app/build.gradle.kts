@@ -61,13 +61,14 @@ kotlin {
             }
         }
     }
+    configureCommonMainKsp()
 }
 
 dependencies {
     kspAll(libs.androidx.room.compiler)
     kspAll(libs.kotlinInject.compiler)
     kspAll(libs.auto.service.ksp)
-    kspAll(libs.krouter.collecting.compiler)
+    kspCommonMainMetadata(libs.krouter.collecting.compiler)
 }
 
 

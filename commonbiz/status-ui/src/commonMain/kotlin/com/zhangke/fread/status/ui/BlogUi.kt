@@ -58,7 +58,6 @@ fun BlogUi(
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
     detailModel: Boolean = false,
     showDivider: Boolean = true,
-    textSelectable: Boolean = false,
     threadsType: ThreadsType = ThreadsType.NONE,
 ) {
     val textHandler = LocalActivityTextHandler.current
@@ -131,7 +130,6 @@ fun BlogUi(
             onUrlClick = onUrlClick,
             onBoostedClick = onBoostedClick,
             onFavouritedClick = onFavouritedClick,
-            textSelectable = textSelectable,
             editedTime = editedTime,
             favouritedCount = bottomPanelInteractions.favouritedCount,
             boostedCount = bottomPanelInteractions.boostedCount,

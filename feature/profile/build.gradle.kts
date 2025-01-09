@@ -45,12 +45,13 @@ kotlin {
             }
         }
     }
+    configureCommonMainKsp()
 }
 
 dependencies {
     kspAll(libs.auto.service.ksp)
     kspAll(libs.kotlinInject.compiler)
-    kspAll(libs.krouter.collecting.compiler)
+    kspCommonMainMetadata(libs.krouter.collecting.compiler)
 }
 
 compose {

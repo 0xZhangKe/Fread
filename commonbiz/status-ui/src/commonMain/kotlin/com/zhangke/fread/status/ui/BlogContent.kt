@@ -71,7 +71,6 @@ fun BlogContent(
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onShowOriginalClick: () -> Unit,
-    textSelectable: Boolean = false,
     boostedCount: Int? = null,
     favouritedCount: Int? = null,
     detailModel: Boolean = false,
@@ -98,7 +97,6 @@ fun BlogContent(
                 reportClick(StatusDataElements.MENTION)
                 onMentionClick(it)
             },
-            textSelectable = textSelectable,
             onUrlClick = onUrlClick,
         )
         val sensitive = blog.sensitive
@@ -190,7 +188,6 @@ private fun BlogTextContentSection(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onUrlClick: (url: String) -> Unit,
-    textSelectable: Boolean = false,
 ) {
     val contentMaxLine = if (blog.platform.protocol.isRss) {
         style.contentStyle.maxLine
@@ -239,7 +236,6 @@ private fun BlogTextContentSection(
                     maxLines = contentMaxLine,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagInStatusClick,
-                    textSelectable = textSelectable,
                     onUrlClick = onUrlClick,
                     fontSizeSp = style.contentStyle.contentSize.value,
                 )
@@ -272,7 +268,6 @@ private fun BlogTextContentSection(
                 onHashtagClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
                 fontSizeSp = style.contentStyle.contentSize.value,
-                textSelectable = textSelectable,
             )
         }
         if (
@@ -293,7 +288,6 @@ private fun BlogTextContentSection(
                 maxLines = contentMaxLine,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
-                textSelectable = textSelectable,
                 fontSizeSp = style.contentStyle.contentSize.value,
                 onUrlClick = onUrlClick,
             )
@@ -307,7 +301,6 @@ private fun SpoilerText(
     hideContent: Boolean,
     spoilerText: RichText,
     fontSize: TextUnit,
-    textSelectable: Boolean = false,
     onShowContent: () -> Unit,
     onHideContent: () -> Unit,
     onUrlClick: (url: String) -> Unit,
@@ -337,7 +330,6 @@ private fun SpoilerText(
             onMentionClick = onMentionClick,
             onHashtagClick = onHashtagInStatusClick,
             onUrlClick = onUrlClick,
-            textSelectable = textSelectable,
             fontSizeSp = fontSize.value,
         )
     }

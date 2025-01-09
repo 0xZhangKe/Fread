@@ -29,6 +29,7 @@ kotlin {
 
                 implementation(compose.components.resources)
 
+                implementation(libs.androidx.annotation)
                 implementation(libs.bundles.androidx.datastore)
 
                 implementation(libs.kotlinx.serialization.core)

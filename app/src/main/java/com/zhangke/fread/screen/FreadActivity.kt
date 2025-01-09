@@ -16,18 +16,21 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
+import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.composable.video.ExoPlayerManager
 import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.fread.common.action.ComposableActions
 import com.zhangke.fread.common.action.RouteAction
+import com.zhangke.fread.common.utils.ActivityResultCallback
+import com.zhangke.fread.common.utils.CallbackableActivity
 import com.zhangke.fread.di.AndroidActivityComponent
 import com.zhangke.fread.di.component
 import com.zhangke.fread.di.create
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.launch
 
-class FreadActivity : ComponentActivity() {
+class FreadActivity : ComponentActivity(), CallbackableActivity {
 
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission(),
@@ -36,6 +39,8 @@ class FreadActivity : ComponentActivity() {
             subscribeNotification()
         }
     }
+
+    private val callbacks = mutableMapOf<Int, ActivityResultCallback>()
 
     override fun onNewIntent(intent: Intent) {
         super.onNewIntent(intent)
@@ -107,5 +112,15 @@ class FreadActivity : ComponentActivity() {
         lifecycleScope.launch {
             ComposableActions.post(uri)
         }
+    }
+
+    override fun registerCallback(requestCode: Int, callback: ActivityResultCallback) {
+        callbacks[requestCode] = callback
+    }
+
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        TopActivityManager.updateTopActivity(this)
+        callbacks[requestCode]?.invoke(resultCode, data)
     }
 }

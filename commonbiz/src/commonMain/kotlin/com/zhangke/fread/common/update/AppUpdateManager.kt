@@ -6,7 +6,7 @@ import com.zhangke.fread.common.config.FreadConfigManager
 import io.ktor.client.call.body
 import io.ktor.client.request.get
 import io.ktor.client.request.parameter
-import io.ktor.client.request.url
+import io.ktor.http.takeFrom
 import me.tatarka.inject.annotations.Inject
 
 class AppUpdateManager @Inject constructor(
@@ -15,7 +15,7 @@ class AppUpdateManager @Inject constructor(
 
     companion object {
 
-        private const val API_RELEASE = "https://api.frad.xyz/release"
+        private const val API_RELEASE = "https://api.fread.xyz/app/release"
         private const val QUERY_PLATFORM = "platform"
     }
 
@@ -52,9 +52,12 @@ class AppUpdateManager @Inject constructor(
     private suspend fun getReleaseInfo(): Result<AppReleaseInfo> {
         return runCatching {
             sharedHttpClient.get {
-                url(API_RELEASE) {
+                url {
+                    takeFrom(API_RELEASE)
                     parameter(QUERY_PLATFORM, platformUpdater.platformName)
                 }
+//                url(API_RELEASE) {
+//                }
             }.body<AppReleaseInfo>()
         }
     }

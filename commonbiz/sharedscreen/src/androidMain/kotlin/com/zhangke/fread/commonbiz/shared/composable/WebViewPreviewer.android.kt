@@ -53,23 +53,3 @@ actual fun WebViewPreviewer(
     )
 }
 
-private fun warpBlogContentHtml(
-    html: String,
-    fontColor: Int,
-): String {
-    val colorString = String.format("#%06X", 0xFFFFFF and fontColor)
-    return """
-        <html>
-        <head>
-        <style>
-        body {
-            color: ${colorString};
-        }
-        </style>
-        </head>
-        <body>
-        $html
-        </body>
-        </html>
-    """.trimIndent()
-}

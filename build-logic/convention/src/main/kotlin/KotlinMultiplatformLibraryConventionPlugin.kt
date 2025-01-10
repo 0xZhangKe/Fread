@@ -21,6 +21,7 @@ import com.zhangke.fread.libraryComponentsExtension
 import com.zhangke.fread.libraryExtension
 import org.gradle.api.Plugin
 import org.gradle.api.Project
+import org.jetbrains.kotlin.gradle.ExperimentalKotlinGradlePluginApi
 
 class KotlinMultiplatformLibraryConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -41,14 +42,23 @@ class KotlinMultiplatformLibraryConventionPlugin : Plugin<Project> {
                 iosX64()
                 iosArm64()
                 iosSimulatorArm64()
-                sourceSets.apply {
-                    targets.configureEach {
-                        compilations.configureEach {
-                            compileTaskProvider.configure {
-                                compilerOptions {
-                                    // https://youtrack.jetbrains.com/issue/KT-61573
-                                    freeCompilerArgs.add("-Xexpect-actual-classes")
-                                }
+                @OptIn(ExperimentalKotlinGradlePluginApi::class)
+                applyHierarchyTemplate {
+                    common {
+                        withAndroidTarget()
+                        group("ios") {
+                            withIosX64()
+                            withIosArm64()
+                            withIosSimulatorArm64()
+                        }
+                    }
+                }
+                targets.configureEach {
+                    compilations.configureEach {
+                        compileTaskProvider.configure {
+                            compilerOptions {
+                                // https://youtrack.jetbrains.com/issue/KT-61573
+                                freeCompilerArgs.add("-Xexpect-actual-classes")
                             }
                         }
                     }

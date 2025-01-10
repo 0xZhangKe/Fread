@@ -8,7 +8,7 @@ import androidx.compose.ui.platform.LocalContext
 actual fun rememberVideoPlayerManager(): VideoPlayerManager {
     val context = LocalContext.current
     return remember(context) {
-        val factory = ExoVideoPlayer.Factory(context)
+        val factory = ExoVideoPlayerController.Factory(context)
         VideoPlayerManager(factory)
     }
 }

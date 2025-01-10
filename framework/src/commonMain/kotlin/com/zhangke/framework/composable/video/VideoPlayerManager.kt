@@ -17,16 +17,16 @@ val LocalVideoPlayerManager = staticCompositionLocalOf<VideoPlayerManager> {
 expect fun rememberVideoPlayerManager(): VideoPlayerManager
 
 class VideoPlayerManager(
-    private val factory: PlatformVideoPlayer.Factory,
+    private val factory: VideoPlayerController.Factory,
 ) {
 
-    private val playerPool = mutableMapOf<PlatformUri, PlatformVideoPlayer>()
+    private val playerPool = mutableMapOf<PlatformUri, VideoPlayerController>()
     private val uriToLifecycle = mutableMapOf<PlatformUri, Pair<Lifecycle, LifecycleObserver>>()
 
     fun obtainPlayer(
         uri: PlatformUri,
         lifecycle: Lifecycle,
-    ): PlatformVideoPlayer {
+    ): VideoPlayerController {
         Log.d("PlayerManager") { "obtainPlayer($uri)" }
         return playerPool[uri] ?: createPlayer(uri, lifecycle).also {
             playerPool[uri] = it
@@ -36,7 +36,7 @@ class VideoPlayerManager(
     private fun createPlayer(
         uri: PlatformUri,
         lifecycle: Lifecycle,
-    ): PlatformVideoPlayer {
+    ): VideoPlayerController {
         Log.d("PlayerManager") { "createPlayer($uri)" }
         val player = factory.create(uri)
         val observer = object : DefaultLifecycleObserver {
@@ -67,7 +67,6 @@ class VideoPlayerManager(
         Log.d("PlayerManager") { "recyclePlayer($uri)" }
         removeLifecycleObserver(uri)
         val player = playerPool.remove(uri) ?: return
-        // player.setVideoSurfaceView(null)
         player.stop()
         player.release()
         Log.d("PlayerManager") { "recyclePlayer($uri) finished" }

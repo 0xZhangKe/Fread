@@ -6,7 +6,7 @@ import androidx.compose.runtime.remember
 @Composable
 actual fun rememberVideoPlayerManager(): VideoPlayerManager {
     return remember {
-        val factory = AvVideoPlayer.Factory()
+        val factory = AvVideoPlayerController.Factory()
         VideoPlayerManager(factory)
     }
 }

@@ -33,7 +33,7 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.detail_page_banner_background
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
-import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.status.ui.richtext.SelectableRichText
 import org.jetbrains.compose.resources.painterResource
 
 @Composable
@@ -125,25 +125,21 @@ fun DetailHeaderContent(
         }
 
         // title
-        SelectionContainer(
+        SelectableRichText(
             modifier = Modifier
+                .freadPlaceholder(loading)
                 .constrainAs(nameRef) {
                     top.linkTo(avatarRef.bottom, 16.dp)
                     start.linkTo(parent.start, 16.dp)
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-        ) {
-            FreadRichText(
-                modifier = Modifier
-                    .freadPlaceholder(loading),
-                richText = title ?: RichText.empty,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-                fontSizeSp = 18F,
-                onUrlClick = onUrlClick,
-            )
-        }
+            richText = title ?: RichText.empty,
+            maxLines = 1,
+            overflow = TextOverflow.Ellipsis,
+            fontSizeSp = 18F,
+            onUrlClick = onUrlClick,
+        )
 
         // acct line
         Box(
@@ -193,8 +189,9 @@ fun DetailHeaderContent(
         }
 
         // description
-        SelectionContainer(
+        SelectableRichText(
             modifier = Modifier
+                .freadPlaceholder(loading)
                 .fillMaxWidth()
                 .constrainAs(noteRef) {
                     top.linkTo(privateNoteRef.bottom, 6.dp)
@@ -202,15 +199,10 @@ fun DetailHeaderContent(
                     end.linkTo(parent.end, 16.dp)
                     width = Dimension.fillToConstraints
                 },
-        ) {
-            FreadRichText(
-                modifier = Modifier
-                    .freadPlaceholder(loading),
-                richText = description ?: RichText.empty,
-                onUrlClick = onUrlClick,
-                onMaybeHashtagTarget = onMaybeHashtagTargetClick,
-            )
-        }
+            richText = description ?: RichText.empty,
+            onUrlClick = onUrlClick,
+            onMaybeHashtagTarget = onMaybeHashtagTargetClick,
+        )
 
         // follow info line
         Box(

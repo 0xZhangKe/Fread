@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -49,6 +50,7 @@ import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
 import com.zhangke.fread.status.ui.preview.StatusPreviewCardUi
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.status.ui.richtext.SelectableRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 
@@ -85,20 +87,39 @@ fun BlogContent(
             blogTranslationState = blogTranslationState,
             onShowOriginalClick = onShowOriginalClick,
         )
-        BlogTextContentSection(
-            blog = blog,
-            blogTranslationState = blogTranslationState,
-            style = style,
-            onHashtagInStatusClick = {
-                reportClick(StatusDataElements.HASHTAG)
-                onHashtagInStatusClick(it)
-            },
-            onMentionClick = {
-                reportClick(StatusDataElements.MENTION)
-                onMentionClick(it)
-            },
-            onUrlClick = onUrlClick,
-        )
+        if (detailModel) {
+            SelectionContainer {
+                BlogTextContentSection(
+                    blog = blog,
+                    blogTranslationState = blogTranslationState,
+                    style = style,
+                    onHashtagInStatusClick = {
+                        reportClick(StatusDataElements.HASHTAG)
+                        onHashtagInStatusClick(it)
+                    },
+                    onMentionClick = {
+                        reportClick(StatusDataElements.MENTION)
+                        onMentionClick(it)
+                    },
+                    onUrlClick = onUrlClick,
+                )
+            }
+        } else {
+            BlogTextContentSection(
+                blog = blog,
+                blogTranslationState = blogTranslationState,
+                style = style,
+                onHashtagInStatusClick = {
+                    reportClick(StatusDataElements.HASHTAG)
+                    onHashtagInStatusClick(it)
+                },
+                onMentionClick = {
+                    reportClick(StatusDataElements.MENTION)
+                    onMentionClick(it)
+                },
+                onUrlClick = onUrlClick,
+            )
+        }
         val sensitive = blog.sensitive
         if (blog.poll != null) {
             BlogPoll(

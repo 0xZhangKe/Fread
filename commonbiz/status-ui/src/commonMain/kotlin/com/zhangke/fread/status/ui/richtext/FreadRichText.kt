@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.ui.richtext
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.selection.SelectionContainer
@@ -96,6 +97,70 @@ fun FreadRichText(
         fontSize = fontSizeSp.sp,
         inlineContent = customInlineContent,
     )
+}
+
+@Composable
+fun SelectableRichText(
+    modifier: Modifier,
+    richText: RichText,
+    color: Color = Color.Unspecified,
+    onMentionClick: (Mention) -> Unit = {},
+    onHashtagClick: (HashtagInStatus) -> Unit = {},
+    onMaybeHashtagTarget: (RichLinkTarget.MaybeHashtagTarget) -> Unit = {},
+    onUrlClick: (url: String) -> Unit = {},
+    // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = Int.MAX_VALUE,
+    fontSizeSp: Float = 14F,
+) {
+    Box(modifier = modifier) {
+        SelectionContainer {
+            FreadRichText(
+                modifier = Modifier,
+                richText = richText,
+                color = color,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick,
+                onMaybeHashtagTarget = onMaybeHashtagTarget,
+                onUrlClick = onUrlClick,
+                overflow = overflow,
+                maxLines = maxLines,
+                fontSizeSp = fontSizeSp,
+            )
+        }
+    }
+}
+
+@Composable
+fun SelectableRichText(
+    content: String,
+    modifier: Modifier = Modifier,
+    mentions: List<Mention> = emptyList(),
+    emojis: List<Emoji> = emptyList(),
+    tags: List<HashtagInStatus> = emptyList(),
+    onMentionClick: (Mention) -> Unit = {},
+    onHashtagClick: (HashtagInStatus) -> Unit = {},
+    onUrlClick: (url: String) -> Unit = {},
+    overflow: TextOverflow = TextOverflow.Ellipsis,
+    maxLines: Int = Int.MAX_VALUE,
+    fontSizeSp: Float = 14F,
+) {
+    Box(modifier = modifier) {
+        SelectionContainer {
+            FreadRichText(
+                content = content,
+                mentions = mentions,
+                emojis = emojis,
+                tags = tags,
+                onMentionClick = onMentionClick,
+                onHashtagClick = onHashtagClick,
+                onUrlClick = onUrlClick,
+                overflow = overflow,
+                maxLines = maxLines,
+                fontSizeSp = fontSizeSp,
+            )
+        }
+    }
 }
 
 private val customInlineContent by lazy(LazyThreadSafetyMode.NONE) {

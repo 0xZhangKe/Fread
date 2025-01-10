@@ -167,17 +167,15 @@ data class StatusContextScreen(
                 composedStatusInteraction = composedStatusInteraction,
             )
 
-            StatusInContextType.ANCHOR -> SelectionContainer {
-                StatusUi(
-                    modifier = modifier,
-                    status = statusInContext.status,
-                    indexInList = indexInList,
-                    threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
-                    onMediaClick = onMediaClick,
-                    detailModel = true,
-                    composedStatusInteraction = composedStatusInteraction,
-                )
-            }
+            StatusInContextType.ANCHOR -> StatusUi(
+                modifier = modifier,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                threadsType = if (indexInList == 0) ThreadsType.ANCHOR_FIRST else ThreadsType.ANCHOR,
+                onMediaClick = onMediaClick,
+                detailModel = true,
+                composedStatusInteraction = composedStatusInteraction,
+            )
 
             StatusInContextType.DESCENDANT -> StatusUi(
                 modifier = modifier.clickable {

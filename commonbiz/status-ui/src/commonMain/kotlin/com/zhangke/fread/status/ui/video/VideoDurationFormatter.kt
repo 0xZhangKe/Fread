@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.ui.video
 
-import java.util.Locale
 import kotlin.time.Duration
 import kotlin.time.Duration.Companion.hours
 import kotlin.time.Duration.Companion.milliseconds
@@ -34,6 +33,6 @@ object VideoDurationFormatter {
     }
 
     private fun Duration.toFormatString(unit: DurationUnit): String {
-        return String.format(Locale.getDefault(),"%02d", toInt(unit))
+        return toInt(unit).toString().padStart(2, '0')
     }
 }

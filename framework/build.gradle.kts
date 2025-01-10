@@ -14,6 +14,20 @@ android {
 }
 
 kotlin {
+    listOf(
+        iosX64(),
+        iosArm64(),
+        iosSimulatorArm64(),
+    ).forEach { target ->
+        target.compilations.getByName("main") {
+            cinterops {
+                val objectObserver by creating {
+                    defFile(project.file("src/nativeInterop/cinterop/objectObserver.def"))
+                    packageName("com.zhangke.framework.kvo")
+                }
+            }
+        }
+    }
     sourceSets {
         commonMain {
             dependencies {

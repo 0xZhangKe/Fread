@@ -1,6 +1,5 @@
 package com.zhangke.fread.status.ui.video.inline
 
-import android.util.Log
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,9 +7,9 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.automirrored.filled.VolumeUp
 import androidx.compose.material.icons.filled.PlayCircleOutline
-import androidx.compose.material.icons.filled.VolumeOff
-import androidx.compose.material.icons.filled.VolumeUp
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.runtime.Composable
@@ -20,17 +19,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import androidx.media3.common.util.UnstableApi
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.inline.LocalPlayableIndexRecorder
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.video.VideoPlayer
 import com.zhangke.framework.composable.video.rememberVideoPlayerState
+import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.config.LocalFreadConfigManager
 
-@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 fun InlineVideo(
     aspectRatio: Float?,
@@ -80,7 +78,6 @@ private fun InlineVideoShell(
     )
 }
 
-@androidx.annotation.OptIn(UnstableApi::class)
 @Composable
 private fun InlineVideoPlayer(
     uri: PlatformUri,
@@ -90,7 +87,7 @@ private fun InlineVideoPlayer(
     onClick: () -> Unit,
     onPlayManually: () -> Unit,
 ) {
-    Log.d("PlayerManager", "InlineVideoPlayer($uri, $playWhenReady)")
+    Log.d("PlayerManager") { "InlineVideoPlayer($uri, $playWhenReady)" }
     Box(
         modifier = Modifier
             .fillMaxSize()
@@ -167,9 +164,9 @@ private fun InlineVideoControlPanel(
             onClick = { onMuteClick(!mute) },
         ) {
             val icon = if (mute) {
-                Icons.Default.VolumeOff
+                Icons.AutoMirrored.Filled.VolumeOff
             } else {
-                Icons.Default.VolumeUp
+                Icons.AutoMirrored.Filled.VolumeUp
             }
             Icon(
                 imageVector = icon,

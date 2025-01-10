@@ -9,17 +9,12 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.architect.theme.FreadTheme
-import com.zhangke.framework.composable.video.ExoPlayerManager
-import com.zhangke.framework.composable.video.LocalExoPlayerManager
 import com.zhangke.fread.common.action.ComposableActions
 import com.zhangke.fread.common.action.RouteAction
 import com.zhangke.fread.common.utils.ActivityResultCallback
@@ -67,19 +62,7 @@ class FreadActivity : ComponentActivity(), CallbackableActivity {
             FreadTheme(
                 darkTheme = dayNightMode.isNight,
             ) {
-                val videoPlayerManager = remember {
-                    ExoPlayerManager()
-                }
-                DisposableEffect(videoPlayerManager) {
-                    onDispose {
-                        videoPlayerManager.recycler()
-                    }
-                }
-                CompositionLocalProvider(
-                    LocalExoPlayerManager provides videoPlayerManager,
-                ) {
-                    activityComponent.freadContent()
-                }
+                activityComponent.freadContent()
             }
         }
     }

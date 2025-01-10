@@ -4,6 +4,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -19,7 +20,8 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.zhangke.framework.architect.theme.FreadTheme
+import com.zhangke.framework.composable.video.LocalVideoPlayerManager
+import com.zhangke.framework.composable.video.rememberVideoPlayerManager
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.config.FreadConfigManager
@@ -69,8 +71,15 @@ internal fun FreadApp(
     activityTextHandler: ActivityTextHandler,
     activityHelper: ActivityHelper,
 ) {
+    val videoPlayerManager = rememberVideoPlayerManager()
+    DisposableEffect(videoPlayerManager) {
+        onDispose {
+            videoPlayerManager.recycler()
+        }
+    }
     val statusConfig by freadConfigManager.statusConfigFlow.collectAsState()
     CompositionLocalProvider(
+        LocalVideoPlayerManager provides videoPlayerManager,
         LocalStatusUiConfig provides StatusUiConfig.create(config = statusConfig),
         LocalImageLoader provides imageLoader,
         LocalViewModelProviderFactory provides viewModelProviderFactory,

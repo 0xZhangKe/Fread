@@ -1,20 +1,18 @@
 package com.zhangke.framework.composable.video
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -23,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.PlatformUri
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.isActive
 import kotlin.math.abs
 
 @Composable
@@ -30,100 +29,94 @@ fun VideoPlayer(
     uri: PlatformUri,
     playWhenReady: Boolean,
     modifier: Modifier = Modifier,
+    aspectRatio: VideoAspectRatio = VideoAspectRatio.ScaleToFit,
     state: VideoState = rememberVideoPlayerState(),
     videoPlayerManager: VideoPlayerManager = LocalVideoPlayerManager.current,
 ) {
-    var playErrorInfo: String? by remember {
-        mutableStateOf(null)
-    }
-    var playAspectRatio by remember {
-        mutableFloatStateOf(1.778F)
-    }
-
     val lifecycle = LocalLifecycleOwner.current.lifecycle
-    val videoPlayer = remember(uri, videoPlayerManager) {
+    val controller = remember(uri, videoPlayerManager) {
         videoPlayerManager.obtainPlayer(uri, lifecycle).apply {
             prepare(state, playWhenReady)
         }
     }
 
-    Box(modifier = modifier.fillMaxSize()) {
-        videoPlayer.Content(
-            modifier = Modifier
-                .align(Alignment.Center)
-                .fillMaxWidth()
-                .aspectRatio(playAspectRatio),
+    val playErrorInfo by controller.errorFlow.collectAsState(null)
+    val isLoading by controller.isLoadingFlow.collectAsState(false)
+
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center,
+    ) {
+        controller.Content(
+            aspectRatio = aspectRatio,
+            modifier = Modifier.fillMaxSize(),
         )
         if (playErrorInfo.isNullOrBlank().not()) {
             Text(
                 modifier = Modifier
-                    .align(Alignment.Center)
                     .padding(horizontal = 16.dp),
                 text = playErrorInfo.orEmpty(),
                 color = Color.White,
                 style = MaterialTheme.typography.labelMedium,
             )
         }
-    }
-
-    LaunchedEffect(state.targetSeekTo) {
-        videoPlayer.seekTo(state.targetSeekTo)
-    }
-    LaunchedEffect(uri) {
-        while (true) {
-            delay(240)
-            state.updatePosition(videoPlayer.currentPosition)
-            state.updateDuration(videoPlayer.duration)
-        }
-    }
-    LaunchedEffect(state.playerVolume) {
-        if (videoPlayer.volume == state.playerVolume) return@LaunchedEffect
-        videoPlayer.volume = state.playerVolume
-    }
-
-    LaunchedEffect(state.playing) {
-        if (videoPlayer.isPlaying == state.playing) return@LaunchedEffect
-        if (state.playing) {
-            val diff = abs(videoPlayer.duration - videoPlayer.currentPosition)
-            if (diff < 100L) {
-                videoPlayer.seekTo(0L)
-            }
-            videoPlayer.play()
-        } else {
-            videoPlayer.pause()
+        if (isLoading) {
+            CircularProgressIndicator(
+                color = Color.White,
+            )
         }
     }
 
-    val listener = remember(uri) {
-        object : PlatformVideoPlayerListener() {
-            override fun onVideoSizeChanged(aspectRatio: Float) {
-                playAspectRatio = aspectRatio
+    LaunchedEffect(controller) {
+        while (isActive) {
+            delay(250)
+            state.updateDuration(controller.duration.inWholeMilliseconds)
+            state.updatePosition(controller.currentPosition.inWholeMilliseconds)
+        }
+    }
+    LaunchedEffect(controller) {
+        snapshotFlow { state.targetSeekTo }.collect { position ->
+            controller.seekTo(position)
+        }
+    }
+    LaunchedEffect(controller) {
+        snapshotFlow { state.playerVolume }.collect { volume ->
+            controller.setVolume(volume)
+        }
+    }
+    LaunchedEffect(controller) {
+        snapshotFlow { state.playing }.collect { playing ->
+            if (playing) {
+                val diff = abs(controller.duration.inWholeMilliseconds - controller.currentPosition.inWholeMilliseconds)
+                if (diff < 100L) {
+                    controller.seekTo(0L)
+                }
+                controller.play()
+            } else {
+                controller.pause()
             }
+        }
+    }
 
-            override fun onPlayerError(error: String?) {
-                playErrorInfo = error
-            }
-
-            override fun onPlaybackEndChanged(ended: Boolean) {
-                state.onPlaybackEndChanged(ended)
-            }
-
-            override fun onVolumeChanged(volume: Float) {
-                state.onVolumeChanged(volume)
-            }
-
-            override fun onIsPlayingChanged(isPlaying: Boolean) {
-                state.onIsPlayingChanged(isPlaying)
-            }
+    LaunchedEffect(controller) {
+        controller.volumeFlow.collect { volume ->
+            state.onVolumeChanged(volume)
+        }
+    }
+    LaunchedEffect(controller) {
+        controller.hasVideoEndedFlow.collect { ended ->
+            state.onPlaybackEndChanged(ended)
+        }
+    }
+    LaunchedEffect(controller) {
+        controller.isPlayingFlow.collect { isPlaying ->
+            state.onIsPlayingChanged(isPlaying)
         }
     }
 
     DisposableEffect(uri) {
-        videoPlayer.addListener(listener)
         onDispose {
             Log.d("PlayerManager") { "onDispose" }
-            state.updatePosition(videoPlayer.currentPosition)
-            videoPlayer.removeListener(listener)
             videoPlayerManager.recyclePlayer(uri)
         }
     }

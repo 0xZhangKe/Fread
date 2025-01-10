@@ -83,12 +83,14 @@ class AvVideoPlayerController(
 
         timeControlStatusObserver = avPlayer.addObserverSingle<Long>(
             "timeControlStatus",
+            options = NSKeyValueObservingOptionInitial or NSKeyValueObservingOptionNew,
         ) { timeControlStatus ->
             _isLoadingFlow.value = timeControlStatus == AVPlayerTimeControlStatusWaitingToPlayAtSpecifiedRate
             _isPlayingFlow.value = timeControlStatus == AVPlayerTimeControlStatusPlaying
         }
         statusObserver = avPlayer.currentItem!!.addObserverSingle<Long>(
             "status",
+            options = NSKeyValueObservingOptionInitial or NSKeyValueObservingOptionNew,
         ) { status ->
             when (status) {
                 AVPlayerItemStatusReadyToPlay -> {

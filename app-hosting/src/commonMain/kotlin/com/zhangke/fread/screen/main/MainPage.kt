@@ -72,6 +72,11 @@ fun Screen.MainPage() {
             drawerState.open()
         }
     }
+    BackHandler(drawerState.isOpen) {
+        coroutineScope.launch {
+            drawerState.close()
+        }
+    }
     CompositionLocalProvider(
         LocalNestedTabConnection provides nestedTabConnection,
     ) {

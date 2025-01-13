@@ -4,6 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.ReadOnlyComposable
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.cinterop.useContents
 import platform.UIKit.UIScreen
@@ -15,7 +16,7 @@ actual fun getScreenWidth(): Dp {
     return with(LocalDensity.current) {
         // TODO: This is not the correct way to get the screen width
         UIScreen.mainScreen().bounds().useContents {
-            size.width.toInt().toDp()
+            size.width.toInt().dp
         }
     }
 }
@@ -27,7 +28,7 @@ actual fun getScreenHeight(): Dp {
     return with(LocalDensity.current) {
         // TODO: This is not the correct way to get the screen width
         UIScreen.mainScreen().bounds().useContents {
-            size.height.toInt().toDp()
+            size.height.toInt().dp
         }
     }
 }

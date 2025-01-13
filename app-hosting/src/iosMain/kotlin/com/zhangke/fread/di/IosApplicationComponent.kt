@@ -5,11 +5,15 @@ import com.seiko.imageloader.component.setupDefaultComponents
 import com.seiko.imageloader.intercept.bitmapMemoryCacheConfig
 import com.seiko.imageloader.intercept.imageMemoryCacheConfig
 import com.seiko.imageloader.intercept.painterMemoryCacheConfig
+import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.StorageHelper
+import com.zhangke.fread.startup.KRouterStartup
 import me.tatarka.inject.annotations.Component
+import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 import platform.Foundation.NSUserDefaults
+import platform.UIKit.UIApplication
 import platform.UIKit.UIApplicationDelegateProtocol
 
 @Component
@@ -17,6 +21,11 @@ import platform.UIKit.UIApplicationDelegateProtocol
 abstract class IosApplicationComponent(
     @get:Provides val applicationDelegate: UIApplicationDelegateProtocol,
 ) : HostingApplicationComponent {
+
+    @Provides
+    fun provideApplication(): UIApplication {
+        return UIApplication.sharedApplication
+    }
 
     @Provides
     fun provideNsUserDefaults(): NSUserDefaults {
@@ -50,6 +59,10 @@ abstract class IosApplicationComponent(
             }
         }
     }
+
+    @IntoSet
+    @Provides
+    fun KRouterStartup.binds(): ModuleStartup = this
 
     companion object
 }

@@ -32,6 +32,14 @@ class LocalConfigManager @Inject constructor(
         configSettings.putInt(key, value)
     }
 
+    suspend fun getLong(key: String): Long?{
+        return configSettings.getLongOrNull(key)
+    }
+
+    suspend fun putLong(key: String, value: Long){
+        configSettings.putLong(key, value)
+    }
+
     suspend fun getBoolean(key: String): Boolean? {
         return configSettings.getBooleanOrNull(key)
     }

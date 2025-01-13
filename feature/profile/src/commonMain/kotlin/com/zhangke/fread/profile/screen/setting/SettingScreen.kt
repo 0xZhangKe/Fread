@@ -1,5 +1,6 @@
 package com.zhangke.fread.profile.screen.setting
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.outlined.Chat
@@ -36,6 +38,8 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
@@ -234,6 +238,7 @@ class SettingScreen : BaseScreen() {
                     icon = Icons.Outlined.Info,
                     title = stringResource(Res.string.profile_setting_about_title),
                     subtitle = uiState.settingInfo,
+                    redDot = uiState.haveNewAppVersion,
                     onClick = onAboutClick,
                 )
             }
@@ -418,6 +423,7 @@ class SettingScreen : BaseScreen() {
         icon: ImageVector,
         title: String,
         subtitle: String,
+        redDot: Boolean = false,
         onClick: () -> Unit,
     ) {
         SettingItem(
@@ -429,6 +435,7 @@ class SettingScreen : BaseScreen() {
                 )
             },
             title = title,
+            redDot = redDot,
             subtitle = subtitle,
             onClick = onClick,
         )
@@ -438,6 +445,7 @@ class SettingScreen : BaseScreen() {
     private fun SettingItem(
         icon: @Composable () -> Unit,
         title: String,
+        redDot: Boolean = false,
         subtitle: String,
         onClick: () -> Unit,
     ) {
@@ -456,11 +464,23 @@ class SettingScreen : BaseScreen() {
                 icon()
                 Spacer(modifier = Modifier.width(16.dp))
                 Column {
-                    Text(
-                        text = title,
-                        style = MaterialTheme.typography.titleMedium,
-                        maxLines = 1,
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = title,
+                            style = MaterialTheme.typography.titleMedium,
+                            maxLines = 1,
+                        )
+                        if (redDot){
+                            Spacer(modifier = Modifier.width(4.dp))
+                            Box(
+                                modifier = Modifier.size(4.dp)
+                                    .clip(CircleShape)
+                                    .background(Color.Red.copy(alpha = 0.8F)),
+                            )
+                        }
+                    }
                     Text(
                         modifier = Modifier.padding(top = 4.dp),
                         text = subtitle,

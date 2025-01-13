@@ -24,7 +24,7 @@ import com.zhangke.fread.status.ui.common.ProgressedAvatar
 import com.zhangke.fread.status.ui.common.ProgressedBanner
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.RelationshipUiState
-import com.zhangke.fread.status.ui.richtext.FreadRichText
+import com.zhangke.fread.status.ui.richtext.SelectableRichText
 
 @Composable
 fun DetailHeaderContent(
@@ -106,7 +106,7 @@ fun DetailHeaderContent(
         }
 
         // title
-        FreadRichText(
+        SelectableRichText(
             modifier = Modifier
                 .freadPlaceholder(loading)
                 .constrainAs(nameRef) {
@@ -117,7 +117,6 @@ fun DetailHeaderContent(
                 },
             richText = title ?: RichText.empty,
             maxLines = 1,
-            textSelectable = true,
             overflow = TextOverflow.Ellipsis,
             fontSizeSp = 18F,
             onUrlClick = onUrlClick,
@@ -171,7 +170,7 @@ fun DetailHeaderContent(
         }
 
         // description
-        FreadRichText(
+        SelectableRichText(
             modifier = Modifier
                 .freadPlaceholder(loading)
                 .fillMaxWidth()
@@ -182,7 +181,6 @@ fun DetailHeaderContent(
                     width = Dimension.fillToConstraints
                 },
             richText = description ?: RichText.empty,
-            textSelectable = true,
             onUrlClick = onUrlClick,
             onMaybeHashtagTarget = onMaybeHashtagTargetClick,
         )

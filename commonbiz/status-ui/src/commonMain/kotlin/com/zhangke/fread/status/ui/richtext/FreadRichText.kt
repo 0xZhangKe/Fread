@@ -95,7 +95,7 @@ fun FreadRichText(
         overflow = overflow,
         maxLines = maxLines,
         fontSize = fontSizeSp.sp,
-        inlineContent = customInlineContent,
+        inlineContent = rememberInlineContent(richText.emojis),
     )
 }
 
@@ -163,20 +163,30 @@ fun SelectableRichText(
     }
 }
 
-private val customInlineContent by lazy(LazyThreadSafetyMode.NONE) {
-    mapOf(
-        "emoji" to InlineTextContent(
-            Placeholder(
+@Composable
+private fun rememberInlineContent(
+    emojis: List<Emoji>,
+): Map<String, InlineTextContent> {
+    return remember(emojis) {
+        val emojiContent = InlineTextContent(
+            placeholder = Placeholder(
                 width = 1.em,
                 height = 1.em,
                 placeholderVerticalAlign = PlaceholderVerticalAlign.TextBottom,
             ),
-        ) { emojiUrl ->
-            Image(
-                rememberImagePainter(emojiUrl),
-                contentDescription = null,
-                modifier = Modifier.fillMaxSize(),
-            )
+        ) { shortCode ->
+            val fixedShortCode = shortCode.removePrefix(":").removeSuffix(":")
+            val emoji = emojis.firstOrNull { it.shortcode == fixedShortCode }
+            if (emoji != null) {
+                Image(
+                    painter = rememberImagePainter(emoji.url),
+                    contentDescription = null,
+                    modifier = Modifier.fillMaxSize(),
+                )
+            } else {
+                Text(fixedShortCode)
+            }
         }
-    )
+        mapOf("emoji" to emojiContent)
+    }
 }

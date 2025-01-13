@@ -151,6 +151,7 @@ object HtmlParser {
                             spanBuilder.pop(popQueue.removeLast())
                         }
                     }
+
                     "span" -> {
                         skip = false
                     }
@@ -185,7 +186,7 @@ internal fun AnnotatedString.Builder.appendWithEmoji(
         if (emojiCode != null) {
             val emoji = emojis[emojiCode]
             if (emoji != null) {
-                appendInlineContent("emoji", emoji.url)
+                appendInlineContent("emoji", ":${emoji.shortcode}:")
             } else {
                 append(it.value)
             }

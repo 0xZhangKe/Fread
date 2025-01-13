@@ -16,7 +16,7 @@ class RichText(
     val document: String,
     private val mentions: List<Mention>,
     private val hashTags: List<HashtagInStatus>,
-    private val emojis: List<Emoji>,
+    val emojis: List<Emoji>,
     private val parsePossibleHashtag: Boolean = false,
 ) : PlatformSerializable {
 

@@ -66,8 +66,6 @@ kotlin {
                 implementation(libs.bundles.androidx.media3)
 
                 implementation(libs.ktml)
-                implementation(libs.halilibo.richtext)
-                implementation(libs.halilibo.richtext.material3)
 
                 implementation(libs.ktor.client.okhttp)
             }

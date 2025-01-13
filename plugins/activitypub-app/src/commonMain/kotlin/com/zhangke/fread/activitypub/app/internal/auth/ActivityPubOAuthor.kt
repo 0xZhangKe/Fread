@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.auth
 
 import com.zhangke.activitypub.api.ActivityPubScope
-import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
@@ -9,12 +8,11 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEnt
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
-import com.zhangke.fread.common.browser.BrowserLauncher
+import com.zhangke.fread.common.browser.OAuthHandler
+import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.ext.getCurrentTimeMillis
 import com.zhangke.fread.status.model.IdentityRole
-import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
@@ -29,12 +27,13 @@ class ActivityPubOAuthor @Inject constructor(
     private val accountAdapter: ActivityPubLoggedAccountAdapter,
     private val platformEntityAdapter: ActivityPubPlatformEntityAdapter,
     private val activityPubDatabases: ActivityPubDatabases,
-    private val browserLauncher: BrowserLauncher,
+    private val applicationScope: ApplicationCoroutineScope,
+    private val oAuthHandler: OAuthHandler,
 ) {
 
-    private val oauthCodeFlow: MutableSharedFlow<String> = MutableSharedFlow()
-
-    fun startOauth(baseUrl: FormalBaseUrl) = ApplicationScope.launch {
+    internal fun startOauth(
+        baseUrl: FormalBaseUrl,
+    ) = applicationScope.launch {
         val app = applicationRepo.getApplicationByBaseUrl(baseUrl)
         if (app == null) {
             toast("Application not registered")
@@ -46,8 +45,12 @@ class ActivityPubOAuthor @Inject constructor(
             clientId = app.clientId,
             redirectUri = app.redirectUri,
         )
-        openOauthPage(oauthUrl)
-        val code = oauthCodeFlow.first()
+        val code = try {
+            oAuthHandler.startOAuth(oauthUrl)
+        } catch (e: Exception) {
+            toast(e.message)
+            return@launch
+        }
         val account = try {
             val instance = client.instanceRepo.getInstanceInformation().getOrThrow()
             activityPubDatabases.getPlatformDao()
@@ -67,13 +70,5 @@ class ActivityPubOAuthor @Inject constructor(
             return@launch
         }
         repo.insert(account, getCurrentTimeMillis())
-    }
-
-    internal suspend fun onOauthSuccess(code: String) {
-        oauthCodeFlow.emit(code)
-    }
-
-    private fun openOauthPage(oauthUrl: String) {
-        browserLauncher.launchWebTabInApp(oauthUrl, checkAppSupportPage = false)
     }
 }

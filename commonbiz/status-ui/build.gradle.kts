@@ -27,10 +27,14 @@ kotlin {
                 implementation(libs.arrow.core)
 
                 implementation(libs.bundles.voyager)
+                implementation(libs.androidx.annotation)
                 implementation(libs.imageLoader)
                 implementation(libs.ktml)
 
                 implementation(libs.krouter.runtime)
+
+                implementation(project(":thirds:halilibo-richtext-ui"))
+                implementation(project(":thirds:halilibo-richtext-material3"))
             }
         }
         commonTest {
@@ -47,9 +51,6 @@ kotlin {
 
                 implementation(libs.okhttp3)
                 implementation(libs.okhttp3.logging)
-
-                implementation(libs.halilibo.richtext)
-                implementation(libs.halilibo.richtext.material3)
 
                 implementation(libs.auto.service.annotations)
             }

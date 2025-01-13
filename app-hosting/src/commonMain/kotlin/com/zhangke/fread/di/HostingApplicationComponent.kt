@@ -13,6 +13,7 @@ import com.zhangke.fread.feature.message.di.NotificationsComponent
 import com.zhangke.fread.feeds.di.FeedsComponent
 import com.zhangke.fread.profile.di.ProfileComponent
 import com.zhangke.fread.rss.di.RssComponent
+import com.zhangke.fread.screen.main.MainViewModel
 import com.zhangke.fread.screen.main.drawer.MainDrawerViewModel
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.StatusProvider
@@ -44,5 +45,11 @@ interface HostingApplicationComponent : CommonComponent,
     @Provides
     fun provideMainDrawerMainDrawerViewModel(creator: () -> MainDrawerViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return MainDrawerViewModel::class to creator
+    }
+
+    @IntoMap
+    @Provides
+    fun provideMainPageViewModel(creator: () -> MainViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return MainViewModel::class to creator
     }
 }

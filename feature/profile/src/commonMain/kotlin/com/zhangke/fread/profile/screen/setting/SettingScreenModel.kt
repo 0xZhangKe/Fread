@@ -6,6 +6,7 @@ import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.handler.TextHandler
+import com.zhangke.fread.common.update.AppUpdateManager
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -16,6 +17,7 @@ class SettingScreenModel @Inject constructor(
     private val textHandler: TextHandler,
     private val freadConfigManager: FreadConfigManager,
     private val dayNightHelper: DayNightHelper,
+    private val updateManager: AppUpdateManager,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -25,6 +27,7 @@ class SettingScreenModel @Inject constructor(
             settingInfo = getAppVersionInfo(),
             contentSize = StatusContentSize.default(),
             alwaysShowSensitiveContent = false,
+            haveNewAppVersion = false,
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -44,6 +47,12 @@ class SettingScreenModel @Inject constructor(
                             alwaysShowSensitiveContent = config.alwaysShowSensitiveContent,
                         )
                     }
+                }
+        }
+        viewModelScope.launch {
+            updateManager.checkForUpdate(false)
+                .onSuccess { (needUpdate, _) ->
+                    _uiState.update { it.copy(haveNewAppVersion = needUpdate) }
                 }
         }
     }

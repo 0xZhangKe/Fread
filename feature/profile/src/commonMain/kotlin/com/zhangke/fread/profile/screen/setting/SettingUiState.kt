@@ -9,4 +9,5 @@ data class SettingUiState(
     val dayNightMode: DayNightMode,
     val settingInfo: String,
     val contentSize: StatusContentSize,
+    val haveNewAppVersion: Boolean,
 )

@@ -65,4 +65,7 @@
     <string name="status_ui_user_detail_posts">帖子</string>
     <string name="status_ui_user_detail_follower_info">关注者</string>
     <string name="status_ui_user_detail_following_info">正在关注</string>
+
+    <string name="status_ui_update_dialog_title">更新</string>
+    <string name="status_ui_update_dialog_release_note">%1$s 版本更新日志：\n%2$s </string>
 </resources>

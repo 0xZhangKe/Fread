@@ -50,7 +50,6 @@ import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
 import com.zhangke.fread.status.ui.preview.StatusPreviewCardUi
 import com.zhangke.fread.status.ui.richtext.FreadRichText
-import com.zhangke.fread.status.ui.richtext.SelectableRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 
@@ -89,20 +88,22 @@ fun BlogContent(
         )
         if (detailModel) {
             SelectionContainer {
-                BlogTextContentSection(
-                    blog = blog,
-                    blogTranslationState = blogTranslationState,
-                    style = style,
-                    onHashtagInStatusClick = {
-                        reportClick(StatusDataElements.HASHTAG)
-                        onHashtagInStatusClick(it)
-                    },
-                    onMentionClick = {
-                        reportClick(StatusDataElements.MENTION)
-                        onMentionClick(it)
-                    },
-                    onUrlClick = onUrlClick,
-                )
+                Column {
+                    BlogTextContentSection(
+                        blog = blog,
+                        blogTranslationState = blogTranslationState,
+                        style = style,
+                        onHashtagInStatusClick = {
+                            reportClick(StatusDataElements.HASHTAG)
+                            onHashtagInStatusClick(it)
+                        },
+                        onMentionClick = {
+                            reportClick(StatusDataElements.MENTION)
+                            onMentionClick(it)
+                        },
+                        onUrlClick = onUrlClick,
+                    )
+                }
             }
         } else {
             BlogTextContentSection(

@@ -13,7 +13,7 @@ compose-multiplatform = "1.7.1"
 androidx-core = "1.13.1"
 androidx-fragment = "1.7.1"
 androidx-appcompat = "1.6.1"
-androidx-annotation = "1.8.2"
+androidx-annotation = "1.9.1"
 androidx-activity = "1.8.2"
 androidx-preference = "1.2.1"
 androidx-collection = "1.3.0"
@@ -40,7 +40,7 @@ auto_service = "1.0.1"
 
 voyager = "1.1.0-beta02"
 
-krouter = "1.0.2"
+krouter = "1.1.0"
 
 multiplatformsettings = "1.2.0"
 
@@ -55,7 +55,6 @@ material = "1.12.0"
 rssparser = "6.0.8"
 
 ktml = "0.0.6"
-halilibo-richtext = "0.20.0"
 
 jsoup = "1.15.3"
 
@@ -196,12 +195,9 @@ material = { group = "com.google.android.material", name = "material", version.r
 rssparser = { group = "com.prof18.rssparser", name = "rssparser", version.ref = "rssparser" }
 
 ktml = { group = "moe.tlaster", name = "ktml", version.ref = "ktml" }
-halilibo-richtext = { group = "com.halilibo.compose-richtext", name = "richtext-ui", version.ref = "halilibo-richtext" }
-halilibo-richtext-material3 = { group = "com.halilibo.compose-richtext", name = "richtext-ui-material3", version.ref = "halilibo-richtext" }
-jsoup = {group = "org.jsoup", name = "jsoup", version.ref = "jsoup"}
 imageLoader = { group = "io.github.qdsfdhvh", name = "image-loader", version = "1.9.0" }
 okio = { group = "com.squareup.okio", name = "okio", version = "3.9.0" }
-ksoup = { module = "com.fleeksoft.ksoup:ksoup", version = "0.1.6-alpha1" }
+ksoup = { module = "com.fleeksoft.ksoup:ksoup-kotlinx", version = "0.2.1" }
 uri-kmp = { module = "com.eygraber:uri-kmp", version = "0.0.18" }
 bignum = { module = "com.ionspin.kotlin:bignum", version = "0.3.10" }
 kermit = { module = "co.touchlab:kermit", version = "2.0.4" }

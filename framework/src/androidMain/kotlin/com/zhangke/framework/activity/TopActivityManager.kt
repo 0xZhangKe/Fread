@@ -27,4 +27,8 @@ object TopActivityManager {
             },
         )
     }
+
+    fun updateTopActivity(activity: Activity){
+        activeActivity = SoftReference(activity)
+    }
 }

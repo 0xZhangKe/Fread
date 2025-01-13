@@ -66,11 +66,12 @@ kotlin {
             }
         }
     }
+    configureCommonMainKsp()
 }
 
 dependencies {
     kspAll(libs.kotlinInject.compiler)
-    kspAll(libs.krouter.reducing.compiler)
+    kspCommonMainMetadata(libs.krouter.reducing.compiler)
 }
 
 ksp {

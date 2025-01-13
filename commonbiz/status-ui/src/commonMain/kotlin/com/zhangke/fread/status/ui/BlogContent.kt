@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -71,7 +72,6 @@ fun BlogContent(
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onShowOriginalClick: () -> Unit,
-    textSelectable: Boolean = false,
     boostedCount: Int? = null,
     favouritedCount: Int? = null,
     detailModel: Boolean = false,
@@ -86,21 +86,41 @@ fun BlogContent(
             blogTranslationState = blogTranslationState,
             onShowOriginalClick = onShowOriginalClick,
         )
-        BlogTextContentSection(
-            blog = blog,
-            blogTranslationState = blogTranslationState,
-            style = style,
-            onHashtagInStatusClick = {
-                reportClick(StatusDataElements.HASHTAG)
-                onHashtagInStatusClick(it)
-            },
-            onMentionClick = {
-                reportClick(StatusDataElements.MENTION)
-                onMentionClick(it)
-            },
-            textSelectable = textSelectable,
-            onUrlClick = onUrlClick,
-        )
+        if (detailModel) {
+            SelectionContainer {
+                Column {
+                    BlogTextContentSection(
+                        blog = blog,
+                        blogTranslationState = blogTranslationState,
+                        style = style,
+                        onHashtagInStatusClick = {
+                            reportClick(StatusDataElements.HASHTAG)
+                            onHashtagInStatusClick(it)
+                        },
+                        onMentionClick = {
+                            reportClick(StatusDataElements.MENTION)
+                            onMentionClick(it)
+                        },
+                        onUrlClick = onUrlClick,
+                    )
+                }
+            }
+        } else {
+            BlogTextContentSection(
+                blog = blog,
+                blogTranslationState = blogTranslationState,
+                style = style,
+                onHashtagInStatusClick = {
+                    reportClick(StatusDataElements.HASHTAG)
+                    onHashtagInStatusClick(it)
+                },
+                onMentionClick = {
+                    reportClick(StatusDataElements.MENTION)
+                    onMentionClick(it)
+                },
+                onUrlClick = onUrlClick,
+            )
+        }
         val sensitive = blog.sensitive
         if (blog.poll != null) {
             BlogPoll(
@@ -190,7 +210,6 @@ private fun BlogTextContentSection(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onUrlClick: (url: String) -> Unit,
-    textSelectable: Boolean = false,
 ) {
     val contentMaxLine = if (blog.platform.protocol.isRss) {
         style.contentStyle.maxLine
@@ -239,7 +258,6 @@ private fun BlogTextContentSection(
                     maxLines = contentMaxLine,
                     onMentionClick = onMentionClick,
                     onHashtagClick = onHashtagInStatusClick,
-                    textSelectable = textSelectable,
                     onUrlClick = onUrlClick,
                     fontSizeSp = style.contentStyle.contentSize.value,
                 )
@@ -272,7 +290,6 @@ private fun BlogTextContentSection(
                 onHashtagClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
                 fontSizeSp = style.contentStyle.contentSize.value,
-                textSelectable = textSelectable,
             )
         }
         if (
@@ -293,7 +310,6 @@ private fun BlogTextContentSection(
                 maxLines = contentMaxLine,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagInStatusClick,
-                textSelectable = textSelectable,
                 fontSizeSp = style.contentStyle.contentSize.value,
                 onUrlClick = onUrlClick,
             )
@@ -307,7 +323,6 @@ private fun SpoilerText(
     hideContent: Boolean,
     spoilerText: RichText,
     fontSize: TextUnit,
-    textSelectable: Boolean = false,
     onShowContent: () -> Unit,
     onHideContent: () -> Unit,
     onUrlClick: (url: String) -> Unit,
@@ -337,7 +352,6 @@ private fun SpoilerText(
             onMentionClick = onMentionClick,
             onHashtagClick = onHashtagInStatusClick,
             onUrlClick = onUrlClick,
-            textSelectable = textSelectable,
             fontSizeSp = fontSize.value,
         )
     }

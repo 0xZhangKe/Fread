@@ -51,6 +51,7 @@ fun BlogUi(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onMentionDidClick: (String) -> Unit,
     onShowOriginalClick: () -> Unit,
     onTranslateClick: () -> Unit,
     onBoostedClick: ((String) -> Unit)? = null,
@@ -135,6 +136,7 @@ fun BlogUi(
             boostedCount = bottomPanelInteractions.boostedCount,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
+            onMentionDidClick = onMentionDidClick,
             onShowOriginalClick = onShowOriginalClick,
         )
         StatusBottomInteractionPanel(

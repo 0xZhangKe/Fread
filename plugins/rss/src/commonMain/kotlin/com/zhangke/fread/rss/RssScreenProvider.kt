@@ -5,7 +5,6 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.rss.internal.screen.source.RssSourceScreen
-import com.zhangke.fread.rss.internal.screen.source.RssSourceScreenRoute
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.account.LoggedAccount
@@ -52,6 +51,14 @@ class RssScreenProvider @Inject constructor(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
+    ): Screen? {
+        return null
+    }
+
+    override fun getUserDetailRoute(
+        role: IdentityRole,
+        did: String,
+        protocol: StatusProviderProtocol
     ): Screen? {
         return null
     }

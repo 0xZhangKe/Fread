@@ -60,6 +60,13 @@ fun StatusUi(
             onMentionClick = {
                 composedStatusInteraction.onMentionClick(status.role, it)
             },
+            onMentionDidClick = {
+                composedStatusInteraction.onMentionClick(
+                    role = status.role,
+                    did = it,
+                    protocol = status.status.platform.protocol,
+                )
+            },
             onFollowClick = {
                 composedStatusInteraction.onFollowClick(status.role, it)
             },

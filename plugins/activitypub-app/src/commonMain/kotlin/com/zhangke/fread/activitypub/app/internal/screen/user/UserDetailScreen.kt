@@ -72,6 +72,7 @@ import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
@@ -135,13 +136,13 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 data class UserDetailScreen(
-    private val role: IdentityRole,
-    private val userUri: FormalUri? = null,
-    private val webFinger: WebFinger? = null,
+    val role: IdentityRole,
+    val userUri: FormalUri? = null,
+    val webFinger: WebFinger? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = role.toString() + userUri + webFinger
+        get() = role.toString() + webFinger.toString() + userUri
 
     @Composable
     override fun Content() {

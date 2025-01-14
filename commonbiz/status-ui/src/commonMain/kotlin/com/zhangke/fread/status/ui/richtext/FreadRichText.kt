@@ -66,6 +66,7 @@ fun FreadRichText(
     richText: RichText,
     color: Color = Color.Unspecified,
     onMentionClick: (Mention) -> Unit = {},
+    onMentionDidClick: (String) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
     onMaybeHashtagTarget: (RichLinkTarget.MaybeHashtagTarget) -> Unit = {},
     onUrlClick: (url: String) -> Unit = {},
@@ -79,6 +80,7 @@ fun FreadRichText(
             when (target) {
                 is RichLinkTarget.UrlTarget -> onUrlClick(target.url)
                 is RichLinkTarget.MentionTarget -> onMentionClick(target.mention)
+                is RichLinkTarget.MentionDidTarget -> onMentionDidClick(target.did)
                 is RichLinkTarget.HashtagTarget -> onHashtagClick(target.hashtag)
                 is RichLinkTarget.MaybeHashtagTarget -> onMaybeHashtagTarget(target)
             }

@@ -8,6 +8,7 @@ import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusProviderProtocol
 
 
 interface ComposedStatusInteraction {
@@ -18,6 +19,7 @@ interface ComposedStatusInteraction {
     fun onHashtagInStatusClick(role: IdentityRole, hashtagInStatus: HashtagInStatus)
     fun onHashtagClick(role: IdentityRole, tag: Hashtag)
     fun onMentionClick(role: IdentityRole, mention: Mention)
+    fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol)
     fun onStatusClick(status: StatusUiState)
     fun onFollowClick(role: IdentityRole, target: BlogAuthor)
     fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)

@@ -1,9 +1,10 @@
 package com.zhangke.fread.rss
 
+import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.rss.internal.screen.source.RssSourceScreenRoute
+import com.zhangke.fread.rss.internal.screen.source.RssSourceScreen
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.account.LoggedAccount
@@ -39,18 +40,26 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): String? {
+    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val url = uriInsight.url
-        return RssSourceScreenRoute.buildRoute(url)
+        return RssSourceScreen(url)
     }
 
     override fun getUserDetailRoute(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
+        return null
+    }
+
+    override fun getUserDetailRoute(
+        role: IdentityRole,
+        did: String,
+        protocol: StatusProviderProtocol
+    ): Screen? {
         return null
     }
 

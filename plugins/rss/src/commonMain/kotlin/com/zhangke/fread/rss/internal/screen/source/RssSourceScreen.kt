@@ -57,10 +57,7 @@ import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(RssSourceScreenRoute.ROUTE)
-class RssSourceScreen(
-    @RouteParam(RssSourceScreenRoute.PARAMS_URL) private val url: String,
-) : BaseScreen() {
+class RssSourceScreen(private val url: String) : BaseScreen() {
 
     @Composable
     override fun Content() {

@@ -10,6 +10,7 @@ import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -43,6 +44,8 @@ interface IInteractiveHandler {
     fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
 
     fun onMentionClick(role: IdentityRole, mention: Mention)
+
+    fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol)
 
     fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus)
 

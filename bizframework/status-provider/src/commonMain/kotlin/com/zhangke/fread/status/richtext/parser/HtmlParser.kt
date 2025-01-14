@@ -116,6 +116,7 @@ object HtmlParser {
                                         tag = when (linkTarget) {
                                             is RichLinkTarget.UrlTarget -> linkTarget.url
                                             is RichLinkTarget.MentionTarget -> linkTarget.mention.id
+                                            is RichLinkTarget.MentionDidTarget -> linkTarget.did
                                             is RichLinkTarget.HashtagTarget -> linkTarget.hashtag.name
                                             is RichLinkTarget.MaybeHashtagTarget -> linkTarget.hashtag
                                         },

@@ -24,7 +24,6 @@ class BlogDetailViewModel @Inject constructor(
         viewModelScope.launch {
             statusProvider.screenProvider
                 .getUserDetailRoute(IdentityRole.nonIdentityRole, author.uri)
-                ?.let { KRouter.routeScreen(it) }
                 ?.let { _openScreenFlow.emit(it) }
         }
     }

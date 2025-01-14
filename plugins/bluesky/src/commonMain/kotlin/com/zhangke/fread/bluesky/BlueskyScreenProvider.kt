@@ -62,6 +62,15 @@ class BlueskyScreenProvider @Inject constructor(
         return BskyUserDetailScreen(role = role, did = did)
     }
 
+    override fun getUserDetailRoute(
+        role: IdentityRole,
+        did: String,
+        protocol: StatusProviderProtocol
+    ): Screen? {
+        if (protocol.notBluesky) return null
+        return BskyUserDetailScreen(role = role, did = did)
+    }
+
     override fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,

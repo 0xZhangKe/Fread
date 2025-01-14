@@ -9,6 +9,8 @@ sealed interface RichLinkTarget {
 
     data class MentionTarget(val mention: Mention) : RichLinkTarget
 
+    data class MentionDidTarget(val did: String) : RichLinkTarget
+
     data class HashtagTarget(val hashtag: HashtagInStatus) : RichLinkTarget
 
     data class MaybeHashtagTarget(val hashtag: String) : RichLinkTarget

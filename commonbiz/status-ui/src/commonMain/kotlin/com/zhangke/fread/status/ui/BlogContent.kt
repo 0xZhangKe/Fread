@@ -71,6 +71,7 @@ fun BlogContent(
     onFavouritedClick: ((String) -> Unit)? = null,
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onMentionDidClick: (String) -> Unit,
     onShowOriginalClick: () -> Unit,
     boostedCount: Int? = null,
     favouritedCount: Int? = null,
@@ -101,6 +102,10 @@ fun BlogContent(
                             reportClick(StatusDataElements.MENTION)
                             onMentionClick(it)
                         },
+                        onMentionDidClick = {
+                            reportClick(StatusDataElements.MENTION)
+                            onMentionDidClick(it)
+                        },
                         onUrlClick = onUrlClick,
                     )
                 }
@@ -117,6 +122,10 @@ fun BlogContent(
                 onMentionClick = {
                     reportClick(StatusDataElements.MENTION)
                     onMentionClick(it)
+                },
+                onMentionDidClick = {
+                    reportClick(StatusDataElements.MENTION)
+                    onMentionDidClick(it)
                 },
                 onUrlClick = onUrlClick,
             )
@@ -209,6 +218,7 @@ private fun BlogTextContentSection(
     style: StatusStyle,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onMentionDidClick: (String) -> Unit,
     onUrlClick: (url: String) -> Unit,
 ) {
     val contentMaxLine = if (blog.platform.protocol.isRss) {
@@ -236,6 +246,7 @@ private fun BlogTextContentSection(
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
+            onMentionDidClick = onMentionDidClick,
             onUrlClick = onUrlClick,
         )
         if (blog.content.isNotEmpty()) {
@@ -257,6 +268,7 @@ private fun BlogTextContentSection(
                     richText = humanizedContent,
                     maxLines = contentMaxLine,
                     onMentionClick = onMentionClick,
+                    onMentionDidClick = onMentionDidClick,
                     onHashtagClick = onHashtagInStatusClick,
                     onUrlClick = onUrlClick,
                     fontSizeSp = style.contentStyle.contentSize.value,
@@ -287,6 +299,7 @@ private fun BlogTextContentSection(
                 richText = blog.humanizedDescription,
                 maxLines = contentMaxLine,
                 onMentionClick = onMentionClick,
+                onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
                 fontSizeSp = style.contentStyle.contentSize.value,
@@ -309,6 +322,7 @@ private fun BlogTextContentSection(
                 richText = humanizedContent,
                 maxLines = contentMaxLine,
                 onMentionClick = onMentionClick,
+                onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
                 fontSizeSp = style.contentStyle.contentSize.value,
                 onUrlClick = onUrlClick,
@@ -328,6 +342,7 @@ private fun SpoilerText(
     onUrlClick: (url: String) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onMentionDidClick: (String) -> Unit,
 ) {
     Box(
         modifier = modifier
@@ -350,6 +365,7 @@ private fun SpoilerText(
             richText = spoilerText,
             color = inverseOnSurfaceDark,
             onMentionClick = onMentionClick,
+            onMentionDidClick = onMentionDidClick,
             onHashtagClick = onHashtagInStatusClick,
             onUrlClick = onUrlClick,
             fontSizeSp = fontSize.value,

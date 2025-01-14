@@ -19,6 +19,7 @@ import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.richtext.preParseRichText
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -224,6 +225,10 @@ class FeedsViewModelController(
 
     override fun onMentionClick(role: IdentityRole, mention: Mention) {
         interactiveHandler.onMentionClick(role, mention)
+    }
+
+    override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
+        interactiveHandler.onMentionClick(role, did, protocol)
     }
 
     override fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus) {

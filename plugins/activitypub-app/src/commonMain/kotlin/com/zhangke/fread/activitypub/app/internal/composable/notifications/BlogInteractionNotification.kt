@@ -72,6 +72,13 @@ fun BlogInteractionNotification(
             onUrlClick = {
                 browserLauncher.launchWebTabInApp(it, statusUiState.role)
             },
+            onMentionDidClick = {
+                composedStatusInteraction.onMentionClick(
+                    role = statusUiState.role,
+                    did = it,
+                    protocol = statusUiState.status.platform.protocol,
+                )
+            },
         )
     }
 }

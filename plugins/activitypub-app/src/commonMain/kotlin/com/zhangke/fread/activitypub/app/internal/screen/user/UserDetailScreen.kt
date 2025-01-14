@@ -77,7 +77,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.utils.decodeAsUri
 import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.Res
@@ -138,25 +137,20 @@ import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
-@Destination(UserDetailRoute.ROUTE)
 data class UserDetailScreen(
-    @RouteParam(UserDetailRoute.PARAMS_ROLE) val roleParam: String? = null,
-    @RouteParam(UserDetailRoute.PARAMS_USER_URI) val userUriParam: String? = null,
-    @RouteParam(UserDetailRoute.PARAMS_WEB_FINGER) val webFingerParam: String? = null,
-    private val role: IdentityRole? = null,
-    private val webFinger: WebFinger? = null,
+    val role: IdentityRole,
+    val userUri: FormalUri? = null,
+    val webFinger: WebFinger? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = roleParam + userUriParam + webFingerParam + role.toString() + webFinger.toString()
+        get() = role.toString() + webFinger.toString() + userUri
 
     @Composable
     override fun Content() {
@@ -165,17 +159,6 @@ data class UserDetailScreen(
         val transparentNavigator = LocalTransparentNavigator.current
         val browserLauncher = LocalActivityBrowserLauncher.current
         val activityTextHandler = LocalActivityTextHandler.current
-        val (role, userUri, webFinger) = remember(roleParam, userUriParam, role, webFinger) {
-            if (role != null && webFinger != null) {
-                Triple(role, null, webFinger)
-            } else {
-                Triple(
-                    IdentityRole.decodeFromString(roleParam!!)!!,
-                    userUriParam?.decodeAsUri()?.let(FormalUri::from),
-                    webFingerParam?.let(WebFinger::decodeFromUrlString),
-                )
-            }
-        }
         val viewModel = getViewModel<UserDetailContainerViewModel>()
             .getViewModel(role, userUri, webFinger)
         val uiState by viewModel.uiState.collectAsState()

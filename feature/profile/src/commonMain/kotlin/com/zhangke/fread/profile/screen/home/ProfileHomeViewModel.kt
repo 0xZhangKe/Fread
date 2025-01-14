@@ -94,7 +94,6 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
-                ?.let { KRouter.routeScreen(it) }
                 ?.let { _openPageFlow.emit(it) }
         }
     }

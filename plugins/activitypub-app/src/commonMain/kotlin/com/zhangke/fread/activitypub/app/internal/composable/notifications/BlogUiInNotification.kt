@@ -13,6 +13,7 @@ import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.ui.BlogContent
 import com.zhangke.fread.status.ui.BlogUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -27,6 +28,7 @@ fun OnlyBlogContentUi(
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onUrlClick: (String) -> Unit,
     onMentionClick: (Mention) -> Unit,
+    onMentionDidClick: (String) -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
     val transparentNavigator = LocalTransparentNavigator.current
@@ -49,6 +51,7 @@ fun OnlyBlogContentUi(
             onVoted = onVoted,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
+            onMentionDidClick = onMentionDidClick,
             onUrlClick = onUrlClick,
             onShowOriginalClick = {},
         )
@@ -103,6 +106,13 @@ fun WholeBlogUi(
             },
             onMentionClick = {
                 composedStatusInteraction.onMentionClick(statusUiState.role, it)
+            },
+            onMentionDidClick = {
+                composedStatusInteraction.onMentionClick(
+                    role = statusUiState.role,
+                    did = it,
+                    protocol = statusUiState.status.platform.protocol,
+                )
             },
             onUrlClick = {
                 browserLauncher.launchWebTabInApp(it, statusUiState.role)

@@ -73,6 +73,10 @@ class InteractiveHandler(
             this@InteractiveHandler.onMentionClick(role, mention)
         }
 
+        override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
+            this@InteractiveHandler.onMentionClick(role, did, protocol)
+        }
+
         override fun onStatusClick(status: StatusUiState) {
             this@InteractiveHandler.onStatusClick(status)
         }
@@ -157,7 +161,7 @@ class InteractiveHandler(
     override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
         coroutineScope.launch {
             screenProvider.getUserDetailRoute(role, blogAuthor.uri)
-                ?.let(::tryOpenScreenByRoute)
+                ?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
 
@@ -232,7 +236,17 @@ class InteractiveHandler(
                 role = role,
                 webFinger = mention.webFinger,
                 protocol = mention.protocol,
-            )?.let(::tryOpenScreenByRoute)
+            )?.let { mutableOpenScreenFlow.emit(it) }
+        }
+    }
+
+    override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
+        coroutineScope.launch {
+            screenProvider.getUserDetailRoute(
+                role = role,
+                did = did,
+                protocol = protocol,
+            )?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
 

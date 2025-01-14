@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.richtext.parser
 
 import androidx.compose.foundation.text.appendInlineContent
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
@@ -13,6 +14,7 @@ import com.fleeksoft.ksoup.nodes.Element
 import com.fleeksoft.ksoup.nodes.Node
 import com.fleeksoft.ksoup.nodes.TextNode
 import com.fleeksoft.ksoup.select.NodeVisitor
+import com.zhangke.framework.architect.theme.primaryLight
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
@@ -73,11 +75,10 @@ object HtmlParser {
                     }
 
                     "a" -> {
-                        val element = node
-                        val href = element.attr("href")
+                        val href = node.attr("href")
                         var linkTarget: RichLinkTarget? = null
-                        if (element.hasClass("hashtag")) {
-                            val text = element.text()
+                        if (node.hasClass("hashtag")) {
+                            val text = node.text()
                             if (text.startsWith("#")) {
                                 if (parsePossibleHashtag) {
                                     linkTarget =
@@ -94,7 +95,7 @@ object HtmlParser {
                                     linkTarget = RichLinkTarget.UrlTarget(href)
                                 }
                             }
-                        } else if (element.hasClass("mention")) {
+                        } else if (node.hasClass("mention")) {
                             val id = mentions.firstOrNull { it.url == href }?.id
                             if (id != null) {
                                 val mention = mentions.firstOrNull { it.id == id }
@@ -121,12 +122,12 @@ object HtmlParser {
                                             is RichLinkTarget.MaybeHashtagTarget -> linkTarget.hashtag
                                         },
                                         styles = TextLinkStyles(
-                                            style = SpanStyle(color = Color.Blue),
+                                            style = SpanStyle(color = primaryLight),
                                             hoveredStyle = SpanStyle(textDecoration = TextDecoration.Underline),
                                         ),
                                         linkInteractionListener = {
                                             onLinkTargetClick(linkTarget)
-                                        }
+                                        },
                                     )
                                 )
                             )

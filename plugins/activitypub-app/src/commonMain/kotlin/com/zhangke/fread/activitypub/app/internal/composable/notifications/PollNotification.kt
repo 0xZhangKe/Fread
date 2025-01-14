@@ -60,6 +60,13 @@ fun PollNotification(
             onMentionClick = {
                 composedStatusInteraction.onMentionClick(status.role, it)
             },
+            onMentionDidClick = {
+                composedStatusInteraction.onMentionClick(
+                    role = status.role,
+                    did = it,
+                    protocol = status.status.platform.protocol,
+                )
+            },
             onHashtagInStatusClick = {
                 composedStatusInteraction.onHashtagInStatusClick(status.role, it)
             },

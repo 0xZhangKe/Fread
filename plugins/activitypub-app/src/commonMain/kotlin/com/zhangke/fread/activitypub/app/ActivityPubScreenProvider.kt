@@ -92,6 +92,14 @@ class ActivityPubScreenProvider @Inject constructor(
         return UserDetailScreen(role = role, webFinger = webFinger)
     }
 
+    override fun getUserDetailRoute(
+        role: IdentityRole,
+        did: String,
+        protocol: StatusProviderProtocol
+    ): Screen? {
+        return null
+    }
+
     override fun getTagTimelineScreenRoute(
         role: IdentityRole,
         tag: String,

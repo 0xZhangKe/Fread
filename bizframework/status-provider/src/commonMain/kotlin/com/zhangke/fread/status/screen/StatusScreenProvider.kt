@@ -55,11 +55,17 @@ class StatusScreenProvider(
         protocol: StatusProviderProtocol,
     ): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getUserDetailScreen(
-                role,
-                webFinger,
-                protocol
-            )
+            it.getUserDetailScreen(role, webFinger, protocol)
+        }
+    }
+
+    fun getUserDetailRoute(
+        role: IdentityRole,
+        did: String,
+        protocol: StatusProviderProtocol,
+    ): Screen? {
+        return providerList.firstNotNullOfOrNull {
+            it.getUserDetailRoute(role, did, protocol)
         }
     }
 
@@ -145,6 +151,12 @@ interface IStatusScreenProvider {
     fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
+        protocol: StatusProviderProtocol
+    ): Screen?
+
+    fun getUserDetailRoute(
+        role: IdentityRole,
+        did: String,
         protocol: StatusProviderProtocol
     ): Screen?
 

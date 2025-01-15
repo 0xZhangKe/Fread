@@ -11,27 +11,11 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.architect.json.JsonModuleBuilder
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.commonbiz.mastodon_logo
 import com.zhangke.fread.status.model.FreadContent
-import com.zhangke.krouter.annotation.Service
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.modules.SerializersModuleBuilder
-import kotlinx.serialization.serializer
 import org.jetbrains.compose.resources.painterResource
-
-@Service
-class ActivityPubContentJsonModuleBuilder : JsonModuleBuilder {
-
-    override fun SerializersModuleBuilder.buildSerializersModule() {
-        polymorphic(
-            baseClass = FreadContent::class,
-            actualClass = ActivityPubContent::class,
-            actualSerializer = serializer(),
-        )
-    }
-}
 
 @Serializable
 data class ActivityPubContent(

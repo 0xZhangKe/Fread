@@ -15,21 +15,6 @@ class ContentManager(
     private val providerList: List<IContentManager>
 ) {
 
-    val contentJson by lazy {
-        Json(globalJson) {
-            serializersModule = SerializersModule {
-                providerList.forEach {
-                    with(it) { buildSerializersModule() }
-                }
-                polymorphic(
-                    baseClass = FreadContent::class,
-                    actualClass = MixedContent::class,
-                    actualSerializer = serializer(),
-                )
-            }
-        }
-    }
-
     suspend fun addContent(
         platform: BlogPlatform,
         action: AddContentAction,
@@ -47,8 +32,6 @@ interface IContentManager {
     suspend fun addContent(platform: BlogPlatform, action: AddContentAction)
 
     fun restoreContent(config: ContentConfig): FreadContent?
-
-    fun SerializersModuleBuilder.buildSerializersModule()
 }
 
 data class AddContentAction(

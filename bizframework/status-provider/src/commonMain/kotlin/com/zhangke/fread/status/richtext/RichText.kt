@@ -10,6 +10,15 @@ import com.zhangke.fread.status.richtext.parser.HtmlParser
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
+interface IRichText{
+
+    val originText: String
+
+    var onLinkTargetClick: OnLinkTargetClick
+
+    fun parse(): AnnotatedString
+}
+
 @Serializable
 class RichText(
     @Suppress("MemberVisibilityCanBePrivate")

@@ -9,16 +9,16 @@ data class PreviewCard(
     val url: String,
     val title: String,
     val description: String,
-    val authorName: String,
-    val authorUrl: String,
-    val providerName: String,
-    val providerUrl: String,
-    val html: String,
-    val width: Int,
-    val height: Int,
-    val image: String?,
-    val embedUrl: String?,
-    val blurhash: String?,
+    val authorName: String? = null,
+    val authorUrl: String? = null,
+    val providerName: String? = null,
+    val providerUrl: String? = null,
+    val html: String? = null,
+    val width: Int? = null,
+    val height: Int? = null,
+    val image: String? = null,
+    val embedUrl: String? = null,
+    val blurhash: String? = null,
 ) : PlatformSerializable {
 
     companion object {
@@ -29,6 +29,7 @@ data class PreviewCard(
 
     val aspectRatio: Float
         get() {
+            if (width == null || height == null) return DEFAULT_ASPECT_RATIO
             val ratio = width / height.toFloat()
             if (ratio.isNaN() || ratio.isInfinite()) {
                 return DEFAULT_ASPECT_RATIO

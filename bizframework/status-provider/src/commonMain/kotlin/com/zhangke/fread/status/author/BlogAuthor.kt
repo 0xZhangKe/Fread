@@ -10,6 +10,7 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class BlogAuthor(
+    // 对于 Bluesky 来说，个人数据应该通过 DID 获取 PDS endpoint，而不是直接使用 baseUrl
     val uri: FormalUri,
     val webFinger: WebFinger,
     val name: String,

@@ -15,8 +15,8 @@ sealed class BlogMediaMeta: PlatformSerializable {
 
         @Serializable
         data class LayoutMeta(
-            val width: Int?,
-            val height: Int?,
+            val width: Long?,
+            val height: Long?,
             val size: String?,
             val aspect: Float?,
         ): PlatformSerializable
@@ -34,8 +34,8 @@ sealed class BlogMediaMeta: PlatformSerializable {
         val duration: Double?,
         val fps: Int?,
         val size: String?,
-        val width: Int?,
-        val height: Int?,
+        val width: Long?,
+        val height: Long?,
         val aspect: Float?,
         val audioEncode: String?,
         val audioBitrate: String?,
@@ -46,8 +46,8 @@ sealed class BlogMediaMeta: PlatformSerializable {
 
         @Serializable
         data class LayoutMeta(
-            val width: Int?,
-            val height: Int?,
+            val width: Long?,
+            val height: Long?,
             val size: String?,
             val aspect: Float?,
             val frameRate: String?,
@@ -71,8 +71,8 @@ sealed class BlogMediaMeta: PlatformSerializable {
 
         @Serializable
         data class LayoutMeta(
-            val width: Int?,
-            val height: Int?,
+            val width: Long?,
+            val height: Long?,
             val size: String?,
             val aspect: Float?,
             val frameRate: String?,

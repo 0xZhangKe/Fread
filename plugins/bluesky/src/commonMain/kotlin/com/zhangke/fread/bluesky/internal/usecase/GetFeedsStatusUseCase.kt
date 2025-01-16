@@ -30,7 +30,6 @@ class GetFeedsStatusUseCase @Inject constructor(
         cursor: String?,
     ): Result<List<Status>> {
         client.getListFeedCatching(GetListFeedQueryParams(list = AtUri(feeds.uri), cursor = cursor))
-        Post
         return Result.success(emptyList())
     }
 }

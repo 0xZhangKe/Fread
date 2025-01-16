@@ -1,8 +1,6 @@
 package com.zhangke.fread.status.richtext.parser
 
 import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -16,6 +14,7 @@ import com.fleeksoft.ksoup.nodes.TextNode
 import com.fleeksoft.ksoup.select.NodeVisitor
 import com.zhangke.framework.architect.theme.primaryLight
 import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
@@ -28,9 +27,13 @@ object HtmlParser {
         emojis: List<Emoji>,
         mentions: List<Mention>,
         hashTags: List<HashtagInStatus>,
+        facets: List<Facet>,
         onLinkTargetClick: OnLinkTargetClick,
         parsePossibleHashtag: Boolean = false,
     ): AnnotatedString {
+        if (facets.isNotEmpty()) {
+            return FacetHtmlParser().parse(document, facets, onLinkTargetClick)
+        }
         return buildAnnotatedString {
             Ksoup.parseBodyFragment(document)
                 .body()

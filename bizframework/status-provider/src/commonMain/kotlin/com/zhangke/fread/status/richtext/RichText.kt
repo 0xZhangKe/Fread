@@ -4,28 +4,21 @@ import androidx.compose.ui.text.AnnotatedString
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.framework.utils.PlatformTransient
 import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.parser.HtmlParser
 import kotlinx.serialization.Contextual
 import kotlinx.serialization.Serializable
 
-interface IRichText{
-
-    val originText: String
-
-    var onLinkTargetClick: OnLinkTargetClick
-
-    fun parse(): AnnotatedString
-}
-
 @Serializable
 class RichText(
     @Suppress("MemberVisibilityCanBePrivate")
     val document: String,
-    private val mentions: List<Mention>,
-    private val hashTags: List<HashtagInStatus>,
-    val emojis: List<Emoji>,
+    private val mentions: List<Mention> = emptyList(),
+    private val hashTags: List<HashtagInStatus> = emptyList(),
+    val emojis: List<Emoji> = emptyList(),
+    val facets: List<Facet> = emptyList(),
     private val parsePossibleHashtag: Boolean = false,
 ) : PlatformSerializable {
 
@@ -48,6 +41,7 @@ class RichText(
             emojis = emojis,
             mentions = mentions,
             hashTags = hashTags,
+            facets = facets,
             parsePossibleHashtag = parsePossibleHashtag,
             onLinkTargetClick = clickableDelegate,
         ).also {

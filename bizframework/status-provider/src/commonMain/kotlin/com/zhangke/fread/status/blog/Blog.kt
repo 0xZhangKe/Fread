@@ -21,15 +21,16 @@ data class Blog(
     val content: String,
     val url: String,
     val date: Instant,
-    val forwardCount: Int?,
-    val likeCount: Int?,
-    val repliesCount: Int?,
+    val forwardCount: Long?,
+    val likeCount: Long?,
+    val repliesCount: Long?,
     val sensitive: Boolean,
     val spoilerText: String,
     /**
      * ISO 639 Part 1 two-letter language code
      */
     val language: String? = null,
+    // 对于 Bluesky 来说，个人数据应该通过 DID 获取 PDS endpoint，而不是直接使用 baseUrl
     val platform: BlogPlatform,
     val mediaList: List<BlogMedia>,
     val emojis: List<Emoji>,

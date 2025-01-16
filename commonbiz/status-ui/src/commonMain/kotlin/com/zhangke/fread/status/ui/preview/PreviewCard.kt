@@ -137,10 +137,10 @@ private fun PreviewCardTexts(
     style: StatusStyle,
     maxLine: Int,
 ) {
-    if (card.providerName.isNotEmpty()) {
+    if (!card.providerName.isNullOrEmpty()) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
-            text = card.providerName,
+            text = card.providerName!!,
             style = style.cardStyle.descStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,

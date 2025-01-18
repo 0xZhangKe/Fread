@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -63,6 +62,7 @@ data class StatusContextScreen(
         StatusContextContent(
             uiState = uiState,
             snackbarHostState = snackbarHostState,
+            onScrolledToAnchor = viewModel::onScrolledToAnchor,
             onMediaClick = { event ->
                 onStatusMediaClick(
                     transparentNavigator = transparentNavigator,
@@ -84,6 +84,7 @@ data class StatusContextScreen(
     private fun StatusContextContent(
         uiState: StatusContextUiState,
         snackbarHostState: SnackbarHostState,
+        onScrolledToAnchor: () -> Unit,
         onBackClick: () -> Unit = {},
         onMediaClick: OnBlogMediaClick,
         composedStatusInteraction: ComposedStatusInteraction,
@@ -103,9 +104,10 @@ data class StatusContextScreen(
                 if (contextStatus.isEmpty()) return@Scaffold
                 val state = rememberLazyListState()
                 val anchorIndex = uiState.anchorIndex
-                if (anchorIndex in 0..contextStatus.lastIndex) {
+                if (!uiState.loading && uiState.needScrollToAnchor && anchorIndex in 0..contextStatus.lastIndex) {
                     LaunchedEffect(anchorIndex) {
                         state.animateScrollToItem(anchorIndex)
+                        onScrolledToAnchor()
                     }
                 }
                 InlineVideoLazyColumn(

@@ -21,7 +21,9 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.zhangke.framework.ktx.ifNullOrEmpty
@@ -104,7 +106,7 @@ fun FreadDialog(
     header: (@Composable () -> Unit)? = null,
     content: (@Composable () -> Unit)? = null,
     titleContentColor: Color = MaterialTheme.colorScheme.onSurface,
-    textContentColor: Color = MaterialTheme.colorScheme.onSurfaceVariant,
+    textContentColor: Color = MaterialTheme.colorScheme.onSurface,
     negativeButton: (@Composable () -> Unit)? = null,
     positiveButton: (@Composable () -> Unit)? = null,
 ) {
@@ -122,12 +124,16 @@ fun FreadDialog(
                 modifier = Modifier
                     .fillMaxWidth()
                     .wrapContentHeight()
-                    .padding(start = 24.dp, top = 24.dp, end = 20.dp, bottom = 12.dp)
+                    .padding(start = 24.dp, top = 16.dp, end = 20.dp, bottom = 8.dp)
             ) {
                 if (header != null) {
                     ProvideContentColorTextStyle(
                         contentColor = titleContentColor,
-                        textStyle = MaterialTheme.typography.headlineSmall,
+                        textStyle = MaterialTheme.typography.titleMedium
+                            .copy(
+                                fontSize = 18.sp,
+                                fontWeight = FontWeight.SemiBold,
+                            ),
                     ) {
                         Box(
                             Modifier
@@ -148,7 +154,7 @@ fun FreadDialog(
                         Box(
                             Modifier
                                 .fillMaxWidth()
-                                .padding(top = 16.dp)
+                                .padding(top = 12.dp)
                                 .align(Alignment.Start),
                             contentAlignment = Alignment.CenterStart,
                         ) {

@@ -51,6 +51,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -72,7 +73,6 @@ import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
@@ -388,8 +388,10 @@ data class UserDetailScreen(
                                         modifier = Modifier,
                                         text = account?.prettyAcct.orEmpty(),
                                         maxLines = 1,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.labelMedium,
+                                        style = MaterialTheme.typography.labelMedium
+                                            .copy(fontWeight = FontWeight.Normal),
                                     )
                                 }
                                 if (uiState.relationship?.followedBy == true) {
@@ -401,8 +403,10 @@ data class UserDetailScreen(
                                                 shape = RoundedCornerShape(2.dp),
                                             )
                                             .padding(horizontal = 4.dp),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_follows_you),
-                                        style = MaterialTheme.typography.bodySmall,
+                                        style = MaterialTheme.typography.bodySmall
+                                            .copy(fontWeight = FontWeight.Normal),
                                     )
                                 }
                             }

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -62,7 +63,7 @@ class ContentHomeScreen : BaseScreen() {
                     pagerState.animateScrollToPage(uiState.currentPageIndex)
                 }
                 val contentScrollInProgress by
-                    mainTabConnection.contentScrollInpProgress.collectAsState()
+                mainTabConnection.contentScrollInpProgress.collectAsState()
                 HorizontalPager(
                     state = pagerState,
                     userScrollEnabled = !contentScrollInProgress,

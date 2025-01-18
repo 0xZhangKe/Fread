@@ -40,8 +40,8 @@ android {
 //            resolutionStrategy { force support.'core-ktx' }
 //        }
         applicationId = "com.zhangke.fread"
-        versionCode = 102030
-        versionName = "1.2.3"
+        versionCode = 102040
+        versionName = "1.2.4"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

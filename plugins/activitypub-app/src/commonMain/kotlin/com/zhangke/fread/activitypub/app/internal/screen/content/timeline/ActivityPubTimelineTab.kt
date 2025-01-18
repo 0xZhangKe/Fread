@@ -5,7 +5,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.ExperimentalMaterialApi
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -71,7 +71,6 @@ internal class ActivityPubTimelineTab(
         ConsumeOpenScreenFlow(viewModel.openScreenFlow)
     }
 
-    @OptIn(ExperimentalMaterialApi::class)
     @Composable
     private fun ActivityPubTimelineContent(
         uiState: ActivityPubTimelineUiState,
@@ -83,65 +82,70 @@ internal class ActivityPubTimelineTab(
         onRefresh: () -> Unit,
         onReadMinIndex: (ActivityPubTimelineItem) -> Unit,
     ) {
-        if (uiState.items.isEmpty()) {
-            if (uiState.showPagingLoadingPlaceholder) {
-                StatusListPlaceholder()
-            } else if (uiState.pageErrorContent != null) {
-                InitErrorContent(uiState.pageErrorContent)
-            }
-        } else {
-            Box(modifier = Modifier.fillMaxSize()) {
-                val state = rememberLoadableInlineVideoLazyColumnState(
-                    refreshing = uiState.refreshing,
-                    onRefresh = onRefresh,
-                    onLoadMore = onLoadMore,
-                    initialFirstVisibleItemIndex = uiState.initialShowIndex,
-                )
-                val lazyListState = state.lazyListState
-                ObserveMinReadItem(lazyListState) {
-                    uiState.items.getOrNull(it)?.let { item ->
-                        onReadMinIndex(item)
-                    }
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            if (uiState.items.isEmpty()) {
+                if (uiState.showPagingLoadingPlaceholder) {
+                    StatusListPlaceholder()
+                } else if (uiState.pageErrorContent != null) {
+                    InitErrorContent(uiState.pageErrorContent)
                 }
-                ObserveForFeedsConnection(
-                    listState = lazyListState,
-                    onRefresh = onRefresh,
-                )
-                LaunchedEffect(uiState.jumpToStatusId) {
-                    if (!uiState.jumpToStatusId.isNullOrEmpty()) {
-                        val jumpToIndex = uiState.items.getIndexByIdOrNull(uiState.jumpToStatusId)
-                        if (jumpToIndex >= 0 && jumpToIndex < uiState.items.size) {
-                            onJumpedToStatus()
-                            state.lazyListState.animateScrollToItem(jumpToIndex)
+            } else {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    val state = rememberLoadableInlineVideoLazyColumnState(
+                        refreshing = uiState.refreshing,
+                        onRefresh = onRefresh,
+                        onLoadMore = onLoadMore,
+                        initialFirstVisibleItemIndex = uiState.initialShowIndex,
+                    )
+                    val lazyListState = state.lazyListState
+                    ObserveMinReadItem(lazyListState) {
+                        uiState.items.getOrNull(it)?.let { item ->
+                            onReadMinIndex(item)
                         }
                     }
-                }
-                LoadableInlineVideoLazyColumn(
-                    modifier = Modifier
-                        .fillMaxSize()
-                        .applyNestedScrollConnection(nestedScrollConnection),
-                    state = state,
-                    onLoadPrevious = {
-                        onLoadPrevious()
-                    },
-                    refreshing = uiState.refreshing,
-                    loadState = uiState.loadMoreState,
-                    contentPadding = PaddingValues(
-                        bottom = 64.dp,
+                    ObserveForFeedsConnection(
+                        listState = lazyListState,
+                        onRefresh = onRefresh,
                     )
-                ) {
-                    itemsIndexed(
-                        items = uiState.items,
-                        key = { _, item ->
-                            (item as ActivityPubTimelineItem.StatusItem).status.status.id
+                    LaunchedEffect(uiState.jumpToStatusId) {
+                        if (!uiState.jumpToStatusId.isNullOrEmpty()) {
+                            val jumpToIndex =
+                                uiState.items.getIndexByIdOrNull(uiState.jumpToStatusId)
+                            if (jumpToIndex >= 0 && jumpToIndex < uiState.items.size) {
+                                onJumpedToStatus()
+                                state.lazyListState.animateScrollToItem(jumpToIndex)
+                            }
+                        }
+                    }
+                    LoadableInlineVideoLazyColumn(
+                        modifier = Modifier
+                            .fillMaxSize()
+                            .applyNestedScrollConnection(nestedScrollConnection),
+                        state = state,
+                        onLoadPrevious = {
+                            onLoadPrevious()
                         },
-                    ) { index, item ->
-                        FeedsStatusNode(
-                            modifier = Modifier.fillMaxWidth(),
-                            status = (item as ActivityPubTimelineItem.StatusItem).status,
-                            composedStatusInteraction = composedStatusInteraction,
-                            indexInList = index,
+                        refreshing = uiState.refreshing,
+                        loadState = uiState.loadMoreState,
+                        contentPadding = PaddingValues(
+                            bottom = 64.dp,
                         )
+                    ) {
+                        itemsIndexed(
+                            items = uiState.items,
+                            key = { _, item ->
+                                (item as ActivityPubTimelineItem.StatusItem).status.status.id
+                            },
+                        ) { index, item ->
+                            FeedsStatusNode(
+                                modifier = Modifier.fillMaxWidth(),
+                                status = (item as ActivityPubTimelineItem.StatusItem).status,
+                                composedStatusInteraction = composedStatusInteraction,
+                                indexInList = index,
+                            )
+                        }
                     }
                 }
             }

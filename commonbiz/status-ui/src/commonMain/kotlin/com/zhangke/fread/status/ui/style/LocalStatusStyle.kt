@@ -3,6 +3,7 @@ package com.zhangke.fread.status.ui.style
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 
@@ -108,6 +109,7 @@ object StatusStyles {
             avatarSize = 36.dp,
             nameToAvatarSpacing = 6.dp,
             descStyle = MaterialTheme.typography.bodySmall
+                .copy(fontWeight = FontWeight.Light)
         )
     }
 
@@ -118,6 +120,7 @@ object StatusStyles {
             avatarSize = 40.dp,
             nameToAvatarSpacing = 8.dp,
             descStyle = MaterialTheme.typography.bodySmall
+                .copy(fontWeight = FontWeight.Normal)
         )
     }
 
@@ -128,6 +131,7 @@ object StatusStyles {
             avatarSize = 44.dp,
             nameToAvatarSpacing = 8.dp,
             descStyle = MaterialTheme.typography.bodyMedium
+                .copy(fontWeight = FontWeight.Medium)
         )
     }
 
@@ -138,7 +142,7 @@ object StatusStyles {
             titleSize = 14.sp,
             contentSize = 12.sp,
             startPadding = 0.dp,
-            contentVerticalSpacing = 6.dp,
+            contentVerticalSpacing = 2.dp,
         )
     }
 
@@ -149,7 +153,7 @@ object StatusStyles {
             titleSize = 16.sp,
             contentSize = 14.sp,
             startPadding = 0.dp,
-            contentVerticalSpacing = 8.dp,
+            contentVerticalSpacing = 4.dp,
         )
     }
 
@@ -160,7 +164,7 @@ object StatusStyles {
             titleSize = 18.sp,
             contentSize = 16.sp,
             startPadding = 0.dp,
-            contentVerticalSpacing = 10.dp,
+            contentVerticalSpacing = 6.dp,
         )
     }
 

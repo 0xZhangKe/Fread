@@ -12,7 +12,6 @@ import com.zhangke.fread.status.ui.label.StatusPinnedLabel
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.status.ui.threads.ThreadsType
-import com.zhangke.fread.status.ui.threads.contentIndent
 
 @Composable
 fun StatusUi(
@@ -42,7 +41,7 @@ fun StatusUi(
             threadsType = threadsType,
             detailModel = detailModel,
             following = status.following,
-            style = if (threadsType.contentIndent) style.contentIndentStyle() else style,
+            style = if (detailModel) style else style.contentIndentStyle(),
             onInteractive = {
                 composedStatusInteraction.onStatusInteractive(status, it)
             },

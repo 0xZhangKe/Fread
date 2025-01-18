@@ -1,10 +1,13 @@
 package com.zhangke.fread.activitypub.app.internal.screen.trending
 
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
@@ -32,31 +35,35 @@ internal class TrendingStatusTab(private val role: IdentityRole) : BasePagerTab(
         val uiState by viewModel.uiState.collectAsState()
         val mainTabConnection = LocalNestedTabConnection.current
         val coroutineScope = rememberCoroutineScope()
-        FeedsContent(
-            uiState = uiState,
-            openScreenFlow = viewModel.openScreenFlow,
-            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
-            composedStatusInteraction = viewModel.composedStatusInteraction,
-            onRefresh = viewModel::onRefresh,
-            onLoadMore = viewModel::onLoadMore,
-            observeScrollToTopEvent = true,
-            nestedScrollConnection = nestedScrollConnection,
-            onImmersiveEvent = {
-                if (it) {
-                    mainTabConnection.openImmersiveMode(coroutineScope)
-                } else {
-                    mainTabConnection.closeImmersiveMode(coroutineScope)
+        Surface(
+            modifier = Modifier.fillMaxSize(),
+        ) {
+            FeedsContent(
+                uiState = uiState,
+                openScreenFlow = viewModel.openScreenFlow,
+                newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
+                composedStatusInteraction = viewModel.composedStatusInteraction,
+                onRefresh = viewModel::onRefresh,
+                onLoadMore = viewModel::onLoadMore,
+                observeScrollToTopEvent = true,
+                nestedScrollConnection = nestedScrollConnection,
+                onImmersiveEvent = {
+                    if (it) {
+                        mainTabConnection.openImmersiveMode(coroutineScope)
+                    } else {
+                        mainTabConnection.closeImmersiveMode(coroutineScope)
+                    }
+                },
+                onScrollInProgress = {
+                    mainTabConnection.updateContentScrollInProgress(it)
+                },
+            )
+            LaunchedEffect(mainTabConnection.refreshFlow) {
+                mainTabConnection.refreshFlow.collect {
+                    viewModel.onRefresh()
                 }
-            },
-            onScrollInProgress = {
-                mainTabConnection.updateContentScrollInProgress(it)
-            },
-        )
-        LaunchedEffect(mainTabConnection.refreshFlow) {
-            mainTabConnection.refreshFlow.collect {
-                viewModel.onRefresh()
             }
+            ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
         }
-        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
 }

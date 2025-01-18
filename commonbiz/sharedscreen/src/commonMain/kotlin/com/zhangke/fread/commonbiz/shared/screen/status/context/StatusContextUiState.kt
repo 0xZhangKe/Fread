@@ -6,6 +6,7 @@ import com.zhangke.fread.common.status.model.StatusUiState
 data class StatusContextUiState(
     val contextStatus: List<StatusInContext>,
     val loading: Boolean,
+    val needScrollToAnchor: Boolean,
     val errorMessage: TextString?,
 ) {
 

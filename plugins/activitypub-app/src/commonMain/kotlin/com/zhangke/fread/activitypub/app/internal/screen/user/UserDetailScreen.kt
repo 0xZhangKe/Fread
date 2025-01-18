@@ -396,8 +396,10 @@ data class UserDetailScreen(
                                         modifier = Modifier,
                                         text = account?.prettyAcct.orEmpty(),
                                         maxLines = 1,
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         overflow = TextOverflow.Ellipsis,
-                                        style = MaterialTheme.typography.labelMedium,
+                                        style = MaterialTheme.typography.labelMedium
+                                            .copy(fontWeight = FontWeight.Normal),
                                     )
                                 }
                                 if (uiState.relationship?.followedBy == true) {
@@ -409,8 +411,10 @@ data class UserDetailScreen(
                                                 shape = RoundedCornerShape(2.dp),
                                             )
                                             .padding(horizontal = 4.dp),
+                                        color = MaterialTheme.colorScheme.onSurfaceVariant,
                                         text = stringResource(Res.string.activity_pub_user_detail_follows_you),
-                                        style = MaterialTheme.typography.bodySmall,
+                                        style = MaterialTheme.typography.bodySmall
+                                            .copy(fontWeight = FontWeight.Normal),
                                     )
                                 }
                             }

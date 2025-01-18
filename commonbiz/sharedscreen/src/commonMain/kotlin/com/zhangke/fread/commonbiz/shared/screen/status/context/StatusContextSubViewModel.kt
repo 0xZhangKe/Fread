@@ -40,6 +40,7 @@ class StatusContextSubViewModel(
         StatusContextUiState(
             contextStatus = emptyList(),
             loading = false,
+            needScrollToAnchor = true,
             errorMessage = null,
         )
     )
@@ -81,6 +82,12 @@ class StatusContextSubViewModel(
             loadStatus()
         }
         loadAnchorFollowingState()
+    }
+
+    fun onScrolledToAnchor() {
+        _uiState.update { state ->
+            state.copy(needScrollToAnchor = false)
+        }
     }
 
     private suspend fun loadStatus() {

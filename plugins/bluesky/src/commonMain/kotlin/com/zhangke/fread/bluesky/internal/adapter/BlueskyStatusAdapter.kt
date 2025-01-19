@@ -4,13 +4,10 @@ import app.bsky.embed.AspectRatio
 import app.bsky.embed.ImagesViewImage
 import app.bsky.embed.RecordWithMediaViewMediaUnion
 import app.bsky.embed.VideoView
-import app.bsky.feed.FeedViewPost
 import app.bsky.feed.FeedViewPostReasonUnion
-import app.bsky.feed.Post
-import app.bsky.feed.PostView
 import app.bsky.feed.PostViewEmbedUnion
 import com.zhangke.framework.datetime.Instant
-import com.zhangke.fread.bluesky.internal.utils.bskyJson
+import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
@@ -19,9 +16,8 @@ import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
+import com.zhangke.fread.status.status.model.StatusInteraction
 import kotlinx.collections.immutable.persistentListOf
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyStatusAdapter @Inject constructor(
@@ -29,34 +25,38 @@ class BlueskyStatusAdapter @Inject constructor(
 ) {
 
     fun convert(
-        feedViewPost: FeedViewPost,
+        processingBskyPost: ProcessingBskyPost,
+        supportInteraction: List<StatusInteraction>,
         platform: BlogPlatform,
         isSelfStatus: Boolean,
     ): Status {
-        val postView = feedViewPost.post
-        val pinned = feedViewPost.reason is FeedViewPostReasonUnion.ReasonPin
-        when (feedViewPost.reason) {
-            is FeedViewPostReasonUnion.ReasonPin -> {
-
-            }
-
-            is FeedViewPostReasonUnion.ReasonRepost -> {
-
-            }
-
-            else -> {}
+        val feedsReason = processingBskyPost.reason
+        val pinned = feedsReason is FeedViewPostReasonUnion.ReasonPin
+        if (feedsReason is FeedViewPostReasonUnion.ReasonRepost) {
+            val author = accountAdapter.convertToBlogAuthor(feedsReason.value.by)
+            val repostedStatus = convertToBlog(processingBskyPost, platform, pinned, isSelfStatus)
+            return Status.Reblog(
+                id = repostedStatus.id,
+                datetime = repostedStatus.date.instant.toEpochMilliseconds(),
+                author = author,
+                reblog = repostedStatus,
+                supportInteraction = supportInteraction,
+            )
         }
-
+        return Status.NewBlog(
+            blog = convertToBlog(processingBskyPost, platform, pinned, isSelfStatus),
+            supportInteraction = supportInteraction,
+        )
     }
 
     private fun convertToBlog(
-        postView: PostView,
+        processingBskyPost: ProcessingBskyPost,
         platform: BlogPlatform,
         pinned: Boolean,
         isSelfStatus: Boolean,
     ): Blog {
-        val post: Post =
-            bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(postView.record))
+        val post = processingBskyPost.post
+        val postView = processingBskyPost.postView
         return Blog(
             id = postView.cid.cid,
             author = accountAdapter.convertToBlogAuthor(postView.author),

@@ -41,6 +41,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.common.BlogTranslateLabel
+import com.zhangke.fread.status.ui.embed.BlogEmbedUi
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusBottomEditedLabel
@@ -164,7 +165,16 @@ fun BlogContent(
                     onMediaClick(it)
                 },
             )
-        } else if (blog.card != null) {
+        } else if (blog.embed != null) {
+            BlogEmbedUi(
+                modifier = Modifier
+                    .padding(top = style.contentStyle.contentVerticalSpacing)
+                    .fillMaxWidth(),
+                embed = blog.embed!!,
+                onClick = {
+
+                },
+            )
             StatusPreviewCardUi(
                 modifier = Modifier
                     .padding(top = style.contentStyle.contentVerticalSpacing)

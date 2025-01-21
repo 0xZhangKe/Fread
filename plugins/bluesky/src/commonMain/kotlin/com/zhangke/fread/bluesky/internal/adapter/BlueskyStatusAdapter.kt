@@ -1,23 +1,30 @@
 package com.zhangke.fread.bluesky.internal.adapter
 
+import app.bsky.actor.ProfileViewBasic
 import app.bsky.embed.AspectRatio
 import app.bsky.embed.ImagesViewImage
+import app.bsky.embed.RecordViewRecord
+import app.bsky.embed.RecordViewRecordUnion
 import app.bsky.embed.RecordWithMediaViewMediaUnion
 import app.bsky.embed.VideoView
 import app.bsky.feed.FeedViewPostReasonUnion
+import app.bsky.feed.Post
 import app.bsky.feed.PostViewEmbedUnion
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
+import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
-import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
 import kotlinx.collections.immutable.persistentListOf
+import kotlinx.serialization.json.decodeFromJsonElement
+import kotlinx.serialization.json.encodeToJsonElement
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyStatusAdapter @Inject constructor(
@@ -55,31 +62,80 @@ class BlueskyStatusAdapter @Inject constructor(
         pinned: Boolean,
         isSelfStatus: Boolean,
     ): Blog {
-        val post = processingBskyPost.post
-        val postView = processingBskyPost.postView
+        return convertToBlog(
+            post = processingBskyPost.post,
+            id = processingBskyPost.postView.cid.cid,
+            author = processingBskyPost.postView.author,
+            url = processingBskyPost.postView.uri.atUri,
+            replyCount = processingBskyPost.postView.replyCount,
+            likeCount = processingBskyPost.postView.likeCount,
+            repostCount = processingBskyPost.postView.repostCount,
+            embedUnion = processingBskyPost.postView.embed,
+            platform = platform,
+            pinned = pinned,
+            isSelfStatus = isSelfStatus,
+        )
+    }
+
+    private fun convertToBlog(
+        recordView: RecordViewRecord,
+        platform: BlogPlatform,
+        pinned: Boolean,
+        isSelfStatus: Boolean,
+    ): Blog {
+        val post: Post =
+            bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(recordView.value))
+        return convertToBlog(
+            post = post,
+            id = recordView.cid.cid,
+            author = recordView.author,
+            url = recordView.uri.atUri,
+            replyCount = recordView.replyCount,
+            likeCount = recordView.likeCount,
+            repostCount = recordView.repostCount,
+            embedUnion = null,
+            platform = platform,
+            pinned = pinned,
+            isSelfStatus = isSelfStatus,
+        )
+    }
+
+    private fun convertToBlog(
+        post: Post,
+        id: String,
+        author: ProfileViewBasic,
+        url: String,
+        repostCount: Long?,
+        likeCount: Long?,
+        replyCount: Long?,
+        embedUnion: PostViewEmbedUnion?,
+        platform: BlogPlatform,
+        pinned: Boolean,
+        isSelfStatus: Boolean,
+    ): Blog {
         return Blog(
-            id = postView.cid.cid,
-            author = accountAdapter.convertToBlogAuthor(postView.author),
+            id = id,
+            author = accountAdapter.convertToBlogAuthor(author),
             title = null,
             description = null,
             content = post.text,
-            url = postView.uri.atUri,
+            url = url,
             date = Instant(post.createdAt),
-            forwardCount = postView.repostCount,
-            likeCount = postView.likeCount,
-            repliesCount = postView.replyCount,
+            forwardCount = repostCount,
+            likeCount = likeCount,
+            repliesCount = replyCount,
             sensitive = false,
             spoilerText = "",
             language = post.langs.firstOrNull()?.tag,
             platform = platform,
-            mediaList = postView.embed?.let(::convertToMedia) ?: emptyList(),
+            mediaList = embedUnion?.let(::convertToMedia) ?: emptyList(),
             emojis = emptyList(),
             mentions = emptyList(),
             tags = emptyList(),
             pinned = pinned,
             poll = null,
             visibility = StatusVisibility.PUBLIC,
-            card = convertPreviewCard(postView.embed),
+            embed = convertEmbed(embedUnion, platform),
             isSelf = isSelfStatus,
             supportTranslate = false,
         )
@@ -188,18 +244,33 @@ class BlueskyStatusAdapter @Inject constructor(
     private val AspectRatio.aspect: Float
         get() = (width.toDouble() / height.toDouble()).toFloat()
 
-    private fun convertPreviewCard(embed: PostViewEmbedUnion?): PreviewCard? {
-        val externalView =
-            (embed as? PostViewEmbedUnion.ExternalView)?.value?.external ?: return null
-        return PreviewCard(
-            type = if (externalView.thumb?.uri.isNullOrEmpty()) {
-                PreviewCard.CardType.LINK
-            } else {
-                PreviewCard.CardType.PHOTO
-            },
-            url = externalView.uri.uri,
-            title = externalView.title,
-            description = externalView.description,
-        )
+    private fun convertEmbed(
+        embedUnion: PostViewEmbedUnion?,
+        platform: BlogPlatform,
+    ): BlogEmbed? {
+        if (embedUnion is PostViewEmbedUnion.ExternalView) {
+            val externalView = embedUnion.value.external
+            return BlogEmbed.Link(
+                url = externalView.uri.uri,
+                title = externalView.title,
+                description = externalView.description,
+                image = externalView.thumb?.uri,
+                video = false,
+            )
+        }
+        if (embedUnion is PostViewEmbedUnion.RecordView) {
+            val embedRecord = embedUnion.value.record
+            if (embedRecord is RecordViewRecordUnion.ViewRecord) {
+                return BlogEmbed.Blog(
+                    convertToBlog(
+                        recordView = embedRecord.value,
+                        platform = platform,
+                        pinned = false,
+                        isSelfStatus = false,
+                    )
+                )
+            }
+        }
+        return null
     }
 }

@@ -11,10 +11,10 @@ import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatet
 import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.blog.PostingApplication
-import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusVisibility
@@ -115,7 +115,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             mentions = entity.mentions.mapNotNull { it.toMention() },
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),
-            card = entity.card?.toCard(),
+            embed = entity.card?.toEmbed(),
             editedAt = entity.editedAt?.let { formatDatetimeToDate(it) }?.let { Instant(it) },
             application = entity.application?.toApplication(),
         )
@@ -175,12 +175,12 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    private fun ActivityPubStatusEntity.PreviewCard.toCard(): PreviewCard {
-        return PreviewCard(
-            type = type.convertCardType(),
+    private fun ActivityPubStatusEntity.PreviewCard.toEmbed(): BlogEmbed {
+        return BlogEmbed.Link(
             url = url,
             title = title,
             description = description,
+            video = type == ActivityPubStatusEntity.PreviewCard.TYPE_VIDEO,
             authorName = authorName,
             authorUrl = authorUrl,
             providerName = providerName,
@@ -192,16 +192,6 @@ class ActivityPubStatusAdapter @Inject constructor(
             embedUrl = embedUrl,
             blurhash = blurhash,
         )
-    }
-
-    private fun String.convertCardType(): PreviewCard.CardType {
-        return when (this) {
-            ActivityPubStatusEntity.PreviewCard.TYPE_LINK -> PreviewCard.CardType.LINK
-            ActivityPubStatusEntity.PreviewCard.TYPE_PHOTO -> PreviewCard.CardType.PHOTO
-            ActivityPubStatusEntity.PreviewCard.TYPE_VIDEO -> PreviewCard.CardType.VIDEO
-            ActivityPubStatusEntity.PreviewCard.TYPE_RICH -> PreviewCard.CardType.RICH
-            else -> PreviewCard.CardType.PHOTO
-        }
     }
 
     private fun ActivityPubStatusEntity.Application.toApplication(): PostingApplication {

@@ -115,7 +115,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             mentions = entity.mentions.mapNotNull { it.toMention() },
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),
-            embed = entity.card?.toEmbed(),
+            embeds = entity.card?.toEmbed()?.let { listOf(it) } ?: emptyList(),
             editedAt = entity.editedAt?.let { formatDatetimeToDate(it) }?.let { Instant(it) },
             application = entity.application?.toApplication(),
         )

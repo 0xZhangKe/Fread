@@ -8,7 +8,6 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.PostingApplication
-import com.zhangke.fread.status.blog.PreviewCard
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform

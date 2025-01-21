@@ -2,6 +2,7 @@ package com.zhangke.fread.bluesky.internal.adapter
 
 import app.bsky.actor.ProfileViewBasic
 import app.bsky.embed.AspectRatio
+import app.bsky.embed.ExternalViewExternal
 import app.bsky.embed.ImagesViewImage
 import app.bsky.embed.RecordViewRecord
 import app.bsky.embed.RecordViewRecordUnion
@@ -80,8 +81,6 @@ class BlueskyStatusAdapter @Inject constructor(
     private fun convertToBlog(
         recordView: RecordViewRecord,
         platform: BlogPlatform,
-        pinned: Boolean,
-        isSelfStatus: Boolean,
     ): Blog {
         val post: Post =
             bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(recordView.value))
@@ -95,8 +94,8 @@ class BlueskyStatusAdapter @Inject constructor(
             repostCount = recordView.repostCount,
             embedUnion = null,
             platform = platform,
-            pinned = pinned,
-            isSelfStatus = isSelfStatus,
+            pinned = false,
+            isSelfStatus = false,
         )
     }
 
@@ -135,7 +134,7 @@ class BlueskyStatusAdapter @Inject constructor(
             pinned = pinned,
             poll = null,
             visibility = StatusVisibility.PUBLIC,
-            embed = convertEmbed(embedUnion, platform),
+            embeds = convertEmbed(embedUnion, platform),
             isSelf = isSelfStatus,
             supportTranslate = false,
         )
@@ -162,6 +161,7 @@ class BlueskyStatusAdapter @Inject constructor(
 
             is PostViewEmbedUnion.RecordWithMediaView -> {
                 when (val media = embedUnion.value.media) {
+                    // ExternalView will be convert to link embed
                     is RecordWithMediaViewMediaUnion.ExternalView -> persistentListOf()
                     is RecordWithMediaViewMediaUnion.ImagesView -> {
                         media.value.images.map { it.toMedia() }
@@ -247,30 +247,43 @@ class BlueskyStatusAdapter @Inject constructor(
     private fun convertEmbed(
         embedUnion: PostViewEmbedUnion?,
         platform: BlogPlatform,
-    ): BlogEmbed? {
+    ): List<BlogEmbed> {
         if (embedUnion is PostViewEmbedUnion.ExternalView) {
-            val externalView = embedUnion.value.external
-            return BlogEmbed.Link(
-                url = externalView.uri.uri,
-                title = externalView.title,
-                description = externalView.description,
-                image = externalView.thumb?.uri,
-                video = false,
-            )
+            return listOf(embedUnion.value.external.toLinkEmbed())
+        }
+        if (embedUnion is PostViewEmbedUnion.RecordWithMediaView) {
+            val embeds = mutableListOf<BlogEmbed>()
+            val media = embedUnion.value.media
+            if (media is RecordWithMediaViewMediaUnion.ExternalView) {
+                // another type will be convert to media list in Blog
+                embeds += media.value.external.toLinkEmbed()
+            }
+            val record = embedUnion.value.record.record
+            if (record is RecordViewRecordUnion.ViewRecord) {
+                embeds += record.toBlogEmbed(platform)
+            }
+            return embeds
         }
         if (embedUnion is PostViewEmbedUnion.RecordView) {
             val embedRecord = embedUnion.value.record
             if (embedRecord is RecordViewRecordUnion.ViewRecord) {
-                return BlogEmbed.Blog(
-                    convertToBlog(
-                        recordView = embedRecord.value,
-                        platform = platform,
-                        pinned = false,
-                        isSelfStatus = false,
-                    )
-                )
+                return listOf(embedRecord.toBlogEmbed(platform))
             }
         }
-        return null
+        return emptyList()
+    }
+
+    private fun RecordViewRecordUnion.ViewRecord.toBlogEmbed(platform: BlogPlatform): BlogEmbed {
+        return BlogEmbed.Blog(convertToBlog(recordView = this.value, platform = platform))
+    }
+
+    private fun ExternalViewExternal.toLinkEmbed(): BlogEmbed.Link {
+        return BlogEmbed.Link(
+            url = this.uri.uri,
+            title = this.title,
+            description = this.description,
+            image = this.thumb?.uri,
+            video = false,
+        )
     }
 }

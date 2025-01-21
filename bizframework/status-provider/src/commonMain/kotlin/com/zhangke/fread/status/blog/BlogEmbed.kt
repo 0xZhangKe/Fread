@@ -17,9 +17,30 @@ sealed interface BlogEmbed {
         val image: String? = null,
         val embedUrl: String? = null,
         val blurhash: String? = null,
-    ): BlogEmbed
+    ) : BlogEmbed {
+
+        companion object {
+
+            private val standardRange = 0.5f..2f
+            private const val DEFAULT_ASPECT_RATIO = 1F
+        }
+
+        val aspectRatio: Float
+            get() {
+                if (width == null || height == null) return DEFAULT_ASPECT_RATIO
+                val ratio = width / height.toFloat()
+                if (ratio.isNaN() || ratio.isInfinite()) {
+                    return DEFAULT_ASPECT_RATIO
+                }
+                if (ratio in standardRange) {
+                    return ratio
+                }
+                return DEFAULT_ASPECT_RATIO
+            }
+
+    }
 
     data class Blog(
         val blog: com.zhangke.fread.status.blog.Blog,
-    ): BlogEmbed
+    ) : BlogEmbed
 }

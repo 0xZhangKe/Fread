@@ -49,7 +49,7 @@ import com.zhangke.fread.status.ui.label.StatusBottomInteractionLabel
 import com.zhangke.fread.status.ui.label.StatusBottomTimeLabel
 import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
-import com.zhangke.fread.status.ui.preview.StatusPreviewCardUi
+import com.zhangke.fread.status.ui.embed.StatusEmbedLinkUi
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -173,16 +173,6 @@ fun BlogContent(
                 embed = blog.embed!!,
                 onClick = {
 
-                },
-            )
-            StatusPreviewCardUi(
-                modifier = Modifier
-                    .padding(top = style.contentStyle.contentVerticalSpacing)
-                    .fillMaxWidth(),
-                card = blog.card!!,
-                style = style,
-                onCardClick = {
-                    onUrlClick(it.url)
                 },
             )
         }

@@ -17,5 +17,9 @@ sealed interface BlogEmbed {
         val image: String? = null,
         val embedUrl: String? = null,
         val blurhash: String? = null,
-    )
+    ): BlogEmbed
+
+    data class Blog(
+        val blog: com.zhangke.fread.status.blog.Blog,
+    ): BlogEmbed
 }

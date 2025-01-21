@@ -39,7 +39,7 @@ data class Blog(
     val pinned: Boolean = false,
     val poll: BlogPoll?,
     val visibility: StatusVisibility,
-    val card: PreviewCard? = null,
+    val embed: BlogEmbed? = null,
     val isSelf: Boolean = false,
     val supportTranslate: Boolean = false,
     val editedAt: Instant? = null,

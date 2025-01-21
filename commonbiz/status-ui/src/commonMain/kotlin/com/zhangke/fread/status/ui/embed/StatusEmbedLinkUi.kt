@@ -1,4 +1,4 @@
-package com.zhangke.fread.status.ui.preview
+package com.zhangke.fread.status.ui.embed
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,15 +35,15 @@ import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.blurhash.blurhash
-import com.zhangke.fread.status.blog.PreviewCard
+import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
-fun StatusPreviewCardUi(
+fun StatusEmbedLinkUi(
     modifier: Modifier,
-    card: PreviewCard,
+    linkEmbed: BlogEmbed.Link,
     style: StatusStyle,
-    onCardClick: (PreviewCard) -> Unit,
+    onCardClick: (BlogEmbed.Link) -> Unit,
 ) {
     val containerModifier = modifier
         .border(
@@ -51,33 +51,33 @@ fun StatusPreviewCardUi(
             color = DividerDefaults.color,
             shape = RoundedCornerShape(8.dp),
         )
-        .clickable { onCardClick(card) }
+        .clickable { onCardClick(linkEmbed) }
         .padding(bottom = style.cardStyle.contentVerticalPadding)
-    if (card.image.isNullOrEmpty().not()) {
+    if (linkEmbed.image.isNullOrEmpty().not()) {
         Column(modifier = containerModifier) {
-            if (card.image.isNullOrEmpty().not()) {
+            if (linkEmbed.image.isNullOrEmpty().not()) {
                 Box(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .aspectRatio(card.aspectRatio)
+                        .aspectRatio(linkEmbed.aspectRatio)
                 ) {
                     AutoSizeImage(
-                        remember(card.image) {
-                            ImageRequest(card.image.orEmpty())
+                        remember(linkEmbed.image) {
+                            ImageRequest(linkEmbed.image.orEmpty())
                         },
                         modifier = Modifier
                             .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
                             .fillMaxSize()
-                            .blurhash(card.blurhash),
+                            .blurhash(linkEmbed.blurhash),
                         contentDescription = "Preview Image",
                     )
-                    if (card.type == PreviewCard.CardType.VIDEO) {
+                    if (linkEmbed.video) {
                         IconButton(
                             modifier = Modifier
                                 .size(32.dp)
                                 .align(Alignment.Center),
                             onClick = {
-                                onCardClick(card)
+                                onCardClick(linkEmbed)
                             },
                             colors = IconButtonDefaults.iconButtonColors(
                                 containerColor = MaterialTheme.colorScheme.primaryContainer,
@@ -93,7 +93,7 @@ fun StatusPreviewCardUi(
                 }
             }
             Spacer(modifier = Modifier.height(style.cardStyle.imageBottomPadding))
-            PreviewCardTexts(card, style, 2)
+            PreviewCardTexts(linkEmbed, style, 2)
         }
     } else {
         Row(
@@ -106,7 +106,7 @@ fun StatusPreviewCardUi(
                     .weight(1F)
                     .padding(end = 8.dp)
             ) {
-                PreviewCardTexts(card, style, 1)
+                PreviewCardTexts(linkEmbed, style, 1)
             }
             Box(
                 modifier = Modifier
@@ -133,7 +133,7 @@ fun StatusPreviewCardUi(
 
 @Composable
 private fun PreviewCardTexts(
-    card: PreviewCard,
+    card: BlogEmbed.Link,
     style: StatusStyle,
     maxLine: Int,
 ) {

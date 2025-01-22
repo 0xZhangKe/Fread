@@ -42,7 +42,13 @@ class BlueskyStatusAdapter @Inject constructor(
         val pinned = feedsReason is FeedViewPostReasonUnion.ReasonPin
         if (feedsReason is FeedViewPostReasonUnion.ReasonRepost) {
             val author = accountAdapter.convertToBlogAuthor(feedsReason.value.by)
-            val repostedStatus = convertToBlog(processingBskyPost, platform, pinned, isSelfStatus)
+            val repostedStatus = convertToBlog(
+                processingBskyPost,
+                supportInteraction,
+                platform,
+                pinned,
+                isSelfStatus,
+            )
             return Status.Reblog(
                 id = repostedStatus.id,
                 datetime = repostedStatus.date.instant.toEpochMilliseconds(),
@@ -52,25 +58,36 @@ class BlueskyStatusAdapter @Inject constructor(
             )
         }
         return Status.NewBlog(
-            blog = convertToBlog(processingBskyPost, platform, pinned, isSelfStatus),
+            blog = convertToBlog(
+                processingBskyPost,
+                supportInteraction,
+                platform,
+                pinned,
+                isSelfStatus
+            ),
             supportInteraction = supportInteraction,
         )
     }
 
     private fun convertToBlog(
         processingBskyPost: ProcessingBskyPost,
+        supportInteraction: List<StatusInteraction>,
         platform: BlogPlatform,
         pinned: Boolean,
         isSelfStatus: Boolean,
     ): Blog {
         return convertToBlog(
             post = processingBskyPost.post,
+            supportInteraction = supportInteraction,
             id = processingBskyPost.postView.cid.cid,
             author = processingBskyPost.postView.author,
             url = processingBskyPost.postView.uri.atUri,
             replyCount = processingBskyPost.postView.replyCount,
             likeCount = processingBskyPost.postView.likeCount,
             repostCount = processingBskyPost.postView.repostCount,
+            liked = supportInteraction.liked,
+            bookmarked = supportInteraction.bookmarked,
+            forward = supportInteraction.forwarded,
             embedUnion = processingBskyPost.postView.embed,
             platform = platform,
             pinned = pinned,
@@ -80,18 +97,23 @@ class BlueskyStatusAdapter @Inject constructor(
 
     private fun convertToBlog(
         recordView: RecordViewRecord,
+        supportInteraction: List<StatusInteraction>,
         platform: BlogPlatform,
     ): Blog {
         val post: Post =
             bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(recordView.value))
         return convertToBlog(
             post = post,
+            supportInteraction = supportInteraction,
             id = recordView.cid.cid,
             author = recordView.author,
             url = recordView.uri.atUri,
             replyCount = recordView.replyCount,
             likeCount = recordView.likeCount,
             repostCount = recordView.repostCount,
+            liked = supportInteraction.liked,
+            bookmarked = supportInteraction.bookmarked,
+            forward = supportInteraction.forwarded,
             embedUnion = null,
             platform = platform,
             pinned = false,
@@ -101,12 +123,16 @@ class BlueskyStatusAdapter @Inject constructor(
 
     private fun convertToBlog(
         post: Post,
+        supportInteraction: List<StatusInteraction>,
         id: String,
         author: ProfileViewBasic,
         url: String,
         repostCount: Long?,
         likeCount: Long?,
         replyCount: Long?,
+        liked: Boolean,
+        bookmarked: Boolean,
+        forward: Boolean,
         embedUnion: PostViewEmbedUnion?,
         platform: BlogPlatform,
         pinned: Boolean,
@@ -123,6 +149,9 @@ class BlueskyStatusAdapter @Inject constructor(
             forwardCount = repostCount,
             likeCount = likeCount,
             repliesCount = replyCount,
+            liked = liked,
+            bookmarked = bookmarked,
+            forward = forward,
             sensitive = false,
             spoilerText = "",
             language = post.langs.firstOrNull()?.tag,
@@ -134,7 +163,7 @@ class BlueskyStatusAdapter @Inject constructor(
             pinned = pinned,
             poll = null,
             visibility = StatusVisibility.PUBLIC,
-            embeds = convertEmbed(embedUnion, platform),
+            embeds = convertEmbed(embedUnion, supportInteraction, platform),
             isSelf = isSelfStatus,
             supportTranslate = false,
         )
@@ -246,6 +275,7 @@ class BlueskyStatusAdapter @Inject constructor(
 
     private fun convertEmbed(
         embedUnion: PostViewEmbedUnion?,
+        supportInteraction: List<StatusInteraction>,
         platform: BlogPlatform,
     ): List<BlogEmbed> {
         if (embedUnion is PostViewEmbedUnion.ExternalView) {
@@ -260,21 +290,24 @@ class BlueskyStatusAdapter @Inject constructor(
             }
             val record = embedUnion.value.record.record
             if (record is RecordViewRecordUnion.ViewRecord) {
-                embeds += record.toBlogEmbed(platform)
+                embeds += record.toBlogEmbed(supportInteraction, platform)
             }
             return embeds
         }
         if (embedUnion is PostViewEmbedUnion.RecordView) {
             val embedRecord = embedUnion.value.record
             if (embedRecord is RecordViewRecordUnion.ViewRecord) {
-                return listOf(embedRecord.toBlogEmbed(platform))
+                return listOf(embedRecord.toBlogEmbed(supportInteraction, platform))
             }
         }
         return emptyList()
     }
 
-    private fun RecordViewRecordUnion.ViewRecord.toBlogEmbed(platform: BlogPlatform): BlogEmbed {
-        return BlogEmbed.Blog(convertToBlog(recordView = this.value, platform = platform))
+    private fun RecordViewRecordUnion.ViewRecord.toBlogEmbed(
+        supportInteraction: List<StatusInteraction>,
+        platform: BlogPlatform,
+    ): BlogEmbed {
+        return BlogEmbed.Blog(convertToBlog(this.value, supportInteraction, platform))
     }
 
     private fun ExternalViewExternal.toLinkEmbed(): BlogEmbed.Link {
@@ -286,4 +319,13 @@ class BlueskyStatusAdapter @Inject constructor(
             video = false,
         )
     }
+
+    private val List<StatusInteraction>.liked: Boolean
+        get() = filterIsInstance<StatusInteraction.Like>().firstOrNull()?.liked ?: false
+
+    private val List<StatusInteraction>.forwarded: Boolean
+        get() = filterIsInstance<StatusInteraction.Forward>().firstOrNull()?.forwarded ?: false
+
+    private val List<StatusInteraction>.bookmarked: Boolean
+        get() = filterIsInstance<StatusInteraction.Bookmark>().firstOrNull()?.bookmarked ?: false
 }

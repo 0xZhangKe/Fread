@@ -17,6 +17,7 @@ import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScr
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
@@ -31,6 +32,7 @@ import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.serializer
 
 class InteractiveHandler(
     private val statusProvider: StatusProvider,
@@ -73,12 +75,20 @@ class InteractiveHandler(
             this@InteractiveHandler.onMentionClick(role, mention)
         }
 
-        override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
+        override fun onMentionClick(
+            role: IdentityRole,
+            did: String,
+            protocol: StatusProviderProtocol
+        ) {
             this@InteractiveHandler.onMentionClick(role, did, protocol)
         }
 
         override fun onStatusClick(status: StatusUiState) {
             this@InteractiveHandler.onStatusClick(status)
+        }
+
+        override fun onBlockClick(role: IdentityRole, blog: Blog) {
+            this@InteractiveHandler.onBlogClick(role, blog)
         }
 
         override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
@@ -176,6 +186,21 @@ class InteractiveHandler(
                         globalJson.encodeToString(Status.serializer(), it)
                     },
                     blogTranslationUiState = status.blogTranslationState,
+                )
+            }
+            mutableOpenScreenFlow.emit(screen)
+        }
+    }
+
+    override fun onBlogClick(role: IdentityRole, blog: Blog) {
+        coroutineScope.launch {
+            val screen = if (blog.platform.protocol.isRss) {
+                BlogDetailScreen(blog)
+            } else {
+                StatusContextScreen(
+                    role = role,
+                    serializedBlog = globalJson.encodeToString(serializer(), blog),
+                    blogTranslationUiState = null,
                 )
             }
             mutableOpenScreenFlow.emit(screen)

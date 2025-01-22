@@ -5,6 +5,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -36,6 +37,8 @@ interface IInteractiveHandler {
     fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor)
 
     fun onStatusClick(status: StatusUiState)
+
+    fun onBlogClick(role: IdentityRole, blog: Blog)
 
     fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>)
 

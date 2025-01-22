@@ -3,6 +3,7 @@ package com.zhangke.fread.status.ui
 import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -21,6 +22,7 @@ interface ComposedStatusInteraction {
     fun onMentionClick(role: IdentityRole, mention: Mention)
     fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol)
     fun onStatusClick(status: StatusUiState)
+    fun onBlockClick(role: IdentityRole, blog: Blog)
     fun onFollowClick(role: IdentityRole, target: BlogAuthor)
     fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)
     fun onBoostedClick(role: IdentityRole, status: StatusUiState)

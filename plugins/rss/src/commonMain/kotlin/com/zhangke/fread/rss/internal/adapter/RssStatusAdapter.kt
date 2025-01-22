@@ -51,6 +51,9 @@ class RssStatusAdapter @Inject constructor(
             forwardCount = null,
             likeCount = null,
             repliesCount = null,
+            liked = false,
+            bookmarked = false,
+            forward = false,
             sensitive = false,
             spoilerText = "",
             platform = rssPlatformTransformer.create(uriInsight, source),
@@ -61,7 +64,7 @@ class RssStatusAdapter @Inject constructor(
             tags = emptyList(),
             pinned = false,
             visibility = StatusVisibility.PUBLIC,
-            card = null,
+            embeds = emptyList(),
             language = null,
         )
     }

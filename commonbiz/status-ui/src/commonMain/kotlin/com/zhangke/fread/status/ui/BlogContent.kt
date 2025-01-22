@@ -34,6 +34,7 @@ import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -41,7 +42,7 @@ import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.common.BlogTranslateLabel
-import com.zhangke.fread.status.ui.embed.BlogEmbedUi
+import com.zhangke.fread.status.ui.embed.BlogEmbedsUi
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusBottomEditedLabel
@@ -49,7 +50,6 @@ import com.zhangke.fread.status.ui.label.StatusBottomInteractionLabel
 import com.zhangke.fread.status.ui.label.StatusBottomTimeLabel
 import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
-import com.zhangke.fread.status.ui.embed.StatusEmbedLinkUi
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -73,6 +73,8 @@ fun BlogContent(
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
+    onBlogClick: (Blog) -> Unit,
+    onUserInfoClick: (BlogAuthor) -> Unit,
     onShowOriginalClick: () -> Unit,
     boostedCount: Int? = null,
     favouritedCount: Int? = null,
@@ -165,15 +167,21 @@ fun BlogContent(
                     onMediaClick(it)
                 },
             )
-        } else if (blog.embed != null) {
-            BlogEmbedUi(
+        } else if (blog.embeds.isNotEmpty()) {
+            BlogEmbedsUi(
                 modifier = Modifier
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
-                embed = blog.embed!!,
-                onClick = {
-
-                },
+                embeds= blog.embeds,
+                style = style,
+                onContentClick = onBlogClick,
+                onMediaClick = onMediaClick,
+                onUserInfoClick = onUserInfoClick,
+                onHashtagInStatusClick = onHashtagInStatusClick,
+                onUrlClick = onUrlClick,
+                onVoted = onVoted,
+                onMentionClick = onMentionClick,
+                onMentionDidClick = onMentionDidClick,
             )
         }
 

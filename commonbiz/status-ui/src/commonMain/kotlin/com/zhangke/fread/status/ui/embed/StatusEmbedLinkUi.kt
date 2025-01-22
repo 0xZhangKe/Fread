@@ -46,11 +46,6 @@ fun StatusEmbedLinkUi(
     onCardClick: (BlogEmbed.Link) -> Unit,
 ) {
     val containerModifier = modifier
-        .border(
-            width = 1.dp,
-            color = DividerDefaults.color,
-            shape = RoundedCornerShape(8.dp),
-        )
         .clickable { onCardClick(linkEmbed) }
         .padding(bottom = style.cardStyle.contentVerticalPadding)
     if (linkEmbed.image.isNullOrEmpty().not()) {

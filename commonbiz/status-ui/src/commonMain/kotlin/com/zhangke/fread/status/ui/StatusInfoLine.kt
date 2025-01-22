@@ -48,6 +48,7 @@ fun StatusInfoLine(
     style: StatusStyle,
     visibility: StatusVisibility,
     showFollowButton: Boolean,
+    showMoreOperationIcon: Boolean = true,
     moreInteractions: List<StatusUiInteraction>,
     onInteractive: (StatusUiInteraction) -> Unit,
     onUserInfoClick: (BlogAuthor) -> Unit,
@@ -158,21 +159,23 @@ fun StatusInfoLine(
             )
         }
 
-        val moreIconAlign = if (showFollowButton) {
-            Alignment.CenterVertically
-        } else {
-            Alignment.Top
+        if (showMoreOperationIcon) {
+            val moreIconAlign = if (showFollowButton) {
+                Alignment.CenterVertically
+            } else {
+                Alignment.Top
+            }
+            StatusMoreInteractionIcon(
+                modifier = Modifier
+                    .align(moreIconAlign)
+                    .padding(end = style.containerEndPadding / 2),
+                blogUrl = blogUrl,
+                blogTranslationState = blogTranslationState,
+                style = style,
+                moreActionList = moreInteractions,
+                onActionClick = onInteractive,
+                onTranslateClick = onTranslateClick,
+            )
         }
-        StatusMoreInteractionIcon(
-            modifier = Modifier
-                .align(moreIconAlign)
-                .padding(end = style.containerEndPadding / 2),
-            blogUrl = blogUrl,
-            blogTranslationState = blogTranslationState,
-            style = style,
-            moreActionList = moreInteractions,
-            onActionClick = onInteractive,
-            onTranslateClick = onTranslateClick,
-        )
     }
 }

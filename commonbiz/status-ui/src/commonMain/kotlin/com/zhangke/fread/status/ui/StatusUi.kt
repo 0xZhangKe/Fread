@@ -84,6 +84,9 @@ fun StatusUi(
             onTranslateClick = {
                 composedStatusInteraction.onTranslateClick(status.role, status)
             },
+            onBlogClick = {
+                composedStatusInteraction.onBlockClick(status.role, it)
+            },
         )
     }
 }

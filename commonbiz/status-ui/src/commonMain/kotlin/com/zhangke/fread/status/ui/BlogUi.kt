@@ -53,6 +53,7 @@ fun BlogUi(
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
     onShowOriginalClick: () -> Unit,
+    onBlogClick: (Blog) -> Unit,
     onTranslateClick: () -> Unit,
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
@@ -138,6 +139,8 @@ fun BlogUi(
             onMentionClick = onMentionClick,
             onMentionDidClick = onMentionDidClick,
             onShowOriginalClick = onShowOriginalClick,
+            onBlogClick = onBlogClick,
+            onUserInfoClick = onUserInfoClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier

@@ -14,6 +14,7 @@ import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -209,6 +210,10 @@ class FeedsViewModelController(
 
     override fun onStatusClick(status: StatusUiState) {
         interactiveHandler.onStatusClick(status)
+    }
+
+    override fun onBlogClick(role: IdentityRole, blog: Blog) {
+        interactiveHandler.onBlogClick(role, blog)
     }
 
     override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {

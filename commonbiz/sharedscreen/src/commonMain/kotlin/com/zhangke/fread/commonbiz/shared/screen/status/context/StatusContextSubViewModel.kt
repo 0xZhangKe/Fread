@@ -11,8 +11,10 @@ import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.fread.commonbiz.shared.usecase.ConvertNwqBlogToStatusUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
@@ -27,8 +29,10 @@ class StatusContextSubViewModel(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val role: IdentityRole,
-    private val anchorStatus: Status,
+    anchorStatus: Status?,
+    blog: Blog?,
     private val blogTranslationUiState: BlogTranslationUiState?,
+    convertNewBlogToStatus: ConvertNwqBlogToStatusUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -46,6 +50,8 @@ class StatusContextSubViewModel(
     )
     val uiState = _uiState.asStateFlow()
 
+    private val anchorStatus: Status = anchorStatus ?: convertNewBlogToStatus(blog!!)
+
     private var anchorAuthorFollowing: Boolean? = null
 
     init {
@@ -54,9 +60,9 @@ class StatusContextSubViewModel(
             onInteractiveHandleResult = {
                 when (it) {
                     is InteractiveHandleResult.UpdateStatus -> {
-                        val anchorStatus = _uiState.value.contextStatus
+                        val innerAnchorStatus = _uiState.value.contextStatus
                             .firstOrNull { status -> status.type == StatusInContextType.ANCHOR }
-                        if (anchorStatus?.status != it.status) {
+                        if (innerAnchorStatus?.status != it.status) {
                             updateStatus(it.status)
                         }
                     }

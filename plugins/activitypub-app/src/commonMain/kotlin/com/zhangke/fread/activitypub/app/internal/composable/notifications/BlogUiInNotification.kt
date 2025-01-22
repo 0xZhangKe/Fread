@@ -13,7 +13,6 @@ import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
-import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.ui.BlogContent
 import com.zhangke.fread.status.ui.BlogUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -54,6 +53,8 @@ fun OnlyBlogContentUi(
             onMentionDidClick = onMentionDidClick,
             onUrlClick = onUrlClick,
             onShowOriginalClick = {},
+            onBlogClick = {},
+            onUserInfoClick = {},
         )
     }
 }
@@ -122,6 +123,9 @@ fun WholeBlogUi(
             },
             onTranslateClick = {
                 composedStatusInteraction.onTranslateClick(statusUiState.role, statusUiState)
+            },
+            onBlogClick = {
+                composedStatusInteraction.onBlockClick(statusUiState.role, it)
             },
         )
     }

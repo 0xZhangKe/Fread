@@ -50,6 +50,7 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
 import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import kotlinx.coroutines.launch
@@ -148,7 +149,8 @@ class BlueskyHomeTab(
                     LocalSnackbarHostState provides snackBarHostState,
                 ) {
                     if (uiState.content != null) {
-                        val tabList = remember(uiState) { createTabList(uiState.content) }
+                        val tabList =
+                            remember(uiState) { createTabList(uiState.content, uiState.role) }
                         val pagerState = rememberPagerState(0) {
                             tabList.size
                         }
@@ -235,8 +237,8 @@ class BlueskyHomeTab(
         }
     }
 
-    private fun createTabList(content: BlueskyContent): List<HomeFeedsTab> {
+    private fun createTabList(content: BlueskyContent, role: IdentityRole): List<HomeFeedsTab> {
         return content.feedsList.filter { it.pinned }
-            .map { HomeFeedsTab(it) }
+            .map { HomeFeedsTab(it, role) }
     }
 }

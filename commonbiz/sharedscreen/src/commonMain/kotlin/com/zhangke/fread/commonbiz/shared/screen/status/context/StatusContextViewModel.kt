@@ -5,7 +5,7 @@ import com.zhangke.fread.common.feeds.repo.FeedsRepo
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.usecase.ConvertNwqBlogToStatusUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.ConvertNewBlogToStatusUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.blog.Blog
@@ -19,7 +19,7 @@ class StatusContextViewModel @Inject constructor(
     private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
-    private val convertNewBlogToStatus: ConvertNwqBlogToStatusUseCase,
+    private val convertNewBlogToStatus: ConvertNewBlogToStatusUseCase,
 ) : ContainerViewModel<StatusContextSubViewModel, StatusContextViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): StatusContextSubViewModel {

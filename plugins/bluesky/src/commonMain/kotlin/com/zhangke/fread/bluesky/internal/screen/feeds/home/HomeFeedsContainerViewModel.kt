@@ -1,14 +1,21 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.home
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
-import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
-import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.usecase.GetFeedsStatusUseCase
+import com.zhangke.fread.common.status.StatusUpdater
+import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 
 class HomeFeedsContainerViewModel @Inject constructor(
-    private val clientManager: BlueskyClientManager,
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusUpdater: StatusUpdater,
+    private val statusProvider: StatusProvider,
+    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val getFeedsStatus: GetFeedsStatusUseCase,
 ) : ContainerViewModel<HomeFeedsViewModel, HomeFeedsContainerViewModel.Params>() {
 
     fun getViewModel(
@@ -22,7 +29,11 @@ class HomeFeedsContainerViewModel @Inject constructor(
 
     override fun createSubViewModel(params: Params): HomeFeedsViewModel {
         return HomeFeedsViewModel(
-            clientManager = clientManager,
+            buildStatusUiState = buildStatusUiState,
+            statusProvider = statusProvider,
+            getFeedsStatus = getFeedsStatus,
+            statusUpdater = statusUpdater,
+            refactorToNewBlog = refactorToNewBlog,
             feeds = params.feeds,
             role = params.role,
         )

@@ -24,6 +24,10 @@ import app.bsky.graph.GetListsQueryParams
 import app.bsky.graph.GetListsResponse
 import app.bsky.unspecced.GetPopularFeedGeneratorsQueryParams
 import app.bsky.unspecced.GetPopularFeedGeneratorsResponse
+import com.atproto.repo.CreateRecordRequest
+import com.atproto.repo.CreateRecordResponse
+import com.atproto.repo.DeleteRecordRequest
+import com.atproto.repo.DeleteRecordResponse
 import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
@@ -114,6 +118,14 @@ class BlueskyClient(
 
     suspend fun getListFeedCatching(params: GetListFeedQueryParams): Result<GetListFeedResponse> {
         return runCatching { getListFeed(params) }.toResult()
+    }
+
+    suspend fun createRecordCatching(params: CreateRecordRequest): Result<CreateRecordResponse> {
+        return runCatching { createRecord(params) }.toResult()
+    }
+
+    suspend fun deleteRecordCatching(params: DeleteRecordRequest): Result<DeleteRecordResponse> {
+        return runCatching { deleteRecord(params) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

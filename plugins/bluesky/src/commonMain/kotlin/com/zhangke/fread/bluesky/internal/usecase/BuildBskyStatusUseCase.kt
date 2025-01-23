@@ -2,35 +2,33 @@ package com.zhangke.fread.bluesky.internal.usecase
 
 import app.bsky.feed.FeedViewPost
 import app.bsky.feed.FeedViewPostReasonUnion
+import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
-import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
-import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 import me.tatarka.inject.annotations.Inject
 
 class BuildBskyStatusUseCase @Inject constructor(
-    private val clientManager: BlueskyClientManager,
     private val accountManager: BlueskyLoggedAccountManager,
     private val platformRepo: BlueskyPlatformRepo,
     private val statusAdapter: BlueskyStatusAdapter,
 ) {
 
     suspend operator fun invoke(
-        role: IdentityRole,
+        baseUrl: FormalBaseUrl,
         feedViewPost: FeedViewPost,
-    ) {
-        val client = clientManager.getClient(role)
-        val platform = platformRepo.getPlatform(client.baseUrl)
+    ): Status {
+        val platform = platformRepo.getPlatform(baseUrl)
         val allCount = accountManager.getAllAccount()
         val self = accountManager.getAllAccount().any { it.did == feedViewPost.post.author.did.did }
         val processingPost = feedViewPost.toProcessingPost()
-        statusAdapter.convert(
+        return statusAdapter.convert(
             processingBskyPost = processingPost,
             platform = platform,
             isSelfStatus = self,

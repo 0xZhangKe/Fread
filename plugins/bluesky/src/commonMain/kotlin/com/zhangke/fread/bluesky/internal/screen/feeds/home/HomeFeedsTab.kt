@@ -1,19 +1,23 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.home
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import cafe.adriel.voyager.core.screen.Screen
+import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
-import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
+import com.zhangke.fread.status.model.IdentityRole
 
-class HomeFeedsTab(private val feeds: BlueskyFeeds) : PagerTab {
+class HomeFeedsTab(
+    private val feeds: BlueskyFeeds,
+    private val role: IdentityRole,
+) : PagerTab {
 
     override val options: PagerTabOptions
         @Composable get() = PagerTabOptions(title = feeds.displayName())
@@ -23,11 +27,23 @@ class HomeFeedsTab(private val feeds: BlueskyFeeds) : PagerTab {
         screen: Screen,
         nestedScrollConnection: NestedScrollConnection?
     ) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            Text(
-                modifier = Modifier.align(Alignment.Center),
-                text = feeds.displayName(),
-            )
-        }
+        val viewModel = screen.getViewModel<HomeFeedsContainerViewModel>().getViewModel(feeds, role)
+        val uiState by viewModel.uiState.collectAsState()
+
+        FeedsContent(
+            uiState = uiState,
+            openScreenFlow = viewModel.openScreenFlow,
+            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
+            onRefresh = viewModel::onRefresh,
+            onLoadMore = viewModel::onLoadMore,
+            composedStatusInteraction = viewModel.composedStatusInteraction,
+            observeScrollToTopEvent = true,
+            nestedScrollConnection = nestedScrollConnection,
+            onImmersiveEvent = {},
+            onScrollInProgress = {},
+        )
+
+        val snackbarHostState = LocalSnackbarHostState.current
+        ConsumeSnackbarFlow(snackbarHostState, viewModel.errorMessageFlow)
     }
 }

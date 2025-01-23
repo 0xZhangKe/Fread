@@ -11,7 +11,7 @@ import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.fread.commonbiz.shared.usecase.ConvertNwqBlogToStatusUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.ConvertNewBlogToStatusUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.blog.Blog
@@ -32,7 +32,7 @@ class StatusContextSubViewModel(
     anchorStatus: Status?,
     blog: Blog?,
     private val blogTranslationUiState: BlogTranslationUiState?,
-    convertNewBlogToStatus: ConvertNwqBlogToStatusUseCase,
+    convertNewBlogToStatus: ConvertNewBlogToStatusUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,

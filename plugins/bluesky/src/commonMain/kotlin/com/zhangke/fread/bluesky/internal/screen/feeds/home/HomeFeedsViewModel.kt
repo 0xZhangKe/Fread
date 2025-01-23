@@ -1,36 +1,73 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.home
 
-import app.bsky.feed.GetFeedQueryParams
-import app.bsky.graph.GetListQueryParams
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
-import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.usecase.GetFeedsStatusUseCase
+import com.zhangke.fread.common.feeds.model.RefreshResult
+import com.zhangke.fread.common.status.StatusUpdater
+import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
+import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
-import kotlinx.coroutines.launch
-import sh.christian.ozone.api.AtUri
+import com.zhangke.fread.status.richtext.preParseRichText
+import com.zhangke.fread.status.status.model.Status
 
 class HomeFeedsViewModel(
-    private val clientManager: BlueskyClientManager,
+    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusProvider: StatusProvider,
+    private val getFeedsStatus: GetFeedsStatusUseCase,
+    refactorToNewBlog: RefactorToNewBlogUseCase,
+    statusUpdater: StatusUpdater,
     private val feeds: BlueskyFeeds,
     private val role: IdentityRole,
-): SubViewModel() {
+) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
+    statusProvider = statusProvider,
+    statusUpdater = statusUpdater,
+    buildStatusUiState = buildStatusUiState,
+    refactorToNewBlog = refactorToNewBlog,
+) {
 
-    private fun loadFeedsList(){
-        viewModelScope.launch{
+    companion object {
+
+        private const val FLAG_CURSOR_ENDING = "flag_cursor_ending_for_suggested_feeds"
+    }
+
+    private var cursor: String? = null
+
+    init {
+        initController(
+            coroutineScope = viewModelScope,
+            roleResolver = { role },
+            loadFirstPageLocalFeeds = {
+                Result.success(emptyList())
+            },
+            loadNewFromServerFunction = ::loadNewDataFromServer,
+            loadMoreFunction = { loadMoreDataFromServer() },
+            onStatusUpdate = {},
+        )
+        initFeeds(false)
+    }
+
+    private suspend fun loadNewDataFromServer(): Result<RefreshResult> {
+        return loadFeeds(null).map {
+            RefreshResult(
+                newStatus = it,
+                deletedStatus = emptyList(),
+            )
         }
     }
 
-    private suspend fun loadFeeds(){
-        val client = clientManager.getClient(role)
-//        when(feeds){
-//            is BlueskyContent.BlueskyTab.FeedsTab -> {
-//                client.getFeedCatching(GetFeedQueryParams(feed = AtUri(tab.feedUri)))
-//            }
-//
-//            is BlueskyContent.BlueskyTab.ListTab -> {
-//                client.getListCatching(GetListQueryParams(list = AtUri(tab.listUri)))
-//            }
-//        }
+    private suspend fun loadMoreDataFromServer(): Result<List<Status>> {
+        if (cursor == FLAG_CURSOR_ENDING) return Result.success(emptyList())
+        return loadFeeds()
+    }
+
+    private suspend fun loadFeeds(cursor: String? = this.cursor): Result<List<Status>> {
+        return getFeedsStatus(role = role, feeds = feeds, cursor = cursor).map {
+            this.cursor = if (it.cursor.isNullOrBlank()) FLAG_CURSOR_ENDING else it.cursor
+            it.feeds.onEach { status -> status.preParseRichText() }
+        }
     }
 }

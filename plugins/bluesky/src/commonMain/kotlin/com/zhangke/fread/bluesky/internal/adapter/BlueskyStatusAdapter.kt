@@ -63,7 +63,7 @@ class BlueskyStatusAdapter @Inject constructor(
                 supportInteraction,
                 platform,
                 pinned,
-                isSelfStatus
+                isSelfStatus,
             ),
             supportInteraction = supportInteraction,
         )

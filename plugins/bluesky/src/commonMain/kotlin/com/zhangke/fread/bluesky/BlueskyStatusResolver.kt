@@ -1,10 +1,12 @@
 package com.zhangke.fread.bluesky
 
+import com.zhangke.fread.bluesky.internal.usecase.BskyStatusInteractiveUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
@@ -13,7 +15,9 @@ import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
-class BlueskyStatusResolver @Inject constructor(): IStatusResolver {
+class BlueskyStatusResolver @Inject constructor(
+    private val statusInteractive: BskyStatusInteractiveUseCase,
+) : IStatusResolver {
 
     override suspend fun getStatus(
         role: IdentityRole,
@@ -38,7 +42,8 @@ class BlueskyStatusResolver @Inject constructor(): IStatusResolver {
         status: Status,
         interaction: StatusInteraction
     ): Result<Status?>? {
-        TODO("Not yet implemented")
+        if (status.platform.protocol.notBluesky) return null
+        return statusInteractive(role, status, interaction)
     }
 
     override suspend fun votePoll(

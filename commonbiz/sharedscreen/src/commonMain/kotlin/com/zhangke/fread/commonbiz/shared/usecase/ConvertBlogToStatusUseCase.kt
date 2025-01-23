@@ -5,7 +5,7 @@ import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
 import me.tatarka.inject.annotations.Inject
 
-class ConvertNwqBlogToStatusUseCase @Inject constructor() {
+class ConvertNewBlogToStatusUseCase @Inject constructor() {
 
     operator fun invoke(blog: Blog): Status {
         val supportActions = getStatusInteraction(

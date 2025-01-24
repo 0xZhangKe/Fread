@@ -2,16 +2,14 @@ package com.zhangke.fread.bluesky.internal.usecase
 
 import app.bsky.feed.FeedViewPost
 import app.bsky.feed.FeedViewPostReasonUnion
+import app.bsky.feed.PostView
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
 import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
-import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
-import kotlinx.serialization.json.decodeFromJsonElement
-import kotlinx.serialization.json.encodeToJsonElement
 import me.tatarka.inject.annotations.Inject
 
 class BuildBskyStatusUseCase @Inject constructor(
@@ -33,7 +31,28 @@ class BuildBskyStatusUseCase @Inject constructor(
             platform = platform,
             isSelfStatus = self,
             supportInteraction = buildInteractions(
-                processingPost = processingPost,
+                post = processingPost.postView,
+                pinned = processingPost.pinned,
+                logged = allCount.isNotEmpty(),
+                self = self,
+            ),
+        )
+    }
+
+    suspend operator fun invoke(
+        baseUrl: FormalBaseUrl,
+        postView: PostView,
+    ): Status {
+        val platform = platformRepo.getPlatform(baseUrl)
+        val allCount = accountManager.getAllAccount()
+        val self = accountManager.getAllAccount().any { it.did == postView.author.did.did }
+        return statusAdapter.convert(
+            postView = postView,
+            platform = platform,
+            isSelfStatus = self,
+            supportInteraction = buildInteractions(
+                post = postView,
+                pinned = false,
                 logged = allCount.isNotEmpty(),
                 self = self,
             ),
@@ -41,11 +60,11 @@ class BuildBskyStatusUseCase @Inject constructor(
     }
 
     private fun buildInteractions(
-        processingPost: ProcessingBskyPost,
+        post: PostView,
+        pinned: Boolean,
         logged: Boolean,
         self: Boolean,
     ): List<StatusInteraction> {
-        val post = processingPost.postView
         val actionList = mutableListOf<StatusInteraction>()
         actionList += StatusInteraction.Like(
             likeCount = post.likeCount.toIntOrNull(),
@@ -68,7 +87,6 @@ class BuildBskyStatusUseCase @Inject constructor(
         )
         if (self) {
             actionList.add(StatusInteraction.Delete(enable = true))
-            val pinned = processingPost.pinned
             actionList.add(StatusInteraction.Pin(pinned = pinned, enable = true))
             // just edit interaction limit
             actionList.add(StatusInteraction.Edit(true))
@@ -82,7 +100,6 @@ class BuildBskyStatusUseCase @Inject constructor(
 
     private fun FeedViewPost.toProcessingPost(): ProcessingBskyPost {
         return ProcessingBskyPost(
-            post = bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(this.post.record)),
             postView = this.post,
             reason = reason,
             pinned = reason is FeedViewPostReasonUnion.ReasonPin,

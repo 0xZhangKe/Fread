@@ -87,6 +87,7 @@ class RssStatusResolver @Inject constructor(
         return Result.success(
             StatusContext(
                 ancestors = emptyList(),
+                status = null,
                 descendants = emptyList(),
             )
         )

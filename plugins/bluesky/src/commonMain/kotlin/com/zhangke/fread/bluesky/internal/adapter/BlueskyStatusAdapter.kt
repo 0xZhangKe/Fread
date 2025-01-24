@@ -10,6 +10,7 @@ import app.bsky.embed.RecordWithMediaViewMediaUnion
 import app.bsky.embed.VideoView
 import app.bsky.feed.FeedViewPostReasonUnion
 import app.bsky.feed.Post
+import app.bsky.feed.PostView
 import app.bsky.feed.PostViewEmbedUnion
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
@@ -33,6 +34,25 @@ class BlueskyStatusAdapter @Inject constructor(
 ) {
 
     fun convert(
+        postView: PostView,
+        supportInteraction: List<StatusInteraction>,
+        platform: BlogPlatform,
+        isSelfStatus: Boolean,
+        pinned: Boolean = false,
+    ): Status {
+        return Status.NewBlog(
+            blog = convertToBlog(
+                postView = postView,
+                supportInteraction = supportInteraction,
+                platform = platform,
+                pinned = pinned,
+                isSelfStatus = isSelfStatus,
+            ),
+            supportInteraction = supportInteraction,
+        )
+    }
+
+    fun convert(
         processingBskyPost: ProcessingBskyPost,
         supportInteraction: List<StatusInteraction>,
         platform: BlogPlatform,
@@ -40,55 +60,46 @@ class BlueskyStatusAdapter @Inject constructor(
     ): Status {
         val feedsReason = processingBskyPost.reason
         val pinned = feedsReason is FeedViewPostReasonUnion.ReasonPin
+        val blog = convertToBlog(
+            postView = processingBskyPost.postView,
+            supportInteraction = supportInteraction,
+            platform = platform,
+            pinned = pinned,
+            isSelfStatus = isSelfStatus,
+        )
         if (feedsReason is FeedViewPostReasonUnion.ReasonRepost) {
             val author = accountAdapter.convertToBlogAuthor(feedsReason.value.by)
-            val repostedStatus = convertToBlog(
-                processingBskyPost,
-                supportInteraction,
-                platform,
-                pinned,
-                isSelfStatus,
-            )
             return Status.Reblog(
-                id = repostedStatus.id,
-                datetime = repostedStatus.date.instant.toEpochMilliseconds(),
+                id = blog.id,
+                datetime = blog.date.instant.toEpochMilliseconds(),
                 author = author,
-                reblog = repostedStatus,
+                reblog = blog,
                 supportInteraction = supportInteraction,
             )
         }
-        return Status.NewBlog(
-            blog = convertToBlog(
-                processingBskyPost,
-                supportInteraction,
-                platform,
-                pinned,
-                isSelfStatus,
-            ),
-            supportInteraction = supportInteraction,
-        )
+        return Status.NewBlog(blog, supportInteraction)
     }
 
     private fun convertToBlog(
-        processingBskyPost: ProcessingBskyPost,
+        postView: PostView,
         supportInteraction: List<StatusInteraction>,
         platform: BlogPlatform,
         pinned: Boolean,
         isSelfStatus: Boolean,
     ): Blog {
         return convertToBlog(
-            post = processingBskyPost.post,
+            post = postView.record.bskyJson(),
             supportInteraction = supportInteraction,
-            id = processingBskyPost.postView.cid.cid,
-            author = processingBskyPost.postView.author,
-            url = processingBskyPost.postView.uri.atUri,
-            replyCount = processingBskyPost.postView.replyCount,
-            likeCount = processingBskyPost.postView.likeCount,
-            repostCount = processingBskyPost.postView.repostCount,
+            id = postView.cid.cid,
+            author = postView.author,
+            url = postView.uri.atUri,
+            replyCount = postView.replyCount,
+            likeCount = postView.likeCount,
+            repostCount = postView.repostCount,
             liked = supportInteraction.liked,
             bookmarked = supportInteraction.bookmarked,
             forward = supportInteraction.forwarded,
-            embedUnion = processingBskyPost.postView.embed,
+            embedUnion = postView.embed,
             platform = platform,
             pinned = pinned,
             isSelfStatus = isSelfStatus,

@@ -18,6 +18,7 @@ class ConvertToStatusContextUseCase @Inject constructor(
     ): StatusContext {
         return StatusContext(
             ancestors = entity.ancestors.toStatusList(platform),
+            status = null,
             descendants = entity.descendants.toStatusList(platform),
         )
     }

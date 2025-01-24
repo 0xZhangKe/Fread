@@ -36,18 +36,18 @@ sealed class StatusInteraction : PlatformSerializable {
     ) : StatusInteraction(), PlatformSerializable
 
     @Serializable
-    class Delete(
+    data class Delete(
         override val enable: Boolean,
     ) : StatusInteraction(), PlatformSerializable
 
     @Serializable
-    class Pin(
+    data class Pin(
         val pinned: Boolean,
         override val enable: Boolean,
     ) : StatusInteraction(), PlatformSerializable
 
     @Serializable
-    class Edit(
+    data class Edit(
         override val enable: Boolean,
     ) : StatusInteraction(), PlatformSerializable
 }

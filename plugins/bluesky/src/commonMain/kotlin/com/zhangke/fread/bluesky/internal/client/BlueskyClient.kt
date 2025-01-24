@@ -14,6 +14,8 @@ import app.bsky.feed.GetFeedQueryParams
 import app.bsky.feed.GetFeedResponse
 import app.bsky.feed.GetListFeedQueryParams
 import app.bsky.feed.GetListFeedResponse
+import app.bsky.feed.GetPostThreadQueryParams
+import app.bsky.feed.GetPostThreadResponse
 import app.bsky.feed.GetSuggestedFeedsQueryParams
 import app.bsky.feed.GetSuggestedFeedsResponse
 import app.bsky.feed.GetTimelineQueryParams
@@ -28,6 +30,10 @@ import com.atproto.repo.CreateRecordRequest
 import com.atproto.repo.CreateRecordResponse
 import com.atproto.repo.DeleteRecordRequest
 import com.atproto.repo.DeleteRecordResponse
+import com.atproto.repo.GetRecordQueryParams
+import com.atproto.repo.GetRecordResponse
+import com.atproto.repo.PutRecordRequest
+import com.atproto.repo.PutRecordResponse
 import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
@@ -120,12 +126,24 @@ class BlueskyClient(
         return runCatching { getListFeed(params) }.toResult()
     }
 
+    suspend fun getRecordCatching(params: GetRecordQueryParams): Result<GetRecordResponse> {
+        return runCatching { getRecord(params) }.toResult()
+    }
+
     suspend fun createRecordCatching(params: CreateRecordRequest): Result<CreateRecordResponse> {
         return runCatching { createRecord(params) }.toResult()
     }
 
+    suspend fun putRecordCatching(params: PutRecordRequest): Result<PutRecordResponse> {
+        return runCatching { putRecord(params) }.toResult()
+    }
+
     suspend fun deleteRecordCatching(params: DeleteRecordRequest): Result<DeleteRecordResponse> {
         return runCatching { deleteRecord(params) }.toResult()
+    }
+
+    suspend fun getPostThreadCatching(params: GetPostThreadQueryParams): Result<GetPostThreadResponse> {
+        return runCatching { getPostThread(params) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

@@ -84,9 +84,6 @@ class StatusContextSubViewModel(
         launchInViewModel {
             loadStatusContext()
         }
-        launchInViewModel {
-            loadStatus()
-        }
         loadAnchorFollowingState()
     }
 
@@ -94,22 +91,6 @@ class StatusContextSubViewModel(
         _uiState.update { state ->
             state.copy(needScrollToAnchor = false)
         }
-    }
-
-    private suspend fun loadStatus() {
-        statusProvider.statusResolver
-            .getStatus(role, anchorStatus.id, anchorStatus.platform)
-            .onSuccess {
-                updateStatus(
-                    buildStatusUiState(
-                        role = role,
-                        status = it,
-                        blogTranslationState = blogTranslationUiState
-                    ).also { status ->
-                        statusUpdater.update(status)
-                    }
-                )
-            }
     }
 
     private suspend fun loadStatusContext() {
@@ -130,6 +111,11 @@ class StatusContextSubViewModel(
                         errorMessage = null,
                     )
                 }
+                if (statusContext.status == null) {
+                    loadStatus()
+                } else {
+                    updateAnchorStatus(statusContext.status!!)
+                }
             }.onFailure {
                 _uiState.update { state ->
                     state.copy(
@@ -139,6 +125,22 @@ class StatusContextSubViewModel(
                     )
                 }
             }
+    }
+
+    private suspend fun loadStatus() {
+        statusProvider.statusResolver
+            .getStatus(role, anchorStatus.id, anchorStatus.platform)
+            .onSuccess { updateAnchorStatus(it) }
+    }
+
+    private suspend fun updateAnchorStatus(status: Status) {
+        updateStatus(
+            buildStatusUiState(
+                role = role,
+                status = status,
+                blogTranslationState = blogTranslationUiState
+            ).also { statusUpdater.update(it) }
+        )
     }
 
     private suspend fun buildContextStatus(

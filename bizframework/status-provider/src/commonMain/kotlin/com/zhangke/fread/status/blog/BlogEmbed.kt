@@ -1,7 +1,11 @@
 package com.zhangke.fread.status.blog
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 sealed interface BlogEmbed {
 
+    @Serializable
     data class Link(
         val url: String,
         val title: String,
@@ -40,6 +44,7 @@ sealed interface BlogEmbed {
 
     }
 
+    @Serializable
     data class Blog(
         val blog: com.zhangke.fread.status.blog.Blog,
     ) : BlogEmbed

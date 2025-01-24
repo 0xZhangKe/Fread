@@ -1,7 +1,6 @@
 package com.zhangke.fread.bluesky.internal.model
 
 import app.bsky.feed.FeedViewPostReasonUnion
-import app.bsky.feed.Post
 import app.bsky.feed.PostView
 
 /**
@@ -9,7 +8,6 @@ import app.bsky.feed.PostView
  */
 data class ProcessingBskyPost(
     val postView: PostView,
-    val post: Post,
     val pinned: Boolean,
     val reason: FeedViewPostReasonUnion?,
 )

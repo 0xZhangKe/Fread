@@ -1,6 +1,10 @@
 package com.zhangke.fread.bluesky
 
+import app.bsky.actor.GetProfileQueryParams
+import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.usecase.BskyStatusInteractiveUseCase
+import com.zhangke.fread.bluesky.internal.usecase.GetStatusContextUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
@@ -14,9 +18,13 @@ import com.zhangke.fread.status.status.model.StatusContext
 import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
+import sh.christian.ozone.api.Did
 
 class BlueskyStatusResolver @Inject constructor(
+    private val clientManager: BlueskyClientManager,
     private val statusInteractive: BskyStatusInteractiveUseCase,
+    private val getStatusContextFunction: GetStatusContextUseCase,
+    private val userUriTransformer: UserUriTransformer,
 ) : IStatusResolver {
 
     override suspend fun getStatus(
@@ -58,7 +66,8 @@ class BlueskyStatusResolver @Inject constructor(
         role: IdentityRole,
         status: Status
     ): Result<StatusContext>? {
-        TODO("Not yet implemented")
+        if (status.platform.protocol.notBluesky) return null
+        return getStatusContextFunction(role, status)
     }
 
     override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {
@@ -99,7 +108,12 @@ class BlueskyStatusResolver @Inject constructor(
         role: IdentityRole,
         target: BlogAuthor
     ): Result<Boolean>? {
-        TODO("Not yet implemented")
+        val did = userUriTransformer.parse(target.uri)?.did ?: return null
+        val client = clientManager.getClient(role)
+        val profileResult = client.getProfileCatching(GetProfileQueryParams(Did(did)))
+        if (profileResult.isFailure) return Result.failure(profileResult.exceptionOrNull()!!)
+        val profile = profileResult.getOrThrow()
+        return Result.success(profile.viewer?.following?.atUri.isNullOrEmpty().not())
     }
 
     override suspend fun translate(
@@ -107,6 +121,7 @@ class BlueskyStatusResolver @Inject constructor(
         status: Status,
         lan: String
     ): Result<BlogTranslation>? {
-        TODO("Not yet implemented")
+        if (status.platform.protocol.notBluesky) return null
+        return Result.failure(RuntimeException("Not implemented"))
     }
 }

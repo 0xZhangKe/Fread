@@ -113,6 +113,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             poll = entity.poll?.let(pollAdapter::adapt),
             emojis = emojis,
             pinned = entity.pinned ?: false,
+            facets = emptyList(),
             isSelf = isSelfStatus,
             supportTranslate = true,
             mentions = entity.mentions.mapNotNull { it.toMention() },

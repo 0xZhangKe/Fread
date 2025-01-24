@@ -4,8 +4,8 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class Facet(
-    val byteStart: Int,
-    val byteEnd: Int,
+    val byteStart: Long,
+    val byteEnd: Long,
     val features: List<FacetFeatureUnion>,
 )
 

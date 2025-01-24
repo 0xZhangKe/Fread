@@ -4,6 +4,7 @@ import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusVisibility
@@ -39,6 +40,7 @@ data class Blog(
     val emojis: List<Emoji>,
     val mentions: List<Mention>,
     val tags: List<HashtagInStatus>,
+    val facets: List<Facet>,
     val pinned: Boolean = false,
     val poll: BlogPoll?,
     val visibility: StatusVisibility,
@@ -64,6 +66,7 @@ data class Blog(
             mentions = mentions,
             emojis = emojis,
             hashTags = tags,
+            facets = facets,
         )
     }
 

@@ -62,6 +62,7 @@ class RssStatusAdapter @Inject constructor(
             emojis = emptyList(),
             mentions = emptyList(),
             tags = emptyList(),
+            facets = emptyList(),
             pinned = false,
             visibility = StatusVisibility.PUBLIC,
             embeds = emptyList(),

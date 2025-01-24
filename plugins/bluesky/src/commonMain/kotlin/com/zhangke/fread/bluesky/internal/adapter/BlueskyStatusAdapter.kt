@@ -12,6 +12,8 @@ import app.bsky.feed.FeedViewPostReasonUnion
 import app.bsky.feed.Post
 import app.bsky.feed.PostView
 import app.bsky.feed.PostViewEmbedUnion
+import app.bsky.richtext.Facet
+import app.bsky.richtext.FacetFeatureUnion
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
@@ -173,6 +175,7 @@ class BlueskyStatusAdapter @Inject constructor(
             tags = emptyList(),
             pinned = pinned,
             poll = null,
+            facets = post.facets.map { it.convert() },
             visibility = StatusVisibility.PUBLIC,
             embeds = convertEmbed(embedUnion, supportInteraction, platform),
             isSelf = isSelfStatus,
@@ -328,6 +331,28 @@ class BlueskyStatusAdapter @Inject constructor(
             description = this.description,
             image = this.thumb?.uri,
             video = false,
+        )
+    }
+
+    private fun Facet.convert(): com.zhangke.fread.status.model.Facet {
+        return com.zhangke.fread.status.model.Facet(
+            byteStart = this.index.byteStart,
+            byteEnd = this.index.byteEnd,
+            features = this.features.map { feature ->
+                when (feature) {
+                    is FacetFeatureUnion.Mention -> com.zhangke.fread.status.model.FacetFeatureUnion.Mention(
+                        did = feature.value.did.did,
+                    )
+
+                    is FacetFeatureUnion.Link -> com.zhangke.fread.status.model.FacetFeatureUnion.Link(
+                        uri = feature.value.uri.uri,
+                    )
+
+                    is FacetFeatureUnion.Tag -> com.zhangke.fread.status.model.FacetFeatureUnion.Tag(
+                        tag = feature.value.tag,
+                    )
+                }
+            }
         )
     }
 

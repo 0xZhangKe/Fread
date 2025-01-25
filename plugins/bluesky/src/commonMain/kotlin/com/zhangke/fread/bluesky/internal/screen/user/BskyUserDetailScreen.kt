@@ -8,13 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -29,14 +30,20 @@ import androidx.constraintlayout.compose.Dimension
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.HorizontalPagerWithTab
+import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.bluesky.internal.composable.DetailTopBar
+import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
+import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.ProgressedAvatar
 import com.zhangke.fread.status.ui.common.ProgressedBanner
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
@@ -92,9 +99,11 @@ class BskyUserDetailScreen(
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
         }
+        val snackBarState = rememberSnackbarHostState()
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
+            snackbarHost = { SnackbarHost(snackBarState) },
         ) { innerPaddings ->
             ScrollUpTopBarLayout(
                 modifier = Modifier
@@ -123,12 +132,21 @@ class BskyUserDetailScreen(
                 },
                 contentCanScrollBackward = contentCanScrollBackward,
             ) {
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize(),
+                val tabs = remember(uiState.tabs) {
+                    uiState.tabs.map { HomeFeedsTab(role = role, feeds = it) }
+                }
+                val nestedTabConnection = remember {
+                    NestedTabConnection()
+                }
+                CompositionLocalProvider(
+                    LocalSnackbarHostState provides snackBarState,
+                    LocalNestedTabConnection provides nestedTabConnection,
                 ) {
-                    items(100) {
-                        Text("Item $it", modifier = Modifier.padding(16.dp))
-                    }
+                    val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
+                    HorizontalPagerWithTab(
+                        tabList = tabs,
+                        pagerUserScrollEnabled = !contentScrollInProgress,
+                    )
                 }
             }
         }

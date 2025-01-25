@@ -6,6 +6,7 @@ import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
 import app.bsky.actor.ViewerState
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.RelationshipUiState
@@ -35,6 +36,7 @@ class BskyUserDetailViewModel @Inject constructor(
     val uiState = _uiState.asStateFlow()
 
     init {
+        _uiState.update { it.copy(tabs = createTabs()) }
         loadUserDetail()
     }
 
@@ -62,11 +64,11 @@ class BskyUserDetailViewModel @Inject constructor(
         }
     }
 
-    fun onFollowClick(){
+    fun onFollowClick() {
 
     }
 
-    fun onUnfollowClick(){
+    fun onUnfollowClick() {
 
     }
 
@@ -98,4 +100,13 @@ class BskyUserDetailViewModel @Inject constructor(
                 else -> RelationshipUiState.UNKNOWN
             }
         }
+
+    private fun createTabs(): List<BlueskyFeeds> {
+        return listOf(
+            BlueskyFeeds.UserPosts(did),
+            BlueskyFeeds.UserReplies(did),
+            BlueskyFeeds.UserMedias(did),
+            BlueskyFeeds.UserLikes(did),
+        )
+    }
 }

@@ -19,6 +19,7 @@ class FacetHtmlParser {
         onLinkTargetClick: OnLinkTargetClick,
     ): AnnotatedString {
         val annotatedStringBuilder = AnnotatedString.Builder()
+        annotatedStringBuilder.append(document)
         val chars = document.toCharArray()
         val legalRange = chars.indices
         for (facet in facets) {
@@ -46,8 +47,8 @@ class FacetHtmlParser {
                         linkTarget = RichLinkTarget.MaybeHashtagTarget(feature.tag)
                     }
                 }
-                annotatedStringBuilder.pushLink(
-                    LinkAnnotation.Clickable(
+                annotatedStringBuilder.addLink(
+                    clickable = LinkAnnotation.Clickable(
                         tag = linkTag,
                         styles = TextLinkStyles(
                             style = SpanStyle(color = primaryLight),
@@ -56,7 +57,9 @@ class FacetHtmlParser {
                         linkInteractionListener = {
                             onLinkTargetClick(linkTarget)
                         },
-                    )
+                    ),
+                    start = start.toInt(),
+                    end = end.toInt(),
                 )
             }
         }

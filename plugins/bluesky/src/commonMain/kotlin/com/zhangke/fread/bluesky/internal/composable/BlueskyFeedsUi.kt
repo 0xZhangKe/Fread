@@ -190,7 +190,7 @@ private val BlueskyFeeds.avatar: String?
         return when (this) {
             is BlueskyFeeds.Feeds -> avatar
             is BlueskyFeeds.List -> avatar
-            is BlueskyFeeds.Following -> null
+            else -> null
         }
     }
 
@@ -199,7 +199,7 @@ private val BlueskyFeeds.description: String?
         return when (this) {
             is BlueskyFeeds.Feeds -> description
             is BlueskyFeeds.List -> description
-            is BlueskyFeeds.Following -> null
+            else -> null
         }
     }
 
@@ -207,8 +207,7 @@ private val BlueskyFeeds.likeCount: Long?
     get() {
         return when (this) {
             is BlueskyFeeds.Feeds -> likeCount
-            is BlueskyFeeds.List -> null
-            is BlueskyFeeds.Following -> null
+            else -> null
         }
     }
 
@@ -216,7 +215,6 @@ private val BlueskyFeeds.creatorName: String?
     get() {
         return when (this) {
             is BlueskyFeeds.Feeds -> creator.displayName
-            is BlueskyFeeds.List -> null
-            is BlueskyFeeds.Following -> null
+            else -> null
         }
     }

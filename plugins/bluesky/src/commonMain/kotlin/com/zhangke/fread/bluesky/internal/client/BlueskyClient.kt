@@ -6,6 +6,8 @@ import app.bsky.actor.ProfileViewDetailed
 import app.bsky.actor.PutPreferencesRequest
 import app.bsky.feed.GetActorFeedsQueryParams
 import app.bsky.feed.GetActorFeedsResponse
+import app.bsky.feed.GetActorLikesQueryParams
+import app.bsky.feed.GetActorLikesResponse
 import app.bsky.feed.GetAuthorFeedQueryParams
 import app.bsky.feed.GetAuthorFeedResponse
 import app.bsky.feed.GetFeedGeneratorsQueryParams
@@ -20,6 +22,8 @@ import app.bsky.feed.GetSuggestedFeedsQueryParams
 import app.bsky.feed.GetSuggestedFeedsResponse
 import app.bsky.feed.GetTimelineQueryParams
 import app.bsky.feed.GetTimelineResponse
+import app.bsky.feed.SearchPostsQueryParams
+import app.bsky.feed.SearchPostsResponse
 import app.bsky.graph.GetListQueryParams
 import app.bsky.graph.GetListResponse
 import app.bsky.graph.GetListsQueryParams
@@ -144,6 +148,14 @@ class BlueskyClient(
 
     suspend fun getPostThreadCatching(params: GetPostThreadQueryParams): Result<GetPostThreadResponse> {
         return runCatching { getPostThread(params) }.toResult()
+    }
+
+    suspend fun searchPostsCatching(params: SearchPostsQueryParams): Result<SearchPostsResponse> {
+        return runCatching { searchPosts(params) }.toResult()
+    }
+
+    suspend fun getActorLikesCatching(params: GetActorLikesQueryParams): Result<GetActorLikesResponse> {
+        return runCatching { getActorLikes(params) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

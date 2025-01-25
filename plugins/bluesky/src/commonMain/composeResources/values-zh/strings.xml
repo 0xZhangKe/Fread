@@ -13,4 +13,9 @@
     <string name="bsky_feeds_explorer_liked_by">%1$s 个用户喜欢</string>
 
     <string name="bsky_feeds_following_name">关注中</string>
+
+    <string name="bsky_feeds_user_posts">帖子</string>
+    <string name="bsky_feeds_user_replies">回复</string>
+    <string name="bsky_feeds_user_medias">媒体</string>
+    <string name="bsky_feeds_user_likes">喜欢</string>
 </resources>

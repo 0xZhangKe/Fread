@@ -3,6 +3,10 @@ package com.zhangke.fread.bluesky.internal.model
 import androidx.compose.runtime.Composable
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_feeds_following_name
+import com.zhangke.fread.bluesky.bsky_feeds_user_likes
+import com.zhangke.fread.bluesky.bsky_feeds_user_medias
+import com.zhangke.fread.bluesky.bsky_feeds_user_posts
+import com.zhangke.fread.bluesky.bsky_feeds_user_replies
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource
 
@@ -71,6 +75,69 @@ sealed interface BlueskyFeeds {
         @Composable
         override fun displayName(): String {
             return name
+        }
+    }
+
+    @Serializable
+    data class Hashtags(
+        val hashtag: String,
+        override val pinned: Boolean = false,
+        override val following: Boolean = false,
+    ) : BlueskyFeeds {
+
+        @Composable
+        override fun displayName() = hashtag
+    }
+
+    @Serializable
+    data class UserPosts(
+        val did: String,
+        override val pinned: Boolean = false,
+        override val following: Boolean = false,
+    ) : BlueskyFeeds {
+
+        @Composable
+        override fun displayName(): String {
+            return stringResource(Res.string.bsky_feeds_user_posts)
+        }
+    }
+
+    @Serializable
+    data class UserReplies(
+        val did: String,
+        override val pinned: Boolean = false,
+        override val following: Boolean = false,
+    ) : BlueskyFeeds {
+
+        @Composable
+        override fun displayName(): String {
+            return stringResource(Res.string.bsky_feeds_user_replies)
+        }
+    }
+
+    @Serializable
+    data class UserMedias(
+        val did: String,
+        override val pinned: Boolean = false,
+        override val following: Boolean = false,
+    ) : BlueskyFeeds {
+
+        @Composable
+        override fun displayName(): String {
+            return stringResource(Res.string.bsky_feeds_user_medias)
+        }
+    }
+
+    @Serializable
+    data class UserLikes(
+        val did: String,
+        override val pinned: Boolean = false,
+        override val following: Boolean = false,
+    ) : BlueskyFeeds {
+
+        @Composable
+        override fun displayName(): String {
+            return stringResource(Res.string.bsky_feeds_user_likes)
         }
     }
 }

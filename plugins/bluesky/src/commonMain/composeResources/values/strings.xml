@@ -12,4 +12,9 @@
     <string name="bsky_feeds_explorer_liked_by">Liked by %1$s users</string>
 
     <string name="bsky_feeds_following_name">Following</string>
+
+    <string name="bsky_feeds_user_posts">Posts</string>
+    <string name="bsky_feeds_user_replies">Replies</string>
+    <string name="bsky_feeds_user_medias">Medias</string>
+    <string name="bsky_feeds_user_likes">Likes</string>
 </resources>

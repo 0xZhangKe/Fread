@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.screen.user
 
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.ui.common.RelationshipUiState
 
 data class BskyUserDetailUiState(
@@ -15,6 +16,7 @@ data class BskyUserDetailUiState(
     val followsCount: Long?,
     val postsCount: Long?,
     val relationship: RelationshipUiState,
+    val tabs: List<BlueskyFeeds>,
 ) {
 
     companion object {
@@ -33,6 +35,7 @@ data class BskyUserDetailUiState(
                 followsCount = null,
                 postsCount = null,
                 relationship = RelationshipUiState.UNKNOWN,
+                tabs = emptyList(),
             )
         }
     }

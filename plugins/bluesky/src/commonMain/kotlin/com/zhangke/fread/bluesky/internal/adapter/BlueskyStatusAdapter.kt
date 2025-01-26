@@ -26,7 +26,6 @@ import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusInteraction
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
 import me.tatarka.inject.annotations.Inject
@@ -205,7 +204,7 @@ class BlueskyStatusAdapter @Inject constructor(
             is PostViewEmbedUnion.RecordWithMediaView -> {
                 when (val media = embedUnion.value.media) {
                     // ExternalView will be convert to link embed
-                    is RecordWithMediaViewMediaUnion.ExternalView -> persistentListOf()
+                    is RecordWithMediaViewMediaUnion.ExternalView -> emptyList()
                     is RecordWithMediaViewMediaUnion.ImagesView -> {
                         media.value.images.map { it.toMedia() }
                     }

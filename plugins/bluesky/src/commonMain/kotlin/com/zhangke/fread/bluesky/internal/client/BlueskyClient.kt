@@ -28,6 +28,8 @@ import app.bsky.graph.GetListQueryParams
 import app.bsky.graph.GetListResponse
 import app.bsky.graph.GetListsQueryParams
 import app.bsky.graph.GetListsResponse
+import app.bsky.notification.ListNotificationsQueryParams
+import app.bsky.notification.ListNotificationsResponse
 import app.bsky.unspecced.GetPopularFeedGeneratorsQueryParams
 import app.bsky.unspecced.GetPopularFeedGeneratorsResponse
 import com.atproto.repo.CreateRecordRequest
@@ -156,6 +158,10 @@ class BlueskyClient(
 
     suspend fun getActorLikesCatching(params: GetActorLikesQueryParams): Result<GetActorLikesResponse> {
         return runCatching { getActorLikes(params) }.toResult()
+    }
+
+    suspend fun listNotificationsCatching(params: ListNotificationsQueryParams): Result<ListNotificationsResponse> {
+        return runCatching { listNotifications(params) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

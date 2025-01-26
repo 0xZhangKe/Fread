@@ -64,7 +64,7 @@ firebaseKmp = "2.1.0"
 goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
-bluesky = "0.1.1-SNAPSHOT"
+bluesky = "0.3.1"
 
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
@@ -209,7 +209,7 @@ googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", 
 
 composeRuntimeTracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "compose-runtime-tracing" }
 
-bluesky = { module = "moe.tlaster.ozone:bluesky", version.ref = "bluesky" }
+bluesky = { module = "sh.christian.ozone:bluesky", version.ref = "bluesky" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

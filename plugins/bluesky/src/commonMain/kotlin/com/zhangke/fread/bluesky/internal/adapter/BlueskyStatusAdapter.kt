@@ -17,6 +17,7 @@ import app.bsky.richtext.FacetFeatureUnion
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
@@ -133,6 +134,55 @@ class BlueskyStatusAdapter @Inject constructor(
         )
     }
 
+    fun convertToBlog(
+        post: Post,
+        id: String,
+        author: BlogAuthor,
+        url: String,
+        platform: BlogPlatform,
+        liked: Boolean = false,
+        bookmarked: Boolean = false,
+        forward: Boolean = false,
+        pinned: Boolean = false,
+        isSelfStatus: Boolean = false,
+        repostCount: Long? = null,
+        likeCount: Long? = null,
+        replyCount: Long? = null,
+        embedList: List<BlogEmbed> = emptyList(),
+        mediaList: List<BlogMedia> = emptyList(),
+    ): Blog {
+        return Blog(
+            id = id,
+            author = author,
+            title = null,
+            description = null,
+            content = post.text,
+            url = url,
+            date = Instant(post.createdAt),
+            forwardCount = repostCount,
+            likeCount = likeCount,
+            repliesCount = replyCount,
+            liked = liked,
+            bookmarked = bookmarked,
+            forward = forward,
+            sensitive = false,
+            spoilerText = "",
+            language = post.langs.firstOrNull()?.tag,
+            platform = platform,
+            mediaList = mediaList,
+            emojis = emptyList(),
+            mentions = emptyList(),
+            tags = emptyList(),
+            pinned = pinned,
+            poll = null,
+            facets = post.facets.map { it.convert() },
+            visibility = StatusVisibility.PUBLIC,
+            embeds = embedList,
+            isSelf = isSelfStatus,
+            supportTranslate = false,
+        )
+    }
+
     private fun convertToBlog(
         post: Post,
         supportInteraction: List<StatusInteraction>,
@@ -150,46 +200,24 @@ class BlueskyStatusAdapter @Inject constructor(
         pinned: Boolean,
         isSelfStatus: Boolean,
     ): Blog {
-        return Blog(
+        return convertToBlog(
+            post = post,
             id = id,
             author = accountAdapter.convertToBlogAuthor(author),
-            title = null,
-            description = null,
-            content = post.text,
             url = url,
-            date = Instant(post.createdAt),
-            forwardCount = repostCount,
+            platform = platform,
+            mediaList = embedUnion?.let(::convertToMedia) ?: emptyList(),
+            embedList = convertEmbed(embedUnion, supportInteraction, platform),
+            repostCount = repostCount,
             likeCount = likeCount,
-            repliesCount = replyCount,
+            replyCount = replyCount,
             liked = liked,
             bookmarked = bookmarked,
             forward = forward,
-            sensitive = false,
-            spoilerText = "",
-            language = post.langs.firstOrNull()?.tag,
-            platform = platform,
-            mediaList = embedUnion?.let(::convertToMedia) ?: emptyList(),
-            emojis = emptyList(),
-            mentions = emptyList(),
-            tags = emptyList(),
             pinned = pinned,
-            poll = null,
-            facets = post.facets.map { it.convert() },
-            visibility = StatusVisibility.PUBLIC,
-            embeds = convertEmbed(embedUnion, supportInteraction, platform),
-            isSelf = isSelfStatus,
-            supportTranslate = false,
+            isSelfStatus = isSelfStatus,
         )
     }
-
-//    private fun convertToVisibility(threadGateView: ThreadgateView?): StatusVisibility {
-//        val threadGate: Threadgate? = threadGateView?.record?.let { record ->
-//            bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(record))
-//        }
-//        threadGate ?: return StatusVisibility.PUBLIC
-//        if (threadGate.allow.isEmpty()) return StatusVisibility.PRIVATE
-//        threadGate.allow.
-//    }
 
     private fun convertToMedia(embedUnion: PostViewEmbedUnion): List<BlogMedia> {
         return when (embedUnion) {
@@ -212,6 +240,8 @@ class BlueskyStatusAdapter @Inject constructor(
                     is RecordWithMediaViewMediaUnion.VideoView -> {
                         listOf(media.value.toMedia())
                     }
+
+                    is RecordWithMediaViewMediaUnion.Unknown -> emptyList()
                 }
             }
 
@@ -337,7 +367,7 @@ class BlueskyStatusAdapter @Inject constructor(
         return com.zhangke.fread.status.model.Facet(
             byteStart = this.index.byteStart,
             byteEnd = this.index.byteEnd,
-            features = this.features.map { feature ->
+            features = this.features.mapNotNull { feature ->
                 when (feature) {
                     is FacetFeatureUnion.Mention -> com.zhangke.fread.status.model.FacetFeatureUnion.Mention(
                         did = feature.value.did.did,
@@ -350,6 +380,8 @@ class BlueskyStatusAdapter @Inject constructor(
                     is FacetFeatureUnion.Tag -> com.zhangke.fread.status.model.FacetFeatureUnion.Tag(
                         tag = feature.value.tag,
                     )
+
+                    is FacetFeatureUnion.Unknown -> null
                 }
             }
         )

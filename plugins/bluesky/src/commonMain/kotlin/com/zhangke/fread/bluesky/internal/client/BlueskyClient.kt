@@ -18,6 +18,8 @@ import app.bsky.feed.GetListFeedQueryParams
 import app.bsky.feed.GetListFeedResponse
 import app.bsky.feed.GetPostThreadQueryParams
 import app.bsky.feed.GetPostThreadResponse
+import app.bsky.feed.GetPostsQueryParams
+import app.bsky.feed.GetPostsResponse
 import app.bsky.feed.GetSuggestedFeedsQueryParams
 import app.bsky.feed.GetSuggestedFeedsResponse
 import app.bsky.feed.GetTimelineQueryParams
@@ -104,8 +106,8 @@ class BlueskyClient(
         return runCatching { getFeed(params) }.toResult()
     }
 
-    suspend fun getPopularFeedGeneratorsCatching(params: GetPopularFeedGeneratorsQueryParams): Result<GetPopularFeedGeneratorsResponse> {
-        return runCatching { getPopularFeedGenerators(params) }.toResult()
+    suspend fun getPopularFeedGeneratorsUnspeccedCatching(params: GetPopularFeedGeneratorsQueryParams): Result<GetPopularFeedGeneratorsResponse> {
+        return runCatching { getPopularFeedGeneratorsUnspecced(params) }.toResult()
     }
 
     suspend fun getActorFeedsCatching(request: GetActorFeedsQueryParams): Result<GetActorFeedsResponse> {
@@ -150,6 +152,10 @@ class BlueskyClient(
 
     suspend fun getPostThreadCatching(params: GetPostThreadQueryParams): Result<GetPostThreadResponse> {
         return runCatching { getPostThread(params) }.toResult()
+    }
+
+    suspend fun getPostsCatching(params: GetPostsQueryParams): Result<GetPostsResponse>{
+        return runCatching { getPosts(params) }.toResult()
     }
 
     suspend fun searchPostsCatching(params: SearchPostsQueryParams): Result<SearchPostsResponse> {

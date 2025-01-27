@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.content.IContentManager
+import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.status.IStatusResolver
 import me.tatarka.inject.annotations.Inject
@@ -15,6 +16,7 @@ class ActivityPubProvider @Inject constructor(
     internalStatusResolver: ActivityPubStatusResolver,
     internalSourceResolver: ActivityPubSourceResolver,
     internalAccountManager: ActivityPubAccountManager,
+    notificationResolver: ActivityPubNotificationResolver,
 ) : IStatusProvider {
 
     override val contentManager: IContentManager = internalContentManager
@@ -30,4 +32,6 @@ class ActivityPubProvider @Inject constructor(
     override val statusSourceResolver = internalSourceResolver
 
     override val accountManager: IAccountManager = internalAccountManager
+
+    override val notificationResolver: INotificationResolver = notificationResolver
 }

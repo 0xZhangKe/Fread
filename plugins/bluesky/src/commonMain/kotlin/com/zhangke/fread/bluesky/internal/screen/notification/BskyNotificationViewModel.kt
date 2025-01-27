@@ -1,72 +1,151 @@
 package com.zhangke.fread.bluesky.internal.screen.notification
 
 import androidx.lifecycle.ViewModel
-import app.bsky.feed.Like
-import app.bsky.feed.Repost
-import app.bsky.graph.Follow
-import app.bsky.notification.ListNotificationsNotification
 import app.bsky.notification.ListNotificationsQueryParams
-import app.bsky.notification.ListNotificationsReason
-import app.bsky.notification.ListNotificationsResponse
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
+import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
+import com.zhangke.fread.bluesky.internal.client.BlueskyClient
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.model.CompletedBskyNotification
+import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
+import com.zhangke.fread.bluesky.internal.usecase.GetCompletedNotificationUseCase
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.notification.StatusNotification
+import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 
 class BskyNotificationViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val role: IdentityRole,
+    private val platformRepo: BlueskyPlatformRepo,
+    private val accountAdapter: BlueskyAccountAdapter,
+    private val statusAdapter: BlueskyStatusAdapter,
+    private val getCompletedNotification: GetCompletedNotificationUseCase,
     private val onlyMention: Boolean,
 ) : ViewModel() {
 
+    private var cursor: String? = null
 
-    private fun loadNotification() {
-        launchInViewModel {
-            clientManager.getClient(role)
-                .listNotificationsCatching(
-                    ListNotificationsQueryParams(reasons = listOf("mention", "reply", "quote"))
-                ).onSuccess {
+    private var blogPlatform: BlogPlatform? = null
 
-                }.onFailure {
-
-                }
+    private suspend fun loadNotification(cursor: String? = this.cursor): Result<List<StatusNotification>> {
+        val platform = getBlogPlatform(clientManager.getClient(role))
+        return getCompletedNotification(
+            role = role,
+            params = ListNotificationsQueryParams(
+                reasons = if (onlyMention) listOf("mention", "reply", "quote") else emptyList(),
+                cursor = cursor,
+            ),
+        ).map { paged ->
+            this@BskyNotificationViewModel.cursor = paged.cursor
+            paged.notifications.map { it.convert(platform) }
         }
     }
 
-    private fun ListNotificationsResponse.convert() {
-        notifications.map { it.convert() }
-    }
-
-    private fun ListNotificationsNotification.convert() {
-        when (this.reason) {
-            is ListNotificationsReason.Like -> {
-                val like: Like = this.record.bskyJson()
+    private fun CompletedBskyNotification.convert(
+        blogPlatform: BlogPlatform,
+    ): StatusNotification {
+        val author = accountAdapter.convertToBlogAuthor(this.author)
+        return when (this.record) {
+            is CompletedBskyNotification.Record.Like -> {
+                StatusNotification.Like(
+                    author = author,
+                    blog = statusAdapter.convertToBlog(
+                        post = this.record.post.record.bskyJson(),
+                        id = this.record.post.cid.cid,
+                        url = this.record.post.uri.atUri,
+                        platform = blogPlatform,
+                        author = author,
+                        isSelfStatus = true,
+                    ),
+                    createAt = this.record.createAt,
+                )
             }
 
-            is ListNotificationsReason.Repost -> {
-                val repost: Repost = this.record.bskyJson()
+            is CompletedBskyNotification.Record.Follow -> {
+                StatusNotification.Follow(
+                    author = author,
+                    createAt = this.record.createAt,
+                )
             }
 
-            is ListNotificationsReason.Follow -> {
-                val follow: Follow = this.record.bskyJson()
-
+            is CompletedBskyNotification.Record.Mention -> {
+                StatusNotification.Mention(
+                    author = author,
+                    blog = statusAdapter.convertToBlog(
+                        post = this.record.post,
+                        id = this.record.cid,
+                        url = this.record.uri,
+                        platform = blogPlatform,
+                        author = author,
+                        isSelfStatus = false,
+                    ),
+                )
             }
 
-            is ListNotificationsReason.Quote,
-            is ListNotificationsReason.Mention,
-            is ListNotificationsReason.Reply -> {
-                val follow: Follow = this.record.bskyJson()
-
+            is CompletedBskyNotification.Record.Reply -> {
+                StatusNotification.Reply(
+                    author = author,
+                    reply = statusAdapter.convertToBlog(
+                        post = this.record.reply,
+                        id = this.record.cid,
+                        url = this.record.uri,
+                        platform = blogPlatform,
+                        author = author,
+                        isSelfStatus = false,
+                    ),
+                )
             }
 
-            is ListNotificationsReason.StarterpackJoined -> {
-
+            is CompletedBskyNotification.Record.Quote -> {
+                StatusNotification.Quote(
+                    author = author,
+                    quote = statusAdapter.convertToBlog(
+                        post = this.record.quote,
+                        id = this.record.cid,
+                        url = this.record.uri,
+                        platform = blogPlatform,
+                        author = author,
+                        isSelfStatus = false,
+                    ),
+                    blog = statusAdapter.convertToBlog(
+                        post = this.record.post.record.bskyJson(),
+                        id = this.record.post.cid.cid,
+                        url = this.record.post.uri.atUri,
+                        platform = blogPlatform,
+                        author = author,
+                        isSelfStatus = true,
+                    ),
+                )
             }
 
-            is ListNotificationsReason.Unknown -> {
+            is CompletedBskyNotification.Record.Repost -> {
+                StatusNotification.Repost(
+                    author = author,
+                    blog = statusAdapter.convertToBlog(
+                        post = this.record.post.record.bskyJson(),
+                        id = this.record.post.cid.cid,
+                        url = this.record.post.uri.atUri,
+                        platform = blogPlatform,
+                        author = author,
+                        isSelfStatus = true,
+                    ),
+                    createAt = this.record.createAt,
+                )
+            }
 
+            is CompletedBskyNotification.Record.OnlyMessage -> {
+                StatusNotification.Unknown(
+                    message = this.record.message,
+                    createAt = this.record.createAt,
+                )
             }
         }
+    }
+
+    private suspend fun getBlogPlatform(client: BlueskyClient): BlogPlatform {
+        return blogPlatform ?: platformRepo.getPlatform(client.baseUrl).also { blogPlatform = it }
     }
 }

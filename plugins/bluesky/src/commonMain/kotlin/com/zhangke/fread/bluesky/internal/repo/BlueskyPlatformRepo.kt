@@ -10,12 +10,12 @@ class BlueskyPlatformRepo @Inject constructor(
     private val platformUriTransformer: PlatformUriTransformer,
 ) {
 
-    fun getAllPlatform(): List<BlogPlatform> {
+    suspend fun getAllPlatform(): List<BlogPlatform> {
         val baseUrl = FormalBaseUrl.parse("https://bsky.social")!!
         return listOf(createBlueskyPlatform(baseUrl))
     }
 
-    fun getPlatform(baseUrl: FormalBaseUrl): BlogPlatform {
+    suspend fun getPlatform(baseUrl: FormalBaseUrl): BlogPlatform {
         return createBlueskyPlatform(baseUrl)
     }
 

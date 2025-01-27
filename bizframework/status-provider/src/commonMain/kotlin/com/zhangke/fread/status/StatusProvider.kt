@@ -4,6 +4,8 @@ import com.zhangke.fread.status.account.AccountManager
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.content.ContentManager
 import com.zhangke.fread.status.content.IContentManager
+import com.zhangke.fread.status.notification.INotificationResolver
+import com.zhangke.fread.status.notification.NotificationResolver
 import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.platform.PlatformResolver
 import com.zhangke.fread.status.screen.IStatusScreenProvider
@@ -35,6 +37,8 @@ class StatusProvider constructor(
     val statusSourceResolver = StatusSourceResolver(providers.map { it.statusSourceResolver })
 
     val accountManager = AccountManager(providers.map { it.accountManager })
+
+    val notificationResolver = NotificationResolver(providers.map { it.notificationResolver })
 }
 
 interface IStatusProvider {
@@ -52,4 +56,6 @@ interface IStatusProvider {
     val statusSourceResolver: IStatusSourceResolver
 
     val accountManager: IAccountManager
+
+    val notificationResolver: INotificationResolver
 }

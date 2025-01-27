@@ -1,0 +1,162 @@
+package com.zhangke.fread.bluesky.internal.usecase
+
+import app.bsky.feed.GetPostsQueryParams
+import app.bsky.feed.Like
+import app.bsky.feed.PostView
+import app.bsky.feed.Repost
+import app.bsky.graph.Follow
+import app.bsky.notification.ListNotificationsNotification
+import app.bsky.notification.ListNotificationsQueryParams
+import app.bsky.notification.ListNotificationsReason
+import com.zhangke.framework.datetime.Instant
+import com.zhangke.fread.bluesky.internal.client.BlueskyClient
+import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.model.CompletedBskyNotification
+import com.zhangke.fread.bluesky.internal.model.PagedCompletedBskyNotifications
+import com.zhangke.fread.bluesky.internal.utils.bskyJson
+import com.zhangke.fread.status.model.IdentityRole
+import me.tatarka.inject.annotations.Inject
+import sh.christian.ozone.api.AtUri
+
+class GetCompletedNotificationUseCase @Inject constructor(
+    private val clientManager: BlueskyClientManager,
+) {
+
+    suspend operator fun invoke(
+        role: IdentityRole,
+        params: ListNotificationsQueryParams,
+    ): Result<PagedCompletedBskyNotifications> {
+        val client = clientManager.getClient(role)
+        val notificationSerializedCache = mutableMapOf<ListNotificationsNotification, Any>()
+        return client.listNotificationsCatching(params)
+            .mapCatching { notification ->
+                val uriList =
+                    notification.notifications.getNeedFetchPostUris(notificationSerializedCache)
+                val postList = if (uriList.isNotEmpty()) {
+                    fetchPostByUris(client, uriList).getOrThrow()
+                } else {
+                    null
+                }
+                notification.notifications.map { it.convert(postList, notificationSerializedCache) }
+                PagedCompletedBskyNotifications(
+                    cursor = notification.cursor,
+                    notifications = notification.notifications.map {
+                        it.convert(postList, notificationSerializedCache)
+                    },
+                    priority = notification.priority,
+                    seenAt = notification.seenAt?.let { Instant(it) },
+                )
+            }
+    }
+
+    private fun ListNotificationsNotification.convert(
+        posList: List<PostView>?,
+        serializedCache: MutableMap<ListNotificationsNotification, Any>,
+    ): CompletedBskyNotification {
+        val record: CompletedBskyNotification.Record = when (reason) {
+            ListNotificationsReason.Like -> {
+                val like: Like = (serializedCache[this] as? Like) ?: record.bskyJson()
+                CompletedBskyNotification.Record.Like(
+                    post = posList!!.first { it.uri == like.subject.uri },
+                    createAt = Instant(like.createdAt),
+                )
+            }
+
+            ListNotificationsReason.Repost -> {
+                val repost: Repost = (serializedCache[this] as? Repost) ?: record.bskyJson()
+                CompletedBskyNotification.Record.Repost(
+                    post = posList!!.first { it.uri == repost.subject.uri },
+                    createAt = Instant(repost.createdAt),
+                )
+            }
+
+            ListNotificationsReason.Follow -> {
+                val follow: Follow = this.record.bskyJson()
+                CompletedBskyNotification.Record.Follow(
+                    createAt = Instant(follow.createdAt),
+                )
+            }
+
+            ListNotificationsReason.Mention -> {
+                CompletedBskyNotification.Record.Mention(
+                    post = this.record.bskyJson(),
+                    cid = this.cid.cid,
+                    uri = this.uri.atUri,
+                )
+            }
+
+            ListNotificationsReason.Reply -> {
+                CompletedBskyNotification.Record.Reply(
+                    reply = this.record.bskyJson(),
+                    cid = this.cid.cid,
+                    uri = this.uri.atUri,
+                )
+            }
+
+            ListNotificationsReason.Quote -> {
+                CompletedBskyNotification.Record.Quote(
+                    quote = this.record.bskyJson(),
+                    cid = this.cid.cid,
+                    uri = this.uri.atUri,
+                    post = posList!!.first { it.uri == this.reasonSubject!! },
+                )
+            }
+
+            ListNotificationsReason.StarterpackJoined -> {
+                CompletedBskyNotification.Record.OnlyMessage(
+                    message = "StarterackJoined: ${this.record}",
+                    createAt = Instant(this.indexedAt),
+                )
+            }
+
+            is ListNotificationsReason.Unknown -> {
+                CompletedBskyNotification.Record.OnlyMessage(
+                    message = "Unknown(${(reason as? ListNotificationsReason.Unknown)?.rawValue}): ${this.record}",
+                    createAt = Instant(this.indexedAt),
+                )
+            }
+        }
+        return CompletedBskyNotification(
+            uri = this.uri.atUri,
+            cid = this.cid.cid,
+            record = record,
+            author = this.author,
+            isRead = this.isRead,
+            indexedAt = Instant(this.indexedAt),
+            labels = this.labels,
+        )
+    }
+
+    private suspend fun fetchPostByUris(
+        client: BlueskyClient,
+        uriList: List<AtUri>,
+    ): Result<List<PostView>> {
+        return client.getPostsCatching(GetPostsQueryParams(uris = uriList)).map { it.posts }
+    }
+
+    private fun List<ListNotificationsNotification>.getNeedFetchPostUris(
+        notificationSerializedCache: MutableMap<ListNotificationsNotification, Any>,
+    ): List<AtUri> {
+        return mapNotNull {
+            when (it.reason) {
+                is ListNotificationsReason.Repost -> {
+                    val repost: Repost = it.record.bskyJson()
+                    notificationSerializedCache[it] = repost
+                    repost.subject.uri
+                }
+
+                is ListNotificationsReason.Like -> {
+                    val like: Like = it.record.bskyJson()
+                    notificationSerializedCache[it] = like
+                    like.subject.uri
+                }
+
+                is ListNotificationsReason.Quote -> {
+                    it.reasonSubject!!
+                }
+
+                else -> null
+            }
+        }
+    }
+}

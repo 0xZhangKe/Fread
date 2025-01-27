@@ -3,6 +3,7 @@ package com.zhangke.fread.rss
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.content.IContentManager
+import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.search.ISearchEngine
@@ -18,6 +19,7 @@ class RssStatusProvider @Inject constructor(
     rssStatusResolver: RssStatusResolver,
     rssStatusSourceResolver: RssStatusSourceResolver,
     rssPlatformResolver: RssPlatformResolver,
+    rssNotificationResolver: RssNotificationResolver,
 ) : IStatusProvider {
 
     override val contentManager: IContentManager = contentManager
@@ -33,4 +35,6 @@ class RssStatusProvider @Inject constructor(
     override val statusSourceResolver: IStatusSourceResolver = rssStatusSourceResolver
 
     override val accountManager: IAccountManager = rssAccountManager
+
+    override val notificationResolver: INotificationResolver = rssNotificationResolver
 }

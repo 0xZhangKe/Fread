@@ -4,7 +4,7 @@ import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.db.BlueskyLoggedAccountDao
 import com.zhangke.fread.bluesky.internal.db.BlueskyLoggedAccountDatabase
 import com.zhangke.fread.bluesky.internal.db.BlueskyLoggedAccountEntity
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import me.tatarka.inject.annotations.Inject

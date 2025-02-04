@@ -87,11 +87,10 @@ class NotificationsHomeScreen : BaseScreen() {
         onAccountSelected: (LoggedAccount) -> Unit,
     ) {
         val snackbarHost = rememberSnackbarHostState()
-        val accountToTabList = uiState.accountToTabList
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                if (uiState.accountToTabList.size > 1 && uiState.selectedAccount != null) {
+                if (uiState.tabs.size > 1 && uiState.selectedAccount != null) {
                     NotificationTopBar(
                         account = uiState.selectedAccount,
                         accountList = uiState.accountList,
@@ -112,7 +111,7 @@ class NotificationsHomeScreen : BaseScreen() {
                 )
             },
         ) { paddings ->
-            if (accountToTabList.isEmpty()) {
+            if (uiState.tabs.isEmpty()) {
                 Column(
                     modifier = Modifier
                         .padding(paddings)
@@ -142,7 +141,7 @@ class NotificationsHomeScreen : BaseScreen() {
                         .fillMaxSize(),
                 ) {
                     val pagerState = rememberPagerState {
-                        accountToTabList.size
+                        uiState.tabs.size
                     }
                     LaunchedEffect(uiState) {
                         val index = uiState.accountList.indexOf(uiState.selectedAccount)
@@ -158,7 +157,7 @@ class NotificationsHomeScreen : BaseScreen() {
                             state = pagerState,
                             userScrollEnabled = false,
                         ) { pageIndex ->
-                            with(accountToTabList[pageIndex].second) {
+                            with(uiState.tabs[pageIndex]) {
                                 TabContent(this@NotificationsHomeScreen, null)
                             }
                         }

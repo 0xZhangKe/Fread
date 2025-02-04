@@ -6,7 +6,7 @@ import com.zhangke.framework.controller.LoadableUiState
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.activitypub.app.internal.model.RelationshipSeveranceEvent
 import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.datetime.Instant

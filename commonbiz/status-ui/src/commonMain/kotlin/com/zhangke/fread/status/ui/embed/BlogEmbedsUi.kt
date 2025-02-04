@@ -21,6 +21,7 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 internal fun BlogEmbedsUi(
     modifier: Modifier,
     embeds: List<BlogEmbed>,
+    isOwner: Boolean,
     style: StatusStyle,
     onContentClick: (Blog) -> Unit,
     onMediaClick: OnBlogMediaClick,
@@ -37,6 +38,7 @@ internal fun BlogEmbedsUi(
             modifier = modifier,
             embed = embed,
             style = style,
+            isOwner = isOwner,
             onUrlClick = onUrlClick,
             onContentClick = onContentClick,
             onMediaClick = onMediaClick,
@@ -54,6 +56,7 @@ private fun BlogEmbedUi(
     modifier: Modifier,
     embed: BlogEmbed,
     style: StatusStyle,
+    isOwner: Boolean,
     onContentClick: (Blog) -> Unit,
     onMediaClick: OnBlogMediaClick,
     onUserInfoClick: (BlogAuthor) -> Unit,
@@ -81,6 +84,7 @@ private fun BlogEmbedUi(
                 modifier = modifier
                     .embedBorder(),
                 blog = embed.blog,
+                isOwner = isOwner,
                 style = style,
                 onContentClick = onContentClick,
                 onMediaClick = onMediaClick,

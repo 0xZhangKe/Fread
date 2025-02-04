@@ -5,33 +5,54 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.blog.PostingApplication
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
-import com.zhangke.fread.status.status.model.StatusInteraction
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
-    private val accountManager: ActivityPubAccountManager,
     private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
     private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) {
+
+    suspend fun toStatusUiState(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
+        role: IdentityRole,
+        isOwner: Boolean,
+        logged: Boolean,
+    ): StatusUiState {
+        val status = toStatus(entity, platform)
+        return StatusUiState(
+            status = status,
+            role = role,
+            logged = logged,
+            isOwner = isOwner,
+            blogTranslationState = BlogTranslationUiState(
+                support = status.intrinsicBlog.supportTranslate,
+                translating = false,
+                showingTranslation = false,
+                blogTranslation = null,
+            ),
+        )
+    }
 
     suspend fun toStatus(
         entity: ActivityPubStatusEntity,
@@ -48,49 +69,38 @@ class ActivityPubStatusAdapter @Inject constructor(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.NewBlog {
-        val (blog, supportActions) = getBlogAndInteractions(entity, platform)
-        return Status.NewBlog(blog, supportActions)
+        val blog = getBlogAndInteractions(entity, platform)
+        return Status.NewBlog(blog)
     }
 
     private suspend fun transformReblog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.Reblog {
-        val (blog, supportActions) = getBlogAndInteractions(entity.reblog!!, platform)
+        val blog = getBlogAndInteractions(entity.reblog!!, platform)
         return Status.Reblog(
             author = activityPubAccountEntityAdapter.toAuthor(entity.account),
             id = entity.id,
-            datetime = formatDatetimeToDate(entity.createdAt).toEpochMilliseconds(),
+            createAt = Instant(formatDatetimeToDate(entity.createdAt)),
             reblog = blog,
-            supportInteraction = supportActions,
         )
     }
 
     private suspend fun getBlogAndInteractions(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform
-    ): Pair<Blog, List<StatusInteraction>> {
-        val currentLoginAccount = accountManager.getAllLoggedAccount()
-            .firstOrNull { it.platform.baseUrl.equalsDomain(platform.baseUrl) }
+    ): Blog {
         val statusAuthor = activityPubAccountEntityAdapter.toAuthor(entity.account)
-        val isSelfStatus =
-            currentLoginAccount?.webFinger?.equalsDomain(statusAuthor.webFinger) == true
-        val blog = transformBlog(entity, platform, statusAuthor, isSelfStatus)
-        val supportActions = getStatusSupportInteraction(
-            entity = entity,
-            isSelfStatus = isSelfStatus,
-            logged = currentLoginAccount != null,
-        )
-        return blog to supportActions
+        return transformBlog(entity, platform, statusAuthor)
     }
 
     private suspend fun transformBlog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
         author: BlogAuthor,
-        isSelfStatus: Boolean,
     ): Blog {
         val emojis = entity.emojis.map(emojiEntityAdapter::toEmoji)
+        val createAt = Instant(formatDatetimeToDate(entity.createdAt))
         return Blog(
             id = entity.id,
             author = author,
@@ -99,22 +109,35 @@ class ActivityPubStatusAdapter @Inject constructor(
             content = entity.content.orEmpty(),
             sensitive = entity.sensitive,
             spoilerText = entity.spoilerText,
-            date = Instant(formatDatetimeToDate(entity.createdAt)),
+            createAt = createAt,
+            formattedCreateAt = createAt.formatDefault(),
             url = entity.url.ifNullOrEmpty { entity.uri },
             language = entity.language,
-            forwardCount = entity.reblogsCount.toLong(),
-            forward = entity.reblogged ?: false,
-            likeCount = entity.favouritesCount.toLong(),
-            liked = entity.favourited ?: false,
-            bookmarked = entity.bookmarked ?: false,
-            repliesCount = entity.repliesCount.toLong(),
+            like = Blog.Like(
+                support = true,
+                liked = entity.favourited,
+                likedCount = entity.favouritesCount.toLong()
+            ),
+            forward = Blog.Forward(
+                support = true,
+                forward = entity.reblogged,
+                forwardCount = entity.reblogsCount.toLong(),
+            ),
+            bookmark = Blog.Bookmark(
+                support = true,
+            ),
+            reply = Blog.Reply(
+                support = true,
+                repliesCount = entity.repliesCount.toLong(),
+            ),
+            supportEdit = true,
+            quote = Blog.Quote(support = false),
             platform = platform,
             mediaList = entity.mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = entity.poll?.let(pollAdapter::adapt),
             emojis = emojis,
-            pinned = entity.pinned ?: false,
+            pinned = entity.pinned == true,
             facets = emptyList(),
-            isSelf = isSelfStatus,
             supportTranslate = true,
             mentions = entity.mentions.mapNotNull { it.toMention() },
             tags = entity.tags.map { it.toTag() },

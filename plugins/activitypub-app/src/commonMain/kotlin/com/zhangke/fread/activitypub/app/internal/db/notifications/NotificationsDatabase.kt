@@ -16,7 +16,6 @@ import androidx.sqlite.SQLiteConnection
 import androidx.sqlite.execSQL
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubAccountEntityConverter
-import com.zhangke.fread.activitypub.app.internal.db.converter.FormalUriConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.RelationshipSeveranceEventConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.StatusNotificationTypeConverter
 import com.zhangke.fread.activitypub.app.internal.model.RelationshipSeveranceEvent
@@ -67,7 +66,6 @@ interface NotificationsDao {
     RelationshipSeveranceEventConverter::class,
     StatusNotificationTypeConverter::class,
     ActivityPubAccountEntityConverter::class,
-    FormalUriConverter::class,
     StatusConverter::class,
 )
 @Database(entities = [NotificationsEntity::class], version = DB_VERSION, exportSchema = false)

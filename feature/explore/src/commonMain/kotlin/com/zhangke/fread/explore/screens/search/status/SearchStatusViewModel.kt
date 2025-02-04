@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.StatusUiState
-import com.zhangke.fread.common.status.model.updateStatus
+import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.updateStatus
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult

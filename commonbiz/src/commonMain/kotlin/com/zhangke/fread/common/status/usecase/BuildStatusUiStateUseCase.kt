@@ -1,34 +1,47 @@
 package com.zhangke.fread.common.status.usecase
 
-import com.zhangke.fread.common.ext.formatDefault
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
-import kotlinx.datetime.Instant
 import me.tatarka.inject.annotations.Inject
 
-class BuildStatusUiStateUseCase @Inject constructor(
-    private val generateBottomInteractionUseCase: GenerateBottomInteractionUseCase,
-    private val generateMoreInteraction: GenerateMoreInteraction,
-    private val formatStatusDisplayTime: FormatStatusDisplayTimeUseCase,
-) {
+class BuildStatusUiStateUseCase @Inject constructor() {
 
-    suspend operator fun invoke(
-        role: IdentityRole,
+    operator fun invoke(
+        statusUiStatus: StatusUiState,
         status: Status,
         following: Boolean? = null,
         blogTranslationState: BlogTranslationUiState? = null,
     ): StatusUiState {
-        val createdDate = status.datetime
+        return StatusUiState(
+            status = status,
+            role = statusUiStatus.role,
+            logged = statusUiStatus.logged,
+            isOwner = statusUiStatus.isOwner,
+            blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
+                support = status.intrinsicBlog.supportTranslate,
+                translating = false,
+                showingTranslation = false,
+                blogTranslation = null,
+            ),
+            following = following ?: statusUiStatus.following,
+        )
+    }
+
+    operator fun invoke(
+        role: IdentityRole,
+        status: Status,
+        following: Boolean? = null,
+        logged: Boolean = false,
+        isOwner: Boolean = false,
+        blogTranslationState: BlogTranslationUiState? = null,
+    ): StatusUiState {
         return StatusUiState(
             status = status,
             role = role,
-            displayTime = formatStatusDisplayTime(createdDate),
-            // TODO: maybe set date time format
-            specificTime = Instant.fromEpochMilliseconds(createdDate).formatDefault(),
-            // TODO: maybe set date time format
-            editedTime = status.intrinsicBlog.editedAt?.instant?.formatDefault(),
+            logged = logged,
+            isOwner = isOwner,
             blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,
                 translating = false,
@@ -36,8 +49,6 @@ class BuildStatusUiStateUseCase @Inject constructor(
                 blogTranslation = null,
             ),
             following = following,
-            bottomInteractions = generateBottomInteractionUseCase(status.supportInteraction),
-            moreInteractions = generateMoreInteraction(status.supportInteraction),
         )
     }
 }

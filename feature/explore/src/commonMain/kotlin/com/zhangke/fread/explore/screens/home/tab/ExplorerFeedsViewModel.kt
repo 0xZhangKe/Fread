@@ -5,7 +5,7 @@ import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult

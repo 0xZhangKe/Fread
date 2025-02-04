@@ -8,7 +8,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.commonbiz.shared.composable.onStatusMediaClick
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
@@ -36,10 +36,10 @@ fun OnlyBlogContentUi(
         BlogContent(
             modifier = Modifier.fillMaxWidth(),
             blog = blog,
+            isOwner = statusUiState.isOwner,
             blogTranslationState = statusUiState.blogTranslationState,
             indexOfFeeds = indexInList,
             style = style.statusStyle,
-            specificTime = statusUiState.specificTime,
             onMediaClick = { event ->
                 onStatusMediaClick(
                     transparentNavigator = transparentNavigator,
@@ -76,17 +76,14 @@ fun WholeBlogUi(
         BlogUi(
             modifier = Modifier,
             blog = blog,
+            logged = statusUiState.logged,
+            isOwner = statusUiState.isOwner,
             blogTranslationState = statusUiState.blogTranslationState,
             indexInList = indexInList,
-            displayTime = statusUiState.displayTime,
-            specificTime = statusUiState.specificTime,
-            editedTime = statusUiState.editedTime,
             following = statusUiState.following,
-            bottomPanelInteractions = statusUiState.bottomInteractions,
-            moreInteractions = statusUiState.moreInteractions,
             style = style.statusStyle,
-            onInteractive = {
-                composedStatusInteraction.onStatusInteractive(statusUiState, it)
+            onInteractive = { type, blog ->
+                composedStatusInteraction.onStatusInteractive(statusUiState, type)
             },
             onUserInfoClick = {
                 composedStatusInteraction.onUserInfoClick(statusUiState.role, it)

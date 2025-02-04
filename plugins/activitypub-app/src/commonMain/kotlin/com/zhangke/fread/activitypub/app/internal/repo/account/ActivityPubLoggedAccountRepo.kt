@@ -6,7 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggerAccountDao
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow

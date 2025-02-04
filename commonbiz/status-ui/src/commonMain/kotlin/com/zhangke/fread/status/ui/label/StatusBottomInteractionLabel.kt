@@ -27,8 +27,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun StatusBottomInteractionLabel(
     modifier: Modifier,
-    boostedCount: Int,
-    favouritedCount: Int,
+    boostedCount: Long,
+    favouritedCount: Long,
     style: StatusStyle,
     onBoostedClick: () -> Unit,
     onFavouritedClick: () -> Unit,

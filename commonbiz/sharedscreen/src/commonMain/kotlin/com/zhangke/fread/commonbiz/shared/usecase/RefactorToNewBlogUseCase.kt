@@ -10,7 +10,6 @@ class RefactorToNewBlogUseCase @Inject constructor() {
             is Status.NewBlog -> status
             is Status.Reblog -> Status.NewBlog(
                 blog = status.reblog,
-                supportInteraction = status.supportInteraction,
             )
         }
     }

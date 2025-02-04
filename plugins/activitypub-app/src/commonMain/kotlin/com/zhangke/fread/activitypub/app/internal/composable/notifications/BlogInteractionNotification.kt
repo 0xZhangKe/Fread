@@ -14,7 +14,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 

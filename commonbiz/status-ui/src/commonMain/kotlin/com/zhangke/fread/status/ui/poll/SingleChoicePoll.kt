@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogPoll
 
 @Composable

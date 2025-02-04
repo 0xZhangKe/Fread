@@ -1,8 +1,8 @@
 package com.zhangke.fread.commonbiz.shared.feeds
 
 import com.zhangke.framework.controller.CommonLoadableUiState
-import com.zhangke.fread.common.status.model.StatusUiState
-import com.zhangke.fread.common.status.model.updateStatus
+import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.updateStatus
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update

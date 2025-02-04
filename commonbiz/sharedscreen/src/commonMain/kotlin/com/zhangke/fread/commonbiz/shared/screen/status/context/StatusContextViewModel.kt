@@ -3,7 +3,7 @@ package com.zhangke.fread.commonbiz.shared.screen.status.context
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.ConvertNewBlogToStatusUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase

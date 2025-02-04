@@ -4,7 +4,7 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration

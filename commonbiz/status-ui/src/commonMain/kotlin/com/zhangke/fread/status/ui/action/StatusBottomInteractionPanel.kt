@@ -15,39 +15,79 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.common.status.model.StatusUiInteraction
+import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
 fun StatusBottomInteractionPanel(
     modifier: Modifier = Modifier,
     style: StatusStyle,
-    interactions: List<StatusUiInteraction>,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    blog: Blog,
+    logged: Boolean,
+    onInteractive: (StatusActionType, Blog) -> Unit,
 ) {
-    if (interactions.isEmpty()) return
     Row(
         modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
     ) {
-        interactions.forEachIndexed { index, interaction ->
+        StatusActionIcon(
+            modifier = Modifier,
+            imageVector = replyIcon(),
+            enabled = logged && blog.reply.support,
+            style = style,
+            contentDescription = replyAlt(),
+            text = blog.reply.repliesCount?.countToLabel(),
+            highLight = false,
+            onClick = { onInteractive(StatusActionType.REPLY, blog) },
+        )
+        Spacer(modifier = Modifier.weight(1F))
+        StatusActionIcon(
+            modifier = Modifier,
+            imageVector = forwardIcon(),
+            enabled = logged && blog.forward.support,
+            style = style,
+            contentDescription = forwardAlt(),
+            text = blog.forward.forwardCount?.countToLabel(),
+            highLight = blog.forward.forward == true,
+            onClick = { onInteractive(StatusActionType.FORWARD, blog) },
+        )
+        Spacer(modifier = Modifier.weight(1F))
+        StatusActionIcon(
+            modifier = Modifier,
+            imageVector = likeIcon(blog.like.liked == true),
+            enabled = logged && blog.like.support,
+            style = style,
+            contentDescription = likeAlt(),
+            text = blog.like.likedCount?.countToLabel(),
+            highLight = blog.like.liked == true,
+            onClick = { onInteractive(StatusActionType.LIKE, blog) },
+        )
+        if (blog.bookmark.support) {
+            Spacer(modifier = Modifier.weight(1F))
             StatusActionIcon(
                 modifier = Modifier,
-                imageVector = interaction.logo,
-                enabled = interaction.enabled,
+                imageVector = bookmarkIcon(blog.bookmark.bookmarked == true),
+                enabled = logged,
                 style = style,
-                contentDescription = interaction.actionName,
-                text = interaction.label,
-                highLight = interaction.highLight,
-                onClick = {
-                    onInteractive(interaction)
-                },
+                contentDescription = bookmarkAlt(blog.bookmark.bookmarked == true),
+                text = null,
+                highLight = blog.bookmark.bookmarked == true,
+                onClick = { onInteractive(StatusActionType.BOOKMARK, blog) },
             )
-            if (index != interactions.lastIndex) {
-                Spacer(modifier = Modifier.weight(1F))
-            }
         }
+        Spacer(modifier = Modifier.weight(1F))
+        StatusActionIcon(
+            modifier = Modifier,
+            imageVector = shareIcon(),
+            enabled = true,
+            style = style,
+            contentDescription = shareAlt(),
+            text = null,
+            highLight = false,
+            onClick = { onInteractive(StatusActionType.SHARE, blog) },
+        )
     }
 }
 

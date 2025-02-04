@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.status.model
 
+import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
@@ -7,16 +8,14 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.serialization.Serializable
 
 @Serializable
-sealed class Status: PlatformSerializable {
+sealed class Status : PlatformSerializable {
 
-    abstract val datetime: Long
+    abstract val createAt: Instant
 
     /**
      * identify of this status, must non-empty
      */
     abstract val id: String
-
-    abstract val supportInteraction: List<StatusInteraction>
 
     /**
      * 该 Platform 表示获取到该 Status 时使用的 Platform，而不是 Status 本身所属的 Platform。
@@ -41,12 +40,11 @@ sealed class Status: PlatformSerializable {
     @Serializable
     data class NewBlog(
         val blog: Blog,
-        override val supportInteraction: List<StatusInteraction>,
     ) : Status(), PlatformSerializable {
 
         override val id: String get() = blog.id
 
-        override val datetime: Long get() = blog.date.instant.toEpochMilliseconds()
+        override val createAt: Instant get() = blog.createAt
 
         override val platform: BlogPlatform
             get() = blog.platform
@@ -56,9 +54,8 @@ sealed class Status: PlatformSerializable {
     data class Reblog(
         val author: BlogAuthor,
         override val id: String,
-        override val datetime: Long,
+        override val createAt: Instant,
         val reblog: Blog,
-        override val supportInteraction: List<StatusInteraction>,
     ) : Status(), PlatformSerializable {
 
         override val platform: BlogPlatform

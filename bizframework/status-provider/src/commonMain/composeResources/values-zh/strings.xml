@@ -3,4 +3,11 @@
 
     <string name="mixed_content_subtitle_1">混合内容 ·</string>
     <string name="mixed_content_subtitle_2">条订阅源</string>
+
+    <string name="date_time_ago">前</string>
+    <string name="date_time_day">天</string>
+    <string name="date_time_hour">小时</string>
+    <string name="date_time_minute">分</string>
+    <string name="date_time_second">秒</string>
+
 </resources>

@@ -3,6 +3,7 @@ package com.zhangke.fread.common.status.model
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 
 sealed interface SearchResultUiState {

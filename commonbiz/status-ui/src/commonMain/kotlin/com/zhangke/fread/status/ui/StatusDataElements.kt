@@ -1,8 +1,7 @@
 package com.zhangke.fread.status.ui
 
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.status.model.StatusUiInteraction
-import com.zhangke.fread.status.status.model.StatusInteraction
+import com.zhangke.fread.status.model.StatusActionType
 
 /**
  * Status 本身的事件上报尽可能贴近触发该事件的位置
@@ -32,27 +31,15 @@ object StatusDataElements {
     const val TRANSLATE = "statusTranslate"
 }
 
-fun reportStatusInteractionClickEvent(interaction: StatusUiInteraction) {
-    if (interaction is StatusUiInteraction.Share) {
-        reportClick(StatusDataElements.SHARE)
-        return
+fun reportStatusInteractionClickEvent(actionType: StatusActionType) {
+    when (actionType) {
+        StatusActionType.LIKE -> reportClick(StatusDataElements.LIKE)
+        StatusActionType.FORWARD -> reportClick(StatusDataElements.FORWARD)
+        StatusActionType.BOOKMARK -> reportClick(StatusDataElements.BOOKMARK)
+        StatusActionType.REPLY -> reportClick(StatusDataElements.COMMENT)
+        StatusActionType.DELETE -> reportClick(StatusDataElements.DELETE)
+        StatusActionType.SHARE -> reportClick(StatusDataElements.SHARE)
+        StatusActionType.PIN -> reportClick(StatusDataElements.MORE)
+        StatusActionType.EDIT -> reportClick(StatusDataElements.MORE)
     }
-    val element = when (val statusInteraction = interaction.statusInteraction) {
-        is StatusInteraction.Delete -> StatusDataElements.DELETE
-        is StatusInteraction.Like -> {
-            if (statusInteraction.liked) StatusDataElements.DISLIKE else StatusDataElements.LIKE
-        }
-
-        is StatusInteraction.Comment -> StatusDataElements.COMMENT
-        is StatusInteraction.Forward -> {
-            if (statusInteraction.forwarded) StatusDataElements.UN_FORWARD else StatusDataElements.FORWARD
-        }
-
-        is StatusInteraction.Bookmark -> {
-            if (statusInteraction.bookmarked) StatusDataElements.UN_BOOKMARK else StatusDataElements.BOOKMARK
-        }
-
-        else -> return
-    }
-    reportClick(element)
 }

@@ -3,7 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.usecase
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 

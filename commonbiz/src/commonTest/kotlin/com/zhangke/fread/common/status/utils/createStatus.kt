@@ -44,7 +44,7 @@ fun createStatus(
             description = null,
             content = content,
             title = title,
-            date = com.zhangke.framework.datetime.Instant(date),
+            createAt = com.zhangke.framework.datetime.Instant(date),
             emojis = emptyList(),
             forwardCount = forwardCount,
             likeCount = likeCount,

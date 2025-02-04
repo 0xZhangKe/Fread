@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.ui.image.BlogImageMedias

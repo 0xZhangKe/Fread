@@ -5,6 +5,7 @@ import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 
 fun buildRichText(
@@ -25,19 +26,31 @@ fun buildRichText(
     )
 }
 
-fun Blog.preParseRichText() {
+suspend fun Blog.preParseRichText() {
     author.humanizedName.parse()
     humanizedContent.parse()
     humanizedSpoilerText.parse()
     humanizedDescription.parse()
+    formattingDisplayTime.parse()
 }
 
-fun Status.preParseRichText() {
+suspend fun Status.preParseRichText() {
     triggerAuthor.humanizedName.parse()
     intrinsicBlog.preParseRichText()
 }
 
-fun List<Status>.preParseRichText() {
+suspend fun StatusUiState.preParseRichText() {
+    status.triggerAuthor.humanizedName.parse()
+    status.intrinsicBlog.preParseRichText()
+}
+
+suspend fun List<Status>.preParseRichText() {
+    forEach {
+        it.preParseRichText()
+    }
+}
+
+suspend fun List<StatusUiState>.preParseRichText() {
     forEach {
         it.preParseRichText()
     }

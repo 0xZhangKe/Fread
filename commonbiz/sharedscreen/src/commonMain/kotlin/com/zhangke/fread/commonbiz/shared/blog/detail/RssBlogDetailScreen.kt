@@ -27,8 +27,8 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
-import com.zhangke.fread.common.utils.DateTimeFormatter
+import com.zhangke.fread.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.utils.DateTimeFormatter
 import com.zhangke.fread.commonbiz.shared.composable.WebViewPreviewer
 import com.zhangke.fread.commonbiz.shared.screen.shared_status_context_screen_title
 import com.zhangke.fread.status.blog.Blog
@@ -36,7 +36,7 @@ import com.zhangke.fread.status.ui.StatusInfoLine
 import com.zhangke.fread.status.ui.style.StatusStyles
 import org.jetbrains.compose.resources.stringResource
 
-class BlogDetailScreen(
+class RssBlogDetailScreen(
     private val blog: Blog,
 ) : BaseScreen() {
 
@@ -78,18 +78,17 @@ class BlogDetailScreen(
                     .background(MaterialTheme.colorScheme.surface),
             ) {
                 Spacer(modifier = Modifier.height(16.dp))
-                val displayTime by produceState("", blog.date) {
-                    value = DateTimeFormatter.format(blog.date.instant.toEpochMilliseconds())
+                val displayTime by produceState("", blog.createAt) {
+                    value = DateTimeFormatter.format(blog.createAt.instant.toEpochMilliseconds())
                 }
                 StatusInfoLine(
                     modifier = Modifier.fillMaxWidth(),
-                    blogAuthor = blog.author,
-                    blogUrl = blog.url,
+                    blog = blog,
+                    isOwner = false,
                     visibility = blog.visibility,
                     displayTime = displayTime,
                     style = StatusStyles.medium(),
-                    moreInteractions = emptyList(),
-                    onInteractive = {},
+                    onInteractive = { _, _ -> },
                     onUserInfoClick = viewModel::onUserInfoClick,
                     onUrlClick = {
                         browserLauncher.launchWebTabInApp(it)

@@ -25,7 +25,6 @@ class NotificationsHomeViewModel @Inject constructor(
         NotificationsHomeUiState(
             selectedAccount = null,
             accountList = emptyList(),
-            accountToTabList = emptyList(),
         )
     )
     val uiState = _uiState.asStateFlow()
@@ -35,11 +34,6 @@ class NotificationsHomeViewModel @Inject constructor(
             statusProvider.accountManager
                 .getAllAccountFlow()
                 .collect { accounts ->
-                    val accountToTabList = accounts.mapNotNull { account ->
-                        statusProvider.screenProvider
-                            .getNotificationScreen(account)
-                            ?.let { account to it }
-                    }
                     var selectedAccount = _uiState.value.selectedAccount
                     if (selectedAccount == null) {
                         val latestSelectedAccount = getLastedSelectedAccount()
@@ -52,7 +46,6 @@ class NotificationsHomeViewModel @Inject constructor(
                         it.copy(
                             accountList = accounts,
                             selectedAccount = selectedAccount,
-                            accountToTabList = accountToTabList,
                         )
                     }
                 }

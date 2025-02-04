@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_hashtag_timeline_descripti
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.common.ext.getCurrentInstant
+import com.zhangke.fread.common.utils.getCurrentInstant
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.StatusUpdater

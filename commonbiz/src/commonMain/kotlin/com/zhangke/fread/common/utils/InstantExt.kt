@@ -1,4 +1,4 @@
-package com.zhangke.fread.common.ext
+package com.zhangke.fread.common.utils
 
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
@@ -12,6 +12,10 @@ fun getCurrentInstant(): Instant {
 
 fun getCurrentTimeMillis(): Long {
     return Clock.System.now().toEpochMilliseconds()
+}
+
+fun com.zhangke.framework.datetime.Instant.formatDefault(): String {
+    return instant.formatDefault()
 }
 
 fun Instant.formatDefault(): String {

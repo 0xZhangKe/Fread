@@ -9,6 +9,7 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
@@ -42,7 +43,7 @@ class RssStatusResolver @Inject constructor(
         val uriInsight = uriTransformer.parse(uri)
             ?: return Result.failure(IllegalArgumentException("Unknown uri: $uri"))
         val fetchResult = rssStatusRepo.getStatus(uriInsight)
-            .map { it.sortedByDescending { status -> status.datetime } }
+            .map { it.sortedByDescending { status -> status.createAt.epochMillis } }
         if (fetchResult.isFailure) {
             return Result.failure(fetchResult.exceptionOrThrow())
         }
@@ -66,7 +67,7 @@ class RssStatusResolver @Inject constructor(
     override suspend fun interactive(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction
+        type: StatusActionType,
     ): Result<Status?>? {
         return null
     }

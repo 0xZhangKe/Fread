@@ -10,7 +10,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_translate_show_original

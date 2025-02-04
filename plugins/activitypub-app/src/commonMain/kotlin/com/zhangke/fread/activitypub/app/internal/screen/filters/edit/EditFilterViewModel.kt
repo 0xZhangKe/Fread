@@ -10,7 +10,7 @@ import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow

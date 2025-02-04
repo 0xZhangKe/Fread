@@ -1,17 +1,41 @@
 package com.zhangke.fread.bluesky
 
+import app.bsky.notification.ListNotificationsQueryParams
+import com.zhangke.fread.bluesky.internal.adapter.BlueskyNotificationAdapter
+import com.zhangke.fread.bluesky.internal.usecase.GetCompletedNotificationUseCase
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.StatusNotification
 import me.tatarka.inject.annotations.Inject
 
-class BlueskyNotificationResolver @Inject constructor(): INotificationResolver {
+class BlueskyNotificationResolver @Inject constructor(
+    private val getCompletedNotification: GetCompletedNotificationUseCase,
+    private val notificationAdapter: BlueskyNotificationAdapter,
+) : INotificationResolver {
 
     override suspend fun getNotifications(
-        role: IdentityRole,
+        account: LoggedAccount,
         type: INotificationResolver.NotificationRequestType,
-        cursor: String?
-    ): Result<List<StatusNotification>>? {
-        TODO("Not yet implemented")
+        cursor: String?,
+    ): Result<Pair<String?, List<StatusNotification>>>? {
+        if (account.platform.protocol.notBluesky) return null
+        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return getCompletedNotification(
+            role = role,
+            params = ListNotificationsQueryParams(
+                reasons = if (type == INotificationResolver.NotificationRequestType.MENTION) {
+                    listOf("mention", "reply", "quote")
+                } else {
+                    emptyList()
+                },
+                cursor = cursor,
+            ),
+        ).map { paged ->
+            paged.cursor to paged.notifications.map {
+                notificationAdapter.convert(it, account.platform)
+            }
+        }
     }
 }

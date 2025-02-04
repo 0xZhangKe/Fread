@@ -33,7 +33,7 @@ import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
@@ -61,8 +61,8 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
+    isOwner: Boolean,
     blogTranslationState: BlogTranslationUiState,
-    specificTime: String,
     style: StatusStyle,
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
@@ -76,8 +76,6 @@ fun BlogContent(
     onBlogClick: (Blog) -> Unit,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onShowOriginalClick: () -> Unit,
-    boostedCount: Int? = null,
-    favouritedCount: Int? = null,
     detailModel: Boolean = false,
     editedTime: String? = null,
 ) {
@@ -140,7 +138,7 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 poll = blog.poll!!,
-                isSelf = blog.isSelf,
+                isSelf = isOwner,
                 blogTranslationState = blogTranslationState,
                 onVoted = {
                     reportClick(StatusDataElements.VOTE)
@@ -172,7 +170,8 @@ fun BlogContent(
                 modifier = Modifier
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
-                embeds= blog.embeds,
+                embeds = blog.embeds,
+                isOwner = isOwner,
                 style = style,
                 onContentClick = onBlogClick,
                 onMediaClick = onMediaClick,
@@ -191,7 +190,7 @@ fun BlogContent(
                     .fillMaxWidth()
                     .padding(top = style.contentStyle.contentVerticalSpacing),
                 blog = blog,
-                specificTime = specificTime,
+                specificTime = blog.formattedCreateAt,
                 style = style,
                 onUrlClick = onUrlClick,
             )
@@ -203,13 +202,13 @@ fun BlogContent(
                     style = style,
                 )
             }
-            if (favouritedCount != null && boostedCount != null) {
+            if (blog.like.likedCount != null && blog.forward.forwardCount != null) {
                 StatusBottomInteractionLabel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = style.contentStyle.contentVerticalSpacing),
-                    boostedCount = boostedCount,
-                    favouritedCount = favouritedCount,
+                    boostedCount = blog.forward.forwardCount!!,
+                    favouritedCount = blog.like.likedCount!!,
                     style = style,
                     onBoostedClick = { onBoostedClick?.invoke(blog.id) },
                     onFavouritedClick = { onFavouritedClick?.invoke(blog.id) },

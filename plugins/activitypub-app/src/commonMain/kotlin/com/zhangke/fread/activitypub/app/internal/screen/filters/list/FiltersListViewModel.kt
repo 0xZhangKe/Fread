@@ -12,7 +12,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_filters_active
 import com.zhangke.fread.activitypub.app.activity_pub_filters_expired
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

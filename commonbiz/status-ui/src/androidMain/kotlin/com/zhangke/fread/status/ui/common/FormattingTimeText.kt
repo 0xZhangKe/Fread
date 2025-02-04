@@ -16,7 +16,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.TextUnit
-import com.zhangke.fread.common.utils.DateTimeFormatter
+import com.zhangke.fread.status.utils.DateTimeFormatter
 import java.util.Date
 
 @Composable

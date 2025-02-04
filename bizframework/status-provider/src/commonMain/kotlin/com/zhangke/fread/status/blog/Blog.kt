@@ -5,6 +5,7 @@ import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
+import com.zhangke.fread.status.model.FormattingTime
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusVisibility
@@ -21,13 +22,14 @@ data class Blog(
     val description: String?,
     val content: String,
     val url: String,
-    val date: Instant,
-    val forwardCount: Long?,
-    val forward: Boolean,
-    val likeCount: Long?,
-    val liked: Boolean,
-    val bookmarked: Boolean,
-    val repliesCount: Long?,
+    val createAt: Instant,
+    val formattedCreateAt: String,
+    val supportEdit: Boolean,
+    val like: Like,
+    val forward: Forward,
+    val bookmark: Bookmark,
+    val reply: Reply,
+    val quote: Quote,
     val sensitive: Boolean,
     val spoilerText: String,
     /**
@@ -45,9 +47,9 @@ data class Blog(
     val poll: BlogPoll?,
     val visibility: StatusVisibility,
     val embeds: List<BlogEmbed> = emptyList(),
-    val isSelf: Boolean = false,
     val supportTranslate: Boolean = false,
     val editedAt: Instant? = null,
+    val formattedEditAt: String? = null,
     val application: PostingApplication? = null,
 ) : PlatformSerializable {
 
@@ -78,4 +80,39 @@ data class Blog(
             hashTags = tags,
         )
     }
+
+    val formattingDisplayTime: FormattingTime by lazy {
+        FormattingTime(createAt)
+    }
+
+    @Serializable
+    data class Like(
+        val support: Boolean,
+        val likedCount: Long? = null,
+        val liked: Boolean? = null,
+    )
+
+    @Serializable
+    data class Forward(
+        val support: Boolean,
+        val forwardCount: Long? = null,
+        val forward: Boolean? = null,
+    )
+
+    @Serializable
+    data class Bookmark(
+        val support: Boolean,
+        val bookmarked: Boolean? = null,
+    )
+
+    @Serializable
+    data class Reply(
+        val support: Boolean,
+        val repliesCount: Long? = null,
+    )
+
+    @Serializable
+    data class Quote(
+        val support: Boolean,
+    )
 }

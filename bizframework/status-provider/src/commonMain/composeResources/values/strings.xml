@@ -4,4 +4,10 @@
     <string name="mixed_content_subtitle_1">Mixed Content ·</string>
     <string name="mixed_content_subtitle_2">Sources</string>
 
+    <string name="date_time_ago">&#160;ago</string>
+    <string name="date_time_day">day</string>
+    <string name="date_time_hour">hour</string>
+    <string name="date_time_minute">min</string>
+    <string name="date_time_second">sec</string>
+
 </resources>

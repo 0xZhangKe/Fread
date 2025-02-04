@@ -11,7 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.repo.application.ActivityPubAp
 import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject

@@ -16,7 +16,7 @@ import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.NotificationsRepo
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.common.status.usecase.FormatStatusDisplayTimeUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler

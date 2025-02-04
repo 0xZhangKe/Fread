@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmoji
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.fread.common.ext.formatDefault
+import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

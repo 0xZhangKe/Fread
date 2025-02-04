@@ -7,7 +7,7 @@ import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_finish_subtitle
 import com.zhangke.fread.activitypub.app.activity_pub_filter_edit_duration_permanent
-import com.zhangke.fread.common.ext.formatDefault
+import com.zhangke.fread.common.utils.formatDefault
 import kotlinx.datetime.Instant
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.stringResource

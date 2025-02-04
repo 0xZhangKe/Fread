@@ -5,17 +5,16 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.feeds.repo.FeedsRepo
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
-import com.zhangke.fread.common.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.fread.commonbiz.shared.usecase.ConvertNewBlogToStatusUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -32,7 +31,6 @@ class StatusContextSubViewModel(
     anchorStatus: Status?,
     blog: Blog?,
     private val blogTranslationUiState: BlogTranslationUiState?,
-    convertNewBlogToStatus: ConvertNewBlogToStatusUseCase,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -50,11 +48,21 @@ class StatusContextSubViewModel(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val anchorStatus: Status = anchorStatus ?: convertNewBlogToStatus(blog!!)
+    private val anchorStatus: Status = anchorStatus ?: Status.NewBlog(blog!!)
 
     private var anchorAuthorFollowing: Boolean? = null
 
     init {
+        _uiState.update {
+            it.copy(
+                contextStatus = listOf(
+                    StatusInContext(
+                        type = StatusInContextType.ANCHOR,
+                        status = buildStatusUiState(role = role, status = this.anchorStatus)
+                    )
+                )
+            )
+        }
         initInteractiveHandler(
             coroutineScope = viewModelScope,
             onInteractiveHandleResult = {
@@ -94,15 +102,9 @@ class StatusContextSubViewModel(
     }
 
     private suspend fun loadStatusContext() {
-        val fixedAnchorStatus = refactorToNewBlog(anchorStatus)
-        if (_uiState.value.contextStatus.isEmpty()) {
-            _uiState.value = _uiState.value.copy(
-                loading = true,
-                contextStatus = buildContextStatus(fixedAnchorStatus),
-            )
-        }
+        _uiState.update { it.copy(loading = true) }
         statusProvider.statusResolver
-            .getStatusContext(role, fixedAnchorStatus)
+            .getStatusContext(role, anchorStatus)
             .onSuccess { statusContext ->
                 _uiState.update { state ->
                     state.copy(
@@ -149,7 +151,7 @@ class StatusContextSubViewModel(
     ): List<StatusInContext> {
         val contextStatus = mutableListOf<StatusInContext>()
         if (statusContext != null) {
-            contextStatus += statusContext.ancestors.sortedBy { it.datetime }
+            contextStatus += statusContext.ancestors.sortedBy { it.createAt.epochMillis }
                 .map { StatusInContext(buildStatusUiState(role, it), StatusInContextType.ANCESTOR) }
         }
         contextStatus += StatusInContext(
@@ -162,7 +164,7 @@ class StatusContextSubViewModel(
             StatusInContextType.ANCHOR,
         )
         if (statusContext != null) {
-            contextStatus += statusContext.descendants.sortedBy { it.datetime }
+            contextStatus += statusContext.descendants.sortedBy { it.createAt.epochMillis }
                 .map {
                     StatusInContext(
                         buildStatusUiState(role, it),

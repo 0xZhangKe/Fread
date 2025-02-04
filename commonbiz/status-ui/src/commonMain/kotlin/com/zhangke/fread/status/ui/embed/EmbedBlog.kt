@@ -9,10 +9,10 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.fread.common.ext.formatDefault
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
-import com.zhangke.fread.common.utils.DateTimeFormatter
-import com.zhangke.fread.common.utils.defaultFormatConfig
+import com.zhangke.fread.common.utils.formatDefault
+import com.zhangke.fread.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.utils.DateTimeFormatter
+import com.zhangke.fread.status.utils.defaultFormatConfig
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
@@ -27,6 +27,7 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 fun EmbedBlog(
     modifier: Modifier,
     blog: Blog,
+    isOwner: Boolean,
     style: StatusStyle,
     onContentClick: (Blog) -> Unit,
     onMediaClick: OnBlogMediaClick,
@@ -40,22 +41,21 @@ fun EmbedBlog(
     Column(
         modifier = modifier.noRippleClick { onContentClick(blog) },
     ) {
-        val datetime = blog.date.instant.toEpochMilliseconds()
+        val datetime = blog.createAt.instant.toEpochMilliseconds()
         StatusInfoLine(
             modifier = Modifier
                 .padding(top = 16.dp)
                 .fillMaxWidth(),
             blogTranslationState = remember { BlogTranslationUiState(support = false) },
-            blogAuthor = blog.author,
+            blog = blog,
+            isOwner = isOwner,
             displayTime = produceState("") {
                 DateTimeFormatter.format(datetime, defaultFormatConfig())
             }.value,
             visibility = blog.visibility,
-            blogUrl = blog.url,
             showFollowButton = false,
-            moreInteractions = emptyList(),
             showMoreOperationIcon = false,
-            onInteractive = {},
+            onInteractive = { _, _ -> },
             onUserInfoClick = onUserInfoClick,
             onUrlClick = onUrlClick,
             onFollowClick = {},
@@ -73,9 +73,10 @@ fun EmbedBlog(
                     end = style.containerEndPadding,
                 ),
             blog = blog,
+            isOwner = isOwner,
             blogTranslationState = remember { BlogTranslationUiState(support = false) },
             specificTime = remember {
-                blog.date.instant.formatDefault()
+                blog.createAt.instant.formatDefault()
             },
             detailModel = false,
             indexOfFeeds = 0,

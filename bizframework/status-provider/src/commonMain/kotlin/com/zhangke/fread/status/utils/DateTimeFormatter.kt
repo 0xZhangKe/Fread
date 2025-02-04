@@ -1,12 +1,13 @@
-package com.zhangke.fread.common.utils
+package com.zhangke.fread.status.utils
 
-import com.zhangke.fread.common.ext.getCurrentInstant
-import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.date_time_ago
-import com.zhangke.fread.commonbiz.date_time_day
-import com.zhangke.fread.commonbiz.date_time_hour
-import com.zhangke.fread.commonbiz.date_time_minute
-import com.zhangke.fread.commonbiz.date_time_second
+import org.jetbrains.compose.resources.stringResource
+import androidx.compose.runtime.Composable
+import fread.bizframework.status_provider.generated.resources.Res
+import fread.bizframework.status_provider.generated.resources.date_time_ago
+import fread.bizframework.status_provider.generated.resources.date_time_day
+import fread.bizframework.status_provider.generated.resources.date_time_hour
+import fread.bizframework.status_provider.generated.resources.date_time_minute
+import fread.bizframework.status_provider.generated.resources.date_time_second
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 import kotlinx.datetime.format
@@ -38,7 +39,7 @@ object DateTimeFormatter {
         config: DatetimeFormatConfig,
     ): String {
         val instant = Instant.fromEpochMilliseconds(datetime)
-        val duration = getCurrentInstant() - instant
+        val duration = Clock.System.now() - instant
         if (duration > 3.days) {
             // TODO: format with locale
             return instant.format(
@@ -91,4 +92,13 @@ suspend fun defaultFormatConfig() = DatetimeFormatConfig(
     hour = getString(Res.string.date_time_hour),
     minutes = getString(Res.string.date_time_minute),
     second = getString(Res.string.date_time_second),
+)
+
+@Composable
+fun defaultUiFormatConfig() = DatetimeFormatConfig(
+    ago = stringResource(Res.string.date_time_ago),
+    day = stringResource(Res.string.date_time_day),
+    hour = stringResource(Res.string.date_time_hour),
+    minutes = stringResource(Res.string.date_time_minute),
+    second = stringResource(Res.string.date_time_second),
 )

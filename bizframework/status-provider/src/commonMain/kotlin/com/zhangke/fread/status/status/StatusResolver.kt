@@ -6,6 +6,7 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
@@ -47,9 +48,9 @@ class StatusResolver(
     suspend fun interactive(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction,
+        type: StatusActionType,
     ): Result<Status?> {
-        return resolverList.mapFirst { it.interactive(role, status, interaction) }
+        return resolverList.mapFirst { it.interactive(role, status, type) }
     }
 
     suspend fun follow(
@@ -136,7 +137,7 @@ interface IStatusResolver {
     suspend fun interactive(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction,
+        type: StatusActionType,
     ): Result<Status?>?
 
     suspend fun votePoll(

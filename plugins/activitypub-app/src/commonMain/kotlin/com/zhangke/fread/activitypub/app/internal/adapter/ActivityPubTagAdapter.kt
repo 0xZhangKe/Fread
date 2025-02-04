@@ -5,7 +5,7 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_trends_tag_description
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
-import com.zhangke.fread.common.ext.getCurrentInstant
+import com.zhangke.fread.common.utils.getCurrentInstant
 import com.zhangke.fread.status.model.Hashtag
 import kotlinx.datetime.LocalDateTime
 import kotlinx.datetime.TimeZone

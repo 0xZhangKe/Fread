@@ -9,10 +9,9 @@ import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.StatusUiInteraction
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailScreen
+import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
@@ -24,6 +23,7 @@ import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.status.model.Status
@@ -52,8 +52,8 @@ class InteractiveHandler(
 
     override val composedStatusInteraction = object : ComposedStatusInteraction {
 
-        override fun onStatusInteractive(status: StatusUiState, interaction: StatusUiInteraction) {
-            this@InteractiveHandler.onStatusInteractive(status, interaction)
+        override fun onStatusInteractive(status: StatusUiState, type: StatusActionType) {
+            this@InteractiveHandler.onStatusInteractive(status, type)
         }
 
         override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
@@ -133,15 +133,15 @@ class InteractiveHandler(
         }
     }
 
-    override fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction) {
-        if (uiInteraction is StatusUiInteraction.Comment) {
+    override fun onStatusInteractive(status: StatusUiState, type: StatusActionType) {
+        if (type == StatusActionType.REPLY) {
             coroutineScope.launch {
                 screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
                     ?.let(::tryOpenScreenByRoute)
             }
             return
         }
-        if (uiInteraction is StatusUiInteraction.Edit) {
+        if (type == StatusActionType.EDIT) {
             coroutineScope.launch {
                 screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
                     ?.let(::tryOpenScreenByRoute)
@@ -149,10 +149,9 @@ class InteractiveHandler(
             return
         }
         coroutineScope.launch {
-            val interaction = uiInteraction.statusInteraction ?: return@launch
             val result = statusProvider.statusResolver
-                .interactive(status.role, status.status, interaction)
-                .map { s -> s?.let { buildStatusUiState(status.role, it) } }
+                .interactive(status.role, status.status, type)
+                .map { s -> s?.let { buildStatusUiState(status, it) } }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch
@@ -178,7 +177,7 @@ class InteractiveHandler(
     override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
             val screen = if (status.status.intrinsicBlog.platform.protocol.isRss) {
-                BlogDetailScreen(status.status.intrinsicBlog)
+                RssBlogDetailScreen(status.status.intrinsicBlog)
             } else {
                 StatusContextScreen(
                     role = status.role,
@@ -195,7 +194,7 @@ class InteractiveHandler(
     override fun onBlogClick(role: IdentityRole, blog: Blog) {
         coroutineScope.launch {
             val screen = if (blog.platform.protocol.isRss) {
-                BlogDetailScreen(blog)
+                RssBlogDetailScreen(blog)
             } else {
                 StatusContextScreen(
                     role = role,
@@ -211,7 +210,7 @@ class InteractiveHandler(
         coroutineScope.launch {
             val result = statusProvider.statusResolver
                 .votePoll(status.role, status.status, votedOption)
-                .map { buildStatusUiState(status.role, it) }
+                .map { buildStatusUiState(status, it) }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch

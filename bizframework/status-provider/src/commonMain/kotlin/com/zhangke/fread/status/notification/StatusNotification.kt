@@ -8,48 +8,71 @@ import kotlinx.serialization.Serializable
 @Serializable
 sealed interface StatusNotification {
 
+    val id: String
+
+    val createAt: Instant
+
     @Serializable
     data class Like(
+        override val id: String,
         val author: BlogAuthor,
         val blog: Blog,
-        val createAt: Instant,
+        override val createAt: Instant,
     ) : StatusNotification
 
     @Serializable
     data class Follow(
+        override val id: String,
         val author: BlogAuthor,
-        val createAt: Instant,
+        override val createAt: Instant,
     ) : StatusNotification
 
     @Serializable
     data class Mention(
+        override val id: String,
         val author: BlogAuthor,
         val blog: Blog,
-    ) : StatusNotification
+    ) : StatusNotification{
+
+        override val createAt: Instant
+            get() = blog.createAt
+    }
 
     @Serializable
     data class Repost(
+        override val id: String,
         val author: BlogAuthor,
         val blog: Blog,
-        val createAt: Instant,
+        override val createAt: Instant,
     ) : StatusNotification
 
     @Serializable
     data class Quote(
+        override val id: String,
         val author: BlogAuthor,
         val quote: Blog,
         val blog: Blog,
-    ) : StatusNotification
+    ) : StatusNotification{
+
+        override val createAt: Instant
+            get() = blog.createAt
+    }
 
     @Serializable
     data class Reply(
+        override val id: String,
         val author: BlogAuthor,
         val reply: Blog,
-    ) : StatusNotification
+    ) : StatusNotification{
+
+        override val createAt: Instant
+            get() = reply.createAt
+    }
 
     @Serializable
     data class Unknown(
+        override val id: String,
         val message: String,
-        val createAt: Instant,
+        override val createAt: Instant,
     ) : StatusNotification
 }

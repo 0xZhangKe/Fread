@@ -23,7 +23,6 @@ class BuildBskyStatusUseCase @Inject constructor(
         feedViewPost: FeedViewPost,
     ): Status {
         val platform = platformRepo.getPlatform(baseUrl)
-        val allCount = accountManager.getAllAccount()
         val self = accountManager.getAllAccount().any { it.did == feedViewPost.post.author.did.did }
         val processingPost = feedViewPost.toProcessingPost()
         return statusAdapter.convert(
@@ -33,7 +32,6 @@ class BuildBskyStatusUseCase @Inject constructor(
             supportInteraction = buildInteractions(
                 post = processingPost.postView,
                 pinned = processingPost.pinned,
-                logged = allCount.isNotEmpty(),
                 self = self,
             ),
         )
@@ -44,7 +42,6 @@ class BuildBskyStatusUseCase @Inject constructor(
         postView: PostView,
     ): Status {
         val platform = platformRepo.getPlatform(baseUrl)
-        val allCount = accountManager.getAllAccount()
         val self = accountManager.getAllAccount().any { it.did == postView.author.did.did }
         return statusAdapter.convert(
             postView = postView,
@@ -53,7 +50,6 @@ class BuildBskyStatusUseCase @Inject constructor(
             supportInteraction = buildInteractions(
                 post = postView,
                 pinned = false,
-                logged = allCount.isNotEmpty(),
                 self = self,
             ),
         )
@@ -62,7 +58,6 @@ class BuildBskyStatusUseCase @Inject constructor(
     private fun buildInteractions(
         post: PostView,
         pinned: Boolean,
-        logged: Boolean,
         self: Boolean,
     ): List<StatusInteraction> {
         val actionList = mutableListOf<StatusInteraction>()

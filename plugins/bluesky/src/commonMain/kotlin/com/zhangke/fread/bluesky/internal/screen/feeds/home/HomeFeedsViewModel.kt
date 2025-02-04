@@ -11,6 +11,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.richtext.preParseRichText
 import com.zhangke.fread.status.status.model.Status
 
@@ -59,7 +60,7 @@ class HomeFeedsViewModel(
         }
     }
 
-    private suspend fun loadMoreDataFromServer(): Result<List<Status>> {
+    private suspend fun loadMoreDataFromServer(): Result<List<StatusUiState>> {
         if (cursor == FLAG_CURSOR_ENDING) return Result.success(emptyList())
         return loadFeeds()
     }

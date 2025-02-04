@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.db.converter
+package com.zhangke.fread.common.db.converts
 
 import androidx.room.TypeConverter
 import com.zhangke.fread.status.uri.FormalUri

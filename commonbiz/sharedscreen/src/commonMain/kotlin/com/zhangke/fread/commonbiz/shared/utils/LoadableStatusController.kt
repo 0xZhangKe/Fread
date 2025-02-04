@@ -3,7 +3,7 @@ package com.zhangke.fread.commonbiz.shared.utils
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.controller.CommonLoadableController
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.richtext.preParseRichText

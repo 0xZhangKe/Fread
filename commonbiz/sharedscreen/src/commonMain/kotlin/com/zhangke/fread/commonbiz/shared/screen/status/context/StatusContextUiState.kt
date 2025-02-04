@@ -1,7 +1,7 @@
 package com.zhangke.fread.commonbiz.shared.screen.status.context
 
 import com.zhangke.framework.composable.TextString
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 
 data class StatusContextUiState(
     val contextStatus: List<StatusInContext>,

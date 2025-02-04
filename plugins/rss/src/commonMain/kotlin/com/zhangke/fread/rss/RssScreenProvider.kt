@@ -36,10 +36,6 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
-        return null
-    }
-
     override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null

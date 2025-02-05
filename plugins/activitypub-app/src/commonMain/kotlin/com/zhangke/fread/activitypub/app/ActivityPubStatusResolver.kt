@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapt
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTranslationEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
@@ -25,7 +26,6 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
-import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
@@ -41,6 +41,7 @@ class ActivityPubStatusResolver @Inject constructor(
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
+    private val loggedAccountProvider: LoggedAccountProvider,
     private val translationAdapter: ActivityPubTranslationEntityAdapter,
 ) : IStatusResolver {
 
@@ -51,10 +52,16 @@ class ActivityPubStatusResolver @Inject constructor(
     ): Result<StatusUiState>? {
         if (platform.protocol.notActivityPub) return null
         val statusRepo = clientManager.getClient(role).statusRepo
+        val loggedAccount = loggedAccountProvider.getAccount(role)
         return statusRepo.getStatuses(statusId)
             .mapCatching { entity ->
                 if (entity == null) throw RuntimeException("Can't find status(${statusId})")
-                activityPubStatusAdapter.toStatus(entity, platform)
+                activityPubStatusAdapter.toStatusUiState(
+                    entity = entity,
+                    platform = platform,
+                    role = role,
+                    loggedAccount = loggedAccount,
+                )
             }
     }
 
@@ -64,7 +71,7 @@ class ActivityPubStatusResolver @Inject constructor(
         limit: Int,
         minId: String?,
         maxId: String?,
-    ): Result<List<Status>>? {
+    ): Result<List<StatusUiState>>? {
         val userInsights = userUriTransformer.parse(uri)
         if (userInsights != null) {
             return getUserStatus(
@@ -130,14 +137,24 @@ class ActivityPubStatusResolver @Inject constructor(
         role: IdentityRole,
         limit: Int,
         maxId: String?,
-    ): Result<List<Status>> {
+    ): Result<List<StatusUiState>> {
         val platformResult = platformRepo.getPlatform(role)
         if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
         val platform = platformResult.getOrThrow()
+        val loggedAccount = loggedAccountProvider.getAccount(role)
         return clientManager.getClient(role)
             .timelinesRepo
             .publicTimelines(limit = limit, maxId = maxId)
-            .map { list -> list.map { activityPubStatusAdapter.toStatus(it, platform) } }
+            .map { list ->
+                list.map {
+                    activityPubStatusAdapter.toStatusUiState(
+                        entity = it,
+                        platform = platform,
+                        role = role,
+                        loggedAccount = loggedAccount,
+                    )
+                }
+            }
     }
 
     override suspend fun follow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {

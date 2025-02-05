@@ -101,7 +101,7 @@ class RefreshStatusUseCase @Inject constructor(
                 limit = limit,
             ).map { list ->
                 list.map {
-                    statusContentEntityAdapter.toEntity(sourceUri, it, false)
+                    statusContentEntityAdapter.toEntity(sourceUri, it.status, false)
                 }
             }
     }

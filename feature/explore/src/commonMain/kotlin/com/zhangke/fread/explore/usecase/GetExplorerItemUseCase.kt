@@ -1,6 +1,5 @@
 package com.zhangke.fread.explore.usecase
 
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.explore.model.ExplorerItem
 import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTabType
 import com.zhangke.fread.status.StatusProvider
@@ -9,7 +8,6 @@ import me.tatarka.inject.annotations.Inject
 
 class GetExplorerItemUseCase @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
 ) {
 
     private companion object {
@@ -46,14 +44,7 @@ class GetExplorerItemUseCase @Inject constructor(
                     limit = DEFAULT_LIMIT,
                     maxId = maxId,
                 ).map { list ->
-                    list.map {
-                        ExplorerItem.ExplorerStatus(
-                            buildStatusUiState(
-                                role = role,
-                                status = it,
-                            )
-                        )
-                    }
+                    list.map { ExplorerItem.ExplorerStatus(it) }
                 }
             }
         }

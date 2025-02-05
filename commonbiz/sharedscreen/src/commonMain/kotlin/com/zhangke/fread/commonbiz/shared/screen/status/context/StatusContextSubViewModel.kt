@@ -48,7 +48,11 @@ class StatusContextSubViewModel(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val anchorStatus: Status = anchorStatus ?: Status.NewBlog(blog!!)
+    private val anchorStatus: StatusUiState = buildStatusUiState(
+        role = role,
+        status = anchorStatus ?: Status.NewBlog(blog!!),
+        blogTranslationState = blogTranslationUiState,
+    )
 
     private var anchorAuthorFollowing: Boolean? = null
 
@@ -56,10 +60,7 @@ class StatusContextSubViewModel(
         _uiState.update {
             it.copy(
                 contextStatus = listOf(
-                    StatusInContext(
-                        type = StatusInContextType.ANCHOR,
-                        status = buildStatusUiState(role = role, status = this.anchorStatus)
-                    )
+                    StatusInContext(type = StatusInContextType.ANCHOR, status = this.anchorStatus)
                 )
             )
         }
@@ -104,24 +105,36 @@ class StatusContextSubViewModel(
     private suspend fun loadStatusContext() {
         _uiState.update { it.copy(loading = true) }
         statusProvider.statusResolver
-            .getStatusContext(role, anchorStatus)
+            .getStatusContext(role, anchorStatus.status)
+            .map { statusContext ->
+                if (statusContext.status == null) {
+                    loadStatus()
+                }
+                val status = statusContext.status?.let {
+                    statusUpdater.update(it)
+                    it.copy(
+                        following = anchorAuthorFollowing ?: it.following,
+                        blogTranslationState = blogTranslationUiState ?: it.blogTranslationState
+                    )
+                } ?: anchorStatus
+                statusContext.copy(
+                    status = status.copy(
+                        following = anchorAuthorFollowing ?: status.following,
+                    )
+                )
+            }
             .onSuccess { statusContext ->
                 _uiState.update { state ->
                     state.copy(
-                        contextStatus = buildContextStatus(fixedAnchorStatus, statusContext),
+                        contextStatus = buildContextStatus(statusContext),
                         loading = false,
                         errorMessage = null,
                     )
                 }
-                if (statusContext.status == null) {
-                    loadStatus()
-                } else {
-                    updateAnchorStatus(statusContext.status!!)
-                }
+                statusUpdater.update(statusContext.status!!)
             }.onFailure {
                 _uiState.update { state ->
                     state.copy(
-                        contextStatus = buildContextStatus(fixedAnchorStatus),
                         loading = false,
                         errorMessage = it.toTextStringOrNull(),
                     )
@@ -131,47 +144,41 @@ class StatusContextSubViewModel(
 
     private suspend fun loadStatus() {
         statusProvider.statusResolver
-            .getStatus(role, anchorStatus.id, anchorStatus.platform)
-            .onSuccess { updateAnchorStatus(it) }
-    }
-
-    private suspend fun updateAnchorStatus(status: Status) {
-        updateStatus(
-            buildStatusUiState(
-                role = role,
-                status = status,
-                blogTranslationState = blogTranslationUiState
-            ).also { statusUpdater.update(it) }
-        )
-    }
-
-    private suspend fun buildContextStatus(
-        anchorStatus: Status.NewBlog,
-        statusContext: StatusContext? = null,
-    ): List<StatusInContext> {
-        val contextStatus = mutableListOf<StatusInContext>()
-        if (statusContext != null) {
-            contextStatus += statusContext.ancestors.sortedBy { it.createAt.epochMillis }
-                .map { StatusInContext(buildStatusUiState(role, it), StatusInContextType.ANCESTOR) }
-        }
-        contextStatus += StatusInContext(
-            buildStatusUiState(
-                role = role,
-                status = anchorStatus,
-                following = anchorAuthorFollowing,
-                blogTranslationState = blogTranslationUiState,
-            ),
-            StatusInContextType.ANCHOR,
-        )
-        if (statusContext != null) {
-            contextStatus += statusContext.descendants.sortedBy { it.createAt.epochMillis }
-                .map {
-                    StatusInContext(
-                        buildStatusUiState(role, it),
-                        StatusInContextType.DESCENDANT
+            .getStatus(role, anchorStatus.status.id, anchorStatus.status.platform)
+            .map {
+                it.copy(
+                    following = anchorAuthorFollowing ?: it.following,
+                    blogTranslationState = blogTranslationUiState ?: it.blogTranslationState,
+                )
+            }
+            .onSuccess {
+                statusUpdater.update(it)
+                _uiState.update { state ->
+                    state.copy(
+                        contextStatus = state.contextStatus.map { item ->
+                            if (item.type == StatusInContextType.ANCHOR) {
+                                item.copy(status = it)
+                            } else {
+                                item
+                            }
+                        }
                     )
                 }
-        }
+            }
+    }
+
+    private fun buildContextStatus(
+        statusContext: StatusContext,
+    ): List<StatusInContext> {
+        val contextStatus = mutableListOf<StatusInContext>()
+        contextStatus += statusContext.ancestors.sortedBy { it.status.createAt.epochMillis }
+            .map { StatusInContext(it, StatusInContextType.ANCESTOR) }
+        contextStatus += StatusInContext(
+            statusContext.status!!,
+            StatusInContextType.ANCHOR,
+        )
+        contextStatus += statusContext.descendants.sortedBy { it.status.createAt.epochMillis }
+            .map { StatusInContext(it, StatusInContextType.DESCENDANT) }
         return contextStatus
     }
 
@@ -197,7 +204,7 @@ class StatusContextSubViewModel(
             statusProvider.statusResolver
                 .isFollowing(
                     role = role,
-                    target = anchorStatus.intrinsicBlog.author,
+                    target = anchorStatus.status.intrinsicBlog.author,
                 )?.onSuccess { following ->
                     anchorAuthorFollowing = following
                     updateAnchorFollowingState()

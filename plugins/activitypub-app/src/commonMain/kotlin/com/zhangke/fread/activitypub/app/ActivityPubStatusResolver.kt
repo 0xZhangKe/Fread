@@ -19,6 +19,7 @@ import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
@@ -47,7 +48,7 @@ class ActivityPubStatusResolver @Inject constructor(
         role: IdentityRole,
         statusId: String,
         platform: BlogPlatform
-    ): Result<Status>? {
+    ): Result<StatusUiState>? {
         if (platform.protocol.notActivityPub) return null
         val statusRepo = clientManager.getClient(role).statusRepo
         return statusRepo.getStatuses(statusId)

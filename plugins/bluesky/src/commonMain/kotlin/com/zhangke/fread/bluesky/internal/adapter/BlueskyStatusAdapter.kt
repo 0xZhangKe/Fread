@@ -7,6 +7,7 @@ import app.bsky.embed.RecordViewRecord
 import app.bsky.embed.RecordViewRecordUnion
 import app.bsky.embed.RecordWithMediaViewMediaUnion
 import app.bsky.embed.VideoView
+import app.bsky.feed.FeedViewPost
 import app.bsky.feed.FeedViewPostReasonUnion
 import app.bsky.feed.Post
 import app.bsky.feed.PostView
@@ -14,7 +15,7 @@ import app.bsky.feed.PostViewEmbedUnion
 import app.bsky.richtext.Facet
 import app.bsky.richtext.FacetFeatureUnion
 import com.zhangke.framework.datetime.Instant
-import com.zhangke.fread.bluesky.internal.model.ProcessingBskyPost
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.author.BlogAuthor
@@ -23,6 +24,9 @@ import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaMeta
 import com.zhangke.fread.status.blog.BlogMediaType
+import com.zhangke.fread.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
@@ -49,13 +53,13 @@ class BlueskyStatusAdapter @Inject constructor(
     }
 
     fun convert(
-        processingBskyPost: ProcessingBskyPost,
+        feedViewPost: FeedViewPost,
         platform: BlogPlatform,
     ): Status {
-        val feedsReason = processingBskyPost.reason
+        val feedsReason = feedViewPost.reason
         val pinned = feedsReason is FeedViewPostReasonUnion.ReasonPin
         val blog = convertToBlog(
-            postView = processingBskyPost.postView,
+            postView = feedViewPost.post,
             platform = platform,
             pinned = pinned,
         )
@@ -69,6 +73,55 @@ class BlueskyStatusAdapter @Inject constructor(
             )
         }
         return Status.NewBlog(blog)
+    }
+
+    fun convertToUiState(
+        role: IdentityRole,
+        status: Status,
+        logged: Boolean,
+        isOwner: Boolean,
+    ): StatusUiState {
+        return StatusUiState(
+            status = status,
+            logged = logged,
+            isOwner = isOwner,
+            blogTranslationState = BlogTranslationUiState(support = false),
+            role = role,
+        )
+    }
+
+    fun convertToUiState(
+        role: IdentityRole,
+        postView: PostView,
+        platform: BlogPlatform,
+        loggedAccount: BlueskyLoggedAccount?,
+        pinned: Boolean = false,
+    ): StatusUiState {
+        val status = convert(postView, platform, pinned)
+        return convertToUiState(
+            role = role,
+            status = status,
+            logged = loggedAccount != null,
+            isOwner = loggedAccount != null && postView.author.did.did == loggedAccount.did,
+        )
+    }
+
+    fun convertToUiState(
+        role: IdentityRole,
+        feedViewPost: FeedViewPost,
+        platform: BlogPlatform,
+        loggedAccount: BlueskyLoggedAccount?,
+    ): StatusUiState {
+        val status = convert(
+            feedViewPost = feedViewPost,
+            platform = platform,
+        )
+        return convertToUiState(
+            role = role,
+            status = status,
+            logged = loggedAccount != null,
+            isOwner = loggedAccount != null && feedViewPost.post.author.did.did == loggedAccount.did,
+        )
     }
 
     private fun convertToBlog(

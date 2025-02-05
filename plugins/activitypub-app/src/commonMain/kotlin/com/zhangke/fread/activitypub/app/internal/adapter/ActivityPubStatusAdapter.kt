@@ -6,6 +6,7 @@ import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.author.BlogAuthor
@@ -36,14 +37,15 @@ class ActivityPubStatusAdapter @Inject constructor(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
         role: IdentityRole,
-        isOwner: Boolean,
-        logged: Boolean,
+        loggedAccount: ActivityPubLoggedAccount?,
     ): StatusUiState {
         val status = toStatus(entity, platform)
+        val isOwner =
+            loggedAccount?.webFinger?.equalsDomain(status.intrinsicBlog.author.webFinger) == true
         return StatusUiState(
             status = status,
             role = role,
-            logged = logged,
+            logged = loggedAccount != null,
             isOwner = isOwner,
             blogTranslationState = BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,

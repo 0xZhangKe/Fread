@@ -201,8 +201,6 @@ private fun createBlueskyHttpClient(
             this.onLoginRequest = onLoginRequest
         }
         install(AtProtoProxyPlugin)
-
         expectSuccess = false
-
     }
 }

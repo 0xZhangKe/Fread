@@ -5,6 +5,8 @@ import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.common.feeds.model.RefreshResult
@@ -15,9 +17,9 @@ import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.richtext.preParseRichText
-import com.zhangke.fread.status.status.model.Status
 
 class UserTimelineViewModel(
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
@@ -28,6 +30,7 @@ class UserTimelineViewModel(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val loggedAccountProvider: LoggedAccountProvider,
     val tabType: UserTimelineTabType,
     val role: IdentityRole,
     val webFinger: WebFinger,
@@ -62,11 +65,12 @@ class UserTimelineViewModel(
             }
     }
 
-    private suspend fun loadMoreDataFromServer(maxId: String): Result<List<Status>> {
+    private suspend fun loadMoreDataFromServer(maxId: String): Result<List<StatusUiState>> {
         return loadUserTimeline(maxId)
     }
 
-    private suspend fun loadUserTimeline(maxId: String? = null): Result<List<Status>> {
+    private suspend fun loadUserTimeline(maxId: String? = null): Result<List<StatusUiState>> {
+        val loggedAccount = loggedAccountProvider.getAccount(role)
         val accountIdResult =
             webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
         if (accountIdResult.isFailure) {
@@ -81,7 +85,9 @@ class UserTimelineViewModel(
             accountId = accountIdResult.getOrThrow(),
             maxId = maxId,
         ).map { data ->
-            data.filter { it.id != maxId }.map { item -> item.toUiState(platform) }
+            data.filter { it.id != maxId }.map { item ->
+                item.toUiState(loggedAccount, platform)
+            }
         }
     }
 
@@ -116,9 +122,17 @@ class UserTimelineViewModel(
         }
     }
 
-    private suspend fun ActivityPubStatusEntity.toUiState(platform: BlogPlatform): Status {
-        val status = statusAdapter.toStatus(this, platform)
-        status.preParseRichText()
+    private suspend fun ActivityPubStatusEntity.toUiState(
+        loggedAccount: ActivityPubLoggedAccount?,
+        platform: BlogPlatform,
+    ): StatusUiState {
+        val status = statusAdapter.toStatusUiState(
+            entity = this,
+            role = role,
+            platform = platform,
+            loggedAccount = loggedAccount,
+        )
+        status.status.preParseRichText()
         return status
     }
 }

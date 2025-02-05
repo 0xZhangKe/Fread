@@ -21,6 +21,7 @@ class BlueskyClientManager @Inject constructor(
 ) {
 
     private val cachedClient = mutableMapOf<IdentityRole, BlueskyClient>()
+    private val cachedAccount = mutableMapOf<IdentityRole, BlueskyLoggedAccount>()
 
     private val httpClientEngine by lazy {
         createHttpClientEngine()
@@ -36,6 +37,7 @@ class BlueskyClientManager @Inject constructor(
 
     fun clearCache() {
         cachedClient.clear()
+        cachedAccount.clear()
     }
 
     fun getClient(role: IdentityRole): BlueskyClient {
@@ -67,11 +69,16 @@ class BlueskyClientManager @Inject constructor(
     }
 
     private suspend fun getLoggedAccount(role: IdentityRole): BlueskyLoggedAccount? {
+        cachedAccount[role]?.let { return it }
         if (role.accountUri != null) {
-            loggedAccountRepo.queryByUri(role.accountUri.toString())?.let { return it }
+            loggedAccountRepo.queryByUri(role.accountUri.toString())?.let {
+                cachedAccount[role] = it
+                return it
+            }
         }
         if (role.baseUrl == null) return null
         return loggedAccountRepo.queryAll()
             .firstOrNull { it.platform.baseUrl.equalsDomain(role.baseUrl!!) }
+            ?.also { cachedAccount[role] = it }
     }
 }

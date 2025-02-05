@@ -13,7 +13,6 @@ import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.richtext.preParseRichText
-import com.zhangke.fread.status.status.model.Status
 
 class HomeFeedsViewModel(
     private val buildStatusUiState: BuildStatusUiStateUseCase,
@@ -65,7 +64,7 @@ class HomeFeedsViewModel(
         return loadFeeds()
     }
 
-    private suspend fun loadFeeds(cursor: String? = this.cursor): Result<List<Status>> {
+    private suspend fun loadFeeds(cursor: String? = this.cursor): Result<List<StatusUiState>> {
         return getFeedsStatus(role = role, feeds = feeds, cursor = cursor).map {
             this.cursor = if (it.cursor.isNullOrBlank()) FLAG_CURSOR_ENDING else it.cursor
             it.feeds.onEach { status -> status.preParseRichText() }

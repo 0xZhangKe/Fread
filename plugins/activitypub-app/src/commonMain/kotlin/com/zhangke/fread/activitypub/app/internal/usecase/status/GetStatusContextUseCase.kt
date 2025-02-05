@@ -5,6 +5,7 @@ import com.zhangke.activitypub.entities.ActivityPubStatusEntity
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -23,8 +24,6 @@ class GetStatusContextUseCase @Inject constructor(
         status: Status,
     ): Result<StatusContext> {
         val loggedAccount = loggedAccountProvider.getAccount(role)
-        val isOwner =
-            loggedAccount?.webFinger?.equalsDomain(status.intrinsicBlog.author.webFinger) == true
         return clientManager.getClient(role)
             .statusRepo
             .getStatusContext(status.id)
@@ -33,8 +32,7 @@ class GetStatusContextUseCase @Inject constructor(
                     entity = it,
                     platform = status.platform,
                     role = role,
-                    logged = loggedAccount != null,
-                    isOwner = isOwner,
+                    loggedAccount = loggedAccount,
                 )
             }
     }
@@ -43,22 +41,19 @@ class GetStatusContextUseCase @Inject constructor(
         entity: ActivityPubStatusContextEntity,
         platform: BlogPlatform,
         role: IdentityRole,
-        logged: Boolean,
-        isOwner: Boolean,
+        loggedAccount: ActivityPubLoggedAccount?,
     ): StatusContext {
         return StatusContext(
             ancestors = entity.ancestors.toStatusList(
                 role = role,
                 platform = platform,
-                logged = logged,
-                isOwner = isOwner,
+                loggedAccount = loggedAccount,
             ),
             status = null,
             descendants = entity.descendants.toStatusList(
                 role = role,
                 platform = platform,
-                logged = logged,
-                isOwner = isOwner,
+                loggedAccount = loggedAccount,
             ),
         )
     }
@@ -66,15 +61,13 @@ class GetStatusContextUseCase @Inject constructor(
     private suspend fun List<ActivityPubStatusEntity>.toStatusList(
         role: IdentityRole,
         platform: BlogPlatform,
-        logged: Boolean,
-        isOwner: Boolean,
+        loggedAccount: ActivityPubLoggedAccount?,
     ): List<StatusUiState> {
         return this.map { statusEntity ->
             statusAdapter.toStatusUiState(
                 entity = statusEntity,
                 platform = platform,
-                logged = logged,
-                isOwner = isOwner,
+                loggedAccount = loggedAccount,
                 role = role,
             )
         }

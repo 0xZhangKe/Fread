@@ -7,6 +7,7 @@ import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
@@ -21,7 +22,7 @@ class StatusResolver(
         role: IdentityRole,
         statusId: String,
         platform: BlogPlatform,
-    ): Result<Status> {
+    ): Result<StatusUiState> {
         return resolverList.mapFirst { it.getStatus(role, statusId, platform) }
     }
 
@@ -121,7 +122,7 @@ interface IStatusResolver {
         role: IdentityRole,
         statusId: String,
         platform: BlogPlatform,
-    ): Result<Status>?
+    ): Result<StatusUiState>?
 
     /**
      * @return null if un-support

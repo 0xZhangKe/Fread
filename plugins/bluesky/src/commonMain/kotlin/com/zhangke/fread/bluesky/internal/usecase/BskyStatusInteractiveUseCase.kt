@@ -13,8 +13,8 @@ import com.zhangke.fread.bluesky.internal.client.repostRecord
 import com.zhangke.fread.bluesky.internal.client.rkey
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.status.model.Status
-import com.zhangke.fread.status.status.model.StatusInteraction
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
@@ -30,7 +30,7 @@ class BskyStatusInteractiveUseCase @Inject constructor(
     suspend operator fun invoke(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction,
+        type: StatusActionType,
     ): Result<Status?> {
         val client = clientManager.getClient(role)
         val loggedAccount =
@@ -41,9 +41,9 @@ class BskyStatusInteractiveUseCase @Inject constructor(
             uri = AtUri(blog.url),
             cid = Cid(blog.id),
         )
-        when (interaction) {
-            is StatusInteraction.Like -> {
-                return if (interaction.liked) {
+        when (type) {
+            StatusActionType.LIKE -> {
+                return if (blog.like.liked == true) {
                     client.unlike(status, repo)
                 } else {
                     client.like(
@@ -54,8 +54,8 @@ class BskyStatusInteractiveUseCase @Inject constructor(
                 }
             }
 
-            is StatusInteraction.Forward -> {
-                return if (interaction.forwarded) {
+            StatusActionType.FORWARD -> {
+                return if (blog.forward.forward == true) {
                     client.unForward(status, repo)
                 } else {
                     client.forward(
@@ -66,7 +66,7 @@ class BskyStatusInteractiveUseCase @Inject constructor(
                 }
             }
 
-            is StatusInteraction.Delete -> {
+            StatusActionType.DELETE -> {
                 return client.deleteRecord(
                     repo = repo,
                     collection = BskyCollections.feedPost,
@@ -74,8 +74,8 @@ class BskyStatusInteractiveUseCase @Inject constructor(
                 ).map { null }
             }
 
-            is StatusInteraction.Pin -> {
-                val pinned = interaction.pinned
+            StatusActionType.PIN -> {
+                val pinned = blog.pinned
                 return updateProfileRecord(
                     client = client,
                     updater = { profile ->
@@ -91,15 +91,8 @@ class BskyStatusInteractiveUseCase @Inject constructor(
                         )
                     },
                 ).map {
-                    updateStatusInteraction(
+                    updateStatus(
                         status = status,
-                        updateInteraction = { action ->
-                            if (action is StatusInteraction.Pin) {
-                                action.copy(pinned = !pinned)
-                            } else {
-                                action
-                            }
-                        },
                         updateBlog = { blog ->
                             blog.copy(pinned = !pinned)
                         },
@@ -116,22 +109,21 @@ class BskyStatusInteractiveUseCase @Inject constructor(
         repo: Did,
         subject: StrongRef,
     ): Result<Status> {
-        val blog = status.intrinsicBlog
         return this.createRecord(
             collection = BskyCollections.feedLike,
             repo = repo,
             record = likeRecord(subject),
         ).map {
-            updateStatusInteraction(
+            updateStatus(
                 status = status,
-                updateInteraction = { action ->
-                    if (action is StatusInteraction.Like) {
-                        action.copy(liked = true, likeCount = action.likeCount + 1)
-                    } else {
-                        action
-                    }
+                updateBlog = { blog ->
+                    blog.copy(
+                        like = blog.like.copy(
+                            liked = true,
+                            likedCount = (blog.like.likedCount ?: 0L) + 1L,
+                        ),
+                    )
                 },
-                updateBlog = { blog.copy(liked = true, likeCount = (blog.likeCount ?: 1L) + 1L) },
             )
         }
     }
@@ -146,17 +138,15 @@ class BskyStatusInteractiveUseCase @Inject constructor(
             repo = repo,
             record = repostRecord(subject),
         ).map {
-            updateStatusInteraction(
+            updateStatus(
                 status = status,
-                updateInteraction = { action ->
-                    if (action is StatusInteraction.Forward) {
-                        action.copy(forwarded = true, forwardCount = action.forwardCount + 1)
-                    } else {
-                        action
-                    }
-                },
                 updateBlog = { blog ->
-                    blog.copy(forward = true, forwardCount = (blog.forwardCount ?: 1L) + 1L)
+                    blog.copy(
+                        forward = blog.forward.copy(
+                            forward = true,
+                            forwardCount = (blog.forward.forwardCount ?: 0L) + 1L,
+                        ),
+                    )
                 },
             )
         }
@@ -171,17 +161,15 @@ class BskyStatusInteractiveUseCase @Inject constructor(
             collection = BskyCollections.feedLike,
             rkey = status.rkey,
         ).map {
-            updateStatusInteraction(
+            updateStatus(
                 status = status,
-                updateInteraction = { action ->
-                    if (action is StatusInteraction.Like) {
-                        action.copy(liked = false, likeCount = action.likeCount - 1)
-                    } else {
-                        action
-                    }
-                },
                 updateBlog = { blog ->
-                    blog.copy(liked = false, likeCount = (blog.likeCount ?: 1L) - 1L)
+                    blog.copy(
+                        like = blog.like.copy(
+                            liked = false,
+                            likedCount = (blog.like.likedCount ?: 1L) - 1L,
+                        ),
+                    )
                 },
             )
         }
@@ -196,17 +184,15 @@ class BskyStatusInteractiveUseCase @Inject constructor(
             collection = BskyCollections.feedRepost,
             rkey = status.rkey,
         ).map {
-            updateStatusInteraction(
+            updateStatus(
                 status = status,
-                updateInteraction = { action ->
-                    if (action is StatusInteraction.Forward) {
-                        action.copy(forwarded = false, forwardCount = action.forwardCount - 1)
-                    } else {
-                        action
-                    }
-                },
                 updateBlog = { blog ->
-                    blog.copy(forward = false, likeCount = (blog.forwardCount ?: 1L) - 1L)
+                    blog.copy(
+                        forward = blog.forward.copy(
+                            forward = false,
+                            forwardCount = (blog.forward.forwardCount ?: 1L) - 1L,
+                        ),
+                    )
                 },
             )
         }
@@ -240,22 +226,19 @@ class BskyStatusInteractiveUseCase @Inject constructor(
         )
     }
 
-    private fun updateStatusInteraction(
+    private fun updateStatus(
         status: Status,
-        updateInteraction: (StatusInteraction) -> StatusInteraction,
         updateBlog: (Blog) -> Blog,
     ): Status {
         return when (status) {
             is Status.NewBlog -> {
                 status.copy(
-                    supportInteraction = status.supportInteraction.map(updateInteraction),
                     blog = updateBlog(status.blog),
                 )
             }
 
             is Status.Reblog -> {
                 status.copy(
-                    supportInteraction = status.supportInteraction.map(updateInteraction),
                     reblog = updateBlog(status.reblog),
                 )
             }

@@ -35,7 +35,7 @@ class StatusContentEntityAdapter @Inject constructor(
             sourceUri = sourceUri,
             statusIdOfPlatform = status.id,
             status = status,
-            createTimestamp = status.datetime,
+            createTimestamp = status.createAt.epochMillis,
         )
     }
 }

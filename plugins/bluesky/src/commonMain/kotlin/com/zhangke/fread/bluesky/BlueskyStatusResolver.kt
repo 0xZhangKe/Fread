@@ -10,6 +10,8 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
@@ -31,7 +33,7 @@ class BlueskyStatusResolver @Inject constructor(
         role: IdentityRole,
         statusId: String,
         platform: BlogPlatform
-    ): Result<Status>? {
+    ): Result<StatusUiState>? {
         TODO("Not yet implemented")
     }
 
@@ -48,10 +50,10 @@ class BlueskyStatusResolver @Inject constructor(
     override suspend fun interactive(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction
+        type: StatusActionType,
     ): Result<Status?>? {
         if (status.platform.protocol.notBluesky) return null
-        return statusInteractive(role, status, interaction)
+        return statusInteractive(role, status, type)
     }
 
     override suspend fun votePoll(
@@ -86,7 +88,7 @@ class BlueskyStatusResolver @Inject constructor(
         role: IdentityRole,
         limit: Int,
         maxId: String?
-    ): Result<List<Status>>? {
+    ): Result<List<StatusUiState>>? {
         TODO("Not yet implemented")
     }
 

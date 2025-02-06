@@ -5,6 +5,7 @@ import com.zhangke.fread.rss.internal.repo.RssStatusRepo
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -83,7 +84,7 @@ class RssStatusResolver @Inject constructor(
 
     override suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
         return null

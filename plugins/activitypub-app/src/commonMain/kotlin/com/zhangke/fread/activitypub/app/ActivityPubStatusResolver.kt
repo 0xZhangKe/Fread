@@ -15,6 +15,7 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.GetUserStatusUs
 import com.zhangke.fread.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
@@ -96,11 +97,11 @@ class ActivityPubStatusResolver @Inject constructor(
 
     override suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
-        if (status.notThisPlatform()) return null
-        return votePollUseCase(role, status, votedOption)
+        if (blog.platform.protocol.notActivityPub) return null
+        return votePollUseCase(role, blog, votedOption)
     }
 
     override suspend fun getStatusContext(

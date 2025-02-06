@@ -41,7 +41,7 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_notification_tab_title_all
 import com.zhangke.fread.activitypub.app.activity_pub_notification_tab_title_mention
 import com.zhangke.fread.activitypub.app.internal.ApNotificationElements
-import com.zhangke.fread.activitypub.app.internal.composable.notifications.StatusNotificationUi
+import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
 import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab

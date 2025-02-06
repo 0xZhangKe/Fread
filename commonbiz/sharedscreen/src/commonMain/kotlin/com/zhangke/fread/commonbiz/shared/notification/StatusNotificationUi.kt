@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -8,8 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.BlogDivider
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
@@ -18,14 +17,14 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 @Composable
 fun StatusNotificationUi(
     modifier: Modifier,
-    notification: NotificationUiState,
+    notification: StatusNotification,
     indexInList: Int,
     style: NotificationStyle = defaultNotificationStyle(),
-    onRejectClick: (NotificationUiState) -> Unit,
-    onAcceptClick: (NotificationUiState) -> Unit,
+    onRejectClick: (StatusNotification) -> Unit,
+    onAcceptClick: (StatusNotification) -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    if (notification.type == StatusNotificationType.MENTION) {
+    if (notification is StatusNotification.Mention) {
         Box(modifier = modifier) {
             MentionNotification(
                 notification = notification,
@@ -39,7 +38,7 @@ fun StatusNotificationUi(
     Column(modifier = modifier) {
         Box(modifier = Modifier.padding(style.containerPaddings)) {
             when (notification.type) {
-                StatusNotificationType.FAVOURITE -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.FAVOURITE -> {
                     FavouriteNotification(
                         notification = notification,
                         indexInList = indexInList,
@@ -48,7 +47,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                StatusNotificationType.REBLOG -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.REBLOG -> {
                     ReblogNotification(
                         notification = notification,
                         indexInList = indexInList,
@@ -57,7 +56,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                StatusNotificationType.POLL -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.POLL -> {
                     PollNotification(
                         notification = notification,
                         indexInList = indexInList,
@@ -66,7 +65,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                StatusNotificationType.FOLLOW -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.FOLLOW -> {
                     FollowNotification(
                         notification = notification,
                         style = style,
@@ -76,7 +75,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                StatusNotificationType.UPDATE -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.UPDATE -> {
                     UpdateNotification(
                         notification = notification,
                         indexInList = indexInList,
@@ -85,7 +84,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                StatusNotificationType.FOLLOW_REQUEST -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.FOLLOW_REQUEST -> {
                     FollowRequestNotification(
                         notification = notification,
                         style = style,
@@ -97,7 +96,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                StatusNotificationType.STATUS -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.STATUS -> {
                     NewStatusNotification(
                         notification = notification,
                         indexInList = indexInList,
@@ -106,7 +105,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                StatusNotificationType.SEVERED_RELATIONSHIPS -> {
+                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.SEVERED_RELATIONSHIPS -> {
                     SeveredRelationshipsNotification(
                         notification = notification,
                         style = style,

@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -22,20 +22,21 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_notification_follow_request
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_follow_request
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FollowRequestNotification(
-    notification: NotificationUiState,
+    notification: StatusNotification.FollowRequest,
     style: NotificationStyle,
     onUserInfoClick: (BlogAuthor) -> Unit,
-    onRejectClick: (NotificationUiState) -> Unit,
-    onAcceptClick: (NotificationUiState) -> Unit,
+    onRejectClick: (StatusNotification.FollowRequest) -> Unit,
+    onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         NotificationHeadLine(
@@ -45,7 +46,7 @@ fun FollowRequestNotification(
             icon = Icons.Default.PersonAddAlt1,
             avatar = null,
             accountName = null,
-            interactionDesc = stringResource(Res.string.activity_pub_notification_follow_request),
+            interactionDesc = stringResource(Res.string.shared_notification_follow_request),
             style = style,
         )
 
@@ -57,16 +58,15 @@ fun FollowRequestNotification(
             BlogAuthorAvatar(
                 modifier = Modifier
                     .size(style.statusStyle.infoLineStyle.avatarSize),
-                imageUrl = notification.account.avatar,
+                imageUrl = notification.author.avatar,
             )
 
             Column(
                 modifier = Modifier.weight(1F).padding(start = 6.dp, end = 6.dp),
             ) {
-                Text(
+                FreadRichText(
                     modifier = Modifier,
-                    textAlign = TextAlign.Left,
-                    text = notification.account.displayName.take(style.nameMaxLength),
+                    richText = notification.author.humanizedName,
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
@@ -74,12 +74,11 @@ fun FollowRequestNotification(
                 Text(
                     modifier = Modifier.padding(top = 2.dp),
                     textAlign = TextAlign.Left,
-                    text = notification.account.acct,
+                    text = notification.author.webFinger.toString(),
                     maxLines = 1,
                     overflow = TextOverflow.Ellipsis,
                 )
             }
-
 
             SimpleIconButton(
                 modifier = Modifier

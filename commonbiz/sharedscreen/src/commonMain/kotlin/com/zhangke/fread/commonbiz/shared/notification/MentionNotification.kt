@@ -1,15 +1,16 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
+import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 
 @Composable
 fun MentionNotification(
-    notification: NotificationUiState,
+    notification: StatusNotification,
     indexInList: Int,
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -29,7 +30,7 @@ fun MentionNotification(
             },
         statusUiState = status,
         indexInList = indexInList,
-        style = style,
+        style = style.statusStyle,
         composedStatusInteraction = composedStatusInteraction,
     )
 }

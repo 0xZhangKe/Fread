@@ -14,4 +14,16 @@
     <string name="profile_description">Fread supports adding multiple accounts. The added accounts can be used to post, like, forward, comment, etc. You can also view the list created by the added accounts.</string>
 
     <string name="list_content_empty_placeholder">No content available</string>
+    <string name="shared_notification_unknown_desc">Unknown Notification</string>
+
+    <string name="shared_notification_favourited_desc">favourited your post</string>
+    <string name="shared_notification_reblog_desc">reblog your post</string>
+    <string name="shared_notification_poll_desc">View previous voting results</string>
+    <string name="shared_notification_poll_count">%1$s votes · Closed</string>
+    <string name="shared_notification_follow_desc">followed you</string>
+    <string name="shared_notification_update_desc">edited a post</string>
+    <string name="shared_notification_follow_request">You have received a follow request</string>
+    <string name="shared_notification_new_status_desc">post a new blog</string>
+    <string name="shared_notification_severed_desc">has severed ties with you</string>
+
 </resources>

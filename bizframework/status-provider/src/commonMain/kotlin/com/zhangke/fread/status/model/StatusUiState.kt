@@ -21,7 +21,12 @@ data class BlogTranslationUiState(
     val translating: Boolean = false,
     val showingTranslation: Boolean = false,
     val blogTranslation: BlogTranslation? = null,
-) : PlatformSerializable
+) : PlatformSerializable {
+
+    companion object {
+        val DEFAULT = BlogTranslationUiState(support = false)
+    }
+}
 
 fun List<StatusUiState>.updateStatus(
     status: StatusUiState,

@@ -22,6 +22,7 @@ interface ComposedStatusInteraction {
     fun onMentionClick(role: IdentityRole, mention: Mention)
     fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol)
     fun onStatusClick(status: StatusUiState)
+    fun onBlogClick(role: IdentityRole, blog: Blog)
     fun onBlockClick(role: IdentityRole, blog: Blog)
     fun onFollowClick(role: IdentityRole, target: BlogAuthor)
     fun onUnfollowClick(role: IdentityRole, target: BlogAuthor)

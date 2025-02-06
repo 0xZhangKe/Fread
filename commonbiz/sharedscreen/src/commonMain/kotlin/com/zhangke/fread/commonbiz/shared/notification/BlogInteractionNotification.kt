@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -14,17 +14,20 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.commonbiz.shared.composable.OnlyBlogContentUi
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 
 /**
- * 关于博客的通知UI。
+ * 关于你自己发布的博客的通知UI。
  * 例如你发布的帖子被别人点赞、转发、收藏等。
  */
 @Composable
 fun BlogInteractionNotification(
-    statusUiState: StatusUiState,
+    blog: Blog,
+    role: IdentityRole,
     author: BlogAuthor,
     icon: ImageVector,
     interactionDesc: String,
@@ -37,13 +40,11 @@ fun BlogInteractionNotification(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                composedStatusInteraction.onStatusClick(statusUiState)
-            }
+            .clickable { composedStatusInteraction.onBlogClick(role, blog) },
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
-                composedStatusInteraction.onUserInfoClick(statusUiState.role, author)
+                composedStatusInteraction.onUserInfoClick(role, author)
             },
             icon = icon,
             avatar = author.avatar,
@@ -57,26 +58,25 @@ fun BlogInteractionNotification(
                 .padding(top = style.headLineToContentPadding)
                 .statusBorder()
                 .padding(style.internalBlogPadding),
-            statusUiState = statusUiState,
+            blog = blog,
+            isOwner = true,
             indexInList = indexInList,
-            style = style,
-            onVoted = {
-                composedStatusInteraction.onVoted(statusUiState, it)
-            },
+            style = style.statusStyle,
+            onVoted = {},
             onHashtagInStatusClick = {
-                composedStatusInteraction.onHashtagInStatusClick(statusUiState.role, it)
+                composedStatusInteraction.onHashtagInStatusClick(role, it)
             },
             onMentionClick = {
-                composedStatusInteraction.onMentionClick(statusUiState.role, it)
+                composedStatusInteraction.onMentionClick(role, it)
             },
             onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, statusUiState.role)
+                browserLauncher.launchWebTabInApp(it, role)
             },
             onMentionDidClick = {
                 composedStatusInteraction.onMentionClick(
-                    role = statusUiState.role,
+                    role = role,
                     did = it,
-                    protocol = statusUiState.status.platform.protocol,
+                    protocol = blog.platform.protocol,
                 )
             },
         )

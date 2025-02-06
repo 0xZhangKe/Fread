@@ -33,10 +33,10 @@ import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
@@ -62,10 +62,10 @@ fun BlogContent(
     modifier: Modifier,
     blog: Blog,
     isOwner: Boolean,
-    blogTranslationState: BlogTranslationUiState,
     style: StatusStyle,
     indexOfFeeds: Int,
     onMediaClick: OnBlogMediaClick,
+    blogTranslationState: BlogTranslationUiState = BlogTranslationUiState.DEFAULT,
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onBoostedClick: ((String) -> Unit)? = null,

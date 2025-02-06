@@ -111,6 +111,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.Like(
                     id = entity.id,
                     author = author,
+                    role = role,
                     blog = status!!.status.intrinsicBlog,
                     createAt = createAt,
                     unread = unread,
@@ -130,6 +131,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.Follow(
                     id = entity.id,
                     author = author,
+                    role = role,
                     createAt = createAt,
                     unread = unread,
                 )
@@ -139,6 +141,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.Repost(
                     id = entity.id,
                     author = author,
+                    role = role,
                     createAt = createAt,
                     blog = status!!.status.intrinsicBlog,
                     unread = unread,
@@ -156,6 +159,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.FollowRequest(
                     id = entity.id,
                     createAt = createAt,
+                    role = role,
                     author = author,
                     unread = unread,
                 )
@@ -165,6 +169,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.Poll(
                     id = entity.id,
                     createAt = createAt,
+                    role = role,
                     unread = unread,
                     blog = status!!.status.intrinsicBlog,
                 )
@@ -183,6 +188,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 StatusNotification.SeveredRelationships(
                     id = entity.id,
                     createAt = createAt,
+                    role = role,
                     unread = unread,
                     reason = entity.relationshipSeveranceEvent?.targetName.ifNullOrEmpty { "Unknown" },
                 )
@@ -192,6 +198,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                 id = entity.id,
                 createAt = createAt,
                 unread = unread,
+                role = role,
                 message = "Unknown notification type: ${entity.type}",
             )
         }

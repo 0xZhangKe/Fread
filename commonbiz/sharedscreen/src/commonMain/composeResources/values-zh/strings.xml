@@ -13,4 +13,16 @@
     <string name="profile_description">Fread 支持添加多个账号，添加进来的账号可以用来发帖、点赞、转发、评论等操作，还可以查看已添加账号创建的列表。</string>
 
     <string name="list_content_empty_placeholder">暂无内容</string>
+    <string name="shared_notification_unknown_desc">未知通知</string>
+
+    <string name="shared_notification_favourited_desc">喜欢了你的动态</string>
+    <string name="shared_notification_reblog_desc">转发了你的动态</string>
+    <string name="shared_notification_poll_desc">查看投票结果</string>
+    <string name="shared_notification_poll_count">%1$s 票 · 已结束</string>
+    <string name="shared_notification_follow_desc">关注了你</string>
+    <string name="shared_notification_update_desc">编辑了一条博客</string>
+    <string name="shared_notification_follow_request">你收到一条关注请求</string>
+    <string name="shared_notification_new_status_desc">发布了新博客</string>
+    <string name="shared_notification_severed_desc">和你中断了关系</string>
+
 </resources>

@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -8,12 +8,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
+import com.zhangke.fread.status.model.StatusUiState
 
 @Composable
 fun NotificationWithWholeStatus(
-    notification: NotificationUiState,
+    notification: StatusUiState,
     indexInList: Int,
     icon: ImageVector,
     interactionDesc: String,

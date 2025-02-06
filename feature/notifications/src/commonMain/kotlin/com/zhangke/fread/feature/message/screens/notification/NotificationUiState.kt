@@ -11,14 +11,14 @@ data class NotificationUiState(
     val account: LoggedAccount,
     val onlyMentions: Boolean,
     override val initializing: Boolean,
-    override val dataList: List<StatusNotificationUiState>,
+    override val dataList: List<StatusNotification>,
     override val refreshing: Boolean,
     override val loadMoreState: LoadState,
     override val errorMessage: TextString?,
-) : LoadableUiState<StatusNotificationUiState, NotificationUiState> {
+) : LoadableUiState<StatusNotification, NotificationUiState> {
 
     override fun copyObject(
-        dataList: List<StatusNotificationUiState>,
+        dataList: List<StatusNotification>,
         initializing: Boolean,
         refreshing: Boolean,
         loadMoreState: LoadState,
@@ -50,8 +50,3 @@ data class NotificationUiState(
         }
     }
 }
-
-data class StatusNotificationUiState(
-    val notification: StatusNotification,
-    val status: StatusUiState? = null,
-)

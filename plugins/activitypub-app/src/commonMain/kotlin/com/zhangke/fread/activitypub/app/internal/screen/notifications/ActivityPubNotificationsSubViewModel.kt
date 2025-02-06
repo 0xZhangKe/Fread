@@ -6,7 +6,6 @@ import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
@@ -16,7 +15,6 @@ import com.zhangke.fread.activitypub.app.internal.model.UserUriInsights
 import com.zhangke.fread.activitypub.app.internal.repo.NotificationsRepo
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.common.status.usecase.FormatStatusDisplayTimeUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
@@ -25,6 +23,7 @@ import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import kotlinx.coroutines.flow.update
 import kotlinx.datetime.Instant
 
@@ -139,7 +138,6 @@ class ActivityPubNotificationsSubViewModel(
             ?.id ?: return
         if (firstNotificationId == reportedNotificationId) return
         reportedNotificationId = firstNotificationId
-        Log.i("F_TEST") { "report notification read: $firstNotificationId" }
         launchInViewModel {
             clientManager.getClient(role)
                 .markerRepo

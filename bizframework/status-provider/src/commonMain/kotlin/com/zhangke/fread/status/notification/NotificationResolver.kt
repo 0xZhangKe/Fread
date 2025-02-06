@@ -9,8 +9,8 @@ class NotificationResolver(
     suspend fun getNotifications(
         account: LoggedAccount,
         type: INotificationResolver.NotificationRequestType,
-        cursor: String?
-    ): Result<Pair<String?, List<StatusNotification>>> = resolverList.firstNotNullOf {
+        cursor: String?,
+    ): Result<PagedStatusNotification> = resolverList.firstNotNullOf {
         it.getNotifications(account, type, cursor)
     }
 }
@@ -26,5 +26,5 @@ interface INotificationResolver {
         account: LoggedAccount,
         type: NotificationRequestType = NotificationRequestType.ALL,
         cursor: String? = null,
-    ): Result<Pair<String?, List<StatusNotification>>>?
+    ): Result<PagedStatusNotification>?
 }

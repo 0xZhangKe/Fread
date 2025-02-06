@@ -4,7 +4,6 @@ import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
@@ -13,6 +12,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.feature.message.repo.notification.NotificationsRepo
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.StatusNotification
 import kotlinx.coroutines.flow.update
@@ -71,7 +71,31 @@ class NotificationViewModel(
         )
     }
 
-    private suspend fun getDataFromServer(): Result<List<StatusNotificationUiState>> {
+    fun switchTab(onlyMentions: Boolean) {
+        _uiState.update { it.copy(onlyMentions = onlyMentions) }
+        cursor = null
+        loadableController.initData(
+            getDataFromServer = ::getDataFromServer,
+            getDataFromLocal = ::getDataFromLocal,
+        )
+    }
+
+    fun onRefresh() {
+        loadableController.onRefresh(false) {
+            getDataFromServer(null)
+        }
+    }
+
+    fun onLoadMore() {
+        loadableController.onLoadMore {
+            getDataFromServer(loadMore = true)
+        }
+    }
+
+    private suspend fun getDataFromServer(
+        cursor: String? = this.cursor,
+        loadMore: Boolean = false,
+    ): Result<List<StatusNotification>> {
         return statusProvider.notificationResolver.getNotifications(
             account = account,
             type = if (uiState.value.onlyMentions) {
@@ -81,17 +105,18 @@ class NotificationViewModel(
             },
             cursor = cursor,
         ).map {
-            cursor = it.first
-            it.second.map { notification ->
-                StatusNotificationUiState(
-                    notification = notification,
-                    status = buildStatusUiState(notification.status)
-                )
+            this.cursor = it.cursor
+            it.notifications
+        }.onSuccess {
+            if (loadMore || uiState.value.onlyMentions) {
+                notificationsRepo.insertNotification(account.uri, it)
+            } else {
+                notificationsRepo.replaceNotifications(account.uri, it)
             }
         }
     }
 
-    private suspend fun getDataFromLocal(): List<StatusNotificationUiState> {
+    private suspend fun getDataFromLocal(): List<StatusNotification> {
         return notificationsRepo.getNotifications(account.uri)
             .filter {
                 if (uiState.value.onlyMentions) {
@@ -103,29 +128,49 @@ class NotificationViewModel(
     }
 
     private suspend fun updateStatus(newStatus: StatusUiState) {
+        var updatedNotification: StatusNotification? = null
         _uiState.update { current ->
             current.copy(
                 dataList = current.dataList.map { notification ->
-                    if (notification)
-                    if (it.status?.status?.intrinsicBlog?.id == newStatus.status.intrinsicBlog.id) {
-                        it.copy(status = newStatus)
-                    } else {
-                        it
+                    when (notification) {
+                        is StatusNotification.Mention -> {
+                            if (notification.status.status.id == newStatus.status.id) {
+                                notification.copy(status = newStatus)
+                                    .also { updatedNotification = it }
+                            } else {
+                                notification
+                            }
+                        }
+
+                        is StatusNotification.Quote -> {
+                            if (notification.quote.status.id == newStatus.status.id) {
+                                notification.copy(quote = newStatus)
+                                    .also { updatedNotification = it }
+                            } else {
+                                notification
+                            }
+                        }
+
+                        is StatusNotification.Reply -> {
+                            if (notification.reply.status.id == newStatus.status.id) {
+                                notification.copy(reply = newStatus)
+                                    .also { updatedNotification = it }
+                            } else {
+                                notification
+                            }
+                        }
+
+                        else -> notification
                     }
                 }
             )
         }
 
-        notificationsRepo.updateNotificationStatus(
-            accountOwnershipUri = userUriInsights.uri,
-            status = newStatus.status
-        )
-    }
-
-    private fun StatusNotification.toUiState(): StatusNotificationUiState{
-        return StatusNotificationUiState(
-            notification = this,
-            status = null,
-        )
+        if (updatedNotification != null) {
+            notificationsRepo.updateNotification(
+                accountUri = account.uri,
+                notification = updatedNotification!!,
+            )
+        }
     }
 }

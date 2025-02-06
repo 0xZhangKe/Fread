@@ -43,6 +43,7 @@ data class CompletedBskyNotification(
             val post: Post,
             val cid: String,
             val uri: String,
+            val isOwner: Boolean,
         ) : Record
 
         data class Quote(
@@ -50,12 +51,14 @@ data class CompletedBskyNotification(
             val cid: String,
             val uri: String,
             val post: PostView,
+            val isOwner: Boolean,
         ) : Record
 
         data class Reply(
             val reply: Post,
             val cid: String,
             val uri: String,
+            val isOwner: Boolean,
         ) : Record
 
         data class OnlyMessage(

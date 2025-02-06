@@ -7,7 +7,7 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.notification.INotificationResolver
-import com.zhangke.fread.status.notification.StatusNotification
+import com.zhangke.fread.status.notification.PagedStatusNotification
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyNotificationResolver @Inject constructor(
@@ -19,7 +19,8 @@ class BlueskyNotificationResolver @Inject constructor(
         account: LoggedAccount,
         type: INotificationResolver.NotificationRequestType,
         cursor: String?,
-    ): Result<Pair<String?, List<StatusNotification>>>? {
+        loadedCount: Int,
+    ): Result<PagedStatusNotification>? {
         if (account.platform.protocol.notBluesky) return null
         val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
         return getCompletedNotification(
@@ -33,9 +34,12 @@ class BlueskyNotificationResolver @Inject constructor(
                 cursor = cursor,
             ),
         ).map { paged ->
-            paged.cursor to paged.notifications.map {
-                notificationAdapter.convert(it, account.platform)
-            }
+            PagedStatusNotification(
+                cursor = paged.cursor,
+                notifications = paged.notifications.map {
+                    notificationAdapter.convert(it, role, account.platform)
+                },
+            )
         }
     }
 }

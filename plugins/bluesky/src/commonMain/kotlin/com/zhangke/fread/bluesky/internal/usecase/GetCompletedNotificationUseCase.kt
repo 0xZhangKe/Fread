@@ -9,6 +9,7 @@ import app.bsky.notification.ListNotificationsNotification
 import app.bsky.notification.ListNotificationsQueryParams
 import app.bsky.notification.ListNotificationsReason
 import com.zhangke.framework.datetime.Instant
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.client.BlueskyClient
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.CompletedBskyNotification
@@ -27,6 +28,7 @@ class GetCompletedNotificationUseCase @Inject constructor(
         params: ListNotificationsQueryParams,
     ): Result<PagedCompletedBskyNotifications> {
         val client = clientManager.getClient(role)
+        val loggedAccount = client.loggedAccountProvider()
         val notificationSerializedCache = mutableMapOf<ListNotificationsNotification, Any>()
         return client.listNotificationsCatching(params)
             .mapCatching { notification ->
@@ -37,11 +39,10 @@ class GetCompletedNotificationUseCase @Inject constructor(
                 } else {
                     null
                 }
-                notification.notifications.map { it.convert(postList, notificationSerializedCache) }
                 PagedCompletedBskyNotifications(
                     cursor = notification.cursor,
                     notifications = notification.notifications.map {
-                        it.convert(postList, notificationSerializedCache)
+                        it.convert(postList, notificationSerializedCache, loggedAccount)
                     },
                     priority = notification.priority,
                     seenAt = notification.seenAt?.let { Instant(it) },
@@ -52,7 +53,9 @@ class GetCompletedNotificationUseCase @Inject constructor(
     private fun ListNotificationsNotification.convert(
         posList: List<PostView>?,
         serializedCache: MutableMap<ListNotificationsNotification, Any>,
+        loggedAccount: BlueskyLoggedAccount?,
     ): CompletedBskyNotification {
+        val isOwner = loggedAccount?.did == author.did.did
         val record: CompletedBskyNotification.Record = when (reason) {
             ListNotificationsReason.Like -> {
                 val like: Like = (serializedCache[this] as? Like) ?: record.bskyJson()
@@ -82,6 +85,7 @@ class GetCompletedNotificationUseCase @Inject constructor(
                     post = this.record.bskyJson(),
                     cid = this.cid.cid,
                     uri = this.uri.atUri,
+                    isOwner = isOwner,
                 )
             }
 
@@ -90,6 +94,7 @@ class GetCompletedNotificationUseCase @Inject constructor(
                     reply = this.record.bskyJson(),
                     cid = this.cid.cid,
                     uri = this.uri.atUri,
+                    isOwner = isOwner,
                 )
             }
 
@@ -99,6 +104,7 @@ class GetCompletedNotificationUseCase @Inject constructor(
                     cid = this.cid.cid,
                     uri = this.uri.atUri,
                     post = posList!!.first { it.uri == this.reasonSubject!! },
+                    isOwner = isOwner,
                 )
             }
 

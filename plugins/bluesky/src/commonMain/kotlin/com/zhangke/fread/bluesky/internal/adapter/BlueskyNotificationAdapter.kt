@@ -2,8 +2,10 @@ package com.zhangke.fread.bluesky.internal.adapter
 
 import com.zhangke.fread.bluesky.internal.model.CompletedBskyNotification
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyNotificationAdapter @Inject constructor(
@@ -13,12 +15,14 @@ class BlueskyNotificationAdapter @Inject constructor(
 
     fun convert(
         notification: CompletedBskyNotification,
+        role: IdentityRole,
         platform: BlogPlatform,
     ): StatusNotification {
-        return notification.convert(platform)
+        return notification.convert(role, platform)
     }
 
     private fun CompletedBskyNotification.convert(
+        role: IdentityRole,
         blogPlatform: BlogPlatform,
     ): StatusNotification {
         val author = accountAdapter.convertToBlogAuthor(this.author)
@@ -27,13 +31,13 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Like(
                     id = this.cid,
                     author = author,
+                    unread = !this.isRead,
                     blog = statusAdapter.convertToBlog(
                         post = this.record.post.record.bskyJson(),
                         id = this.record.post.cid.cid,
                         url = this.record.post.uri.atUri,
                         platform = blogPlatform,
                         author = author,
-                        isSelfStatus = true,
                     ),
                     createAt = this.record.createAt,
                 )
@@ -43,6 +47,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Follow(
                     id = this.cid,
                     author = author,
+                    unread = !this.isRead,
                     createAt = this.record.createAt,
                 )
             }
@@ -51,13 +56,20 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Mention(
                     author = author,
                     id = this.cid,
-                    blog = statusAdapter.convertToBlog(
-                        post = this.record.post,
-                        id = this.record.cid,
-                        url = this.record.uri,
-                        platform = blogPlatform,
-                        author = author,
-                        isSelfStatus = false,
+                    unread = !this.isRead,
+                    status = statusAdapter.convertToUiState(
+                        role = role,
+                        status = Status.NewBlog(
+                            statusAdapter.convertToBlog(
+                                post = this.record.post,
+                                id = this.record.cid,
+                                url = this.record.uri,
+                                platform = blogPlatform,
+                                author = author,
+                            )
+                        ),
+                        logged = true,
+                        isOwner = this.record.isOwner,
                     ),
                 )
             }
@@ -66,13 +78,20 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Reply(
                     id = this.cid,
                     author = author,
-                    reply = statusAdapter.convertToBlog(
-                        post = this.record.reply,
-                        id = this.record.cid,
-                        url = this.record.uri,
-                        platform = blogPlatform,
-                        author = author,
-                        isSelfStatus = false,
+                    unread = !this.isRead,
+                    reply = statusAdapter.convertToUiState(
+                        role = role,
+                        status = Status.NewBlog(
+                            statusAdapter.convertToBlog(
+                                post = this.record.reply,
+                                id = this.record.cid,
+                                url = this.record.uri,
+                                platform = blogPlatform,
+                                author = author,
+                            )
+                        ),
+                        logged = false,
+                        isOwner = this.record.isOwner,
                     ),
                 )
             }
@@ -80,22 +99,21 @@ class BlueskyNotificationAdapter @Inject constructor(
             is CompletedBskyNotification.Record.Quote -> {
                 StatusNotification.Quote(
                     id = this.cid,
+                    unread = !this.isRead,
                     author = author,
-                    quote = statusAdapter.convertToBlog(
-                        post = this.record.quote,
-                        id = this.record.cid,
-                        url = this.record.uri,
-                        platform = blogPlatform,
-                        author = author,
-                        isSelfStatus = false,
-                    ),
-                    blog = statusAdapter.convertToBlog(
-                        post = this.record.post.record.bskyJson(),
-                        id = this.record.post.cid.cid,
-                        url = this.record.post.uri.atUri,
-                        platform = blogPlatform,
-                        author = author,
-                        isSelfStatus = true,
+                    quote = statusAdapter.convertToUiState(
+                        role = role,
+                        status = Status.NewBlog(
+                            statusAdapter.convertToBlog(
+                                post = this.record.quote,
+                                id = this.record.cid,
+                                url = this.record.uri,
+                                platform = blogPlatform,
+                                author = author,
+                            )
+                        ),
+                        logged = false,
+                        isOwner = this.record.isOwner,
                     ),
                 )
             }
@@ -104,13 +122,13 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Repost(
                     id = this.cid,
                     author = author,
+                    unread = !this.isRead,
                     blog = statusAdapter.convertToBlog(
                         post = this.record.post.record.bskyJson(),
                         id = this.record.post.cid.cid,
                         url = this.record.post.uri.atUri,
                         platform = blogPlatform,
                         author = author,
-                        isSelfStatus = true,
                     ),
                     createAt = this.record.createAt,
                 )
@@ -119,6 +137,7 @@ class BlueskyNotificationAdapter @Inject constructor(
             is CompletedBskyNotification.Record.OnlyMessage -> {
                 StatusNotification.Unknown(
                     id = this.cid,
+                    unread = !this.isRead,
                     message = this.record.message,
                     createAt = this.record.createAt,
                 )

@@ -1,18 +1,18 @@
 package com.zhangke.fread.rss
 
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.notification.INotificationResolver
-import com.zhangke.fread.status.notification.StatusNotification
-import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.uri.FormalUri
+import com.zhangke.fread.status.notification.PagedStatusNotification
 import me.tatarka.inject.annotations.Inject
 
-class RssNotificationResolver @Inject constructor(): INotificationResolver {
+class RssNotificationResolver @Inject constructor() : INotificationResolver {
 
     override suspend fun getNotifications(
-        platform: BlogPlatform,
+        account: LoggedAccount,
         type: INotificationResolver.NotificationRequestType,
-        cursor: String?
-    ): Result<Pair<String?, List<StatusNotification>>>? {
+        cursor: String?,
+        loadedCount: Int,
+    ): Result<PagedStatusNotification>? {
         return null
     }
 }

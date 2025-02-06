@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -8,14 +8,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_notification_unknown_desc
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_unknown_desc
+import com.zhangke.fread.status.notification.StatusNotification
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun UnknownNotification(
-    notification: NotificationUiState,
+    notification: StatusNotification.Unknown,
 ) {
     Column(
         modifier = Modifier
@@ -26,13 +26,13 @@ fun UnknownNotification(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = stringResource(Res.string.activity_pub_notification_unknown_desc),
+            text = stringResource(Res.string.shared_notification_unknown_desc),
         )
         Text(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp),
-            text = "${notification.type.name} from ${notification.account.displayName}",
+            text = notification.message,
         )
     }
 }

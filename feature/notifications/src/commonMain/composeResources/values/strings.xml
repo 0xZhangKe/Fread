@@ -3,4 +3,6 @@
 
     <string name="notification_tab_title">Notifications</string>
     <string name="notifications_account_empty_tip">No logged-in account currently</string>
+    <string name="notifications_tab_all">All</string>
+    <string name="notifications_tab_mention">Mentions</string>
 </resources>

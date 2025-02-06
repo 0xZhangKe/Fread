@@ -2,6 +2,7 @@ package com.zhangke.fread.status.status
 
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
@@ -70,10 +71,10 @@ class StatusResolver(
 
     suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status> {
-        return resolverList.mapFirst { it.votePoll(role, status, votedOption) }
+        return resolverList.mapFirst { it.votePoll(role, blog, votedOption) }
     }
 
     suspend fun getStatusContext(role: IdentityRole, status: Status): Result<StatusContext> {
@@ -143,7 +144,7 @@ interface IStatusResolver {
 
     suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status>?
 

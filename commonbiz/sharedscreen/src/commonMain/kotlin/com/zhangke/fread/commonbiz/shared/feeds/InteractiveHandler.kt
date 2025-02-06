@@ -9,7 +9,6 @@ import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
@@ -25,6 +24,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -85,6 +85,10 @@ class InteractiveHandler(
 
         override fun onStatusClick(status: StatusUiState) {
             this@InteractiveHandler.onStatusClick(status)
+        }
+
+        override fun onBlogClick(role: IdentityRole, blog: Blog) {
+            this@InteractiveHandler.onBlogClick(role, blog)
         }
 
         override fun onBlockClick(role: IdentityRole, blog: Blog) {
@@ -209,7 +213,7 @@ class InteractiveHandler(
     override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {
         coroutineScope.launch {
             val result = statusProvider.statusResolver
-                .votePoll(status.role, status.status, votedOption)
+                .votePoll(status.role, status.status.intrinsicBlog, votedOption)
                 .map { buildStatusUiState(status, it) }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())

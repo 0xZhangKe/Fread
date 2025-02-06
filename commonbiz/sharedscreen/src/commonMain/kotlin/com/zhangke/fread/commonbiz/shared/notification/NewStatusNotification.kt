@@ -1,17 +1,17 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.runtime.Composable
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_notification_new_status_desc
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun NewStatusNotification(
-    notification: NotificationUiState,
+    notification: StatusUiState,
     indexInList: Int,
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -20,7 +20,7 @@ fun NewStatusNotification(
         notification = notification,
         indexInList = indexInList,
         icon = Icons.Default.NotificationsNone,
-        interactionDesc = stringResource(Res.string.activity_pub_notification_new_status_desc),
+        interactionDesc = stringResource(Res.string.shared_notification_new_status_desc),
         style = style,
         composedStatusInteraction = composedStatusInteraction,
     )

@@ -6,6 +6,7 @@ import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.usecase.BskyStatusInteractiveUseCase
 import com.zhangke.fread.bluesky.internal.usecase.GetStatusContextUseCase
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
@@ -58,7 +59,7 @@ class BlueskyStatusResolver @Inject constructor(
 
     override suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
         TODO("Not yet implemented")

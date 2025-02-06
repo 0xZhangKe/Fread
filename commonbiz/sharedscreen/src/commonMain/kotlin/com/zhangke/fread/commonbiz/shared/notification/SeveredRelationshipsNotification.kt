@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -12,15 +12,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_notification_severed_desc
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_severed_desc
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.model.StatusUiState
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SeveredRelationshipsNotification(
-    notification: NotificationUiState,
+    notification: StatusUiState,
     style: NotificationStyle,
     onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
@@ -36,7 +36,7 @@ fun SeveredRelationshipsNotification(
             icon = Icons.Default.WarningAmber,
             avatar = notification.account.avatar,
             accountName = notification.account.displayName,
-            interactionDesc = stringResource(Res.string.activity_pub_notification_severed_desc),
+            interactionDesc = stringResource(Res.string.shared_notification_severed_desc),
             style = style,
         )
 

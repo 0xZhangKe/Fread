@@ -21,10 +21,10 @@ import org.jetbrains.compose.resources.stringResource
 fun BlogTranslateLabel(
     modifier: Modifier,
     style: StatusStyle,
-    blogTranslationState: BlogTranslationUiState,
+    blogTranslationState: BlogTranslationUiState?,
     onShowOriginalClick: () -> Unit,
 ) {
-    if (!blogTranslationState.support) return
+    if (blogTranslationState == null || !blogTranslationState.support) return
     if (!blogTranslationState.translating && !blogTranslationState.showingTranslation) return
     Row(
         modifier = modifier

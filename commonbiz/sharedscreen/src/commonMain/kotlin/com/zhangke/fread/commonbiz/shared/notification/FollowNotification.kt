@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Row
@@ -14,16 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_notification_follow_desc
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_follow_desc
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun FollowNotification(
-    notification: NotificationUiState,
+    notification: StatusNotification.Follow,
     style: NotificationStyle,
     onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
@@ -47,19 +48,19 @@ fun FollowNotification(
             modifier = Modifier
                 .padding(start = 6.dp)
                 .size(style.triggerAccountAvatarSize),
-            imageUrl = notification.account.avatar,
+            imageUrl = notification.author.avatar,
         )
 
-        Text(
+        FreadRichText(
             modifier = Modifier.padding(start = 6.dp),
-            text = notification.account.displayName.take(style.nameMaxLength),
+            richText = notification.author.humanizedName,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
 
         Text(
             modifier = Modifier.padding(start = 6.dp),
-            text = stringResource(Res.string.activity_pub_notification_follow_desc),
+            text = stringResource(Res.string.shared_notification_follow_desc),
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

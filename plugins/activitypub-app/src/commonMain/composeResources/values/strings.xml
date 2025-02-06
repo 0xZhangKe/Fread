@@ -75,19 +75,6 @@
     <string name="activity_pub_content_tab_public_timeline">Public</string>
     <string name="activity_pub_content_tab_trending">Trending</string>
 
-    <string name="activity_pub_notification_tab_title_all">All</string>
-    <string name="activity_pub_notification_tab_title_mention">Mention</string>
-    <string name="activity_pub_notification_favourited_desc">favourited your post</string>
-    <string name="activity_pub_notification_reblog_desc">reblog your post</string>
-    <string name="activity_pub_notification_unknown_desc">Unknown Notification</string>
-    <string name="activity_pub_notification_poll_desc">View previous voting results</string>
-    <string name="activity_pub_notification_poll_count">%1$s votes · Closed</string>
-    <string name="activity_pub_notification_follow_desc">followed you</string>
-    <string name="activity_pub_notification_update_desc">edited a post</string>
-    <string name="activity_pub_notification_follow_request">You have received a follow request</string>
-    <string name="activity_pub_notification_new_status_desc">post a new blog</string>
-    <string name="activity_pub_notification_severed_desc">has severed ties with you</string>
-
     <string name="activity_pub_hashtag_timeline_description">%1$s posts · %2$s participants · %3$s post today</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">Are you sure you want to unfollow this hashtag?</string>
 

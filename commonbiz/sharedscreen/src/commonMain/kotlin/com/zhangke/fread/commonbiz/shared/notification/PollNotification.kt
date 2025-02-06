@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable.notifications
+package com.zhangke.fread.commonbiz.shared.notification
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
@@ -8,16 +8,17 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Poll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_notification_poll_desc
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.NotificationUiState
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.commonbiz.shared.composable.OnlyBlogContentUi
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.status.model.StatusUiState
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PollNotification(
-    notification: NotificationUiState,
+    notification: StatusUiState,
     indexInList: Int,
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -42,7 +43,7 @@ fun PollNotification(
             icon = Icons.Default.Poll,
             avatar = null,
             accountName = null,
-            interactionDesc = stringResource(Res.string.activity_pub_notification_poll_desc),
+            interactionDesc = stringResource(Res.string.shared_notification_poll_desc),
             style = style,
         )
         OnlyBlogContentUi(

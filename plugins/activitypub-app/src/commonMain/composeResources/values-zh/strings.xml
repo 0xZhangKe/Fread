@@ -74,19 +74,6 @@
     <string name="activity_pub_content_tab_public_timeline">跨站</string>
     <string name="activity_pub_content_tab_trending">趋势</string>
 
-    <string name="activity_pub_notification_tab_title_all">所有</string>
-    <string name="activity_pub_notification_tab_title_mention">提及</string>
-    <string name="activity_pub_notification_favourited_desc">喜欢了你的动态</string>
-    <string name="activity_pub_notification_reblog_desc">转发了你的动态</string>
-    <string name="activity_pub_notification_unknown_desc">未知通知</string>
-    <string name="activity_pub_notification_poll_desc">查看投票结果</string>
-    <string name="activity_pub_notification_poll_count">%1$s 票 · 已结束</string>
-    <string name="activity_pub_notification_follow_desc">关注了你</string>
-    <string name="activity_pub_notification_update_desc">编辑了一条博客</string>
-    <string name="activity_pub_notification_follow_request">你收到一条关注请求</string>
-    <string name="activity_pub_notification_new_status_desc">发布了新博客</string>
-    <string name="activity_pub_notification_severed_desc">和你中断了关系</string>
-
     <string name="activity_pub_hashtag_timeline_description">%1$s 条帖子 · %2$s 参与 · %3$s 条今日帖子</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
 

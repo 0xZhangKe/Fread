@@ -30,6 +30,7 @@ class BlueskyNotificationAdapter @Inject constructor(
             is CompletedBskyNotification.Record.Like -> {
                 StatusNotification.Like(
                     id = this.cid,
+                    role = role,
                     author = author,
                     unread = !this.isRead,
                     blog = statusAdapter.convertToBlog(
@@ -47,6 +48,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Follow(
                     id = this.cid,
                     author = author,
+                    role = role,
                     unread = !this.isRead,
                     createAt = this.record.createAt,
                 )
@@ -122,6 +124,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                 StatusNotification.Repost(
                     id = this.cid,
                     author = author,
+                    role = role,
                     unread = !this.isRead,
                     blog = statusAdapter.convertToBlog(
                         post = this.record.post.record.bskyJson(),
@@ -137,6 +140,7 @@ class BlueskyNotificationAdapter @Inject constructor(
             is CompletedBskyNotification.Record.OnlyMessage -> {
                 StatusNotification.Unknown(
                     id = this.cid,
+                    role = role,
                     unread = !this.isRead,
                     message = this.record.message,
                     createAt = this.record.createAt,

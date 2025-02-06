@@ -71,8 +71,8 @@ class NotificationViewModel(
         )
     }
 
-    fun switchTab(onlyMentions: Boolean) {
-        _uiState.update { it.copy(onlyMentions = onlyMentions) }
+    fun onSwitchTab(onlyMentions: Boolean) {
+        _uiState.update { it.copy(inOnlyMentionTab = onlyMentions) }
         cursor = null
         loadableController.initData(
             getDataFromServer = ::getDataFromServer,
@@ -92,13 +92,28 @@ class NotificationViewModel(
         }
     }
 
+    fun onNotificationShown(notification: StatusNotificationUiState) {
+        if (!notification.unreadState) return
+        _uiState.update { state ->
+            state.copy(
+                dataList = state.dataList.map {
+                    if (it.id == notification.id) {
+                        it.copy(unreadState = false)
+                    } else {
+                        it
+                    }
+                }
+            )
+        }
+    }
+
     private suspend fun getDataFromServer(
         cursor: String? = this.cursor,
         loadMore: Boolean = false,
-    ): Result<List<StatusNotification>> {
+    ): Result<List<StatusNotificationUiState>> {
         return statusProvider.notificationResolver.getNotifications(
             account = account,
-            type = if (uiState.value.onlyMentions) {
+            type = if (uiState.value.inOnlyMentionTab) {
                 INotificationResolver.NotificationRequestType.MENTION
             } else {
                 INotificationResolver.NotificationRequestType.ALL
@@ -106,25 +121,26 @@ class NotificationViewModel(
             cursor = cursor,
         ).map {
             this.cursor = it.cursor
-            it.notifications
+            it.notifications.map { n -> StatusNotificationUiState(n) }
         }.onSuccess {
-            if (loadMore || uiState.value.onlyMentions) {
-                notificationsRepo.insertNotification(account.uri, it)
+            if (loadMore || uiState.value.inOnlyMentionTab) {
+                notificationsRepo.insertNotification(account.uri, it.map { n -> n.notification })
             } else {
-                notificationsRepo.replaceNotifications(account.uri, it)
+                notificationsRepo.replaceNotifications(account.uri, it.map { n -> n.notification })
             }
         }
     }
 
-    private suspend fun getDataFromLocal(): List<StatusNotification> {
+    private suspend fun getDataFromLocal(): List<StatusNotificationUiState> {
         return notificationsRepo.getNotifications(account.uri)
             .filter {
-                if (uiState.value.onlyMentions) {
+                if (uiState.value.inOnlyMentionTab) {
                     it is StatusNotification.Mention || it is StatusNotification.Quote || it is StatusNotification.Reply
                 } else {
                     true
                 }
             }.sortedByDescending { it.createAt.epochMillis }
+            .map { StatusNotificationUiState(it) }
     }
 
     private suspend fun updateStatus(newStatus: StatusUiState) {
@@ -132,36 +148,10 @@ class NotificationViewModel(
         _uiState.update { current ->
             current.copy(
                 dataList = current.dataList.map { notification ->
-                    when (notification) {
-                        is StatusNotification.Mention -> {
-                            if (notification.status.status.id == newStatus.status.id) {
-                                notification.copy(status = newStatus)
-                                    .also { updatedNotification = it }
-                            } else {
-                                notification
-                            }
-                        }
-
-                        is StatusNotification.Quote -> {
-                            if (notification.quote.status.id == newStatus.status.id) {
-                                notification.copy(quote = newStatus)
-                                    .also { updatedNotification = it }
-                            } else {
-                                notification
-                            }
-                        }
-
-                        is StatusNotification.Reply -> {
-                            if (notification.reply.status.id == newStatus.status.id) {
-                                notification.copy(reply = newStatus)
-                                    .also { updatedNotification = it }
-                            } else {
-                                notification
-                            }
-                        }
-
-                        else -> notification
-                    }
+                    notification.updateStatus(newStatus)?.let {
+                        updatedNotification = it.notification
+                        it
+                    } ?: notification
                 }
             )
         }
@@ -169,7 +159,7 @@ class NotificationViewModel(
         if (updatedNotification != null) {
             notificationsRepo.updateNotification(
                 accountUri = account.uri,
-                notification = updatedNotification!!,
+                notification = updatedNotification,
             )
         }
     }

@@ -170,6 +170,7 @@ sealed interface StatusNotification {
         override val id: String,
         override val createAt: Instant,
         override val role: IdentityRole,
+        val author: BlogAuthor,
         val reason: String,
         override val unread: Boolean,
     ) : StatusNotification {

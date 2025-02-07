@@ -32,6 +32,7 @@ import app.bsky.graph.GetListsQueryParams
 import app.bsky.graph.GetListsResponse
 import app.bsky.notification.ListNotificationsQueryParams
 import app.bsky.notification.ListNotificationsResponse
+import app.bsky.notification.UpdateSeenRequest
 import app.bsky.unspecced.GetPopularFeedGeneratorsQueryParams
 import app.bsky.unspecced.GetPopularFeedGeneratorsResponse
 import com.atproto.repo.CreateRecordRequest
@@ -154,7 +155,7 @@ class BlueskyClient(
         return runCatching { getPostThread(params) }.toResult()
     }
 
-    suspend fun getPostsCatching(params: GetPostsQueryParams): Result<GetPostsResponse>{
+    suspend fun getPostsCatching(params: GetPostsQueryParams): Result<GetPostsResponse> {
         return runCatching { getPosts(params) }.toResult()
     }
 
@@ -168,6 +169,10 @@ class BlueskyClient(
 
     suspend fun listNotificationsCatching(params: ListNotificationsQueryParams): Result<ListNotificationsResponse> {
         return runCatching { listNotifications(params) }.toResult()
+    }
+
+    suspend fun updateSeenCatching(request: UpdateSeenRequest): Result<Unit> {
+        return runCatching { updateSeen(request) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

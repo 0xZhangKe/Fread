@@ -8,41 +8,34 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.unit.dp
-import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.ui.ComposedStatusInteraction
 
 @Composable
 fun NotificationWithWholeStatus(
-    notification: StatusUiState,
+    status: StatusUiState,
+    author: BlogAuthor,
     indexInList: Int,
     icon: ImageVector,
     interactionDesc: String,
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    val status = notification.status
-    if (status == null) {
-        UnknownNotification(
-            notification = notification,
-        )
-        return
-    }
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                composedStatusInteraction.onStatusClick(status)
-            }
+            .clickable { composedStatusInteraction.onStatusClick(status) }
             .padding(vertical = 8.dp)
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
-                composedStatusInteraction.onUserInfoClick(notification.role, notification.author)
+                composedStatusInteraction.onUserInfoClick(status.role, author)
             },
             icon = icon,
-            avatar = notification.account.avatar,
-            accountName = notification.account.displayName,
+            avatar = author.avatar,
+            accountName = author.humanizedName,
             interactionDesc = interactionDesc,
             style = style,
         )
@@ -54,7 +47,7 @@ fun NotificationWithWholeStatus(
                 .padding(style.internalBlogPadding),
             statusUiState = status,
             indexInList = indexInList,
-            style = style,
+            style = style.statusStyle,
             showDivider = false,
             composedStatusInteraction = composedStatusInteraction,
         )

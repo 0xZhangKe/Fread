@@ -54,6 +54,7 @@ data class NotificationUiState(
 data class StatusNotificationUiState(
     val notification: StatusNotification,
     val unreadState: Boolean = notification.unread,
+    val fromLocal: Boolean,
 ) {
 
     val id: String get() = notification.id

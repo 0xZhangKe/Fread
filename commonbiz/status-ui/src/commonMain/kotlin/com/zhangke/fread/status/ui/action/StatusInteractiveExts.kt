@@ -42,7 +42,7 @@ internal fun forwardIcon(): ImageVector {
 }
 
 @Composable
-internal fun replyIcon(): ImageVector {
+fun replyIcon(): ImageVector {
     return vectorResource(Res.drawable.ic_status_comment)
 }
 

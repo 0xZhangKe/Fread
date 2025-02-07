@@ -1,5 +1,6 @@
 package com.zhangke.fread.feature.message.screens.notification
 
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.controller.LoadableController
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
@@ -45,6 +46,7 @@ class NotificationViewModel(
 
     val uiState = loadableController.uiState
 
+    private var reportedNotificationId: String? = null
     private var cursor: String? = null
 
     init {
@@ -80,8 +82,8 @@ class NotificationViewModel(
         )
     }
 
-    fun onRefresh() {
-        loadableController.onRefresh(false) {
+    fun onRefresh(hideRefreshing: Boolean = false) {
+        loadableController.onRefresh(hideRefreshing) {
             getDataFromServer(null)
         }
     }
@@ -107,6 +109,41 @@ class NotificationViewModel(
         }
     }
 
+    fun onPageResume() {
+        val firstNotificationId = uiState.value
+            .dataList
+            .firstOrNull()
+            ?.takeIf { !it.fromLocal }
+            ?.id ?: return
+        if (firstNotificationId == reportedNotificationId) return
+        reportedNotificationId = firstNotificationId
+        launchInViewModel {
+            statusProvider.notificationResolver
+                .updateUnreadNotification(
+                    account = account,
+                    notificationLastReadId = firstNotificationId
+                )
+        }
+    }
+
+    fun onRejectClick(notification: StatusNotification.FollowRequest) {
+        launchInViewModel {
+            statusProvider.notificationResolver
+                .rejectFollowRequest(account, notification.author)
+                .onSuccess { onRefresh(true) }
+                .onFailure { mutableErrorMessageFlow.emitTextMessageFromThrowable(it) }
+        }
+    }
+
+    fun onAcceptClick(notification: StatusNotification.FollowRequest) {
+        launchInViewModel {
+            statusProvider.notificationResolver
+                .acceptFollowRequest(account, notification.author)
+                .onSuccess { onRefresh(true) }
+                .onFailure { mutableErrorMessageFlow.emitTextMessageFromThrowable(it) }
+        }
+    }
+
     private suspend fun getDataFromServer(
         cursor: String? = this.cursor,
         loadMore: Boolean = false,
@@ -121,7 +158,7 @@ class NotificationViewModel(
             cursor = cursor,
         ).map {
             this.cursor = it.cursor
-            it.notifications.map { n -> StatusNotificationUiState(n) }
+            it.notifications.map { n -> StatusNotificationUiState(n, fromLocal = false) }
         }.onSuccess {
             if (loadMore || uiState.value.inOnlyMentionTab) {
                 notificationsRepo.insertNotification(account.uri, it.map { n -> n.notification })
@@ -140,7 +177,7 @@ class NotificationViewModel(
                     true
                 }
             }.sortedByDescending { it.createAt.epochMillis }
-            .map { StatusNotificationUiState(it) }
+            .map { StatusNotificationUiState(it, fromLocal = true) }
     }
 
     private suspend fun updateStatus(newStatus: StatusUiState) {
@@ -159,7 +196,7 @@ class NotificationViewModel(
         if (updatedNotification != null) {
             notificationsRepo.updateNotification(
                 accountUri = account.uri,
-                notification = updatedNotification,
+                notification = updatedNotification!!,
             )
         }
     }

@@ -11,31 +11,28 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_severed_desc
 import com.zhangke.fread.status.author.BlogAuthor
-import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.notification.StatusNotification
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun SeveredRelationshipsNotification(
-    notification: StatusUiState,
+    notification: StatusNotification.SeveredRelationships,
     style: NotificationStyle,
     onUserInfoClick: (BlogAuthor) -> Unit,
 ) {
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable {
-                onUserInfoClick(notification.author)
-            },
+            .clickable { onUserInfoClick(notification.author) },
     ) {
         NotificationHeadLine(
             modifier = Modifier,
             icon = Icons.Default.WarningAmber,
-            avatar = notification.account.avatar,
-            accountName = notification.account.displayName,
+            avatar = notification.author.avatar,
+            accountName = notification.author.humanizedName,
             interactionDesc = stringResource(Res.string.shared_notification_severed_desc),
             style = style,
         )
@@ -44,7 +41,7 @@ fun SeveredRelationshipsNotification(
             modifier = Modifier
                 .padding(top = style.headLineToContentPadding)
                 .align(Alignment.CenterHorizontally),
-            text = notification.relationshipSeveranceEvent?.targetName.ifNullOrEmpty { "Unknown!" },
+            text = notification.reason,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )

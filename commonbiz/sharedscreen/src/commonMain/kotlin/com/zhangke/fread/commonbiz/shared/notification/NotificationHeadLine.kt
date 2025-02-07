@@ -14,14 +14,16 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import com.zhangke.fread.status.ui.richtext.FreadRichText
 
 @Composable
 fun NotificationHeadLine(
     modifier: Modifier,
     icon: ImageVector,
     avatar: String?,
-    accountName: String?,
+    accountName: RichText?,
     interactionDesc: String,
     style: NotificationStyle,
     iconTint: Color = LocalContentColor.current,
@@ -46,10 +48,10 @@ fun NotificationHeadLine(
             )
         }
 
-        if (!accountName.isNullOrEmpty()) {
-            Text(
+        if (accountName != null) {
+            FreadRichText(
                 modifier = Modifier.padding(start = 6.dp),
-                text = accountName.take(style.nameMaxLength),
+                richText = accountName,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )

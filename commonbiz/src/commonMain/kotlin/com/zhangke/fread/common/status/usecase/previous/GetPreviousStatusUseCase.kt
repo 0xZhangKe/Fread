@@ -16,7 +16,6 @@ class GetPreviousStatusUseCase @Inject constructor(
 
     suspend operator fun invoke(
         sourceUriList: List<FormalUri>,
-        limit: Int,
         maxStatus: StatusContentEntity,
     ): Result<List<Status>> {
         val maxCreateTime = maxStatus.createTimestamp
@@ -25,7 +24,6 @@ class GetPreviousStatusUseCase @Inject constructor(
                 async {
                     getSingleSourcePreviousStatus(
                         sourceUri = sourceUri,
-                        limit = limit,
                         maxCreateTime = maxCreateTime,
                     )
                 }
@@ -43,7 +41,6 @@ class GetPreviousStatusUseCase @Inject constructor(
             .flatMap { it.getOrNull() ?: emptyList() }
             .filter { it.id != maxStatus.id }
             .sortedByDescending { it.createTimestamp }
-            .take(limit)
             .map(statusContentEntityAdapter::toStatus)
             .toList()
         return Result.success(statusList)

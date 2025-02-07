@@ -30,16 +30,12 @@ class StatusResolver(
     suspend fun getStatusList(
         role: IdentityRole,
         uri: FormalUri,
-        limit: Int,
-        minId: String? = null,
         maxId: String? = null,
     ): Result<List<StatusUiState>> {
         for (statusResolver in resolverList) {
             val result = statusResolver.getStatusList(
                 role = role,
                 uri = uri,
-                limit = limit,
-                minId = minId,
                 maxId = maxId,
             )
             if (result != null) return result
@@ -131,8 +127,6 @@ interface IStatusResolver {
     suspend fun getStatusList(
         role: IdentityRole,
         uri: FormalUri,
-        limit: Int,
-        minId: String?,
         maxId: String?
     ): Result<List<StatusUiState>>?
 

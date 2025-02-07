@@ -111,7 +111,6 @@ class MixedContentSubViewModel(
         if (mixedContent == null) return Result.failure(Exception("mixedContent is null"))
         return feedsRepo.refresh(
             sourceUriList = mixedContent!!.sourceUriList,
-            limit = config.loadFromServerLimit,
         )
     }
 
@@ -119,7 +118,6 @@ class MixedContentSubViewModel(
         if (mixedContent == null) return Result.failure(Exception("mixedContent is null"))
         return feedsRepo.getStatus(
             sourceUriList = mixedContent!!.sourceUriList,
-            limit = config.loadFromServerLimit,
             maxId = maxId,
         )
     }

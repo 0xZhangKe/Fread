@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.MultiChoiceSegmentedButtonRow
@@ -37,19 +36,20 @@ import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
-import com.zhangke.fread.activitypub.app.internal.composable.notifications.StatusNotificationUi
 import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.fread.commonbiz.shared.notification.StatusNotificationUi
 import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.notifications_tab_all
 import com.zhangke.fread.feature.notifications.notifications_tab_mention
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import kotlinx.coroutines.delay
 import org.jetbrains.compose.resources.stringResource
 
 class NotificationTab(
-    val loggedAccount: LoggedAccount,
+    private val loggedAccount: LoggedAccount,
 ) : BasePagerTab() {
 
     override val options: PagerTabOptions?
@@ -72,19 +72,22 @@ class NotificationTab(
             onLoadMore = viewModel::onLoadMore,
             composedStatusInteraction = viewModel.composedStatusInteraction,
             nestedScrollConnection = nestedScrollConnection,
+            onAcceptClick = viewModel::onAcceptClick,
+            onRejectClick = viewModel::onRejectClick,
+            onNotificationShown = viewModel::onNotificationShown,
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
         ConsumeFlow(viewModel.openScreenFlow) {
             navigator.push(it)
         }
-//        if (uiState.dataList.isNotEmpty()) {
-//            val first = uiState.dataList.first()
-//            LaunchedEffect(first.id, first.fromLocal) {
-//                // 停留1秒表示已读
-//                delay(1000)
-//                viewModel.onPageResume()
-//            }
-//        }
+        if (uiState.dataList.isNotEmpty()) {
+            val first = uiState.dataList.first()
+            LaunchedEffect(first.id, first.fromLocal) {
+                // 停留1秒表示已读
+                delay(1000)
+                viewModel.onPageResume()
+            }
+        }
     }
 
     @Composable
@@ -95,8 +98,8 @@ class NotificationTab(
         onSwitchTab: (Boolean) -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
-        onRejectClick: (StatusNotificationUiState) -> Unit,
-        onAcceptClick: (StatusNotificationUiState) -> Unit,
+        onRejectClick: (StatusNotification.FollowRequest) -> Unit,
+        onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
         onNotificationShown: (StatusNotificationUiState) -> Unit,
     ) {
         Column(
@@ -139,7 +142,7 @@ class NotificationTab(
                         StatusNotificationUi(
                             modifier = Modifier.fillMaxWidth()
                                 .background(backgroundColor),
-                            notification = notification,
+                            notification = notification.notification,
                             composedStatusInteraction = composedStatusInteraction,
                             indexInList = index,
                             onAcceptClick = onAcceptClick,
@@ -157,7 +160,6 @@ class NotificationTab(
         }
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun NotificationTabTitle(
         uiState: NotificationUiState,

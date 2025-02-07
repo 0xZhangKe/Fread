@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.notification.INotificationResolver
@@ -189,6 +190,7 @@ class ActivityPubNotificationResolver @Inject constructor(
                     id = entity.id,
                     createAt = createAt,
                     role = role,
+                    author = author,
                     unread = unread,
                     reason = entity.relationshipSeveranceEvent?.targetName.ifNullOrEmpty { "Unknown" },
                 )
@@ -202,5 +204,43 @@ class ActivityPubNotificationResolver @Inject constructor(
                 message = "Unknown notification type: ${entity.type}",
             )
         }
+    }
+
+    override suspend fun rejectFollowRequest(
+        account: LoggedAccount,
+        requestAuthor: BlogAuthor
+    ): Result<Unit>? {
+        if (account.platform.protocol.notActivityPub) return null
+        val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
+        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return clientManager.getClient(role)
+            .accountRepo
+            .rejectFollowRequest(activityPubAccount.userId)
+            .map { }
+    }
+
+    override suspend fun acceptFollowRequest(
+        account: LoggedAccount,
+        requestAuthor: BlogAuthor
+    ): Result<Unit>? {
+        if (account.platform.protocol.notActivityPub) return null
+        val activityPubAccount = account as? ActivityPubLoggedAccount ?: return null
+        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return clientManager.getClient(role)
+            .accountRepo
+            .authorizeFollowRequest(activityPubAccount.userId)
+            .map { }
+    }
+
+    override suspend fun updateUnreadNotification(
+        account: LoggedAccount,
+        notificationLastReadId: String
+    ): Result<Unit>? {
+        if (account.platform.protocol.notActivityPub) return null
+        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return clientManager.getClient(role)
+            .markerRepo
+            .saveMarkers(notificationLastReadId = notificationLastReadId)
+            .map { }
     }
 }

@@ -25,5 +25,6 @@
     <string name="shared_notification_follow_request">You have received a follow request</string>
     <string name="shared_notification_new_status_desc">post a new blog</string>
     <string name="shared_notification_severed_desc">has severed ties with you</string>
+    <string name="shared_notification_quote_desc">quoted your post</string>
 
 </resources>

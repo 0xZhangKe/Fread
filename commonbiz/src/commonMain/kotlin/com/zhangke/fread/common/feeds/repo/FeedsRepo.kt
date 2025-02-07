@@ -54,7 +54,6 @@ class FeedsRepo @Inject constructor(
 
     suspend fun getStatus(
         sourceUriList: List<FormalUri>,
-        limit: Int,
         maxId: String,
     ): Result<List<Status>> {
         val maxStatus = statusContentRepo.queryByPlatformId(maxId)
@@ -63,16 +62,14 @@ class FeedsRepo @Inject constructor(
         }
         return getPreviousStatus(
             sourceUriList = sourceUriList,
-            limit = limit,
             maxStatus = maxStatus,
         ).map { list -> list.distinctBy { it.id } }
     }
 
     suspend fun refresh(
         sourceUriList: List<FormalUri>,
-        limit: Int,
     ): Result<RefreshResult> {
-        return refreshStatus(sourceUriList, limit)
+        return refreshStatus(sourceUriList)
     }
 
     suspend fun updateStatus(status: Status) {

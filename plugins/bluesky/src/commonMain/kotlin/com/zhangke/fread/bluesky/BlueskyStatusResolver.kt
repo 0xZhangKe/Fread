@@ -41,10 +41,8 @@ class BlueskyStatusResolver @Inject constructor(
     override suspend fun getStatusList(
         role: IdentityRole,
         uri: FormalUri,
-        limit: Int,
-        minId: String?,
-        maxId: String?
-    ): Result<List<Status>>? {
+        maxId: String?,
+    ): Result<List<StatusUiState>>? {
         TODO("Not yet implemented")
     }
 

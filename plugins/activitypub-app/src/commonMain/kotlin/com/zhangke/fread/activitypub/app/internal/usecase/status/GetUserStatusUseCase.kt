@@ -8,7 +8,6 @@ import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdR
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
-import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
 
 class GetUserStatusUseCase @Inject constructor(
@@ -22,8 +21,6 @@ class GetUserStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         role: IdentityRole,
         userInsights: UserUriInsights,
-        limit: Int,
-        minId: String?,
         maxId: String?,
     ): Result<List<StatusUiState>> {
         val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsights.webFinger, role)
@@ -36,8 +33,7 @@ class GetUserStatusUseCase @Inject constructor(
         return clientManager.getClient(role)
             .accountRepo.getStatuses(
                 id = userId,
-                limit = limit,
-                minId = minId,
+                limit = 100,
                 maxId = maxId,
             ).map { list ->
                 list.map {

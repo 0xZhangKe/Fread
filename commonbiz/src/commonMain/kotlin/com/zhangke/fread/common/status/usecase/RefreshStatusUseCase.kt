@@ -24,11 +24,10 @@ class RefreshStatusUseCase @Inject constructor(
 
     suspend operator fun invoke(
         sourceUriList: List<FormalUri>,
-        limit: Int,
     ): Result<RefreshResult> {
         if (sourceUriList.isEmpty()) return Result.success(RefreshResult(emptyList(), emptyList()))
         val resultList = sourceUriList.map {
-            getStatus(it, limit)
+            getStatus(it)
         }
         if (resultList.all { it.isFailure }) {
             return Result.failure(resultList.first().exceptionOrNull()!!)
@@ -49,10 +48,9 @@ class RefreshStatusUseCase @Inject constructor(
 
     private suspend fun getStatus(
         sourceUri: FormalUri,
-        limit: Int,
     ): Result<RefreshResult> {
         val role = IdentityRole(sourceUri, null)
-        val entitiesResult = fetchStatus(role, sourceUri, limit)
+        val entitiesResult = fetchStatus(role, sourceUri)
         if (entitiesResult.isFailure) {
             return Result.failure(entitiesResult.exceptionOrNull()!!)
         }
@@ -92,13 +90,11 @@ class RefreshStatusUseCase @Inject constructor(
     private suspend fun fetchStatus(
         role: IdentityRole,
         sourceUri: FormalUri,
-        limit: Int,
     ): Result<List<StatusContentEntity>> {
         return statusProvider.statusResolver
             .getStatusList(
                 role = role,
                 uri = sourceUri,
-                limit = limit,
             ).map { list ->
                 list.map {
                     statusContentEntityAdapter.toEntity(sourceUri, it.status, false)

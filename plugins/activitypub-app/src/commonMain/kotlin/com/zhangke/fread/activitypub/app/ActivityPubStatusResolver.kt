@@ -69,8 +69,6 @@ class ActivityPubStatusResolver @Inject constructor(
     override suspend fun getStatusList(
         role: IdentityRole,
         uri: FormalUri,
-        limit: Int,
-        minId: String?,
         maxId: String?,
     ): Result<List<StatusUiState>>? {
         val userInsights = userUriTransformer.parse(uri)
@@ -78,8 +76,6 @@ class ActivityPubStatusResolver @Inject constructor(
             return getUserStatus(
                 role = role,
                 userInsights = userInsights,
-                limit = limit,
-                minId = minId,
                 maxId = maxId,
             )
         }

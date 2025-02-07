@@ -37,33 +37,18 @@ class RssStatusResolver @Inject constructor(
     override suspend fun getStatusList(
         role: IdentityRole,
         uri: FormalUri,
-        limit: Int,
-        minId: String?,
         maxId: String?,
     ): Result<List<StatusUiState>>? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri)
             ?: return Result.failure(IllegalArgumentException("Unknown uri: $uri"))
+        if (maxId.isNullOrEmpty().not()) return Result.success(emptyList())
         val fetchResult = rssStatusRepo.getStatus(uriInsight)
             .map { it.sortedByDescending { status -> status.createAt.epochMillis } }
         if (fetchResult.isFailure) {
             return Result.failure(fetchResult.exceptionOrThrow())
         }
-        var finalReturnItems = fetchResult.getOrThrow()
-        if (finalReturnItems.isEmpty()) return Result.success(emptyList())
-        if (!minId.isNullOrEmpty()) {
-            val sinceIndex = finalReturnItems.indexOfFirst { it.id == minId }
-            if (sinceIndex >= 0) {
-                finalReturnItems = finalReturnItems.subList(0, sinceIndex)
-            }
-        }
-        if (!maxId.isNullOrEmpty()) {
-            val maxIndex = finalReturnItems.indexOfFirst { it.id == maxId }
-            if (maxIndex >= 0) {
-                finalReturnItems = finalReturnItems.subList(maxIndex, finalReturnItems.size)
-            }
-        }
-        return Result.success(finalReturnItems.take(limit).map {
+        val finalReturnItems = fetchResult.getOrThrow().map {
             StatusUiState(
                 role = role,
                 status = it,
@@ -71,7 +56,9 @@ class RssStatusResolver @Inject constructor(
                 isOwner = false,
                 blogTranslationState = BlogTranslationUiState(false),
             )
-        })
+        }
+        if (finalReturnItems.isEmpty()) return Result.success(emptyList())
+        return Result.success(finalReturnItems)
     }
 
     override suspend fun interactive(

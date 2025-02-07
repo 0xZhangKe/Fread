@@ -1,18 +1,34 @@
 package com.zhangke.fread.commonbiz.shared.notification
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.FormatQuote
+import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.BlogDivider
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.status.ui.action.replyIcon
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.statusui.ic_status_forward
+import org.jetbrains.compose.resources.stringResource
+import org.jetbrains.compose.resources.vectorResource
 
 @Composable
 fun StatusNotificationUi(
@@ -20,25 +36,14 @@ fun StatusNotificationUi(
     notification: StatusNotification,
     indexInList: Int,
     style: NotificationStyle = defaultNotificationStyle(),
-    onRejectClick: (StatusNotification) -> Unit,
-    onAcceptClick: (StatusNotification) -> Unit,
+    onRejectClick: (StatusNotification.FollowRequest) -> Unit,
+    onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
-    if (notification is StatusNotification.Mention) {
-        Box(modifier = modifier) {
-            MentionNotification(
-                notification = notification,
-                indexInList = indexInList,
-                style = style,
-                composedStatusInteraction = composedStatusInteraction,
-            )
-        }
-        return
-    }
     Column(modifier = modifier) {
         Box(modifier = Modifier.padding(style.containerPaddings)) {
-            when (notification.type) {
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.FAVOURITE -> {
+            when (notification) {
+                is StatusNotification.Like -> {
                     FavouriteNotification(
                         notification = notification,
                         indexInList = indexInList,
@@ -47,16 +52,44 @@ fun StatusNotificationUi(
                     )
                 }
 
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.REBLOG -> {
-                    ReblogNotification(
-                        notification = notification,
+                is StatusNotification.Mention -> {
+                    WholeBlogUi(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clickable { composedStatusInteraction.onStatusClick(notification.status) },
+                        statusUiState = notification.status,
+                        indexInList = indexInList,
+                        style = style.statusStyle,
+                        composedStatusInteraction = composedStatusInteraction,
+                    )
+                }
+
+                is StatusNotification.Reply -> {
+                    NotificationWithWholeStatus(
+                        status = notification.status,
+                        author = notification.status.status.triggerAuthor,
+                        indexInList = indexInList,
+                        icon = replyIcon(),
+                        interactionDesc = stringResource(Res.string.shared_notification_update_desc),
+                        style = style,
+                        composedStatusInteraction = composedStatusInteraction,
+                    )
+                }
+
+                is StatusNotification.Repost -> {
+                    BlogInteractionNotification(
+                        blog = notification.blog,
+                        role = notification.role,
+                        author = notification.author,
+                        icon = vectorResource(com.zhangke.fread.statusui.Res.drawable.ic_status_forward),
+                        interactionDesc = stringResource(Res.string.shared_notification_reblog_desc),
                         indexInList = indexInList,
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.POLL -> {
+                is StatusNotification.Poll -> {
                     PollNotification(
                         notification = notification,
                         indexInList = indexInList,
@@ -65,7 +98,7 @@ fun StatusNotificationUi(
                     )
                 }
 
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.FOLLOW -> {
+                is StatusNotification.Follow -> {
                     FollowNotification(
                         notification = notification,
                         style = style,
@@ -75,16 +108,19 @@ fun StatusNotificationUi(
                     )
                 }
 
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.UPDATE -> {
-                    UpdateNotification(
-                        notification = notification,
+                is StatusNotification.Update -> {
+                    NotificationWithWholeStatus(
+                        status = notification.status,
+                        author = notification.status.status.triggerAuthor,
                         indexInList = indexInList,
+                        icon = Icons.Default.Edit,
+                        interactionDesc = stringResource(Res.string.shared_notification_update_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.FOLLOW_REQUEST -> {
+                is StatusNotification.FollowRequest -> {
                     FollowRequestNotification(
                         notification = notification,
                         style = style,
@@ -96,16 +132,31 @@ fun StatusNotificationUi(
                     )
                 }
 
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.STATUS -> {
-                    NewStatusNotification(
-                        notification = notification,
+                is StatusNotification.NewStatus -> {
+                    NotificationWithWholeStatus(
+                        status = notification.status,
+                        author = notification.status.status.triggerAuthor,
                         indexInList = indexInList,
+                        icon = Icons.Default.NotificationsNone,
+                        interactionDesc = stringResource(Res.string.shared_notification_new_status_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
 
-                com.zhangke.fread.activitypub.app.internal.model.StatusNotificationType.SEVERED_RELATIONSHIPS -> {
+                is StatusNotification.Quote -> {
+                    NotificationWithWholeStatus(
+                        status = notification.status,
+                        author = notification.status.status.triggerAuthor,
+                        indexInList = indexInList,
+                        icon = Icons.Default.FormatQuote,
+                        interactionDesc = stringResource(Res.string.shared_notification_quote_desc),
+                        style = style,
+                        composedStatusInteraction = composedStatusInteraction,
+                    )
+                }
+
+                is StatusNotification.SeveredRelationships -> {
                     SeveredRelationshipsNotification(
                         notification = notification,
                         style = style,
@@ -115,10 +166,9 @@ fun StatusNotificationUi(
                     )
                 }
 
-                else -> {
-                    UnknownNotification(
-                        notification = notification,
-                    )
+
+                is StatusNotification.Unknown -> {
+                    UnknownNotification(notification = notification)
                 }
             }
         }

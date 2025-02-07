@@ -8,34 +8,28 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Poll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.commonbiz.shared.composable.OnlyBlogContentUi
 import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_poll_desc
+import com.zhangke.fread.status.notification.StatusNotification
+import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PollNotification(
-    notification: StatusUiState,
+    notification: StatusNotification.Poll,
     indexInList: Int,
     style: NotificationStyle,
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     val browserLauncher = LocalActivityBrowserLauncher.current
-    val status = notification.status
-    if (status == null) {
-        UnknownNotification(
-            notification = notification,
-        )
-        return
-    }
+    val role = notification.role
     Column(
         modifier = Modifier
             .fillMaxWidth()
             .clickable {
-                composedStatusInteraction.onStatusClick(status)
+                composedStatusInteraction.onBlockClick(role, notification.blog)
             },
     ) {
         NotificationHeadLine(
@@ -52,28 +46,21 @@ fun PollNotification(
                 .fillMaxWidth()
                 .statusBorder()
                 .padding(style.internalBlogPadding),
-            statusUiState = status,
+            blog = notification.blog,
+            isOwner = false,
             indexInList = indexInList,
-            style = style,
-            onVoted = {
-                composedStatusInteraction.onVoted(status, it)
-            },
-            onMentionClick = {
-                composedStatusInteraction.onMentionClick(status.role, it)
-            },
+            style = style.statusStyle,
+            onVoted = {},
+            onMentionClick = { composedStatusInteraction.onMentionClick(role, it) },
             onMentionDidClick = {
                 composedStatusInteraction.onMentionClick(
-                    role = status.role,
+                    role = role,
                     did = it,
-                    protocol = status.status.platform.protocol,
+                    protocol = notification.blog.platform.protocol,
                 )
             },
-            onHashtagInStatusClick = {
-                composedStatusInteraction.onHashtagInStatusClick(status.role, it)
-            },
-            onUrlClick = {
-                browserLauncher.launchWebTabInApp(it, status.role)
-            },
+            onHashtagInStatusClick = { composedStatusInteraction.onHashtagInStatusClick(role, it) },
+            onUrlClick = { browserLauncher.launchWebTabInApp(it, role) },
         )
     }
 }

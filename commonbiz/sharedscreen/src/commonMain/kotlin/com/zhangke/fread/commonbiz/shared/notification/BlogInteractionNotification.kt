@@ -48,7 +48,7 @@ fun BlogInteractionNotification(
             },
             icon = icon,
             avatar = author.avatar,
-            accountName = author.name,
+            accountName = author.humanizedName,
             interactionDesc = interactionDesc,
             style = style,
             iconTint = iconTint,

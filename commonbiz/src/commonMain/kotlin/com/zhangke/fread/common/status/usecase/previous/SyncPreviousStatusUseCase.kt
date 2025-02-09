@@ -21,12 +21,14 @@ class SyncPreviousStatusUseCase @Inject constructor(
 
     suspend operator fun invoke(
         sourceUri: FormalUri,
+        limit: Int,
         maxCreateTime: Long,
     ): Result<Unit> {
         val role = IdentityRole(sourceUri, null)
         return syncStatusAndSaveToLocal(
             role = role,
             sourceUri = sourceUri,
+            pageLimit = limit,
             maxStatus = decideMaxStatus(sourceUri, maxCreateTime),
         )
     }
@@ -34,11 +36,13 @@ class SyncPreviousStatusUseCase @Inject constructor(
     private suspend fun syncStatusAndSaveToLocal(
         role: IdentityRole,
         sourceUri: FormalUri,
+        pageLimit: Int,
         maxStatus: StatusContentEntity?,
     ): Result<Unit> {
         val result = statusResolver.getStatusList(
             role = role,
             uri = sourceUri,
+            limit = pageLimit,
             maxId = maxStatus?.statusIdOfPlatform,
         )
         if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)

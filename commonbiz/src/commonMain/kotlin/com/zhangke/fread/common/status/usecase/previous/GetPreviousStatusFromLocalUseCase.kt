@@ -16,12 +16,14 @@ class GetPreviousStatusFromLocalUseCase @Inject constructor(
      */
     suspend operator fun invoke(
         sourceUri: FormalUri,
+        limit: Int,
+        maxCreateTime: Long?,
     ): List<StatusContentEntity> {
-        val realLimit = 100
+        val realLimit = limit + StatusConfigurationDefault.config.loadFromLocalRedundancies
         return if (maxCreateTime == null) {
-            statusContentRepo.query(sourceUri)
+            statusContentRepo.query(sourceUri, realLimit)
         } else {
-            statusContentRepo.queryPrevious(sourceUri, maxCreateTime)
+            statusContentRepo.queryPrevious(sourceUri, maxCreateTime, realLimit)
         }
     }
 }

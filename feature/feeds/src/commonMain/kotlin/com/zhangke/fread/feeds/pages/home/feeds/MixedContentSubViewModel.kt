@@ -1,132 +1,133 @@
 package com.zhangke.fread.feeds.pages.home.feeds
 
+import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.common.content.FreadContentRepo
-import com.zhangke.fread.common.feeds.model.RefreshResult
-import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
-import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
-import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.status.model.Status
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
 
 class MixedContentSubViewModel(
     private val contentRepo: FreadContentRepo,
-    private val feedsRepo: FeedsRepo,
+    private val mixedRepo: MixedStatusRepo,
     statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val statusProvider: StatusProvider,
     private val refactorToNewBlog: RefactorToNewBlogUseCase,
     private val configId: String,
-) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
-    statusProvider = statusProvider,
-    statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
-) {
+) : SubViewModel()
 
-    private val _configUiState = MutableStateFlow(MixedContentUiState(null))
-    val configUiState = _configUiState.asStateFlow()
+//    IFeedsViewModelController by FeedsViewModelController(
+//    statusProvider = statusProvider,
+//    statusUpdater = statusUpdater,
+//    buildStatusUiState = buildStatusUiState,
+//    refactorToNewBlog = refactorToNewBlog,
+//)
+
+{
 
     private val config = StatusConfigurationDefault.config
-    private var mixedContent: MixedContent? = null
+
+    private val _uiState = MutableStateFlow(MixedContentUiState.default())
+    val uiState = _uiState.asStateFlow()
+
+    private val _openScreen = MutableSharedFlow<Screen>()
+    val openScreen = _openScreen.asSharedFlow()
+
+    private val _snackBarMessage = MutableSharedFlow<TextString>()
+    val snackBarMessage = _snackBarMessage.asSharedFlow()
+
+    private var initJob: Job? = null
+    private var refreshJob: Job? = null
+    private var loadMoreJob: Job? = null
 
     init {
-        initController(
-            coroutineScope = viewModelScope,
-            roleResolver = {
-                generateRole(it)
-            },
-            loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
-            loadNewFromServerFunction = ::loadNewFromServer,
-            loadMoreFunction = ::loadMore,
-            onStatusUpdate = ::onStatusUpdate,
-        )
         launchInViewModel {
-            mixedContent = contentRepo.getContent(configId) as? MixedContent
-            _configUiState.update {
-                it.copy(config = mixedContent)
+            _uiState.update { it.copy(initializing = true) }
+            val mixedContent = contentRepo.getContent(configId) as? MixedContent
+            if (mixedContent == null) {
+                _uiState.update { it.copy(pageError = textOf("Content($configId) does not exists!")) }
+            } else {
+                _uiState.update { it.copy(content = mixedContent) }
+                async { mixedRepo.refresh(mixedContent) }
+                mixedRepo.getLocalStatusFlow(mixedContent)
+                    .collect { data ->
+                        _uiState.update { it.copy(dataList = data, initializing = false) }
+                    }
             }
-            initFeeds(true)
-            startAutoFetchNewerFeeds()
         }
-        launchInViewModel {
-            statusProvider.accountManager
-                .getAllAccountFlow()
-                .drop(1)
-                .collect {
-                    delay(200)
-                    initFeeds(false)
-                }
-        }
-        launchInViewModel {
-            feedsRepo.feedsInfoChangedFlow
-                .collect {
-                    delay(50)
-                    initFeeds(false)
-                }
-        }
+
         launchInViewModel {
             contentRepo.getContentFlow(configId)
                 .drop(1)
-                .collect {
+                .mapNotNull { it as? MixedContent }
+                .collect { content ->
                     delay(50)
-                    mixedContent = it as? MixedContent
-                    _configUiState.update { state ->
-                        state.copy(config = mixedContent)
-                    }
-                    initFeeds(false)
+                    _uiState.update { it.copy(content = content) }
+                    mixedRepo.refresh(content)
                 }
         }
     }
 
     fun onContentTitleClick() {
-        val mixedContent = mixedContent ?: return
+        val mixedContent = uiState.value.content ?: return
         launchInViewModel {
-            mutableOpenScreenFlow.emit(EditMixedContentScreen(mixedContent.id))
+            _openScreen.emit(EditMixedContentScreen(mixedContent.id))
         }
     }
 
-    private suspend fun loadFirstPageLocalFeeds(): Result<List<Status>> {
-        if (mixedContent == null) return Result.success(emptyList())
-        return feedsRepo.getLocalFirstPageStatus(
-            sourceUriList = mixedContent!!.sourceUriList,
-            limit = config.loadFromLocalLimit,
-        ).let { Result.success(it) }
+    fun onRefresh() {
+        val content = uiState.value.content ?: return
+        if (refreshJob?.isActive == true || loadMoreJob?.isActive == true) return
+        refreshJob?.cancel()
+        loadMoreJob?.cancel()
+        refreshJob = launchInViewModel {
+            _uiState.update { it.copy(refreshing = true) }
+            mixedRepo.refresh(content)
+                .onSuccess {
+                    _uiState.update { it.copy(refreshing = false) }
+                }.onFailure {
+                    _uiState.update { it.copy(refreshing = false) }
+                    _snackBarMessage.emitTextMessageFromThrowable(it)
+                }
+        }
     }
 
-    private suspend fun loadNewFromServer(): Result<RefreshResult> {
-        if (mixedContent == null) return Result.failure(Exception("mixedContent is null"))
-        return feedsRepo.refresh(
-            sourceUriList = mixedContent!!.sourceUriList,
-        )
-    }
-
-    private suspend fun loadMore(maxId: String): Result<List<Status>> {
-        if (mixedContent == null) return Result.failure(Exception("mixedContent is null"))
-        return feedsRepo.getStatus(
-            sourceUriList = mixedContent!!.sourceUriList,
-            maxId = maxId,
-        )
-    }
-
-    private suspend fun onStatusUpdate(status: Status) {
-        feedsRepo.updateStatus(status)
-    }
-
-    private fun generateRole(status: Status): IdentityRole {
-        return IdentityRole(status.triggerAuthor.uri, null)
+    fun onLoadMore() {
+        val content = uiState.value.content ?: return
+        if (refreshJob?.isActive == true || loadMoreJob?.isActive == true) return
+        refreshJob?.cancel()
+        loadMoreJob?.cancel()
+        loadMoreJob = launchInViewModel {
+            _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
+            mixedRepo.loadMoreStatus(content)
+                .onSuccess {
+                    _uiState.update { it.copy(loadMoreState = LoadState.Idle) }
+                }.onFailure { t ->
+                    _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
+                    _snackBarMessage.emitTextMessageFromThrowable(t)
+                }
+        }
     }
 }

@@ -34,7 +34,7 @@ data class IdentityRole(
                 UrlEncoder.decode(text).let {
                     Json.decodeFromString(serializer(), it)
                 }
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 null
             }
         }

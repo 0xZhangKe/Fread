@@ -18,7 +18,6 @@ import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
-import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
@@ -41,6 +40,7 @@ class BlueskyStatusResolver @Inject constructor(
     override suspend fun getStatusList(
         role: IdentityRole,
         uri: FormalUri,
+        limit: Int,
         maxId: String?,
     ): Result<List<StatusUiState>>? {
         TODO("Not yet implemented")

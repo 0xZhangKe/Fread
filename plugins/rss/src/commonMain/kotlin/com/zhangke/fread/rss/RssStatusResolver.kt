@@ -37,6 +37,7 @@ class RssStatusResolver @Inject constructor(
     override suspend fun getStatusList(
         role: IdentityRole,
         uri: FormalUri,
+        limit: Int,
         maxId: String?,
     ): Result<List<StatusUiState>>? {
         if (!uri.isRssUri) return null

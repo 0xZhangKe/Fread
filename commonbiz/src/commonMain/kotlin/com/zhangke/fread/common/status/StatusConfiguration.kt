@@ -13,7 +13,7 @@ data class StatusConfiguration(
 object StatusConfigurationDefault {
 
     val config = StatusConfiguration(
-        loadFromServerLimit = 40,
+        loadFromServerLimit = 60,
         loadFromLocalLimit = 100,
         loadFromLocalRedundancies = 3,
         autoFetchNewerFeedsInterval = 2.minutes,

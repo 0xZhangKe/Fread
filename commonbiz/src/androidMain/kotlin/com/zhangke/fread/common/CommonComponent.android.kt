@@ -10,10 +10,11 @@ import com.russhwolf.settings.coroutines.FlowSettings
 import com.russhwolf.settings.datastore.DataStoreSettings
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
+import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.MixedStatusDatabases
 import com.zhangke.fread.common.db.StatusDatabase
-import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
@@ -73,6 +74,16 @@ actual interface CommonPlatformComponent {
             context,
             FreadContentDatabase::class.java,
             FreadContentDatabase.DB_NAME,
+        ).build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideMixedStatusDatabases(context: ApplicationContext): MixedStatusDatabases {
+        return Room.databaseBuilder(
+            context,
+            MixedStatusDatabases::class.java,
+            MixedStatusDatabases.DB_NAME,
         ).build()
     }
 

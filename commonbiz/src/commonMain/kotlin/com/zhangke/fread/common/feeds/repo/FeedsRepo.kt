@@ -17,6 +17,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
+/**
+ * 1. Load all local data.
+ * 2. Load remote first page data and replace local data.
+ *  data of remote needs to sort by date for ui layer.
+ * 3. Load more remote data need decide max-id.
+ */
 @ApplicationScope
 class FeedsRepo @Inject constructor(
     private val getPreviousStatus: GetPreviousStatusUseCase,

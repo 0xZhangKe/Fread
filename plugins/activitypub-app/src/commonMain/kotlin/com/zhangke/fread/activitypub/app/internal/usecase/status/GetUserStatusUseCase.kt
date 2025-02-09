@@ -21,6 +21,7 @@ class GetUserStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         role: IdentityRole,
         userInsights: UserUriInsights,
+        limit: Int,
         maxId: String?,
     ): Result<List<StatusUiState>> {
         val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(userInsights.webFinger, role)
@@ -33,7 +34,7 @@ class GetUserStatusUseCase @Inject constructor(
         return clientManager.getClient(role)
             .accountRepo.getStatuses(
                 id = userId,
-                limit = 100,
+                limit = limit,
                 maxId = maxId,
             ).map { list ->
                 list.map {

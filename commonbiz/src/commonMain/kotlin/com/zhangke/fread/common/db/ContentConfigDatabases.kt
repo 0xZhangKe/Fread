@@ -16,7 +16,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.common.db.converts.ContentTabConverter
 import com.zhangke.fread.common.db.converts.ContentTypeConverter
 import com.zhangke.fread.common.db.converts.FormalBaseUrlConverter
-import com.zhangke.fread.common.db.converts.StatusProviderUriConverter
+import com.zhangke.fread.common.db.converts.FormalUriConverter
 import com.zhangke.fread.common.db.converts.StatusProviderUriListConverter
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentType
@@ -90,7 +90,7 @@ interface ContentConfigDao {
 @TypeConverters(
     ContentTabConverter::class,
     ContentTypeConverter::class,
-    StatusProviderUriConverter::class,
+    FormalUriConverter::class,
     StatusProviderUriListConverter::class,
     FormalBaseUrlConverter::class,
 )

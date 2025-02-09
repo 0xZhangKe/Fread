@@ -7,12 +7,12 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
-import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
 
 class StatusResolver(
@@ -28,14 +28,14 @@ class StatusResolver(
     }
 
     suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
+        limit: Int,
         maxId: String? = null,
-    ): Result<List<StatusUiState>> {
+    ): Result<PagedData<StatusUiState>> {
         for (statusResolver in resolverList) {
             val result = statusResolver.getStatusList(
-                role = role,
                 uri = uri,
+                limit = limit,
                 maxId = maxId,
             )
             if (result != null) return result
@@ -108,7 +108,7 @@ class StatusResolver(
         role: IdentityRole,
         status: Status,
         lan: String,
-    ): Result<BlogTranslation>{
+    ): Result<BlogTranslation> {
         return resolverList.firstNotNullOf { it.translate(role, status, lan) }
     }
 }
@@ -125,10 +125,10 @@ interface IStatusResolver {
      * @return null if un-support
      */
     suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
+        limit: Int,
         maxId: String?
-    ): Result<List<StatusUiState>>?
+    ): Result<PagedData<StatusUiState>>?
 
     suspend fun interactive(
         role: IdentityRole,

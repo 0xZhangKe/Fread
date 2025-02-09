@@ -3,7 +3,7 @@ package com.zhangke.fread.commonbiz.shared.screen.status.context
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.fread.common.feeds.repo.FeedsRepo
+import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
 class StatusContextSubViewModel(
-    private val feedsRepo: FeedsRepo,
+    private val mixedStatusRepo: MixedStatusRepo,
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
     private val buildStatusUiState: BuildStatusUiStateUseCase,
@@ -183,7 +183,7 @@ class StatusContextSubViewModel(
     }
 
     private suspend fun updateStatus(newStatus: StatusUiState) {
-        feedsRepo.updateStatus(newStatus.status)
+        mixedStatusRepo.updateStatus(newStatus)
         _uiState.update { state ->
             val contextStatus = state.contextStatus.map { item ->
                 item.copy(

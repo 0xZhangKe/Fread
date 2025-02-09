@@ -20,6 +20,7 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.notActivityPub
@@ -67,19 +68,20 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     override suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
+        limit: Int,
         maxId: String?,
-    ): Result<List<StatusUiState>>? {
-        val userInsights = userUriTransformer.parse(uri)
-        if (userInsights != null) {
-            return getUserStatus(
-                role = role,
-                userInsights = userInsights,
-                maxId = maxId,
-            )
+    ): Result<PagedData<StatusUiState>>? {
+        val userInsights = userUriTransformer.parse(uri) ?: return null
+        val role = IdentityRole(baseUrl = userInsights.baseUrl)
+        return getUserStatus(
+            role = role,
+            userInsights = userInsights,
+            limit = limit,
+            maxId = maxId,
+        ).map {
+            PagedData(it, it.lastOrNull()?.status?.id)
         }
-        return null
     }
 
     override suspend fun interactive(

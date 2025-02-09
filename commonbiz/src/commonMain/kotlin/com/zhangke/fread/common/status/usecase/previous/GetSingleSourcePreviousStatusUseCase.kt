@@ -12,8 +12,9 @@ class GetSingleSourcePreviousStatusUseCase @Inject constructor(
     suspend operator fun invoke(
         sourceUri: FormalUri,
         maxCreateTime: Long,
+        limit: Int,
     ): Result<List<StatusContentEntity>> {
-        val statusFromLocal = getPreviousStatusFromLocal(sourceUri, maxCreateTime)
+        val statusFromLocal = getPreviousStatusFromLocal(sourceUri, limit, maxCreateTime)
         if (statusFromLocal.size >= limit ||
             statusFromLocal.lastOrNull()?.isFirstStatus == true
         ) {

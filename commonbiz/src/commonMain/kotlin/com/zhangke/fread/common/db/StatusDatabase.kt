@@ -19,8 +19,8 @@ import com.zhangke.fread.common.db.converts.BlogMediaListConverter
 import com.zhangke.fread.common.db.converts.BlogPollConverter
 import com.zhangke.fread.common.db.converts.ContentTypeConverter
 import com.zhangke.fread.common.db.converts.FormalBaseUrlConverter
+import com.zhangke.fread.common.db.converts.FormalUriConverter
 import com.zhangke.fread.common.db.converts.StatusConverter
-import com.zhangke.fread.common.db.converts.StatusProviderUriConverter
 import com.zhangke.fread.common.db.converts.StatusProviderUriListConverter
 import com.zhangke.fread.common.db.converts.StatusTypeConverter
 import com.zhangke.fread.common.utils.ListStringConverter
@@ -163,7 +163,7 @@ interface StatusContentDao {
 }
 
 @TypeConverters(
-    StatusProviderUriConverter::class,
+    FormalUriConverter::class,
     ListStringConverter::class,
     StatusProviderUriListConverter::class,
     StatusTypeConverter::class,

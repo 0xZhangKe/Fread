@@ -8,7 +8,6 @@ import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.IdentityRole
-import kotlinx.collections.immutable.toImmutableList
 import me.tatarka.inject.annotations.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -31,11 +30,11 @@ class FollowFeedsUseCase @Inject constructor(
             preferences = preference.preferences.map {
                 if (it is SavedFeedsPrefV2) {
                     val newItems = it.value.items + feeds.toSaveFeeds()
-                    SavedFeedsPrefV2(app.bsky.actor.SavedFeedsPrefV2(newItems.toImmutableList()))
+                    SavedFeedsPrefV2(app.bsky.actor.SavedFeedsPrefV2(newItems))
                 } else {
                     it
                 }
-            }.toImmutableList(),
+            },
         )
         return clientManager.getClient(role).putPreferencesCatching(request)
     }
@@ -44,7 +43,7 @@ class FollowFeedsUseCase @Inject constructor(
     private fun BlueskyFeeds.Feeds.toSaveFeeds(): SavedFeed {
         return SavedFeed(
             id = Uuid.random().toString(),
-            type = Type.FEED,
+            type = Type.Feed,
             value = this.uri,
             pinned = true,
         )

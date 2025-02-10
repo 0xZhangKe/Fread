@@ -26,7 +26,7 @@ fun buildRichText(
     )
 }
 
-suspend fun Blog.preParseRichText() {
+suspend fun Blog.preParseBlog() {
     author.humanizedName.parse()
     humanizedContent.parse()
     humanizedSpoilerText.parse()
@@ -34,24 +34,24 @@ suspend fun Blog.preParseRichText() {
     formattingDisplayTime.parse()
 }
 
-suspend fun Status.preParseRichText() {
+suspend fun Status.preParseStatus() {
     triggerAuthor.humanizedName.parse()
-    intrinsicBlog.preParseRichText()
+    intrinsicBlog.preParseBlog()
 }
 
-suspend fun StatusUiState.preParseRichText() {
+suspend fun StatusUiState.preParseStatusUiState() {
     status.triggerAuthor.humanizedName.parse()
-    status.intrinsicBlog.preParseRichText()
+    status.intrinsicBlog.preParseBlog()
 }
 
-suspend fun List<Status>.preParseRichText() {
+suspend fun List<Status>.preParseStatusList() {
     forEach {
-        it.preParseRichText()
+        it.preParseStatus()
     }
 }
 
-suspend fun List<StatusUiState>.preParseRichText() {
+suspend fun List<StatusUiState>.preParse() {
     forEach {
-        it.preParseRichText()
+        it.preParseStatusUiState()
     }
 }

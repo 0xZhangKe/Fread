@@ -1,6 +1,8 @@
 package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubSearchEntity
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.search.SearchResult
 import me.tatarka.inject.annotations.Inject
@@ -14,6 +16,8 @@ class ActivityPubSearchAdapter @Inject constructor(
     suspend fun toSearchResult(
         entity: ActivityPubSearchEntity,
         platform: BlogPlatform,
+        role: IdentityRole,
+        account: ActivityPubLoggedAccount?,
     ): List<SearchResult> {
         val authorList = entity.accounts.map {
             SearchResult.Author(accountEntityAdapter.toAuthor(it))
@@ -22,7 +26,7 @@ class ActivityPubSearchAdapter @Inject constructor(
             SearchResult.SearchedHashtag(hashtagAdapter.adapt(it))
         }
         val statusList = entity.statuses.map {
-            SearchResult.SearchedStatus(statusAdapter.toStatus(it, platform))
+            SearchResult.SearchedStatus(statusAdapter.toStatusUiState(it, platform, role, account))
         }
         return authorList + hashtagList + statusList
     }

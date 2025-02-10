@@ -12,12 +12,12 @@ import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
-import com.zhangke.fread.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
@@ -46,7 +46,7 @@ class RssSearchEngine @Inject constructor(
         role: IdentityRole,
         query: String,
         maxId: String?,
-    ): Result<List<Status>> {
+    ): Result<List<StatusUiState>> {
         return Result.success(emptyList())
     }
 

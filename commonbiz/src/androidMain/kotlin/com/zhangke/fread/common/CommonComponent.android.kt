@@ -14,7 +14,6 @@ import com.zhangke.fread.common.browser.OAuthHandler
 import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.db.FreadContentDatabase
 import com.zhangke.fread.common.db.MixedStatusDatabases
-import com.zhangke.fread.common.db.StatusDatabase
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
@@ -37,20 +36,6 @@ actual interface CommonPlatformComponent {
         context: ApplicationContext,
     ): FlowSettings {
         return DataStoreSettings(context.localConfig)
-    }
-
-    @ApplicationScope
-    @Provides
-    fun provideStatusDatabases(
-        context: ApplicationContext,
-    ): StatusDatabase {
-        return Room.databaseBuilder(
-            context,
-            StatusDatabase::class.java,
-            StatusDatabase.DB_NAME,
-        ).addMigrations(
-            StatusDatabase.Status1to2Migration(),
-        ).build()
     }
 
     @ApplicationScope

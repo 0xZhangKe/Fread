@@ -18,3 +18,16 @@ class StatusConverter {
         return Json.encodeToString(Status.serializer(), status)
     }
 }
+
+class NonNullStatusConverter {
+
+    @TypeConverter
+    fun fromString(string: String): Status {
+        return Json.decodeFromString(Status.serializer(), string)
+    }
+
+    @TypeConverter
+    fun toString(status: Status): String {
+        return Json.encodeToString(Status.serializer(), status)
+    }
+}

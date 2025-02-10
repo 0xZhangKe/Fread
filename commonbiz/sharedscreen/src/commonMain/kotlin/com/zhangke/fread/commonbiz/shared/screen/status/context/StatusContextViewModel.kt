@@ -1,23 +1,23 @@
 package com.zhangke.fread.commonbiz.shared.screen.status.context
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.status.model.Status
+import com.zhangke.fread.status.model.StatusUiState
 import me.tatarka.inject.annotations.Inject
 
 class StatusContextViewModel @Inject constructor(
     private val mixedStatusRepo: MixedStatusRepo,
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
 ) : ContainerViewModel<StatusContextSubViewModel, StatusContextViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): StatusContextSubViewModel {
@@ -25,8 +25,8 @@ class StatusContextViewModel @Inject constructor(
             mixedStatusRepo = mixedStatusRepo,
             statusProvider = statusProvider,
             statusUpdater = statusUpdater,
-            buildStatusUiState = buildStatusUiState,
-            refactorToNewBlog = refactorToNewBlog,
+            statusUiStateAdapter = statusUiStateAdapter,
+            refactorToNewStatus = refactorToNewStatus,
             role = params.role,
             anchorStatus = params.anchorStatus,
             blog = params.blog,
@@ -36,7 +36,7 @@ class StatusContextViewModel @Inject constructor(
 
     fun getSubViewModel(
         role: IdentityRole,
-        anchorStatus: Status?,
+        anchorStatus: StatusUiState?,
         blog: Blog?,
         blogTranslationUiState: BlogTranslationUiState?,
     ): StatusContextSubViewModel {
@@ -45,11 +45,11 @@ class StatusContextViewModel @Inject constructor(
 
     class Params(
         val role: IdentityRole,
-        val anchorStatus: Status?,
+        val anchorStatus: StatusUiState?,
         val blog: Blog?,
         val blogTranslationUiState: BlogTranslationUiState?,
     ) : SubViewModelParams() {
 
-        override val key: String = anchorStatus?.id + blog?.id + role
+        override val key: String = anchorStatus?.status?.id + blog?.id + role
     }
 }

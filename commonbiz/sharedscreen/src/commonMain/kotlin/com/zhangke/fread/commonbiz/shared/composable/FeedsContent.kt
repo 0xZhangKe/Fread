@@ -32,8 +32,10 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.commonbiz.shared.screen.list_content_empty_placeholder
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -48,7 +50,7 @@ import kotlin.time.Duration.Companion.seconds
 fun FeedsContent(
     uiState: CommonFeedsUiState,
     openScreenFlow: SharedFlow<Screen>,
-    newStatusNotifyFlow: SharedFlow<Unit>,
+    newStatusNotifyFlow: SharedFlow<Unit>?,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -59,18 +61,53 @@ fun FeedsContent(
     onScrollInProgress: ((Boolean) -> Unit)? = null,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
-    if (uiState.feeds.isEmpty()) {
-        if (uiState.showPagingLoadingPlaceholder) {
+    FeedsContent(
+        feeds = uiState.feeds,
+        refreshing = uiState.refreshing,
+        loadMoreState = uiState.loadMoreState,
+        showPagingLoadingPlaceholder = uiState.showPagingLoadingPlaceholder,
+        pageErrorContent = uiState.pageErrorContent,
+        newStatusNotifyFlow = newStatusNotifyFlow,
+        onRefresh = onRefresh,
+        onLoadMore = onLoadMore,
+        composedStatusInteraction = composedStatusInteraction,
+        nestedScrollConnection = nestedScrollConnection,
+        observeScrollToTopEvent = observeScrollToTopEvent,
+        contentCanScrollBackward = contentCanScrollBackward,
+        onImmersiveEvent = onImmersiveEvent,
+        onScrollInProgress = onScrollInProgress,
+    )
+}
+
+@Composable
+fun FeedsContent(
+    feeds: List<StatusUiState>,
+    refreshing: Boolean,
+    loadMoreState: LoadState,
+    showPagingLoadingPlaceholder: Boolean,
+    pageErrorContent: TextString?,
+    newStatusNotifyFlow: SharedFlow<Unit>?,
+    onRefresh: () -> Unit,
+    onLoadMore: () -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
+    nestedScrollConnection: NestedScrollConnection? = null,
+    observeScrollToTopEvent: Boolean = false,
+    contentCanScrollBackward: MutableState<Boolean>? = null,
+    onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
+    onScrollInProgress: ((Boolean) -> Unit)? = null,
+) {
+    if (feeds.isEmpty()) {
+        if (showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
-        } else if (uiState.pageErrorContent != null) {
-            InitErrorContent(uiState.pageErrorContent)
+        } else if (pageErrorContent != null) {
+            InitErrorContent(pageErrorContent)
         } else {
             EmptyListContent()
         }
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLoadableInlineVideoLazyColumnState(
-                refreshing = uiState.refreshing,
+                refreshing = refreshing,
                 onRefresh = onRefresh,
                 onLoadMore = onLoadMore,
             )
@@ -109,13 +146,13 @@ fun FeedsContent(
                     .fillMaxSize()
                     .applyNestedScrollConnection(nestedScrollConnection),
                 state = state,
-                refreshing = uiState.refreshing,
-                loadState = uiState.loadMoreState,
+                refreshing = refreshing,
+                loadState = loadMoreState,
                 contentPadding = PaddingValues(
                     bottom = 80.dp,
                 ),
             ) {
-                itemsIndexed(uiState.feeds) { index, item ->
+                itemsIndexed(feeds) { index, item ->
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
                         status = item,
@@ -127,12 +164,14 @@ fun FeedsContent(
             var showNewStatusNotifyBar by remember {
                 mutableStateOf(false)
             }
-            ConsumeFlow(newStatusNotifyFlow) {
-                delay(1000)
-                if (state.lazyListState.firstVisibleItemIndex > 0) {
-                    showNewStatusNotifyBar = true
+            if (newStatusNotifyFlow != null) {
+                ConsumeFlow(newStatusNotifyFlow) {
+                    delay(1000)
+                    if (state.lazyListState.firstVisibleItemIndex > 0) {
+                        showNewStatusNotifyBar = true
+                    }
+                    delay(20.seconds)
                 }
-                delay(20.seconds)
             }
             val coroutineScope = rememberCoroutineScope()
             AnimatedVisibility(
@@ -146,7 +185,7 @@ fun FeedsContent(
                     onClick = {
                         showNewStatusNotifyBar = false
                         coroutineScope.launch {
-                            if (uiState.feeds.isNotEmpty()) {
+                            if (feeds.isNotEmpty()) {
                                 state.lazyListState.animateScrollToItem(0)
                             }
                         }

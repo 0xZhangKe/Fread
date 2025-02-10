@@ -18,10 +18,10 @@ class BlueskyNotificationAdapter @Inject constructor(
         role: IdentityRole,
         platform: BlogPlatform,
     ): StatusNotification {
-        return notification.convert(role, platform)
+        return notification.convertNotification(role, platform)
     }
 
-    private fun CompletedBskyNotification.convert(
+    private fun CompletedBskyNotification.convertNotification(
         role: IdentityRole,
         blogPlatform: BlogPlatform,
     ): StatusNotification {

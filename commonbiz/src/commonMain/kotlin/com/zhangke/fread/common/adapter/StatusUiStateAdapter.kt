@@ -1,4 +1,4 @@
-package com.zhangke.fread.common.status.usecase
+package com.zhangke.fread.common.adapter
 
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.IdentityRole
@@ -6,9 +6,9 @@ import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
 
-class BuildStatusUiStateUseCase @Inject constructor() {
+class StatusUiStateAdapter @Inject constructor() {
 
-    operator fun invoke(
+    fun toStatusUiState(
         statusUiStatus: StatusUiState,
         status: Status,
         following: Boolean? = null,
@@ -29,26 +29,23 @@ class BuildStatusUiStateUseCase @Inject constructor() {
         )
     }
 
-    operator fun invoke(
+    fun toStatusUiStateSnapshot(
         role: IdentityRole,
         status: Status,
-        following: Boolean? = null,
-        logged: Boolean = false,
-        isOwner: Boolean = false,
         blogTranslationState: BlogTranslationUiState? = null,
     ): StatusUiState {
         return StatusUiState(
             status = status,
             role = role,
-            logged = logged,
-            isOwner = isOwner,
+            logged = false,
+            isOwner = false,
             blogTranslationState = blogTranslationState ?: BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,
                 translating = false,
                 showingTranslation = false,
                 blogTranslation = null,
             ),
-            following = following,
+            following = false,
         )
     }
 }

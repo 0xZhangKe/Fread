@@ -8,7 +8,6 @@ import com.russhwolf.settings.coroutines.toFlowSettings
 import com.zhangke.fread.common.db.ContentConfigDatabases
 import com.zhangke.fread.common.db.FreadContentDatabase
 import com.zhangke.fread.common.db.MixedStatusDatabases
-import com.zhangke.fread.common.db.StatusDatabase
 import com.zhangke.fread.common.di.ApplicationScope
 import kotlinx.cinterop.ExperimentalForeignApi
 import kotlinx.coroutines.Dispatchers
@@ -20,17 +19,6 @@ import platform.Foundation.NSUserDefaults
 import platform.Foundation.NSUserDomainMask
 
 actual interface CommonPlatformComponent {
-
-    @ApplicationScope
-    @Provides
-    fun provideStatusDatabases(): StatusDatabase {
-        val dbFilePath = documentDirectory() + "/${StatusDatabase.DB_NAME}"
-        return Room.databaseBuilder<StatusDatabase>(
-            name = dbFilePath,
-        ).setDriver(BundledSQLiteDriver())
-            .setQueryCoroutineContext(Dispatchers.IO)
-            .build()
-    }
 
     @ApplicationScope
     @Provides

@@ -7,14 +7,14 @@ import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
@@ -32,15 +32,15 @@ class MixedContentSubViewModel(
     private val contentRepo: FreadContentRepo,
     private val mixedRepo: MixedStatusRepo,
     statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     private val statusProvider: StatusProvider,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val configId: String,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     private val _uiState = MutableStateFlow(MixedContentUiState.default())

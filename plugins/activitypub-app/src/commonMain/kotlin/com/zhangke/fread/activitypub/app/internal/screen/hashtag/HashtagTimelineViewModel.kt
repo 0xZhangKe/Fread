@@ -8,18 +8,20 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_hashtag_timeline_description
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.common.utils.getCurrentInstant
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
+import com.zhangke.fread.common.utils.getCurrentInstant
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.status.model.Status
+import com.zhangke.fread.status.model.StatusUiState
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -36,15 +38,16 @@ class HashtagTimelineViewModel(
     private val statusUpdater: StatusUpdater,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
-    buildStatusUiState: BuildStatusUiStateUseCase,
-    refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val loggedAccountProvider: LoggedAccountProvider,
+    statusUiStateAdapter: StatusUiStateAdapter,
+    refactorToNewStatus: RefactorToNewStatusUseCase,
     private val role: IdentityRole,
     private val hashtag: String,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     private val _hashtagTimelineUiState = MutableStateFlow(
@@ -89,7 +92,7 @@ class HashtagTimelineViewModel(
         }
     }
 
-    private suspend fun loadMore(maxId: String?): Result<List<Status>> {
+    private suspend fun loadMore(maxId: String?): Result<List<StatusUiState>> {
         return loadHashtagTimeline(maxId)
     }
 
@@ -154,18 +157,28 @@ class HashtagTimelineViewModel(
         }
     }
 
-    private suspend fun loadHashtagTimeline(maxId: String? = null): Result<List<Status>> {
+    private suspend fun loadHashtagTimeline(maxId: String? = null): Result<List<StatusUiState>> {
         val platformResult = platformRepo.getPlatform(role)
         if (platformResult.isFailure) {
             return Result.failure(platformResult.exceptionOrNull()!!)
         }
         val platform = platformResult.getOrThrow()
+        val account = loggedAccountProvider.getAccount(role)
         return clientManager.getClient(role)
             .timelinesRepo
             .getTagTimeline(
                 hashtag = hashtag,
                 limit = StatusConfigurationDefault.config.loadFromServerLimit,
                 maxId = maxId,
-            ).map { list -> list.map { statusAdapter.toStatus(it, platform) } }
+            ).map { list ->
+                list.map {
+                    statusAdapter.toStatusUiState(
+                        entity = it,
+                        platform = platform,
+                        role = role,
+                        loggedAccount = account,
+                    )
+                }
+            }
     }
 }

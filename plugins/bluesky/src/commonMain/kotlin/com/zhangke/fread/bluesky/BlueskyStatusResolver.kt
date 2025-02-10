@@ -11,6 +11,7 @@ import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.notBluesky
@@ -38,11 +39,10 @@ class BlueskyStatusResolver @Inject constructor(
     }
 
     override suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
         limit: Int,
         maxId: String?,
-    ): Result<List<StatusUiState>>? {
+    ): Result<PagedData<StatusUiState>>? {
         TODO("Not yet implemented")
     }
 

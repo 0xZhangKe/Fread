@@ -6,13 +6,13 @@ import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
-import com.zhangke.fread.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
@@ -33,7 +33,7 @@ class BlueskySearchEngine @Inject constructor(
         role: IdentityRole,
         query: String,
         maxId: String?
-    ): Result<List<Status>> {
+    ): Result<List<StatusUiState>> {
         TODO("Not yet implemented")
     }
 

@@ -7,10 +7,8 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentScreen
-import com.zhangke.fread.bluesky.internal.screen.notification.BskyNotificationTab
 import com.zhangke.fread.bluesky.internal.screen.user.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
-import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -48,11 +46,6 @@ class BlueskyScreenProvider @Inject constructor(
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is BlueskyContent) return null
         return BlueskyEditContentScreen(content.id)
-    }
-
-    override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
-        if (account.platform.protocol.notBluesky) return null
-        return BskyNotificationTab()
     }
 
     override fun getUserDetailScreen(

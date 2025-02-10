@@ -2,12 +2,14 @@ package com.zhangke.fread.activitypub.app.internal.screen.content.timeline
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
+import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
@@ -15,8 +17,10 @@ import me.tatarka.inject.annotations.Inject
 class ActivityPubTimelineContainerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val statusAdapter: ActivityPubStatusAdapter,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
+    private val loggedAccountProvider: LoggedAccountProvider,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
     private val accountManager: ActivityPubAccountManager,
     private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
@@ -26,8 +30,10 @@ class ActivityPubTimelineContainerViewModel @Inject constructor(
         return ActivityPubTimelineViewModel(
             statusProvider = statusProvider,
             statusUpdater = statusUpdater,
-            buildStatusUiState = buildStatusUiState,
-            refactorToNewBlog = refactorToNewBlog,
+            statusUiStateAdapter = statusUiStateAdapter,
+            statusAdapter = statusAdapter,
+            loggedAccountProvider = loggedAccountProvider,
+            refactorToNewStatus = refactorToNewStatus,
             statusReadStateRepo = statusReadStateRepo,
             accountManager = accountManager,
             timelineRepo = timelineRepo,

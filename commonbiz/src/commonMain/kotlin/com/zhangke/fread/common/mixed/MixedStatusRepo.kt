@@ -22,7 +22,7 @@ class MixedStatusRepo @Inject constructor(
 
     private val mixedStatusDao = mixedStatusDatabases.mixedStatusDao()
 
-    suspend fun getLocalStatusFlow(content: MixedContent): Flow<List<StatusUiState>> {
+    fun getLocalStatusFlow(content: MixedContent): Flow<List<StatusUiState>> {
         return flow {
             mixedStatusDao.queryFlow(content.sourceUriList)
                 .collect { emit(calculateDisplayList(it)) }
@@ -93,6 +93,34 @@ class MixedStatusRepo @Inject constructor(
             .let { mixedStatusDao.insertStatus(it) }
     }
 
+    suspend fun deleteStatus(statusId: String) {
+        val entityList = mixedStatusDao.queryByStatusId(statusId)
+        if (entityList.isEmpty()) return
+        val newStatusList = mutableListOf<MixedStatusEntity>()
+        entityList.groupBy { it.sourceUri }
+            .filter { it.value.isNotEmpty() }
+            .map { it.value.sortedByDescending { item -> item.createAt } }
+            .forEach { statusList ->
+                val lastEntity = statusList.last()
+                if (lastEntity.statusId == statusId) {
+                    var list = statusList.subList(0, statusList.lastIndex)
+                    if (!lastEntity.cursor.isNullOrEmpty()) {
+                        list = list.mapIndexed { index, entity ->
+                            if (index == list.lastIndex) {
+                                entity.copy(cursor = lastEntity.cursor)
+                            } else {
+                                entity
+                            }
+                        }
+                    }
+                    newStatusList.addAll(list)
+                } else {
+                    newStatusList.addAll(statusList)
+                }
+            }
+        mixedStatusDao.insertStatus(newStatusList)
+    }
+
     /**
      * 获取每个 Source 下对应的帖子列表中最早的那个帖子，如果这个帖子可以加载更多（包含 cursor）。
      */
@@ -100,8 +128,7 @@ class MixedStatusRepo @Inject constructor(
         val endingList = mutableListOf<MixedStatusEntity>()
         val groupedList = list.groupBy { it.sourceUri }
         groupedList.forEach { (_, entities) ->
-            entities.sortedByDescending { it.createAt }
-                .lastOrNull()
+            entities.minByOrNull { it.createAt }
                 ?.takeIf { !it.cursor.isNullOrEmpty() }
                 ?.let { endingList += it }
         }

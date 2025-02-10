@@ -1,9 +1,9 @@
 package com.zhangke.fread.explore.screens.home.tab
 
 import com.zhangke.framework.lifecycle.ContainerViewModel
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
@@ -13,8 +13,8 @@ class ExplorerFeedsContainerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
     private val getExplorerItem: GetExplorerItemUseCase,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
 ) : ContainerViewModel<ExplorerFeedsViewModel, ExplorerFeedsContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): ExplorerFeedsViewModel {
@@ -24,8 +24,8 @@ class ExplorerFeedsContainerViewModel @Inject constructor(
             statusUpdater = statusUpdater,
             statusProvider = statusProvider,
             getExplorerItem = getExplorerItem,
-            refactorToNewBlog = refactorToNewBlog,
-            buildStatusUiState = buildStatusUiState,
+            refactorToNewStatus = refactorToNewStatus,
+            statusUiStateAdapter = statusUiStateAdapter,
         )
     }
 

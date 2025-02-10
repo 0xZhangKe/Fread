@@ -13,7 +13,6 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClient
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.IdentityRole
-import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
@@ -51,7 +50,7 @@ class GetFollowingFeedsUseCase @Inject constructor(
         generatorList: List<GeneratorView>,
         listViewList: List<ListView>,
     ): BlueskyFeeds? = when (feed.type) {
-        Type.FEED -> {
+        Type.Feed -> {
             val generator = generatorList.firstOrNull { it.uri.atUri == feed.value }
             if (generator == null) {
                 null
@@ -60,7 +59,7 @@ class GetFollowingFeedsUseCase @Inject constructor(
             }
         }
 
-        Type.LIST -> {
+        Type.List -> {
             val listView = listViewList.firstOrNull { it.uri.atUri == feed.value }
             if (listView == null) {
                 null
@@ -69,7 +68,7 @@ class GetFollowingFeedsUseCase @Inject constructor(
             }
         }
 
-        Type.TIMELINE -> {
+        Type.Timeline -> {
             BlueskyFeeds.Following(feed.pinned, true)
         }
 
@@ -80,7 +79,7 @@ class GetFollowingFeedsUseCase @Inject constructor(
         client: BlueskyClient,
         feeds: List<SavedFeed>,
     ): Result<List<ListView>> {
-        val lists = feeds.filter { it.type == Type.LIST }.map { it.value }
+        val lists = feeds.filter { it.type == Type.List }.map { it.value }
         if (lists.isEmpty()) return Result.success(emptyList())
         val allResults = supervisorScope {
             lists.map { uri ->
@@ -97,9 +96,8 @@ class GetFollowingFeedsUseCase @Inject constructor(
         client: BlueskyClient,
         feeds: List<SavedFeed>,
     ): Result<List<GeneratorView>> {
-        val feedsUris = feeds.filter { it.type == Type.FEED }
+        val feedsUris = feeds.filter { it.type == Type.Feed }
             .map { AtUri(it.value) }
-            .toImmutableList()
         return client.getFeedGeneratorsCatching(
             GetFeedGeneratorsQueryParams(feedsUris)
         ).map { it.feeds }

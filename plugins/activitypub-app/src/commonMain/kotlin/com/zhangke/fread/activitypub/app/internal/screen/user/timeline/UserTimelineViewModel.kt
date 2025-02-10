@@ -9,27 +9,27 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.richtext.preParseRichText
+import com.zhangke.fread.status.richtext.preParseStatus
 
 class UserTimelineViewModel(
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusEntityAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
-    private val statusAdapter: ActivityPubStatusAdapter,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     private val clientManager: ActivityPubClientManager,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
     private val loggedAccountProvider: LoggedAccountProvider,
     val tabType: UserTimelineTabType,
     val role: IdentityRole,
@@ -37,8 +37,8 @@ class UserTimelineViewModel(
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     init {
@@ -126,13 +126,13 @@ class UserTimelineViewModel(
         loggedAccount: ActivityPubLoggedAccount?,
         platform: BlogPlatform,
     ): StatusUiState {
-        val status = statusAdapter.toStatusUiState(
+        val status = statusEntityAdapter.toStatusUiState(
             entity = this,
             role = role,
             platform = platform,
             loggedAccount = loggedAccount,
         )
-        status.status.preParseRichText()
+        status.status.preParseStatus()
         return status
     }
 }

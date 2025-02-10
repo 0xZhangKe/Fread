@@ -3,30 +3,30 @@ package com.zhangke.fread.bluesky.internal.screen.feeds.home
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.GetFeedsStatusUseCase
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
 import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
-import com.zhangke.fread.status.richtext.preParseRichText
+import com.zhangke.fread.status.richtext.preParseStatusUiState
 
 class HomeFeedsViewModel(
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     private val statusProvider: StatusProvider,
     private val getFeedsStatus: GetFeedsStatusUseCase,
-    refactorToNewBlog: RefactorToNewBlogUseCase,
+    refactorToNewStatus: RefactorToNewStatusUseCase,
     statusUpdater: StatusUpdater,
     private val feeds: BlueskyFeeds,
     private val role: IdentityRole,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     companion object {
@@ -67,7 +67,7 @@ class HomeFeedsViewModel(
     private suspend fun loadFeeds(cursor: String? = this.cursor): Result<List<StatusUiState>> {
         return getFeedsStatus(role = role, feeds = feeds, cursor = cursor).map {
             this.cursor = if (it.cursor.isNullOrBlank()) FLAG_CURSOR_ENDING else it.cursor
-            it.feeds.onEach { status -> status.preParseRichText() }
+            it.feeds.onEach { status -> status.preParseStatusUiState() }
         }
     }
 }

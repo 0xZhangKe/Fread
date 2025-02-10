@@ -10,7 +10,9 @@ import androidx.room.Query
 import androidx.room.RoomDatabase
 import androidx.room.RoomDatabaseConstructor
 import androidx.room.TypeConverters
+import com.zhangke.fread.common.db.converts.FormalUriConverter
 import com.zhangke.fread.common.db.converts.StatusConverter
+import com.zhangke.fread.common.db.converts.StatusUiStateConverter
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -54,9 +56,11 @@ interface MixedStatusDao {
 
 @TypeConverters(
     StatusConverter::class,
+    StatusUiStateConverter::class,
+    FormalUriConverter::class,
 )
 @Database(
-    entities = [StatusContentEntity::class],
+    entities = [MixedStatusEntity::class],
     version = DB_VERSION,
     exportSchema = false,
 )

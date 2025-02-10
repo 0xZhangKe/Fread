@@ -4,11 +4,13 @@ import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
@@ -17,11 +19,12 @@ class UserTimelineContainerViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val clientManager: ActivityPubClientManager,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
+    private val loggedAccountProvider: LoggedAccountProvider,
 ) : ContainerViewModel<UserTimelineViewModel, UserTimelineContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): UserTimelineViewModel {
@@ -29,14 +32,15 @@ class UserTimelineContainerViewModel @Inject constructor(
             statusProvider = statusProvider,
             statusUpdater = statusUpdater,
             webFingerBaseUrlToUserIdRepo = webFingerBaseUrlToUserIdRepo,
-            buildStatusUiState = buildStatusUiState,
+            statusUiStateAdapter = statusUiStateAdapter,
             platformRepo = platformRepo,
-            statusAdapter = statusAdapter,
+            statusEntityAdapter = statusAdapter,
             clientManager = clientManager,
-            refactorToNewBlog = refactorToNewBlog,
+            refactorToNewStatus = refactorToNewStatus,
             tabType = params.tabType,
             role = params.role,
             webFinger = params.webFinger,
+            loggedAccountProvider = loggedAccountProvider,
         )
     }
 

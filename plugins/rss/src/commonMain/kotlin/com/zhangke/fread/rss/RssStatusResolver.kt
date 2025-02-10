@@ -11,6 +11,7 @@ import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.isRss
@@ -35,31 +36,28 @@ class RssStatusResolver @Inject constructor(
     }
 
     override suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
         limit: Int,
         maxId: String?,
-    ): Result<List<StatusUiState>>? {
+    ): Result<PagedData<StatusUiState>>? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri)
             ?: return Result.failure(IllegalArgumentException("Unknown uri: $uri"))
-        if (maxId.isNullOrEmpty().not()) return Result.success(emptyList())
+        if (!maxId.isNullOrEmpty()) return Result.success(PagedData(emptyList(), null))
         val fetchResult = rssStatusRepo.getStatus(uriInsight)
             .map { it.sortedByDescending { status -> status.createAt.epochMillis } }
-        if (fetchResult.isFailure) {
-            return Result.failure(fetchResult.exceptionOrThrow())
-        }
+        if (fetchResult.isFailure) return Result.failure(fetchResult.exceptionOrThrow())
         val finalReturnItems = fetchResult.getOrThrow().map {
             StatusUiState(
-                role = role,
+                role = IdentityRole.nonIdentityRole,
                 status = it,
                 logged = false,
                 isOwner = false,
                 blogTranslationState = BlogTranslationUiState(false),
             )
         }
-        if (finalReturnItems.isEmpty()) return Result.success(emptyList())
-        return Result.success(finalReturnItems)
+        if (finalReturnItems.isEmpty()) return Result.success(PagedData(emptyList(), null))
+        return Result.success(PagedData(finalReturnItems, null))
     }
 
     override suspend fun interactive(

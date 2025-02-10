@@ -33,19 +33,16 @@ class ActivityPubStatusAdapter @Inject constructor(
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) {
 
-    suspend fun toStatusUiState(
-        entity: ActivityPubStatusEntity,
-        platform: BlogPlatform,
+    fun toStatusUiState(
+        status: Status,
         role: IdentityRole,
-        loggedAccount: ActivityPubLoggedAccount?,
+        logged: Boolean,
+        isOwner: Boolean,
     ): StatusUiState {
-        val status = toStatus(entity, platform)
-        val isOwner =
-            loggedAccount?.webFinger?.equalsDomain(status.intrinsicBlog.author.webFinger) == true
         return StatusUiState(
             status = status,
             role = role,
-            logged = loggedAccount != null,
+            logged = logged,
             isOwner = isOwner,
             blogTranslationState = BlogTranslationUiState(
                 support = status.intrinsicBlog.supportTranslate,
@@ -54,6 +51,40 @@ class ActivityPubStatusAdapter @Inject constructor(
                 blogTranslation = null,
             ),
         )
+    }
+
+    fun toStatusUiState(
+        status: Status,
+        role: IdentityRole,
+        loggedAccount: ActivityPubLoggedAccount?,
+    ): StatusUiState {
+        return toStatusUiState(
+            status = status,
+            role = role,
+            logged = loggedAccount != null,
+            isOwner = loggedAccount?.webFinger?.equalsDomain(status.intrinsicBlog.author.webFinger) == true,
+        )
+    }
+
+    suspend fun toStatusUiState(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
+        role: IdentityRole,
+        loggedAccount: ActivityPubLoggedAccount?,
+    ): StatusUiState {
+        val status = toStatus(entity, platform)
+        return toStatusUiState(status, role, loggedAccount)
+    }
+
+    suspend fun toStatusUiState(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
+        role: IdentityRole,
+        isOwner: Boolean,
+        logged: Boolean,
+    ): StatusUiState {
+        val status = toStatus(entity, platform)
+        return toStatusUiState(status, role, logged = logged, isOwner = isOwner)
     }
 
     suspend fun toStatus(

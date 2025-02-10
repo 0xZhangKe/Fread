@@ -5,7 +5,6 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.ActivityPubProvider
 import com.zhangke.fread.activitypub.app.ActivityPubStartup
 import com.zhangke.fread.activitypub.app.ActivityPubUrlInterceptor
-import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentViewModel
@@ -18,7 +17,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTrendsTagsViewModel
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusViewModel
@@ -128,12 +126,6 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
         return InstanceDetailViewModel::class to InstanceDetailViewModel.Factory { serverBaseUrl ->
             creator(serverBaseUrl)
         }
-    }
-
-    @IntoMap
-    @Provides
-    fun provideActivityPubNotificationsViewModel(creator: () -> ActivityPubNotificationsViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return ActivityPubNotificationsViewModel::class to creator
     }
 
     @IntoMap

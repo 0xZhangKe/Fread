@@ -4,11 +4,11 @@ import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
@@ -21,7 +21,7 @@ import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.updateStatus
-import com.zhangke.fread.status.richtext.preParseRichText
+import com.zhangke.fread.status.richtext.preParse
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
@@ -34,9 +34,9 @@ import kotlinx.coroutines.launch
 
 class FeedsViewModelController(
     statusProvider: StatusProvider,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     statusUpdater: StatusUpdater,
-    refactorToNewBlog: RefactorToNewBlogUseCase,
+    refactorToNewStatus: RefactorToNewStatusUseCase,
 ) : IFeedsViewModelController {
 
     private lateinit var coroutineScope: CoroutineScope
@@ -49,8 +49,8 @@ class FeedsViewModelController(
     private val interactiveHandler = InteractiveHandler(
         statusProvider = statusProvider,
         statusUpdater = statusUpdater,
-        buildStatusUiState = buildStatusUiState,
-        refactorToNewBlog = refactorToNewBlog,
+        statusUiStateAdapter = statusUiStateAdapter,
+        refactorToNewStatus = refactorToNewStatus,
     )
 
     override val mutableUiState = MutableStateFlow(
@@ -111,7 +111,7 @@ class FeedsViewModelController(
             if (needLocalData) {
                 loadFirstPageLocalFeeds()
                     .map { list ->
-                        list.preParseRichText()
+                        list.preParse()
                         list
                     }
                     .onSuccess { localStatus ->
@@ -128,7 +128,7 @@ class FeedsViewModelController(
             loadNewFromServerFunction()
                 .map { result ->
                     val newStatus = result.newStatus
-                    newStatus.preParseRichText()
+                    newStatus.preParse()
                     newStatus
                 }
                 .onFailure {
@@ -169,7 +169,7 @@ class FeedsViewModelController(
     private suspend fun autoFetchNewerFeeds() {
         loadNewFromServerFunction()
             .map {
-                it.newStatus.preParseRichText()
+                it.newStatus.preParse()
                 it
             }
             .onSuccess {

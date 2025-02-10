@@ -117,6 +117,13 @@ abstract class ActivityPubStatusDatabases : RoomDatabase() {
     }
 }
 
+internal class ActivityPubStatus1to2Migration : Migration(1, 2) {
+
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("DELETE FROM ${TABLE_NAME}")
+    }
+}
+
 // The Room compiler generates the `actual` implementations.
 @Suppress("NO_ACTUAL_FOR_EXPECT")
 expect object ActivityPubStatusDatabasesConstructor : RoomDatabaseConstructor<ActivityPubStatusDatabases> {

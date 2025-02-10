@@ -11,7 +11,6 @@ import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import me.tatarka.inject.annotations.Inject
@@ -20,7 +19,6 @@ class PostStatusUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
     private val statusUpdater: StatusUpdater,
     private val statusEntityAdapter: ActivityPubStatusAdapter,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
     private val attachmentAdapter: PostStatusAttachmentAdapter,
 ) {
 
@@ -64,8 +62,13 @@ class PostStatusUseCase @Inject constructor(
                 visibility = visibility?.toEntityVisibility(),
                 language = language?.isO3LanguageCode,
             ).map {
-                val status = statusEntityAdapter.toStatus(it, account.platform)
-                statusUpdater.update(buildStatusUiState(role, status))
+                val status = statusEntityAdapter.toStatusUiState(
+                    entity = it,
+                    platform = account.platform,
+                    role = role,
+                    loggedAccount = account,
+                )
+                statusUpdater.update(status)
             }
         } else {
             val mediaAttributes = mutableListOf<ActivityPubEditStatusEntity.MediaAttributes>()
@@ -96,8 +99,14 @@ class PostStatusUseCase @Inject constructor(
                 spoilerText = if (sensitive == true) spoilerText else null,
                 language = language?.isO3LanguageCode,
             ).map {
-                val status = statusEntityAdapter.toStatus(it, account.platform)
-                statusUpdater.update(buildStatusUiState(role, status))
+                statusUpdater.update(
+                    statusEntityAdapter.toStatusUiState(
+                        entity = it,
+                        platform = account.platform,
+                        role = role,
+                        loggedAccount = account,
+                    )
+                )
             }
         }
     }

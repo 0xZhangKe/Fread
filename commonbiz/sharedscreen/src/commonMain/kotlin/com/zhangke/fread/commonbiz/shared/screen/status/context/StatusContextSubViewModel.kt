@@ -3,13 +3,13 @@ package com.zhangke.fread.commonbiz.shared.screen.status.context
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -25,17 +25,17 @@ class StatusContextSubViewModel(
     private val mixedStatusRepo: MixedStatusRepo,
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     private val role: IdentityRole,
-    anchorStatus: Status?,
+    anchorStatus: StatusUiState?,
     blog: Blog?,
     private val blogTranslationUiState: BlogTranslationUiState?,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     private val _uiState = MutableStateFlow(
@@ -48,11 +48,12 @@ class StatusContextSubViewModel(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val anchorStatus: StatusUiState = buildStatusUiState(
-        role = role,
-        status = anchorStatus ?: Status.NewBlog(blog!!),
-        blogTranslationState = blogTranslationUiState,
-    )
+    private val anchorStatus: StatusUiState =
+        anchorStatus ?: statusUiStateAdapter.toStatusUiStateSnapshot(
+            role = role,
+            status = Status.NewBlog(blog!!),
+            blogTranslationState = blogTranslationUiState,
+        )
 
     private var anchorAuthorFollowing: Boolean? = null
 
@@ -107,16 +108,13 @@ class StatusContextSubViewModel(
         statusProvider.statusResolver
             .getStatusContext(role, anchorStatus.status)
             .map { statusContext ->
-                if (statusContext.status == null) {
-                    loadStatus()
-                }
                 val status = statusContext.status?.let {
                     statusUpdater.update(it)
                     it.copy(
                         following = anchorAuthorFollowing ?: it.following,
                         blogTranslationState = blogTranslationUiState ?: it.blogTranslationState
                     )
-                } ?: anchorStatus
+                } ?: loadStatus() ?: anchorStatus
                 statusContext.copy(
                     status = status.copy(
                         following = anchorAuthorFollowing ?: status.following,
@@ -142,8 +140,8 @@ class StatusContextSubViewModel(
             }
     }
 
-    private suspend fun loadStatus() {
-        statusProvider.statusResolver
+    private suspend fun loadStatus(): StatusUiState? {
+        return statusProvider.statusResolver
             .getStatus(role, anchorStatus.status.id, anchorStatus.status.platform)
             .map {
                 it.copy(
@@ -153,18 +151,18 @@ class StatusContextSubViewModel(
             }
             .onSuccess {
                 statusUpdater.update(it)
-                _uiState.update { state ->
-                    state.copy(
-                        contextStatus = state.contextStatus.map { item ->
-                            if (item.type == StatusInContextType.ANCHOR) {
-                                item.copy(status = it)
-                            } else {
-                                item
-                            }
-                        }
-                    )
-                }
-            }
+//                _uiState.update { state ->
+//                    state.copy(
+//                        contextStatus = state.contextStatus.map { item ->
+//                            if (item.type == StatusInContextType.ANCHOR) {
+//                                item.copy(status = it)
+//                            } else {
+//                                item
+//                            }
+//                        }
+//                    )
+//                }
+            }.getOrNull()
     }
 
     private fun buildContextStatus(

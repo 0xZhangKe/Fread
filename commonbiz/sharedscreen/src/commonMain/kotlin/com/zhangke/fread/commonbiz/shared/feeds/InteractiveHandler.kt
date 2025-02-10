@@ -7,12 +7,12 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.framework.utils.languageCode
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
@@ -26,7 +26,6 @@ import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.isRss
-import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
@@ -37,8 +36,8 @@ import kotlinx.serialization.serializer
 class InteractiveHandler(
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
 ) : IInteractiveHandler {
 
     override val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
@@ -155,7 +154,7 @@ class InteractiveHandler(
         coroutineScope.launch {
             val result = statusProvider.statusResolver
                 .interactive(status.role, status.status, type)
-                .map { s -> s?.let { buildStatusUiState(status, it) } }
+                .map { s -> s?.let { statusUiStateAdapter.toStatusUiState(status, it) } }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch
@@ -185,8 +184,8 @@ class InteractiveHandler(
             } else {
                 StatusContextScreen(
                     role = status.role,
-                    serializedStatus = refactorToNewBlog(status.status).let {
-                        globalJson.encodeToString(Status.serializer(), it)
+                    serializedStatus = refactorToNewStatus(status).let {
+                        globalJson.encodeToString(serializer(), it)
                     },
                     blogTranslationUiState = status.blogTranslationState,
                 )
@@ -214,7 +213,7 @@ class InteractiveHandler(
         coroutineScope.launch {
             val result = statusProvider.statusResolver
                 .votePoll(status.role, status.status.intrinsicBlog, votedOption)
-                .map { buildStatusUiState(status, it) }
+                .map { statusUiStateAdapter.toStatusUiState(status, it) }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch

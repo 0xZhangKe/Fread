@@ -75,9 +75,6 @@ fun EmbedBlog(
             blog = blog,
             isOwner = isOwner,
             blogTranslationState = remember { BlogTranslationUiState(support = false) },
-            specificTime = remember {
-                blog.createAt.instant.formatDefault()
-            },
             detailModel = false,
             indexOfFeeds = 0,
             style = style,

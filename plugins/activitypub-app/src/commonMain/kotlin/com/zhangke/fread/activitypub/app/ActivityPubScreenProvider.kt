@@ -10,7 +10,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubCont
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListRoute
@@ -18,7 +17,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListS
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -70,12 +68,6 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is ActivityPubContent) return null
         return EditContentConfigScreen(content.id)
-    }
-
-    override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
-        if (account.platform.protocol.notActivityPub) return null
-        val userInsights = userUriTransformer.parse(account.uri) ?: return null
-        return ActivityPubNotificationsScreen(userInsights)
     }
 
     override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {

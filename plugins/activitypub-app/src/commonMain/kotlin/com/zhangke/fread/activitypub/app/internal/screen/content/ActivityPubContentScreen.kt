@@ -128,7 +128,7 @@ internal class ActivityPubContentScreen(
                         FloatingActionButton(
                             onClick = {
                                 reportClick(HomeTabElements.POST_STATUS)
-                                onPostBlogClick(account)
+                                account?.let(onPostBlogClick)
                             },
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary,
@@ -222,7 +222,7 @@ internal class ActivityPubContentScreen(
                                 tabList[pageIndex].TabContent(screen, null)
                             }
                         }
-                    } else if (errorMessage.isNullOrBlank().not()) {
+                    } else if (!errorMessage.isNullOrBlank()) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Text(
                                 modifier = Modifier

@@ -30,6 +30,8 @@ import app.bsky.graph.GetListQueryParams
 import app.bsky.graph.GetListResponse
 import app.bsky.graph.GetListsQueryParams
 import app.bsky.graph.GetListsResponse
+import app.bsky.graph.MuteActorRequest
+import app.bsky.graph.UnmuteActorRequest
 import app.bsky.notification.ListNotificationsQueryParams
 import app.bsky.notification.ListNotificationsResponse
 import app.bsky.notification.UpdateSeenRequest
@@ -59,6 +61,7 @@ import io.ktor.http.Url
 import kotlinx.serialization.json.Json
 import sh.christian.ozone.BlueskyApi
 import sh.christian.ozone.XrpcBlueskyApi
+import sh.christian.ozone.api.AtIdentifier
 import sh.christian.ozone.api.response.AtpResponse
 
 class BlueskyClient(
@@ -173,6 +176,14 @@ class BlueskyClient(
 
     suspend fun updateSeenCatching(request: UpdateSeenRequest): Result<Unit> {
         return runCatching { updateSeen(request) }.toResult()
+    }
+
+    suspend fun muteActorCatching(actor: AtIdentifier): Result<Unit> {
+        return runCatching { muteActor(MuteActorRequest(actor)) }.toResult()
+    }
+
+    suspend fun unmuteActorCatching(actor: AtIdentifier): Result<Unit> {
+        return runCatching { unmuteActor(UnmuteActorRequest(actor)) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

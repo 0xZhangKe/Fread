@@ -1,6 +1,5 @@
 package com.zhangke.framework.composable.collapsable
 
-
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxSize

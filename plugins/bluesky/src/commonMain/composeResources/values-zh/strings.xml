@@ -18,4 +18,13 @@
     <string name="bsky_feeds_user_replies">回复</string>
     <string name="bsky_feeds_user_medias">媒体</string>
     <string name="bsky_feeds_user_likes">喜欢</string>
+
+    <string name="bsky_user_detail_action_blocked_list">屏蔽的用户</string>
+    <string name="bsky_user_detail_action_muted_list">隐藏的用户</string>
+    <string name="bsky_user_detail_action_mute_user">隐藏 %1$s</string>
+    <string name="bsky_user_detail_action_unmute_user">取消隐藏</string>
+    <string name="bsky_user_detail_action_block_user">屏蔽 %1$s</string>
+    <string name="bsky_user_detail_action_unblock_user">取消屏蔽</string>
+    <string name="bsky_user_detail_action_block_user_dialog_message">您确认要屏蔽对方吗？</string>
+    <string name="bsky_user_detail_action_mute_user_dialog_message">您确认要隐藏对方吗？</string>
 </resources>

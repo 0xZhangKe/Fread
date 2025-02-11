@@ -888,7 +888,7 @@ data class UserDetailScreen(
                         }
                     },
                 ) {
-                    Text(text = org.jetbrains.compose.resources.stringResource(com.zhangke.fread.framework.Res.string.cancel))
+                    Text(text = stringResource(com.zhangke.fread.framework.Res.string.cancel))
                 }
             }
         }

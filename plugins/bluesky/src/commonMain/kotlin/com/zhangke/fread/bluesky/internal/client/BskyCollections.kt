@@ -11,4 +11,8 @@ object BskyCollections {
     val feedPost = Nsid("app.bsky.feed.post")
 
     val profile = Nsid("app.bsky.actor.profile")
+
+    val follow = Nsid("app.bsky.graph.follow")
+
+    val block = Nsid("app.bsky.graph.block")
 }

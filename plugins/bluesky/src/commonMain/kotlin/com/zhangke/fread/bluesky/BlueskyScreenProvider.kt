@@ -7,7 +7,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentScreen
-import com.zhangke.fread.bluesky.internal.screen.user.BskyUserDetailScreen
+import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent

@@ -1,18 +1,27 @@
-package com.zhangke.fread.bluesky.internal.screen.user
+package com.zhangke.fread.bluesky.internal.screen.user.detail
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.selection.SelectionContainer
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.VolumeOff
+import androidx.compose.material.icons.filled.Block
+import androidx.compose.material.icons.filled.Edit
+import androidx.compose.material.icons.filled.MoreVert
+import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
+import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
@@ -20,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,18 +40,36 @@ import androidx.constraintlayout.compose.Dimension
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.AlertConfirmDialog
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LocalSnackbarHostState
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.analytics.reportClick
+import com.zhangke.fread.bluesky.Res
+import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user
+import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user_dialog_message
+import com.zhangke.fread.bluesky.bsky_user_detail_action_blocked_list
+import com.zhangke.fread.bluesky.bsky_user_detail_action_mute_user
+import com.zhangke.fread.bluesky.bsky_user_detail_action_mute_user_dialog_message
+import com.zhangke.fread.bluesky.bsky_user_detail_action_muted_list
+import com.zhangke.fread.bluesky.bsky_user_detail_action_unmute_user
 import com.zhangke.fread.bluesky.internal.composable.DetailTopBar
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
+import com.zhangke.fread.bluesky.internal.tracking.BskyTrackingElements
+import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.ImageViewerScreen
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.ui.action.DropDownCopyLinkItem
+import com.zhangke.fread.status.ui.action.DropDownOpenInBrowserItem
+import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
 import com.zhangke.fread.status.ui.common.ProgressedAvatar
@@ -49,7 +77,6 @@ import com.zhangke.fread.status.ui.common.ProgressedBanner
 import com.zhangke.fread.status.ui.common.RelationshipStateButton
 import com.zhangke.fread.status.ui.common.RelationshipUiState
 import com.zhangke.fread.status.ui.common.UserFollowLine
-import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.status_ui_user_detail_follows_you
 import org.jetbrains.compose.resources.stringResource
 
@@ -63,30 +90,44 @@ class BskyUserDetailScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val transparentNavigator = LocalTransparentNavigator.current
+        val browserLauncher = LocalActivityBrowserLauncher.current
+        val activityTextHandler = LocalActivityTextHandler.current
         val viewModel = getViewModel<BskyUserDetailViewModel, BskyUserDetailViewModel.Factory> {
             it.create(role, did)
         }
         val uiState by viewModel.uiState.collectAsState()
+        val snackBarState = rememberSnackbarHostState()
         UserDetailContent(
             uiState = uiState,
+            snackbarHostState = snackBarState,
             onBackClick = navigator::pop,
-            onBannerClick = {
-                openFullImageScreen(transparentNavigator, uiState.banner)
-            },
-            onAvatarClick = {
-                openFullImageScreen(transparentNavigator, uiState.avatar)
-            },
+            onBannerClick = { openFullImageScreen(transparentNavigator, uiState.banner) },
+            onAvatarClick = { openFullImageScreen(transparentNavigator, uiState.avatar) },
             onFollowClick = viewModel::onFollowClick,
+            onBlockClick = viewModel::onBlockClick,
             onUnblockClick = viewModel::onUnblockClick,
             onUnfollowClick = viewModel::onUnfollowClick,
             onFollowerClick = {},
             onFollowingClick = {},
+            onOpenInBrowserClick = {
+                uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(it) }
+            },
+            onCopyLinkClick = {
+                uiState.userHomePageUrl?.let { activityTextHandler.copyText(it) }
+            },
+            onEditProfileClick = {},
+            onMuteClick = { viewModel.onMuteClick(true) },
+            onUnmuteClick = { viewModel.onMuteClick(false) },
+            onBlockedUserListClick = {},
+            onMuteUserListClick = {},
         )
+        ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
     }
 
     @Composable
     private fun UserDetailContent(
         uiState: BskyUserDetailUiState,
+        snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onBannerClick: () -> Unit,
         onAvatarClick: () -> Unit,
@@ -95,15 +136,22 @@ class BskyUserDetailScreen(
         onUnblockClick: () -> Unit,
         onFollowerClick: () -> Unit,
         onFollowingClick: () -> Unit,
+        onBlockClick: () -> Unit,
+        onMuteClick: () -> Unit,
+        onUnmuteClick: () -> Unit,
+        onOpenInBrowserClick: () -> Unit,
+        onCopyLinkClick: () -> Unit,
+        onEditProfileClick: () -> Unit,
+        onBlockedUserListClick: () -> Unit,
+        onMuteUserListClick: () -> Unit,
     ) {
         val contentCanScrollBackward = remember {
             mutableStateOf(false)
         }
-        val snackBarState = rememberSnackbarHostState()
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             contentWindowInsets = WindowInsets(0, 0, 0, 0),
-            snackbarHost = { SnackbarHost(snackBarState) },
+            snackbarHost = { SnackbarHost(snackbarHostState) },
         ) { innerPaddings ->
             ScrollUpTopBarLayout(
                 modifier = Modifier
@@ -114,7 +162,19 @@ class BskyUserDetailScreen(
                         progress = progress,
                         title = uiState.displayName.orEmpty(),
                         onBackClick = onBackClick,
-                        actions = {},
+                        actions = {
+                            TopBarActions(
+                                uiState = uiState,
+                                onBlockClick = onBlockClick,
+                                onMuteClick = onMuteClick,
+                                onUnmuteClick = onUnmuteClick,
+                                onOpenInBrowserClick = onOpenInBrowserClick,
+                                onCopyLinkClick = onCopyLinkClick,
+                                onEditProfileClick = onEditProfileClick,
+                                onBlockedUserListClick = onBlockedUserListClick,
+                                onMuteUserListClick = onMuteUserListClick,
+                            )
+                        },
                     )
                 },
                 headerContent = { progress ->
@@ -133,13 +193,19 @@ class BskyUserDetailScreen(
                 contentCanScrollBackward = contentCanScrollBackward,
             ) {
                 val tabs = remember(uiState.tabs) {
-                    uiState.tabs.map { HomeFeedsTab(role = role, feeds = it) }
+                    uiState.tabs.map {
+                        HomeFeedsTab(
+                            contentCanScrollBackward = contentCanScrollBackward,
+                            role = role,
+                            feeds = it,
+                        )
+                    }
                 }
                 val nestedTabConnection = remember {
                     NestedTabConnection()
                 }
                 CompositionLocalProvider(
-                    LocalSnackbarHostState provides snackBarState,
+                    LocalSnackbarHostState provides snackbarHostState,
                     LocalNestedTabConnection provides nestedTabConnection,
                 ) {
                     val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
@@ -170,7 +236,7 @@ private fun UserDetailInfo(
             modifier = Modifier.fillMaxWidth(),
         ) {
             val (bannerRef, avatarRef, nameRef, handleRef, relationRef) = createRefs()
-            val (desRef, followRef, moreRef) = createRefs()
+            val (desRef, followRef) = createRefs()
             ProgressedBanner(
                 modifier = Modifier
                     .clickable { onBannerClick() }
@@ -301,10 +367,150 @@ private fun DetailSubtitle(
                         shape = RoundedCornerShape(2.dp),
                     )
                     .padding(horizontal = 4.dp),
-                text = stringResource(Res.string.status_ui_user_detail_follows_you),
+                text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_follows_you),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
+    }
+}
+
+@Composable
+private fun TopBarActions(
+    uiState: BskyUserDetailUiState,
+    onBlockClick: () -> Unit,
+    onMuteClick: () -> Unit,
+    onUnmuteClick: () -> Unit,
+    onOpenInBrowserClick: () -> Unit,
+    onCopyLinkClick: () -> Unit,
+    onEditProfileClick: () -> Unit,
+    onBlockedUserListClick: () -> Unit,
+    onMuteUserListClick: () -> Unit,
+) {
+    if (uiState.isOwner) {
+        SimpleIconButton(
+            onClick = onEditProfileClick,
+            imageVector = Icons.Default.Edit,
+            contentDescription = "Edit Profile",
+        )
+        Box(modifier = Modifier.width(8.dp))
+    }
+    var showMorePopup by remember {
+        mutableStateOf(false)
+    }
+    SimpleIconButton(
+        onClick = { showMorePopup = true },
+        imageVector = Icons.Default.MoreVert,
+        contentDescription = "More Options"
+    )
+    var showBlockUserConfirmDialog by remember {
+        mutableStateOf(false)
+    }
+    var showMuteDialog by remember {
+        mutableStateOf(false)
+    }
+    DropdownMenu(
+        expanded = showMorePopup,
+        onDismissRequest = { showMorePopup = false },
+    ) {
+        DropDownOpenInBrowserItem {
+            reportClick(BskyTrackingElements.USER_DETAIL_OPEN_IN_BROWSER)
+            showMorePopup = false
+            onOpenInBrowserClick()
+        }
+        DropDownCopyLinkItem {
+            reportClick(BskyTrackingElements.USER_DETAIL_COPY_LINK)
+            showMorePopup = false
+            onCopyLinkClick()
+        }
+        if (uiState.isOwner) {
+            SelfAccountActions(
+                onBlockedUserListClick = onBlockedUserListClick,
+                onMuteUserListClick = onMuteUserListClick,
+            )
+        } else {
+            OtherAccountActions(
+                uiState = uiState,
+                onUnmuteClick = onUnmuteClick,
+                onShowMuteDialogClick = { showMuteDialog = true },
+                onShowBlockUserConfirmDialog = { showBlockUserConfirmDialog = true },
+                onDismissMorePopupRequest = { showMorePopup = false },
+            )
+        }
+    }
+    if (showBlockUserConfirmDialog) {
+        AlertConfirmDialog(
+            content = stringResource(Res.string.bsky_user_detail_action_block_user_dialog_message),
+            onConfirm = {
+                showBlockUserConfirmDialog = false
+                onBlockClick()
+            },
+            onDismissRequest = { showBlockUserConfirmDialog = false },
+        )
+    }
+    if (showMuteDialog) {
+        AlertConfirmDialog(
+            content = stringResource(Res.string.bsky_user_detail_action_mute_user_dialog_message),
+            onConfirm = {
+                showMuteDialog = false
+                onMuteClick()
+            },
+            onDismissRequest = { showMuteDialog = false },
+        )
+    }
+}
+
+@Composable
+private fun SelfAccountActions(
+    onBlockedUserListClick: () -> Unit,
+    onMuteUserListClick: () -> Unit,
+) {
+    ModalDropdownMenuItem(
+        text = stringResource(Res.string.bsky_user_detail_action_muted_list),
+        imageVector = Icons.AutoMirrored.Filled.VolumeOff,
+        onClick = onMuteUserListClick,
+    )
+    ModalDropdownMenuItem(
+        text = stringResource(Res.string.bsky_user_detail_action_blocked_list),
+        imageVector = Icons.Default.Block,
+        onClick = onBlockedUserListClick,
+    )
+}
+
+@Composable
+private fun OtherAccountActions(
+    uiState: BskyUserDetailUiState,
+    onUnmuteClick: () -> Unit,
+    onShowMuteDialogClick: () -> Unit,
+    onShowBlockUserConfirmDialog: () -> Unit,
+    onDismissMorePopupRequest: () -> Unit,
+) {
+    val fixedName = uiState.displayName?.take(10).orEmpty()
+    val muteOrUnmuteText = if (uiState.muted) {
+        stringResource(Res.string.bsky_user_detail_action_unmute_user)
+    } else {
+        stringResource(Res.string.bsky_user_detail_action_mute_user, fixedName)
+    }
+    ModalDropdownMenuItem(
+        text = muteOrUnmuteText,
+        imageVector = Icons.AutoMirrored.Filled.VolumeOff,
+        onClick = {
+            onDismissMorePopupRequest()
+            if (uiState.muted) {
+                onUnmuteClick()
+            } else {
+                onShowMuteDialogClick()
+            }
+        }
+    )
+    if (!uiState.blocked) {
+        ModalDropdownMenuItem(
+            text = stringResource(Res.string.bsky_user_detail_action_block_user, fixedName),
+            imageVector = Icons.Default.Block,
+            onClick = {
+                onDismissMorePopupRequest()
+                onShowBlockUserConfirmDialog()
+            },
+        )
     }
 }
 

@@ -10,6 +10,8 @@ import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.usecase.BskyStatusInteractiveUseCase
 import com.zhangke.fread.bluesky.internal.usecase.GetStatusContextUseCase
+import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
+import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
@@ -34,6 +36,7 @@ class BlueskyStatusResolver @Inject constructor(
     private val statusAdapter: BlueskyStatusAdapter,
     private val platformRepo: BlueskyPlatformRepo,
     private val uriTransformer: UserUriTransformer,
+    private val updateRelationship: UpdateRelationshipUseCase,
     private val statusInteractive: BskyStatusInteractiveUseCase,
     private val getStatusContextFunction: GetStatusContextUseCase,
     private val userUriTransformer: UserUriTransformer,
@@ -139,14 +142,24 @@ class BlueskyStatusResolver @Inject constructor(
         role: IdentityRole,
         target: BlogAuthor
     ): Result<Unit>? {
-        TODO("Not yet implemented")
+        val userUriInsights = userUriTransformer.parse(target.uri) ?: return null
+        return updateRelationship(
+            role = role,
+            targetDid = userUriInsights.did,
+            type = UpdateRelationshipType.FOLLOW,
+        )
     }
 
     override suspend fun unfollow(
         role: IdentityRole,
         target: BlogAuthor
     ): Result<Unit>? {
-        TODO("Not yet implemented")
+        val userUriInsights = userUriTransformer.parse(target.uri) ?: return null
+        return updateRelationship(
+            role = role,
+            targetDid = userUriInsights.did,
+            type = UpdateRelationshipType.UNFOLLOW,
+        )
     }
 
     override suspend fun isFollowing(

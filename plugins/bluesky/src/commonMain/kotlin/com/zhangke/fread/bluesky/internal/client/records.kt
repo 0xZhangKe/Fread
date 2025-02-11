@@ -2,10 +2,13 @@ package com.zhangke.fread.bluesky.internal.client
 
 import app.bsky.feed.Like
 import app.bsky.feed.Repost
+import app.bsky.graph.Block
+import app.bsky.graph.Follow
 import com.atproto.repo.StrongRef
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
+import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.model.JsonContent
 
 internal fun likeRecord(
@@ -24,6 +27,26 @@ internal fun repostRecord(
 ): JsonContent {
     return Repost(
         subject = subject,
+        createdAt = createdAt,
+    ).bskyJson()
+}
+
+internal fun followRecord(
+    did: String,
+    createdAt: Instant = Clock.System.now(),
+): JsonContent {
+    return Follow(
+        subject = Did(did),
+        createdAt = createdAt,
+    ).bskyJson()
+}
+
+internal fun blockRecord(
+    did: String,
+    createdAt: Instant = Clock.System.now(),
+): JsonContent {
+    return Block(
+        subject = Did(did),
         createdAt = createdAt,
     ).bskyJson()
 }

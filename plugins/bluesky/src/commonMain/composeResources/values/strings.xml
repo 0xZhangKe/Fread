@@ -17,4 +17,13 @@
     <string name="bsky_feeds_user_replies">Replies</string>
     <string name="bsky_feeds_user_medias">Medias</string>
     <string name="bsky_feeds_user_likes">Likes</string>
+
+    <string name="bsky_user_detail_action_blocked_list">Blocked Users</string>
+    <string name="bsky_user_detail_action_muted_list">Muted Users</string>
+    <string name="bsky_user_detail_action_mute_user">Mute %1$s</string>
+    <string name="bsky_user_detail_action_unmute_user">Unmute</string>
+    <string name="bsky_user_detail_action_block_user">Block %1$s</string>
+    <string name="bsky_user_detail_action_unblock_user">Unblock</string>
+    <string name="bsky_user_detail_action_block_user_dialog_message">Do you want to block this user?</string>
+    <string name="bsky_user_detail_action_mute_user_dialog_message">Do you want to mute this user?</string>
 </resources>

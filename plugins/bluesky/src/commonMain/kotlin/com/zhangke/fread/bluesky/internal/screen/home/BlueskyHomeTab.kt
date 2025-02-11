@@ -26,6 +26,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -239,6 +240,6 @@ class BlueskyHomeTab(
 
     private fun createTabList(content: BlueskyContent, role: IdentityRole): List<HomeFeedsTab> {
         return content.feedsList.filter { it.pinned }
-            .map { HomeFeedsTab(it, role) }
+            .map { HomeFeedsTab(null, it, role) }
     }
 }

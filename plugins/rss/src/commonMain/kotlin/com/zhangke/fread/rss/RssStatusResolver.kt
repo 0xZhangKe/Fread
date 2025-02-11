@@ -29,7 +29,7 @@ class RssStatusResolver @Inject constructor(
 
     override suspend fun getStatus(
         role: IdentityRole,
-        statusId: String,
+        blog: Blog,
         platform: BlogPlatform
     ): Result<StatusUiState>? {
         return null

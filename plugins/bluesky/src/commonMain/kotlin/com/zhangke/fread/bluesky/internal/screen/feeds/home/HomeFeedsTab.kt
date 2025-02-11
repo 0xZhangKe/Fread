@@ -1,6 +1,7 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.home
 
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -15,6 +16,7 @@ import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
 
 class HomeFeedsTab(
+    private val contentCanScrollBackward: MutableState<Boolean>?,
     private val feeds: BlueskyFeeds,
     private val role: IdentityRole,
 ) : PagerTab {
@@ -38,6 +40,7 @@ class HomeFeedsTab(
             onLoadMore = viewModel::onLoadMore,
             composedStatusInteraction = viewModel.composedStatusInteraction,
             observeScrollToTopEvent = true,
+            contentCanScrollBackward = contentCanScrollBackward,
             nestedScrollConnection = nestedScrollConnection,
             onImmersiveEvent = {},
             onScrollInProgress = {},

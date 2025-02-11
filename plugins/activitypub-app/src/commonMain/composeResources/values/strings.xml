@@ -55,7 +55,7 @@
     <string name="activity_pub_user_detail_menu_edit_private_note_dialog_hint">Enter Private Note</string>
     <string name="activity_pub_user_detail_dialog_content_block">Do you want to block this user?</string>
     <string name="activity_pub_user_detail_dialog_content_block_domain">Do you want to block this domain?</string>
-    <string name="activity_pub_user_menu_blocked_user_list">Blocked users</string>
+    <string name="activity_pub_user_menu_blocked_user_list">Blocked Users</string>
     <string name="activity_pub_user_menu_muted_user_list">Muted Users</string>
     <string name="activity_pub_user_detail_menu_mute_user">Mute %1$s</string>
     <string name="activity_pub_user_detail_menu_unmute_user">Unmute %1$s</string>

@@ -21,10 +21,10 @@ class StatusResolver(
 
     suspend fun getStatus(
         role: IdentityRole,
-        statusId: String,
+        blog: Blog,
         platform: BlogPlatform,
     ): Result<StatusUiState> {
-        return resolverList.mapFirst { it.getStatus(role, statusId, platform) }
+        return resolverList.mapFirst { it.getStatus(role, blog, platform) }
     }
 
     suspend fun getStatusList(
@@ -117,7 +117,7 @@ interface IStatusResolver {
 
     suspend fun getStatus(
         role: IdentityRole,
-        statusId: String,
+        blog: Blog,
         platform: BlogPlatform,
     ): Result<StatusUiState>?
 

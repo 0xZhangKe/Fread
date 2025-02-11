@@ -1,7 +1,12 @@
 package com.zhangke.fread.bluesky
 
 import app.bsky.actor.GetProfileQueryParams
+import app.bsky.feed.GetAuthorFeedFilter
+import app.bsky.feed.GetAuthorFeedQueryParams
+import app.bsky.feed.GetPostsQueryParams
+import com.zhangke.fread.bluesky.internal.adapter.BlueskyStatusAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.usecase.BskyStatusInteractiveUseCase
 import com.zhangke.fread.bluesky.internal.usecase.GetStatusContextUseCase
@@ -21,10 +26,14 @@ import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
+import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
 
 class BlueskyStatusResolver @Inject constructor(
     private val clientManager: BlueskyClientManager,
+    private val statusAdapter: BlueskyStatusAdapter,
+    private val platformRepo: BlueskyPlatformRepo,
+    private val uriTransformer: UserUriTransformer,
     private val statusInteractive: BskyStatusInteractiveUseCase,
     private val getStatusContextFunction: GetStatusContextUseCase,
     private val userUriTransformer: UserUriTransformer,
@@ -32,10 +41,21 @@ class BlueskyStatusResolver @Inject constructor(
 
     override suspend fun getStatus(
         role: IdentityRole,
-        statusId: String,
+        blog: Blog,
         platform: BlogPlatform
     ): Result<StatusUiState>? {
-        TODO("Not yet implemented")
+        if (platform.protocol.notBluesky) return null
+        val client = clientManager.getClient(role)
+        val account = client.loggedAccountProvider()
+        return client.getPostsCatching(GetPostsQueryParams(listOf(AtUri(blog.url))))
+            .map {
+                statusAdapter.convertToUiState(
+                    role = role,
+                    postView = it.posts.first(),
+                    platform = platform,
+                    loggedAccount = account,
+                )
+            }
     }
 
     override suspend fun getStatusList(
@@ -43,7 +63,31 @@ class BlueskyStatusResolver @Inject constructor(
         limit: Int,
         maxId: String?,
     ): Result<PagedData<StatusUiState>>? {
-        TODO("Not yet implemented")
+        val uriInsight = uriTransformer.parse(uri) ?: return null
+        val platform = platformRepo.getAllPlatform().first()
+        val role = IdentityRole(baseUrl = platform.baseUrl)
+        val client = clientManager.getClient(role)
+        val account = client.loggedAccountProvider()
+        return client.getAuthorFeedCatching(
+            GetAuthorFeedQueryParams(
+                actor = Did(uriInsight.did),
+                filter = GetAuthorFeedFilter.PostsAndAuthorThreads,
+                includePins = true,
+                limit = 80,
+            )
+        ).map { result ->
+            PagedData(
+                list = result.feed.map {
+                    statusAdapter.convertToUiState(
+                        role = role,
+                        feedViewPost = it,
+                        platform = platform,
+                        loggedAccount = account,
+                    )
+                },
+                cursor = result.cursor,
+            )
+        }
     }
 
     override suspend fun interactive(
@@ -60,7 +104,7 @@ class BlueskyStatusResolver @Inject constructor(
         blog: Blog,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override suspend fun getStatusContext(

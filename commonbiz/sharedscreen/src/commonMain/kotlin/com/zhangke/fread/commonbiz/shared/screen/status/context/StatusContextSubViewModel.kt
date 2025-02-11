@@ -142,27 +142,15 @@ class StatusContextSubViewModel(
 
     private suspend fun loadStatus(): StatusUiState? {
         return statusProvider.statusResolver
-            .getStatus(role, anchorStatus.status.id, anchorStatus.status.platform)
+            .getStatus(role, anchorStatus.status.intrinsicBlog, anchorStatus.status.platform)
             .map {
                 it.copy(
                     following = anchorAuthorFollowing ?: it.following,
                     blogTranslationState = blogTranslationUiState ?: it.blogTranslationState,
                 )
             }
-            .onSuccess {
-                statusUpdater.update(it)
-//                _uiState.update { state ->
-//                    state.copy(
-//                        contextStatus = state.contextStatus.map { item ->
-//                            if (item.type == StatusInContextType.ANCHOR) {
-//                                item.copy(status = it)
-//                            } else {
-//                                item
-//                            }
-//                        }
-//                    )
-//                }
-            }.getOrNull()
+            .onSuccess { statusUpdater.update(it) }
+            .getOrNull()
     }
 
     private fun buildContextStatus(

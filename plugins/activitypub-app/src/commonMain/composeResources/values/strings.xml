@@ -86,20 +86,13 @@
     <string name="activity_pub_edit_account_info_input_name_hint">"Please enter your username"</string>
     <string name="activity_pub_edit_account_info_input_note_hint">"Please enter bio"</string>
 
-    <string name="activity_pub_user_follower_list_title">Followers</string>
-    <string name="activity_pub_user_following_list_title">Following</string>
     <string name="activity_pub_user_list_empty">No users for now</string>
 
-    <string name="activity_pub_muted_user_list_title">Muted Users</string>
     <string name="activity_pub_muted_user_list_empty">No muted users</string>
     <string name="activity_pub_muted_user_list_unmute">Unmute</string>
 
-    <string name="activity_pub_blocked_user_list_title">Blocked Users</string>
     <string name="activity_pub_blocked_user_list_empty">No blocked users</string>
     <string name="activity_pub_blocked_user_list_unblock">Unblock</string>
-
-    <string name="activity_pub_status_favourites_by_title">Favorited</string>
-    <string name="activity_pub_status_reblog_by_title">Boosted</string>
 
     <string name="activity_pub_bookmarks_list_title">Bookmarks</string>
     <string name="activity_pub_favourites_list_title">Favourites</string>

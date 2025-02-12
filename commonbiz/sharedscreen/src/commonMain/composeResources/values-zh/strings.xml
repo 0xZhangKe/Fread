@@ -26,4 +26,17 @@
     <string name="shared_notification_severed_desc">和你中断了关系</string>
     <string name="shared_notification_quote_desc">引用了你的帖子</string>
 
+    <string name="shared_user_list_title_following">正在关注的用户</string>
+    <string name="shared_user_list_title_followers">关注你的用户</string>
+    <string name="shared_user_list_title_mutes">隐藏的用户</string>
+    <string name="shared_user_list_title_blocks">屏蔽的用户</string>
+    <string name="shared_user_list_title_likes">点赞的用户</string>
+    <string name="shared_user_list_title_reblog">转发的用户</string>
+    <string name="shared_user_list_action_mute">隐藏</string>
+    <string name="shared_user_list_action_block">屏蔽</string>
+    <string name="shared_user_list_action_muted">已隐藏</string>
+    <string name="shared_user_list_action_blocked">已屏蔽</string>
+    <string name="shared_user_list_action_mute_dialog_message">您确定要隐藏该用户吗？</string>
+    <string name="shared_user_list_action_block_dialog_message">您确定要屏蔽该用户吗？</string>
+
 </resources>

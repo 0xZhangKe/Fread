@@ -69,31 +69,31 @@ class RssScreenProvider @Inject constructor(
 
     override fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
     override fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
     override fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
     override fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 

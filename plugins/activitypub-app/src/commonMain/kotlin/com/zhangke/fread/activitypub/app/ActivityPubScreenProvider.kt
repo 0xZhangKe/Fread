@@ -12,8 +12,9 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListRoute
-import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreenRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
@@ -103,42 +104,50 @@ class ActivityPubScreenProvider @Inject constructor(
 
     override fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return UserListRoute.buildBlogFavouritedRoute(
+        return UserListScreen(
             role = role,
-            blogId = blogId,
+            type = UserListType.FAVOURITES,
+            statusId = blog.id,
         )
     }
 
     override fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return UserListRoute.buildBlogBoostedRoute(
+        return UserListScreen(
             role = role,
-            blogId = blogId,
+            type = UserListType.REBLOGS,
+            statusId = blog.id,
         )
     }
 
     override fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return StatusListScreenRoute.buildRoute(role, StatusListType.BOOKMARKS)
+        return StatusListScreen(
+            role = role,
+            type = StatusListType.BOOKMARKS,
+        )
     }
 
     override fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return StatusListScreenRoute.buildRoute(role, StatusListType.FAVOURITES)
+        return StatusListScreen(
+            role = role,
+            type = StatusListType.FAVOURITES,
+        )
     }
 
     override fun getFollowedHashtagScreen(

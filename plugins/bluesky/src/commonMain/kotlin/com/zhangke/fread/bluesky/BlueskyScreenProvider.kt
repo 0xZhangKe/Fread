@@ -8,6 +8,8 @@ import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentScreen
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
+import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
+import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
@@ -84,31 +86,41 @@ class BlueskyScreenProvider @Inject constructor(
 
     override fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
-        TODO("Not yet implemented")
+    ): Screen? {
+        if (protocol.notBluesky) return null
+        return UserListScreen(
+            role = role,
+            type = UserListType.LIKE,
+            postUri = blog.url,
+        )
     }
 
     override fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
-        TODO("Not yet implemented")
+    ): Screen? {
+        if (protocol.notBluesky) return null
+        return UserListScreen(
+            role = role,
+            type = UserListType.REBLOG,
+            postUri = blog.url,
+        )
     }
 
     override fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         TODO("Not yet implemented")
     }
 
     override fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         TODO("Not yet implemented")
     }
 

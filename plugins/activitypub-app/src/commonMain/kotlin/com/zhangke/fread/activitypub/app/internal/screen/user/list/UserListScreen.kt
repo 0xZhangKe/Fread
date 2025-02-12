@@ -33,30 +33,26 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_user_list_empty
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_blocked
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_muted
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_blocks
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_followers
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_following
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_likes
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_mutes
 import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_reblog
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_blocked
-import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_muted
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
 import com.zhangke.fread.status.ui.user.CommonUserUi
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.status_ui_follow
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteUri
 import org.jetbrains.compose.resources.stringResource
 import com.zhangke.fread.commonbiz.shared.screen.Res as SharedRes
 
-@Destination(UserListRoute.ROUTE)
 class UserListScreen(
-    @RouteUri private val route: String = "",
-    private val role: IdentityRole? = null,
-    private val type: UserListType? = null,
+    private val role: IdentityRole,
+    private val type: UserListType,
     private val statusId: String? = null,
     private val userUri: FormalUri? = null,
 ) : BaseScreen() {
@@ -66,12 +62,7 @@ class UserListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<UserListViewModel, UserListViewModel.Factory> {
-            if (route.isEmpty()) {
-                it.create(role = role!!, type = type!!, statusId = statusId, userUri = userUri)
-            } else {
-                val (role, type, statusId) = UserListRoute.parseRouteAsReblogOrFavourited(route)!!
-                it.create(role = role, type = type, statusId = statusId, userUri = null)
-            }
+            it.create(role = role, type = type, statusId = statusId, userUri = userUri)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()

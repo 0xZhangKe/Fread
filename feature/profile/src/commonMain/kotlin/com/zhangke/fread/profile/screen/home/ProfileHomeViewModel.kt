@@ -80,9 +80,7 @@ class ProfileHomeViewModel @Inject constructor(
                 .getFavouritedScreen(
                     role = IdentityRole(account.uri, null),
                     protocol = account.platform.protocol,
-                )
-                ?.let { KRouter.routeScreen(it) }
-                ?.let { _openPageFlow.emit(it) }
+                )?.let { _openPageFlow.emit(it) }
         }
     }
 
@@ -92,9 +90,7 @@ class ProfileHomeViewModel @Inject constructor(
                 .getBookmarkedScreen(
                     role = IdentityRole(account.uri, null),
                     protocol = account.platform.protocol,
-                )
-                ?.let { KRouter.routeScreen(it) }
-                ?.let { _openPageFlow.emit(it) }
+                )?.let { _openPageFlow.emit(it) }
         }
     }
 

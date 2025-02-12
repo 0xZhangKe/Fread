@@ -27,4 +27,16 @@
     <string name="shared_notification_severed_desc">has severed ties with you</string>
     <string name="shared_notification_quote_desc">quoted your post</string>
 
+    <string name="shared_user_list_title_following">Following</string>
+    <string name="shared_user_list_title_followers">Followers</string>
+    <string name="shared_user_list_title_mutes">Muted Users</string>
+    <string name="shared_user_list_title_blocks">Blocked Users</string>
+    <string name="shared_user_list_title_likes">Favorited</string>
+    <string name="shared_user_list_title_reblog">Boosted</string>
+    <string name="shared_user_list_action_mute">Mute</string>
+    <string name="shared_user_list_action_block">Block</string>
+    <string name="shared_user_list_action_muted">Muted</string>
+    <string name="shared_user_list_action_blocked">Blocked</string>
+    <string name="shared_user_list_action_mute_dialog_message">Are you sure you want to mute this user?</string>
+    <string name="shared_user_list_action_block_dialog_message">Are you sure you want to block this user?</string>
 </resources>

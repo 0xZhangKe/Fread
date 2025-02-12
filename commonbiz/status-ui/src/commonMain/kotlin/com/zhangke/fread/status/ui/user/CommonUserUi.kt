@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.user.common.users
+package com.zhangke.fread.status.ui.user
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column

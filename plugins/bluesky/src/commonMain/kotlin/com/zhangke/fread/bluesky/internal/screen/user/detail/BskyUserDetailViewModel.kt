@@ -104,7 +104,7 @@ class BskyUserDetailViewModel @Inject constructor(
                 role = role,
                 did = did,
                 block = true,
-                rkey = null,
+                blockUri = null,
             ).handleAndRefresh()
         }
     }
@@ -115,7 +115,7 @@ class BskyUserDetailViewModel @Inject constructor(
                 role = role,
                 did = did,
                 block = false,
-                rkey = uiState.value.blockUri,
+                blockUri = uiState.value.blockUri,
             ).handleAndRefresh()
         }
     }
@@ -133,7 +133,7 @@ class BskyUserDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun Result<Unit>.handleAndRefresh() {
+    private suspend fun <T> Result<T>.handleAndRefresh() {
         if (isSuccess) {
             loadUserDetail(false)
         } else {

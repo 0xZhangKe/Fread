@@ -1,6 +1,7 @@
 package com.zhangke.fread.bluesky.internal.usecase
 
 import com.atproto.repo.CreateRecordRequest
+import com.atproto.repo.CreateRecordResponse
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
@@ -17,7 +18,7 @@ class CreateRecordUseCase @Inject constructor(
         repo: AtIdentifier,
         collection: Nsid,
         record: JsonContent,
-    ): Result<Unit> {
+    ): Result<CreateRecordResponse> {
         return clientManager.getClient(role)
             .createRecordCatching(
                 CreateRecordRequest(
@@ -25,6 +26,6 @@ class CreateRecordUseCase @Inject constructor(
                     collection = collection,
                     record = record,
                 )
-            ).map { }
+            )
     }
 }

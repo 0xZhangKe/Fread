@@ -68,9 +68,9 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideUserListViewModel(creator: (IdentityRole, UserListType) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return UserListViewModel::class to UserListViewModel.Factory { role, type ->
-            creator(role, type)
+    fun provideUserListViewModel(creator: (IdentityRole, UserListType, String?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return UserListViewModel::class to UserListViewModel.Factory { role, type, postUri ->
+            creator(role, type, postUri)
         }
     }
 

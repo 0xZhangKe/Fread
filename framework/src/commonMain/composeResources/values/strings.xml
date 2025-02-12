@@ -17,6 +17,8 @@
 
     <string name="ok">Yes</string>
 
+    <string name="empty">This space is empty～</string>
+
     <string name="duration_selector_title">Set duration</string>
 
     <string name="retry">Try Again</string>

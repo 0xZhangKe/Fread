@@ -7,6 +7,7 @@ import com.zhangke.fread.bluesky.internal.client.adjustToRkey
 import com.zhangke.fread.bluesky.internal.client.followRecord
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
+import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
 
 class UpdateRelationshipUseCase @Inject constructor(
@@ -20,7 +21,7 @@ class UpdateRelationshipUseCase @Inject constructor(
         targetDid: String,
         type: UpdateRelationshipType,
         followUri: String? = null,
-    ): Result<Unit> {
+    ): Result<AtUri?> {
         val did = Did(targetDid)
         when (type) {
             UpdateRelationshipType.FOLLOW -> {
@@ -29,7 +30,7 @@ class UpdateRelationshipUseCase @Inject constructor(
                     repo = did,
                     collection = BskyCollections.follow,
                     record = followRecord(targetDid),
-                )
+                ).map { it.uri }
             }
 
             UpdateRelationshipType.UNFOLLOW -> {
@@ -41,13 +42,13 @@ class UpdateRelationshipUseCase @Inject constructor(
                 } else {
                     followUri
                 }
-                if (finalFollowUri.isNullOrEmpty()) return Result.success(Unit)
+                if (finalFollowUri.isNullOrEmpty()) return Result.success(null)
                 return deleteRecord(
                     role = role,
                     repo = did,
                     collection = BskyCollections.follow,
                     rkey = finalFollowUri.adjustToRkey(),
-                )
+                ).map { null }
             }
         }
     }

@@ -78,37 +78,33 @@ class StatusScreenProvider(
 
     fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getBlogFavouritedScreen(
-                role,
-                blogId,
-                protocol
-            )
+            it.getBlogFavouritedScreen(role, blog, protocol)
         }
     }
 
     fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String? {
-        return providerList.firstNotNullOfOrNull { it.getBlogBoostedScreen(role, blogId, protocol) }
+    ): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getBlogBoostedScreen(role, blog, protocol) }
     }
 
     fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull { it.getBookmarkedScreen(role, protocol) }
     }
 
     fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull { it.getFavouritedScreen(role, protocol) }
     }
 
@@ -159,25 +155,25 @@ interface IStatusScreenProvider {
 
     fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getFollowedHashtagScreen(
         role: IdentityRole,

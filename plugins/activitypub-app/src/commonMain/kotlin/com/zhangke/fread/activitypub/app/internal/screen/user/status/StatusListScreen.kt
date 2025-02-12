@@ -21,16 +21,11 @@ import com.zhangke.fread.activitypub.app.activity_pub_favourites_list_title
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(StatusListScreenRoute.ROUTE)
 class StatusListScreen(
-    @RouteParam(StatusListScreenRoute.PARAM_ROLE) private val roleString: String? = null,
-    @RouteParam(StatusListScreenRoute.PARAM_TYPE) private val typeString: String? = null,
-    private val role: IdentityRole? = null,
-    private val type: StatusListType? = null,
+    private val role: IdentityRole,
+    private val type: StatusListType,
 ) : BaseScreen() {
 
     @Composable
@@ -38,13 +33,7 @@ class StatusListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<StatusListViewModel, StatusListViewModel.Factory> {
-            if (roleString.isNullOrEmpty() || typeString.isNullOrEmpty()) {
-                it.create(role!!, type!!)
-            } else {
-                val role = IdentityRole.decodeFromString(roleString)!!
-                val type = StatusListType.valueOf(typeString)
-                it.create(role, type)
-            }
+            it.create(role, type)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()

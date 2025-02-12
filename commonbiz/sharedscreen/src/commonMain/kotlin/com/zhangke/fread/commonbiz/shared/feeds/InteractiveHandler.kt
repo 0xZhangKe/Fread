@@ -308,17 +308,17 @@ class InteractiveHandler(
     private fun onBoostedClick(role: IdentityRole, status: StatusUiState) {
         screenProvider.getBlogBoostedScreen(
             role = role,
-            blogId = status.status.intrinsicBlog.id,
+            blog = status.status.intrinsicBlog,
             protocol = status.status.intrinsicBlog.platform.protocol,
-        )?.let(::tryOpenScreenByRoute)
+        )?.let(::openScreen)
     }
 
     private fun onFavouritedClick(role: IdentityRole, status: StatusUiState) {
         screenProvider.getBlogFavouritedScreen(
             role = role,
-            blogId = status.status.intrinsicBlog.id,
+            blog = status.status.intrinsicBlog,
             protocol = status.status.intrinsicBlog.platform.protocol,
-        )?.let(::tryOpenScreenByRoute)
+        )?.let(::openScreen)
     }
 
     private fun onTranslateClick(role: IdentityRole, status: StatusUiState) {
@@ -372,6 +372,12 @@ class InteractiveHandler(
                 showingTranslation = true,
             )
         )
+    }
+
+    private fun openScreen(screen: Screen) {
+        coroutineScope.launch {
+            mutableOpenScreenFlow.emit(screen)
+        }
     }
 
     private fun tryOpenScreenByRoute(route: String) = coroutineScope.launch {

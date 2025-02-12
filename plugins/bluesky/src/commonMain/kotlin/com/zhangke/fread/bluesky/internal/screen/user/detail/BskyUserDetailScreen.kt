@@ -61,6 +61,8 @@ import com.zhangke.fread.bluesky.bsky_user_detail_action_muted_list
 import com.zhangke.fread.bluesky.bsky_user_detail_action_unmute_user
 import com.zhangke.fread.bluesky.internal.composable.DetailTopBar
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
+import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
+import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.bluesky.internal.tracking.BskyTrackingElements
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
@@ -107,8 +109,12 @@ class BskyUserDetailScreen(
             onBlockClick = viewModel::onBlockClick,
             onUnblockClick = viewModel::onUnblockClick,
             onUnfollowClick = viewModel::onUnfollowClick,
-            onFollowerClick = {},
-            onFollowingClick = {},
+            onFollowerClick = {
+                navigator.push(UserListScreen(role = role, type = UserListType.FOLLOWERS))
+            },
+            onFollowingClick = {
+                navigator.push(UserListScreen(role = role, type = UserListType.FOLLOWING))
+            },
             onOpenInBrowserClick = {
                 uiState.userHomePageUrl?.let { browserLauncher.launchWebTabInApp(it) }
             },
@@ -118,8 +124,12 @@ class BskyUserDetailScreen(
             onEditProfileClick = {},
             onMuteClick = { viewModel.onMuteClick(true) },
             onUnmuteClick = { viewModel.onMuteClick(false) },
-            onBlockedUserListClick = {},
-            onMuteUserListClick = {},
+            onBlockedUserListClick = {
+                navigator.push(UserListScreen(role = role, type = UserListType.BLOCKED))
+            },
+            onMuteUserListClick = {
+                navigator.push(UserListScreen(role = role, type = UserListType.MUTED))
+            },
         )
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
     }

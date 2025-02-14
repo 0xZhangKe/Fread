@@ -5,6 +5,8 @@ import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileView
 import app.bsky.actor.ProfileViewDetailed
 import app.bsky.actor.PutPreferencesRequest
+import app.bsky.actor.SearchActorsQueryParams
+import app.bsky.actor.SearchActorsResponse
 import app.bsky.feed.GetActorFeedsQueryParams
 import app.bsky.feed.GetActorFeedsResponse
 import app.bsky.feed.GetActorLikesQueryParams
@@ -172,6 +174,10 @@ class BlueskyClient(
 
     suspend fun searchPostsCatching(params: SearchPostsQueryParams): Result<SearchPostsResponse> {
         return runCatching { searchPosts(params) }.toResult()
+    }
+
+    suspend fun searchActorsCatching(params: SearchActorsQueryParams): Result<SearchActorsResponse> {
+        return runCatching { searchActors(params) }.toResult()
     }
 
     suspend fun getActorLikesCatching(params: GetActorLikesQueryParams): Result<GetActorLikesResponse> {

@@ -22,11 +22,11 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -38,7 +38,7 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Status 头部信息行，主要包括头像，
- * 用户名，WebFinger，时间，更多按钮等。
+ * 用户名，Handle，时间，更多按钮等。
  */
 @Composable
 fun StatusInfoLine(
@@ -140,7 +140,7 @@ fun StatusInfoLine(
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = blogAuthor.webFinger.toString(),
+                    text = blogAuthor.prettyHandle,
                     style = style.infoLineStyle.descStyle,
                     maxLines = 1,
                     color = fontColor,

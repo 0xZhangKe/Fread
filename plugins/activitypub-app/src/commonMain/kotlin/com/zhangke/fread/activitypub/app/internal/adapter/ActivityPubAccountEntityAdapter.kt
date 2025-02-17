@@ -22,6 +22,7 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
             uri = toUri(entity),
             webFinger = webFinger,
             name = entity.displayName,
+            handle = webFinger.toString(),
             description = entity.note,
             avatar = entity.avatar,
             emojis = entity.emojis.map(emojiEntityAdapter::toEmoji),

@@ -7,11 +7,13 @@ import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
 import com.zhangke.framework.architect.json.Empty
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.fread.bluesky.createBlueskyProtocol
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.source.StatusSource
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.jsonObject
 import me.tatarka.inject.annotations.Inject
@@ -80,6 +82,18 @@ class BlueskyAccountAdapter @Inject constructor(
             avatar = profile.avatar?.uri,
             description = profile.description.orEmpty(),
             emojis = emptyList(),
+        )
+    }
+
+    fun createSource(
+        profile: ProfileViewDetailed,
+    ): StatusSource {
+        return StatusSource(
+            uri = userUriTransformer.createUserUri(profile.did.did),
+            name = profile.displayName.orEmpty(),
+            description = profile.description.orEmpty(),
+            protocol = createBlueskyProtocol(),
+            thumbnail = profile.avatar?.uri,
         )
     }
 

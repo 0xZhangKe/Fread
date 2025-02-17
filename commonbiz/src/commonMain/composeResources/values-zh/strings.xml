@@ -34,4 +34,6 @@
     <string name="content_exist_tips">该内容已存在</string>
 
     <string name="add_feeds_page_empty_name_exist">该名字已存在</string>
+
+    <string name="unknown_error">未知错误</string>
 </resources>

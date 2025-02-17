@@ -26,16 +26,16 @@ import me.tatarka.inject.annotations.Inject
 
 class BlueskySearchEngine @Inject constructor(
     private val clientManager: BlueskyClientManager,
+    private val accountAdapter: BlueskyAccountAdapter,
     private val getAtIdentifier: GetAtIdentifierUseCase,
     private val blueskyPlatformRepo: BlueskyPlatformRepo,
-    private val accountAdapter: BlueskyAccountAdapter,
     private val statusAdapter: BlueskyStatusAdapter,
     private val platformRepo: BlueskyPlatformRepo,
 ) : ISearchEngine {
 
     override suspend fun search(
         role: IdentityRole,
-        query: String
+        query: String,
     ): Result<List<SearchResult>> {
         return supervisorScope {
             val postsDeferred = async { searchStatus(role, query, null) }
@@ -59,7 +59,7 @@ class BlueskySearchEngine @Inject constructor(
     override suspend fun searchStatus(
         role: IdentityRole,
         query: String,
-        maxId: String?
+        maxId: String?,
     ): Result<List<StatusUiState>> {
         val client = clientManager.getClient(role)
         val account = client.loggedAccountProvider()
@@ -80,7 +80,7 @@ class BlueskySearchEngine @Inject constructor(
     override suspend fun searchHashtag(
         role: IdentityRole,
         query: String,
-        offset: Int?
+        offset: Int?,
     ): Result<List<Hashtag>> {
         return Result.success(emptyList())
     }
@@ -88,7 +88,7 @@ class BlueskySearchEngine @Inject constructor(
     override suspend fun searchAuthor(
         role: IdentityRole,
         query: String,
-        offset: Int?
+        offset: Int?,
     ): Result<List<BlogAuthor>> {
         val client = clientManager.getClient(role)
         return client.searchActorsCatching(SearchActorsQueryParams(q = query))
@@ -103,21 +103,17 @@ class BlueskySearchEngine @Inject constructor(
 
     override suspend fun searchSource(
         role: IdentityRole,
-        query: String
+        query: String,
     ): Result<List<StatusSource>> {
-        // did
-        // handle
-        // home page
-        // user
         val client = clientManager.getClient(role)
         val identifier = getAtIdentifier(query) ?: return Result.success(emptyList())
         return client.getProfileCatching(GetProfileQueryParams(identifier))
-
+            .map { profile -> listOf(accountAdapter.createSource(profile)) }
     }
 
     override fun searchContent(
         role: IdentityRole,
-        query: String
+        query: String,
     ): Flow<List<SearchContentResult>> {
         return flow {
             blueskyPlatformRepo.getAllPlatform()

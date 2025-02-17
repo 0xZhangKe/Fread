@@ -147,7 +147,7 @@ class BlueskyStatusResolver @Inject constructor(
             role = role,
             targetDid = userUriInsights.did,
             type = UpdateRelationshipType.FOLLOW,
-        )
+        ).map { }
     }
 
     override suspend fun unfollow(
@@ -159,7 +159,7 @@ class BlueskyStatusResolver @Inject constructor(
             role = role,
             targetDid = userUriInsights.did,
             type = UpdateRelationshipType.UNFOLLOW,
-        )
+        ).map { }
     }
 
     override suspend fun isFollowing(

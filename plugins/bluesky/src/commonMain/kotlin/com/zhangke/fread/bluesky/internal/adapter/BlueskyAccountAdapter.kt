@@ -44,6 +44,7 @@ class BlueskyAccountAdapter @Inject constructor(
             accessJwt = createSessionResponse.accessJwt,
             refreshJwt = createSessionResponse.refreshJwt,
             active = createSessionResponse.active,
+            banner = profileViewDetailed?.banner?.uri,
         )
     }
 
@@ -130,6 +131,7 @@ class BlueskyAccountAdapter @Inject constructor(
             user = convertToBlogAuthor(newDid, profile.handle.handle, profile),
             handle = profile.handle.handle,
             did = newDid,
+            banner = profile.banner?.uri,
         )
     }
 

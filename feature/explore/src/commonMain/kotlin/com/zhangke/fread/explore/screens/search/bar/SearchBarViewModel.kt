@@ -45,7 +45,10 @@ class SearchBarViewModel @Inject constructor(
     private val role: IdentityRole
         get() {
             val accountUri = selectedAccount?.uri
-            return IdentityRole(accountUri, null)
+            return IdentityRole(
+                accountUri = accountUri,
+                baseUrl = selectedAccount?.platform?.baseUrl,
+            )
         }
 
     private var searchJob: Job? = null

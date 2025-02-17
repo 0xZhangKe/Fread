@@ -6,11 +6,10 @@ import app.bsky.actor.GetProfileQueryParams
 import app.bsky.actor.ProfileViewDetailed
 import app.bsky.actor.ViewerState
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
@@ -34,6 +33,7 @@ class BskyUserDetailViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val updateRelationship: UpdateRelationshipUseCase,
     private val updateBlock: UpdateBlockUseCase,
+    private val accountManager: BlueskyLoggedAccountManager,
     @Assisted private val role: IdentityRole,
     @Assisted private val did: String,
 ) : ViewModel() {
@@ -69,6 +69,9 @@ class BskyUserDetailViewModel @Inject constructor(
                             loading = false,
                             loadError = null,
                         )
+                    }
+                    if (isOwner) {
+                        accountManager.updateAccountProfile(role, detailed)
                     }
                 }.onFailure {
                     _uiState.update { state ->

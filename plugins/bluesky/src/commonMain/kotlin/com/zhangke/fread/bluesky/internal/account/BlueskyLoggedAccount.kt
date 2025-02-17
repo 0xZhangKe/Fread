@@ -19,6 +19,7 @@ data class BlueskyLoggedAccount(
     val accessJwt: String,
     val refreshJwt: String,
     val active: Boolean?,
+    val banner: String? = null,
 ) : LoggedAccount {
 
     override val uri = user.uri

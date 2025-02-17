@@ -4,7 +4,7 @@ import com.atproto.repo.DeleteRecordRequest
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
-import sh.christian.ozone.api.AtIdentifier
+import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Nsid
 
 class DeleteRecordUseCase @Inject constructor(
@@ -13,10 +13,12 @@ class DeleteRecordUseCase @Inject constructor(
 
     suspend operator fun invoke(
         role: IdentityRole,
-        repo: AtIdentifier,
         collection: Nsid,
         rkey: String,
-    ): Result<Unit>{
+    ): Result<Unit> {
+        val repo = clientManager.getClient(role).loggedAccountProvider()
+            ?.did?.let { Did(it) }
+            ?: return Result.failure(IllegalStateException("No logged account"))
         return clientManager.getClient(role)
             .deleteRecordCatching(
                 DeleteRecordRequest(
@@ -24,6 +26,6 @@ class DeleteRecordUseCase @Inject constructor(
                     collection = collection,
                     rkey = rkey,
                 )
-            ).map {  }
+            ).map { }
     }
 }

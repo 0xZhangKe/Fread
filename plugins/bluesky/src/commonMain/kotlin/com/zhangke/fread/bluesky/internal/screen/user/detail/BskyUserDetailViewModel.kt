@@ -7,6 +7,8 @@ import app.bsky.actor.ProfileViewDetailed
 import app.bsky.actor.ViewerState
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
@@ -15,6 +17,8 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.commonbiz.Res
+import com.zhangke.fread.commonbiz.unknown_error
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.RelationshipUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -49,7 +53,6 @@ class BskyUserDetailViewModel @Inject constructor(
     val snackBarMessage = _snackBarMessage
 
     init {
-        _uiState.update { it.copy(tabs = createTabs()) }
         loadUserDetail()
     }
 
@@ -57,7 +60,8 @@ class BskyUserDetailViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.update { it.copy(loading = showLoading) }
             val client = clientManager.getClient(role)
-            _uiState.update { it.copy(isOwner = client.loggedAccountProvider()?.did == did) }
+            val isOwner = client.loggedAccountProvider()?.did == did
+            _uiState.update { it.copy(isOwner = isOwner, tabs = createTabs(isOwner)) }
             client.getProfileCatching(GetProfileQueryParams(Did(did)))
                 .onSuccess { detailed ->
                     _uiState.update { state ->
@@ -137,7 +141,8 @@ class BskyUserDetailViewModel @Inject constructor(
         if (isSuccess) {
             loadUserDetail(false)
         } else {
-            _snackBarMessage.emitTextMessageFromThrowable(exceptionOrThrow())
+            val errorMessage = exceptionOrNull()?.toTextStringOrNull()
+            _snackBarMessage.emit(errorMessage ?: textOf(Res.string.unknown_error))
         }
     }
 
@@ -166,16 +171,18 @@ class BskyUserDetailViewModel @Inject constructor(
                 this.blockedBy == true -> RelationshipUiState.BLOCKED_BY
                 this.following != null -> RelationshipUiState.FOLLOWING
                 this.followedBy != null -> RelationshipUiState.FOLLOWED_BY
-                else -> RelationshipUiState.UNKNOWN
+                else -> RelationshipUiState.CAN_FOLLOW
             }
         }
 
-    private fun createTabs(): List<BlueskyFeeds> {
-        return listOf(
-            BlueskyFeeds.UserPosts(did),
-            BlueskyFeeds.UserReplies(did),
-            BlueskyFeeds.UserMedias(did),
-            BlueskyFeeds.UserLikes(did),
-        )
+    private fun createTabs(isOwner: Boolean): List<BlueskyFeeds> {
+        return mutableListOf<BlueskyFeeds>().apply {
+            add(BlueskyFeeds.UserPosts(did))
+            add(BlueskyFeeds.UserReplies(did))
+            add(BlueskyFeeds.UserMedias(did))
+            if (isOwner) {
+                add(BlueskyFeeds.UserLikes(did))
+            }
+        }
     }
 }

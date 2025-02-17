@@ -34,4 +34,6 @@
     <string name="content_exist_tips">This content already exists</string>
 
     <string name="add_feeds_page_empty_name_exist">This username is already taken.</string>
+
+    <string name="unknown_error">Unknown Error</string>
 </resources>

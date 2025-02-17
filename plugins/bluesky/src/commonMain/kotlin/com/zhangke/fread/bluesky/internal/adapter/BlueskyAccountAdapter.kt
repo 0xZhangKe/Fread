@@ -29,7 +29,8 @@ class BlueskyAccountAdapter @Inject constructor(
         platform: BlogPlatform,
     ): BlueskyLoggedAccount {
         val did = createSessionResponse.did.did
-        val author = convertToBlogAuthor(did, profileViewDetailed)
+        val author =
+            convertToBlogAuthor(did, createSessionResponse.handle.handle, profileViewDetailed)
         return BlueskyLoggedAccount(
             user = author,
             fromPlatform = platform,
@@ -48,11 +49,13 @@ class BlueskyAccountAdapter @Inject constructor(
 
     fun convertToBlogAuthor(
         did: String,
+        handle: String,
         profileViewDetailed: ProfileViewDetailed?,
     ): BlogAuthor {
         return BlogAuthor(
             uri = userUriTransformer.createUserUri(did),
             webFinger = WebFinger.createFromDid(did),
+            handle = handle,
             name = profileViewDetailed?.displayName.orEmpty(),
             avatar = profileViewDetailed?.avatar?.uri,
             description = profileViewDetailed?.description.orEmpty(),
@@ -65,6 +68,7 @@ class BlueskyAccountAdapter @Inject constructor(
         return BlogAuthor(
             uri = userUriTransformer.createUserUri(did),
             webFinger = WebFinger.createFromDid(did),
+            handle = profile.handle.handle,
             name = profile.displayName.orEmpty(),
             description = "",
             avatar = profile.avatar?.uri,
@@ -78,6 +82,7 @@ class BlueskyAccountAdapter @Inject constructor(
         return BlogAuthor(
             uri = userUriTransformer.createUserUri(profile.did.did),
             webFinger = WebFinger.createFromDid(profile.did.did),
+            handle = profile.handle.handle,
             name = profile.displayName.orEmpty(),
             avatar = profile.avatar?.uri,
             description = profile.description.orEmpty(),
@@ -122,7 +127,7 @@ class BlueskyAccountAdapter @Inject constructor(
     ): BlueskyLoggedAccount {
         val newDid = profile.did.did
         return account.copy(
-            user = convertToBlogAuthor(newDid, profile),
+            user = convertToBlogAuthor(newDid, profile.handle.handle, profile),
             handle = profile.handle.handle,
             did = newDid,
         )

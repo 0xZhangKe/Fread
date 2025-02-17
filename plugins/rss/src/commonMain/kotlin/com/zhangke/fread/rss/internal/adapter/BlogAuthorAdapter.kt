@@ -15,9 +15,11 @@ class BlogAuthorAdapter @Inject constructor(
         uriInsight: RssUriInsight,
         source: RssSource,
     ): BlogAuthor {
+        val webFinger = rssSourceWebFingerTransformer.create(uriInsight.url, source)
         return BlogAuthor(
             uri = uriInsight.rawUri,
-            webFinger = rssSourceWebFingerTransformer.create(uriInsight.url, source),
+            webFinger = webFinger,
+            handle = webFinger.toString(),
             name = source.displayName.ifNullOrEmpty { source.title },
             description = source.description.orEmpty(),
             avatar = source.thumbnail,

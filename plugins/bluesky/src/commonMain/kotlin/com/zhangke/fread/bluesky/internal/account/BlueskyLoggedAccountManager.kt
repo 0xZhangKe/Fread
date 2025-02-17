@@ -89,6 +89,16 @@ class BlueskyLoggedAccountManager @Inject constructor(
         }
     }
 
+    suspend fun updateAccountProfile(
+        role: IdentityRole,
+        profile: ProfileViewDetailed,
+    ) {
+        val account = getAccount(role) ?: return
+        if (account.did != profile.did.did) return
+        val newAccount = accountAdapter.updateProfile(account, profile)
+        accountRepo.updateAccount(account, newAccount)
+    }
+
     suspend fun refreshAccountProfile() {
         accountRepo.queryAll().forEach { account ->
             val role = IdentityRole(accountUri = account.uri, baseUrl = account.platform.baseUrl)

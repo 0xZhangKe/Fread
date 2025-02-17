@@ -27,7 +27,6 @@ class UpdateRelationshipUseCase @Inject constructor(
             UpdateRelationshipType.FOLLOW -> {
                 return createRecord(
                     role = role,
-                    repo = did,
                     collection = BskyCollections.follow,
                     record = followRecord(targetDid),
                 ).map { it.uri }
@@ -45,7 +44,6 @@ class UpdateRelationshipUseCase @Inject constructor(
                 if (finalFollowUri.isNullOrEmpty()) return Result.success(null)
                 return deleteRecord(
                     role = role,
-                    repo = did,
                     collection = BskyCollections.follow,
                     rkey = finalFollowUri.adjustToRkey(),
                 ).map { null }

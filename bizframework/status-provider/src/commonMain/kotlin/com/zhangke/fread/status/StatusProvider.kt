@@ -8,6 +8,8 @@ import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.notification.NotificationResolver
 import com.zhangke.fread.status.platform.IPlatformResolver
 import com.zhangke.fread.status.platform.PlatformResolver
+import com.zhangke.fread.status.publish.IPublishBlogManager
+import com.zhangke.fread.status.publish.PublishBlogManager
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.screen.StatusScreenProvider
 import com.zhangke.fread.status.search.ISearchEngine
@@ -39,6 +41,8 @@ class StatusProvider constructor(
     val accountManager = AccountManager(providers.map { it.accountManager })
 
     val notificationResolver = NotificationResolver(providers.map { it.notificationResolver })
+
+    val publishManager = PublishBlogManager(providers.map { it.publishManager })
 }
 
 interface IStatusProvider {
@@ -58,4 +62,6 @@ interface IStatusProvider {
     val accountManager: IAccountManager
 
     val notificationResolver: INotificationResolver
+
+    val publishManager: IPublishBlogManager
 }

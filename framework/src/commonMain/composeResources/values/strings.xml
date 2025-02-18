@@ -25,6 +25,8 @@
 
     <string name="load_more_error">Oops! Couldn\'t load.</string>
 
+    <string name="unknown_error">Unknown Error</string>
+
     <string name="image_saving">Saving…</string>
     <string name="image_save_success">Save successful</string>
     <string name="image_save_failed">Save failed</string>

@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.composable
+package com.zhangke.framework.composable.pick
 
 import androidx.compose.runtime.Composable
 import com.zhangke.framework.utils.PlatformUri

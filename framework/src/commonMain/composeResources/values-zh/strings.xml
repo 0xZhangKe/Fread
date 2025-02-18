@@ -23,6 +23,8 @@
 
     <string name="retry">重试</string>
 
+    <string name="unknown_error">未知错误</string>
+
     <string name="load_more_error">哦！加载失败</string>
 
     <string name="image_saving">保存中…</string>

@@ -12,6 +12,7 @@
     <string name="activity_pub_instance_detail_language_label">语言: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">月活: %1$s</string>
 
+
     <string name="activity_pub_user_detail_tab_post">帖子</string>
     <string name="activity_pub_user_detail_tab_replies">回复</string>
     <string name="activity_pub_user_detail_tab_media">媒体</string>
@@ -77,12 +78,7 @@
     <string name="activity_pub_hashtag_timeline_description">%1$s 条帖子 · %2$s 参与 · %3$s 条今日帖子</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
 
-    <string name="activity_pub_edit_account_info_name_empty">请输入用户名</string>
-    <string name="activity_pub_edit_account_info_label_name">名字</string>
-    <string name="activity_pub_edit_account_info_label_note">简介</string>
     <string name="activity_pub_edit_account_info_label_about">关于</string>
-    <string name="activity_pub_edit_account_info_input_name_hint">请输入用户名</string>
-    <string name="activity_pub_edit_account_info_input_note_hint">"请输入简介"</string>
 
     <string name="activity_pub_edit_content_screen_config_not_found">配置未找到</string>
 

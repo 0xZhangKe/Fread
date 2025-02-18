@@ -52,16 +52,17 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.StyledIconButton
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.composable.pick.PickVisualMediaLauncherContainer
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_input_name_hint
-import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_input_note_hint
+import com.zhangke.fread.commonbiz.Res as CommonRes
 import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_about
-import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_name
-import com.zhangke.fread.activitypub.app.activity_pub_edit_account_info_label_note
-import com.zhangke.fread.activitypub.app.internal.composable.PickVisualMediaLauncherContainer
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.commonbiz.edit_profile_input_name_hint
+import com.zhangke.fread.commonbiz.edit_profile_input_note_hint
+import com.zhangke.fread.commonbiz.edit_profile_label_name
+import com.zhangke.fread.commonbiz.edit_profile_label_note
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.SharedFlow
 import org.jetbrains.compose.resources.stringResource
@@ -181,11 +182,11 @@ class EditAccountInfoScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(Res.string.activity_pub_edit_account_info_input_name_hint)
+                            text = stringResource(CommonRes.string.edit_profile_input_name_hint)
                         )
                     },
                     label = {
-                        Text(text = stringResource(Res.string.activity_pub_edit_account_info_label_name))
+                        Text(text = stringResource(CommonRes.string.edit_profile_label_name))
                     },
                 )
                 OutlinedTextField(
@@ -197,11 +198,11 @@ class EditAccountInfoScreen(
                     placeholder = {
                         Text(
                             modifier = Modifier.alpha(0.7F),
-                            text = stringResource(Res.string.activity_pub_edit_account_info_input_note_hint),
+                            text = stringResource(CommonRes.string.edit_profile_input_note_hint),
                         )
                     },
                     label = {
-                        Text(text = stringResource(Res.string.activity_pub_edit_account_info_label_note))
+                        Text(text = stringResource(CommonRes.string.edit_profile_label_note))
                     },
                 )
                 AccountFieldListUi(

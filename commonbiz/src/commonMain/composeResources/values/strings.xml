@@ -35,5 +35,10 @@
 
     <string name="add_feeds_page_empty_name_exist">This username is already taken.</string>
 
-    <string name="unknown_error">Unknown Error</string>
+    <string name="edit_profile_name_empty">Please enter your username</string>
+    <string name="edit_profile_label_name">Name</string>
+    <string name="edit_profile_label_note">Bio</string>
+    <string name="edit_profile_input_name_hint">Please enter your username</string>
+    <string name="edit_profile_input_note_hint">Please enter bio</string>
+    <string name="edit_profile_edit_confirm_message">Are you sure you want to exit editing?</string>
 </resources>

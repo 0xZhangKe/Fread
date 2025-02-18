@@ -54,6 +54,7 @@ import com.atproto.repo.GetRecordQueryParams
 import com.atproto.repo.GetRecordResponse
 import com.atproto.repo.PutRecordRequest
 import com.atproto.repo.PutRecordResponse
+import com.atproto.repo.UploadBlobResponse
 import com.atproto.server.CreateSessionRequest
 import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
@@ -228,6 +229,10 @@ class BlueskyClient(
     suspend fun getRepostedCatching(params: GetRepostedByQueryParams): Result<PagedData<ProfileView>> {
         return runCatching { getRepostedBy(params) }.toResult()
             .map { data -> PagedData(list = data.repostedBy, cursor = data.cursor) }
+    }
+
+    suspend fun uploadBlobCatching(data: ByteArray): Result<UploadBlobResponse> {
+        return runCatching { uploadBlob(data) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

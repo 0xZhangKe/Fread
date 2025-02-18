@@ -78,13 +78,8 @@
     <string name="activity_pub_hashtag_timeline_description">%1$s posts · %2$s participants · %3$s post today</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">Are you sure you want to unfollow this hashtag?</string>
 
-    <string name="activity_pub_edit_account_info_name_empty">Please enter your username</string>
-    <string name="activity_pub_edit_account_info_label_name">Name</string>
-    <string name="activity_pub_edit_account_info_label_note">Bio</string>
     <string name="activity_pub_edit_account_info_label_about">About</string>
     <string name="activity_pub_edit_content_screen_config_not_found">Config Not Found</string>
-    <string name="activity_pub_edit_account_info_input_name_hint">"Please enter your username"</string>
-    <string name="activity_pub_edit_account_info_input_note_hint">"Please enter bio"</string>
 
     <string name="activity_pub_user_list_empty">No users for now</string>
 

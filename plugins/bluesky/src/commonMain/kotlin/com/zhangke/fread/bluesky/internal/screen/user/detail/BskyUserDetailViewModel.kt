@@ -16,10 +16,10 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.unknown_error
+import com.zhangke.fread.framework.unknown_error
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.RelationshipUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -52,12 +52,20 @@ class BskyUserDetailViewModel @Inject constructor(
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage
 
+    private var loadJob: Job? = null
+
     init {
         loadUserDetail()
     }
 
+    fun onPageResume() {
+        if (loadJob?.isActive == true) return
+        loadUserDetail()
+    }
+
     private fun loadUserDetail(showLoading: Boolean = true) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _uiState.update { it.copy(loading = showLoading) }
             val client = clientManager.getClient(role)
             val isOwner = client.loggedAccountProvider()?.did == did
@@ -145,7 +153,9 @@ class BskyUserDetailViewModel @Inject constructor(
             loadUserDetail(false)
         } else {
             val errorMessage = exceptionOrNull()?.toTextStringOrNull()
-            _snackBarMessage.emit(errorMessage ?: textOf(Res.string.unknown_error))
+            _snackBarMessage.emit(
+                errorMessage ?: textOf(com.zhangke.fread.framework.Res.string.unknown_error)
+            )
         }
     }
 

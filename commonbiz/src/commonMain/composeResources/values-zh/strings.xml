@@ -35,5 +35,10 @@
 
     <string name="add_feeds_page_empty_name_exist">该名字已存在</string>
 
-    <string name="unknown_error">未知错误</string>
+    <string name="edit_profile_name_empty">请输入用户名</string>
+    <string name="edit_profile_label_name">名字</string>
+    <string name="edit_profile_label_note">简介</string>
+    <string name="edit_profile_input_name_hint">请输入用户名</string>
+    <string name="edit_profile_input_note_hint">请输入简介</string>
+    <string name="edit_profile_edit_confirm_message">确定退出编辑吗？</string>
 </resources>

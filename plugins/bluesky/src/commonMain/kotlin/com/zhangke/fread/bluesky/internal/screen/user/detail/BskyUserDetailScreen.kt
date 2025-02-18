@@ -25,6 +25,7 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -61,6 +62,7 @@ import com.zhangke.fread.bluesky.bsky_user_detail_action_muted_list
 import com.zhangke.fread.bluesky.bsky_user_detail_action_unmute_user
 import com.zhangke.fread.bluesky.internal.composable.DetailTopBar
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
+import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.bluesky.internal.tracking.BskyTrackingElements
@@ -121,7 +123,9 @@ class BskyUserDetailScreen(
             onCopyLinkClick = {
                 uiState.userHomePageUrl?.let { activityTextHandler.copyText(it) }
             },
-            onEditProfileClick = {},
+            onEditProfileClick = {
+                navigator.push(EditProfileScreen(role = role))
+            },
             onMuteClick = { viewModel.onMuteClick(true) },
             onUnmuteClick = { viewModel.onMuteClick(false) },
             onBlockedUserListClick = {
@@ -132,6 +136,7 @@ class BskyUserDetailScreen(
             },
         )
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
+        LaunchedEffect(Unit) { viewModel.onPageResume() }
     }
 
     @Composable

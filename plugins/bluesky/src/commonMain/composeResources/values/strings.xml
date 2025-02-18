@@ -26,4 +26,6 @@
     <string name="bsky_user_detail_action_unblock_user">Unblock</string>
     <string name="bsky_user_detail_action_block_user_dialog_message">Do you want to block this user?</string>
     <string name="bsky_user_detail_action_mute_user_dialog_message">Do you want to mute this user?</string>
+
+    <string name="bsky_edit_profile_title">Edit Profile</string>
 </resources>

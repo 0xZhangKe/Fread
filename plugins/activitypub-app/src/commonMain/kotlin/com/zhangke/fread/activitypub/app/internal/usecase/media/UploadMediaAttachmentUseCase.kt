@@ -24,7 +24,7 @@ class UploadMediaAttachmentUseCase @Inject constructor(
                 ?: return Result.failure(RuntimeException("File invalid!"))
             client.mediaRepo.postFile(
                 fileName = stream.fileName,
-                fileSize = stream.size.length,
+                fileSize = stream.size.bytes,
                 byteArray = bytes,
                 fileMediaType = stream.mimeType,
                 onProgress = {

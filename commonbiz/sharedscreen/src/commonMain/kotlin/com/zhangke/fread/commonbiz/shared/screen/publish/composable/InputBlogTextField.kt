@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.utils.transparentColors
 import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
 import org.jetbrains.compose.resources.stringResource
 

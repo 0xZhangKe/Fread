@@ -1,5 +1,9 @@
 package com.zhangke.framework.utils
 
+import androidx.compose.material3.TextFieldColors
+import androidx.compose.material3.TextFieldDefaults
+import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 
@@ -27,3 +31,11 @@ object TextFieldUtils {
         return insertText(newTextField, insertText)
     }
 }
+
+val TextFieldDefaults.transparentColors: TextFieldColors
+    @Composable get() = colors(
+        focusedIndicatorColor = Color.Transparent,
+        unfocusedIndicatorColor = Color.Transparent,
+        disabledIndicatorColor = Color.Transparent,
+        errorIndicatorColor = Color.Transparent,
+    )

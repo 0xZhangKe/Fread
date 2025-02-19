@@ -39,4 +39,22 @@
     <string name="shared_user_list_action_blocked">Blocked</string>
     <string name="shared_user_list_action_mute_dialog_message">Are you sure you want to mute this user?</string>
     <string name="shared_user_list_action_block_dialog_message">Are you sure you want to block this user?</string>
+
+    <string name="shared_publish_blog_title">Post</string>
+    <string name="shared_publish_blog_text_hint">Type or paste what`s on your mind</string>
+
+    <string name="shared_publish_interaction_no_limit">Anybody can interact</string>
+    <string name="shared_publish_interaction_limited">Interaction limited</string>
+    <string name="shared_publish_interaction_dialog_title">Post interaction settings</string>
+    <string name="shared_publish_interaction_dialog_subtitle">Customize who can interact with this post.</string>
+    <string name="shared_publish_interaction_dialog_quote_title">Quote settings</string>
+    <string name="shared_publish_interaction_dialog_quote_allow">Allow quote posts</string>
+    <string name="shared_publish_interaction_dialog_reply_title">Reply settings</string>
+    <string name="shared_publish_interaction_dialog_reply_subtitle">Allow replies from:</string>
+    <string name="shared_publish_interaction_dialog_reply_all">Everybody</string>
+    <string name="shared_publish_interaction_dialog_reply_nobody">Nobody</string>
+    <string name="shared_publish_interaction_dialog_mentioned">Mentioned users</string>
+    <string name="shared_publish_interaction_dialog_following">Users you follow</string>
+    <string name="shared_publish_interaction_dialog_follower">Your followers</string>
+    <string name="shared_publish_interaction_dialog_in_list">Users in "%1$s"</string>
 </resources>

@@ -39,4 +39,22 @@
     <string name="shared_user_list_action_mute_dialog_message">您确定要隐藏该用户吗？</string>
     <string name="shared_user_list_action_block_dialog_message">您确定要屏蔽该用户吗？</string>
 
+    <string name="shared_publish_blog_title">发帖</string>
+    <string name="shared_publish_blog_text_hint">写下你的想法</string>
+
+
+    <string name="shared_publish_interaction_no_limit">任何人都可以参与互动</string>
+    <string name="shared_publish_interaction_limited">已限制互动</string>
+    <string name="shared_publish_interaction_dialog_title">帖子互动选项</string>
+    <string name="shared_publish_interaction_dialog_subtitle">自定义哪些人可以参与这个帖子的互动。</string>
+    <string name="shared_publish_interaction_dialog_quote_title">引用选项</string>
+    <string name="shared_publish_interaction_dialog_quote_allow">允许引用帖子</string>
+    <string name="shared_publish_interaction_dialog_reply_title">回复选项</string>
+    <string name="shared_publish_interaction_dialog_reply_subtitle">允许这些人参与回复：</string>
+    <string name="shared_publish_interaction_dialog_reply_all">所有人</string>
+    <string name="shared_publish_interaction_dialog_reply_nobody">仅限自己</string>
+    <string name="shared_publish_interaction_dialog_mentioned">被提及的用户</string>
+    <string name="shared_publish_interaction_dialog_following">你关注的用户</string>
+    <string name="shared_publish_interaction_dialog_follower">你的关注者</string>
+    <string name="shared_publish_interaction_dialog_in_list">"%1$s"中的用户</string>
 </resources>

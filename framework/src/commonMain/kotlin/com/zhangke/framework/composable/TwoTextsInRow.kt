@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.status.post.composable
+package com.zhangke.framework.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.runtime.Composable
@@ -9,7 +9,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 
 @Composable
-internal fun TwoTextsInRow(
+fun TwoTextsInRow(
     firstText: @Composable () -> Unit,
     secondText: @Composable () -> Unit,
     spacing: Dp,

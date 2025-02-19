@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.GenericShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
@@ -25,8 +24,6 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -39,7 +36,6 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
@@ -58,6 +54,7 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.TwoTextsInRow
 import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
@@ -75,15 +72,14 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.TwoTextsInRow
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
-import com.zhangke.fread.activitypub.app.post_screen_input_hint
 import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content
 import com.zhangke.fread.activitypub.app.post_status_failed
 import com.zhangke.fread.activitypub.app.post_status_page_title
 import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
 import com.zhangke.fread.status.model.StatusVisibility
-import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
 import com.zhangke.fread.statusui.status_ui_reply
 import com.zhangke.krouter.annotation.Destination
 import com.zhangke.krouter.annotation.RouteParam
@@ -337,7 +333,8 @@ class PostStatusScreen(
                             imageVector = Icons.Default.Reply,
                             contentDescription = null,
                         )
-                        val replyLabel = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_reply)
+                        val replyLabel =
+                            stringResource(com.zhangke.fread.statusui.Res.string.status_ui_reply)
                         Text(
                             modifier = Modifier.padding(start = 4.dp),
                             text = "$replyLabel ${uiState.replyToAuthorInfo.replyAuthorName}",
@@ -443,7 +440,7 @@ class PostStatusScreen(
                         focusManager.clearFocus()
                     }
                 }
-                TextField(
+                InputBlogTextField(
                     modifier = Modifier
                         .constrainAs(inputRef) {
                             top.linkTo(warningRef.bottom)
@@ -452,25 +449,8 @@ class PostStatusScreen(
                             width = Dimension.fillToConstraints
                             height = Dimension.wrapContent
                         },
-                    shape = GenericShape { _, _ -> },
-                    placeholder = {
-                        Text(
-                            text = stringResource(Res.string.post_screen_input_hint),
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                    },
-                    visualTransformation = PostStatusTextVisualTransformation(
-                        highLightColor = MaterialTheme.colorScheme.primary,
-                    ),
-                    value = textFieldValue,
-                    colors = TextFieldDefaults.colors(
-                        focusedIndicatorColor = Color.Transparent,
-                        unfocusedIndicatorColor = Color.Transparent,
-                        disabledIndicatorColor = Color.Transparent,
-                        errorIndicatorColor = Color.Transparent,
-                    ),
-                    textStyle = MaterialTheme.typography.bodyLarge,
-                    onValueChange = {
+                    textFieldValue = textFieldValue,
+                    onContentChanged = {
                         textFieldValue = it
                         onContentChanged(it)
                     },

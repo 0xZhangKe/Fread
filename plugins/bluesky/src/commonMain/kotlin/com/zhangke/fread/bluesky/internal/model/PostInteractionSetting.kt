@@ -24,6 +24,15 @@ sealed interface ReplySetting {
 
     data class Combined(val options: List<CombineOptions>) : ReplySetting
 
+    val combinedMentions: Boolean
+        get() = this is Combined && options.contains(CombineOptions.Mentioned)
+
+    val combinedFollowing : Boolean
+        get() = this is Combined && options.contains(CombineOptions.Following)
+
+    val combinedFollowers : Boolean
+        get() = this is Combined && options.contains(CombineOptions.Followers)
+
     sealed interface CombineOptions {
 
         data object Mentioned : CombineOptions

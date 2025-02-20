@@ -1,35 +1,59 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.outlined.Group
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
+import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.TwoTextsInRow
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_quote_allow
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_quote_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_subtitle
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_subtitle
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_limited
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_no_limit
 import org.jetbrains.compose.resources.stringResource
 
 class PublishPostScreen : BaseScreen() {
@@ -119,20 +143,121 @@ class PublishPostScreen : BaseScreen() {
         )
     }
 
+    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun PostInteractionSettingLabel(
         modifier: Modifier,
         setting: PostInteractionSetting,
+        onQuoteChange: (Boolean) -> Unit,
     ) {
+        var showSelector by remember { mutableStateOf(false) }
+        Row(
+            modifier = modifier
+                .noRippleClick { showSelector = true }
+                .background(
+                    color = MaterialTheme.colorScheme.surfaceContainer,
+                    shape = RoundedCornerShape(2.dp),
+                ).padding(horizontal = 6.dp, vertical = 4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Icon(
+                imageVector = setting.labelIcon,
+                contentDescription = null,
+                tint = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+            Text(
+                modifier = Modifier.padding(start = 6.dp),
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                text = setting.label,
+                style = MaterialTheme.typography.bodyMedium,
+            )
+        }
+        val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
+        if (showSelector) {
+            ModalBottomSheet(
+                onDismissRequest = { showSelector = false },
+                sheetState = state,
+            ) {
+                Column(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 32.dp),
+                ) {
+                    Text(
+                        text = stringResource(Res.string.shared_publish_interaction_dialog_title),
+                        style = MaterialTheme.typography.titleLarge.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    )
+                    Text(
+                        text = stringResource(Res.string.shared_publish_interaction_dialog_subtitle),
+                        style = MaterialTheme.typography.bodyMedium,
+                    )
+                    HorizontalDivider(modifier = Modifier.padding(top = 16.dp).fillMaxWidth())
+                    Text(
+                        modifier = Modifier.padding(top = 26.dp),
+                        text = stringResource(Res.string.shared_publish_interaction_dialog_quote_title),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Text(
+                            text = stringResource(Res.string.shared_publish_interaction_dialog_quote_allow),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
+                        Spacer(modifier = Modifier.weight(1F))
+                        Switch(
+                            checked = setting.allowQuote,
+                            onCheckedChange = onQuoteChange,
+                        )
+                    }
+                    HorizontalDivider(modifier = Modifier.padding(top = 16.dp).fillMaxWidth())
+                    Text(
+                        modifier = Modifier.padding(top = 26.dp),
+                        text = stringResource(Res.string.shared_publish_interaction_dialog_reply_title),
+                        style = MaterialTheme.typography.titleMedium.copy(
+                            fontWeight = FontWeight.SemiBold,
+                        ),
+                    )
+                    Text(
+                        modifier = Modifier.padding(top = 26.dp),
+                        text = stringResource(Res.string.shared_publish_interaction_dialog_reply_subtitle),
+                        style = MaterialTheme.typography.bodySmall,
+                    )
 
+                }
+            }
+        }
+    }
+
+    @Composable
+    private fun InteractionOption(
+        modifier: Modifier,
+        text: String,
+        selected: Boolean,
+    ) {
+        val backgroundColor = if (selected) {
+            MaterialTheme.colorScheme.primary
+        } else {
+            MaterialTheme.colorScheme.primary
+        }
+        Row(
+            modifier = Modifier,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+
+        }
     }
 
     private val PostInteractionSetting.label: String
         @Composable get() {
             return if (this.replySetting is ReplySetting.Everybody) {
-                Icons.Default.Public
+                stringResource(Res.string.shared_publish_interaction_no_limit)
             } else {
-                Icons.Outlined.Group
+                stringResource(Res.string.shared_publish_interaction_limited)
             }
         }
 

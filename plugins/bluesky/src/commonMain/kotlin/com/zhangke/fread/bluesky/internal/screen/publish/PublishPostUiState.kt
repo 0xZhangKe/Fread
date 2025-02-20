@@ -1,6 +1,7 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
 import androidx.compose.ui.text.input.TextFieldValue
+import app.bsky.graph.ListView
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.status.account.LoggedAccount
 
@@ -8,6 +9,7 @@ data class PublishPostUiState(
     val content: TextFieldValue,
     val account: BlueskyLoggedAccount?,
     val attachment: PublishPostMediaAttachment?,
+    val list: List<ListView>,
 )
 
 sealed interface PublishPostMediaAttachment {

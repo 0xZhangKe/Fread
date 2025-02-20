@@ -53,6 +53,7 @@
     <string name="shared_publish_interaction_dialog_reply_subtitle">允许这些人参与回复：</string>
     <string name="shared_publish_interaction_dialog_reply_all">所有人</string>
     <string name="shared_publish_interaction_dialog_reply_nobody">仅限自己</string>
+    <string name="shared_publish_interaction_dialog_reply_combine_title">或者组合选择这些选项：</string>
     <string name="shared_publish_interaction_dialog_mentioned">被提及的用户</string>
     <string name="shared_publish_interaction_dialog_following">你关注的用户</string>
     <string name="shared_publish_interaction_dialog_follower">你的关注者</string>

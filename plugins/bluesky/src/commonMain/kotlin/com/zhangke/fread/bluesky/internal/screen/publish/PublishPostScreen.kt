@@ -8,10 +8,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Check
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.outlined.Group
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -46,8 +50,14 @@ import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_follower
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_following
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_mentioned
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_quote_allow
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_quote_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_all
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_combine_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_nobody
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_subtitle
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_reply_title
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_subtitle
@@ -180,7 +190,8 @@ class PublishPostScreen : BaseScreen() {
             ) {
                 Column(
                     modifier = Modifier.fillMaxWidth()
-                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 32.dp),
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 32.dp)
+                        .verticalScroll(rememberScrollState()),
                 ) {
                     Text(
                         text = stringResource(Res.string.shared_publish_interaction_dialog_title),
@@ -227,7 +238,49 @@ class PublishPostScreen : BaseScreen() {
                         text = stringResource(Res.string.shared_publish_interaction_dialog_reply_subtitle),
                         style = MaterialTheme.typography.bodySmall,
                     )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        InteractionOption(
+                            modifier = Modifier.weight(1F),
+                            text = stringResource(Res.string.shared_publish_interaction_dialog_reply_all),
+                            selected = setting.replySetting is ReplySetting.Everybody,
+                        )
+                        Spacer(modifier = Modifier.width(16.dp))
+                        InteractionOption(
+                            modifier = Modifier.weight(1F),
+                            text = stringResource(Res.string.shared_publish_interaction_dialog_reply_nobody),
+                            selected = setting.replySetting is ReplySetting.Nobody,
+                        )
+                    }
+                    if (setting.replySetting !is ReplySetting.Nobody) {
+                        Text(
+                            modifier = Modifier.padding(top = 26.dp),
+                            text = stringResource(Res.string.shared_publish_interaction_dialog_reply_combine_title),
+                            style = MaterialTheme.typography.bodySmall,
+                        )
 
+                        InteractionOption(
+                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                            text = stringResource(Res.string.shared_publish_interaction_dialog_mentioned),
+                            selected = setting.replySetting.combinedMentions,
+                        )
+
+                        InteractionOption(
+                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                            text = stringResource(Res.string.shared_publish_interaction_dialog_following),
+                            selected = setting.replySetting.combinedFollowing,
+                        )
+
+                        InteractionOption(
+                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                            text = stringResource(Res.string.shared_publish_interaction_dialog_follower),
+                            selected = setting.replySetting.combinedFollowers,
+                        )
+
+
+                    }
                 }
             }
         }
@@ -240,15 +293,38 @@ class PublishPostScreen : BaseScreen() {
         selected: Boolean,
     ) {
         val backgroundColor = if (selected) {
-            MaterialTheme.colorScheme.primary
+            MaterialTheme.colorScheme.primaryContainer.copy(alpha = 0.3F)
         } else {
-            MaterialTheme.colorScheme.primary
+            MaterialTheme.colorScheme.surfaceContainer
         }
         Row(
-            modifier = Modifier,
+            modifier = modifier.background(
+                color = backgroundColor,
+                shape = RoundedCornerShape(6.dp),
+            ).padding(vertical = 16.dp),
             verticalAlignment = Alignment.CenterVertically,
         ) {
-
+            val fontStyle = if (selected) {
+                MaterialTheme.typography.bodyMedium.copy(
+                    fontWeight = FontWeight.SemiBold,
+                )
+            } else {
+                MaterialTheme.typography.bodyMedium
+            }
+            Text(
+                modifier = Modifier.padding(start = 16.dp),
+                text = text,
+                style = fontStyle,
+            )
+            if (selected) {
+                Spacer(modifier = Modifier.weight(1F))
+                Icon(
+                    imageVector = Icons.Default.Check,
+                    contentDescription = null,
+                    tint = MaterialTheme.colorScheme.primary,
+                    modifier = Modifier.padding(end = 16.dp),
+                )
+            }
         }
     }
 

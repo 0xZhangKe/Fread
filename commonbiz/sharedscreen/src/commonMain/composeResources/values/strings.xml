@@ -53,6 +53,7 @@
     <string name="shared_publish_interaction_dialog_reply_subtitle">Allow replies from:</string>
     <string name="shared_publish_interaction_dialog_reply_all">Everybody</string>
     <string name="shared_publish_interaction_dialog_reply_nobody">Nobody</string>
+    <string name="shared_publish_interaction_dialog_reply_combine_title">Or combine these options:</string>
     <string name="shared_publish_interaction_dialog_mentioned">Mentioned users</string>
     <string name="shared_publish_interaction_dialog_following">Users you follow</string>
     <string name="shared_publish_interaction_dialog_follower">Your followers</string>

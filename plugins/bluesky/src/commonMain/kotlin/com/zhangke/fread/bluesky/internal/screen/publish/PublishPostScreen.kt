@@ -38,17 +38,21 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import app.bsky.graph.ListView
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.TwoTextsInRow
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_follower
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_following
@@ -79,6 +83,10 @@ class PublishPostScreen : BaseScreen() {
         uiState: PublishPostUiState,
         snackbarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
+        onContentChanged: (TextFieldValue) -> Unit,
+        onQuoteChange: (Boolean) -> Unit,
+        onSettingSelected: (ReplySetting) -> Unit,
+        onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -114,13 +122,34 @@ class PublishPostScreen : BaseScreen() {
                             name = uiState.account?.userName.orEmpty(),
                             handle = uiState.account?.handle.orEmpty(),
                         )
-
+                        PostInteractionSettingLabel(
+                            modifier = Modifier,
+                            setting = uiState.interactionSetting,
+                            lists = uiState.list,
+                            onQuoteChange = onQuoteChange,
+                            onSettingSelected = onSettingSelected,
+                            onSettingOptionsSelected = onSettingOptionsSelected,
+                        )
                     }
                 }
+                InputBlogTextField(
+                    modifier = Modifier.fillMaxWidth()
+                        .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                    textFieldValue = uiState.content,
+                    onContentChanged = onContentChanged,
+                )
+
             }
         }
     }
 
+    @Composable
+    private fun PublishBottomPanel(
+        uiState: PublishPostUiState,
+        onMediaSelected: (List<PlatformUri>) -> Unit,
+    ){
+
+    }
 
     @Composable
     private fun NameAndAccountInfo(
@@ -158,7 +187,10 @@ class PublishPostScreen : BaseScreen() {
     private fun PostInteractionSettingLabel(
         modifier: Modifier,
         setting: PostInteractionSetting,
+        lists: List<ListView>,
         onQuoteChange: (Boolean) -> Unit,
+        onSettingSelected: (ReplySetting) -> Unit,
+        onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
     ) {
         var showSelector by remember { mutableStateOf(false) }
         Row(
@@ -243,13 +275,15 @@ class PublishPostScreen : BaseScreen() {
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
                         InteractionOption(
-                            modifier = Modifier.weight(1F),
+                            modifier = Modifier.weight(1F)
+                                .noRippleClick { onSettingSelected(ReplySetting.Everybody) },
                             text = stringResource(Res.string.shared_publish_interaction_dialog_reply_all),
                             selected = setting.replySetting is ReplySetting.Everybody,
                         )
                         Spacer(modifier = Modifier.width(16.dp))
                         InteractionOption(
-                            modifier = Modifier.weight(1F),
+                            modifier = Modifier.weight(1F)
+                                .noRippleClick { onSettingSelected(ReplySetting.Nobody) },
                             text = stringResource(Res.string.shared_publish_interaction_dialog_reply_nobody),
                             selected = setting.replySetting is ReplySetting.Nobody,
                         )
@@ -262,24 +296,45 @@ class PublishPostScreen : BaseScreen() {
                         )
 
                         InteractionOption(
-                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+                                .noRippleClick { onSettingOptionsSelected(ReplySetting.CombineOption.Mentioned) },
                             text = stringResource(Res.string.shared_publish_interaction_dialog_mentioned),
                             selected = setting.replySetting.combinedMentions,
                         )
 
                         InteractionOption(
-                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+                                .noRippleClick { onSettingOptionsSelected(ReplySetting.CombineOption.Following) },
                             text = stringResource(Res.string.shared_publish_interaction_dialog_following),
                             selected = setting.replySetting.combinedFollowing,
                         )
 
                         InteractionOption(
-                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth(),
+                            modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+                                .noRippleClick { onSettingOptionsSelected(ReplySetting.CombineOption.Followers) },
                             text = stringResource(Res.string.shared_publish_interaction_dialog_follower),
                             selected = setting.replySetting.combinedFollowers,
                         )
 
-
+                        for (listView in lists) {
+                            val selected = if (setting.replySetting is ReplySetting.Combined) {
+                                setting.replySetting.options
+                                    .filterIsInstance<ReplySetting.CombineOption.UserInList>()
+                                    .any { it.listView.cid == listView.cid }
+                            } else {
+                                false
+                            }
+                            InteractionOption(
+                                modifier = Modifier.padding(top = 16.dp).fillMaxWidth()
+                                    .noRippleClick {
+                                        onSettingOptionsSelected(
+                                            ReplySetting.CombineOption.UserInList(listView)
+                                        )
+                                    },
+                                text = listView.name,
+                                selected = selected,
+                            )
+                        }
                     }
                 }
             }

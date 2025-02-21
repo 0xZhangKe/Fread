@@ -1,5 +1,7 @@
 package com.zhangke.fread.bluesky.internal.model
 
+import app.bsky.graph.ListView
+
 data class PostInteractionSetting(
     val allowQuote: Boolean,
     val replySetting: ReplySetting,
@@ -22,25 +24,25 @@ sealed interface ReplySetting {
 
     data object Everybody : ReplySetting
 
-    data class Combined(val options: List<CombineOptions>) : ReplySetting
+    data class Combined(val options: List<CombineOption>) : ReplySetting
 
     val combinedMentions: Boolean
-        get() = this is Combined && options.contains(CombineOptions.Mentioned)
+        get() = this is Combined && options.contains(CombineOption.Mentioned)
 
-    val combinedFollowing : Boolean
-        get() = this is Combined && options.contains(CombineOptions.Following)
+    val combinedFollowing: Boolean
+        get() = this is Combined && options.contains(CombineOption.Following)
 
-    val combinedFollowers : Boolean
-        get() = this is Combined && options.contains(CombineOptions.Followers)
+    val combinedFollowers: Boolean
+        get() = this is Combined && options.contains(CombineOption.Followers)
 
-    sealed interface CombineOptions {
+    sealed interface CombineOption {
 
-        data object Mentioned : CombineOptions
+        data object Mentioned : CombineOption
 
-        data object Following : CombineOptions
+        data object Following : CombineOption
 
-        data object Followers : CombineOptions
+        data object Followers : CombineOption
 
-        data class UserInList(val list: String) : CombineOptions
+        data class UserInList(val listView: ListView) : CombineOption
     }
 }

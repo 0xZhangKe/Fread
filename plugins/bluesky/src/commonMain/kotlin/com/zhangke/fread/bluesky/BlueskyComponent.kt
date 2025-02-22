@@ -6,6 +6,7 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsContainerVi
 import com.zhangke.fread.bluesky.internal.screen.feeds.list.BskyFeedsExplorerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentViewModel
+import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
@@ -80,6 +81,14 @@ interface BlueskyComponent : BlueskyPlatformComponent {
     fun provideUserListViewModel(creator: (IdentityRole, UserListType, String?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return UserListViewModel::class to UserListViewModel.Factory { role, type, postUri ->
             creator(role, type, postUri)
+        }
+    }
+
+    @IntoMap
+    @Provides
+    fun providePublishPostViewModel(creator: (IdentityRole) -> PublishPostViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return PublishPostViewModel::class to PublishPostViewModel.Factory { role ->
+            creator(role)
         }
     }
 

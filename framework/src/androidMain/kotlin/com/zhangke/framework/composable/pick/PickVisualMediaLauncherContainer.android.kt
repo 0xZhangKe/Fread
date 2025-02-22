@@ -9,6 +9,7 @@ import androidx.compose.runtime.remember
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.buildPickVisualImageRequest
 import com.zhangke.framework.utils.buildPickVisualMediaRequest
+import com.zhangke.framework.utils.buildPickVisualVideoRequest
 import com.zhangke.framework.utils.toPlatformUri
 
 @Composable
@@ -49,5 +50,9 @@ actual class PickVisualMediaLauncherContainerScope(
 
     actual fun launchMedia() {
         launcher.launch(buildPickVisualMediaRequest())
+    }
+
+    actual fun launchVideo(){
+        launcher.launch(buildPickVisualVideoRequest())
     }
 }

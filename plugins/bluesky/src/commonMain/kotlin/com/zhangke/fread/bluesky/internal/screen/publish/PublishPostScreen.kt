@@ -29,6 +29,7 @@ import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -43,10 +44,15 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import app.bsky.graph.ListView
+import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.TwoTextsInRow
 import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
@@ -68,25 +74,44 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dial
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_title
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_limited
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_no_limit
+import com.zhangke.fread.status.model.IdentityRole
 import org.jetbrains.compose.resources.stringResource
 
-class PublishPostScreen : BaseScreen() {
+class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
 
     @Composable
     override fun Content() {
         super.Content()
-
+        val navigator = LocalNavigator.currentOrThrow
+        val viewModel = getViewModel<PublishPostViewModel, PublishPostViewModel.Factory>() {
+            it.create(role)
+        }
+        val uiState by viewModel.uiState.collectAsState()
+        val snackBarHostState = rememberSnackbarHostState()
+        PublishPostContent(
+            uiState = uiState,
+            snackBarHostState = snackBarHostState,
+            onBackClick = navigator::pop,
+            onContentChanged = viewModel::onContentChanged,
+            onQuoteChange = viewModel::onQuoteChange,
+            onSettingSelected = viewModel::onReplySettingChange,
+            onSettingOptionsSelected = viewModel::onSettingOptionsSelected,
+            onMediaSelected = {},
+            onLanguageSelected = {},
+        )
     }
 
     @Composable
     private fun PublishPostContent(
         uiState: PublishPostUiState,
-        snackbarHostState: SnackbarHostState,
+        snackBarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onContentChanged: (TextFieldValue) -> Unit,
         onQuoteChange: (Boolean) -> Unit,
         onSettingSelected: (ReplySetting) -> Unit,
         onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
+        onMediaSelected: (List<PlatformUri>) -> Unit,
+        onLanguageSelected: (Locale) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -95,9 +120,14 @@ class PublishPostScreen : BaseScreen() {
                     onBackClick = onBackClick,
                 )
             },
-            snackbarHost = {
-                SnackbarHost(snackbarHostState)
-            },
+            snackbarHost = { SnackbarHost(snackBarHostState) },
+            bottomBar = {
+                PublishBottomPanel(
+                    uiState = uiState,
+                    onMediaSelected = onMediaSelected,
+                    onLanguageSelected = onLanguageSelected,
+                )
+            }
         ) { innerPadding ->
             Column(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
@@ -138,17 +168,8 @@ class PublishPostScreen : BaseScreen() {
                     textFieldValue = uiState.content,
                     onContentChanged = onContentChanged,
                 )
-
             }
         }
-    }
-
-    @Composable
-    private fun PublishBottomPanel(
-        uiState: PublishPostUiState,
-        onMediaSelected: (List<PlatformUri>) -> Unit,
-    ){
-
     }
 
     @Composable

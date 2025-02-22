@@ -26,4 +26,8 @@ actual class PickVisualMediaLauncherContainerScope {
     actual fun launchMedia() {
         TODO("Not yet implemented")
     }
+
+    actual fun launchVideo(){
+        TODO("Not yet implemented")
+    }
 }

@@ -26,7 +26,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
@@ -50,6 +49,7 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
+import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
@@ -79,10 +79,8 @@ class BlueskyHomeTab(
             screen = screen,
             uiState = uiState,
             snackBarHostState = snackBarHostState,
-            onPostBlogClick = {},
-            onTitleClick = {
-
-            },
+            onPostBlogClick = { navigator.push(PublishPostScreen(uiState.role)) },
+            onTitleClick = {},
         )
     }
 
@@ -117,7 +115,7 @@ class BlueskyHomeTab(
                         FloatingActionButton(
                             onClick = {
                                 reportClick(HomeTabElements.POST_STATUS)
-                                uiState.account?.let(onPostBlogClick)
+                                onPostBlogClick(uiState.account)
                             },
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary,

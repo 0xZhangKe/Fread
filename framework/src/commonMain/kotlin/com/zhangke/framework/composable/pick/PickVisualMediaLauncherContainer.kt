@@ -11,7 +11,10 @@ expect fun PickVisualMediaLauncherContainer(
 )
 
 expect class PickVisualMediaLauncherContainerScope {
+
     fun launchImage()
 
     fun launchMedia()
+
+    fun launchVideo()
 }

@@ -16,6 +16,17 @@ data class PublishPostUiState(
     val list: List<ListView>,
 ) {
 
+    val remainingImageCount: Int
+        get() {
+            return if (attachment is PublishPostMediaAttachment.Image) {
+                maxMediaCount - attachment.files.size
+            } else {
+                maxMediaCount
+            }
+        }
+
+    val remainingTextCount: Int get() = maxCharacters - content.text.length
+
     companion object {
 
         fun default(): PublishPostUiState {

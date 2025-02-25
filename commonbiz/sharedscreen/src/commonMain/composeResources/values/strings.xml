@@ -3,6 +3,8 @@
     <string name="shared_select_language_title">Select Language</string>
     <string name="shared_status_context_screen_title">Detail</string>
 
+    <string name="shared_alt_label">ALT</string>
+
     <string name="login_dialog_input_hint">Please input the server to log in to</string>
     <string name="login_dialog_title">Please select the server to log in to</string>
     <string name="login_dialog_input_tip">Input Server Host</string>
@@ -58,4 +60,8 @@
     <string name="shared_publish_interaction_dialog_following">Users you follow</string>
     <string name="shared_publish_interaction_dialog_follower">Your followers</string>
     <string name="shared_publish_interaction_dialog_in_list">Users in "%1$s"</string>
+
+    <string name="shared_publish_media_alt_dialog_title">Add alt text</string>
+    <string name="shared_publish_media_alt_dialog_input_tip">Descriptive alt text</string>
+    <string name="shared_publish_media_alt_dialog_input_hint">Alt text</string>
 </resources>

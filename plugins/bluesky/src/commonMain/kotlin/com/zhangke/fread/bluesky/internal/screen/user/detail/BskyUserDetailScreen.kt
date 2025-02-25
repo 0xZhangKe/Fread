@@ -372,6 +372,7 @@ private fun DetailSubtitle(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
             style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         if (uiState.relationship == RelationshipUiState.FOLLOWED_BY) {
             Text(

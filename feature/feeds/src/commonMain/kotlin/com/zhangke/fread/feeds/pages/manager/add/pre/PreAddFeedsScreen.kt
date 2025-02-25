@@ -1,6 +1,5 @@
 package com.zhangke.fread.feeds.pages.manager.add.pre
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -61,10 +60,7 @@ import com.zhangke.fread.feeds.pre_add_feeds_input_label_1
 import com.zhangke.fread.feeds.pre_add_feeds_input_label_2
 import com.zhangke.fread.feeds.pre_add_feeds_no_result
 import com.zhangke.fread.status.search.SearchContentResult
-import com.zhangke.fread.status.ui.source.BlogPlatformSnapshotUi
-import com.zhangke.fread.status.ui.source.BlogPlatformUi
 import com.zhangke.fread.status.ui.source.SearchContentResultUi
-import com.zhangke.fread.status.ui.source.StatusSourceUi
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -232,23 +228,7 @@ class PreAddFeedsScreen : BaseScreen() {
                                     style = MaterialTheme.typography.labelMedium,
                                 )
                             }
-                            items(
-                                uiState.allSearchedResult,
-                                key = {
-                                    when (it) {
-                                        is SearchContentResult.Source -> it.source.uri
-                                        is SearchContentResult.ActivityPubPlatform -> it.platform.uri
-                                        is SearchContentResult.ActivityPubPlatformSnapshot -> it.platform.domain
-                                    }
-                                },
-                                contentType = {
-                                    when (it) {
-                                        is SearchContentResult.Source -> 1
-                                        is SearchContentResult.ActivityPubPlatform -> 2
-                                        is SearchContentResult.ActivityPubPlatformSnapshot -> 3
-                                    }
-                                },
-                            ) { content ->
+                            items(uiState.allSearchedResult) { content ->
                                 SearchContentResultUi(content, onContentClick)
                             }
                         }

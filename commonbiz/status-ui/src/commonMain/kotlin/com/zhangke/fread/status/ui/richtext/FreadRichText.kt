@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
@@ -65,6 +66,7 @@ fun FreadRichText(
     modifier: Modifier,
     richText: RichText,
     color: Color = Color.Unspecified,
+    fontWeight: FontWeight? = null,
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
@@ -95,6 +97,7 @@ fun FreadRichText(
         modifier = modifier,
         color = color,
         overflow = overflow,
+        fontWeight = fontWeight,
         maxLines = maxLines,
         fontSize = fontSizeSp.sp,
         inlineContent = rememberInlineContent(richText.emojis),

@@ -230,23 +230,7 @@ class PreAddFeedsScreen : BaseScreen() {
                                     )
                                 }
                             }
-                            items(
-                                uiState.allSearchedResult,
-                                key = {
-                                    when (it) {
-                                        is SearchContentResult.Source -> it.source.uri
-                                        is SearchContentResult.Platform -> it.platform.uri
-                                        is SearchContentResult.SearchedPlatformSnapshot -> it.platform.domain
-                                    }
-                                },
-                                contentType = {
-                                    when (it) {
-                                        is SearchContentResult.Source -> 1
-                                        is SearchContentResult.Platform -> 2
-                                        is SearchContentResult.SearchedPlatformSnapshot -> 3
-                                    }
-                                },
-                            ) { content ->
+                            items(uiState.allSearchedResult) { content ->
                                 SearchContentResultUi(content, onContentClick)
                             }
                         }

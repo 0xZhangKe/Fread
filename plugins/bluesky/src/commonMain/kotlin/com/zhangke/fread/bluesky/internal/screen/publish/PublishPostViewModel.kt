@@ -32,6 +32,11 @@ class PublishPostViewModel @Inject constructor(
     }
 
     init {
+        launchInViewModel {
+            val client = clientManager.getClient(role)
+            val account = client.loggedAccountProvider() ?: return@launchInViewModel
+            _uiState.update { it.copy(account = account) }
+        }
         loadUserList()
     }
 

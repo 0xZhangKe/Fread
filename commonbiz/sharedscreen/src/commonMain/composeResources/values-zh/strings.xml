@@ -3,6 +3,8 @@
     <string name="shared_select_language_title">选择语言</string>
     <string name="shared_status_context_screen_title">详情</string>
 
+    <string name="shared_alt_label">替代文本</string>
+
     <string name="login_dialog_input_hint">请输入要登录的服务器</string>
     <string name="login_dialog_title">请选择要登录的服务器</string>
     <string name="login_dialog_input_tip">请输入服务器地址</string>
@@ -58,4 +60,8 @@
     <string name="shared_publish_interaction_dialog_following">你关注的用户</string>
     <string name="shared_publish_interaction_dialog_follower">你的关注者</string>
     <string name="shared_publish_interaction_dialog_in_list">"%1$s"中的用户</string>
+
+    <string name="shared_publish_media_alt_dialog_title">添加替代文本</string>
+    <string name="shared_publish_media_alt_dialog_input_tip">扩充描述替代文本</string>
+    <string name="shared_publish_media_alt_dialog_input_hint">替代文本</string>
 </resources>

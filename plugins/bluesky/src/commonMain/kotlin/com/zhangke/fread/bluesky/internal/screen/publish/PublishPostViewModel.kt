@@ -7,10 +7,18 @@ import app.bsky.embed.AspectRatio
 import app.bsky.embed.Images
 import app.bsky.embed.ImagesImage
 import app.bsky.embed.Video
+import app.bsky.feed.Post
+import app.bsky.feed.PostEmbedUnion
+import com.atproto.repo.ApplyWritesCreate
+import com.atproto.repo.ApplyWritesRequest
+import com.atproto.repo.ApplyWritesRequestWriteUnion
+import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
+import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
@@ -22,15 +30,18 @@ import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.supervisorScope
+import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
-import sh.christian.ozone.api.model.JsonContent
+import sh.christian.ozone.api.Language
 
 class PublishPostViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
@@ -50,6 +61,12 @@ class PublishPostViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(PublishPostUiState.default())
     val uiState = _uiState.asStateFlow()
+
+    private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
+    val snackBarMessageFlow = _snackBarMessageFlow.asSharedFlow()
+
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow = _finishPageFlow.asSharedFlow()
 
     private var publishJob: Job? = null
 
@@ -179,10 +196,11 @@ class PublishPostViewModel @Inject constructor(
     fun onPublishClick() {
         if (publishJob?.isActive == true) return
         publishJob?.cancel()
+        val account = uiState.value.account ?: return
         publishJob = launchInViewModel {
             _uiState.update { it.copy(publishing = true) }
             val client = clientManager.getClient(role)
-            val embeds: Result<JsonContent>? =
+            val embeds: Result<PostEmbedUnion>? =
                 when (val attachment = uiState.value.attachment) {
                     is PublishPostMediaAttachment.Video -> {
                         uploadVideo(attachment.file)
@@ -194,23 +212,47 @@ class PublishPostViewModel @Inject constructor(
 
                     else -> null
                 }
-
-            client.applyWrites()
+            val post = Post(
+                text = uiState.value.content.text,
+                langs = uiState.value.selectedLanguages.map { Language(it) },
+                embed = embeds?.getOrNull(),
+                createdAt = Clock.System.now(),
+            )
+            val createWrite = ApplyWritesRequestWriteUnion.Create(
+                ApplyWritesCreate(
+                    collection = BskyCollections.feedPost,
+                    value = post.bskyJson(),
+                )
+            )
+            val request = ApplyWritesRequest(
+                repo = Did(account.did),
+                validate = true,
+                writes = listOf(createWrite),
+            )
+            client.applyWritesCatching(request)
+                .onFailure {
+                    _uiState.update { it.copy(publishing = false) }
+                    _snackBarMessageFlow.emitTextMessageFromThrowable(it)
+                }.onSuccess {
+                    _uiState.update { it.copy(publishing = false) }
+                    _finishPageFlow.emit(Unit)
+                }
         }
     }
 
-    private suspend fun uploadVideo(file: PublishPostMediaAttachmentFile): Result<JsonContent> {
+    private suspend fun uploadVideo(file: PublishPostMediaAttachmentFile): Result<PostEmbedUnion> {
         return uploadBlob(role = role, fileUri = file.file.uri)
             .map {
-                Video(
+                val video = Video(
                     video = it.first,
                     alt = file.alt,
                     aspectRatio = it.second?.convert(),
-                ).bskyJson()
+                )
+                PostEmbedUnion.Video(video)
             }
     }
 
-    private suspend fun uploadImages(image: PublishPostMediaAttachment.Image): Result<JsonContent> {
+    private suspend fun uploadImages(image: PublishPostMediaAttachment.Image): Result<PostEmbedUnion> {
         val resultList: List<Result<ImagesImage>> = supervisorScope {
             image.files.map { file ->
                 async {
@@ -227,7 +269,8 @@ class PublishPostViewModel @Inject constructor(
         if (resultList.any { it.isFailure }) {
             return Result.failure(resultList.first { it.isFailure }.exceptionOrNull()!!)
         }
-        return Result.success(Images(resultList.map { it.getOrThrow() }).bskyJson())
+        val images = Images(resultList.map { it.getOrThrow() })
+        return Result.success(PostEmbedUnion.Images(images))
     }
 
     private fun com.zhangke.framework.utils.AspectRatio.convert(): AspectRatio {

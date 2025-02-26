@@ -2,15 +2,23 @@ package com.zhangke.fread.bluesky.internal.screen.publish
 
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
+import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.model.IdentityRole
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
@@ -18,6 +26,8 @@ import sh.christian.ozone.api.Did
 class PublishPostViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val getAllLists: GetAllListsUseCase,
+    private val platformUriHelper: PlatformUriHelper,
+    private val configManager: FreadConfigManager,
     @Assisted private val role: IdentityRole,
 ) : ViewModel() {
 
@@ -36,6 +46,16 @@ class PublishPostViewModel @Inject constructor(
             val client = clientManager.getClient(role)
             val account = client.loggedAccountProvider() ?: return@launchInViewModel
             _uiState.update { it.copy(account = account) }
+        }
+        launchInViewModel {
+            configManager.getBskyPublishLanguage().let {
+                _uiState.update { state ->
+                    val selectedLanguages = it.ifEmpty {
+                        listOf("en")
+                    }
+                    state.copy(selectedLanguages = selectedLanguages)
+                }
+            }
         }
         loadUserList()
     }
@@ -73,6 +93,75 @@ class PublishPostViewModel @Inject constructor(
                 )
             )
         }
+    }
+
+    fun onMediaSelected(medias: List<PlatformUri>) {
+        if (medias.isEmpty()) return
+        viewModelScope.launch {
+            val currentAttachment = uiState.value.attachment
+            val fileList = medias.map {
+                async { platformUriHelper.read(it) }
+            }.awaitAll().filterNotNull()
+            val attachment = if (fileList.first().isVideo) {
+                PublishPostMediaAttachment.Video(fileList.first().toUiFile())
+            } else {
+                PublishPostMediaAttachment.Image(fileList.map { it.toUiFile() })
+            }
+            _uiState.update { it.copy(attachment = currentAttachment.merge(attachment)) }
+        }
+    }
+
+    private fun PublishPostMediaAttachment?.merge(
+        attachment: PublishPostMediaAttachment
+    ): PublishPostMediaAttachment {
+        if (this == null) return attachment
+        if (this is PublishPostMediaAttachment.Video || attachment is PublishPostMediaAttachment.Video) {
+            return attachment
+        }
+        val files = (this as PublishPostMediaAttachment.Image).files
+        return PublishPostMediaAttachment.Image(files + (attachment as PublishPostMediaAttachment.Image).files)
+    }
+
+    private fun ContentProviderFile.toUiFile(): PublishPostMediaAttachmentFile {
+        return PublishPostMediaAttachmentFile(
+            file = this,
+            alt = null
+        )
+    }
+
+    fun onMediaAltChanged(file: PublishPostMediaAttachmentFile, alt: String) {
+        val attachment = uiState.value.attachment
+        if (attachment is PublishPostMediaAttachment.Video) {
+            _uiState.update {
+                it.copy(attachment = PublishPostMediaAttachment.Video(file.copy(alt = alt)))
+            }
+        } else {
+            val files = (attachment as PublishPostMediaAttachment.Image).files.map {
+                if (it == file) {
+                    it.copy(alt = alt)
+                } else {
+                    it
+                }
+            }
+            _uiState.update { it.copy(attachment = PublishPostMediaAttachment.Image(files)) }
+        }
+    }
+
+    fun onMediaDeleteClick(file: PublishPostMediaAttachmentFile) {
+        val attachment = uiState.value.attachment
+        if (attachment is PublishPostMediaAttachment.Video) {
+            _uiState.update { it.copy(attachment = null) }
+        } else {
+            val files = (attachment as PublishPostMediaAttachment.Image).files.filter { it != file }
+            _uiState.update { it.copy(attachment = PublishPostMediaAttachment.Image(files)) }
+        }
+    }
+
+    fun onLanguageSelected(selectedLanguages: List<String>) {
+        launchInViewModel {
+            configManager.updateBskyPublishLanguage(selectedLanguages)
+        }
+        _uiState.update { it.copy(selectedLanguages = selectedLanguages) }
     }
 
     private fun loadUserList() {

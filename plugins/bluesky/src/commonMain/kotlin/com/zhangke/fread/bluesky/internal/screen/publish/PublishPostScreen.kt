@@ -6,7 +6,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
@@ -28,7 +30,6 @@ import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.TwoTextsInRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
@@ -57,8 +58,10 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
             onQuoteChange = viewModel::onQuoteChange,
             onSettingSelected = viewModel::onReplySettingChange,
             onSettingOptionsSelected = viewModel::onSettingOptionsSelected,
-            onMediaSelected = {},
-            onLanguageSelected = {},
+            onMediaSelected = viewModel::onMediaSelected,
+            onLanguageSelected = viewModel::onLanguageSelected,
+            onMediaAltChanged = viewModel::onMediaAltChanged,
+            onMediaDeleteClick = viewModel::onMediaDeleteClick,
         )
     }
 
@@ -72,7 +75,9 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
         onSettingSelected: (ReplySetting) -> Unit,
         onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
         onMediaSelected: (List<PlatformUri>) -> Unit,
-        onLanguageSelected: (Locale) -> Unit,
+        onLanguageSelected: (List<String>) -> Unit,
+        onMediaAltChanged: (PublishPostMediaAttachmentFile, String) -> Unit,
+        onMediaDeleteClick: (PublishPostMediaAttachmentFile) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -87,11 +92,15 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
                     uiState = uiState,
                     onMediaSelected = onMediaSelected,
                     onLanguageSelected = onLanguageSelected,
+                    selectedLanguages = uiState.selectedLanguages,
+                    maxLanguageCount = uiState.maxLanguageCount,
                 )
-            }
+            },
         ) { innerPadding ->
             Column(
-                modifier = Modifier.fillMaxSize().padding(innerPadding),
+                modifier = Modifier.fillMaxSize()
+                    .padding(innerPadding)
+                    .verticalScroll(rememberScrollState()),
             ) {
                 Row(
                     modifier = Modifier.fillMaxWidth(),
@@ -124,11 +133,21 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
                     }
                 }
                 InputBlogTextField(
-                    modifier = Modifier.fillMaxWidth()
-                        .padding(start = 16.dp, top = 6.dp, end = 16.dp),
+                    modifier = Modifier.fillMaxWidth(),
                     textFieldValue = uiState.content,
                     onContentChanged = onContentChanged,
                 )
+
+                if (uiState.attachment != null) {
+                    PublishPostMediaAttachment(
+                        modifier = Modifier.padding(start = 16.dp, top = 16.dp, end = 16.dp)
+                            .fillMaxWidth(),
+                        media = uiState.attachment,
+                        mediaAltMaxCharacters = uiState.mediaAltMaxCharacters,
+                        onAltChanged = onMediaAltChanged,
+                        onDeleteClick = onMediaDeleteClick,
+                    )
+                }
             }
         }
     }

@@ -3,36 +3,43 @@ package com.zhangke.fread.bluesky.internal.screen.publish
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.bsky.embed.AspectRatio
+import app.bsky.embed.Images
+import app.bsky.embed.ImagesImage
+import app.bsky.embed.Video
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
+import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
+import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.model.IdentityRole
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
+import sh.christian.ozone.api.model.JsonContent
 
 class PublishPostViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val getAllLists: GetAllListsUseCase,
     private val platformUriHelper: PlatformUriHelper,
     private val configManager: FreadConfigManager,
+    private val uploadBlob: UploadBlobUseCase,
     @Assisted private val role: IdentityRole,
 ) : ViewModel() {
-
-    private val _uiState = MutableStateFlow(PublishPostUiState.default())
-    val uiState = _uiState.asStateFlow()
 
     fun interface Factory : ViewModelFactory {
 
@@ -40,6 +47,11 @@ class PublishPostViewModel @Inject constructor(
             role: IdentityRole,
         ): PublishPostViewModel
     }
+
+    private val _uiState = MutableStateFlow(PublishPostUiState.default())
+    val uiState = _uiState.asStateFlow()
+
+    private var publishJob: Job? = null
 
     init {
         launchInViewModel {
@@ -162,6 +174,67 @@ class PublishPostViewModel @Inject constructor(
             configManager.updateBskyPublishLanguage(selectedLanguages)
         }
         _uiState.update { it.copy(selectedLanguages = selectedLanguages) }
+    }
+
+    fun onPublishClick() {
+        if (publishJob?.isActive == true) return
+        publishJob?.cancel()
+        publishJob = launchInViewModel {
+            _uiState.update { it.copy(publishing = true) }
+            val client = clientManager.getClient(role)
+            val embeds: Result<JsonContent>? =
+                when (val attachment = uiState.value.attachment) {
+                    is PublishPostMediaAttachment.Video -> {
+                        uploadVideo(attachment.file)
+                    }
+
+                    is PublishPostMediaAttachment.Image -> {
+                        uploadImages(attachment)
+                    }
+
+                    else -> null
+                }
+
+            client.applyWrites()
+        }
+    }
+
+    private suspend fun uploadVideo(file: PublishPostMediaAttachmentFile): Result<JsonContent> {
+        return uploadBlob(role = role, fileUri = file.file.uri)
+            .map {
+                Video(
+                    video = it.first,
+                    alt = file.alt,
+                    aspectRatio = it.second?.convert(),
+                ).bskyJson()
+            }
+    }
+
+    private suspend fun uploadImages(image: PublishPostMediaAttachment.Image): Result<JsonContent> {
+        val resultList: List<Result<ImagesImage>> = supervisorScope {
+            image.files.map { file ->
+                async {
+                    uploadBlob(role = role, fileUri = file.file.uri).map {
+                        ImagesImage(
+                            image = it.first,
+                            aspectRatio = it.second?.convert(),
+                            alt = file.alt.orEmpty(),
+                        )
+                    }
+                }
+            }.awaitAll()
+        }
+        if (resultList.any { it.isFailure }) {
+            return Result.failure(resultList.first { it.isFailure }.exceptionOrNull()!!)
+        }
+        return Result.success(Images(resultList.map { it.getOrThrow() }).bskyJson())
+    }
+
+    private fun com.zhangke.framework.utils.AspectRatio.convert(): AspectRatio {
+        return AspectRatio(
+            width = width,
+            height = height,
+        )
     }
 
     private fun loadUserList() {

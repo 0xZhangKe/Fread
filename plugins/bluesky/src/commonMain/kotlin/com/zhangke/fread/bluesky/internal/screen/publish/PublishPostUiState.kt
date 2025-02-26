@@ -2,6 +2,7 @@ package com.zhangke.fread.bluesky.internal.screen.publish
 
 import androidx.compose.ui.text.input.TextFieldValue
 import app.bsky.graph.ListView
+import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
@@ -10,9 +11,12 @@ data class PublishPostUiState(
     val content: TextFieldValue,
     val maxCharacters: Int,
     val maxMediaCount: Int,
+    val mediaAltMaxCharacters: Int,
     val account: BlueskyLoggedAccount?,
     val attachment: PublishPostMediaAttachment?,
     val interactionSetting: PostInteractionSetting,
+    val selectedLanguages: List<String>,
+    val maxLanguageCount: Int,
     val list: List<ListView>,
 ) {
 
@@ -33,6 +37,7 @@ data class PublishPostUiState(
             return PublishPostUiState(
                 content = TextFieldValue(),
                 maxCharacters = 300,
+                mediaAltMaxCharacters = 2000,
                 maxMediaCount = 4,
                 interactionSetting = PostInteractionSetting(
                     allowQuote = true,
@@ -40,6 +45,8 @@ data class PublishPostUiState(
                 ),
                 account = null,
                 attachment = null,
+                selectedLanguages = emptyList(),
+                maxLanguageCount = 3,
                 list = emptyList(),
             )
         }
@@ -54,6 +61,6 @@ sealed interface PublishPostMediaAttachment {
 }
 
 data class PublishPostMediaAttachmentFile(
-    val uri: String,
+    val file: ContentProviderFile,
     val alt: String?,
 )

@@ -21,7 +21,6 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -30,6 +29,8 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.ui.AutoSizeImage
+import com.zhangke.framework.composable.ConsumeFlow
+import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.TwoTextsInRow
@@ -68,6 +69,10 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
             onMediaDeleteClick = viewModel::onMediaDeleteClick,
             onPublishClick = viewModel::onPublishClick,
         )
+        ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
+        ConsumeFlow(viewModel.finishPageFlow) {
+            navigator.pop()
+        }
     }
 
     @Composable

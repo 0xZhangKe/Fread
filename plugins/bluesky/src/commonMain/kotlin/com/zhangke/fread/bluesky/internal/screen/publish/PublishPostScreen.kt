@@ -10,6 +10,8 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -19,6 +21,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.rotate
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -27,6 +30,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.seiko.imageloader.ui.AutoSizeImage
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.TwoTextsInRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -62,6 +66,7 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
             onLanguageSelected = viewModel::onLanguageSelected,
             onMediaAltChanged = viewModel::onMediaAltChanged,
             onMediaDeleteClick = viewModel::onMediaDeleteClick,
+            onPublishClick = viewModel::onPublishClick,
         )
     }
 
@@ -78,12 +83,21 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
         onLanguageSelected: (List<String>) -> Unit,
         onMediaAltChanged: (PublishPostMediaAttachmentFile, String) -> Unit,
         onMediaDeleteClick: (PublishPostMediaAttachmentFile) -> Unit,
+        onPublishClick: () -> Unit,
     ) {
         Scaffold(
             topBar = {
                 Toolbar(
                     title = stringResource(Res.string.shared_publish_blog_title),
                     onBackClick = onBackClick,
+                    actions = {
+                        SimpleIconButton(
+                            onClick = onPublishClick,
+                            tint = MaterialTheme.colorScheme.primary,
+                            imageVector = Icons.AutoMirrored.Filled.Send,
+                            contentDescription = "Publish",
+                        )
+                    },
                 )
             },
             snackbarHost = { SnackbarHost(snackBarHostState) },

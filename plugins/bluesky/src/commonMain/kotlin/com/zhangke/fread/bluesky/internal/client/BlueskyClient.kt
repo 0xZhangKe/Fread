@@ -46,6 +46,8 @@ import app.bsky.notification.ListNotificationsResponse
 import app.bsky.notification.UpdateSeenRequest
 import app.bsky.unspecced.GetPopularFeedGeneratorsQueryParams
 import app.bsky.unspecced.GetPopularFeedGeneratorsResponse
+import com.atproto.repo.ApplyWritesRequest
+import com.atproto.repo.ApplyWritesResponse
 import com.atproto.repo.CreateRecordRequest
 import com.atproto.repo.CreateRecordResponse
 import com.atproto.repo.DeleteRecordRequest
@@ -233,6 +235,10 @@ class BlueskyClient(
 
     suspend fun uploadBlobCatching(data: ByteArray): Result<UploadBlobResponse> {
         return runCatching { uploadBlob(data) }.toResult()
+    }
+
+    suspend fun applyWritesCatching(request: ApplyWritesRequest): Result<ApplyWritesResponse> {
+        return runCatching { applyWrites(request) }.toResult()
     }
 
     private fun <T : Any> Result<AtpResponse<T>>.toResult(): Result<T> {

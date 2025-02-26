@@ -1,8 +1,10 @@
 package com.zhangke.fread.bluesky.internal.usecase
 
+import com.zhangke.framework.utils.AspectRatio
 import com.zhangke.framework.utils.ImageCompressUtils
 import com.zhangke.framework.utils.MB
 import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.framework.utils.VideoUtils
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.model.IdentityRole
@@ -22,16 +24,24 @@ class UploadBlobUseCase @Inject constructor(
     suspend operator fun invoke(
         role: IdentityRole,
         fileUri: PlatformUri,
-    ): Result<Blob> {
+    ): Result<Pair<Blob, AspectRatio?>> {
         return runCatching {
             val file = platformUriHelper.read(fileUri)
                 ?: throw RuntimeException("File invalid!")
             var bytes = file.readBytes()
                 ?: throw RuntimeException("File invalid!")
-            if (!file.isVideo) {
-                bytes = ImageCompressUtils().compress(bytes, BSKY_BLOB_MAX_SIZE)
+            var aspect: AspectRatio? = null
+            if (file.isVideo) {
+                VideoUtils().getVideoAspect(fileUri.toString())?.let {
+                    aspect = it
+                }
+            } else {
+                val result = ImageCompressUtils().compress(bytes, BSKY_BLOB_MAX_SIZE)
+                bytes = result.bytes
+                aspect = result.ratio
             }
-            clientManager.getClient(role).uploadBlobCatching(bytes).getOrThrow().blob
+            val blob = clientManager.getClient(role).uploadBlobCatching(bytes).getOrThrow().blob
+            blob to aspect
         }
     }
 }

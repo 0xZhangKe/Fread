@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
+import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.input.TextFieldValue
 import app.bsky.graph.ListView
 import com.zhangke.framework.utils.ContentProviderFile
@@ -17,6 +18,7 @@ data class PublishPostUiState(
     val interactionSetting: PostInteractionSetting,
     val selectedLanguages: List<String>,
     val maxLanguageCount: Int,
+    val publishing: Boolean,
     val list: List<ListView>,
 ) {
 
@@ -47,6 +49,7 @@ data class PublishPostUiState(
                 attachment = null,
                 selectedLanguages = emptyList(),
                 maxLanguageCount = 3,
+                publishing = false,
                 list = emptyList(),
             )
         }

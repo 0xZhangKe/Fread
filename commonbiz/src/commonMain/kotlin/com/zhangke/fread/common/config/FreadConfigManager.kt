@@ -21,6 +21,7 @@ class FreadConfigManager @Inject constructor(
             "fread_status_always_show_sensitive"
         private const val LOCAL_KEY_DEVICE_ID = "device_id"
         private const val LOCAL_KEY_IGNORE_UPDATE_VERSION = "ignore_update_version"
+        private const val LOCAL_KEY_BSKY_PUBLISH_LAN = "bsky_publish_lan"
     }
 
     private val _statusConfigFlow = MutableStateFlow(StatusConfig.default())
@@ -96,6 +97,16 @@ class FreadConfigManager @Inject constructor(
     suspend fun updateIgnoreUpdateVersion(version: Long) {
         withContext(Dispatchers.IO) {
             localConfigManager.putLong(LOCAL_KEY_IGNORE_UPDATE_VERSION, version)
+        }
+    }
+
+    suspend fun getBskyPublishLanguage(): List<String> {
+        return localConfigManager.getString(LOCAL_KEY_BSKY_PUBLISH_LAN)?.split(",") ?: emptyList()
+    }
+
+    suspend fun updateBskyPublishLanguage(languages: List<String>) {
+        withContext(Dispatchers.IO) {
+            localConfigManager.putString(LOCAL_KEY_BSKY_PUBLISH_LAN, languages.joinToString(","))
         }
     }
 }

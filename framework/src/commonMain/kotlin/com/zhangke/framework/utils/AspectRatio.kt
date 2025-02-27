@@ -2,6 +2,7 @@ package com.zhangke.framework.utils
 
 import kotlinx.serialization.Serializable
 
+@Parcelize
 @Serializable
 data class AspectRatio(
     val width: Long,

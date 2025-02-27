@@ -9,6 +9,15 @@ import app.bsky.embed.ImagesImage
 import app.bsky.embed.Video
 import app.bsky.feed.Post
 import app.bsky.feed.PostEmbedUnion
+import app.bsky.feed.Postgate
+import app.bsky.feed.PostgateDisableRule
+import app.bsky.feed.PostgateEmbeddingRuleUnion
+import app.bsky.feed.Threadgate
+import app.bsky.feed.ThreadgateAllowUnion
+import app.bsky.feed.ThreadgateFollowerRule
+import app.bsky.feed.ThreadgateFollowingRule
+import app.bsky.feed.ThreadgateListRule
+import app.bsky.feed.ThreadgateMentionRule
 import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
 import com.atproto.repo.ApplyWritesRequestWriteUnion
@@ -19,9 +28,11 @@ import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
+import com.zhangke.fread.bluesky.internal.client.adjustToRkey
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
+import com.zhangke.fread.bluesky.internal.utils.Tid
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
@@ -40,8 +51,10 @@ import kotlinx.coroutines.supervisorScope
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Language
+import sh.christian.ozone.api.RKey
 
 class PublishPostViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
@@ -200,6 +213,8 @@ class PublishPostViewModel @Inject constructor(
         publishJob = launchInViewModel {
             _uiState.update { it.copy(publishing = true) }
             val client = clientManager.getClient(role)
+            val rkey = Tid.generateTID()
+            val postUri = "at://${account.did}/${BskyCollections.feedPost.nsid}/$rkey"
             val embeds: Result<PostEmbedUnion>? =
                 when (val attachment = uiState.value.attachment) {
                     is PublishPostMediaAttachment.Video -> {
@@ -212,31 +227,104 @@ class PublishPostViewModel @Inject constructor(
 
                     else -> null
                 }
+            if (embeds?.isFailure == true) {
+                _uiState.update { it.copy(publishing = false) }
+                _snackBarMessageFlow.emitTextMessageFromThrowable(embeds.exceptionOrNull()!!)
+                return@launchInViewModel
+            }
             val post = Post(
                 text = uiState.value.content.text,
                 langs = uiState.value.selectedLanguages.map { Language(it) },
                 embed = embeds?.getOrNull(),
                 createdAt = Clock.System.now(),
             )
-            val createWrite = ApplyWritesRequestWriteUnion.Create(
+            val writes = mutableListOf<ApplyWritesRequestWriteUnion>()
+            writes += ApplyWritesRequestWriteUnion.Create(
                 ApplyWritesCreate(
                     collection = BskyCollections.feedPost,
                     value = post.bskyJson(),
+                    rkey = RKey(rkey),
                 )
             )
+            writes += buildTreadAndPostGate(AtUri(postUri))
             val request = ApplyWritesRequest(
                 repo = Did(account.did),
                 validate = true,
-                writes = listOf(createWrite),
+                writes = writes,
             )
             client.applyWritesCatching(request)
-                .onFailure {
+                .onFailure { t ->
                     _uiState.update { it.copy(publishing = false) }
-                    _snackBarMessageFlow.emitTextMessageFromThrowable(it)
+                    _snackBarMessageFlow.emitTextMessageFromThrowable(t)
                 }.onSuccess {
                     _uiState.update { it.copy(publishing = false) }
                     _finishPageFlow.emit(Unit)
                 }
+        }
+    }
+
+    private fun buildTreadAndPostGate(postUri: AtUri): List<ApplyWritesRequestWriteUnion> {
+        val list = mutableListOf<ApplyWritesRequestWriteUnion>()
+        val interactionSetting = uiState.value.interactionSetting
+        val replySetting = interactionSetting.replySetting
+        if (replySetting !is ReplySetting.Everybody) {
+            val allowList = mutableListOf<ThreadgateAllowUnion>()
+            if (replySetting is ReplySetting.Combined) {
+                allowList += buildThreadGateAllowList(replySetting)
+            }
+            val threadGate = Threadgate(
+                post = postUri,
+                allow = allowList,
+                createdAt = Clock.System.now(),
+            )
+            list += ApplyWritesRequestWriteUnion.Create(
+                ApplyWritesCreate(
+                    collection = BskyCollections.threadGate,
+                    value = threadGate.bskyJson(),
+                    rkey = postUri.toString().adjustToRkey(),
+                )
+            )
+        }
+        if (!interactionSetting.allowQuote) {
+            val postGate = Postgate(
+                createdAt = Clock.System.now(),
+                post = postUri,
+                embeddingRules = listOf(PostgateEmbeddingRuleUnion.DisableRule(PostgateDisableRule)),
+            )
+            list += ApplyWritesRequestWriteUnion.Create(
+                ApplyWritesCreate(
+                    collection = BskyCollections.postGate,
+                    value = postGate.bskyJson(),
+                    rkey = postUri.toString().adjustToRkey(),
+                )
+            )
+        }
+        return list
+    }
+
+    private fun buildThreadGateAllowList(
+        setting: ReplySetting.Combined,
+    ): List<ThreadgateAllowUnion> {
+        return buildList {
+            setting.options.forEach { option ->
+                when (option) {
+                    is ReplySetting.CombineOption.Mentioned -> {
+                        add(ThreadgateAllowUnion.MentionRule(ThreadgateMentionRule))
+                    }
+
+                    is ReplySetting.CombineOption.Following -> {
+                        add(ThreadgateAllowUnion.FollowingRule(ThreadgateFollowingRule))
+                    }
+
+                    is ReplySetting.CombineOption.Followers -> {
+                        add(ThreadgateAllowUnion.FollowerRule(ThreadgateFollowerRule))
+                    }
+
+                    is ReplySetting.CombineOption.UserInList -> {
+                        add(ThreadgateAllowUnion.ListRule(ThreadgateListRule(option.listView.uri)))
+                    }
+                }
+            }
         }
     }
 

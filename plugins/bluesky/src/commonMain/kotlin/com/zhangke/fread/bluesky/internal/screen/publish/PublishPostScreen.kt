@@ -12,6 +12,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -96,12 +97,21 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
                     title = stringResource(Res.string.shared_publish_blog_title),
                     onBackClick = onBackClick,
                     actions = {
-                        SimpleIconButton(
-                            onClick = onPublishClick,
-                            tint = MaterialTheme.colorScheme.primary,
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Publish",
-                        )
+                        if (uiState.publishing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .size(24.dp),
+                                color = MaterialTheme.colorScheme.primary,
+                            )
+                        } else {
+                            SimpleIconButton(
+                                onClick = onPublishClick,
+                                tint = MaterialTheme.colorScheme.primary,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Publish",
+                            )
+                        }
                     },
                 )
             },

@@ -20,6 +20,7 @@ import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Nsid
+import sh.christian.ozone.api.RKey
 import sh.christian.ozone.api.model.JsonContent
 
 class BskyStatusInteractiveUseCase @Inject constructor(
@@ -215,7 +216,7 @@ class BskyStatusInteractiveUseCase @Inject constructor(
     private suspend fun BlueskyClient.deleteRecord(
         repo: Did,
         collection: Nsid,
-        rkey: String,
+        rkey: RKey,
     ): Result<DeleteRecordResponse> {
         return this.deleteRecordCatching(
             DeleteRecordRequest(

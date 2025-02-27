@@ -6,6 +6,7 @@ import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Nsid
+import sh.christian.ozone.api.RKey
 
 class DeleteRecordUseCase @Inject constructor(
     private val clientManager: BlueskyClientManager,
@@ -14,7 +15,7 @@ class DeleteRecordUseCase @Inject constructor(
     suspend operator fun invoke(
         role: IdentityRole,
         collection: Nsid,
-        rkey: String,
+        rkey: RKey,
     ): Result<Unit> {
         val repo = clientManager.getClient(role).loggedAccountProvider()
             ?.did?.let { Did(it) }

@@ -275,7 +275,7 @@ private fun PublishPostImageAltDialog(
                 RemainingTextStatus(
                     modifier = Modifier.padding(start = 16.dp),
                     maxCount = maxCharacters,
-                    contentLength = alt.length,
+                    contentLength = inputtedValue.length,
                 )
                 Button(
                     modifier = Modifier.padding(start = 16.dp).weight(1F),

@@ -15,4 +15,8 @@ object BskyCollections {
     val follow = Nsid("app.bsky.graph.follow")
 
     val block = Nsid("app.bsky.graph.block")
+
+    val postGate = Nsid("app.bsky.feed.postgate")
+
+    val threadGate = Nsid("app.bsky.feed.threadgate")
 }

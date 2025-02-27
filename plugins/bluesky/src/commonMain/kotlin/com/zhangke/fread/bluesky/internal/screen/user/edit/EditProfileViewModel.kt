@@ -30,6 +30,7 @@ import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.Did
+import sh.christian.ozone.api.RKey
 import sh.christian.ozone.api.model.Blob
 
 class EditProfileViewModel @Inject constructor(
@@ -151,11 +152,11 @@ class EditProfileViewModel @Inject constructor(
         banner: PlatformUri?,
     ): Result<Pair<Blob?, Blob?>> {
         if (avatar == null && banner == null) return Result.success(null to null)
-        if (avatar == null) return uploadBlob(role, banner!!).map { null to it }
-        if (banner == null) return uploadBlob(role, avatar).map { it to null }
+        if (avatar == null) return uploadBlob(role, banner!!).map { null to it.first }
+        if (banner == null) return uploadBlob(role, avatar).map { it.first to null }
         return supervisorScope {
-            val avatarDeferred = async { uploadBlob(role, avatar) }
-            val bannerDeferred = async { uploadBlob(role, banner) }
+            val avatarDeferred = async { uploadBlob(role, avatar).map { it.first } }
+            val bannerDeferred = async { uploadBlob(role, banner).map { it.first } }
             val avatarResult = avatarDeferred.await()
             val bannerResult = bannerDeferred.await()
             if (avatarResult.isFailure || bannerResult.isFailure) {

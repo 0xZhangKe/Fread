@@ -16,15 +16,12 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -34,7 +31,6 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.TwoTextsInRow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
@@ -43,16 +39,23 @@ import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.ui.publish.NameAndAccountInfo
+import com.zhangke.fread.status.ui.publish.PublishBlogStyleDefault
+import com.zhangke.fread.status.ui.reply.BlogInReply
 import org.jetbrains.compose.resources.stringResource
 
-class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
+class PublishPostScreen(
+    private val role: IdentityRole,
+    private val replyToJsonString: String? = null,
+    private val quoteJsonString: String? = null,
+) : BaseScreen() {
 
     @Composable
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<PublishPostViewModel, PublishPostViewModel.Factory> {
-            it.create(role)
+            it.create(role, replyToJsonString, quoteJsonString)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
@@ -91,6 +94,7 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
         onMediaDeleteClick: (PublishPostMediaAttachmentFile) -> Unit,
         onPublishClick: () -> Unit,
     ) {
+        val publishBlogStyle = PublishBlogStyleDefault.defaultStyle()
         Scaffold(
             topBar = {
                 Toolbar(
@@ -131,6 +135,13 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState()),
             ) {
+                if (uiState.replyBlog != null){
+                    BlogInReply(
+                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
+                        blog = uiState.replyBlog,
+                        style = publishBlogStyle,
+                    )
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                 ) {
@@ -139,20 +150,20 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .clip(CircleShape)
-                            .size(42.dp),
+                            .size(publishBlogStyle.avatarSize),
                         contentDescription = null,
                     )
-
                     Column(
-                        modifier = Modifier.weight(1F).padding(horizontal = 16.dp),
+                        modifier = Modifier.weight(1F).padding(horizontal = 8.dp),
                     ) {
                         NameAndAccountInfo(
                             modifier = Modifier.fillMaxWidth(),
                             name = uiState.account?.userName.orEmpty(),
                             handle = uiState.account?.user?.prettyHandle.orEmpty(),
+                            style = publishBlogStyle,
                         )
                         PostInteractionSettingLabel(
-                            modifier = Modifier.padding(top = 2.dp),
+                            modifier = Modifier.padding(top = 1.dp),
                             setting = uiState.interactionSetting,
                             lists = uiState.list,
                             onQuoteChange = onQuoteChange,
@@ -179,37 +190,5 @@ class PublishPostScreen(private val role: IdentityRole) : BaseScreen() {
                 }
             }
         }
-    }
-
-    @Composable
-    private fun NameAndAccountInfo(
-        modifier: Modifier,
-        name: String,
-        handle: String,
-    ) {
-        TwoTextsInRow(
-            firstText = {
-                Text(
-                    modifier = Modifier,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    text = name,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                )
-            },
-            secondText = {
-                Text(
-                    modifier = Modifier,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    text = handle,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            },
-            spacing = 2.dp,
-            modifier = modifier,
-        )
     }
 }

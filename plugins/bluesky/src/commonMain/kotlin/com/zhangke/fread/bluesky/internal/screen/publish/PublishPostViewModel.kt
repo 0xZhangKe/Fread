@@ -21,6 +21,8 @@ import app.bsky.feed.ThreadgateMentionRule
 import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
 import com.atproto.repo.ApplyWritesRequestWriteUnion
+import com.zhangke.framework.architect.json.fromJson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
@@ -37,7 +39,10 @@ import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.IdentityRole
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.IO
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
@@ -63,12 +68,16 @@ class PublishPostViewModel @Inject constructor(
     private val configManager: FreadConfigManager,
     private val uploadBlob: UploadBlobUseCase,
     @Assisted private val role: IdentityRole,
+    @Assisted replyBlogJsonString: String?,
+    @Assisted quoteBlogJsonString: String?,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
             role: IdentityRole,
+            replyBlogJsonString: String?,
+            quoteBlogJsonString: String?,
         ): PublishPostViewModel
     }
 
@@ -84,6 +93,15 @@ class PublishPostViewModel @Inject constructor(
     private var publishJob: Job? = null
 
     init {
+        launchInViewModel(Dispatchers.IO) {
+            val reply: Blog? = replyBlogJsonString?.let {
+                globalJson.fromJson<Blog>(it)
+            }
+            val quote: Blog? = quoteBlogJsonString?.let {
+                globalJson.fromJson<Blog>(it)
+            }
+            _uiState.update { it.copy(replyBlog = reply, quoteBlog = quote) }
+        }
         launchInViewModel {
             val client = clientManager.getClient(role)
             val account = client.loggedAccountProvider() ?: return@launchInViewModel

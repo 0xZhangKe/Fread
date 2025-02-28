@@ -14,7 +14,6 @@ import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.MoreVert
 import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material.icons.filled.Send
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
@@ -63,6 +62,7 @@ import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.TextFieldUtils
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
@@ -80,20 +80,18 @@ import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.status_ui_reply
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 
-@Destination(PostStatusScreenRoute.ROUTE)
 class PostStatusScreen(
-    @RouteParam(PostStatusScreenRoute.PARAM_ACCOUNT_URI) private val accountUri: String? = null,
-    @RouteParam(PostStatusScreenRoute.PARAM_EDIT_BLOG) private val editBlog: String? = null,
-    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ACCT) private val replyBlogAcct: String? = null,
-    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_BLOG_ID) private val replyBlogId: String? = null,
-    @RouteParam(PostStatusScreenRoute.PARAM_REPLY_TO_AUTHOR_NAME) private val replyAuthorName: String? = null,
-    @RouteParam(PostStatusScreenRoute.PARAMS_REPLY_VISIBILITY) private val replyVisibility: String? = null,
+    private val accountUri: FormalUri,
+    private val editBlogJsonString: String? = null,
+    private val replyBlogAcct: WebFinger? = null,
+    private val replyBlogId: String? = null,
+    private val replyAuthorName: String? = null,
+    private val replyVisibility: String? = null,
 ) : BaseScreen() {
 
     @OptIn(InternalVoyagerApi::class)
@@ -105,7 +103,7 @@ class PostStatusScreen(
             it.create(
                 PostStatusScreenRoute.buildParams(
                     accountUri = accountUri,
-                    editBlog = editBlog,
+                    editBlog = editBlogJsonString,
                     replyBlogAcct = replyBlogAcct,
                     replyBlogId = replyBlogId,
                     replyAuthorName = replyAuthorName,

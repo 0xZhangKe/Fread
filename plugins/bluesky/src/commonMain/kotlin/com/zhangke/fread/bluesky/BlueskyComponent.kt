@@ -86,9 +86,9 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun providePublishPostViewModel(creator: (IdentityRole) -> PublishPostViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return PublishPostViewModel::class to PublishPostViewModel.Factory { role ->
-            creator(role)
+    fun providePublishPostViewModel(creator: (IdentityRole, String?, String?) -> PublishPostViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return PublishPostViewModel::class to PublishPostViewModel.Factory { role, reply, quote ->
+            creator(role, reply, quote)
         }
     }
 

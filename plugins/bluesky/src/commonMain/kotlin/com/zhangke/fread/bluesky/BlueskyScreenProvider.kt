@@ -1,12 +1,14 @@
 package com.zhangke.fread.bluesky
 
 import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentScreen
+import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
@@ -18,6 +20,7 @@ import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
+import kotlinx.serialization.encodeToString
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyScreenProvider @Inject constructor(
@@ -27,15 +30,19 @@ class BlueskyScreenProvider @Inject constructor(
     override suspend fun getReplyBlogScreen(
         role: IdentityRole,
         blog: Blog
-    ): String? {
-        TODO("Not yet implemented")
+    ): Screen? {
+        if (blog.platform.protocol.notBluesky) return null
+        return PublishPostScreen(
+            role = role,
+            replyToJsonString = globalJson.encodeToString(blog),
+        )
     }
 
     override suspend fun getEditBlogScreen(
         role: IdentityRole,
         blog: Blog
-    ): String? {
-        TODO("Not yet implemented")
+    ): Screen? {
+        return null
     }
 
     override fun getContentScreen(

@@ -82,7 +82,7 @@ internal class ActivityPubContentScreen(
                 navigator.push(InstanceDetailScreen(PlatformDetailRoute.buildRoute(it.baseUrl)))
             },
             onPostBlogClick = {
-                navigator.push(PostStatusScreen(accountUri = it.uri.encode()))
+                navigator.push(PostStatusScreen(accountUri = it.uri))
             },
         )
     }

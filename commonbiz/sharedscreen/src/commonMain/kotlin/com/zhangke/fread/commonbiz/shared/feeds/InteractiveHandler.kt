@@ -140,14 +140,14 @@ class InteractiveHandler(
         if (type == StatusActionType.REPLY) {
             coroutineScope.launch {
                 screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
-                    ?.let(::tryOpenScreenByRoute)
+                    ?.let(::openScreen)
             }
             return
         }
         if (type == StatusActionType.EDIT) {
             coroutineScope.launch {
                 screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
-                    ?.let(::tryOpenScreenByRoute)
+                    ?.let(::openScreen)
             }
             return
         }

@@ -20,11 +20,11 @@ class RssScreenProvider @Inject constructor(
     private val uriTransformer: RssUriTransformer,
 ) : IStatusScreenProvider {
 
-    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return null
     }
 
-    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return null
     }
 

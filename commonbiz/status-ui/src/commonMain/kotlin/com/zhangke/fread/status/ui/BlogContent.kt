@@ -53,6 +53,7 @@ import com.zhangke.fread.status.ui.poll.BlogPoll
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.status.ui.style.StatusStyle.ContentStyle
 
 /**
  * 博客正文部分，仅包含内容，投票，媒体，链接预览卡片。
@@ -94,7 +95,7 @@ fun BlogContent(
                     BlogTextContentSection(
                         blog = blog,
                         blogTranslationState = blogTranslationState,
-                        style = style,
+                        style = style.contentStyle,
                         onHashtagInStatusClick = {
                             reportClick(StatusDataElements.HASHTAG)
                             onHashtagInStatusClick(it)
@@ -115,7 +116,7 @@ fun BlogContent(
             BlogTextContentSection(
                 blog = blog,
                 blogTranslationState = blogTranslationState,
-                style = style,
+                style = style.contentStyle,
                 onHashtagInStatusClick = {
                     reportClick(StatusDataElements.HASHTAG)
                     onHashtagInStatusClick(it)
@@ -219,17 +220,17 @@ fun BlogContent(
 }
 
 @Composable
-private fun BlogTextContentSection(
+fun BlogTextContentSection(
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState,
-    style: StatusStyle,
+    style: ContentStyle,
+    blogTranslationState: BlogTranslationUiState? = null,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
     onUrlClick: (url: String) -> Unit,
 ) {
     val contentMaxLine = if (blog.platform.protocol.isRss) {
-        style.contentStyle.maxLine
+        style.maxLine
     } else {
         Int.MAX_VALUE
     }
@@ -239,7 +240,7 @@ private fun BlogTextContentSection(
         var hideContent by rememberSaveable(spoilerText, statusConfig.alwaysShowSensitiveContent) {
             mutableStateOf(!statusConfig.alwaysShowSensitiveContent)
         }
-        val humanizedSpoilerText = if (blogTranslationState.showingTranslation) {
+        val humanizedSpoilerText = if (blogTranslationState?.showingTranslation == true) {
             blogTranslationState.blogTranslation!!.getHumanizedSpoilerText(blog)
         } else {
             blog.humanizedSpoilerText
@@ -248,7 +249,7 @@ private fun BlogTextContentSection(
             modifier = Modifier,
             hideContent = hideContent,
             spoilerText = humanizedSpoilerText,
-            fontSize = style.contentStyle.contentSize,
+            fontSize = style.contentSize,
             onShowContent = { hideContent = false },
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,
@@ -262,7 +263,7 @@ private fun BlogTextContentSection(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
             ) {
-                val humanizedContent = if (blogTranslationState.showingTranslation) {
+                val humanizedContent = if (blogTranslationState?.showingTranslation == true) {
                     blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
                 } else {
                     blog.humanizedContent
@@ -278,7 +279,7 @@ private fun BlogTextContentSection(
                     onMentionDidClick = onMentionDidClick,
                     onHashtagClick = onHashtagInStatusClick,
                     onUrlClick = onUrlClick,
-                    fontSizeSp = style.contentStyle.contentSize.value,
+                    fontSizeSp = style.contentSize.value,
                 )
             }
         }
@@ -288,7 +289,7 @@ private fun BlogTextContentSection(
                 modifier = Modifier,
                 text = blog.title!!,
                 fontWeight = FontWeight.Bold,
-                fontSize = style.contentStyle.titleSize,
+                fontSize = style.titleSize,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleMedium,
@@ -296,9 +297,9 @@ private fun BlogTextContentSection(
         }
         if (!blog.description.isNullOrEmpty()) {
             val topPadding = if (blog.title.isNullOrEmpty()) {
-                style.contentStyle.contentVerticalSpacing
+                style.contentVerticalSpacing
             } else {
-                style.contentStyle.contentVerticalSpacing / 2
+                style.contentVerticalSpacing / 2
             }
             FreadRichText(
                 modifier = Modifier
@@ -309,7 +310,7 @@ private fun BlogTextContentSection(
                 onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
-                fontSizeSp = style.contentStyle.contentSize.value,
+                fontSizeSp = style.contentSize.value,
             )
         }
         if (
@@ -317,7 +318,7 @@ private fun BlogTextContentSection(
             blog.description.isNullOrEmpty() &&
             blog.content.isNotEmpty()
         ) {
-            val humanizedContent = if (blogTranslationState.showingTranslation) {
+            val humanizedContent = if (blogTranslationState?.showingTranslation == true) {
                 blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
             } else {
                 blog.humanizedContent
@@ -331,7 +332,7 @@ private fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
-                fontSizeSp = style.contentStyle.contentSize.value,
+                fontSizeSp = style.contentSize.value,
                 onUrlClick = onUrlClick,
             )
         }

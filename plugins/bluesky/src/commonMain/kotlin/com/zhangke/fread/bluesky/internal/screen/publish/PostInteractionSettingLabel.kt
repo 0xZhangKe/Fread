@@ -71,20 +71,20 @@ fun PostInteractionSettingLabel(
             .background(
                 color = MaterialTheme.colorScheme.surfaceContainer,
                 shape = RoundedCornerShape(6.dp),
-            ).padding(horizontal = 6.dp, vertical = 2.dp),
+            ).padding(horizontal = 6.dp, vertical = 1.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         Icon(
-            modifier = Modifier.size(16.dp),
+            modifier = Modifier.size(14.dp),
             imageVector = setting.labelIcon,
             contentDescription = null,
             tint = MaterialTheme.colorScheme.onSurfaceVariant,
         )
         Text(
-            modifier = Modifier.padding(start = 4.dp),
+            modifier = Modifier.padding(start = 2.dp),
             color = MaterialTheme.colorScheme.onSurfaceVariant,
             text = setting.label,
-            style = MaterialTheme.typography.labelMedium,
+            style = MaterialTheme.typography.labelSmall,
         )
     }
     val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)

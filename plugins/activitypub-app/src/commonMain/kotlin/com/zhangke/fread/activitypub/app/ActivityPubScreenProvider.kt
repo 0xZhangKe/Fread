@@ -32,23 +32,20 @@ class ActivityPubScreenProvider @Inject constructor(
     private val loggedAccountProvider: LoggedAccountProvider,
 ) : IStatusScreenProvider {
 
-    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = role.accountUri
         if (accountUri == null && role.baseUrl != null) {
             accountUri = loggedAccountProvider.getAccount(role.baseUrl!!)?.uri
         }
         accountUri ?: return null
-        return PostStatusScreenRoute.buildRoute(
+        return PostStatusScreenRoute.buildReplyScreen(
             accountUri = accountUri,
-            replyToBlogWebFinger = blog.author.webFinger,
-            replyToBlogId = blog.id,
-            replyAuthorName = blog.author.name,
-            replyVisibility = blog.visibility,
+            blog = blog,
         )
     }
 
-    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = role.accountUri
         if (accountUri == null && role.baseUrl != null) {

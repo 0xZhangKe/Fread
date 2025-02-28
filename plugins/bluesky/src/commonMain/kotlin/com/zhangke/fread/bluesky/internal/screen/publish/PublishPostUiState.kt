@@ -1,12 +1,12 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
-import androidx.compose.ui.geometry.Size
 import androidx.compose.ui.text.input.TextFieldValue
 import app.bsky.graph.ListView
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
+import com.zhangke.fread.status.blog.Blog
 
 data class PublishPostUiState(
     val content: TextFieldValue,
@@ -19,6 +19,8 @@ data class PublishPostUiState(
     val selectedLanguages: List<String>,
     val maxLanguageCount: Int,
     val publishing: Boolean,
+    val replyBlog: Blog?,
+    val quoteBlog: Blog?,
     val list: List<ListView>,
 ) {
 
@@ -30,8 +32,6 @@ data class PublishPostUiState(
                 maxMediaCount
             }
         }
-
-    val remainingTextCount: Int get() = maxCharacters - content.text.length
 
     companion object {
 
@@ -47,6 +47,8 @@ data class PublishPostUiState(
                 ),
                 account = null,
                 attachment = null,
+                replyBlog = null,
+                quoteBlog = null,
                 selectedLanguages = emptyList(),
                 maxLanguageCount = 3,
                 publishing = false,

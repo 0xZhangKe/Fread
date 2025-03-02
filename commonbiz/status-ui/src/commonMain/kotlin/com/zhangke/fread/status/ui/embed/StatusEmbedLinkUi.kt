@@ -1,7 +1,6 @@
 package com.zhangke.fread.status.ui.embed
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -18,7 +17,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Description
 import androidx.compose.material.icons.filled.PlayArrow
-import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -29,6 +27,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -42,12 +41,12 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 fun StatusEmbedLinkUi(
     modifier: Modifier,
     linkEmbed: BlogEmbed.Link,
-    style: StatusStyle,
+    style: StatusStyle.CardStyle,
     onCardClick: (BlogEmbed.Link) -> Unit,
 ) {
     val containerModifier = modifier
         .clickable { onCardClick(linkEmbed) }
-        .padding(bottom = style.cardStyle.contentVerticalPadding)
+        .padding(bottom = style.contentVerticalPadding)
     if (linkEmbed.image.isNullOrEmpty().not()) {
         Column(modifier = containerModifier) {
             if (linkEmbed.image.isNullOrEmpty().not()) {
@@ -64,6 +63,7 @@ fun StatusEmbedLinkUi(
                             .clip(RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp))
                             .fillMaxSize()
                             .blurhash(linkEmbed.blurhash),
+                        contentScale = ContentScale.Crop,
                         contentDescription = "Preview Image",
                     )
                     if (linkEmbed.video) {
@@ -87,14 +87,14 @@ fun StatusEmbedLinkUi(
                     }
                 }
             }
-            Spacer(modifier = Modifier.height(style.cardStyle.imageBottomPadding))
+            Spacer(modifier = Modifier.height(style.imageBottomPadding))
             PreviewCardTexts(linkEmbed, style, 2)
         }
     } else {
         Row(
             modifier = containerModifier
                 .height(86.dp)
-                .padding(top = style.cardStyle.contentVerticalPadding),
+                .padding(top = style.contentVerticalPadding),
         ) {
             Column(
                 modifier = Modifier
@@ -129,14 +129,14 @@ fun StatusEmbedLinkUi(
 @Composable
 private fun PreviewCardTexts(
     card: BlogEmbed.Link,
-    style: StatusStyle,
+    style: StatusStyle.CardStyle,
     maxLine: Int,
 ) {
     if (!card.providerName.isNullOrEmpty()) {
         Text(
             modifier = Modifier.padding(horizontal = 16.dp),
             text = card.providerName!!,
-            style = style.cardStyle.descStyle,
+            style = style.descStyle,
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
@@ -148,7 +148,7 @@ private fun PreviewCardTexts(
             .padding(horizontal = 16.dp),
         textAlign = TextAlign.Start,
         text = card.title,
-        style = style.cardStyle.titleStyle,
+        style = style.titleStyle,
         maxLines = maxLine,
         overflow = TextOverflow.Ellipsis,
     )
@@ -160,7 +160,7 @@ private fun PreviewCardTexts(
                 .padding(horizontal = 16.dp),
             textAlign = TextAlign.Start,
             text = card.description,
-            style = style.cardStyle.descStyle,
+            style = style.descStyle,
             maxLines = maxLine,
             overflow = TextOverflow.Ellipsis,
         )

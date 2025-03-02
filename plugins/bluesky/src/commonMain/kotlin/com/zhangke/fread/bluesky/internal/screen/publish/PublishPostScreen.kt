@@ -1,9 +1,13 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
+import androidx.compose.foundation.gestures.animateScrollBy
+import androidx.compose.foundation.gestures.scrollBy
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
@@ -17,10 +21,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -37,11 +46,17 @@ import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_reply_input_hint
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.publish.NameAndAccountInfo
 import com.zhangke.fread.status.ui.publish.PublishBlogStyleDefault
 import com.zhangke.fread.status.ui.reply.BlogInReply
+import com.zhangke.fread.status.ui.threads.ThreadsType
+import com.zhangke.fread.status.ui.threads.blogBeReplyThreads
+import com.zhangke.fread.status.ui.threads.blogInReplyingThreads
+import com.zhangke.fread.status.ui.utils.getScreenHeight
 import org.jetbrains.compose.resources.stringResource
 
 class PublishPostScreen(
@@ -130,20 +145,52 @@ class PublishPostScreen(
                 )
             },
         ) { innerPadding ->
+            var replyingHeight: Float? by remember {
+                mutableStateOf(null)
+            }
+            val scrollState = rememberScrollState()
+            if (replyingHeight != null) {
+                LaunchedEffect(replyingHeight) {
+                    scrollState.animateScrollBy(-replyingHeight!!)
+                }
+            }
+            val screenHeight = getScreenHeight()
             Column(
                 modifier = Modifier.fillMaxSize()
                     .padding(innerPadding)
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(scrollState)
+                    .padding(bottom = 200.dp),
             ) {
-                if (uiState.replyBlog != null){
+                if (uiState.replying) {
                     BlogInReply(
-                        modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp),
-                        blog = uiState.replyBlog,
+                        modifier = Modifier.fillMaxWidth()
+                            .onGloballyPositioned {
+                                replyingHeight = it.size.height.toFloat()
+                            }
+                            .blogBeReplyThreads(
+                                threadsType = ThreadsType.ANCESTOR,
+                                publishBlogStyle = publishBlogStyle,
+                            )
+                            .padding(
+                                start = publishBlogStyle.startPadding,
+                                end = publishBlogStyle.endPadding,
+                            ),
+                        blog = uiState.replyBlog!!,
                         style = publishBlogStyle,
                     )
                 }
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth()
+                        .let {
+                            if (uiState.replying) {
+                                it.blogInReplyingThreads(
+                                    threadsType = ThreadsType.ANCHOR,
+                                    publishBlogStyle = publishBlogStyle,
+                                ).padding(top = publishBlogStyle.topPadding)
+                            } else {
+                                it
+                            }
+                        },
                 ) {
                     AutoSizeImage(
                         url = uiState.account?.avatar.orEmpty(),
@@ -176,6 +223,14 @@ class PublishPostScreen(
                     modifier = Modifier.fillMaxWidth(),
                     textFieldValue = uiState.content,
                     onContentChanged = onContentChanged,
+                    placeholder = if (uiState.replying) {
+                        stringResource(
+                            Res.string.shared_publish_reply_input_hint,
+                            uiState.replyBlog!!.author.prettyHandle,
+                        )
+                    } else {
+                        stringResource(Res.string.shared_publish_blog_text_hint)
+                    },
                 )
 
                 if (uiState.attachment != null) {

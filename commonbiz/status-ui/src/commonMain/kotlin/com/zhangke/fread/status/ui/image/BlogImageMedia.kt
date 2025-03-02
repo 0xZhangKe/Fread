@@ -70,6 +70,7 @@ fun BlogImageMedias(
     hideContent: Boolean,
     style: BlogImageMediaStyle = BlogImageMediaDefault.defaultStyle,
     onMediaClick: OnBlogMediaClick,
+    showAlt: Boolean = true,
 ) {
     val aspectList = mediaList.take(6).map { it.meta.decideAspect(style.defaultMediaAspect) }
     val mediaPosition: Array<LayoutCoordinates?> = remember(mediaList) {
@@ -99,6 +100,7 @@ fun BlogImageMedias(
                     },
                 media = media,
                 hideContent = hideContent,
+                showAlt = showAlt,
             )
         }
     )
@@ -169,6 +171,7 @@ internal fun BlogImage(
     modifier: Modifier,
     media: BlogMedia,
     hideContent: Boolean,
+    showAlt: Boolean,
 ) {
     val imageUrl = if (media.type == BlogMediaType.GIFV) media.previewUrl else media.url
     if (hideContent) {
@@ -206,7 +209,7 @@ internal fun BlogImage(
                 contentDescription = "Play",
             )
         }
-        if (!media.description.isNullOrEmpty()) {
+        if (showAlt && !media.description.isNullOrEmpty()) {
             var showBottomSheet by remember { mutableStateOf(false) }
             Surface(
                 modifier = Modifier.align(Alignment.BottomStart)

@@ -9,15 +9,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.utils.transparentColors
-import com.zhangke.fread.commonbiz.shared.screen.Res
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
-import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun InputBlogTextField(
     modifier: Modifier,
     textFieldValue: TextFieldValue,
+    placeholder: String,
     onContentChanged: (TextFieldValue) -> Unit,
 ) {
     TextField(
@@ -25,7 +23,7 @@ fun InputBlogTextField(
         shape = GenericShape { _, _ -> },
         placeholder = {
             Text(
-                text = stringResource(Res.string.shared_publish_blog_text_hint),
+                text = placeholder,
                 style = MaterialTheme.typography.bodyLarge,
             )
         },

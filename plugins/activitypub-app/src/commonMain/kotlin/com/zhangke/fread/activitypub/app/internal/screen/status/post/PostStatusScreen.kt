@@ -79,6 +79,7 @@ import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
+import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.status_ui_reply
@@ -452,6 +453,7 @@ class PostStatusScreen(
                         textFieldValue = it
                         onContentChanged(it)
                     },
+                    placeholder = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_publish_blog_text_hint),
                 )
                 StatusAttachment(
                     modifier = Modifier

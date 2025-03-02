@@ -55,13 +55,13 @@ class PublishBlogScreen : BaseScreen() {
             Column(
                 modifier = Modifier.fillMaxSize().padding(innerPadding),
             ) {
-                InputBlogTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(horizontal = 8.dp),
-                    textFieldValue = uiState.content,
-                    onContentChanged = onContentChanged,
-                )
+//                InputBlogTextField(
+//                    modifier = Modifier
+//                        .fillMaxWidth()
+//                        .padding(horizontal = 8.dp),
+//                    textFieldValue = uiState.content,
+//                    onContentChanged = onContentChanged,
+//                )
             }
         }
     }

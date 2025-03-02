@@ -44,6 +44,7 @@
 
     <string name="shared_publish_blog_title">Post</string>
     <string name="shared_publish_blog_text_hint">Type or paste what`s on your mind</string>
+    <string name="shared_publish_reply_input_hint">Replying to %1$s </string>
 
     <string name="shared_publish_interaction_no_limit">Anybody can interact</string>
     <string name="shared_publish_interaction_limited">Interaction limited</string>
@@ -64,4 +65,5 @@
     <string name="shared_publish_media_alt_dialog_title">Add alt text</string>
     <string name="shared_publish_media_alt_dialog_input_tip">Descriptive alt text</string>
     <string name="shared_publish_media_alt_dialog_input_hint">Alt text</string>
+
 </resources>

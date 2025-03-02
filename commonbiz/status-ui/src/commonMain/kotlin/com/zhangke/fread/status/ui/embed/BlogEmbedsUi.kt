@@ -74,7 +74,7 @@ private fun BlogEmbedUi(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 linkEmbed = embed,
-                style = style,
+                style = style.cardStyle,
                 onCardClick = { onUrlClick(embed.url) },
             )
         }
@@ -100,7 +100,7 @@ private fun BlogEmbedUi(
 }
 
 @Composable
-private fun Modifier.embedBorder(): Modifier {
+fun Modifier.embedBorder(): Modifier {
     return this.border(
         width = 1.dp,
         color = DividerDefaults.color,

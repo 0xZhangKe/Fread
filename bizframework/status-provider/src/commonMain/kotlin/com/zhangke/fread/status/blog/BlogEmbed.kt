@@ -26,7 +26,7 @@ sealed interface BlogEmbed {
         companion object {
 
             private val standardRange = 0.5f..2f
-            private const val DEFAULT_ASPECT_RATIO = 1F
+            private const val DEFAULT_ASPECT_RATIO = 2F
         }
 
         val aspectRatio: Float

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.status.blog.Blog
@@ -42,15 +41,17 @@ fun BlogInReply(
             // Name\handle\time row
             Row(
                 modifier = Modifier.fillMaxWidth().padding(top = 2.dp),
-                verticalAlignment = Alignment.CenterVertically,
             ) {
                 NameAndAccountInfo(
-                    modifier = Modifier.weight(1F),
+                    modifier = Modifier.weight(1F)
+                        .alignByBaseline(),
                     name = blog.author.name,
                     handle = blog.author.prettyHandle,
                     style = style,
                 )
                 Text(
+                    modifier = Modifier.padding(start = 4.dp)
+                        .alignByBaseline(),
                     text = blog.formattingDisplayTime.formattedTime(),
                     style = style.handleStyle,
                 )
@@ -64,20 +65,24 @@ fun BlogInReply(
                     BlogTextContentSection(
                         blog = blog,
                         style = style.contentStyle,
+                        contentMaxLine = 10,
                         onHashtagInStatusClick = {},
                         onMentionDidClick = {},
                         onMentionClick = {},
                         onUrlClick = {},
                     )
                 }
-                Spacer(modifier = Modifier.size(8.dp))
-                BlogMedias(
-                    modifier = Modifier.weight(1F),
-                    mediaList = blog.mediaList,
-                    indexInList = 0,
-                    sensitive = blog.sensitive,
-                    onMediaClick = {},
-                )
+                if (blog.mediaList.isNotEmpty()) {
+                    Spacer(modifier = Modifier.size(8.dp))
+                    BlogMedias(
+                        modifier = Modifier.weight(1F),
+                        mediaList = blog.mediaList,
+                        indexInList = 0,
+                        sensitive = blog.sensitive,
+                        onMediaClick = {},
+                        showAlt = false,
+                    )
+                }
             }
 
             // link card

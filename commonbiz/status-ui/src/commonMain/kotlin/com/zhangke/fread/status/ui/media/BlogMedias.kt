@@ -45,6 +45,7 @@ fun BlogMedias(
     indexInList: Int,
     sensitive: Boolean,
     onMediaClick: OnBlogMediaClick,
+    showAlt: Boolean = true,
     blogTranslationState: BlogTranslationUiState? = null,
 ) {
     val density = LocalDensity.current
@@ -74,6 +75,7 @@ fun BlogMedias(
                 indexInList = indexInList,
                 containerWidth = containerWidth!!,
                 onMediaClick = onMediaClick,
+                showAlt = showAlt,
             )
         }
         if (sensitive) {
@@ -119,6 +121,7 @@ private fun BlogMediaContent(
     hideContent: Boolean,
     indexInList: Int,
     containerWidth: Dp,
+    showAlt: Boolean,
     onMediaClick: OnBlogMediaClick,
 ) {
     if (mediaList.firstOrNull()?.type == BlogMediaType.VIDEO) {
@@ -138,6 +141,7 @@ private fun BlogMediaContent(
             onMediaClick = {
                 onMediaClick(it.transformTranslatedEvent(blogTranslationState))
             },
+            showAlt = showAlt,
         )
     }
 }

@@ -24,6 +24,8 @@ data class PublishPostUiState(
     val list: List<ListView>,
 ) {
 
+    val replying: Boolean get() = replyBlog != null
+
     val remainingImageCount: Int
         get() {
             return if (attachment is PublishPostMediaAttachment.Image) {

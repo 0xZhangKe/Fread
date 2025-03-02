@@ -223,17 +223,17 @@ fun BlogContent(
 fun BlogTextContentSection(
     blog: Blog,
     style: ContentStyle,
+    contentMaxLine: Int = if (blog.platform.protocol.isRss) {
+        style.maxLine
+    } else {
+        Int.MAX_VALUE
+    },
     blogTranslationState: BlogTranslationUiState? = null,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
     onUrlClick: (url: String) -> Unit,
 ) {
-    val contentMaxLine = if (blog.platform.protocol.isRss) {
-        style.maxLine
-    } else {
-        Int.MAX_VALUE
-    }
     val spoilerText = blog.spoilerText
     if (spoilerText.isNotEmpty()) {
         val statusConfig = LocalStatusUiConfig.current

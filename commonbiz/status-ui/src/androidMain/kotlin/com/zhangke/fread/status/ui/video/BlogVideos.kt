@@ -1,7 +1,6 @@
 package com.zhangke.fread.status.ui.video
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
@@ -45,7 +44,6 @@ private fun SingleBlogInlineVideo(
         .clip(RoundedCornerShape(8.dp))
         .fillMaxWidth()
         .blurhash(videoMedia.blurhash)
-        .aspectRatio(aspect)
     Box(
         modifier = modifier
     ) {

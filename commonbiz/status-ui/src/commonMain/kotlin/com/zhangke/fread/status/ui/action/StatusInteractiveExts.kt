@@ -7,6 +7,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.PushPin
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
@@ -23,6 +24,7 @@ import com.zhangke.fread.statusui.status_ui_delete
 import com.zhangke.fread.statusui.status_ui_edit
 import com.zhangke.fread.statusui.status_ui_like
 import com.zhangke.fread.statusui.status_ui_pin
+import com.zhangke.fread.statusui.status_ui_quote
 import com.zhangke.fread.statusui.status_ui_share
 import com.zhangke.fread.statusui.status_ui_unbookmark
 import com.zhangke.fread.statusui.status_ui_unpin
@@ -37,6 +39,11 @@ internal fun likeIcon(liked: Boolean): ImageVector {
 @Composable
 internal fun forwardIcon(): ImageVector {
     return vectorResource(Res.drawable.ic_status_forward)
+}
+
+@Composable
+internal fun quoteIcon(): ImageVector {
+    return Icons.Default.FormatQuote
 }
 
 @Composable
@@ -77,6 +84,11 @@ internal fun likeAlt(): String {
 @Composable
 internal fun forwardAlt(): String {
     return stringResource(Res.string.status_ui_boosted)
+}
+
+@Composable
+internal fun quoteAlt(): String {
+    return stringResource(Res.string.status_ui_quote)
 }
 
 @Composable

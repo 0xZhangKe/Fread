@@ -7,8 +7,11 @@ import app.bsky.embed.AspectRatio
 import app.bsky.embed.Images
 import app.bsky.embed.ImagesImage
 import app.bsky.embed.Video
+import app.bsky.feed.GetPostThreadQueryParams
+import app.bsky.feed.GetPostThreadResponseThreadUnion
 import app.bsky.feed.Post
 import app.bsky.feed.PostEmbedUnion
+import app.bsky.feed.PostReplyRef
 import app.bsky.feed.Postgate
 import app.bsky.feed.PostgateDisableRule
 import app.bsky.feed.PostgateEmbeddingRuleUnion
@@ -21,6 +24,7 @@ import app.bsky.feed.ThreadgateMentionRule
 import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
 import com.atproto.repo.ApplyWritesRequestWriteUnion
+import com.atproto.repo.StrongRef
 import com.zhangke.framework.architect.json.fromJson
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
@@ -250,11 +254,18 @@ class PublishPostViewModel @Inject constructor(
                 _snackBarMessageFlow.emitTextMessageFromThrowable(embeds.exceptionOrNull()!!)
                 return@launchInViewModel
             }
+            val replyResult = buildReplyRef()
+            if (replyResult.isFailure) {
+                _uiState.update { it.copy(publishing = false) }
+                _snackBarMessageFlow.emitTextMessageFromThrowable(replyResult.exceptionOrNull()!!)
+                return@launchInViewModel
+            }
             val post = Post(
                 text = uiState.value.content.text,
                 langs = uiState.value.selectedLanguages.map { Language(it) },
                 embed = embeds?.getOrNull(),
                 createdAt = Clock.System.now(),
+                reply = replyResult.getOrNull(),
             )
             val writes = mutableListOf<ApplyWritesRequestWriteUnion>()
             writes += ApplyWritesRequestWriteUnion.Create(
@@ -279,6 +290,25 @@ class PublishPostViewModel @Inject constructor(
                     _finishPageFlow.emit(Unit)
                 }
         }
+    }
+
+    private suspend fun buildReplyRef(): Result<PostReplyRef?> {
+        val reply = uiState.value.replyBlog ?: return Result.success(null)
+        val client = clientManager.getClient(role)
+        val result = client.getPostThreadCatching(
+            GetPostThreadQueryParams(uri = AtUri(reply.url), depth = 1)
+        )
+        if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
+        val response = result.getOrThrow()
+        val threadPostView = (response.thread as? GetPostThreadResponseThreadUnion.ThreadViewPost)
+            ?: return Result.failure(IllegalStateException("Post not found"))
+        val postView = threadPostView.value.post
+        val post: Post = postView.record.bskyJson()
+        val replyPostRef = StrongRef(uri = postView.uri, cid = postView.cid)
+        val root = post.reply?.root ?: replyPostRef
+        return Result.success(
+            PostReplyRef(root = root, parent = replyPostRef)
+        )
     }
 
     private fun buildTreadAndPostGate(postUri: AtUri): List<ApplyWritesRequestWriteUnion> {

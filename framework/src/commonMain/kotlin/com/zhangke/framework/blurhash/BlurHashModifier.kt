@@ -1,5 +1,6 @@
 package com.zhangke.framework.blurhash
 
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -21,7 +22,12 @@ import kotlinx.coroutines.withContext
 import kotlin.math.roundToInt
 
 fun Modifier.blurhash(blurHash: String?): Modifier = composed {
-    if (blurHash.isNullOrEmpty()) return@composed this
+    if (blurHash.isNullOrEmpty()) {
+        val placeholderColor = MaterialTheme.colorScheme.surfaceDim
+        return@composed this.drawBehind {
+            drawRect(color = placeholderColor)
+        }
+    }
     var size: Size? by remember(blurHash) {
         mutableStateOf(null)
     }

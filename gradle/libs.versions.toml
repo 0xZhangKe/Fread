@@ -22,7 +22,7 @@ androidx-room = "2.7.0-alpha08"
 androidx-datastore = "1.1.1"
 androidx-browser = "1.4.0"
 androidx-paging = "3.3.2"
-androidx-media3 = "1.0.0-rc01"
+androidx-media3 = "1.5.1"
 
 compose-runtime-tracing = "1.7.3"
 
@@ -73,7 +73,7 @@ androidx-preference = ["androidx.preference", "androidx.preference.ktx"]
 androidx-datastore = ["androidx-datastore", "androidx.datastore-preferences"]
 androidx-collection = ["androidx.collection", "androidx.collection.ktx"]
 
-androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okhttp", "androidx.media3.ui", "androidx.media3.session", "androidx.media3.database", "androidx.media3.decoder", "androidx.media3.datasource", "androidx.media3.common"]
+androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okhttp", "androidx.media3.ui", "androidx.media3.session", "androidx.media3.database", "androidx.media3.decoder", "androidx.media3.datasource", "androidx.media3.common", "androidx-media3-hls"]
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
@@ -123,6 +123,7 @@ androidx-media3-database = { group = "androidx.media3", name = "media3-database"
 androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", version.ref = "androidx.media3"}
 androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3"}
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
+androidx-media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidx.media3"}
 
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 

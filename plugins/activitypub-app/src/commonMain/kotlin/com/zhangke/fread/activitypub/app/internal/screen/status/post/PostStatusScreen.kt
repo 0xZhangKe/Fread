@@ -37,6 +37,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
@@ -453,7 +454,9 @@ class PostStatusScreen(
                         textFieldValue = it
                         onContentChanged(it)
                     },
-                    placeholder = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_publish_blog_text_hint),
+                    placeholder = buildAnnotatedString {
+                        append(stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_publish_blog_text_hint))
+                    },
                 )
                 StatusAttachment(
                     modifier = Modifier

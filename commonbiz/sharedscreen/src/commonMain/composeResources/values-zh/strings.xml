@@ -43,7 +43,7 @@
 
     <string name="shared_publish_blog_title">发帖</string>
     <string name="shared_publish_blog_text_hint">写下你的想法</string>
-    <string name="shared_publish_reply_input_hint">回复给 %1$s</string>
+    <string name="shared_publish_reply_input_hint">回复给 [[%1$s]]</string>
 
     <string name="shared_publish_interaction_no_limit">任何人都可以参与互动</string>
     <string name="shared_publish_interaction_limited">已限制互动</string>

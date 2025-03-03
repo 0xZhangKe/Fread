@@ -40,9 +40,10 @@ fun InlineVideo(
     uri: PlatformUri,
     onClick: () -> Unit,
 ) {
-    val playableIndexRecorder = LocalPlayableIndexRecorder.current!!
-    playableIndexRecorder.recordePlayableIndex(indexInList)
-    val playWhenReady = playableIndexRecorder.currentActiveIndex == indexInList
+    val playableIndexRecorder = LocalPlayableIndexRecorder.current
+    playableIndexRecorder?.recordePlayableIndex(indexInList)
+    val playWhenReady =
+        playableIndexRecorder != null && playableIndexRecorder.currentActiveIndex == indexInList
     InlineVideoShell(
         aspectRatio = aspectRatio ?: style.defaultMediaAspect,
         style = style,
@@ -54,9 +55,7 @@ fun InlineVideo(
             autoPlay = freadConfigManager.autoPlayInlineVideo,
             playWhenReady = playWhenReady,
             onClick = onClick,
-            onPlayManually = {
-                playableIndexRecorder.changeActiveIndex(indexInList)
-            },
+            onPlayManually = { playableIndexRecorder?.changeActiveIndex(indexInList) },
         )
     }
 }

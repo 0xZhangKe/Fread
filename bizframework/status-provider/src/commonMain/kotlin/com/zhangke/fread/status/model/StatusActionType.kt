@@ -10,4 +10,5 @@ enum class StatusActionType {
     SHARE,
     PIN,
     EDIT,
+    QUOTE,
 }

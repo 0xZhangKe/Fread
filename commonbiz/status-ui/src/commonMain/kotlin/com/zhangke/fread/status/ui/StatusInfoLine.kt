@@ -51,11 +51,11 @@ fun StatusInfoLine(
     visibility: StatusVisibility,
     showFollowButton: Boolean,
     showMoreOperationIcon: Boolean = true,
-    onInteractive: (StatusActionType, Blog) -> Unit,
-    onUserInfoClick: (BlogAuthor) -> Unit,
-    onUrlClick: (url: String) -> Unit,
+    onUrlClick: (url: String) -> Unit = {},
+    onInteractive: (StatusActionType, Blog) -> Unit = { _, _ -> },
+    onUserInfoClick: ((BlogAuthor) -> Unit)? = null,
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
-    onTranslateClick: () -> Unit,
+    onTranslateClick: () -> Unit = {},
     reblogAuthor: BlogAuthor? = null,
     editedAt: Instant? = null,
 ) {
@@ -65,14 +65,10 @@ fun StatusInfoLine(
     ) {
         BlogAuthorAvatar(
             modifier = Modifier
-                .size(style.infoLineStyle.avatarSize)
-                .clickable {
-                    reportClick(StatusDataElements.USER_INFO)
-                    onUserInfoClick(blogAuthor)
-                },
+                .size(style.infoLineStyle.avatarSize),
             onClick = {
                 reportClick(StatusDataElements.USER_INFO)
-                onUserInfoClick(blogAuthor)
+                onUserInfoClick?.invoke(blogAuthor)
             },
             reblogAvatar = reblogAuthor?.avatar,
             authorAvatar = blogAuthor.avatar,
@@ -85,9 +81,9 @@ fun StatusInfoLine(
             FreadRichText(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
+                    .clickable(enabled = onUserInfoClick != null) {
                         reportClick(StatusDataElements.USER_INFO)
-                        onUserInfoClick(blogAuthor)
+                        onUserInfoClick?.invoke(blogAuthor)
                     },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,

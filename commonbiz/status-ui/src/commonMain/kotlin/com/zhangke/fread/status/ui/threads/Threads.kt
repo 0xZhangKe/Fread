@@ -89,28 +89,28 @@ fun Modifier.threads(
 fun Modifier.blogBeReplyThreads(
     threadsType: ThreadsType,
     publishBlogStyle: PublishBlogStyle,
-): Modifier{
+): Modifier {
     return this.threads(
         threadsType = threadsType,
         infoToTopSpacing = 0F,
-        threadStyle = publishBlogStyle.threadStyle,
+        threadStyle = publishBlogStyle.statusStyle.threadsStyle,
         containerTopPadding = 0.dp,
         containerStartPadding = publishBlogStyle.startPadding,
-        avatarSize = publishBlogStyle.avatarSize,
+        avatarSize = publishBlogStyle.statusStyle.infoLineStyle.avatarSize,
     )
 }
 
 fun Modifier.blogInReplyingThreads(
     threadsType: ThreadsType,
     publishBlogStyle: PublishBlogStyle,
-): Modifier{
+): Modifier {
     return this.threads(
         threadsType = threadsType,
         infoToTopSpacing = 0F,
-        threadStyle = publishBlogStyle.threadStyle,
+        threadStyle = publishBlogStyle.statusStyle.threadsStyle,
         containerTopPadding = publishBlogStyle.topPadding,
         containerStartPadding = publishBlogStyle.startPadding,
-        avatarSize = publishBlogStyle.avatarSize,
+        avatarSize = publishBlogStyle.statusStyle.infoLineStyle.avatarSize,
     )
 }
 

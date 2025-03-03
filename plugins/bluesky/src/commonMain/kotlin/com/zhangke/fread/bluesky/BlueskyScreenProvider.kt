@@ -27,7 +27,7 @@ class BlueskyScreenProvider @Inject constructor(
     private val userUriTransformer: UserUriTransformer,
 ) : IStatusScreenProvider {
 
-    override suspend fun getReplyBlogScreen(
+    override fun getReplyBlogScreen(
         role: IdentityRole,
         blog: Blog
     ): Screen? {
@@ -38,11 +38,19 @@ class BlueskyScreenProvider @Inject constructor(
         )
     }
 
-    override suspend fun getEditBlogScreen(
+    override fun getEditBlogScreen(
         role: IdentityRole,
         blog: Blog
     ): Screen? {
         return null
+    }
+
+    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+        if (blog.platform.protocol.notBluesky) return null
+        return PublishPostScreen(
+            role = role,
+            quoteJsonString = globalJson.encodeToString(blog),
+        )
     }
 
     override fun getContentScreen(

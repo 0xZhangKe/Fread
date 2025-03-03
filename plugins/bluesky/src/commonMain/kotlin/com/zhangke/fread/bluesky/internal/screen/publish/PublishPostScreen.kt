@@ -52,9 +52,11 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_reply_input_hint
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.richtext.RichText
+import com.zhangke.fread.status.ui.embed.BlogInEmbedding
+import com.zhangke.fread.status.ui.publish.BlogInQuoting
 import com.zhangke.fread.status.ui.publish.NameAndAccountInfo
 import com.zhangke.fread.status.ui.publish.PublishBlogStyleDefault
-import com.zhangke.fread.status.ui.reply.BlogInReply
 import com.zhangke.fread.status.ui.threads.ThreadsType
 import com.zhangke.fread.status.ui.threads.blogBeReplyThreads
 import com.zhangke.fread.status.ui.threads.blogInReplyingThreads
@@ -112,7 +114,7 @@ class PublishPostScreen(
         onPublishClick: () -> Unit,
     ) {
         val density = LocalDensity.current
-        val publishBlogStyle = PublishBlogStyleDefault.defaultStyle()
+        val style = PublishBlogStyleDefault.defaultStyle()
         Scaffold(
             topBar = {
                 Toolbar(
@@ -175,7 +177,7 @@ class PublishPostScreen(
                     },
             ) {
                 if (uiState.replying) {
-                    BlogInReply(
+                    BlogInEmbedding(
                         modifier = Modifier.fillMaxWidth()
                             .onGloballyPositioned {
                                 if (replyingHeight == null || replyingHeight == 0F) {
@@ -184,14 +186,14 @@ class PublishPostScreen(
                             }
                             .blogBeReplyThreads(
                                 threadsType = ThreadsType.ANCESTOR,
-                                publishBlogStyle = publishBlogStyle,
+                                publishBlogStyle = style,
                             )
                             .padding(
-                                start = publishBlogStyle.startPadding,
-                                end = publishBlogStyle.endPadding,
+                                start = style.startPadding,
+                                end = style.endPadding,
                             ),
                         blog = uiState.replyBlog!!,
-                        style = publishBlogStyle,
+                        style = style.statusStyle,
                     )
                 }
                 Row(
@@ -200,8 +202,8 @@ class PublishPostScreen(
                             if (uiState.replying) {
                                 it.blogInReplyingThreads(
                                     threadsType = ThreadsType.ANCHOR,
-                                    publishBlogStyle = publishBlogStyle,
-                                ).padding(top = publishBlogStyle.topPadding)
+                                    publishBlogStyle = style,
+                                ).padding(top = style.topPadding)
                             } else {
                                 it
                             }
@@ -212,7 +214,7 @@ class PublishPostScreen(
                         modifier = Modifier
                             .padding(start = 16.dp)
                             .clip(CircleShape)
-                            .size(publishBlogStyle.avatarSize),
+                            .size(style.statusStyle.infoLineStyle.avatarSize),
                         contentDescription = null,
                     )
                     Column(
@@ -220,9 +222,9 @@ class PublishPostScreen(
                     ) {
                         NameAndAccountInfo(
                             modifier = Modifier.fillMaxWidth(),
-                            name = uiState.account?.userName.orEmpty(),
+                            humanizedName = RichText(uiState.account?.userName.orEmpty()),
                             handle = uiState.account?.user?.prettyHandle.orEmpty(),
-                            style = publishBlogStyle,
+                            style = style.statusStyle,
                         )
                         PostInteractionSettingLabel(
                             modifier = Modifier.padding(top = 1.dp),
@@ -261,6 +263,15 @@ class PublishPostScreen(
                         mediaAltMaxCharacters = uiState.mediaAltMaxCharacters,
                         onAltChanged = onMediaAltChanged,
                         onDeleteClick = onMediaDeleteClick,
+                    )
+                }
+
+                if (uiState.quoteBlog != null) {
+                    BlogInQuoting(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(16.dp),
+                        blog = uiState.quoteBlog,
+                        style = style.statusStyle,
                     )
                 }
             }

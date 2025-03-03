@@ -12,6 +12,7 @@ object StatusDataElements {
     const val DISLIKE = "statusDislike"
     const val COMMENT = "statusComment"
     const val FORWARD = "statusForward"
+    const val QUOTE = "statusQuote"
     const val UN_FORWARD = "statusUnForward"
     const val SHARE = "statusShare"
     const val MORE = "statusMore"
@@ -41,5 +42,6 @@ fun reportStatusInteractionClickEvent(actionType: StatusActionType) {
         StatusActionType.SHARE -> reportClick(StatusDataElements.SHARE)
         StatusActionType.PIN -> reportClick(StatusDataElements.MORE)
         StatusActionType.EDIT -> reportClick(StatusDataElements.MORE)
+        StatusActionType.QUOTE -> reportClick(StatusDataElements.QUOTE)
     }
 }

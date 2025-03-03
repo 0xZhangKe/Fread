@@ -138,17 +138,18 @@ class InteractiveHandler(
 
     override fun onStatusInteractive(status: StatusUiState, type: StatusActionType) {
         if (type == StatusActionType.REPLY) {
-            coroutineScope.launch {
-                screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
-                    ?.let(::openScreen)
-            }
+            screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
+                ?.let(::openScreen)
             return
         }
         if (type == StatusActionType.EDIT) {
-            coroutineScope.launch {
-                screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
-                    ?.let(::openScreen)
-            }
+            screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
+                ?.let(::openScreen)
+            return
+        }
+        if (type == StatusActionType.QUOTE) {
+            screenProvider.getQuoteBlogScreen(status.role, status.status.intrinsicBlog)
+                ?.let(::openScreen)
             return
         }
         coroutineScope.launch {

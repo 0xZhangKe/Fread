@@ -1,4 +1,4 @@
-package com.zhangke.fread.status.ui.reply
+package com.zhangke.fread.status.ui.embed
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -11,28 +11,27 @@ import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.BlogTextContentSection
-import com.zhangke.fread.status.ui.embed.StatusEmbedLinkUi
-import com.zhangke.fread.status.ui.embed.embedBorder
 import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.publish.NameAndAccountInfo
-import com.zhangke.fread.status.ui.publish.PublishBlogStyle
-import com.zhangke.fread.status.ui.publish.PublishBlogStyleDefault
+import com.zhangke.fread.status.ui.style.StatusStyle
 
 @Composable
-fun BlogInReply(
+fun BlogInEmbedding(
     modifier: Modifier,
     blog: Blog,
-    style: PublishBlogStyle = PublishBlogStyleDefault.defaultStyle(),
+    style: StatusStyle,
+    onContentClick: (Blog) -> Unit = {},
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier.noRippleClick { onContentClick(blog) },
     ) {
         BlogAuthorAvatar(
-            modifier = Modifier.size(style.avatarSize),
+            modifier = Modifier.size(style.infoLineStyle.avatarSize),
             imageUrl = blog.author.avatar,
         )
         Column(
@@ -45,7 +44,7 @@ fun BlogInReply(
                 NameAndAccountInfo(
                     modifier = Modifier.weight(1F)
                         .alignByBaseline(),
-                    name = blog.author.name,
+                    humanizedName = blog.author.humanizedName,
                     handle = blog.author.prettyHandle,
                     style = style,
                 )
@@ -53,7 +52,8 @@ fun BlogInReply(
                     modifier = Modifier.padding(start = 4.dp)
                         .alignByBaseline(),
                     text = blog.formattingDisplayTime.formattedTime(),
-                    style = style.handleStyle,
+                    style = style.infoLineStyle.descStyle,
+                    color = style.secondaryFontColor,
                 )
             }
 
@@ -64,12 +64,9 @@ fun BlogInReply(
                 Column(modifier = Modifier.weight(3F)) {
                     BlogTextContentSection(
                         blog = blog,
-                        style = style.contentStyle,
-                        contentMaxLine = 10,
-                        onHashtagInStatusClick = {},
-                        onMentionDidClick = {},
-                        onMentionClick = {},
-                        onUrlClick = {},
+                        style = style.contentStyle.copy(
+                            maxLine = 10
+                        ),
                     )
                 }
                 if (blog.mediaList.isNotEmpty()) {

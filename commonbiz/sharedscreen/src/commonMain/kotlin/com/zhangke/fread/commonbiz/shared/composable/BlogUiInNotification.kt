@@ -9,10 +9,10 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.BlogContent
 import com.zhangke.fread.status.ui.BlogUi
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
@@ -54,7 +54,6 @@ fun OnlyBlogContentUi(
             onUrlClick = onUrlClick,
             onShowOriginalClick = {},
             onBlogClick = {},
-            onUserInfoClick = {},
         )
     }
 }

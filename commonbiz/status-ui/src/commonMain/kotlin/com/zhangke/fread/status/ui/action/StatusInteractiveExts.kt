@@ -7,8 +7,8 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.PushPin
+import androidx.compose.material.icons.outlined.FormatQuote
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
@@ -43,7 +43,7 @@ internal fun forwardIcon(): ImageVector {
 
 @Composable
 internal fun quoteIcon(): ImageVector {
-    return Icons.Default.FormatQuote
+    return Icons.Outlined.FormatQuote
 }
 
 @Composable

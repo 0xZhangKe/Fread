@@ -7,6 +7,7 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.utils.transparentColors
 import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
@@ -15,7 +16,7 @@ import com.zhangke.fread.status.ui.common.PostStatusTextVisualTransformation
 fun InputBlogTextField(
     modifier: Modifier,
     textFieldValue: TextFieldValue,
-    placeholder: String,
+    placeholder: AnnotatedString,
     onContentChanged: (TextFieldValue) -> Unit,
 ) {
     TextField(

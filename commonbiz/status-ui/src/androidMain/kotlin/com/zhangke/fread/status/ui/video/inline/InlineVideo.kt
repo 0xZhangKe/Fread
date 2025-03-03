@@ -1,6 +1,7 @@
 package com.zhangke.fread.status.ui.video.inline
 
 import android.util.Log
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
@@ -93,6 +94,7 @@ private fun InlineVideoPlayer(
     Box(
         modifier = Modifier
             .fillMaxSize()
+            .background(Color.Black)
             .noRippleClick(onClick = onClick)
     ) {
         if (autoPlay && playWhenReady) {
@@ -120,15 +122,15 @@ private fun InlineVideoPlayer(
         } else {
             Box(modifier = Modifier.fillMaxSize()) {
                 AutoSizeImage(
-                    coverImage.orEmpty(),
-                    modifier = Modifier.fillMaxSize(),
-                    contentScale = ContentScale.Crop,
+                    url = coverImage.orEmpty(),
+                    modifier = Modifier
+                        .fillMaxSize(),
+                    contentScale = ContentScale.FillBounds,
                     contentDescription = null,
                 )
-
                 PlayVideoIconButton(
                     modifier = Modifier
-                        .size(32.dp)
+                        .size(36.dp)
                         .align(Alignment.Center),
                     onClick = {
                         if (autoPlay) {

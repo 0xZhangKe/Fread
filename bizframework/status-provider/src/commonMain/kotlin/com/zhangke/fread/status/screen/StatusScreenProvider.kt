@@ -14,16 +14,20 @@ class StatusScreenProvider(
     private val providerList: List<IStatusScreenProvider>
 ) {
 
-    suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return providerList.firstNotNullOfOrNull {
             it.getReplyBlogScreen(role, blog)
         }
     }
 
-    suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return providerList.firstNotNullOfOrNull {
             it.getEditBlogScreen(role, blog)
         }
+    }
+
+    fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getQuoteBlogScreen(role, blog) }
     }
 
     fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
@@ -125,9 +129,11 @@ class StatusScreenProvider(
 
 interface IStatusScreenProvider {
 
-    suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen?
+    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen?
 
-    suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen?
+    fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen?
+
+    fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen?
 
     fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab?
 

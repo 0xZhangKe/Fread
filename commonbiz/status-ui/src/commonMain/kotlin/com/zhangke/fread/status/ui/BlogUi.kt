@@ -134,7 +134,6 @@ fun BlogUi(
             onMentionDidClick = onMentionDidClick,
             onShowOriginalClick = onShowOriginalClick,
             onBlogClick = onBlogClick,
-            onUserInfoClick = onUserInfoClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier

@@ -7,7 +7,6 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.rss.internal.screen.source.RssSourceScreen
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
-import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -20,11 +19,15 @@ class RssScreenProvider @Inject constructor(
     private val uriTransformer: RssUriTransformer,
 ) : IStatusScreenProvider {
 
-    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return null
     }
 
-    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+        return null
+    }
+
+    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return null
     }
 

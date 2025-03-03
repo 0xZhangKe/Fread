@@ -32,7 +32,7 @@ class ActivityPubScreenProvider @Inject constructor(
     private val loggedAccountProvider: LoggedAccountProvider,
 ) : IStatusScreenProvider {
 
-    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = role.accountUri
         if (accountUri == null && role.baseUrl != null) {
@@ -45,7 +45,7 @@ class ActivityPubScreenProvider @Inject constructor(
         )
     }
 
-    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+    override fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = role.accountUri
         if (accountUri == null && role.baseUrl != null) {
@@ -56,6 +56,10 @@ class ActivityPubScreenProvider @Inject constructor(
             accountUri = accountUri,
             blog = blog,
         )
+    }
+
+    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+        return null
     }
 
     override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {

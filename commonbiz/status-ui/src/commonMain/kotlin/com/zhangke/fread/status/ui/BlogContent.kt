@@ -33,7 +33,6 @@ import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -65,17 +64,16 @@ fun BlogContent(
     isOwner: Boolean,
     style: StatusStyle,
     indexOfFeeds: Int,
-    onMediaClick: OnBlogMediaClick,
+    onBlogClick: (Blog) -> Unit,
+    onMediaClick: OnBlogMediaClick = {},
     blogTranslationState: BlogTranslationUiState = BlogTranslationUiState.DEFAULT,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
-    onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onVoted: (List<BlogPoll.Option>) -> Unit = {},
+    onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
-    onUrlClick: (url: String) -> Unit,
-    onMentionClick: (Mention) -> Unit,
-    onMentionDidClick: (String) -> Unit,
-    onBlogClick: (Blog) -> Unit,
-    onUserInfoClick: (BlogAuthor) -> Unit,
+    onUrlClick: (url: String) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
+    onMentionDidClick: (String) -> Unit = {},
     onShowOriginalClick: () -> Unit,
     detailModel: Boolean = false,
     editedTime: String? = null,
@@ -172,16 +170,9 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 embeds = blog.embeds,
-                isOwner = isOwner,
                 style = style,
                 onContentClick = onBlogClick,
-                onMediaClick = onMediaClick,
-                onUserInfoClick = onUserInfoClick,
-                onHashtagInStatusClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
-                onVoted = onVoted,
-                onMentionClick = onMentionClick,
-                onMentionDidClick = onMentionDidClick,
             )
         }
 
@@ -223,17 +214,17 @@ fun BlogContent(
 fun BlogTextContentSection(
     blog: Blog,
     style: ContentStyle,
-    contentMaxLine: Int = if (blog.platform.protocol.isRss) {
+    blogTranslationState: BlogTranslationUiState? = null,
+    onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
+    onMentionDidClick: (String) -> Unit = {},
+    onUrlClick: (url: String) -> Unit = {},
+) {
+    val contentMaxLine: Int = if (blog.platform.protocol.isRss) {
         style.maxLine
     } else {
         Int.MAX_VALUE
-    },
-    blogTranslationState: BlogTranslationUiState? = null,
-    onHashtagInStatusClick: (HashtagInStatus) -> Unit,
-    onMentionClick: (Mention) -> Unit,
-    onMentionDidClick: (String) -> Unit,
-    onUrlClick: (url: String) -> Unit,
-) {
+    }
     val spoilerText = blog.spoilerText
     if (spoilerText.isNotEmpty()) {
         val statusConfig = LocalStatusUiConfig.current

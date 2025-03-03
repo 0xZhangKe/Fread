@@ -53,6 +53,19 @@ fun StatusBottomInteractionPanel(
             highLight = blog.forward.forward == true,
             onClick = { onInteractive(StatusActionType.FORWARD, blog) },
         )
+        if (blog.quote.support){
+            Spacer(modifier = Modifier.weight(1F))
+            StatusActionIcon(
+                modifier = Modifier,
+                imageVector = quoteIcon(),
+                enabled = logged && blog.quote.support,
+                style = style,
+                contentDescription = quoteAlt(),
+                text = null,
+                highLight = false,
+                onClick = { onInteractive(StatusActionType.QUOTE, blog) },
+            )
+        }
         Spacer(modifier = Modifier.weight(1F))
         StatusActionIcon(
             modifier = Modifier,

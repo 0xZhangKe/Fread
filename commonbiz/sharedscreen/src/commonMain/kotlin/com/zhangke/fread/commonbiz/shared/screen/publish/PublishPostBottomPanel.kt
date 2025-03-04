@@ -1,7 +1,8 @@
-package com.zhangke.fread.bluesky.internal.screen.publish
+package com.zhangke.fread.commonbiz.shared.screen.publish
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.asPaddingValues
@@ -33,22 +34,24 @@ import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
 
 @Composable
-fun PublishBottomPanel(
-    uiState: PublishPostUiState,
+fun PublishPostBottomPanel(
+    modifier: Modifier,
+    contentLength: Int,
+    maxContentLimit: Int,
+    mediaAvailableCount: Int,
     onMediaSelected: (List<PlatformUri>) -> Unit,
     selectedLanguages: List<String>,
     maxLanguageCount: Int,
     onLanguageSelected: (List<String>) -> Unit,
+    actions: @Composable RowScope.() -> Unit = {},
 ) {
-    val bottomPaddingByIme = WindowInsets.ime
-        .asPaddingValues()
-        .calculateBottomPadding()
-    val modifier = if (bottomPaddingByIme > 0.dp) {
-        Modifier.padding(bottom = bottomPaddingByIme)
+    val bottomPaddingByIme = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    val finalModifier = if (bottomPaddingByIme > 0.dp) {
+        modifier.padding(bottom = bottomPaddingByIme)
     } else {
-        Modifier.navigationBarsPadding()
+        modifier.navigationBarsPadding()
     }
-    Surface(modifier = modifier.fillMaxWidth()) {
+    Surface(modifier = finalModifier.fillMaxWidth()) {
         Row(
             modifier = Modifier.fillMaxWidth()
                 .padding(start = 8.dp, end = 16.dp),
@@ -56,7 +59,7 @@ fun PublishBottomPanel(
         ) {
             PickVisualMediaLauncherContainer(
                 onResult = onMediaSelected,
-                maxItems = uiState.remainingImageCount,
+                maxItems = mediaAvailableCount,
             ) {
                 SimpleIconButton(
                     modifier = Modifier,
@@ -67,7 +70,7 @@ fun PublishBottomPanel(
             }
             PickVisualMediaLauncherContainer(
                 onResult = onMediaSelected,
-                maxItems = uiState.remainingImageCount,
+                maxItems = 1,
             ) {
                 SimpleIconButton(
                     modifier = Modifier.padding(start = 16.dp),
@@ -76,7 +79,7 @@ fun PublishBottomPanel(
                     contentDescription = "Add Video",
                 )
             }
-
+            actions()
             Spacer(modifier = Modifier.weight(1F))
             SelectLanguageIconButton(
                 modifier = Modifier,
@@ -84,11 +87,10 @@ fun PublishBottomPanel(
                 selectedLanguages = selectedLanguages,
                 maxLanguageCount = maxLanguageCount,
             )
-
             RemainingTextStatus(
                 modifier = Modifier,
-                maxCount = uiState.maxCharacters,
-                contentLength = uiState.content.text.length,
+                maxCount = maxContentLimit,
+                contentLength = contentLength,
             )
         }
     }

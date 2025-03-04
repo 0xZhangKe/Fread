@@ -15,7 +15,6 @@ data class PostStatusUiState(
     val availableAccountList: List<ActivityPubLoggedAccount>,
     val accountChangeable: Boolean,
     val content: String,
-    val initialContent: String?,
     val attachment: PostStatusAttachment?,
     val visibility: StatusVisibility,
     val visibilityChangeable: Boolean,
@@ -25,6 +24,7 @@ data class PostStatusUiState(
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
     val rules: PostBlogRules,
+    val publishing: Boolean,
     val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
 ) {
 
@@ -49,9 +49,9 @@ data class PostStatusUiState(
         fun default(
             account: ActivityPubLoggedAccount,
             allLoggedAccount: List<ActivityPubLoggedAccount>,
-            initialContent: String?,
             visibility: StatusVisibility,
             replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+            content: String = "",
             sensitive: Boolean = false,
             warningContent: String = "",
             language: Locale? = null,
@@ -62,8 +62,7 @@ data class PostStatusUiState(
             return PostStatusUiState(
                 account = account,
                 availableAccountList = allLoggedAccount,
-                content = "",
-                initialContent = initialContent,
+                content = content,
                 attachment = attachment,
                 visibility = visibility,
                 sensitive = sensitive,
@@ -74,6 +73,7 @@ data class PostStatusUiState(
                 rules = PostBlogRules.default(),
                 accountChangeable = accountChangeable,
                 visibilityChangeable = visibilityChangeable,
+                publishing = false,
                 mentionState = LoadableState.idle(),
             )
         }

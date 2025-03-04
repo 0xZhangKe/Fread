@@ -22,6 +22,12 @@ data class ActivityPubLoggedAccount(
     override val emojis: List<Emoji>,
 ) : LoggedAccount {
 
+    override val prettyHandle: String
+        get() {
+            val handle = webFinger.toString()
+            return if (handle.startsWith('@')) handle else "@$handle"
+        }
+
     override fun hashCode(): Int {
         var result = userId.hashCode()
         result = 31 * result + uri.hashCode()

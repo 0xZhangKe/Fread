@@ -47,7 +47,6 @@ import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.mapNotNull
@@ -77,11 +76,11 @@ class PostStatusViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LoadableState.loading<PostStatusUiState>())
     val uiState: StateFlow<LoadableState<PostStatusUiState>> = _uiState.asStateFlow()
 
-    private val _postState = MutableSharedFlow<LoadableState<Unit>>()
-    val postState: SharedFlow<LoadableState<Unit>> = _postState.asSharedFlow()
-
     private val _snackMessage = MutableSharedFlow<TextString>()
     val snackMessage: SharedFlow<TextString> get() = _snackMessage
+
+    private val _publishSuccessFlow = MutableSharedFlow<Unit>()
+    val publishSuccessFlow: SharedFlow<Unit> get() = _publishSuccessFlow
 
     private var searchMentionUserJob: Job? = null
 
@@ -136,8 +135,6 @@ class PostStatusViewModel @Inject constructor(
     }
 
     private fun maybeSearchAccountForMention(content: TextFieldValue) {
-        val contentText = content.text
-        if (contentText == _uiState.value.successDataOrNull()?.initialContent) return
         val account = _uiState.value.successDataOrNull()?.account ?: return
         searchMentionUserJob?.cancel()
         val role = IdentityRole(accountUri = account.uri, null)
@@ -436,7 +433,7 @@ class PostStatusViewModel @Inject constructor(
             else -> {}
         }
         launchInViewModel {
-            _postState.emit(LoadableState.loading())
+            _uiState.updateOnSuccess { it.copy(publishing = true) }
             postStatus(
                 account = account,
                 content = currentUiState.content,
@@ -448,12 +445,13 @@ class PostStatusViewModel @Inject constructor(
                 visibility = currentUiState.visibility,
                 language = currentUiState.language,
             ).onSuccess {
-                _postState.emit(LoadableState.success(Unit))
-            }.onFailure {
-                _postState.emit(LoadableState.idle())
+                _uiState.updateOnSuccess { it.copy(publishing = false) }
+                _publishSuccessFlow.emit(Unit)
+            }.onFailure { t ->
+                _uiState.updateOnSuccess { it.copy(publishing = false) }
                 val errorMessage = textOf(
                     Res.string.post_status_failed,
-                    it.message.ifNullOrEmpty { "unknown error" },
+                    t.message.ifNullOrEmpty { "unknown error" }.take(180),
                 )
                 _snackMessage.emit(errorMessage)
             }

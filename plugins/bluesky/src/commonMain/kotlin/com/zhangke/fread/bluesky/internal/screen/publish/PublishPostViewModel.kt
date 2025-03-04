@@ -6,12 +6,16 @@ import androidx.lifecycle.viewModelScope
 import app.bsky.embed.AspectRatio
 import app.bsky.embed.Images
 import app.bsky.embed.ImagesImage
+import app.bsky.embed.Record
+import app.bsky.embed.RecordWithMedia
+import app.bsky.embed.RecordWithMediaMediaUnion
 import app.bsky.embed.Video
 import app.bsky.feed.GetPostThreadQueryParams
 import app.bsky.feed.GetPostThreadResponseThreadUnion
 import app.bsky.feed.Post
 import app.bsky.feed.PostEmbedUnion
 import app.bsky.feed.PostReplyRef
+import app.bsky.feed.PostView
 import app.bsky.feed.Postgate
 import app.bsky.feed.PostgateDisableRule
 import app.bsky.feed.PostgateEmbeddingRuleUnion
@@ -61,6 +65,7 @@ import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
+import sh.christian.ozone.api.Cid
 import sh.christian.ozone.api.Did
 import sh.christian.ozone.api.Language
 import sh.christian.ozone.api.RKey
@@ -237,21 +242,10 @@ class PublishPostViewModel @Inject constructor(
             val client = clientManager.getClient(role)
             val rkey = Tid.generateTID()
             val postUri = "at://${account.did}/${BskyCollections.feedPost.nsid}/$rkey"
-            val embeds: Result<PostEmbedUnion>? =
-                when (val attachment = uiState.value.attachment) {
-                    is PublishPostMediaAttachment.Video -> {
-                        uploadVideo(attachment.file)
-                    }
-
-                    is PublishPostMediaAttachment.Image -> {
-                        uploadImages(attachment)
-                    }
-
-                    else -> null
-                }
-            if (embeds?.isFailure == true) {
+            val embedResult = buildPostEmbed()
+            if (embedResult.isFailure) {
                 _uiState.update { it.copy(publishing = false) }
-                _snackBarMessageFlow.emitTextMessageFromThrowable(embeds.exceptionOrNull()!!)
+                _snackBarMessageFlow.emitTextMessageFromThrowable(embedResult.exceptionOrNull()!!)
                 return@launchInViewModel
             }
             val replyResult = buildReplyRef()
@@ -263,7 +257,7 @@ class PublishPostViewModel @Inject constructor(
             val post = Post(
                 text = uiState.value.content.text,
                 langs = uiState.value.selectedLanguages.map { Language(it) },
-                embed = embeds?.getOrNull(),
+                embed = embedResult.getOrNull(),
                 createdAt = Clock.System.now(),
                 reply = replyResult.getOrNull(),
             )
@@ -294,21 +288,28 @@ class PublishPostViewModel @Inject constructor(
 
     private suspend fun buildReplyRef(): Result<PostReplyRef?> {
         val reply = uiState.value.replyBlog ?: return Result.success(null)
-        val client = clientManager.getClient(role)
-        val result = client.getPostThreadCatching(
-            GetPostThreadQueryParams(uri = AtUri(reply.url), depth = 1)
-        )
-        if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
-        val response = result.getOrThrow()
-        val threadPostView = (response.thread as? GetPostThreadResponseThreadUnion.ThreadViewPost)
-            ?: return Result.failure(IllegalStateException("Post not found"))
-        val postView = threadPostView.value.post
+        val postView = getPostDetail(reply.url).let {
+            if (it.isFailure) return Result.failure(it.exceptionOrNull()!!)
+            it.getOrThrow()
+        }
         val post: Post = postView.record.bskyJson()
         val replyPostRef = StrongRef(uri = postView.uri, cid = postView.cid)
         val root = post.reply?.root ?: replyPostRef
         return Result.success(
             PostReplyRef(root = root, parent = replyPostRef)
         )
+    }
+
+    private suspend fun getPostDetail(uri: String): Result<PostView> {
+        val client = clientManager.getClient(role)
+        val result = client.getPostThreadCatching(
+            GetPostThreadQueryParams(uri = AtUri(uri), depth = 1)
+        )
+        if (result.isFailure) return Result.failure(result.exceptionOrNull()!!)
+        val response = result.getOrThrow()
+        val threadPostView = (response.thread as? GetPostThreadResponseThreadUnion.ThreadViewPost)
+            ?: return Result.failure(IllegalStateException("Post not found"))
+        return Result.success(threadPostView.value.post)
     }
 
     private fun buildTreadAndPostGate(postUri: AtUri): List<ApplyWritesRequestWriteUnion> {
@@ -376,19 +377,56 @@ class PublishPostViewModel @Inject constructor(
         }
     }
 
-    private suspend fun uploadVideo(file: PublishPostMediaAttachmentFile): Result<PostEmbedUnion> {
+    private suspend fun buildPostEmbed(): Result<PostEmbedUnion?> {
+        val attachment = uiState.value.attachment
+        val videoResult =
+            (attachment as? PublishPostMediaAttachment.Video)?.let { uploadVideo(it.file) }
+        if (videoResult?.isFailure == true) return Result.failure(videoResult.exceptionOrNull()!!)
+        val imagesResult =
+            (attachment as? PublishPostMediaAttachment.Image)?.let { uploadImages(it) }
+        if (imagesResult?.isFailure == true) return Result.failure(imagesResult.exceptionOrNull()!!)
+        val video = videoResult?.getOrNull()
+        val images = imagesResult?.getOrNull()
+        val quoteRecord = uiState.value.quoteBlog
+            ?.let { StrongRef(uri = AtUri(it.url), cid = Cid(it.id)) }
+            ?.let { Record(it) }
+        if (video == null && images == null && quoteRecord == null) return Result.success(null)
+        val embed = if (quoteRecord != null) {
+            if (video != null || images != null) {
+                val media = video?.let { RecordWithMediaMediaUnion.Video(it) }
+                    ?: RecordWithMediaMediaUnion.Images(images!!)
+                PostEmbedUnion.RecordWithMedia(
+                    RecordWithMedia(
+                        record = quoteRecord,
+                        media = media,
+                    )
+                )
+            } else {
+                PostEmbedUnion.Record(quoteRecord)
+            }
+        } else {
+            video?.let { PostEmbedUnion.Video(it) } ?: PostEmbedUnion.Images(images!!)
+        }
+        return Result.success(embed)
+    }
+
+    private fun buildQuoteEmbed(): StrongRef? {
+        val quoteBlog = uiState.value.quoteBlog ?: return null
+        return StrongRef(uri = AtUri(quoteBlog.url), cid = Cid(quoteBlog.id))
+    }
+
+    private suspend fun uploadVideo(file: PublishPostMediaAttachmentFile): Result<Video> {
         return uploadBlob(role = role, fileUri = file.file.uri)
             .map {
-                val video = Video(
+                Video(
                     video = it.first,
                     alt = file.alt,
                     aspectRatio = it.second?.convert(),
                 )
-                PostEmbedUnion.Video(video)
             }
     }
 
-    private suspend fun uploadImages(image: PublishPostMediaAttachment.Image): Result<PostEmbedUnion> {
+    private suspend fun uploadImages(image: PublishPostMediaAttachment.Image): Result<Images> {
         val resultList: List<Result<ImagesImage>> = supervisorScope {
             image.files.map { file ->
                 async {
@@ -406,7 +444,7 @@ class PublishPostViewModel @Inject constructor(
             return Result.failure(resultList.first { it.isFailure }.exceptionOrNull()!!)
         }
         val images = Images(resultList.map { it.getOrThrow() })
-        return Result.success(PostEmbedUnion.Images(images))
+        return Result.success(images)
     }
 
     private fun com.zhangke.framework.utils.AspectRatio.convert(): AspectRatio {

@@ -56,6 +56,7 @@ private fun BlogEmbedUi(
         is BlogEmbed.Blog -> {
             BlogInEmbedding(
                 modifier = modifier
+                    .padding(8.dp)
                     .embedBorder(),
                 blog = embed.blog,
                 style = style,

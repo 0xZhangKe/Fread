@@ -50,6 +50,7 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.seiko.imageloader.ui.AutoSizeImage
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
@@ -74,7 +75,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content
-import com.zhangke.fread.activitypub.app.post_status_failed
 import com.zhangke.fread.activitypub.app.post_status_page_title
 import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
@@ -114,7 +114,6 @@ class PostStatusScreen(
             )
         }
         val loadableUiState by viewModel.uiState.collectAsState()
-        val postStatus by viewModel.postState.collectAsState(initial = LoadableState.idle())
         var showExitDialog by remember {
             mutableStateOf(false)
         }
@@ -138,7 +137,6 @@ class PostStatusScreen(
         ) { uiState ->
             PostStatusScreenContent(
                 uiState = uiState,
-                postStatus = postStatus,
                 snackMessageState = snackMessageState,
                 onSwitchAccount = viewModel::onSwitchAccountClick,
                 onContentChanged = viewModel::onContentChanged,
@@ -164,12 +162,10 @@ class PostStatusScreen(
                 onDurationSelect = viewModel::onDurationSelect,
             )
         }
-        if (postStatus is LoadableState.Success) {
-            val successMessage = stringResource(Res.string.post_status_success)
-            LaunchedEffect(Unit) {
-                toast(successMessage)
-                navigator.pop()
-            }
+        val successMessage = stringResource(Res.string.post_status_success)
+        ConsumeFlow(viewModel.publishSuccessFlow) {
+            toast(successMessage)
+            navigator.pop()
         }
         BackHandler(true) {
             onBack()
@@ -196,7 +192,6 @@ class PostStatusScreen(
     @Composable
     private fun PostStatusScreenContent(
         uiState: PostStatusUiState,
-        postStatus: LoadableState<Unit>,
         snackMessageState: SnackbarHostState,
         onSwitchAccount: (ActivityPubLoggedAccount) -> Unit,
         onContentChanged: (TextFieldValue) -> Unit,
@@ -219,22 +214,8 @@ class PostStatusScreen(
         onVisibilityChanged: (StatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
     ) {
-        if (postStatus is LoadableState.Failed) {
-            var errorMessage = stringResource(Res.string.post_status_failed)
-            if (postStatus.exception.message.isNullOrEmpty().not()) {
-                errorMessage += ": ${postStatus.exception.message?.take(180)}"
-            }
-            LaunchedEffect(errorMessage) {
-                snackMessageState.showSnackbar(errorMessage)
-            }
-        }
         var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(uiState.initialContent.orEmpty()))
-        }
-        LaunchedEffect(Unit) {
-            if (uiState.content.isEmpty() && !uiState.initialContent.isNullOrEmpty()) {
-                onContentChanged(textFieldValue)
-            }
+            mutableStateOf(TextFieldValue(uiState.content))
         }
         Scaffold(
             snackbarHost = {
@@ -250,22 +231,18 @@ class PostStatusScreen(
                         )
                     },
                     actions = {
-                        when (postStatus) {
-                            is LoadableState.Loading -> {
-                                CircularProgressIndicator(
-                                    modifier = Modifier
-                                        .padding(end = 8.dp)
-                                        .size(24.dp)
-                                )
-                            }
-
-                            else -> {
-                                SimpleIconButton(
-                                    onClick = onPostClick,
-                                    imageVector = Icons.AutoMirrored.Filled.Send,
-                                    contentDescription = "Post",
-                                )
-                            }
+                        if (uiState.publishing) {
+                            CircularProgressIndicator(
+                                modifier = Modifier
+                                    .padding(end = 8.dp)
+                                    .size(24.dp)
+                            )
+                        } else {
+                            SimpleIconButton(
+                                onClick = onPostClick,
+                                imageVector = Icons.AutoMirrored.Filled.Send,
+                                contentDescription = "Post",
+                            )
                         }
                     },
                     title = {

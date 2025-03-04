@@ -13,4 +13,5 @@ interface LoggedAccount {
     val description: String?
     val avatar: String?
     val emojis: List<Emoji>
+    val prettyHandle: String
 }

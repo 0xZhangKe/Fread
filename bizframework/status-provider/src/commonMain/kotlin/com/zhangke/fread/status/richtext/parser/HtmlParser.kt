@@ -164,6 +164,130 @@ object HtmlParser {
             }
         }
     }
+
+
+    fun parseToPlainText(
+        document: String,
+        mentions: List<Mention>,
+    ): String {
+        return buildString {
+            Ksoup.parseBodyFragment(document)
+                .body()
+                .traverse(ParseToPlainVisitor(this, mentions))
+        }
+    }
+
+    class ParseToPlainVisitor(
+        private val builder: StringBuilder,
+        private val mentions: List<Mention>,
+    ) : NodeVisitor {
+
+        private val popQueue = ArrayDeque<Int>()
+
+        private var skip = false
+
+        override fun head(node: Node, depth: Int) {
+            if (skip) {
+                return
+            }
+            if (node is TextNode) {
+                spanBuilder.appendWithEmoji(node.text(), emojis)
+                return
+            }
+            if (node is Element) {
+                when (node.tagName()) {
+                    "br" -> {
+                        spanBuilder.append("\n")
+                    }
+
+                    "a" -> {
+                        val href = node.attr("href")
+                        var linkTarget: RichLinkTarget? = null
+                        if (node.hasClass("hashtag")) {
+                            val text = node.text()
+                            if (text.startsWith("#")) {
+                                if (parsePossibleHashtag) {
+                                    linkTarget =
+                                        RichLinkTarget.MaybeHashtagTarget(text.substring(1))
+                                } else {
+                                    val hashtagText = text.substring(1).lowercase()
+                                    val hashTag = hashTags.firstOrNull { it.name == hashtagText }
+                                    if (hashTag != null) {
+                                        linkTarget = RichLinkTarget.HashtagTarget(hashTag)
+                                    }
+                                }
+                            } else {
+                                if (href.isNotEmpty()) {
+                                    linkTarget = RichLinkTarget.UrlTarget(href)
+                                }
+                            }
+                        } else if (node.hasClass("mention")) {
+                            val id = mentions.firstOrNull { it.url == href }?.id
+                            if (id != null) {
+                                val mention = mentions.firstOrNull { it.id == id }
+                                if (mention != null) {
+                                    linkTarget = RichLinkTarget.MentionTarget(mention)
+                                }
+                            } else {
+                                if (href.isNotEmpty()) {
+                                    linkTarget = RichLinkTarget.UrlTarget(href)
+                                }
+                            }
+                        } else if (href.isNotEmpty()) {
+                            linkTarget = RichLinkTarget.UrlTarget(href)
+                        }
+                        if (linkTarget != null) {
+                            popQueue.addLast(
+                                spanBuilder.pushLink(
+                                    LinkAnnotation.Clickable(
+                                        tag = when (linkTarget) {
+                                            is RichLinkTarget.UrlTarget -> linkTarget.url
+                                            is RichLinkTarget.MentionTarget -> linkTarget.mention.id
+                                            is RichLinkTarget.MentionDidTarget -> linkTarget.did
+                                            is RichLinkTarget.HashtagTarget -> linkTarget.hashtag.name
+                                            is RichLinkTarget.MaybeHashtagTarget -> linkTarget.hashtag
+                                        },
+                                        styles = TextLinkStyles(
+                                            style = SpanStyle(color = primaryLight),
+                                            hoveredStyle = SpanStyle(textDecoration = TextDecoration.Underline),
+                                        ),
+                                        linkInteractionListener = {
+                                            onLinkTargetClick(linkTarget)
+                                        },
+                                    )
+                                )
+                            )
+                        } else {
+                            // no href
+                        }
+                    }
+
+                    "span" -> {
+                        if (node.hasClass("invisible")) {
+                            skip = true
+                        }
+                    }
+                }
+            }
+        }
+
+        override fun tail(node: Node, depth: Int) {
+            if (node is Element) {
+                when (node.tagName()) {
+                    "a" -> {
+                        if (popQueue.isNotEmpty()) {
+                            spanBuilder.pop(popQueue.removeLast())
+                        }
+                    }
+
+                    "span" -> {
+                        skip = false
+                    }
+                }
+            }
+        }
+    }
+
 }
 
 private val EMOJI_CODE_PATTERN = (":(\\w+):").toRegex()

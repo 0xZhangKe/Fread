@@ -35,4 +35,6 @@ data class BlueskyLoggedAccount(
     override val avatar = user.avatar
 
     override val emojis = user.emojis
+
+    override val prettyHandle: String = user.prettyHandle
 }

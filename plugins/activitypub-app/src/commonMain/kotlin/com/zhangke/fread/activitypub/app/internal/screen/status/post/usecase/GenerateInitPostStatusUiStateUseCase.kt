@@ -15,6 +15,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.richtext.parser.HtmlParser
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
@@ -33,7 +34,6 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             is PostStatusScreenParams.PostStatusParams -> PostStatusUiState.default(
                 account = defaultAccount,
                 allLoggedAccount = allLoggedAccount,
-                initialContent = null,
                 visibility = StatusVisibility.PUBLIC,
                 replyToAuthorInfo = null,
             )
@@ -76,7 +76,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            initialContent = initialContent,
+            content = initialContent,
             visibility = replyParams.replyVisibility,
             replyToAuthorInfo = replyParams,
         )
@@ -88,10 +88,19 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         editParams: PostStatusScreenParams.EditStatusParams,
     ): PostStatusUiState {
         val blog = editParams.blog
+        val richText = HtmlParser.parse(
+            document = blog.content,
+            mentions = blog.mentions,
+            emojis = emptyList(),
+            hashTags = emptyList(),
+            facets = emptyList(),
+            onLinkTargetClick = {},
+        )
+        val richTextString = richText.toString()
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            initialContent = blog.content.htmlToText(),
+            content = blog.content.htmlToText(),
             visibility = blog.visibility,
             sensitive = editParams.blog.sensitive,
             language = editParams.blog.language?.let { initLocale(it) },

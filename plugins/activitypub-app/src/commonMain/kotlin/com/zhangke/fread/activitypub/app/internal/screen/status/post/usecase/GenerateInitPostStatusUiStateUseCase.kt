@@ -88,19 +88,10 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         editParams: PostStatusScreenParams.EditStatusParams,
     ): PostStatusUiState {
         val blog = editParams.blog
-        val richText = HtmlParser.parse(
-            document = blog.content,
-            mentions = blog.mentions,
-            emojis = emptyList(),
-            hashTags = emptyList(),
-            facets = emptyList(),
-            onLinkTargetClick = {},
-        )
-        val richTextString = richText.toString()
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            content = blog.content.htmlToText(),
+            content = HtmlParser.parseToPlainText(blog.content),
             visibility = blog.visibility,
             sensitive = editParams.blog.sensitive,
             language = editParams.blog.language?.let { initLocale(it) },

@@ -13,7 +13,7 @@ import com.fleeksoft.ksoup.nodes.Node
 import com.fleeksoft.ksoup.nodes.TextNode
 import com.fleeksoft.ksoup.select.NodeVisitor
 import com.zhangke.framework.architect.theme.primaryLight
-import com.zhangke.framework.utils.Log
+import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
@@ -21,7 +21,6 @@ import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
-import com.zhangke.fread.status.uri.FormalUri
 
 object HtmlParser {
 
@@ -168,16 +167,7 @@ object HtmlParser {
         }
     }
 
-    fun parseToPlainText(
-        document: String,
-        mentions: List<Mention>,
-    ): String {
-//        buildString {
-//            Ksoup.parseBodyFragment(document)
-//                .body()
-//                .traverse(ParseToPlainVisitor(this))
-//        }
-//        return document
+    fun parseToPlainText(document: String): String {
         return buildString {
             Ksoup.parseBodyFragment(document)
                 .body()
@@ -185,13 +175,7 @@ object HtmlParser {
         }
     }
 
-    class ParseToPlainVisitor(
-        private val builder: StringBuilder,
-    ) : NodeVisitor {
-
-        private val popQueue = ArrayDeque<Int>()
-
-        private var skip = false
+    class ParseToPlainVisitor(private val builder: StringBuilder) : NodeVisitor {
 
         private fun Element?.isMention(): Boolean {
             if (this == null) return false
@@ -208,50 +192,30 @@ object HtmlParser {
         }
 
         override fun head(node: Node, depth: Int) {
-            Log.d("F_TEST") { "head: ${node::class.simpleName}(${(node as? Element)?.tagName()}) $node" }
             if (node is Element) {
+                if (node.tagName() == "br") {
+                    builder.appendLine()
+                }
                 if (node.isMention()) {
+                    if (node.tagName() != "a") return
                     val text = node.text()
-                    if (text != "@") {
-                        val href = node.mentionHref()
-                        buildMentionText(text, href)
-                    }
+                    val href = node.mentionHref()
+                    builder.append(buildMentionText(text, href))
+                    return
                 }
             }
-//            if (skip) {
-//                return
-//            }
-//            if (node is TextNode) {
-//                if (node is Element) {
-//                    when (node.tagName()) {
-//                        "br" -> {
-//                            builder.appendLine(node.text())
-//                        }
-//
-//                        "a" -> {
-//                            if (node.hasClass("mention")) {
-//                                val href = node.attr("href")
-////                                buildMentionText(node.text(), href)
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    builder.append(node.text())
-//                }
-//                return
-//            }
+            if (node is TextNode) {
+                if ((node.parent() as? Element)?.isMention() == true) return
+                builder.append(node.text())
+            }
         }
 
         private fun buildMentionText(text: String, href: String?): String {
             if (href.isNullOrBlank()) return text
-            val url = FormalUri.from(href) ?: return text
+            val url = SimpleUri.parse(href) ?: return text
             val textAsWebFinger = WebFinger.create(text)
             if (textAsWebFinger != null) return text
             return "$text@${url.host}"
-        }
-
-        override fun tail(node: Node, depth: Int) {
-            Log.d("F_TEST") { "tail: ${node::class.simpleName}(${(node as? Element)?.tagName()}) $node" }
         }
     }
 

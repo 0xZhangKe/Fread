@@ -13,22 +13,25 @@ import com.fleeksoft.ksoup.nodes.Node
 import com.fleeksoft.ksoup.nodes.TextNode
 import com.fleeksoft.ksoup.select.NodeVisitor
 import com.zhangke.framework.architect.theme.primaryLight
+import com.zhangke.framework.utils.Log
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
+import com.zhangke.fread.status.uri.FormalUri
 
 object HtmlParser {
 
     fun parse(
         document: String,
-        emojis: List<Emoji>,
-        mentions: List<Mention>,
-        hashTags: List<HashtagInStatus>,
-        facets: List<Facet>,
-        onLinkTargetClick: OnLinkTargetClick,
+        emojis: List<Emoji> = emptyList(),
+        mentions: List<Mention> = emptyList(),
+        hashTags: List<HashtagInStatus> = emptyList(),
+        facets: List<Facet> = emptyList(),
+        onLinkTargetClick: OnLinkTargetClick = {},
         parsePossibleHashtag: Boolean = false,
     ): AnnotatedString {
         if (facets.isNotEmpty()) {
@@ -165,126 +168,90 @@ object HtmlParser {
         }
     }
 
-
     fun parseToPlainText(
         document: String,
         mentions: List<Mention>,
     ): String {
+//        buildString {
+//            Ksoup.parseBodyFragment(document)
+//                .body()
+//                .traverse(ParseToPlainVisitor(this))
+//        }
+//        return document
         return buildString {
             Ksoup.parseBodyFragment(document)
                 .body()
-                .traverse(ParseToPlainVisitor(this, mentions))
+                .traverse(ParseToPlainVisitor(this))
         }
     }
 
     class ParseToPlainVisitor(
         private val builder: StringBuilder,
-        private val mentions: List<Mention>,
     ) : NodeVisitor {
 
         private val popQueue = ArrayDeque<Int>()
 
         private var skip = false
 
+        private fun Element?.isMention(): Boolean {
+            if (this == null) return false
+            if (hasClass("mention")) return true
+            return parent().isMention()
+        }
+
+        private fun Element?.mentionHref(): String? {
+            if (this == null) return null
+            if (hasClass("mention")) {
+                return this.attr("href")
+            }
+            return parent().mentionHref()
+        }
+
         override fun head(node: Node, depth: Int) {
-            if (skip) {
-                return
-            }
-            if (node is TextNode) {
-                spanBuilder.appendWithEmoji(node.text(), emojis)
-                return
-            }
+            Log.d("F_TEST") { "head: ${node::class.simpleName}(${(node as? Element)?.tagName()}) $node" }
             if (node is Element) {
-                when (node.tagName()) {
-                    "br" -> {
-                        spanBuilder.append("\n")
-                    }
-
-                    "a" -> {
-                        val href = node.attr("href")
-                        var linkTarget: RichLinkTarget? = null
-                        if (node.hasClass("hashtag")) {
-                            val text = node.text()
-                            if (text.startsWith("#")) {
-                                if (parsePossibleHashtag) {
-                                    linkTarget =
-                                        RichLinkTarget.MaybeHashtagTarget(text.substring(1))
-                                } else {
-                                    val hashtagText = text.substring(1).lowercase()
-                                    val hashTag = hashTags.firstOrNull { it.name == hashtagText }
-                                    if (hashTag != null) {
-                                        linkTarget = RichLinkTarget.HashtagTarget(hashTag)
-                                    }
-                                }
-                            } else {
-                                if (href.isNotEmpty()) {
-                                    linkTarget = RichLinkTarget.UrlTarget(href)
-                                }
-                            }
-                        } else if (node.hasClass("mention")) {
-                            val id = mentions.firstOrNull { it.url == href }?.id
-                            if (id != null) {
-                                val mention = mentions.firstOrNull { it.id == id }
-                                if (mention != null) {
-                                    linkTarget = RichLinkTarget.MentionTarget(mention)
-                                }
-                            } else {
-                                if (href.isNotEmpty()) {
-                                    linkTarget = RichLinkTarget.UrlTarget(href)
-                                }
-                            }
-                        } else if (href.isNotEmpty()) {
-                            linkTarget = RichLinkTarget.UrlTarget(href)
-                        }
-                        if (linkTarget != null) {
-                            popQueue.addLast(
-                                spanBuilder.pushLink(
-                                    LinkAnnotation.Clickable(
-                                        tag = when (linkTarget) {
-                                            is RichLinkTarget.UrlTarget -> linkTarget.url
-                                            is RichLinkTarget.MentionTarget -> linkTarget.mention.id
-                                            is RichLinkTarget.MentionDidTarget -> linkTarget.did
-                                            is RichLinkTarget.HashtagTarget -> linkTarget.hashtag.name
-                                            is RichLinkTarget.MaybeHashtagTarget -> linkTarget.hashtag
-                                        },
-                                        styles = TextLinkStyles(
-                                            style = SpanStyle(color = primaryLight),
-                                            hoveredStyle = SpanStyle(textDecoration = TextDecoration.Underline),
-                                        ),
-                                        linkInteractionListener = {
-                                            onLinkTargetClick(linkTarget)
-                                        },
-                                    )
-                                )
-                            )
-                        } else {
-                            // no href
-                        }
-                    }
-
-                    "span" -> {
-                        if (node.hasClass("invisible")) {
-                            skip = true
-                        }
+                if (node.isMention()) {
+                    val text = node.text()
+                    if (text != "@") {
+                        val href = node.mentionHref()
+                        buildMentionText(text, href)
                     }
                 }
             }
+//            if (skip) {
+//                return
+//            }
+//            if (node is TextNode) {
+//                if (node is Element) {
+//                    when (node.tagName()) {
+//                        "br" -> {
+//                            builder.appendLine(node.text())
+//                        }
+//
+//                        "a" -> {
+//                            if (node.hasClass("mention")) {
+//                                val href = node.attr("href")
+////                                buildMentionText(node.text(), href)
+//                            }
+//                        }
+//                    }
+//                } else {
+//                    builder.append(node.text())
+//                }
+//                return
+//            }
+        }
+
+        private fun buildMentionText(text: String, href: String?): String {
+            if (href.isNullOrBlank()) return text
+            val url = FormalUri.from(href) ?: return text
+            val textAsWebFinger = WebFinger.create(text)
+            if (textAsWebFinger != null) return text
+            return "$text@${url.host}"
         }
 
         override fun tail(node: Node, depth: Int) {
-            if (node is Element) {
-                when (node.tagName()) {
-                    "a" -> {
-                        if (popQueue.isNotEmpty()) {
-                            spanBuilder.pop(popQueue.removeLast())
-                        }
-                    }
-
-                    "span" -> {
-                        skip = false
-                    }
-                }
-            }
+            Log.d("F_TEST") { "tail: ${node::class.simpleName}(${(node as? Element)?.tagName()}) $node" }
         }
     }
 

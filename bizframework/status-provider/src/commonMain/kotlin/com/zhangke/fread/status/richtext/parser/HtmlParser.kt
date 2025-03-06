@@ -31,7 +31,6 @@ object HtmlParser {
         hashTags: List<HashtagInStatus> = emptyList(),
         facets: List<Facet> = emptyList(),
         onLinkTargetClick: OnLinkTargetClick = {},
-        parsePossibleHashtag: Boolean = false,
     ): AnnotatedString {
         if (facets.isNotEmpty()) {
             return FacetHtmlParser().parse(document, facets, onLinkTargetClick)
@@ -46,7 +45,6 @@ object HtmlParser {
                         mentions = mentions,
                         hashTags = hashTags.map { it.copy(name = it.name.lowercase()) },
                         onLinkTargetClick = onLinkTargetClick,
-                        parsePossibleHashtag = parsePossibleHashtag,
                     )
                 )
         }
@@ -57,7 +55,6 @@ object HtmlParser {
         private val emojis: Map<String, Emoji>,
         private val mentions: List<Mention>,
         private val hashTags: List<HashtagInStatus>,
-        private val parsePossibleHashtag: Boolean,
         private val onLinkTargetClick: OnLinkTargetClick,
     ) : NodeVisitor {
 
@@ -85,15 +82,12 @@ object HtmlParser {
                         if (node.hasClass("hashtag")) {
                             val text = node.text()
                             if (text.startsWith("#")) {
-                                if (parsePossibleHashtag) {
-                                    linkTarget =
-                                        RichLinkTarget.MaybeHashtagTarget(text.substring(1))
+                                val hashtagText = text.substring(1).lowercase()
+                                val hashTag = hashTags.firstOrNull { it.name == hashtagText }
+                                linkTarget = if (hashTag != null) {
+                                    RichLinkTarget.HashtagTarget(hashTag)
                                 } else {
-                                    val hashtagText = text.substring(1).lowercase()
-                                    val hashTag = hashTags.firstOrNull { it.name == hashtagText }
-                                    if (hashTag != null) {
-                                        linkTarget = RichLinkTarget.HashtagTarget(hashTag)
-                                    }
+                                    RichLinkTarget.MaybeHashtagTarget(text.substring(1))
                                 }
                             } else {
                                 if (href.isNotEmpty()) {
@@ -179,6 +173,7 @@ object HtmlParser {
 
         private fun Element?.isMention(): Boolean {
             if (this == null) return false
+            if (hasClass("hashtag")) return false
             if (hasClass("mention")) return true
             return parent().isMention()
         }

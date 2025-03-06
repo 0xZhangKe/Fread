@@ -19,7 +19,6 @@ class RichText(
     private val hashTags: List<HashtagInStatus> = emptyList(),
     val emojis: List<Emoji> = emptyList(),
     val facets: List<Facet> = emptyList(),
-    private val parsePossibleHashtag: Boolean = false,
 ) : PlatformSerializable {
 
     @PlatformTransient
@@ -42,7 +41,6 @@ class RichText(
             mentions = mentions,
             hashTags = hashTags,
             facets = facets,
-            parsePossibleHashtag = parsePossibleHashtag,
             onLinkTargetClick = clickableDelegate,
         ).also {
             richText = it

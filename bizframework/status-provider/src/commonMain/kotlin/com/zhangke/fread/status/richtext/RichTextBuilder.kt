@@ -14,7 +14,6 @@ fun buildRichText(
     hashTags: List<HashtagInStatus> = emptyList(),
     emojis: List<Emoji> = emptyList(),
     facets: List<Facet> = emptyList(),
-    parsePossibleHashtag: Boolean = false,
 ): RichText {
     return RichText(
         document = document,
@@ -22,7 +21,6 @@ fun buildRichText(
         hashTags = hashTags,
         emojis = emojis,
         facets = facets,
-        parsePossibleHashtag = parsePossibleHashtag,
     )
 }
 

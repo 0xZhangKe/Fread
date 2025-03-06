@@ -129,7 +129,7 @@ class PostStatusViewModel @Inject constructor(
     fun onContentChanged(inputtedText: TextFieldValue) {
         if (_uiState.value.requireSuccessData().allowedInputCount <= 0) return
         _uiState.updateOnSuccess {
-            it.copy(content = inputtedText.text)
+            it.copy(content = inputtedText)
         }
         maybeSearchAccountForMention(inputtedText)
     }
@@ -366,7 +366,7 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
-    fun onWarningContentChanged(content: String) {
+    fun onWarningContentChanged(content: TextFieldValue) {
         _uiState.updateOnSuccess {
             it.copy(warningContent = content)
         }
@@ -391,7 +391,7 @@ class PostStatusViewModel @Inject constructor(
         val currentUiState = _uiState.value.requireSuccessData()
         val account = currentUiState.account
         val attachment = currentUiState.attachment
-        if (currentUiState.content.isEmpty() && currentUiState.attachment == null) {
+        if (currentUiState.content.text.isEmpty() && currentUiState.attachment == null) {
             _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
             return
         }
@@ -418,7 +418,7 @@ class PostStatusViewModel @Inject constructor(
             }
 
             is PostStatusAttachment.Poll -> {
-                if (currentUiState.content.isEmpty()) {
+                if (currentUiState.content.text.isEmpty()) {
                     _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
                     return
                 }
@@ -436,12 +436,12 @@ class PostStatusViewModel @Inject constructor(
             _uiState.updateOnSuccess { it.copy(publishing = true) }
             postStatus(
                 account = account,
-                content = currentUiState.content,
+                content = currentUiState.content.text,
                 attachment = attachment,
                 originStatusId = (screenParams as? PostStatusScreenParams.EditStatusParams)?.blog?.id,
                 sensitive = currentUiState.sensitive,
-                replyToId = (screenParams as? PostStatusScreenParams.ReplyStatusParams)?.replyToBlogId,
-                spoilerText = currentUiState.warningContent,
+                replyToId = currentUiState.replyToBlog?.id,
+                spoilerText = currentUiState.warningContent.text,
                 visibility = currentUiState.visibility,
                 language = currentUiState.language,
             ).onSuccess {

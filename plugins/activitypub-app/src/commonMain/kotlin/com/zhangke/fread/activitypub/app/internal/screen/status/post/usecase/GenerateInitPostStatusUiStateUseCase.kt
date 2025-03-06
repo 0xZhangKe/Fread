@@ -1,8 +1,8 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.framework.utils.htmlToText
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
@@ -67,7 +67,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         allLoggedAccount: List<ActivityPubLoggedAccount>,
         replyParams: PostStatusScreenParams.ReplyStatusParams,
     ): PostStatusUiState {
-        val replyWebFinger = replyParams.replyToBlogWebFinger
+        val replyWebFinger = replyParams.replyingToBlog.author.webFinger
         val initialContent = if (defaultAccount.platform.baseUrl.host == replyWebFinger.host) {
             "@${replyWebFinger.name} "
         } else {
@@ -76,8 +76,8 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            content = initialContent,
-            visibility = replyParams.replyVisibility,
+            content = TextFieldValue(initialContent),
+            visibility = replyParams.replyingToBlog.visibility,
             replyToAuthorInfo = replyParams,
         )
     }
@@ -91,11 +91,11 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            content = HtmlParser.parseToPlainText(blog.content),
+            content = TextFieldValue(HtmlParser.parseToPlainText(blog.content)),
             visibility = blog.visibility,
             sensitive = editParams.blog.sensitive,
             language = editParams.blog.language?.let { initLocale(it) },
-            warningContent = editParams.blog.spoilerText.htmlToText(),
+            warningContent = TextFieldValue(HtmlParser.parseToPlainText(editParams.blog.spoilerText)),
             replyToAuthorInfo = null,
             visibilityChangeable = false,
             accountChangeable = false,

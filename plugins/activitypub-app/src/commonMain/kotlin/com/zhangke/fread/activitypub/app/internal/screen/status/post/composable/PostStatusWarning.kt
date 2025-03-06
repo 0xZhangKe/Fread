@@ -10,6 +10,7 @@ import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.fread.activitypub.app.Res
@@ -20,8 +21,8 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun PostStatusWarning(
     modifier: Modifier,
-    warning: String?,
-    onValueChanged: (String) -> Unit,
+    warning: TextFieldValue,
+    onValueChanged: (TextFieldValue) -> Unit,
 ) {
     Box(
         modifier = modifier.drawSpoilerBackground()
@@ -30,7 +31,7 @@ fun PostStatusWarning(
             modifier = Modifier
                 .padding(top = 8.dp)
                 .fillMaxSize(),
-            value = warning.orEmpty(),
+            value = warning,
             onValueChange = onValueChanged,
             placeholder = {
                 Text(

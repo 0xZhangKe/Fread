@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.utils.ContentProviderFile
@@ -7,6 +8,7 @@ import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlin.time.Duration
 
@@ -14,13 +16,13 @@ data class PostStatusUiState(
     val account: ActivityPubLoggedAccount,
     val availableAccountList: List<ActivityPubLoggedAccount>,
     val accountChangeable: Boolean,
-    val content: String,
+    val content: TextFieldValue,
     val attachment: PostStatusAttachment?,
     val visibility: StatusVisibility,
     val visibilityChangeable: Boolean,
     val sensitive: Boolean,
-    val warningContent: String,
-    val replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+    val warningContent: TextFieldValue,
+    val replyToBlog: Blog?,
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
     val rules: PostBlogRules,
@@ -35,12 +37,12 @@ data class PostStatusUiState(
             return (rules.maxMediaCount - imageList.size).coerceAtLeast(0)
         }
 
-    val allowedInputCount: Int get() = rules.maxCharacters - content.length
+    val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
 
     fun hasInputtedData(): Boolean {
-        if (content.isNotEmpty()) return true
+        if (content.text.isNotEmpty()) return true
         if (attachment != null) return true
-        if (sensitive && warningContent.isNotEmpty()) return true
+        if (sensitive && warningContent.text.isNotEmpty()) return true
         return false
     }
 
@@ -51,9 +53,9 @@ data class PostStatusUiState(
             allLoggedAccount: List<ActivityPubLoggedAccount>,
             visibility: StatusVisibility,
             replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
-            content: String = "",
+            content: TextFieldValue = TextFieldValue(""),
             sensitive: Boolean = false,
-            warningContent: String = "",
+            warningContent: TextFieldValue = TextFieldValue(""),
             language: Locale? = null,
             accountChangeable: Boolean = true,
             visibilityChangeable: Boolean = true,
@@ -66,7 +68,7 @@ data class PostStatusUiState(
                 attachment = attachment,
                 visibility = visibility,
                 sensitive = sensitive,
-                replyToAuthorInfo = replyToAuthorInfo,
+                replyToBlog = replyToAuthorInfo?.replyingToBlog,
                 warningContent = warningContent,
                 emojiList = emptyList(),
                 language = language ?: getDefaultLocale(),

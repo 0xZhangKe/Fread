@@ -31,12 +31,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.commonbiz.shared.screen.Res
@@ -69,12 +71,20 @@ fun PublishPostScaffold(
     onPublishClick: () -> Unit,
     onBackClick: () -> Unit,
     onSwitchAccountClick: () -> Unit,
+    contentWarning: @Composable () -> Unit = {},
     postSettingLabel: @Composable () -> Unit,
     bottomPanel: @Composable () -> Unit,
     attachment: @Composable (PublishBlogStyle) -> Unit,
 ) {
     val density = LocalDensity.current
     val style = PublishBlogStyleDefault.defaultStyle()
+    val focusManager = LocalFocusManager.current
+    val keyboardState by keyboardAsState()
+    LaunchedEffect(keyboardState) {
+        if (!keyboardState) {
+            focusManager.clearFocus()
+        }
+    }
     Scaffold(
         topBar = {
             Toolbar(
@@ -189,6 +199,7 @@ fun PublishPostScaffold(
                     )
                 }
             }
+            contentWarning()
             InputBlogTextField(
                 modifier = Modifier.fillMaxWidth(),
                 textFieldValue = content,

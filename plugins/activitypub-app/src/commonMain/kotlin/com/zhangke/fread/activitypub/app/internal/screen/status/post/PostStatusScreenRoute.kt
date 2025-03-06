@@ -1,11 +1,12 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.architect.json.fromJson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
 object PostStatusScreenRoute {
 
@@ -15,10 +16,7 @@ object PostStatusScreenRoute {
     ): PostStatusScreen {
         return PostStatusScreen(
             accountUri = accountUri,
-            replyBlogId = blog.id,
-            replyBlogAcct = blog.author.webFinger,
-            replyAuthorName = blog.author.name,
-            replyVisibility = blog.visibility.name,
+            replyingBlogJsonString = globalJson.encodeToString(serializer(), blog)
         )
     }
 
@@ -28,26 +26,22 @@ object PostStatusScreenRoute {
     ): Screen {
         return PostStatusScreen(
             accountUri = accountUri,
-            editBlogJsonString = Json.encodeToString(Blog.serializer(), blog),
+            editBlogJsonString = globalJson.encodeToString(serializer(), blog),
         )
     }
 
     fun buildParams(
         accountUri: FormalUri,
         editBlog: String?,
-        replyBlogAcct: WebFinger?,
-        replyBlogId: String?,
-        replyAuthorName: String?,
-        replyVisibility: String?,
+        replyToBlogJsonString: String?,
     ): PostStatusScreenParams {
-        val formalReplyVisibility = replyVisibility?.let(StatusVisibility::valueOf)
-        if (replyBlogAcct != null && !replyBlogId.isNullOrEmpty()) {
+        val replyToBlog = replyToBlogJsonString?.let {
+            runCatching { globalJson.fromJson<Blog>(it) }.getOrNull()
+        }
+        if (replyToBlog != null) {
             return PostStatusScreenParams.ReplyStatusParams(
                 accountUri = accountUri,
-                replyToBlogWebFinger = replyBlogAcct,
-                replyToBlogId = replyBlogId,
-                replyAuthorName = replyAuthorName.orEmpty(),
-                replyVisibility = formalReplyVisibility ?: StatusVisibility.PUBLIC,
+                replyingToBlog = replyToBlog,
             )
         }
         if (!editBlog.isNullOrEmpty()) {
@@ -68,10 +62,7 @@ sealed interface PostStatusScreenParams {
 
     data class ReplyStatusParams(
         override val accountUri: FormalUri?,
-        val replyToBlogWebFinger: WebFinger,
-        val replyToBlogId: String,
-        val replyAuthorName: String,
-        val replyVisibility: StatusVisibility = StatusVisibility.PUBLIC,
+        val replyingToBlog: Blog,
     ) : PostStatusScreenParams
 
     data class EditStatusParams(

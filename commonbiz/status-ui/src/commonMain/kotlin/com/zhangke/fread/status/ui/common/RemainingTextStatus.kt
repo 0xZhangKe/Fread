@@ -32,6 +32,7 @@ fun RemainingTextStatus(
             text = "${maxCount - contentLength}",
             style = MaterialTheme.typography.labelSmall,
             color = fontColor,
+            maxLines = 1,
         )
         CircularProgressIndicator(
             modifier = Modifier.padding(start = 4.dp)

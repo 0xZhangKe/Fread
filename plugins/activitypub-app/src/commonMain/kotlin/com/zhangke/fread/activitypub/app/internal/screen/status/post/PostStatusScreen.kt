@@ -1,70 +1,37 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.MoreVert
-import androidx.compose.material.icons.filled.Reply
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.DropdownMenu
 import androidx.compose.material3.DropdownMenuItem
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Icon
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.platform.LocalFocusManager
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
-import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.constraintlayout.compose.ConstraintLayout
-import androidx.constraintlayout.compose.Dimension
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.internal.BackHandler
-import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
-import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.TwoTextsInRow
-import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.TextFieldUtils
-import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
@@ -75,25 +42,19 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content
-import com.zhangke.fread.activitypub.app.post_status_page_title
 import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
-import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
-import com.zhangke.fread.statusui.status_ui_reply
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
 
 class PostStatusScreen(
     private val accountUri: FormalUri,
     private val editBlogJsonString: String? = null,
-    private val replyBlogAcct: WebFinger? = null,
-    private val replyBlogId: String? = null,
-    private val replyAuthorName: String? = null,
-    private val replyVisibility: String? = null,
+    private val replyingBlogJsonString: String? = null,
 ) : BaseScreen() {
 
     @OptIn(InternalVoyagerApi::class)
@@ -106,10 +67,7 @@ class PostStatusScreen(
                 PostStatusScreenRoute.buildParams(
                     accountUri = accountUri,
                     editBlog = editBlogJsonString,
-                    replyBlogAcct = replyBlogAcct,
-                    replyBlogId = replyBlogId,
-                    replyAuthorName = replyAuthorName,
-                    replyVisibility = replyVisibility,
+                    replyToBlogJsonString = replyingBlogJsonString,
                 )
             )
         }
@@ -140,9 +98,7 @@ class PostStatusScreen(
                 snackMessageState = snackMessageState,
                 onSwitchAccount = viewModel::onSwitchAccountClick,
                 onContentChanged = viewModel::onContentChanged,
-                onCloseClick = {
-                    onBack()
-                },
+                onCloseClick = { onBack() },
                 onPostClick = viewModel::onPostClick,
                 onSensitiveClick = viewModel::onSensitiveClick,
                 onMediaSelected = viewModel::onMediaSelected,
@@ -188,7 +144,6 @@ class PostStatusScreen(
         ConsumeSnackbarFlow(snackMessageState, viewModel.snackMessage)
     }
 
-    @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun PostStatusScreenContent(
         uiState: PostStatusUiState,
@@ -210,50 +165,41 @@ class PostStatusScreen(
         onRemovePollItemClick: (Int) -> Unit,
         onAddPollItemClick: () -> Unit,
         onPollStyleSelect: (multiple: Boolean) -> Unit,
-        onWarningContentChanged: (String) -> Unit,
+        onWarningContentChanged: (TextFieldValue) -> Unit,
         onVisibilityChanged: (StatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
     ) {
-        var textFieldValue by rememberSaveable(stateSaver = TextFieldValue.Saver) {
-            mutableStateOf(TextFieldValue(uiState.content))
-        }
-        Scaffold(
-            snackbarHost = {
-                SnackbarHost(hostState = snackMessageState)
+        var showAccountSwitchPopup by remember { mutableStateOf(false) }
+        PublishPostScaffold(
+            account = uiState.account,
+            snackBarHostState = snackMessageState,
+            content = uiState.content,
+            showSwitchAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
+            publishing = uiState.publishing,
+            replyingBlog = uiState.replyToBlog,
+            onContentChanged = onContentChanged,
+            onPublishClick = onPostClick,
+            onBackClick = onCloseClick,
+            onSwitchAccountClick = { showAccountSwitchPopup = true },
+            contentWarning = {
+                if (uiState.sensitive) {
+                    PostStatusWarning(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                        warning = uiState.warningContent,
+                        onValueChanged = onWarningContentChanged,
+                    )
+                }
             },
-            topBar = {
-                TopAppBar(
-                    navigationIcon = {
-                        SimpleIconButton(
-                            onClick = onCloseClick,
-                            imageVector = Icons.Default.Close,
-                            contentDescription = "Close",
-                        )
-                    },
-                    actions = {
-                        if (uiState.publishing) {
-                            CircularProgressIndicator(
-                                modifier = Modifier
-                                    .padding(end = 8.dp)
-                                    .size(24.dp)
-                            )
-                        } else {
-                            SimpleIconButton(
-                                onClick = onPostClick,
-                                imageVector = Icons.AutoMirrored.Filled.Send,
-                                contentDescription = "Post",
-                            )
-                        }
-                    },
-                    title = {
-                        Text(
-                            text = stringResource(Res.string.post_status_page_title),
-                            style = MaterialTheme.typography.titleMedium,
-                        )
-                    },
+            postSettingLabel = {
+                PostStatusVisibilityUi(
+                    modifier = Modifier,
+                    visibility = uiState.visibility,
+                    changeable = uiState.visibilityChangeable,
+                    onVisibilitySelect = onVisibilityChanged,
                 )
             },
-            bottomBar = {
+            bottomPanel = {
                 PostStatusBottomBar(
                     uiState = uiState,
                     onSensitiveClick = onSensitiveClick,
@@ -261,188 +207,31 @@ class PostStatusScreen(
                     onLanguageSelected = onLanguageSelected,
                     onPollClicked = onPollClicked,
                     onEmojiPick = {
-                        textFieldValue = TextFieldUtils.insertText(
-                            value = textFieldValue,
-                            insertText = " :${it.shortcode}: ",
+                        onContentChanged(
+                            TextFieldUtils.insertText(
+                                value = uiState.content,
+                                insertText = " :${it.shortcode}: ",
+                            )
                         )
-                        onContentChanged(textFieldValue)
                     },
                     onMentionClick = {
-                        textFieldValue = MentionTextUtil.insertMention(
-                            text = textFieldValue,
-                            insertText = it.acct,
+                        onContentChanged(
+                            MentionTextUtil.insertMention(
+                                text = uiState.content,
+                                insertText = it.acct,
+                            )
                         )
                     },
                     onDeleteEmojiClick = {
-                        textFieldValue = DeleteTextUtil.deleteText(textFieldValue)
+                        onContentChanged(DeleteTextUtil.deleteText(uiState.content))
                     },
                 )
-            }
-        ) { paddingValues ->
-            ConstraintLayout(
-                modifier = Modifier
-                    .padding(paddingValues)
-                    .fillMaxSize()
-                    .verticalScroll(rememberScrollState())
-            ) {
-                val (
-                    replayToBlogRef,
-                    avatarRef,
-                    nameRef,
-                    visibilityRef,
-                    switchAccountRef,
-                    warningRef,
-                    inputRef,
-                    statusAttachmentRef,
-                ) = createRefs()
-                if (uiState.replyToAuthorInfo != null) {
-                    Row(
-                        modifier = Modifier.constrainAs(replayToBlogRef) {
-                            top.linkTo(parent.top, 8.dp)
-                            start.linkTo(parent.start, 16.dp)
-                            end.linkTo(parent.end)
-                            width = Dimension.fillToConstraints
-                            height = Dimension.wrapContent
-                        },
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        Icon(
-                            imageVector = Icons.Default.Reply,
-                            contentDescription = null,
-                        )
-                        val replyLabel =
-                            stringResource(com.zhangke.fread.statusui.Res.string.status_ui_reply)
-                        Text(
-                            modifier = Modifier.padding(start = 4.dp),
-                            text = "$replyLabel ${uiState.replyToAuthorInfo.replyAuthorName}",
-                            style = MaterialTheme.typography.bodyMedium,
-                        )
-                    }
-                } else {
-                    Box(modifier = Modifier.constrainAs(replayToBlogRef) {
-                        top.linkTo(parent.top)
-                        start.linkTo(parent.start)
-                        width = Dimension.value(0.dp)
-                        height = Dimension.value(0.dp)
-                    })
-                }
-                AutoSizeImage(
-                    uiState.account.avatar.orEmpty(),
-                    modifier = Modifier
-                        .clip(CircleShape)
-                        .constrainAs(avatarRef) {
-                            start.linkTo(parent.start, 8.dp)
-                            top.linkTo(replayToBlogRef.bottom, 16.dp)
-                            width = Dimension.value(36.dp)
-                            height = Dimension.value(36.dp)
-                        },
-                    contentDescription = null,
-                )
-                NameAndAccountInfo(
-                    modifier = Modifier.constrainAs(nameRef) {
-                        start.linkTo(avatarRef.end, 8.dp)
-                        top.linkTo(avatarRef.top)
-                        end.linkTo(switchAccountRef.start, 2.dp)
-                        width = Dimension.fillToConstraints
-                    },
-                    uiState = uiState,
-                )
-                PostStatusVisibilityUi(
-                    modifier = Modifier
-                        .constrainAs(visibilityRef) {
-                            top.linkTo(nameRef.bottom, 4.dp)
-                            start.linkTo(nameRef.start)
-                        },
-                    visibility = uiState.visibility,
-                    changeable = uiState.visibilityChangeable,
-                    onVisibilitySelect = onVisibilityChanged,
-                )
-                Box(
-                    modifier = Modifier.constrainAs(switchAccountRef) {
-                        end.linkTo(parent.end, 4.dp)
-                        top.linkTo(nameRef.top)
-                    }
-                ) {
-                    val availableAccountList = uiState.availableAccountList
-                    if (uiState.accountChangeable && availableAccountList.size > 1) {
-                        var showAccountSwitchPopup by remember {
-                            mutableStateOf(false)
-                        }
-                        SimpleIconButton(
-                            onClick = { showAccountSwitchPopup = true },
-                            imageVector = Icons.Default.MoreVert,
-                            contentDescription = "Switch Account",
-                        )
-                        DropdownMenu(
-                            expanded = showAccountSwitchPopup,
-                            onDismissRequest = { showAccountSwitchPopup = false },
-                        ) {
-                            availableAccountList.forEach {
-                                DropdownMenuItem(
-                                    text = {
-                                        Text(
-                                            text = "${it.userName}@${it.platform.name}",
-                                        )
-                                    },
-                                    onClick = {
-                                        showAccountSwitchPopup = false
-                                        onSwitchAccount(it)
-                                    },
-                                )
-                            }
-                        }
-                    }
-                }
-                Box(
-                    modifier = Modifier.constrainAs(warningRef) {
-                        top.linkTo(visibilityRef.bottom, 8.dp)
-                        start.linkTo(parent.start, 16.dp)
-                        end.linkTo(parent.end, 16.dp)
-                        width = Dimension.fillToConstraints
-                        height = Dimension.wrapContent
-                    }
-                ) {
-                    if (uiState.sensitive) {
-                        PostStatusWarning(
-                            modifier = Modifier.fillMaxWidth(),
-                            warning = uiState.warningContent,
-                            onValueChanged = onWarningContentChanged,
-                        )
-                    }
-                }
-                val focusManager = LocalFocusManager.current
-                val keyboardState by keyboardAsState()
-                LaunchedEffect(keyboardState) {
-                    if (!keyboardState) {
-                        focusManager.clearFocus()
-                    }
-                }
-                InputBlogTextField(
-                    modifier = Modifier
-                        .constrainAs(inputRef) {
-                            top.linkTo(warningRef.bottom)
-                            start.linkTo(parent.start, 8.dp)
-                            end.linkTo(parent.end, 8.dp)
-                            width = Dimension.fillToConstraints
-                            height = Dimension.wrapContent
-                        },
-                    textFieldValue = textFieldValue,
-                    onContentChanged = {
-                        textFieldValue = it
-                        onContentChanged(it)
-                    },
-                    placeholder = buildAnnotatedString {
-                        append(stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_publish_blog_text_hint))
-                    },
-                )
+            },
+            attachment = {
                 StatusAttachment(
                     modifier = Modifier
-                        .padding(bottom = 16.dp)
-                        .constrainAs(statusAttachmentRef) {
-                            top.linkTo(inputRef.bottom, 16.dp)
-                            start.linkTo(parent.start)
-                            end.linkTo(parent.end)
-                        },
+                        .fillMaxWidth()
+                        .padding(bottom = 16.dp),
                     uiState = uiState,
                     onDeleteClick = onDeleteClick,
                     onCancelUploadClick = onCancelUploadClick,
@@ -455,38 +244,29 @@ class PostStatusScreen(
                     onPollStyleSelect = onPollStyleSelect,
                     onDurationSelect = onDurationSelect,
                 )
+            },
+        )
+
+        if (showAccountSwitchPopup) {
+            DropdownMenu(
+                expanded = showAccountSwitchPopup,
+                onDismissRequest = { showAccountSwitchPopup = false },
+            ) {
+                uiState.availableAccountList.forEach {
+                    DropdownMenuItem(
+                        text = {
+                            Text(
+                                text = "${it.userName}@${it.platform.name}",
+                            )
+                        },
+                        onClick = {
+                            showAccountSwitchPopup = false
+                            onSwitchAccount(it)
+                        },
+                    )
+                }
             }
         }
-    }
-
-    @Composable
-    private fun NameAndAccountInfo(
-        modifier: Modifier,
-        uiState: PostStatusUiState,
-    ) {
-        TwoTextsInRow(
-            firstText = {
-                Text(
-                    modifier = Modifier,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    text = uiState.account.userName,
-                    style = MaterialTheme.typography.titleMedium,
-                    textAlign = TextAlign.Start,
-                )
-            },
-            secondText = {
-                Text(
-                    modifier = Modifier,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                    text = uiState.account.webFinger.toString(),
-                    style = MaterialTheme.typography.bodySmall,
-                )
-            },
-            spacing = 2.dp,
-            modifier = modifier,
-        )
     }
 
     @Composable

@@ -1,6 +1,7 @@
 package com.zhangke.fread.commonbiz.shared.screen.publish
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.Spacer
@@ -44,6 +45,7 @@ fun PublishPostBottomPanel(
     maxLanguageCount: Int,
     onLanguageSelected: (List<String>) -> Unit,
     actions: @Composable RowScope.() -> Unit = {},
+    floatingBar: @Composable () -> Unit = {},
 ) {
     val bottomPaddingByIme = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
     val finalModifier = if (bottomPaddingByIme > 0.dp) {
@@ -52,46 +54,49 @@ fun PublishPostBottomPanel(
         modifier.navigationBarsPadding()
     }
     Surface(modifier = finalModifier.fillMaxWidth()) {
-        Row(
-            modifier = Modifier.fillMaxWidth()
-                .padding(start = 8.dp, end = 16.dp),
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            PickVisualMediaLauncherContainer(
-                onResult = onMediaSelected,
-                maxItems = mediaAvailableCount,
+        Column(modifier = Modifier.fillMaxWidth()) {
+            floatingBar.invoke()
+            Row(
+                modifier = Modifier.fillMaxWidth()
+                    .padding(start = 8.dp, end = 16.dp),
+                verticalAlignment = Alignment.CenterVertically,
             ) {
-                SimpleIconButton(
+                PickVisualMediaLauncherContainer(
+                    onResult = onMediaSelected,
+                    maxItems = mediaAvailableCount,
+                ) {
+                    SimpleIconButton(
+                        modifier = Modifier,
+                        onClick = { launchImage() },
+                        imageVector = Icons.Default.Image,
+                        contentDescription = "Add Image",
+                    )
+                }
+                PickVisualMediaLauncherContainer(
+                    onResult = onMediaSelected,
+                    maxItems = 1,
+                ) {
+                    SimpleIconButton(
+                        modifier = Modifier.padding(start = 4.dp),
+                        onClick = { launchVideo() },
+                        imageVector = Icons.Default.SmartDisplay,
+                        contentDescription = "Add Video",
+                    )
+                }
+                actions()
+                Spacer(modifier = Modifier.weight(1F))
+                SelectLanguageIconButton(
                     modifier = Modifier,
-                    onClick = { launchImage() },
-                    imageVector = Icons.Default.Image,
-                    contentDescription = "Add Image",
+                    onLanguageSelected = onLanguageSelected,
+                    selectedLanguages = selectedLanguages,
+                    maxLanguageCount = maxLanguageCount,
+                )
+                RemainingTextStatus(
+                    modifier = Modifier,
+                    maxCount = maxContentLimit,
+                    contentLength = contentLength,
                 )
             }
-            PickVisualMediaLauncherContainer(
-                onResult = onMediaSelected,
-                maxItems = 1,
-            ) {
-                SimpleIconButton(
-                    modifier = Modifier.padding(start = 16.dp),
-                    onClick = { launchVideo() },
-                    imageVector = Icons.Default.SmartDisplay,
-                    contentDescription = "Add Video",
-                )
-            }
-            actions()
-            Spacer(modifier = Modifier.weight(1F))
-            SelectLanguageIconButton(
-                modifier = Modifier,
-                onLanguageSelected = onLanguageSelected,
-                selectedLanguages = selectedLanguages,
-                maxLanguageCount = maxLanguageCount,
-            )
-            RemainingTextStatus(
-                modifier = Modifier,
-                maxCount = maxContentLimit,
-                contentLength = contentLength,
-            )
         }
     }
 }

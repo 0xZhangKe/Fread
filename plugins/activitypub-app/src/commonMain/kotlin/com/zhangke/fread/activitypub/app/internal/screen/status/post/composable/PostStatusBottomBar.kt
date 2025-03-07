@@ -111,6 +111,7 @@ internal fun PostStatusBottomBar(
     val bottomEmojiBarHeight = 48.dp
     AnimatedVisibility(
         visible = showEmojiPicker,
+        modifier = Modifier.padding(bottom = bottomPaddingByIme),
     ) {
         BackHandler(showEmojiPicker) {
             showEmojiPicker = false
@@ -118,7 +119,6 @@ internal fun PostStatusBottomBar(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = bottomPaddingByIme)
                 .height(280.dp)
         ) {
             CustomEmojiPicker(

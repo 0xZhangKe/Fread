@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -38,6 +37,7 @@ import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_follower
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_following
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_mentioned
@@ -65,28 +65,11 @@ fun PostInteractionSettingLabel(
     onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
 ) {
     var showSelector by remember { mutableStateOf(false) }
-    Row(
-        modifier = modifier
-            .noRippleClick { showSelector = true }
-            .background(
-                color = MaterialTheme.colorScheme.surfaceContainer,
-                shape = RoundedCornerShape(6.dp),
-            ).padding(horizontal = 6.dp, vertical = 1.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ) {
-        Icon(
-            modifier = Modifier.size(14.dp),
-            imageVector = setting.labelIcon,
-            contentDescription = null,
-            tint = MaterialTheme.colorScheme.onSurfaceVariant,
-        )
-        Text(
-            modifier = Modifier.padding(start = 2.dp),
-            color = MaterialTheme.colorScheme.onSurfaceVariant,
-            text = setting.label,
-            style = MaterialTheme.typography.labelSmall,
-        )
-    }
+    PublishSettingLabel(
+        modifier = modifier.noRippleClick { showSelector = true },
+        label = setting.label,
+        icon = setting.labelIcon,
+    )
     val state = rememberModalBottomSheetState(skipPartiallyExpanded = true)
     if (showSelector) {
         ModalBottomSheet(

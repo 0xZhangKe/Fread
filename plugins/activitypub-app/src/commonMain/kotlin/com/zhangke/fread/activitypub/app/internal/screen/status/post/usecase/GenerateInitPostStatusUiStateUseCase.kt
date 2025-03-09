@@ -133,7 +133,9 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusMediaAttachmentFile.RemoteFile(
             id = this.id,
             url = this.previewUrl.ifNullOrEmpty { this.url },
-            description = this.description,
+            alt = this.description,
+            originalAlt = this.description,
+            isVideo = this.type == BlogMediaType.VIDEO,
         )
     }
 }

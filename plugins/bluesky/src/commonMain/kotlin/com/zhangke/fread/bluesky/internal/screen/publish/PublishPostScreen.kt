@@ -19,6 +19,7 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostBottomPanel
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
@@ -69,8 +70,8 @@ class PublishPostScreen(
         onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
         onMediaSelected: (List<PlatformUri>) -> Unit,
         onLanguageSelected: (List<String>) -> Unit,
-        onMediaAltChanged: (PublishPostMediaAttachmentFile, String) -> Unit,
-        onMediaDeleteClick: (PublishPostMediaAttachmentFile) -> Unit,
+        onMediaAltChanged: (PublishPostMedia, String) -> Unit,
+        onMediaDeleteClick: (PublishPostMedia) -> Unit,
         onPublishClick: () -> Unit,
     ) {
         PublishPostScaffold(

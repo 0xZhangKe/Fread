@@ -25,18 +25,18 @@ import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.GenerateInitPostStatusUiStateUseCase
+import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
-import com.zhangke.fread.activitypub.app.internal.usecase.status.PostStatusUseCase
 import com.zhangke.fread.activitypub.app.post_status_content_is_empty
 import com.zhangke.fread.activitypub.app.post_status_failed
-import com.zhangke.fread.activitypub.app.post_status_media_is_not_upload
 import com.zhangke.fread.activitypub.app.post_status_poll_is_empty
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
@@ -62,7 +62,7 @@ class PostStatusViewModel @Inject constructor(
     private val generateInitPostStatusUiState: GenerateInitPostStatusUiStateUseCase,
     private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val clientManager: ActivityPubClientManager,
-    private val postStatus: PostStatusUseCase,
+    private val publishPost: PublishPostUseCase,
     private val platformUriTransformer: PlatformUriTransformer,
     @Assisted private val screenParams: PostStatusScreenParams,
     private val platformUriHelper: PlatformUriHelper,
@@ -196,7 +196,6 @@ class PostStatusViewModel @Inject constructor(
 
     private fun onAddVideo(file: ContentProviderFile) {
         val attachmentFile = buildLocalAttachmentFile(file)
-        attachmentFile.uploadJob.upload()
         _uiState.updateOnSuccess {
             it.copy(attachment = PostStatusAttachment.Video(attachmentFile))
         }
@@ -211,31 +210,21 @@ class PostStatusViewModel @Inject constructor(
             ?.imageList
             ?.let { imageList += it }
         uriList.forEach { uri ->
-            val attachmentFile = buildLocalAttachmentFile(uri)
-            attachmentFile.uploadJob.upload()
-            imageList += attachmentFile
+            imageList += buildLocalAttachmentFile(uri)
         }
         _uiState.updateOnSuccess {
             it.copy(attachment = PostStatusAttachment.Image(imageList))
         }
     }
 
-    private fun buildUploadFileJob(file: ContentProviderFile) = UploadMediaJob(
-        fileUri = file.uri,
-        role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null),
-        uploadMediaAttachment = uploadMediaAttachment,
-        scope = viewModelScope,
-    )
-
     private fun buildLocalAttachmentFile(
         file: ContentProviderFile,
     ) = PostStatusMediaAttachmentFile.LocalFile(
         file = file,
-        description = null,
-        uploadJob = buildUploadFileJob(file),
+        alt = null,
     )
 
-    fun onMediaDeleteClick(image: PostStatusMediaAttachmentFile) {
+    fun onMediaDeleteClick(image: PublishPostMedia) {
         val attachment = _uiState.value
             .requireSuccessData()
             .attachment ?: return
@@ -256,44 +245,20 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
-    fun onCancelUploadClick(file: PostStatusMediaAttachmentFile.LocalFile) {
-        file.uploadJob.cancel()
-    }
-
-    fun onRetryClick(file: PostStatusMediaAttachmentFile.LocalFile) {
-        file.uploadJob.upload()
-    }
-
-    fun onDescriptionInputted(file: PostStatusMediaAttachmentFile, description: String) {
+    fun onDescriptionInputted(file: PublishPostMedia, description: String) {
         _uiState.updateOnSuccess { state ->
             val imageList = state.attachment?.asImageOrNull?.imageList ?: emptyList()
             val newImageList = imageList.map {
                 if (it == file) {
                     when (it) {
-                        is PostStatusMediaAttachmentFile.LocalFile -> it.copy(description = description)
-                        is PostStatusMediaAttachmentFile.RemoteFile -> it.copy(description = description)
+                        is PostStatusMediaAttachmentFile.LocalFile -> it.copy(alt = description)
+                        is PostStatusMediaAttachmentFile.RemoteFile -> it.copy(alt = description)
                     }
                 } else {
                     it
                 }
             }
             state.copy(attachment = PostStatusAttachment.Image(newImageList))
-        }
-        if (file is PostStatusMediaAttachmentFile.LocalFile) {
-            val mediaId = file.fileId
-            if (!mediaId.isNullOrEmpty()) {
-                launchInViewModel {
-                    val role = IdentityRole(_uiState.value.requireSuccessData().account.uri, null)
-                    clientManager.getClient(role)
-                        .mediaRepo
-                        .updateMedia(
-                            id = mediaId,
-                            description = description,
-                        ).onFailure {
-                            _snackMessage.emitTextMessageFromThrowable(it)
-                        }
-                }
-            }
         }
     }
 
@@ -395,55 +360,24 @@ class PostStatusViewModel @Inject constructor(
             _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
             return
         }
-        when (attachment) {
-            is PostStatusAttachment.Image -> {
-                val allSuccess = attachment.imageList
-                    .mapNotNull { it as? PostStatusMediaAttachmentFile.LocalFile }
-                    .map { it.uploadJob.uploadState.value }
-                    .all { it is UploadMediaJob.UploadState.Success }
-                if (!allSuccess) {
-                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_media_is_not_upload))
+        if (attachment is PostStatusAttachment.Poll) {
+            if (currentUiState.content.text.isEmpty()) {
+                _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
+                return
+            }
+            for (option in attachment.optionList) {
+                if (option.isEmpty()) {
+                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_poll_is_empty))
                     return
                 }
             }
-
-            is PostStatusAttachment.Video -> {
-                val uploadJob = attachment.video
-                    .let { it as? PostStatusMediaAttachmentFile.LocalFile }
-                    ?.uploadJob
-                if (uploadJob != null && uploadJob.uploadState.value !is UploadMediaJob.UploadState.Success) {
-                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_media_is_not_upload))
-                    return
-                }
-            }
-
-            is PostStatusAttachment.Poll -> {
-                if (currentUiState.content.text.isEmpty()) {
-                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
-                    return
-                }
-                for (option in attachment.optionList) {
-                    if (option.isEmpty()) {
-                        _snackMessage.emitInViewModel(textOf(Res.string.post_status_poll_is_empty))
-                        return
-                    }
-                }
-            }
-
-            else -> {}
         }
         launchInViewModel {
             _uiState.updateOnSuccess { it.copy(publishing = true) }
-            postStatus(
+            publishPost(
                 account = account,
-                content = currentUiState.content.text,
-                attachment = attachment,
-                originStatusId = (screenParams as? PostStatusScreenParams.EditStatusParams)?.blog?.id,
-                sensitive = currentUiState.sensitive,
-                replyToId = currentUiState.replyToBlog?.id,
-                spoilerText = currentUiState.warningContent.text,
-                visibility = currentUiState.visibility,
-                language = currentUiState.language,
+                uiState = currentUiState,
+                editingBlogId = (screenParams as? PostStatusScreenParams.EditStatusParams)?.blog?.id,
             ).onSuccess {
                 _uiState.updateOnSuccess { it.copy(publishing = false) }
                 _publishSuccessFlow.emit(Unit)

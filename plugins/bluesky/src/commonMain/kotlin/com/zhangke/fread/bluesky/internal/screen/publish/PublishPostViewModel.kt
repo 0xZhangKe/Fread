@@ -47,6 +47,7 @@ import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Dispatchers
@@ -172,9 +173,9 @@ class PublishPostViewModel @Inject constructor(
                 async { platformUriHelper.read(it) }
             }.awaitAll().filterNotNull()
             val attachment = if (fileList.first().isVideo) {
-                PublishPostMediaAttachment.Video(fileList.first().toUiFile())
+                PublishPostMediaAttachment.Video(fileList.first().toUiFile(true))
             } else {
-                PublishPostMediaAttachment.Image(fileList.map { it.toUiFile() })
+                PublishPostMediaAttachment.Image(fileList.map { it.toUiFile(false) })
             }
             _uiState.update { it.copy(attachment = currentAttachment.merge(attachment)) }
         }
@@ -191,14 +192,16 @@ class PublishPostViewModel @Inject constructor(
         return PublishPostMediaAttachment.Image(files + (attachment as PublishPostMediaAttachment.Image).files)
     }
 
-    private fun ContentProviderFile.toUiFile(): PublishPostMediaAttachmentFile {
+    private fun ContentProviderFile.toUiFile(isVideo: Boolean): PublishPostMediaAttachmentFile {
         return PublishPostMediaAttachmentFile(
             file = this,
-            alt = null
+            alt = null,
+            isVideo = isVideo,
         )
     }
 
-    fun onMediaAltChanged(file: PublishPostMediaAttachmentFile, alt: String) {
+    fun onMediaAltChanged(file: PublishPostMedia, alt: String) {
+        file as PublishPostMediaAttachmentFile
         val attachment = uiState.value.attachment
         if (attachment is PublishPostMediaAttachment.Video) {
             _uiState.update {
@@ -216,7 +219,7 @@ class PublishPostViewModel @Inject constructor(
         }
     }
 
-    fun onMediaDeleteClick(file: PublishPostMediaAttachmentFile) {
+    fun onMediaDeleteClick(file: PublishPostMedia) {
         val attachment = uiState.value.attachment
         if (attachment is PublishPostMediaAttachment.Video) {
             _uiState.update { it.copy(attachment = null) }
@@ -408,11 +411,6 @@ class PublishPostViewModel @Inject constructor(
             video?.let { PostEmbedUnion.Video(it) } ?: PostEmbedUnion.Images(images!!)
         }
         return Result.success(embed)
-    }
-
-    private fun buildQuoteEmbed(): StrongRef? {
-        val quoteBlog = uiState.value.quoteBlog ?: return null
-        return StrongRef(uri = AtUri(quoteBlog.url), cid = Cid(quoteBlog.id))
     }
 
     private suspend fun uploadVideo(file: PublishPostMediaAttachmentFile): Result<Video> {

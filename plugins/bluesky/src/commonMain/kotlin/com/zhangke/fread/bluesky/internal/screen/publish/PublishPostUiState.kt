@@ -6,6 +6,7 @@ import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
 import com.zhangke.fread.bluesky.internal.model.ReplySetting
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
 
 data class PublishPostUiState(
@@ -23,8 +24,6 @@ data class PublishPostUiState(
     val quoteBlog: Blog?,
     val list: List<ListView>,
 ) {
-
-    val replying: Boolean get() = replyBlog != null
 
     val remainingImageCount: Int
         get() {
@@ -62,6 +61,12 @@ data class PublishPostUiState(
 
 sealed interface PublishPostMediaAttachment {
 
+    val medias: List<PublishPostMedia>
+        get() = when (this) {
+            is Image -> files
+            is Video -> listOf(file)
+        }
+
     data class Image(val files: List<PublishPostMediaAttachmentFile>) : PublishPostMediaAttachment
 
     data class Video(val file: PublishPostMediaAttachmentFile) : PublishPostMediaAttachment
@@ -69,5 +74,11 @@ sealed interface PublishPostMediaAttachment {
 
 data class PublishPostMediaAttachmentFile(
     val file: ContentProviderFile,
-    val alt: String?,
-)
+    override val isVideo: Boolean,
+    override val alt: String?,
+) : PublishPostMedia {
+
+    override val uri: String
+        get() = file.uri.toString()
+
+}

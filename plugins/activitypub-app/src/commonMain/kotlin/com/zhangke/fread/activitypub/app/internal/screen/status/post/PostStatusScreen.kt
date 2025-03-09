@@ -35,9 +35,7 @@ import com.zhangke.framework.utils.TextFieldUtils
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusImageAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusVideoAttachment
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
@@ -45,6 +43,8 @@ import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content
 import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMediaAttachment
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
@@ -104,8 +104,6 @@ class PostStatusScreen(
                 onMediaSelected = viewModel::onMediaSelected,
                 onLanguageSelected = viewModel::onLanguageSelected,
                 onDeleteClick = viewModel::onMediaDeleteClick,
-                onCancelUploadClick = viewModel::onCancelUploadClick,
-                onRetryClick = viewModel::onRetryClick,
                 onDescriptionInputted = viewModel::onDescriptionInputted,
                 onPollClicked = viewModel::onPollClicked,
                 onPollContentChanged = viewModel::onPollContentChanged,
@@ -154,10 +152,8 @@ class PostStatusScreen(
         onPostClick: () -> Unit,
         onSensitiveClick: () -> Unit,
         onMediaSelected: (List<PlatformUri>) -> Unit,
-        onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
-        onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
-        onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
-        onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
+        onDeleteClick: (PublishPostMedia) -> Unit,
+        onDescriptionInputted: (PublishPostMedia, String) -> Unit,
         onLanguageSelected: (Locale) -> Unit,
         onPollClicked: () -> Unit,
         onPollContentChanged: (Int, String) -> Unit,
@@ -234,8 +230,6 @@ class PostStatusScreen(
                         .padding(bottom = 16.dp),
                     uiState = uiState,
                     onDeleteClick = onDeleteClick,
-                    onCancelUploadClick = onCancelUploadClick,
-                    onRetryClick = onRetryClick,
                     onDescriptionInputted = onDescriptionInputted,
                     onPollContentChanged = onPollContentChanged,
                     onRemovePollClick = onRemovePollClick,
@@ -273,10 +267,8 @@ class PostStatusScreen(
     private fun StatusAttachment(
         modifier: Modifier,
         uiState: PostStatusUiState,
-        onDeleteClick: (PostStatusMediaAttachmentFile) -> Unit,
-        onCancelUploadClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
-        onRetryClick: (PostStatusMediaAttachmentFile.LocalFile) -> Unit,
-        onDescriptionInputted: (PostStatusMediaAttachmentFile, String) -> Unit,
+        onDeleteClick: (PublishPostMedia) -> Unit,
+        onDescriptionInputted: (PublishPostMedia, String) -> Unit,
         onPollContentChanged: (Int, String) -> Unit,
         onRemovePollClick: () -> Unit,
         onRemovePollItemClick: (Int) -> Unit,
@@ -287,27 +279,26 @@ class PostStatusScreen(
         val attachment = uiState.attachment ?: return
         when (attachment) {
             is PostStatusAttachment.Image -> {
-                PostStatusImageAttachment(
-                    modifier = modifier,
-                    attachment = attachment,
+                PublishPostMediaAttachment(
+                    modifier = modifier
+                        .padding(horizontal = 16.dp),
+                    medias = attachment.imageList,
+                    mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
+                    onAltChanged = onDescriptionInputted,
                     onDeleteClick = onDeleteClick,
-                    onCancelUploadClick = onCancelUploadClick,
-                    onRetryClick = onRetryClick,
-                    onDescriptionInputted = onDescriptionInputted,
                 )
             }
 
             is PostStatusAttachment.Video -> {
-                PostStatusVideoAttachment(
-                    modifier = modifier,
-                    attachment = attachment,
+                PublishPostMediaAttachment(
+                    modifier = modifier
+                        .padding(horizontal = 16.dp),
+                    medias = listOf(attachment.video),
+                    mediaAltMaxCharacters = uiState.rules.altMaxCharacters,
+                    onAltChanged = onDescriptionInputted,
                     onDeleteClick = onDeleteClick,
-                    onCancelUploadClick = onCancelUploadClick,
-                    onRetryClick = onRetryClick,
-                    onDescriptionInputted = onDescriptionInputted,
                 )
             }
-
 
             is PostStatusAttachment.Poll -> {
                 PostStatusPoll(

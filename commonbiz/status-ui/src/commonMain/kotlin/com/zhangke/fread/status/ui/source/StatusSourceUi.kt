@@ -2,6 +2,7 @@ package com.zhangke.fread.status.ui.source
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.zhangke.fread.common.resources.logo
 import com.zhangke.fread.status.source.StatusSource
 
 @Composable
@@ -15,6 +16,6 @@ fun StatusSourceUi(
         title = source.name,
         subtitle = null,
         description = source.description,
-        protocolName = source.protocol.name,
+        protocolLogo = source.protocol.logo,
     )
 }

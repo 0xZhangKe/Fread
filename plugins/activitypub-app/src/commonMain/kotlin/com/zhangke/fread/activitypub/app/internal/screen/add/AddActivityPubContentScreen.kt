@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.add
 
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -93,6 +94,7 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
                         .padding(horizontal = 16.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
+
                     if (state.contentExist) {
                         Icon(
                             modifier = Modifier,
@@ -165,4 +167,19 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
             }
         }
     }
+
+//    @Composable
+//    private fun ContentAddingState(
+//        modifier: Modifier,
+//        success: Boolean,
+//    ) {
+//        val borderColor =
+//        Row(
+//            modifier = Modifier.border(
+//                color = borderColor,
+//            )
+//        ) {
+//
+//        }
+//    }
 }

@@ -2,6 +2,7 @@ package com.zhangke.fread.status.ui.source
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import com.zhangke.fread.common.resources.logo
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
 
@@ -17,7 +18,7 @@ fun BlogPlatformUi(
         title = platform.name,
         subtitle = platform.baseUrl.host,
         description = platform.description,
-        protocolName = platform.protocol.name,
+        protocolLogo = platform.protocol.logo,
         showDivider = showDivider,
     )
 }
@@ -33,6 +34,6 @@ fun BlogPlatformSnapshotUi(
         title = platform.domain,
         subtitle = null,
         description = platform.description,
-        protocolName = platform.protocol.name,
+        protocolLogo = platform.protocol.logo,
     )
 }

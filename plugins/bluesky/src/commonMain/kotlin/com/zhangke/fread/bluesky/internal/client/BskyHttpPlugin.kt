@@ -99,10 +99,10 @@ internal class XrpcAuthPlugin(
                     } else {
                         val account = plugin.accountProvider()
                         if (account != null) {
-                            refreshToken(scope, account.refreshJwt)?.let { response ->
-                                plugin.newSessionUpdater(response)
+                            refreshToken(scope, account.refreshJwt)?.let { refreshedResponse ->
+                                plugin.newSessionUpdater(refreshedResponse)
                                 context.headers.remove(Authorization)
-                                context.bearerAuth(response.accessJwt)
+                                context.bearerAuth(refreshedResponse.accessJwt)
                                 result = execute(context)
                             }
                         }

@@ -18,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -35,7 +37,7 @@ fun SourceCommonUi(
     title: String,
     subtitle: String?,
     description: String,
-    protocolName: String,
+    protocolLogo: ImageVector,
     modifier: Modifier = Modifier,
     showDivider: Boolean = true,
 ) {
@@ -56,9 +58,9 @@ fun SourceCommonUi(
                     Image(
                         modifier = Modifier
                             .freadPlaceholder(
-                            action is ImageAction.Loading,
-                            shape = CircleShape,
-                        )
+                                visible = action !is ImageAction.Success,
+                                shape = CircleShape,
+                            )
                             .matchParentSize()
                             .clip(CircleShape),
                         painter = rememberImageActionPainter(action),
@@ -70,22 +72,20 @@ fun SourceCommonUi(
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Row(
-                    verticalAlignment = Alignment.Bottom,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = title,
                         maxLines = 1,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = protocolName,
-                        maxLines = 1,
-                        textAlign = TextAlign.Start,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelMedium,
+                    Spacer(modifier = Modifier.width(4.dp))
+                    Image(
+                        modifier = Modifier.size(12.dp),
+                        imageVector = protocolLogo,
+                        contentDescription = null,
                     )
                 }
                 if (subtitle.isNullOrEmpty()) {
@@ -97,10 +97,11 @@ fun SourceCommonUi(
                         maxLines = 1,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelSmall,
                     )
                 }
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(2.dp))
                 FreadRichText(
                     content = description,
                     maxLines = 3,
@@ -113,8 +114,8 @@ fun SourceCommonUi(
                         browserLauncher.launchWebTabInApp(it)
                     },
                 )
+                Spacer(modifier = Modifier.width(16.dp))
             }
-            Spacer(Modifier.width(16.dp))
         }
         Spacer(Modifier.height(8.dp))
         if (showDivider) {

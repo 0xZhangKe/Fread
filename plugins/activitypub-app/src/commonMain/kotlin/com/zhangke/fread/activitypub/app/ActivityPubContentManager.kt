@@ -17,6 +17,7 @@ class ActivityPubContentManager @Inject constructor() : IContentManager {
         action: AddContentAction,
     ) {
         if (platform.protocol.notActivityPub) return
+        action.onFinishPage()
         action.onOpenNewPage(AddActivityPubContentScreen(platform))
     }
 

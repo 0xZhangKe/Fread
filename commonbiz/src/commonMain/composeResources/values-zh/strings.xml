@@ -27,6 +27,8 @@
 
     <string name="save">保存</string>
 
+    <string name="done">完成</string>
+
     <string name="status_provider_type_activity_pub">长毛象</string>
 
     <string name="add_content_title">添加内容</string>
@@ -34,6 +36,7 @@
     <string name="add_content_success_with_login_reminder">添加成功，是否登录？</string>
 
     <string name="content_exist_tips">该内容已存在</string>
+    <string name="content_add_success">内容添加成功</string>
 
     <string name="add_feeds_page_empty_name_exist">该名字已存在</string>
 

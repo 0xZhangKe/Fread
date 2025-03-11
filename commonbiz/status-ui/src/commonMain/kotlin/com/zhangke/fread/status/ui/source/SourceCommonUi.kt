@@ -37,7 +37,7 @@ fun SourceCommonUi(
     title: String,
     subtitle: String?,
     description: String,
-    protocolLogo: ImageVector,
+    protocolLogo: ImageVector?,
     modifier: Modifier = Modifier,
     showDivider: Boolean = true,
 ) {
@@ -81,12 +81,14 @@ fun SourceCommonUi(
                         overflow = TextOverflow.Ellipsis,
                         style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     )
-                    Spacer(modifier = Modifier.width(4.dp))
-                    Image(
-                        modifier = Modifier.size(12.dp),
-                        imageVector = protocolLogo,
-                        contentDescription = null,
-                    )
+                    if (protocolLogo != null) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Image(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = protocolLogo,
+                            contentDescription = null,
+                        )
+                    }
                 }
                 if (subtitle.isNullOrEmpty()) {
                     Spacer(modifier = Modifier.height(0.5.dp))

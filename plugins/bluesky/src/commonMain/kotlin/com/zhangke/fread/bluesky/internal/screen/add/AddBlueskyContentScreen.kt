@@ -5,7 +5,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -148,10 +147,9 @@ class AddBlueskyContentScreen(
                             modifier = Modifier.align(Alignment.CenterStart),
                             onClick = onSkipClick,
                             colors = ButtonDefaults.buttonColors(
-                                containerColor = MaterialTheme.colorScheme.surfaceContainer,
-                                contentColor = MaterialTheme.colorScheme.onSurface,
+                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                                contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
                             ),
-                            shape = RoundedCornerShape(6.dp),
                         ) {
                             Text(stringResource(com.zhangke.fread.framework.Res.string.skip))
                         }
@@ -159,7 +157,10 @@ class AddBlueskyContentScreen(
                     Button(
                         modifier = Modifier.align(Alignment.CenterEnd),
                         onClick = onLoginClick,
-                        shape = RoundedCornerShape(6.dp),
+                        colors = ButtonDefaults.buttonColors(
+                            containerColor = MaterialTheme.colorScheme.primaryContainer,
+                            contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        ),
                         enabled = uiState.canLogin,
                     ) {
                         Text(stringResource(com.zhangke.fread.commonbiz.Res.string.login))

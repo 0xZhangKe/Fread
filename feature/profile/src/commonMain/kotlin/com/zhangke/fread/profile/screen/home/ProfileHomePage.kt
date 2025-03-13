@@ -40,7 +40,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
@@ -52,7 +51,7 @@ import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.resources.PlatformLogo
-import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.profile_page_logout_dialog_content
 import com.zhangke.fread.feature.profile.profile_page_title
@@ -69,10 +68,10 @@ class ProfileHomePage : BaseScreen() {
     @Composable
     override fun Content() {
         super.Content()
-        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val rootNavigator = LocalNavigator.currentOrThrow.rootNavigator
+        val moduleScreenVisitor = LocalModuleScreenVisitor.current
         LaunchedEffect(Unit) {
             viewModel.refreshAccountInfo()
         }
@@ -84,7 +83,7 @@ class ProfileHomePage : BaseScreen() {
                 uiState = uiState,
                 onAddAccountClick = {
                     reportClick(ProfileElements.ADD_ACCOUNT)
-                    bottomSheetNavigator.show(LoginBottomSheetScreen())
+                    rootNavigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
                 },
                 onSettingClick = {
                     reportClick(ProfileElements.SETTING)

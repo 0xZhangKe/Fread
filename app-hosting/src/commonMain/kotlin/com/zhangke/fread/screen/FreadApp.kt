@@ -42,6 +42,8 @@ import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.ThumbnailHelper
 import com.zhangke.fread.common.utils.ToastHelper
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
+import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
@@ -69,6 +71,7 @@ internal fun FreadApp(
     activityLanguageHelper: ActivityLanguageHelper,
     activityTextHandler: ActivityTextHandler,
     activityHelper: ActivityHelper,
+    moduleScreenVisitor: ModuleScreenVisitor,
 ) {
     val statusConfig by freadConfigManager.statusConfigFlow.collectAsState()
     CompositionLocalProvider(
@@ -86,6 +89,7 @@ internal fun FreadApp(
         LocalActivityTextHandler provides activityTextHandler,
         LocalToastHelper provides toastHelper,
         LocalActivityHelper provides activityHelper,
+        LocalModuleScreenVisitor provides moduleScreenVisitor,
     ) {
         ProvideNavigatorLifecycleKMPSupport {
             TransparentNavigator {

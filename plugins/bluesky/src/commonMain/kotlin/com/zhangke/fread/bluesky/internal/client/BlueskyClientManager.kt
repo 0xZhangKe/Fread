@@ -57,7 +57,7 @@ class BlueskyClientManager @Inject constructor(
             loggedAccountProvider = loggedAccountProvider,
             newSessionUpdater = { updateNewSession(role, it) },
             onLoginRequest = {
-                GlobalScreenNavigation.navigate(AddBlueskyContentScreen(role.baseUrl!!, true))
+//                GlobalScreenNavigation.navigate(AddBlueskyContentScreen(role.baseUrl!!, true))
             },
         )
     }

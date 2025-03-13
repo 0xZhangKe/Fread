@@ -1,5 +1,6 @@
 package com.zhangke.fread.commonbiz.shared
 
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
@@ -37,5 +38,15 @@ interface SharedScreenModelModule {
         return LoginToTargetPlatformViewModel::class to LoginToTargetPlatformViewModel.Factory { platform ->
             creator(platform)
         }
+    }
+
+    @Provides
+    @ApplicationScope
+    fun provideModuleScreenVisitor(
+        feedsScreenVisitor: IFeedsScreenVisitor,
+    ): ModuleScreenVisitor {
+        return ModuleScreenVisitor(
+            feedsScreenVisitor = feedsScreenVisitor,
+        )
     }
 }

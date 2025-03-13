@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -35,7 +36,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -50,6 +51,7 @@ import com.zhangke.fread.analytics.ProfileElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.common.resources.PlatformLogo
 import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
 import com.zhangke.fread.feature.profile.Res
 import com.zhangke.fread.feature.profile.profile_page_logout_dialog_content
@@ -201,16 +203,8 @@ class ProfileHomePage : BaseScreen() {
                         start = 16.dp,
                         top = 16.dp,
                         end = 16.dp,
-                        bottom = 8.dp
                     )
             ) {
-                Text(
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    text = platform.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
                 accountList.forEach { account ->
                     LoggedAccountSection(
                         account = account,
@@ -240,9 +234,10 @@ class ProfileHomePage : BaseScreen() {
         var showLogoutDialog by remember {
             mutableStateOf(false)
         }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .noRippleClick { onAccountClick(account) }) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClick { onAccountClick(account) }) {
             BlogAuthorAvatar(
                 modifier = Modifier
                     .size(48.dp)
@@ -250,23 +245,38 @@ class ProfileHomePage : BaseScreen() {
                 imageUrl = account.avatar,
             )
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                FreadRichText(
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    maxLines = 1,
-                    content = account.userName,
-                    emojis = account.emojis,
-                    fontSizeSp = 22F,
-                    onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, account.role)
-                    },
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    FreadRichText(
+                        modifier = Modifier.padding(start = 16.dp),
+                        maxLines = 1,
+                        content = account.userName,
+                        emojis = account.emojis,
+                        fontSizeSp = 18F,
+                        fontWeight = FontWeight.SemiBold,
+                        onUrlClick = {
+                            browserLauncher.launchWebTabInApp(it, account.role)
+                        },
+                    )
+                    Spacer(modifier = Modifier.width(4.dp))
+                    PlatformLogo(
+                        modifier = Modifier.size(14.dp),
+                        protocol = account.platform.protocol,
+                    )
+                }
+                Text(
+                    modifier = Modifier.padding(start = 16.dp, top = 2.dp),
+                    text = account.prettyHandle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
                 )
                 FreadRichText(
                     modifier = Modifier.padding(start = 16.dp, top = 4.dp),
-                    maxLines = 3,
+                    maxLines = 5,
                     content = account.description.orEmpty(),
                     emojis = account.emojis,
                     fontSizeSp = 16F,

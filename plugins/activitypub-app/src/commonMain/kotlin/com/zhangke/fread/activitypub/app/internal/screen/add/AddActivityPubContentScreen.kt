@@ -18,7 +18,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -92,19 +92,19 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
                     modifier = Modifier.fillMaxSize()
                         .padding(top = 42.dp)
                         .padding(horizontal = 16.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
                 ) {
                     ContentAddingState(
-                        modifier = Modifier.fillMaxWidth(),
+                        modifier = Modifier.align(Alignment.CenterHorizontally)
+                            .fillMaxWidth(),
                         contentExists = state.contentExist,
                     )
                     Spacer(modifier = Modifier.height(16.dp))
                     PlatformPreview(
-                        modifier = Modifier,
+                        modifier = Modifier.align(Alignment.CenterHorizontally),
                         platform = platform,
                     )
                     LoggedAccountInfo(
-                        modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
+                        modifier = Modifier.align(Alignment.CenterHorizontally).fillMaxWidth(),
                         account = state.account,
                         onSkipClick = onSkipClick,
                         onLoginClick = onLoginClick,
@@ -173,22 +173,26 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
         onDoneClick: () -> Unit,
     ) {
         if (account == null) {
+            Spacer(modifier = Modifier.padding(top = 16.dp))
             Row(
-                modifier = modifier.padding(horizontal = 64.dp),
+                modifier = modifier.padding(horizontal = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                TextButton(
+                Button(
                     modifier = Modifier.weight(1f),
                     onClick = onSkipClick,
-                    colors = ButtonDefaults.textButtonColors(),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                    ),
                 ) {
                     Text(text = stringResource(com.zhangke.fread.framework.Res.string.skip))
                 }
                 Spacer(modifier = Modifier.width(32.dp))
-                TextButton(
+                Button(
                     modifier = Modifier.weight(1f),
                     onClick = onLoginClick,
-                    colors = ButtonDefaults.textButtonColors(
+                    colors = ButtonDefaults.buttonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
                         contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
                     ),
@@ -197,22 +201,31 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
                 }
             }
         } else {
+            VerticalDivider(modifier = Modifier.padding(start = 40.dp).height(48.dp))
             Column(
                 modifier = modifier.fillMaxWidth(),
                 horizontalAlignment = Alignment.CenterHorizontally,
             ) {
-                SourceCommonUi(
+                Card(
                     modifier = Modifier.fillMaxWidth(),
-                    thumbnail = account.avatar.orEmpty(),
-                    title = account.userName,
-                    subtitle = account.prettyHandle,
-                    description = account.description.orEmpty(),
-                    protocolLogo = null,
-                    showDivider = false,
-                )
+                ) {
+                    SourceCommonUi(
+                        modifier = Modifier.fillMaxWidth(),
+                        thumbnail = account.avatar.orEmpty(),
+                        title = account.userName,
+                        subtitle = account.prettyHandle,
+                        description = account.description.orEmpty(),
+                        protocolLogo = null,
+                        showDivider = false,
+                    )
+                }
 
                 Button(
                     modifier = Modifier.padding(top = 16.dp),
+                    colors = ButtonDefaults.buttonColors(
+                        containerColor = MaterialTheme.colorScheme.primaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                    ),
                     onClick = onDoneClick,
                 ) {
                     Text(text = stringResource(Res.string.done))

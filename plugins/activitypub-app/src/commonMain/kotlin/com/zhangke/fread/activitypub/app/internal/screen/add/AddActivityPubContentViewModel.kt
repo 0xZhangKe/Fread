@@ -39,7 +39,7 @@ class AddActivityPubContentViewModel @Inject constructor(
                 _uiState.updateToSuccess(
                     AddActivityPubContentUiState(
                         contentExist = true,
-                        account = null,
+                        account = accountManager.getAccount(platform.baseUrl),
                     )
                 )
             } else {

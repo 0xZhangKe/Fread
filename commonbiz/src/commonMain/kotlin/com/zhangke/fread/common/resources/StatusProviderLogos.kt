@@ -1,8 +1,12 @@
 package com.zhangke.fread.common.resources
 
+import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.RssFeed
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.bluesky_logo
@@ -22,6 +26,29 @@ val StatusProviderProtocol.logo: ImageVector
             else -> rssLogo()
         }
     }
+
+@Composable
+fun PlatformLogo(
+    modifier: Modifier,
+    protocol: StatusProviderProtocol,
+) {
+    Box(
+        modifier = modifier,
+    ) {
+        val logo = when {
+            protocol.isBluesky -> blueskyLogo()
+            protocol.isActivityPub -> mastodonLogo()
+            else -> null
+        }
+        if (logo != null) {
+            Image(
+                modifier = Modifier.fillMaxSize(),
+                imageVector = logo,
+                contentDescription = null,
+            )
+        }
+    }
+}
 
 @Composable
 fun mastodonLogo(): ImageVector {

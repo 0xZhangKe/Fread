@@ -23,7 +23,8 @@ internal fun BlogEmbedsUi(
     if (embeds.isEmpty()) return
     embeds.forEach { embed ->
         BlogEmbedUi(
-            modifier = modifier,
+            modifier = modifier
+                .padding(top = style.contentStyle.contentVerticalSpacing),
             embed = embed,
             style = style,
             onUrlClick = onUrlClick,
@@ -45,7 +46,6 @@ private fun BlogEmbedUi(
             StatusEmbedLinkUi(
                 modifier = modifier
                     .embedBorder()
-                    .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 linkEmbed = embed,
                 style = style.cardStyle,
@@ -56,8 +56,8 @@ private fun BlogEmbedUi(
         is BlogEmbed.Blog -> {
             BlogInEmbedding(
                 modifier = modifier
-                    .padding(8.dp)
-                    .embedBorder(),
+                    .embedBorder()
+                    .padding(8.dp),
                 blog = embed.blog,
                 style = style,
                 onContentClick = onContentClick,

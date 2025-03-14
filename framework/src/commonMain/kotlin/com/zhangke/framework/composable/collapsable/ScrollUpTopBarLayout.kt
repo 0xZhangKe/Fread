@@ -12,6 +12,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberUpdatedState
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -30,10 +31,10 @@ fun ScrollUpTopBarLayout(
     immersiveToTopBar: Boolean = true,
     scrollableContent: @Composable BoxScope.() -> Unit,
 ) {
-    var topBarHeightPx: Int by remember {
+    var topBarHeightPx: Int by rememberSaveable {
         mutableIntStateOf(0)
     }
-    var headerContentHeightPx: Int by remember {
+    var headerContentHeightPx: Int by rememberSaveable {
         mutableIntStateOf(0)
     }
     val nestedScrollConnection = if (immersiveToTopBar){

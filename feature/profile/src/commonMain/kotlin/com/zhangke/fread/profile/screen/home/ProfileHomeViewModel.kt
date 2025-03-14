@@ -78,7 +78,7 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getFavouritedScreen(
-                    role = IdentityRole(account.uri, null),
+                    role = IdentityRole(account.uri, baseUrl = account.platform.baseUrl),
                     protocol = account.platform.protocol,
                 )?.let { _openPageFlow.emit(it) }
         }

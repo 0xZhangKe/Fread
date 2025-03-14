@@ -4,8 +4,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.State
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.Saver
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
@@ -22,8 +24,10 @@ fun rememberCollapsableTopBarLayoutConnection(
             StaticTopBarLayoutConnection()
         }
     } else {
-        remember(contentCanScrollBackward, maxPx, minPx) {
-            CollapsableTopBarLayoutConnection(contentCanScrollBackward, maxPx, minPx)
+        rememberSaveable(maxPx, minPx, saver = CollapsableTopBarLayoutConnection.Saver) {
+            CollapsableTopBarLayoutConnection(maxPx, minPx)
+        }.also {
+            it.contentCanScrollBackward = contentCanScrollBackward
         }
     }
 }
@@ -39,10 +43,11 @@ class StaticTopBarLayoutConnection : NestedScrollConnection, ICollapsableTopBarL
 }
 
 class CollapsableTopBarLayoutConnection(
-    private val contentCanScrollBackward: State<Boolean>,
     private val maxPx: Float,
     private val minPx: Float,
 ) : NestedScrollConnection, ICollapsableTopBarLayoutConnection {
+
+    var contentCanScrollBackward: State<Boolean>? = null
 
     private var topBarHeight: Float = maxPx
         set(value) {
@@ -58,7 +63,7 @@ class CollapsableTopBarLayoutConnection(
 
         if (height == minPx) {
             if (available.y > 0F) {
-                return if (contentCanScrollBackward.value) {
+                return if (contentCanScrollBackward?.value == true) {
                     Offset.Zero
                 } else {
                     topBarHeight += available.y
@@ -80,5 +85,22 @@ class CollapsableTopBarLayoutConnection(
         topBarHeight += available.y
 
         return Offset(0f, available.y)
+    }
+
+    companion object {
+
+        val Saver: Saver<CollapsableTopBarLayoutConnection, *> = listSaver(
+            save = {
+                listOf(it.minPx, it.maxPx, it.topBarHeight)
+            },
+            restore = {
+                CollapsableTopBarLayoutConnection(
+                    minPx = it[0],
+                    maxPx = it[1],
+                ).apply {
+                    topBarHeight = it[2]
+                }
+            }
+        )
     }
 }

@@ -89,9 +89,12 @@ class GetFeedsStatusUseCase @Inject constructor(
             }
 
             is BlueskyFeeds.UserMedias -> {
+                val did = feeds.did ?: loggedAccount?.did ?: return Result.failure(
+                    IllegalArgumentException("did is null")
+                )
                 client.getAuthorFeedCatching(
                     GetAuthorFeedQueryParams(
-                        actor = Did(feeds.did),
+                        actor = Did(did),
                         cursor = cursor,
                         filter = GetAuthorFeedFilter.PostsWithMedia,
                     )
@@ -99,9 +102,12 @@ class GetFeedsStatusUseCase @Inject constructor(
             }
 
             is BlueskyFeeds.UserLikes -> {
+                val did = feeds.did ?: loggedAccount?.did ?: return Result.failure(
+                    IllegalArgumentException("did is null")
+                )
                 client.getActorLikesCatching(
                     GetActorLikesQueryParams(
-                        actor = Did(feeds.did),
+                        actor = Did(did),
                         cursor = cursor,
                     )
                 ).map { it.cursor to it.feed }.convert(role, platform, loggedAccount)

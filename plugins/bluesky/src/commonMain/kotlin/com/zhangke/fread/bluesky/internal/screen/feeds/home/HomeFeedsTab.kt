@@ -16,9 +16,9 @@ import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
 import com.zhangke.fread.status.model.IdentityRole
 
 class HomeFeedsTab(
-    private val contentCanScrollBackward: MutableState<Boolean>?,
     private val feeds: BlueskyFeeds,
     private val role: IdentityRole,
+    private val contentCanScrollBackward: MutableState<Boolean>? = null,
 ) : PagerTab {
 
     override val options: PagerTabOptions

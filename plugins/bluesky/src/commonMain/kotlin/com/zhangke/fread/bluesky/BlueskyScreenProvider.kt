@@ -6,6 +6,8 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreen
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentScreen
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
@@ -129,14 +131,18 @@ class BlueskyScreenProvider @Inject constructor(
         role: IdentityRole,
         protocol: StatusProviderProtocol
     ): Screen? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
     ): Screen? {
-        TODO("Not yet implemented")
+        if (protocol.notBluesky) return null
+        return HomeFeedsScreen(
+            role = role,
+            feeds = BlueskyFeeds.UserLikes(null),
+        )
     }
 
     override fun getFollowedHashtagScreen(
@@ -150,6 +156,6 @@ class BlueskyScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl
     ): String? {
-        TODO("Not yet implemented")
+        return null
     }
 }

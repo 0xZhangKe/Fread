@@ -117,7 +117,7 @@ sealed interface BlueskyFeeds {
 
     @Serializable
     data class UserMedias(
-        val did: String,
+        val did: String?,
         override val pinned: Boolean = false,
         override val following: Boolean = false,
     ) : BlueskyFeeds {
@@ -130,7 +130,7 @@ sealed interface BlueskyFeeds {
 
     @Serializable
     data class UserLikes(
-        val did: String,
+        val did: String?,
         override val pinned: Boolean = false,
         override val following: Boolean = false,
     ) : BlueskyFeeds {

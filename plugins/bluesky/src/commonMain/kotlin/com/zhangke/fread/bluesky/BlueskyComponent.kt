@@ -2,8 +2,9 @@ package com.zhangke.fread.bluesky
 
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentViewModel
+import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsViewModel
+import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsContainerViewModel
-import com.zhangke.fread.bluesky.internal.screen.feeds.list.BskyFeedsExplorerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentViewModel
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostViewModel
@@ -54,8 +55,8 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideBskyFeedsExplorerViewModel(creator: (IdentityRole) -> BskyFeedsExplorerViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return BskyFeedsExplorerViewModel::class to BskyFeedsExplorerViewModel.Factory { role ->
+    fun provideBskyFeedsExplorerViewModel(creator: (IdentityRole) -> BskyFollowingFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return BskyFollowingFeedsViewModel::class to BskyFollowingFeedsViewModel.Factory { role ->
             creator(role)
         }
     }
@@ -96,5 +97,13 @@ interface BlueskyComponent : BlueskyPlatformComponent {
     @Provides
     fun provideHomeFeedsContainerViewModel(creator: () -> HomeFeedsContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return HomeFeedsContainerViewModel::class to creator
+    }
+
+    @IntoMap
+    @Provides
+    fun provideExplorerFeedsViewModel(creator: (IdentityRole) -> ExplorerFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return ExplorerFeedsViewModel::class to ExplorerFeedsViewModel.Factory { role ->
+            creator(role)
+        }
     }
 }

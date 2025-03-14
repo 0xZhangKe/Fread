@@ -18,7 +18,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_edit_content_title
-import com.zhangke.fread.bluesky.internal.screen.feeds.list.BskyFeedsExplorerPage
+import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPage
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.ui.bar.EditContentTopBar
 import org.jetbrains.compose.resources.stringResource
@@ -44,7 +44,7 @@ class BlueskyEditContentScreen(
             onDeleteClick = {},
             onExplorerClick = {
                 uiState.successDataOrNull()?.role?.let {
-                    navigator.push(BskyFeedsExplorerPage(it))
+                    navigator.push(BskyFollowingFeedsPage(it))
                 }
             },
         )

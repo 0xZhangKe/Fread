@@ -115,7 +115,7 @@ class BlueskyHomeTab(
                         FloatingActionButton(
                             onClick = {
                                 reportClick(HomeTabElements.POST_STATUS)
-                                onPostBlogClick(uiState.account)
+                                uiState.account?.let(onPostBlogClick)
                             },
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary,
@@ -238,6 +238,6 @@ class BlueskyHomeTab(
 
     private fun createTabList(content: BlueskyContent, role: IdentityRole): List<HomeFeedsTab> {
         return content.feedsList.filter { it.pinned }
-            .map { HomeFeedsTab(null, it, role) }
+            .map { HomeFeedsTab(feeds = it, role = role) }
     }
 }

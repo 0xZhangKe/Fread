@@ -38,6 +38,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
+import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -88,6 +89,9 @@ class BskyUserDetailScreen(
     private val role: IdentityRole,
     private val did: String,
 ) : BaseScreen() {
+
+    override val key: ScreenKey
+        get() = role.toString() + did
 
     @Composable
     override fun Content() {

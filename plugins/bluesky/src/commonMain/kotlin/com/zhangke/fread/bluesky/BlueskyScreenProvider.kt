@@ -139,10 +139,7 @@ class BlueskyScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol
     ): Screen? {
         if (protocol.notBluesky) return null
-        return HomeFeedsScreen(
-            role = role,
-            feeds = BlueskyFeeds.UserLikes(null),
-        )
+        return HomeFeedsScreen.create(BlueskyFeeds.UserLikes(null), role)
     }
 
     override fun getFollowedHashtagScreen(

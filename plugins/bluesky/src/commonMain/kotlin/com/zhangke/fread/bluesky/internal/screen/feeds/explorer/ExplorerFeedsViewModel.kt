@@ -1,4 +1,4 @@
-package com.zhangke.fread.bluesky.internal.screen.feeds.list
+package com.zhangke.fread.bluesky.internal.screen.feeds.explorer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -7,12 +7,12 @@ import com.zhangke.framework.collections.updateItem
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
+import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyFeedsAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.FollowFeedsUseCase
-import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
@@ -25,11 +25,10 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
-class BskyFeedsExplorerViewModel @Inject constructor(
+class ExplorerFeedsViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
-    private val getFollowingFeeds: GetFollowingFeedsUseCase,
-    private val followFeeds: FollowFeedsUseCase,
     private val feedsAdapter: BlueskyFeedsAdapter,
+    private val followFeeds: FollowFeedsUseCase,
     @Assisted private val role: IdentityRole,
 ) : ViewModel() {
 
@@ -42,59 +41,53 @@ class BskyFeedsExplorerViewModel @Inject constructor(
 
         fun create(
             role: IdentityRole,
-        ): BskyFeedsExplorerViewModel
+        ): ExplorerFeedsViewModel
     }
 
-    private val _uiState = MutableStateFlow(BskyFeedsExplorerUiState.default())
+    private val _uiState = MutableStateFlow(ExplorerFeedsUiState.default())
     val uiState = _uiState.asStateFlow()
 
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage.asSharedFlow()
 
+    private var refreshMoreJob: Job? = null
+    private var loadMoreJob: Job? = null
     private var cursor: String? = null
 
-    private var initJob: Job? = null
-    private var loadMoreJob: Job? = null
-
     init {
-        loadFeedsList(false)
-    }
-
-    fun onRefresh() {
-        loadFeedsList(true)
-    }
-
-    private fun loadFeedsList(refreshing: Boolean) {
-        if (initJob?.isActive == true) return
-        initJob?.cancel()
-        cursor = null
-        initJob = viewModelScope.launch {
-            _uiState.update {
-                it.copy(
-                    initializing = !refreshing,
-                    refreshing = refreshing,
-                    pageError = null,
-                )
-            }
-            getFollowingFeeds(role)
+        launchInViewModel {
+            _uiState.update { it.copy(initializing = true) }
+            getSuggestedFeeds(null)
                 .onSuccess { list ->
                     _uiState.update {
                         it.copy(
                             initializing = false,
-                            refreshing = false,
-                            followingFeeds = list,
+                            feeds = list,
                         )
                     }
                 }.onFailure { t ->
+                    _uiState.update { it.copy(initializing = false, pageError = t) }
+                }
+        }
+    }
+
+    fun onRefresh() {
+        if (refreshMoreJob?.isActive == true) return
+        refreshMoreJob?.cancel()
+        refreshMoreJob = viewModelScope.launch {
+            _uiState.update { it.copy(refreshing = true) }
+            getSuggestedFeeds(null)
+                .onSuccess { list ->
                     _uiState.update {
                         it.copy(
-                            initializing = false,
                             refreshing = false,
-                            pageError = t,
+                            feeds = list,
                         )
                     }
+                }.onFailure { t ->
+                    _uiState.update { it.copy(refreshing = false) }
+                    _snackBarMessage.emitTextMessageFromThrowable(t)
                 }
-            onLoadMore()
         }
     }
 
@@ -109,7 +102,7 @@ class BskyFeedsExplorerViewModel @Inject constructor(
                     _uiState.update {
                         it.copy(
                             loadMoreState = LoadState.Idle,
-                            suggestedFeeds = it.suggestedFeeds + list,
+                            feeds = it.feeds + list,
                         )
                     }
                 }.onFailure { t ->
@@ -120,7 +113,7 @@ class BskyFeedsExplorerViewModel @Inject constructor(
         }
     }
 
-    private suspend fun getSuggestedFeeds(): Result<List<BlueskyFeedsUiState>> {
+    private suspend fun getSuggestedFeeds(cursor: String? = this.cursor): Result<List<BlueskyFeedsUiState>> {
         return clientManager.getClient(role)
             .getSuggestedFeedsCatching(GetSuggestedFeedsQueryParams(cursor = cursor))
             .onSuccess {
@@ -128,36 +121,43 @@ class BskyFeedsExplorerViewModel @Inject constructor(
             }
             .map {
                 it.feeds.map { item ->
-                    BlueskyFeedsUiState(false, feedsAdapter.convertToFeeds(item, false, false))
+                    BlueskyFeedsUiState(
+                        followRequesting = false,
+                        feeds = feedsAdapter.convertToFeeds(
+                            generator = item,
+                            following = false,
+                            pinned = false
+                        ),
+                    )
                 }
             }
     }
 
-    fun onAddFeedsClick(feeds: BlueskyFeedsUiState) {
-        if (feeds.loading) return
-        if (feeds.feeds !is BlueskyFeeds.Feeds) return
+    fun onFollowClick(feedsUiState: BlueskyFeedsUiState) {
+        if (feedsUiState.followRequesting) return
+        if (feedsUiState.feeds !is BlueskyFeeds.Feeds) return
         viewModelScope.launch {
             _uiState.update { state ->
-                state.copy(suggestedFeeds = state.suggestedFeeds.updateItem(feeds) {
-                    it.copy(loading = true)
-                })
+                state.copy(
+                    feeds = state.feeds.updateItem(feedsUiState) {
+                        it.copy(followRequesting = true)
+                    },
+                )
             }
-            followFeeds(role, feeds.feeds)
+            followFeeds(role, feedsUiState.feeds)
                 .onSuccess {
                     _uiState.update { state ->
-                        state.copy(suggestedFeeds = state.suggestedFeeds.filter { it.feeds != feeds.feeds })
+                        state.copy(feeds = state.feeds.filter { it.feeds != feedsUiState.feeds })
                     }
-                    getFollowingFeeds(role)
-                        .onSuccess { followingFeeds ->
-                            _uiState.update { it.copy(followingFeeds = followingFeeds) }
-                        }
-                }.onFailure {
+                }.onFailure { t ->
                     _uiState.update { state ->
-                        state.copy(suggestedFeeds = state.suggestedFeeds.updateItem(feeds) {
-                            it.copy(loading = false)
-                        })
+                        state.copy(
+                            feeds = state.feeds.updateItem(feedsUiState) {
+                                it.copy(followRequesting = false)
+                            },
+                        )
                     }
-                    _snackBarMessage.emitTextMessageFromThrowable(it)
+                    _snackBarMessage.emitTextMessageFromThrowable(t)
                 }
         }
     }

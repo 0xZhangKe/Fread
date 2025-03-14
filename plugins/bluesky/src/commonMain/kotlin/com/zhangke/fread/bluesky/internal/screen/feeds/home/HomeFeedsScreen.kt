@@ -7,9 +7,11 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -21,14 +23,22 @@ import com.zhangke.fread.status.model.IdentityRole
 import org.jetbrains.compose.resources.stringResource
 
 class HomeFeedsScreen(
-    feeds: BlueskyFeeds,
-    role: IdentityRole,
+    private val feedsJson: String,
+    private val role: IdentityRole,
 ) : BaseScreen() {
 
-    private val tab = HomeFeedsTab(
-        feeds = feeds,
-        role = role,
-    )
+    companion object {
+
+        fun create(feeds: BlueskyFeeds, role: IdentityRole): HomeFeedsScreen {
+            return HomeFeedsScreen(
+                role = role,
+                feedsJson = globalJson.encodeToString(
+                    serializer = BlueskyFeeds.serializer(),
+                    value = feeds,
+                ),
+            )
+        }
+    }
 
     @Composable
     override fun Content() {
@@ -36,6 +46,12 @@ class HomeFeedsScreen(
         val navigator = LocalNavigator.currentOrThrow
         val snackbarHostState = rememberSnackbarHostState()
 
+        val tab = remember {
+            HomeFeedsTab(
+                feeds = globalJson.decodeFromString(feedsJson),
+                role = role,
+            )
+        }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {

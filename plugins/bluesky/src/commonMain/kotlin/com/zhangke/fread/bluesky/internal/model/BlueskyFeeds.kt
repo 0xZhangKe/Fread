@@ -17,23 +17,23 @@ import org.jetbrains.compose.resources.stringResource
  * 也包含 Following Timeline 和 用户自己创建的 List。
  */
 @Serializable
-sealed interface BlueskyFeeds {
+sealed class BlueskyFeeds {
 
     /**
      * pinned to Home Screen
      */
-    val pinned: Boolean
+    abstract val pinned: Boolean
 
-    val following: Boolean
+    abstract val following: Boolean
 
     @Composable
-    fun displayName(): String
+    abstract fun displayName(): String
 
     @Serializable
     data class Following(
         override val following: Boolean,
         override val pinned: Boolean,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName(): String {
@@ -49,11 +49,11 @@ sealed interface BlueskyFeeds {
         override val following: Boolean,
         override val pinned: Boolean,
         val displayName: String,
-        val description: String?,
-        val avatar: String?,
-        val likeCount: Long?,
+        val description: String? = null,
+        val avatar: String? = null,
+        val likeCount: Long? = null,
         val creator: BlueskyProfile,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName(): String {
@@ -66,11 +66,11 @@ sealed interface BlueskyFeeds {
         val id: String,
         val uri: String,
         val name: String,
-        val description: String?,
-        val avatar: String?,
+        val description: String? = null,
+        val avatar: String? = null,
         override val following: Boolean,
         override val pinned: Boolean,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName(): String {
@@ -83,7 +83,7 @@ sealed interface BlueskyFeeds {
         val hashtag: String,
         override val pinned: Boolean = false,
         override val following: Boolean = false,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName() = hashtag
@@ -94,7 +94,7 @@ sealed interface BlueskyFeeds {
         val did: String,
         override val pinned: Boolean = false,
         override val following: Boolean = false,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName(): String {
@@ -107,7 +107,7 @@ sealed interface BlueskyFeeds {
         val did: String,
         override val pinned: Boolean = false,
         override val following: Boolean = false,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName(): String {
@@ -120,7 +120,7 @@ sealed interface BlueskyFeeds {
         val did: String?,
         override val pinned: Boolean = false,
         override val following: Boolean = false,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName(): String {
@@ -130,10 +130,10 @@ sealed interface BlueskyFeeds {
 
     @Serializable
     data class UserLikes(
-        val did: String?,
+        val did: String? = null,
         override val pinned: Boolean = false,
         override val following: Boolean = false,
-    ) : BlueskyFeeds {
+    ) : BlueskyFeeds() {
 
         @Composable
         override fun displayName(): String {

@@ -9,6 +9,7 @@
 
     <string name="bsky_edit_content_title">编辑</string>
 
+    <string name="bsky_feeds_explorer_more">浏览更多 Feeds</string>
     <string name="bsky_feeds_explorer_creator_label">创建者  %1$s</string>
     <string name="bsky_feeds_explorer_liked_by">%1$s 个用户喜欢</string>
 

@@ -8,6 +8,7 @@
 
     <string name="bsky_edit_content_title">Edit Content</string>
 
+    <string name="bsky_feeds_explorer_more">Dive into more feeds</string>
     <string name="bsky_feeds_explorer_creator_label">Feed by %1$s</string>
     <string name="bsky_feeds_explorer_liked_by">Liked by %1$s users</string>
 

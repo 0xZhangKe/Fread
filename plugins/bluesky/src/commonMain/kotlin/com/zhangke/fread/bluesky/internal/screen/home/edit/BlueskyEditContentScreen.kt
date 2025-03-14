@@ -15,7 +15,6 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_edit_content_title
@@ -32,7 +31,6 @@ class BlueskyEditContentScreen(
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val snackBarHostState = rememberSnackbarHostState()
         val viewModel =
             getViewModel<BlueskyEditContentViewModel, BlueskyEditContentViewModel.Factory> {
                 it.create(contentId)

@@ -145,7 +145,7 @@ fun BlueskyExploringFeeds(
             ),
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,
-            color = MaterialTheme.colorScheme.onSurface.copy(alpha = 0.6F),
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
             textAlign = TextAlign.Start,
             overflow = TextOverflow.Ellipsis,
         )
@@ -154,7 +154,7 @@ fun BlueskyExploringFeeds(
 }
 
 @Composable
-private fun FeedsAvatar(
+internal fun FeedsAvatar(
     url: String?,
     modifier: Modifier,
 ) {

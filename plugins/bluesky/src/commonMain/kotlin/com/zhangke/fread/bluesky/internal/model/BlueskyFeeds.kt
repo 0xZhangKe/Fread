@@ -52,8 +52,11 @@ sealed class BlueskyFeeds {
         val description: String? = null,
         val avatar: String? = null,
         val likeCount: Long? = null,
+        val likedRecord: String? = null,
         val creator: BlueskyProfile,
     ) : BlueskyFeeds() {
+
+        val liked: Boolean get() = !likedRecord.isNullOrEmpty()
 
         @Composable
         override fun displayName(): String {

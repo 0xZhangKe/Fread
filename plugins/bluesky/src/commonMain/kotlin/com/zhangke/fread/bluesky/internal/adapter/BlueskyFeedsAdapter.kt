@@ -24,6 +24,7 @@ class BlueskyFeedsAdapter @Inject constructor(
             description = generator.description,
             avatar = generator.avatar?.uri,
             likeCount = generator.likeCount,
+            likedRecord = generator.viewer?.like?.atUri,
             creator = profileAdapter.convertToProfile(generator.creator),
         )
     }
@@ -43,6 +44,7 @@ class BlueskyFeedsAdapter @Inject constructor(
             description = generator.description,
             avatar = generator.avatar?.uri,
             likeCount = generator.likeCount,
+            likedRecord = generator.viewer?.like?.atUri,
             creator = profileAdapter.convertToProfile(generator.creator),
         )
     }

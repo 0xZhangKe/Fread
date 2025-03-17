@@ -1,28 +1,16 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.detail
 
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+
 data class FeedsDetailUiState(
-    val initializing: Boolean,
-    val avatar: String?,
-    val name: String?,
-    val authorHandle: String?,
-    val description: String?,
-    val likedCount: Long?,
-    val liked: Boolean,
-    val pinned: Boolean,
+    val feeds: BlueskyFeeds.Feeds,
 ) {
 
     companion object {
 
-        fun default(): FeedsDetailUiState {
+        fun default(feeds: BlueskyFeeds.Feeds): FeedsDetailUiState {
             return FeedsDetailUiState(
-                initializing = false,
-                avatar = null,
-                name = null,
-                authorHandle = null,
-                description = null,
-                likedCount = null,
-                liked = false,
-                pinned = false,
+                feeds = feeds,
             )
         }
     }

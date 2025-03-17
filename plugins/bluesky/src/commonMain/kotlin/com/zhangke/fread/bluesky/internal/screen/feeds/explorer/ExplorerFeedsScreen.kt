@@ -16,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.Toolbar
@@ -25,6 +26,8 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_more
 import com.zhangke.fread.bluesky.internal.composable.BlueskyExploringFeeds
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
@@ -36,6 +39,7 @@ class ExplorerFeedsScreen(private val role: IdentityRole) : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<ExplorerFeedsViewModel, ExplorerFeedsViewModel.Factory> {
                 it.create(role)
@@ -48,7 +52,11 @@ class ExplorerFeedsScreen(private val role: IdentityRole) : BaseScreen() {
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onLoadMore = viewModel::onLoadMore,
-            onFeedsClick = {},
+            onFeedsClick = { feeds ->
+                (feeds.feeds as? BlueskyFeeds.Feeds)?.let {
+                    bottomSheetNavigator.show(FeedsDetailScreen.create(it, role))
+                }
+            },
             onFollowClick = viewModel::onFollowClick,
         )
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)

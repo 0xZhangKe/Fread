@@ -9,4 +9,7 @@ data class BlueskyProfile(
     val displayName: String?,
     val description: String?,
     val avatar: String?,
-)
+){
+
+    val prettyHandle: String = if (handle.startsWith('@')) handle else "@$handle"
+}

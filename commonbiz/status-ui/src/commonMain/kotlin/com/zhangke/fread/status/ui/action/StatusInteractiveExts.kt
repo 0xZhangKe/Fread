@@ -32,7 +32,7 @@ import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
 @Composable
-internal fun likeIcon(liked: Boolean): ImageVector {
+fun likeIcon(liked: Boolean): ImageVector {
     return if (liked) Icons.Default.Favorite else Icons.Default.FavoriteBorder
 }
 
@@ -67,7 +67,7 @@ internal fun shareIcon(): ImageVector {
 }
 
 @Composable
-internal fun pinIcon(pinned: Boolean): ImageVector {
+fun pinIcon(pinned: Boolean): ImageVector {
     return if (pinned) Icons.Default.PushPin else Icons.Outlined.PushPin
 }
 
@@ -77,7 +77,7 @@ internal fun editIcon(): ImageVector {
 }
 
 @Composable
-internal fun likeAlt(): String {
+fun likeAlt(): String {
     return stringResource(Res.string.status_ui_like)
 }
 
@@ -112,7 +112,7 @@ internal fun shareAlt(): String {
 }
 
 @Composable
-internal fun pinAlt(pinned: Boolean): String {
+fun pinAlt(pinned: Boolean): String {
     return if (pinned) stringResource(Res.string.status_ui_unpin) else stringResource(Res.string.status_ui_pin)
 }
 

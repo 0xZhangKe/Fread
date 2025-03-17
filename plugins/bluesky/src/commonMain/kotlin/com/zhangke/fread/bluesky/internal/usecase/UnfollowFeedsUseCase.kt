@@ -1,15 +1,11 @@
 package com.zhangke.fread.bluesky.internal.usecase
 
 import app.bsky.actor.PreferencesUnion.SavedFeedsPrefV2
-import app.bsky.actor.SavedFeed
-import app.bsky.actor.Type
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
-import kotlin.uuid.ExperimentalUuidApi
-import kotlin.uuid.Uuid
 
-class FollowFeedsUseCase @Inject constructor(
+class UnfollowFeedsUseCase @Inject constructor(
     private val updatePreferences: UpdatePreferencesUseCase,
 ) {
 
@@ -19,26 +15,16 @@ class FollowFeedsUseCase @Inject constructor(
     ): Result<Unit> {
         return updatePreferences(
             role = role,
-            updater = { preference ->
-                preference.map {
-                    if (it is SavedFeedsPrefV2) {
-                        val newItems = it.value.items + feeds.toSaveFeeds()
+            updater = { preferences ->
+                preferences.map { preference ->
+                    if (preference is SavedFeedsPrefV2) {
+                        val newItems = preference.value.items.filter { it.value != feeds.uri }
                         SavedFeedsPrefV2(app.bsky.actor.SavedFeedsPrefV2(newItems))
                     } else {
-                        it
+                        preference
                     }
                 }
             },
-        )
-    }
-
-    @OptIn(ExperimentalUuidApi::class)
-    private fun BlueskyFeeds.Feeds.toSaveFeeds(): SavedFeed {
-        return SavedFeed(
-            id = Uuid.random().toString(),
-            type = Type.Feed,
-            value = this.uri,
-            pinned = true,
         )
     }
 }

@@ -3,7 +3,9 @@ package com.zhangke.fread.bluesky.internal.screen.feeds.following
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
@@ -18,13 +20,14 @@ import me.tatarka.inject.annotations.Inject
 
 class BskyFollowingFeedsViewModel @Inject constructor(
     private val getFollowingFeeds: GetFollowingFeedsUseCase,
-    @Assisted private val role: IdentityRole,
+    private val contentRepo: FreadContentRepo,
+    @Assisted private val contentId: String,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            role: IdentityRole,
+            contentId: String,
         ): BskyFollowingFeedsViewModel
     }
 
@@ -34,9 +37,9 @@ class BskyFollowingFeedsViewModel @Inject constructor(
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage.asSharedFlow()
 
-    private var cursor: String? = null
-
     private var initJob: Job? = null
+
+    private var role: IdentityRole? = null
 
     init {
         loadFeedsList(false)
@@ -46,7 +49,7 @@ class BskyFollowingFeedsViewModel @Inject constructor(
         loadFeedsList(true)
     }
 
-    fun onPageResume(){
+    fun onPageResume() {
         loadFeedsList(false)
     }
 
@@ -61,6 +64,19 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                     pageError = null,
                 )
             }
+            val roleResult = getRole()
+            if (roleResult.isFailure) {
+                _uiState.update {
+                    it.copy(
+                        initializing = false,
+                        refreshing = false,
+                        pageError = roleResult.exceptionOrNull(),
+                    )
+                }
+                return@launch
+            }
+            val role = roleResult.getOrThrow()
+            _uiState.update { it.copy(role = role) }
             getFollowingFeeds(role)
                 .onSuccess { list ->
                     _uiState.update {
@@ -80,5 +96,17 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                     }
                 }
         }
+    }
+
+    private suspend fun getRole(): Result<IdentityRole> {
+        if (role != null) return Result.success(role!!)
+        val content = contentRepo.getContent(contentId)?.let { it as? BlueskyContent }
+        if (content == null) return Result.failure(IllegalArgumentException("Content not found $contentId"))
+        return Result.success(
+            IdentityRole(
+                accountUri = null,
+                baseUrl = content.baseUrl,
+            )
+        ).onSuccess { this.role = it }
     }
 }

@@ -115,7 +115,7 @@ fun BlueskyExploringFeeds(
                     )
                 }
             }
-            if (onAddClick != null && !loading) {
+            if (!feeds.pinned && onAddClick != null && !loading) {
                 IconButton(onClick = { onAddClick(feeds) }) {
                     Icon(
                         imageVector = Icons.Default.Add,

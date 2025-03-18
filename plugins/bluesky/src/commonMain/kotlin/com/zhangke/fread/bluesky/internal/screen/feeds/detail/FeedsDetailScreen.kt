@@ -1,11 +1,11 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.detail
 
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Share
@@ -23,6 +23,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +35,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -51,8 +53,8 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.action.likeAlt
 import com.zhangke.fread.status.ui.action.likeIcon
 import com.zhangke.fread.status.ui.action.pinAlt
-import com.zhangke.fread.status.ui.action.pinIcon
 import org.jetbrains.compose.resources.stringResource
+import kotlin.jvm.Transient
 
 class FeedsDetailScreen(
     private val feedsJson: String,
@@ -71,6 +73,9 @@ class FeedsDetailScreen(
             )
         }
     }
+
+    @Transient
+    var onFeedsUpdate: ((BlueskyFeeds.Feeds) -> Unit)? = null
 
     @Composable
     override fun Content() {
@@ -92,6 +97,9 @@ class FeedsDetailScreen(
             onPinClick = viewModel::onPinClick,
         )
         ConsumeSnackbarFlow(snackbarHostState, viewModel.snackBarMessageFlow)
+        ConsumeFlow(viewModel.feedsUpdateFlow) {
+            onFeedsUpdate?.invoke(it)
+        }
     }
 
     @Composable
@@ -182,35 +190,30 @@ class FeedsDetailScreen(
                     .padding(start = 16.dp, top = 8.dp, end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                Spacer(modifier = Modifier.width(16.dp))
-                TextButton(
-                    modifier = Modifier.weight(1F),
+                IconButton(
                     onClick = onLikeClick,
-                    colors = ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
-                    ),
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        likeIcon(liked = feeds.liked)
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Text(likeAlt())
-                    }
+                    Icon(
+                        modifier = Modifier.size(24.dp),
+                        imageVector = likeIcon(liked = feeds.liked),
+                        contentDescription = likeAlt(),
+                        tint = if (feeds.liked) {
+                            MaterialTheme.colorScheme.tertiary
+                        } else {
+                            MaterialTheme.colorScheme.onSurfaceVariant
+                        }
+                    )
                 }
-                Spacer(modifier = Modifier.width(16.dp))
+                Spacer(modifier = Modifier.width(8.dp))
                 val pinBtnColors = if (feeds.pinned) {
                     ButtonDefaults.textButtonColors(
                         containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        contentColor = Color.White,
                     )
                 } else {
                     ButtonDefaults.textButtonColors(
                         containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = MaterialTheme.colorScheme.onPrimaryContainer,
+                        contentColor = Color.White,
                     )
                 }
                 TextButton(
@@ -218,15 +221,7 @@ class FeedsDetailScreen(
                     onClick = onPinClick,
                     colors = pinBtnColors,
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.Center,
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        pinIcon(pinned = feeds.pinned)
-                        Spacer(modifier = Modifier.width(2.dp))
-                        Text(pinAlt(feeds.pinned))
-                    }
+                    Text(pinAlt(feeds.pinned))
                 }
             }
         }

@@ -64,12 +64,12 @@ class GetFollowingFeedsUseCase @Inject constructor(
             if (listView == null) {
                 null
             } else {
-                feedsAdapter.convertToList(feed, listView, true)
+                feedsAdapter.convertToList(feed, listView)
             }
         }
 
         Type.Timeline -> {
-            BlueskyFeeds.Following(feed.pinned, true)
+            BlueskyFeeds.Following(feed.pinned)
         }
 
         else -> null

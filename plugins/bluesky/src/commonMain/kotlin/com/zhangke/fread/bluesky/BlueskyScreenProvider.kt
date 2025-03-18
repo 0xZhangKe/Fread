@@ -7,9 +7,9 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPage
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreen
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
-import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentScreen
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
@@ -64,7 +64,7 @@ class BlueskyScreenProvider @Inject constructor(
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is BlueskyContent) return null
-        return BlueskyEditContentScreen(content.id)
+        return BskyFollowingFeedsPage(content.id)
     }
 
     override fun getUserDetailScreen(

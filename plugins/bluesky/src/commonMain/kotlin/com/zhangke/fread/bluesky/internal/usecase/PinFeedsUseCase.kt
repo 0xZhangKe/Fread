@@ -9,7 +9,7 @@ import me.tatarka.inject.annotations.Inject
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
-class FollowFeedsUseCase @Inject constructor(
+class PinFeedsUseCase @Inject constructor(
     private val updatePreferences: UpdatePreferencesUseCase,
 ) {
 

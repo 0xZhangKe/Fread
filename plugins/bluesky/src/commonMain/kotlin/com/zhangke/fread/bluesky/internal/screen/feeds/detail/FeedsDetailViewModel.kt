@@ -14,8 +14,8 @@ import com.zhangke.fread.bluesky.internal.client.adjustToRkey
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.CreateRecordUseCase
 import com.zhangke.fread.bluesky.internal.usecase.DeleteRecordUseCase
-import com.zhangke.fread.bluesky.internal.usecase.FollowFeedsUseCase
-import com.zhangke.fread.bluesky.internal.usecase.UnfollowFeedsUseCase
+import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
+import com.zhangke.fread.bluesky.internal.usecase.UnpinFeedsUseCase
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
@@ -36,10 +36,10 @@ class FeedsDetailViewModel @Inject constructor(
     private val feedsAdapter: BlueskyFeedsAdapter,
     private val createRecord: CreateRecordUseCase,
     private val deleteRecord: DeleteRecordUseCase,
-    private val followFeeds: FollowFeedsUseCase,
-    private val unfollowFeeds: UnfollowFeedsUseCase,
+    private val followFeeds: PinFeedsUseCase,
+    private val unfollowFeeds: UnpinFeedsUseCase,
     @Assisted private val role: IdentityRole,
-    @Assisted private val feeds: BlueskyFeeds.Feeds,
+    @Assisted feeds: BlueskyFeeds.Feeds,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
@@ -56,6 +56,9 @@ class FeedsDetailViewModel @Inject constructor(
     private val _snackBarMessageFlow = MutableSharedFlow<TextString>()
     val snackBarMessageFlow = _snackBarMessageFlow.asSharedFlow()
 
+    private val _feedsUpdateFlow = MutableSharedFlow<BlueskyFeeds.Feeds>()
+    val feedsUpdateFlow = _feedsUpdateFlow.asSharedFlow()
+
     private var likeJob: Job? = null
     private var pinJob: Job? = null
 
@@ -67,6 +70,7 @@ class FeedsDetailViewModel @Inject constructor(
         if (likeJob?.isActive == true) return
         likeJob?.cancel()
         likeJob = launchInViewModel {
+            val feeds = _uiState.value.feeds
             if (feeds.liked) {
                 deleteRecord(
                     role = role,
@@ -97,12 +101,15 @@ class FeedsDetailViewModel @Inject constructor(
         if (pinJob?.isActive == true) return
         pinJob?.cancel()
         pinJob = launchInViewModel {
+            val feeds = _uiState.value.feeds
             if (feeds.pinned) {
                 unfollowFeeds(role = role, feeds = feeds)
             } else {
                 followFeeds(role = role, feeds = feeds)
             }.onSuccess {
-                getFeedsDetail()
+                val newFeeds = feeds.copy(pinned = !feeds.pinned)
+                _uiState.update { state -> state.copy(feeds = newFeeds) }
+                _feedsUpdateFlow.emit(newFeeds)
             }.onFailure {
                 _snackBarMessageFlow.emitTextMessageFromThrowable(it)
             }
@@ -111,6 +118,7 @@ class FeedsDetailViewModel @Inject constructor(
 
     private fun getFeedsDetail() {
         launchInViewModel {
+            val feeds = _uiState.value.feeds
             clientManager.getClient(role)
                 .getFeedGeneratorsCatching(GetFeedGeneratorsQueryParams(listOf(AtUri(feeds.uri))))
                 .onSuccess { response ->
@@ -118,11 +126,11 @@ class FeedsDetailViewModel @Inject constructor(
                         ?.let { generatorView ->
                             feedsAdapter.convertToFeeds(
                                 generator = generatorView,
-                                following = false,
-                                pinned = false,
+                                pinned = feeds.pinned,
                             )
                         }?.let { feed ->
                             _uiState.update { it.copy(feeds = feed) }
+                            _feedsUpdateFlow.emit(feed)
                         }
                 }
         }

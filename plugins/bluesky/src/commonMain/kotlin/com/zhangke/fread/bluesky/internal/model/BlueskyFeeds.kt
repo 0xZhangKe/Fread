@@ -24,14 +24,11 @@ sealed class BlueskyFeeds {
      */
     abstract val pinned: Boolean
 
-    abstract val following: Boolean
-
     @Composable
     abstract fun displayName(): String
 
     @Serializable
     data class Following(
-        override val following: Boolean,
         override val pinned: Boolean,
     ) : BlueskyFeeds() {
 
@@ -46,7 +43,6 @@ sealed class BlueskyFeeds {
         val uri: String,
         val cid: String,
         val did: String,
-        override val following: Boolean,
         override val pinned: Boolean,
         val displayName: String,
         val description: String? = null,
@@ -71,7 +67,6 @@ sealed class BlueskyFeeds {
         val name: String,
         val description: String? = null,
         val avatar: String? = null,
-        override val following: Boolean,
         override val pinned: Boolean,
     ) : BlueskyFeeds() {
 
@@ -85,7 +80,6 @@ sealed class BlueskyFeeds {
     data class Hashtags(
         val hashtag: String,
         override val pinned: Boolean = false,
-        override val following: Boolean = false,
     ) : BlueskyFeeds() {
 
         @Composable
@@ -96,7 +90,6 @@ sealed class BlueskyFeeds {
     data class UserPosts(
         val did: String,
         override val pinned: Boolean = false,
-        override val following: Boolean = false,
     ) : BlueskyFeeds() {
 
         @Composable
@@ -109,7 +102,6 @@ sealed class BlueskyFeeds {
     data class UserReplies(
         val did: String,
         override val pinned: Boolean = false,
-        override val following: Boolean = false,
     ) : BlueskyFeeds() {
 
         @Composable
@@ -122,7 +114,6 @@ sealed class BlueskyFeeds {
     data class UserMedias(
         val did: String?,
         override val pinned: Boolean = false,
-        override val following: Boolean = false,
     ) : BlueskyFeeds() {
 
         @Composable
@@ -135,7 +126,6 @@ sealed class BlueskyFeeds {
     data class UserLikes(
         val did: String? = null,
         override val pinned: Boolean = false,
-        override val following: Boolean = false,
     ) : BlueskyFeeds() {
 
         @Composable

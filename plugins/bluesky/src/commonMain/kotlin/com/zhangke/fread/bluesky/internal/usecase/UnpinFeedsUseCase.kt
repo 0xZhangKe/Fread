@@ -5,7 +5,7 @@ import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 
-class UnfollowFeedsUseCase @Inject constructor(
+class UnpinFeedsUseCase @Inject constructor(
     private val updatePreferences: UpdatePreferencesUseCase,
 ) {
 

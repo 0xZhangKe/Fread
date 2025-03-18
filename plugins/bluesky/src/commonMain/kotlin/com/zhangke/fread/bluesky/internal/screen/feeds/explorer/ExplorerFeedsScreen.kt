@@ -54,7 +54,9 @@ class ExplorerFeedsScreen(private val role: IdentityRole) : BaseScreen() {
             onLoadMore = viewModel::onLoadMore,
             onFeedsClick = { feeds ->
                 (feeds.feeds as? BlueskyFeeds.Feeds)?.let {
-                    bottomSheetNavigator.show(FeedsDetailScreen.create(it, role))
+                    val feedsDetailScreen = FeedsDetailScreen.create(it, role)
+                    feedsDetailScreen.onFeedsUpdate = viewModel::onFeedsUpdate
+                    bottomSheetNavigator.show(feedsDetailScreen)
                 }
             },
             onFollowClick = viewModel::onFollowClick,

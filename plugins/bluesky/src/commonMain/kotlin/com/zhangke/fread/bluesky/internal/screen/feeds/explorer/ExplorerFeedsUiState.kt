@@ -27,5 +27,5 @@ data class ExplorerFeedsUiState(
 
 data class BlueskyFeedsUiState(
     val followRequesting: Boolean,
-    val feeds: BlueskyFeeds,
+    val feeds: BlueskyFeeds.Feeds,
 )

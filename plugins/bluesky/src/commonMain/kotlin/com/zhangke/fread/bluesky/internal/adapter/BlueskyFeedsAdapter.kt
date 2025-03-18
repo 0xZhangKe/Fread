@@ -19,7 +19,6 @@ class BlueskyFeedsAdapter @Inject constructor(
             cid = generator.cid.cid,
             did = generator.did.did,
             pinned = savedFeed.pinned,
-            following = true,
             displayName = generator.displayName,
             description = generator.description,
             avatar = generator.avatar?.uri,
@@ -31,7 +30,6 @@ class BlueskyFeedsAdapter @Inject constructor(
 
     fun convertToFeeds(
         generator: GeneratorView,
-        following: Boolean,
         pinned: Boolean,
     ): BlueskyFeeds.Feeds {
         return BlueskyFeeds.Feeds(
@@ -39,7 +37,6 @@ class BlueskyFeedsAdapter @Inject constructor(
             cid = generator.cid.cid,
             did = generator.did.did,
             pinned = pinned,
-            following = following,
             displayName = generator.displayName,
             description = generator.description,
             avatar = generator.avatar?.uri,
@@ -52,7 +49,6 @@ class BlueskyFeedsAdapter @Inject constructor(
     fun convertToList(
         feed: SavedFeed,
         listView: ListView,
-        following: Boolean,
     ): BlueskyFeeds.List {
         return BlueskyFeeds.List(
             id = feed.id,
@@ -60,7 +56,6 @@ class BlueskyFeedsAdapter @Inject constructor(
             name = listView.name,
             description = listView.description,
             avatar = listView.avatar?.uri,
-            following = following,
             pinned = feed.pinned,
         )
     }

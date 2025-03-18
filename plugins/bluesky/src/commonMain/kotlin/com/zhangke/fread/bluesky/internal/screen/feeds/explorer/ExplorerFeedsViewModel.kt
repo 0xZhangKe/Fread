@@ -2,6 +2,7 @@ package com.zhangke.fread.bluesky.internal.screen.feeds.explorer
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import app.bsky.actor.PreferencesUnion.SavedFeedsPrefV2
 import app.bsky.feed.GetSuggestedFeedsQueryParams
 import com.zhangke.framework.collections.updateItem
 import com.zhangke.framework.composable.TextString
@@ -9,26 +10,29 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyFeedsAdapter
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
-import com.zhangke.fread.bluesky.internal.usecase.FollowFeedsUseCase
+import com.zhangke.fread.bluesky.internal.usecase.PinFeedsUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 class ExplorerFeedsViewModel @Inject constructor(
     private val clientManager: BlueskyClientManager,
     private val feedsAdapter: BlueskyFeedsAdapter,
-    private val followFeeds: FollowFeedsUseCase,
+    private val followFeeds: PinFeedsUseCase,
     @Assisted private val role: IdentityRole,
 ) : ViewModel() {
 
@@ -53,6 +57,8 @@ class ExplorerFeedsViewModel @Inject constructor(
     private var refreshMoreJob: Job? = null
     private var loadMoreJob: Job? = null
     private var cursor: String? = null
+
+    private val pinnedFeedsUris = mutableListOf<String>()
 
     init {
         launchInViewModel {
@@ -114,28 +120,33 @@ class ExplorerFeedsViewModel @Inject constructor(
     }
 
     private suspend fun getSuggestedFeeds(cursor: String? = this.cursor): Result<List<BlueskyFeedsUiState>> {
-        return clientManager.getClient(role)
-            .getSuggestedFeedsCatching(GetSuggestedFeedsQueryParams(cursor = cursor))
-            .onSuccess {
-                this.cursor = if (it.cursor.isNullOrBlank()) FLAG_CURSOR_ENDING else it.cursor
+        val client = clientManager.getClient(role)
+        return supervisorScope {
+            val pinnedFeedsDeferred = async { getPinnedFeeds() }
+            val feedsListDeferred = async {
+                client.getSuggestedFeedsCatching(GetSuggestedFeedsQueryParams(cursor = cursor))
+                    .onSuccess {
+                        this@ExplorerFeedsViewModel.cursor =
+                            if (it.cursor.isNullOrBlank()) FLAG_CURSOR_ENDING else it.cursor
+                    }
             }
-            .map {
+            val pinnedFeeds = pinnedFeedsDeferred.await().getOrNull() ?: emptyList()
+            feedsListDeferred.await().map {
                 it.feeds.map { item ->
                     BlueskyFeedsUiState(
                         followRequesting = false,
                         feeds = feedsAdapter.convertToFeeds(
                             generator = item,
-                            following = false,
-                            pinned = false
+                            pinned = pinnedFeeds.any { uri -> uri == item.uri.atUri },
                         ),
                     )
                 }
             }
+        }
     }
 
     fun onFollowClick(feedsUiState: BlueskyFeedsUiState) {
         if (feedsUiState.followRequesting) return
-        if (feedsUiState.feeds !is BlueskyFeeds.Feeds) return
         viewModelScope.launch {
             _uiState.update { state ->
                 state.copy(
@@ -147,18 +158,67 @@ class ExplorerFeedsViewModel @Inject constructor(
             followFeeds(role, feedsUiState.feeds)
                 .onSuccess {
                     _uiState.update { state ->
-                        state.copy(feeds = state.feeds.filter { it.feeds != feedsUiState.feeds })
+                        state.copy(
+                            feeds = state.feeds.map { item ->
+                                if (item.feeds.uri == feedsUiState.feeds.uri) {
+                                    item.copy(
+                                        feeds = item.feeds.copy(pinned = true),
+                                        followRequesting = false,
+                                    )
+                                } else {
+                                    item
+                                }
+                            },
+                        )
                     }
+                    pinnedFeedsUris += feedsUiState.feeds.uri
                 }.onFailure { t ->
                     _uiState.update { state ->
                         state.copy(
-                            feeds = state.feeds.updateItem(feedsUiState) {
-                                it.copy(followRequesting = false)
+                            feeds = state.feeds.map { item ->
+                                if (item.feeds.uri == feedsUiState.feeds.uri) {
+                                    item.copy(followRequesting = false)
+                                } else {
+                                    item
+                                }
                             },
                         )
                     }
                     _snackBarMessage.emitTextMessageFromThrowable(t)
                 }
         }
+    }
+
+    fun onFeedsUpdate(feeds: BlueskyFeeds.Feeds) {
+        _uiState.update { state ->
+            state.copy(
+                feeds = state.feeds.map {
+                    if (it.feeds.cid == feeds.cid) {
+                        it.copy(feeds = feeds)
+                    } else {
+                        it
+                    }
+                }
+            )
+        }
+        if (feeds.pinned) {
+            pinnedFeedsUris += feeds.uri
+        } else {
+            pinnedFeedsUris -= feeds.uri
+        }
+    }
+
+    private suspend fun getPinnedFeeds(): Result<List<String>> {
+        if (pinnedFeedsUris.isNotEmpty()) return Result.success(pinnedFeedsUris)
+        val preferenceResult = clientManager.getClient(role).getPreferencesCatching()
+        if (preferenceResult.isFailure) return Result.failure(preferenceResult.exceptionOrThrow())
+        return preferenceResult.map {
+            it.preferences.filterIsInstance<SavedFeedsPrefV2>()
+                .firstOrNull()
+                ?.value
+                ?.items
+                ?: emptyList()
+        }.map { feeds -> feeds.map { it.value } }
+            .onSuccess { pinnedFeedsUris += it }
     }
 }

@@ -57,9 +57,9 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideBskyFeedsExplorerViewModel(creator: (IdentityRole) -> BskyFollowingFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return BskyFollowingFeedsViewModel::class to BskyFollowingFeedsViewModel.Factory { role ->
-            creator(role)
+    fun provideBskyFeedsExplorerViewModel(creator: (String) -> BskyFollowingFeedsViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return BskyFollowingFeedsViewModel::class to BskyFollowingFeedsViewModel.Factory { contentId ->
+            creator(contentId)
         }
     }
 

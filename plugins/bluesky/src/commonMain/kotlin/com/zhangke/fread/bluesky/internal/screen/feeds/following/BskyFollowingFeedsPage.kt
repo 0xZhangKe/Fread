@@ -43,11 +43,10 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScr
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
-import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import org.jetbrains.compose.resources.stringResource
 
-class BskyFollowingFeedsPage(private val role: IdentityRole) : BaseScreen() {
+class BskyFollowingFeedsPage(private val contentId: String) : BaseScreen() {
 
     @Composable
     override fun Content() {
@@ -55,7 +54,7 @@ class BskyFollowingFeedsPage(private val role: IdentityRole) : BaseScreen() {
         val navigator = LocalNavigator.currentOrThrow
         val viewModel =
             getViewModel<BskyFollowingFeedsViewModel, BskyFollowingFeedsViewModel.Factory> {
-                it.create(role)
+                it.create(contentId)
             }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()
@@ -66,7 +65,9 @@ class BskyFollowingFeedsPage(private val role: IdentityRole) : BaseScreen() {
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
             onFollowingFeedsClick = {},
-            onExplorerClick = { navigator.push(ExplorerFeedsScreen(role)) }
+            onExplorerClick = {
+                uiState.role?.let { navigator.push(ExplorerFeedsScreen(it)) }
+            }
         )
 
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)

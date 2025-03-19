@@ -31,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
@@ -39,6 +40,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_more
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.screen.feeds.detail.FeedsDetailScreen
 import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.Res
@@ -52,6 +54,7 @@ class BskyFollowingFeedsPage(private val contentId: String) : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<BskyFollowingFeedsViewModel, BskyFollowingFeedsViewModel.Factory> {
                 it.create(contentId)
@@ -64,10 +67,18 @@ class BskyFollowingFeedsPage(private val contentId: String) : BaseScreen() {
             snackBarState = snackBarState,
             onBackClick = navigator::pop,
             onRefresh = viewModel::onRefresh,
-            onFollowingFeedsClick = {},
+            onFeedsClick = { feed ->
+                uiState.role?.let {
+                    val screen = FeedsDetailScreen.create(feed, it)
+                    screen.onFeedsUpdate = { f ->
+                        viewModel.onFeedsUpdate(f)
+                    }
+                    bottomSheetNavigator.show(screen)
+                }
+            },
             onExplorerClick = {
                 uiState.role?.let { navigator.push(ExplorerFeedsScreen(it)) }
-            }
+            },
         )
 
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
@@ -84,7 +95,7 @@ class BskyFollowingFeedsPage(private val contentId: String) : BaseScreen() {
         snackBarState: SnackbarHostState,
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
-        onFollowingFeedsClick: (BlueskyFeeds) -> Unit,
+        onFeedsClick: (BlueskyFeeds) -> Unit,
         onExplorerClick: () -> Unit = {},
     ) {
         Scaffold(
@@ -136,7 +147,7 @@ class BskyFollowingFeedsPage(private val contentId: String) : BaseScreen() {
                                 BlueskyFollowingFeeds(
                                     modifier = Modifier.fillMaxSize(),
                                     feeds = it,
-                                    onFeedsClick = onFollowingFeedsClick,
+                                    onFeedsClick = onFeedsClick,
                                 )
                                 HorizontalDivider(
                                     modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)

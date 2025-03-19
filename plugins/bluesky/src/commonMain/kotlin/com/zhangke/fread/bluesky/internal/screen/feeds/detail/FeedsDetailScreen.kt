@@ -63,7 +63,7 @@ class FeedsDetailScreen(
 
     companion object {
 
-        fun create(feeds: BlueskyFeeds.Feeds, role: IdentityRole): FeedsDetailScreen {
+        fun create(feeds: BlueskyFeeds, role: IdentityRole): FeedsDetailScreen {
             return FeedsDetailScreen(
                 role = role,
                 feedsJson = globalJson.encodeToString(
@@ -82,7 +82,7 @@ class FeedsDetailScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<FeedsDetailViewModel, FeedsDetailViewModel.Factory> {
-            val feeds = globalJson.decodeFromString<BlueskyFeeds>(feedsJson) as BlueskyFeeds.Feeds
+            val feeds = globalJson.decodeFromString<BlueskyFeeds>(feedsJson)
             it.create(role, feeds)
         }
         val uiState by viewModel.uiState.collectAsState()
@@ -92,7 +92,8 @@ class FeedsDetailScreen(
             uiState = uiState,
             snackbarHostState = snackbarHostState,
             onCreatorClick = { navigator.push(BskyUserDetailScreen(role = role, did = it.did)) },
-            onShareClick = { textHandler.shareUrl(url = it.uri, text = it.displayName) },
+            onShareFeedsClick = { textHandler.shareUrl(url = it.uri, text = it.displayName) },
+            onShareListClick = { textHandler.shareUrl(url = it.uri, text = it.name) },
             onLikeClick = viewModel::onLikeClick,
             onPinClick = viewModel::onPinClick,
         )
@@ -107,36 +108,154 @@ class FeedsDetailScreen(
         uiState: FeedsDetailUiState,
         snackbarHostState: SnackbarHostState,
         onCreatorClick: (BlueskyProfile) -> Unit,
-        onShareClick: (BlueskyFeeds.Feeds) -> Unit,
+        onShareFeedsClick: (BlueskyFeeds.Feeds) -> Unit,
+        onShareListClick: (BlueskyFeeds.List) -> Unit,
         onLikeClick: () -> Unit,
         onPinClick: () -> Unit,
     ) {
         Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
             val feeds = uiState.feeds
-            Row(
-                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                FeedsAvatar(
-                    url = feeds.avatar,
-                    modifier = Modifier,
+            if (feeds is BlueskyFeeds.Feeds) {
+                FeedsDetail(
+                    feeds = feeds,
+                    onCreatorClick = onCreatorClick,
+                    onShareClick = onShareFeedsClick,
+                    onLikeClick = onLikeClick,
+                    onPinClick = onPinClick,
                 )
-                Column(
-                    modifier = Modifier.weight(1F).padding(start = 16.dp),
-                ) {
-                    Text(
-                        text = feeds.displayName(),
-                        maxLines = 1,
-                        style = MaterialTheme.typography.titleMedium
-                            .copy(fontWeight = FontWeight.SemiBold),
-                    )
+            } else if (feeds is BlueskyFeeds.List) {
+                ListDetail(
+                    feeds = feeds,
+                    onShareClick = onShareListClick,
+                )
+            }
+        }
+        SnackbarHost(
+            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+            hostState = snackbarHostState,
+        )
+    }
+
+    @Composable
+    private fun FeedsDetail(
+        feeds: BlueskyFeeds.Feeds,
+        onCreatorClick: (BlueskyProfile) -> Unit,
+        onShareClick: (BlueskyFeeds.Feeds) -> Unit,
+        onLikeClick: () -> Unit,
+        onPinClick: () -> Unit,
+    ) {
+        FeedsBasicInfo(
+            name = feeds.displayName(),
+            authorHandle = feeds.creator.prettyHandle,
+            avatar = feeds.avatar,
+            description = feeds.description,
+            onShareClick = { onShareClick(feeds) },
+            onCreatorClick = { onCreatorClick(feeds.creator) },
+        )
+        Text(
+            modifier = Modifier.fillMaxWidth()
+                .padding(top = 8.dp, start = 16.dp, end = 16.dp),
+            text = stringResource(
+                Res.string.bsky_feeds_explorer_liked_by,
+                (feeds.likeCount ?: 0L).formatToHumanReadable(),
+            ),
+            style = MaterialTheme.typography.labelMedium,
+            maxLines = 1,
+            color = MaterialTheme.colorScheme.onSurfaceVariant,
+            textAlign = TextAlign.Start,
+            overflow = TextOverflow.Ellipsis,
+        )
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(start = 16.dp, top = 8.dp, end = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(
+                onClick = onLikeClick,
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    imageVector = likeIcon(liked = feeds.liked),
+                    contentDescription = likeAlt(),
+                    tint = if (feeds.liked) {
+                        MaterialTheme.colorScheme.tertiary
+                    } else {
+                        MaterialTheme.colorScheme.onSurfaceVariant
+                    }
+                )
+            }
+            Spacer(modifier = Modifier.width(8.dp))
+            val pinBtnColors = if (feeds.pinned) {
+                ButtonDefaults.textButtonColors(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = Color.White,
+                )
+            } else {
+                ButtonDefaults.textButtonColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer,
+                    contentColor = Color.White,
+                )
+            }
+            TextButton(
+                modifier = Modifier.weight(1F),
+                onClick = onPinClick,
+                colors = pinBtnColors,
+            ) {
+                Text(pinAlt(feeds.pinned))
+            }
+        }
+    }
+
+
+    @Composable
+    private fun ListDetail(
+        feeds: BlueskyFeeds.List,
+        onShareClick: (BlueskyFeeds.List) -> Unit,
+    ) {
+        FeedsBasicInfo(
+            name = feeds.name,
+            avatar = feeds.avatar,
+            authorHandle = null,
+            description = feeds.description,
+            onShareClick = { onShareClick(feeds) },
+            onCreatorClick = {},
+        )
+    }
+
+    @Composable
+    private fun FeedsBasicInfo(
+        avatar: String?,
+        name: String,
+        authorHandle: String?,
+        description: String?,
+        onShareClick: () -> Unit,
+        onCreatorClick: () -> Unit,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            FeedsAvatar(
+                url = avatar,
+                modifier = Modifier,
+            )
+            Column(
+                modifier = Modifier.weight(1F).padding(start = 16.dp),
+            ) {
+                Text(
+                    text = name,
+                    maxLines = 1,
+                    style = MaterialTheme.typography.titleMedium
+                        .copy(fontWeight = FontWeight.SemiBold),
+                )
+                if (!authorHandle.isNullOrEmpty()) {
                     val authorPrefix =
                         stringResource(Res.string.bsky_feeds_detail_creator_prefix)
-                    val creator = remember(feeds.creator.handle) {
+                    val creator = remember(authorHandle) {
                         buildAnnotatedString {
                             append(authorPrefix)
                             append(" ")
-                            append(feeds.creator.prettyHandle)
+                            append(authorHandle)
                             addStyle(
                                 style = SpanStyle(textDecoration = TextDecoration.Underline),
                                 start = authorPrefix.length,
@@ -145,7 +264,7 @@ class FeedsDetailScreen(
                         }
                     }
                     Text(
-                        modifier = Modifier.noRippleClick { onCreatorClick(feeds.creator) }
+                        modifier = Modifier.noRippleClick { onCreatorClick() }
                             .padding(top = 1.dp),
                         text = creator,
                         maxLines = 1,
@@ -153,81 +272,25 @@ class FeedsDetailScreen(
                         style = MaterialTheme.typography.labelMedium,
                     )
                 }
-                IconButton(
-                    onClick = { onShareClick(feeds) },
-                ) {
-                    Icon(
-                        imageVector = Icons.Default.Share,
-                        contentDescription = "Share",
-                    )
-                }
             }
-            if (!feeds.description.isNullOrEmpty()) {
-                Text(
-                    modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                    text = feeds.description,
-                    textAlign = TextAlign.Start,
-                    overflow = TextOverflow.Ellipsis,
-                    maxLines = 1,
-                    style = MaterialTheme.typography.bodyMedium,
+            IconButton(
+                onClick = { onShareClick() },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Share,
+                    contentDescription = "Share",
                 )
             }
+        }
+        if (!description.isNullOrEmpty()) {
             Text(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(top = 8.dp, start = 16.dp, end = 16.dp),
-                text = stringResource(
-                    Res.string.bsky_feeds_explorer_liked_by,
-                    (feeds.likeCount ?: 0L).formatToHumanReadable(),
-                ),
-                style = MaterialTheme.typography.labelMedium,
-                maxLines = 1,
-                color = MaterialTheme.colorScheme.onSurfaceVariant,
+                modifier = Modifier.padding(top = 8.dp, start = 16.dp, end = 16.dp),
+                text = description,
                 textAlign = TextAlign.Start,
                 overflow = TextOverflow.Ellipsis,
+                maxLines = 1,
+                style = MaterialTheme.typography.bodyMedium,
             )
-            Row(
-                modifier = Modifier.fillMaxWidth()
-                    .padding(start = 16.dp, top = 8.dp, end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-            ) {
-                IconButton(
-                    onClick = onLikeClick,
-                ) {
-                    Icon(
-                        modifier = Modifier.size(24.dp),
-                        imageVector = likeIcon(liked = feeds.liked),
-                        contentDescription = likeAlt(),
-                        tint = if (feeds.liked) {
-                            MaterialTheme.colorScheme.tertiary
-                        } else {
-                            MaterialTheme.colorScheme.onSurfaceVariant
-                        }
-                    )
-                }
-                Spacer(modifier = Modifier.width(8.dp))
-                val pinBtnColors = if (feeds.pinned) {
-                    ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                        contentColor = Color.White,
-                    )
-                } else {
-                    ButtonDefaults.textButtonColors(
-                        containerColor = MaterialTheme.colorScheme.primaryContainer,
-                        contentColor = Color.White,
-                    )
-                }
-                TextButton(
-                    modifier = Modifier.weight(1F),
-                    onClick = onPinClick,
-                    colors = pinBtnColors,
-                ) {
-                    Text(pinAlt(feeds.pinned))
-                }
-            }
         }
-        SnackbarHost(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            hostState = snackbarHostState,
-        )
     }
 }

@@ -69,7 +69,7 @@ class GetFollowingFeedsUseCase @Inject constructor(
         }
 
         Type.Timeline -> {
-            BlueskyFeeds.Following(feed.pinned)
+            BlueskyFeeds.FollowingTimeline(feed.pinned)
         }
 
         else -> null

@@ -51,7 +51,7 @@ class GetFeedsStatusUseCase @Inject constructor(
                     .convert(role, platform, loggedAccount)
             }
 
-            is BlueskyFeeds.Following -> {
+            is BlueskyFeeds.FollowingTimeline -> {
                 client.getTimelineCatching(GetTimelineQueryParams(cursor = cursor))
                     .map { it.cursor to it.feed }
                     .convert(role, platform, loggedAccount)

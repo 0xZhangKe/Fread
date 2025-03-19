@@ -24,13 +24,17 @@ sealed class BlueskyFeeds {
      */
     abstract val pinned: Boolean
 
+    abstract val id: String
+
     @Composable
     abstract fun displayName(): String
 
     @Serializable
-    data class Following(
+    data class FollowingTimeline(
         override val pinned: Boolean,
     ) : BlueskyFeeds() {
+
+        override val id: String get() = "FollowingTimeline"
 
         @Composable
         override fun displayName(): String {
@@ -54,6 +58,8 @@ sealed class BlueskyFeeds {
 
         val liked: Boolean get() = !likedRecord.isNullOrEmpty()
 
+        override val id: String get() = cid
+
         @Composable
         override fun displayName(): String {
             return displayName
@@ -62,7 +68,7 @@ sealed class BlueskyFeeds {
 
     @Serializable
     data class List(
-        val id: String,
+        override val id: String,
         val uri: String,
         val name: String,
         val description: String? = null,
@@ -82,6 +88,8 @@ sealed class BlueskyFeeds {
         override val pinned: Boolean = false,
     ) : BlueskyFeeds() {
 
+        override val id: String get() = hashtag
+
         @Composable
         override fun displayName() = hashtag
     }
@@ -91,6 +99,8 @@ sealed class BlueskyFeeds {
         val did: String,
         override val pinned: Boolean = false,
     ) : BlueskyFeeds() {
+
+        override val id: String get() = "$did/posts"
 
         @Composable
         override fun displayName(): String {
@@ -104,6 +114,8 @@ sealed class BlueskyFeeds {
         override val pinned: Boolean = false,
     ) : BlueskyFeeds() {
 
+        override val id: String get() = "$did/replies"
+
         @Composable
         override fun displayName(): String {
             return stringResource(Res.string.bsky_feeds_user_replies)
@@ -116,6 +128,8 @@ sealed class BlueskyFeeds {
         override val pinned: Boolean = false,
     ) : BlueskyFeeds() {
 
+        override val id: String get() = "$did/medias"
+
         @Composable
         override fun displayName(): String {
             return stringResource(Res.string.bsky_feeds_user_medias)
@@ -127,6 +141,8 @@ sealed class BlueskyFeeds {
         val did: String? = null,
         override val pinned: Boolean = false,
     ) : BlueskyFeeds() {
+
+        override val id: String get() = "$did/likes"
 
         @Composable
         override fun displayName(): String {

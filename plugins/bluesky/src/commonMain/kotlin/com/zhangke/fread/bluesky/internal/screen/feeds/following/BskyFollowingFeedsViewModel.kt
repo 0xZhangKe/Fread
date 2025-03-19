@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
@@ -51,6 +52,31 @@ class BskyFollowingFeedsViewModel @Inject constructor(
 
     fun onPageResume() {
         loadFeedsList(false)
+    }
+
+    fun onFeedsUpdate(feeds: BlueskyFeeds) {
+        val feedsList = _uiState.value.followingFeeds
+        val exists = feedsList.any { it.id == feeds.id }
+        val newFeedsList = if (feeds.pinned) {
+            if (exists) {
+                feedsList.map {
+                    if (it.id == feeds.id) {
+                        feeds
+                    } else {
+                        it
+                    }
+                }
+            } else {
+                feedsList + feeds
+            }
+        } else {
+            if (exists) {
+                feedsList.filter { it.id != feeds.id }
+            } else {
+                feedsList
+            }
+        }
+        _uiState.update { it.copy(followingFeeds = newFeedsList) }
     }
 
     private fun loadFeedsList(refreshing: Boolean) {

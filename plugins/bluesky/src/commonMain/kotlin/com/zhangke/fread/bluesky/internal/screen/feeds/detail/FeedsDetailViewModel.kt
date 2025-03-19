@@ -39,14 +39,14 @@ class FeedsDetailViewModel @Inject constructor(
     private val followFeeds: PinFeedsUseCase,
     private val unfollowFeeds: UnpinFeedsUseCase,
     @Assisted private val role: IdentityRole,
-    @Assisted feeds: BlueskyFeeds.Feeds,
+    @Assisted feeds: BlueskyFeeds,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
             role: IdentityRole,
-            feeds: BlueskyFeeds.Feeds,
+            feeds: BlueskyFeeds,
         ): FeedsDetailViewModel
     }
 
@@ -68,9 +68,10 @@ class FeedsDetailViewModel @Inject constructor(
 
     fun onLikeClick() {
         if (likeJob?.isActive == true) return
+        val feeds = _uiState.value.feeds
+        if (feeds !is BlueskyFeeds.Feeds) return
         likeJob?.cancel()
         likeJob = launchInViewModel {
-            val feeds = _uiState.value.feeds
             if (feeds.liked) {
                 deleteRecord(
                     role = role,
@@ -98,10 +99,11 @@ class FeedsDetailViewModel @Inject constructor(
     }
 
     fun onPinClick() {
+        val feeds = _uiState.value.feeds
+        if (feeds !is BlueskyFeeds.Feeds) return
         if (pinJob?.isActive == true) return
         pinJob?.cancel()
         pinJob = launchInViewModel {
-            val feeds = _uiState.value.feeds
             if (feeds.pinned) {
                 unfollowFeeds(role = role, feeds = feeds)
             } else {
@@ -119,6 +121,7 @@ class FeedsDetailViewModel @Inject constructor(
     private fun getFeedsDetail() {
         launchInViewModel {
             val feeds = _uiState.value.feeds
+            if (feeds !is BlueskyFeeds.Feeds) return@launchInViewModel
             clientManager.getClient(role)
                 .getFeedGeneratorsCatching(GetFeedGeneratorsQueryParams(listOf(AtUri(feeds.uri))))
                 .onSuccess { response ->

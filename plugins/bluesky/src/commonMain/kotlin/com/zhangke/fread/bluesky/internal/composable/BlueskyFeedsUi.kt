@@ -14,7 +14,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ListAlt
 import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.ChevronRight
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +33,7 @@ import com.seiko.imageloader.model.ImageRequest
 import com.seiko.imageloader.rememberImageActionPainter
 import com.seiko.imageloader.ui.AutoSizeBox
 import com.zhangke.framework.composable.freadPlaceholder
+import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_creator_label
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_liked_by
@@ -60,12 +60,6 @@ fun BlueskyFollowingFeeds(
             maxLines = 1,
             textAlign = TextAlign.Start,
             overflow = TextOverflow.Ellipsis,
-        )
-
-        Icon(
-            imageVector = Icons.Default.ChevronRight,
-            modifier = Modifier,
-            contentDescription = null,
         )
     }
 }
@@ -141,7 +135,7 @@ fun BlueskyExploringFeeds(
             modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
             text = stringResource(
                 Res.string.bsky_feeds_explorer_liked_by,
-                (feeds.likeCount ?: 0L).toString(),
+                (feeds.likeCount ?: 0L).formatToHumanReadable(),
             ),
             style = MaterialTheme.typography.labelMedium,
             maxLines = 1,

@@ -8,7 +8,6 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsVie
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsViewModel
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsContainerViewModel
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeContainerViewModel
-import com.zhangke.fread.bluesky.internal.screen.home.edit.BlueskyEditContentViewModel
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailViewModel
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileViewModel
@@ -45,14 +44,6 @@ interface BlueskyComponent : BlueskyPlatformComponent {
     @Provides
     fun provideBlueskyHomeContainerViewModel(creator: () -> BlueskyHomeContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return BlueskyHomeContainerViewModel::class to creator
-    }
-
-    @IntoMap
-    @Provides
-    fun provideBlueskyEditContentViewModel(creator: (String) -> BlueskyEditContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return BlueskyEditContentViewModel::class to BlueskyEditContentViewModel.Factory { contentId ->
-            creator(contentId)
-        }
     }
 
     @IntoMap
@@ -111,7 +102,7 @@ interface BlueskyComponent : BlueskyPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideFeedsDetailViewModel(creator: (IdentityRole, BlueskyFeeds.Feeds) -> FeedsDetailViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideFeedsDetailViewModel(creator: (IdentityRole, BlueskyFeeds) -> FeedsDetailViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return FeedsDetailViewModel::class to FeedsDetailViewModel.Factory { role, feeds ->
             creator(role, feeds)
         }

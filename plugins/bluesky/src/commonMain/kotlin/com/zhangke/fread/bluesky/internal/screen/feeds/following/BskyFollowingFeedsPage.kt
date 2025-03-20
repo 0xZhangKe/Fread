@@ -45,10 +45,14 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.explorer.ExplorerFeedsScr
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import org.jetbrains.compose.resources.stringResource
 
-class BskyFollowingFeedsPage(private val contentId: String) : BaseScreen() {
+class BskyFollowingFeedsPage(
+    private val contentId: String?,
+    private val role: IdentityRole?,
+) : BaseScreen() {
 
     @Composable
     override fun Content() {
@@ -57,7 +61,7 @@ class BskyFollowingFeedsPage(private val contentId: String) : BaseScreen() {
         val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel =
             getViewModel<BskyFollowingFeedsViewModel, BskyFollowingFeedsViewModel.Factory> {
-                it.create(contentId)
+                it.create(contentId, role)
             }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarState = rememberSnackbarHostState()

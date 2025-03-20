@@ -4,6 +4,7 @@ import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -39,6 +40,12 @@ class StatusScreenProvider(
     fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         return providerList.firstNotNullOfOrNull {
             it.getEditContentConfigScreenScreen(content)
+        }
+    }
+
+    suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
+        return providerList.firstNotNullOfOrNull {
+            it.getEditContentConfigScreenScreen(account)
         }
     }
 
@@ -138,6 +145,8 @@ interface IStatusScreenProvider {
     fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab?
 
     fun getEditContentConfigScreenScreen(content: FreadContent): Screen?
+
+    suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen?
 
     fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen?
 

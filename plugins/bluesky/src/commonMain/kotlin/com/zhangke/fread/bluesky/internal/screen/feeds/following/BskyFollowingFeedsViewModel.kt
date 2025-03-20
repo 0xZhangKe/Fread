@@ -22,13 +22,15 @@ import me.tatarka.inject.annotations.Inject
 class BskyFollowingFeedsViewModel @Inject constructor(
     private val getFollowingFeeds: GetFollowingFeedsUseCase,
     private val contentRepo: FreadContentRepo,
-    @Assisted private val contentId: String,
+    @Assisted private val contentId: String?,
+    @Assisted private val role: IdentityRole?,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
 
         fun create(
-            contentId: String,
+            contentId: String?,
+            role: IdentityRole?,
         ): BskyFollowingFeedsViewModel
     }
 
@@ -40,7 +42,7 @@ class BskyFollowingFeedsViewModel @Inject constructor(
 
     private var initJob: Job? = null
 
-    private var role: IdentityRole? = null
+    private var cachedRole: IdentityRole? = role
 
     init {
         loadFeedsList(false)
@@ -125,14 +127,14 @@ class BskyFollowingFeedsViewModel @Inject constructor(
     }
 
     private suspend fun getRole(): Result<IdentityRole> {
-        if (role != null) return Result.success(role!!)
-        val content = contentRepo.getContent(contentId)?.let { it as? BlueskyContent }
+        if (cachedRole != null) return Result.success(cachedRole!!)
+        val content = contentId?.let { contentRepo.getContent(it) }?.let { it as? BlueskyContent }
         if (content == null) return Result.failure(IllegalArgumentException("Content not found $contentId"))
         return Result.success(
             IdentityRole(
                 accountUri = null,
                 baseUrl = content.baseUrl,
             )
-        ).onSuccess { this.role = it }
+        ).onSuccess { this.cachedRole = it }
     }
 }

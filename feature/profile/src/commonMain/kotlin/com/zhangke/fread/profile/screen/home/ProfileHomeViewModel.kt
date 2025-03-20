@@ -105,4 +105,12 @@ class ProfileHomeViewModel @Inject constructor(
                 ?.let { _openPageFlow.emit(it) }
         }
     }
+
+    fun onPinnedFeedsClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.screenProvider
+                .getEditContentConfigScreenScreen(account)
+                ?.let { _openPageFlow.emit(it) }
+        }
+    }
 }

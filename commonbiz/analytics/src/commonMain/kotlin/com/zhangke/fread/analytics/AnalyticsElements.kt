@@ -38,6 +38,7 @@ object ProfileElements {
     const val FAVOURITED = "profileFavourited"
     const val BOOKMARKED = "profileBookmarked"
     const val HASHTAG = "profileHashtag"
+    const val PINNED_FEEDS = "profilePinnedFeeds"
 }
 
 object SettingElements {

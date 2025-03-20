@@ -15,6 +15,7 @@ import com.zhangke.fread.bluesky.internal.screen.user.detail.BskyUserDetailScree
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -64,7 +65,13 @@ class BlueskyScreenProvider @Inject constructor(
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is BlueskyContent) return null
-        return BskyFollowingFeedsPage(content.id)
+        return BskyFollowingFeedsPage(contentId = content.id, role = null)
+    }
+
+    override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
+        if (account.platform.protocol.notBluesky) return null
+        val role = IdentityRole(baseUrl = account.platform.baseUrl, accountUri = account.uri)
+        return BskyFollowingFeedsPage(contentId = null, role = role)
     }
 
     override fun getUserDetailScreen(
@@ -146,7 +153,7 @@ class BlueskyScreenProvider @Inject constructor(
         role: IdentityRole,
         protocol: StatusProviderProtocol
     ): String? {
-        TODO("Not yet implemented")
+        return null
     }
 
     override fun getInstanceDetailScreen(

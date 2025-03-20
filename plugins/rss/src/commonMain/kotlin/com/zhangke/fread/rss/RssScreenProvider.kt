@@ -7,6 +7,7 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.rss.internal.screen.source.RssSourceScreen
 import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -36,6 +37,10 @@ class RssScreenProvider @Inject constructor(
     }
 
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
+        return null
+    }
+
+    override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
         return null
     }
 

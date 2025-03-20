@@ -33,5 +33,5 @@ fun reportToFireBase(
     eventName: String,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {},
 ) {
-    Firebase.analytics.logEvent(eventName, TrackingEventDataBuilder().apply(paramsBuilder).build())
+//    Firebase.analytics.logEvent(eventName, TrackingEventDataBuilder().apply(paramsBuilder).build())
 }

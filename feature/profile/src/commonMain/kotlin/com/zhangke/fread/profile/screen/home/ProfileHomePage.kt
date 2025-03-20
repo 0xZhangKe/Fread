@@ -58,6 +58,7 @@ import com.zhangke.fread.feature.profile.profile_page_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -109,6 +110,10 @@ class ProfileHomePage : BaseScreen() {
                     reportClick(ProfileElements.HASHTAG)
                     viewModel.onFollowedHashtagClick(it)
                 },
+                onPinnedFeedsClick = {
+                    reportClick(ProfileElements.PINNED_FEEDS)
+                    viewModel.onPinnedFeedsClick(it)
+                },
             )
             ConsumeFlow(viewModel.openPageFlow) {
                 navigator.push(it)
@@ -126,6 +131,7 @@ class ProfileHomePage : BaseScreen() {
         onFavouritedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
     ) {
         Surface(
             modifier = Modifier
@@ -167,13 +173,13 @@ class ProfileHomePage : BaseScreen() {
                 ) {
                     items(uiState.accountDataList) { item ->
                         AccountGroupItem(
-                            platform = item.first,
                             accountList = item.second,
                             onLogoutClick = onLogoutClick,
                             onAccountClick = onAccountClick,
                             onFavouritedClick = onFavouritedClick,
                             onBookmarkedClick = onBookmarkedClick,
                             onFollowedHashtagClick = onFollowedHashtagClick,
+                            onPinnedFeedsClick = onPinnedFeedsClick,
                         )
                     }
                 }
@@ -183,13 +189,13 @@ class ProfileHomePage : BaseScreen() {
 
     @Composable
     private fun AccountGroupItem(
-        platform: BlogPlatform,
         accountList: List<LoggedAccount>,
         onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
         onFavouritedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
     ) {
         Card(
             modifier = Modifier
@@ -207,13 +213,12 @@ class ProfileHomePage : BaseScreen() {
                 accountList.forEach { account ->
                     LoggedAccountSection(
                         account = account,
-                        onLogoutClick = {
-                            onLogoutClick(account)
-                        },
+                        onLogoutClick = onLogoutClick,
                         onAccountClick = onAccountClick,
                         onFavouritedClick = onFavouritedClick,
                         onBookmarkedClick = onBookmarkedClick,
                         onFollowedHashtagClick = onFollowedHashtagClick,
+                        onPinnedFeedsClick = onPinnedFeedsClick,
                     )
                 }
             }
@@ -223,16 +228,14 @@ class ProfileHomePage : BaseScreen() {
     @Composable
     private fun LoggedAccountSection(
         account: LoggedAccount,
-        onLogoutClick: () -> Unit,
+        onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
         onFavouritedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
     ) {
         val browserLauncher = LocalActivityBrowserLauncher.current
-        var showLogoutDialog by remember {
-            mutableStateOf(false)
-        }
         Row(
             modifier = Modifier
                 .fillMaxWidth()
@@ -281,45 +284,74 @@ class ProfileHomePage : BaseScreen() {
                     fontSizeSp = 16F,
                     onUrlClick = {
                         browserLauncher.launchWebTabInApp(it, account.role)
-                    }
+                    },
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = { onFavouritedClick(account) },
-                        imageVector = Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorite",
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = { onBookmarkedClick(account) },
-                        imageVector = Icons.Outlined.BookmarkBorder,
-                        contentDescription = "Bookmarks",
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = {
-                            onFollowedHashtagClick(account)
-                        },
-                        imageVector = Icons.Default.Tag,
-                        contentDescription = "Followed Tags",
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = { showLogoutDialog = true },
-                        imageVector = Icons.AutoMirrored.Filled.Logout,
-                        contentDescription = "Followed Tags",
-                    )
-                }
+                AccountInteractionPanel(
+                    modifier = Modifier,
+                    account = account,
+                    onLikedClick = onFavouritedClick,
+                    onBookmarkedClick = onBookmarkedClick,
+                    onLogoutClick = onLogoutClick,
+                    onFollowedHashtagClick = onFollowedHashtagClick,
+                    onPinnedFeedsClick = onPinnedFeedsClick,
+                )
             }
+        }
+    }
+
+    @Composable
+    private fun AccountInteractionPanel(
+        modifier: Modifier,
+        account: LoggedAccount,
+        onLikedClick: (LoggedAccount) -> Unit,
+        onBookmarkedClick: (LoggedAccount) -> Unit,
+        onLogoutClick: (LoggedAccount) -> Unit,
+        onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
+    ) {
+        var showLogoutDialog by remember { mutableStateOf(false) }
+        val isBluesky = account.platform.protocol.isBluesky
+        val iconSize = 20.dp
+        Row(
+            modifier = modifier.fillMaxWidth()
+                .padding(end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SimpleIconButton(
+                iconModifier = Modifier.size(iconSize),
+                onClick = { onLikedClick(account) },
+                imageVector = Icons.Outlined.FavoriteBorder,
+                contentDescription = "Liked",
+            )
+            if (!isBluesky) {
+                Spacer(modifier = Modifier.weight(1F))
+                SimpleIconButton(
+                    iconModifier = Modifier.size(iconSize),
+                    onClick = { onBookmarkedClick(account) },
+                    imageVector = Icons.Outlined.BookmarkBorder,
+                    contentDescription = "Bookmarks",
+                )
+            }
+            Spacer(modifier = Modifier.weight(1F))
+            SimpleIconButton(
+                iconModifier = Modifier.size(iconSize),
+                onClick = {
+                    if (isBluesky) {
+                        onPinnedFeedsClick(account)
+                    } else {
+                        onFollowedHashtagClick(account)
+                    }
+                },
+                imageVector = Icons.Default.Tag,
+                contentDescription = "Tags",
+            )
+            Spacer(modifier = Modifier.weight(1F))
+            SimpleIconButton(
+                iconModifier = Modifier.size(iconSize),
+                onClick = { showLogoutDialog = true },
+                imageVector = Icons.AutoMirrored.Filled.Logout,
+                contentDescription = "Logout",
+            )
         }
         if (showLogoutDialog) {
             FreadDialog(
@@ -327,7 +359,7 @@ class ProfileHomePage : BaseScreen() {
                 contentText = stringResource(Res.string.profile_page_logout_dialog_content),
                 onPositiveClick = {
                     showLogoutDialog = false
-                    onLogoutClick()
+                    onLogoutClick(account)
                 },
                 onNegativeClick = {
                     showLogoutDialog = false

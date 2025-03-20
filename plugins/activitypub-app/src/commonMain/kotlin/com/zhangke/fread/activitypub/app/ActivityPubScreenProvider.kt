@@ -18,6 +18,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListS
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
@@ -70,6 +71,10 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         if (content !is ActivityPubContent) return null
         return EditContentConfigScreen(content.id)
+    }
+
+    override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
+        return null
     }
 
     override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {

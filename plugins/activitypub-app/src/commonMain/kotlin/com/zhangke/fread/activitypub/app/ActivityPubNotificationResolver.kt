@@ -1,7 +1,7 @@
 package com.zhangke.fread.activitypub.app
 
 import com.zhangke.activitypub.entities.ActivityPubNotificationsEntity
-import com.zhangke.framework.datetime.Instant
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
@@ -9,7 +9,6 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
-import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
@@ -28,7 +27,6 @@ class ActivityPubNotificationResolver @Inject constructor(
     private val loggedAccountProvider: LoggedAccountProvider,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val statusAdapter: ActivityPubStatusAdapter,
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
 ) : INotificationResolver {
 
     override suspend fun getNotifications(
@@ -97,7 +95,7 @@ class ActivityPubNotificationResolver @Inject constructor(
         platform: BlogPlatform,
         unread: Boolean,
     ): StatusNotification {
-        val createAt = Instant(formatDatetimeToDate(entity.createdAt))
+        val createAt = DateParser.parseOrCurrent(entity.createdAt)
         val author = accountAdapter.toAuthor(entity.account)
         val status = entity.status?.let {
             statusAdapter.toStatusUiState(

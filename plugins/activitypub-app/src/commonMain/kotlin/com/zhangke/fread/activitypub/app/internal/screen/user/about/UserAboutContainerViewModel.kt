@@ -5,13 +5,11 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
-import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
 
 class UserAboutContainerViewModel @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) : ContainerViewModel<UserAboutViewModel, UserAboutContainerViewModel.Params>() {
@@ -19,7 +17,6 @@ class UserAboutContainerViewModel @Inject constructor(
     override fun createSubViewModel(params: Params): UserAboutViewModel {
         return UserAboutViewModel(
             clientManager = clientManager,
-            formatDatetimeToDate = formatDatetimeToDate,
             webFingerBaseUrlToUserIdRepo = webFingerBaseUrlToUserIdRepo,
             emojiEntityAdapter = emojiEntityAdapter,
             role = params.role,

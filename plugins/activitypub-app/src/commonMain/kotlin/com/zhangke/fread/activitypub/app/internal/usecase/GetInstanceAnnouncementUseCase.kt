@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app.internal.usecase
 
 import com.zhangke.activitypub.entities.ActivityPubAnnouncementEntity
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
@@ -9,7 +10,6 @@ import me.tatarka.inject.annotations.Inject
 
 class GetInstanceAnnouncementUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
 ) {
 
     suspend operator fun invoke(
@@ -28,8 +28,10 @@ class GetInstanceAnnouncementUseCase @Inject constructor(
     }
 
     private fun ActivityPubAnnouncementEntity.isActive(): Boolean {
-        val startDateTime = startsAt?.let { formatDatetimeToDate(it) }?.toEpochMilliseconds()
-        val endDateTime = endsAt?.let { formatDatetimeToDate(it) }?.toEpochMilliseconds()
+        val startDateTime =
+            startsAt?.let { DateParser.parseOrCurrent(it) }?.instant?.toEpochMilliseconds()
+        val endDateTime =
+            endsAt?.let { DateParser.parseOrCurrent(it) }?.instant?.toEpochMilliseconds()
         if (startDateTime == null) return true
         val currentDateTime = getCurrentTimeMillis()
         if (currentDateTime < startDateTime) return false

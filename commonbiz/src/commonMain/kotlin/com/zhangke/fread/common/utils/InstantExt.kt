@@ -1,10 +1,8 @@
 package com.zhangke.fread.common.utils
 
+import com.zhangke.framework.date.InstantFormater
 import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
-import kotlinx.datetime.format
-import kotlinx.datetime.format.DateTimeComponents
-import kotlinx.datetime.format.char
 
 fun getCurrentInstant(): Instant {
     return Clock.System.now()
@@ -15,23 +13,9 @@ fun getCurrentTimeMillis(): Long {
 }
 
 fun com.zhangke.framework.datetime.Instant.formatDefault(): String {
-    return instant.formatDefault()
+    return this.instant.formatDefault()
 }
 
 fun Instant.formatDefault(): String {
-    return format(
-        DateTimeComponents.Format {
-            year()
-            char('-')
-            monthNumber()
-            char('-')
-            dayOfMonth()
-            char(' ')
-            hour()
-            char(':')
-            minute()
-            char(':')
-            second()
-        }
-    )
+    return InstantFormater().formatToMediumDate(this)
 }

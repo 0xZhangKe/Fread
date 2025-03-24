@@ -2,12 +2,11 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.framework.datetime.Instant
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
 import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
@@ -26,7 +25,6 @@ import com.zhangke.fread.status.status.model.Status
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
@@ -114,7 +112,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         return Status.Reblog(
             author = activityPubAccountEntityAdapter.toAuthor(entity.account),
             id = entity.id,
-            createAt = Instant(formatDatetimeToDate(entity.createdAt)),
+            createAt = DateParser.parseOrCurrent(entity.createdAt),
             reblog = blog,
         )
     }
@@ -133,7 +131,7 @@ class ActivityPubStatusAdapter @Inject constructor(
         author: BlogAuthor,
     ): Blog {
         val emojis = entity.emojis.map(emojiEntityAdapter::toEmoji)
-        val createAt = Instant(formatDatetimeToDate(entity.createdAt))
+        val createAt = DateParser.parseOrCurrent(entity.createdAt)
         return Blog(
             id = entity.id,
             author = author,
@@ -176,7 +174,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),
             embeds = entity.card?.toEmbed()?.let { listOf(it) } ?: emptyList(),
-            editedAt = entity.editedAt?.let { formatDatetimeToDate(it) }?.let { Instant(it) },
+            editedAt = entity.editedAt?.let { DateParser.parseOrCurrent(it) },
             application = entity.application?.toApplication(),
         )
     }

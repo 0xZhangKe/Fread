@@ -132,7 +132,7 @@ private fun MainDrawerContent(
             ) {
                 TopAppBar(
                     title = {
-                        Text(text = stringResource(com.zhangke.fread.hosting.Res.string.main_drawer_title))
+                        Text(text = stringResource(Res.string.main_drawer_title))
                     },
                     actions = {
                         SimpleIconButton(

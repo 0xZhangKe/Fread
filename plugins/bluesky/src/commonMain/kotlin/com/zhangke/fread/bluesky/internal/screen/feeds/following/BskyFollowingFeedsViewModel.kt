@@ -3,9 +3,12 @@ package com.zhangke.fread.bluesky.internal.screen.feeds.following
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
+import com.zhangke.fread.bluesky.internal.usecase.UpdatePinnedFeedsOrderUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
@@ -22,6 +25,7 @@ import me.tatarka.inject.annotations.Inject
 class BskyFollowingFeedsViewModel @Inject constructor(
     private val getFollowingFeeds: GetFollowingFeedsUseCase,
     private val contentRepo: FreadContentRepo,
+    private val updatePinnedFeedsOrder: UpdatePinnedFeedsOrderUseCase,
     @Assisted private val contentId: String?,
     @Assisted private val role: IdentityRole?,
 ) : ViewModel() {
@@ -107,6 +111,7 @@ class BskyFollowingFeedsViewModel @Inject constructor(
             _uiState.update { it.copy(role = role) }
             getFollowingFeeds(role)
                 .onSuccess { list ->
+                    list.joinToString { it.id }.let { Log.d("F_TEST") { it } }
                     _uiState.update {
                         it.copy(
                             initializing = false,
@@ -136,5 +141,11 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                 baseUrl = content.baseUrl,
             )
         ).onSuccess { this.cachedRole = it }
+    }
+
+    fun onFeedsOrderChanged(startIndex: Int, endIndex: Int){
+        launchInViewModel {
+            updatePinnedFeedsOrder
+        }
     }
 }

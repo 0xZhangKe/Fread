@@ -161,7 +161,7 @@ class EditContentConfigScreen(
                 },
                 onDragEnd = { startIndex, endIndex ->
                     onShowingTabMove(startIndex, endIndex)
-                }
+                },
             )
             LazyColumn(
                 state = state.listState,

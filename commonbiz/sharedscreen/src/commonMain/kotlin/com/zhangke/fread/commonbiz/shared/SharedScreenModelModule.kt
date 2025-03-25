@@ -26,9 +26,11 @@ interface SharedScreenModelModule {
     @ApplicationScope
     fun provideModuleScreenVisitor(
         feedsScreenVisitor: IFeedsScreenVisitor,
+        profileScreenVisitor: IProfileScreenVisitor,
     ): ModuleScreenVisitor {
         return ModuleScreenVisitor(
             feedsScreenVisitor = feedsScreenVisitor,
+            profileScreenVisitor = profileScreenVisitor,
         )
     }
 }

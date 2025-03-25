@@ -40,13 +40,13 @@ import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.analytics.MainDrawerElements
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.config.AppCommonConfig
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.hosting.Res
@@ -71,11 +71,12 @@ fun Screen.MainDrawer(
     onDismissRequest: () -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
+    val bottomSheetNavigator = LocalBottomSheetNavigator.current
+    val screenVisitor = LocalModuleScreenVisitor.current
     val viewModel = getViewModel<MainDrawerViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()
-    val browserLauncher = LocalActivityBrowserLauncher.current
     MainDrawerContent(
         uiState = uiState,
         onContentConfigClick = {
@@ -102,12 +103,9 @@ fun Screen.MainDrawer(
             navigator.push(SettingScreen())
         },
         onDonateClick = {
-            onDismissRequest()
+//            onDismissRequest()
             reportClick(MainDrawerElements.DONATE)
-            browserLauncher.launchWebTabInApp(
-                AppCommonConfig.DONATE_LINK,
-                checkAppSupportPage = false,
-            )
+            bottomSheetNavigator.show(screenVisitor.profileScreenVisitor.getDonateScreen())
         },
     )
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)

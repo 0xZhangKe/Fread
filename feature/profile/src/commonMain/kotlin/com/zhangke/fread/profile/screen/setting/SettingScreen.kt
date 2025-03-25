@@ -45,12 +45,11 @@ import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.fread.analytics.SettingElements
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.config.AppCommonConfig
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
@@ -87,6 +86,7 @@ import com.zhangke.fread.feature.profile.profile_setting_open_source_feedback_de
 import com.zhangke.fread.feature.profile.profile_setting_open_source_title
 import com.zhangke.fread.feature.profile.profile_setting_ratting
 import com.zhangke.fread.feature.profile.profile_setting_ratting_desc
+import com.zhangke.fread.profile.screen.donate.DonateScreen
 import com.zhangke.fread.profile.screen.opensource.OpenSourceScreen
 import com.zhangke.fread.profile.screen.setting.about.AboutScreen
 import kotlinx.coroutines.delay
@@ -105,10 +105,10 @@ class SettingScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
+        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<SettingScreenModel>()
         val uiState by viewModel.uiState.collectAsState()
 
-        val browserLauncher = LocalActivityBrowserLauncher.current
         val activityLanguageHelper = LocalActivityLanguageHelper.current
         val activityDayNightHelper = LocalActivityDayNightHelper.current
         val activityTextHandler = LocalActivityTextHandler.current
@@ -148,10 +148,7 @@ class SettingScreen : BaseScreen() {
             },
             onDonateClick = {
                 reportClick(SettingElements.DONATE)
-                browserLauncher.launchWebTabInApp(
-                    AppCommonConfig.DONATE_LINK,
-                    checkAppSupportPage = false,
-                )
+                bottomSheetNavigator.show(DonateScreen())
             },
             onContentSizeChanged = {
                 reportClick(SettingElements.CONTENT_SIZE)
@@ -472,7 +469,7 @@ class SettingScreen : BaseScreen() {
                             style = MaterialTheme.typography.titleMedium,
                             maxLines = 1,
                         )
-                        if (redDot){
+                        if (redDot) {
                             Spacer(modifier = Modifier.width(4.dp))
                             Box(
                                 modifier = Modifier.size(4.dp)

@@ -15,6 +15,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -113,27 +114,31 @@ class FeedsDetailScreen(
         onLikeClick: () -> Unit,
         onPinClick: () -> Unit,
     ) {
-        Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
-            val feeds = uiState.feeds
-            if (feeds is BlueskyFeeds.Feeds) {
-                FeedsDetail(
-                    feeds = feeds,
-                    onCreatorClick = onCreatorClick,
-                    onShareClick = onShareFeedsClick,
-                    onLikeClick = onLikeClick,
-                    onPinClick = onPinClick,
-                )
-            } else if (feeds is BlueskyFeeds.List) {
-                ListDetail(
-                    feeds = feeds,
-                    onShareClick = onShareListClick,
-                )
+        Surface(
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            Column(modifier = Modifier.fillMaxWidth().padding(top = 8.dp, bottom = 32.dp)) {
+                val feeds = uiState.feeds
+                if (feeds is BlueskyFeeds.Feeds) {
+                    FeedsDetail(
+                        feeds = feeds,
+                        onCreatorClick = onCreatorClick,
+                        onShareClick = onShareFeedsClick,
+                        onLikeClick = onLikeClick,
+                        onPinClick = onPinClick,
+                    )
+                } else if (feeds is BlueskyFeeds.List) {
+                    ListDetail(
+                        feeds = feeds,
+                        onShareClick = onShareListClick,
+                    )
+                }
             }
+            SnackbarHost(
+                modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
+                hostState = snackbarHostState,
+            )
         }
-        SnackbarHost(
-            modifier = Modifier.fillMaxWidth().padding(bottom = 16.dp),
-            hostState = snackbarHostState,
-        )
     }
 
     @Composable

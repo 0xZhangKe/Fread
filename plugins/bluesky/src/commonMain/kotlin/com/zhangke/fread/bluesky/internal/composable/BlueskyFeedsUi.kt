@@ -48,7 +48,7 @@ fun BlueskyFollowingFeeds(
 ) {
     Row(
         modifier = modifier.clickable { onFeedsClick(feeds) }
-            .padding(horizontal = 16.dp, vertical = 8.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FeedsAvatar(feeds.avatar, Modifier)

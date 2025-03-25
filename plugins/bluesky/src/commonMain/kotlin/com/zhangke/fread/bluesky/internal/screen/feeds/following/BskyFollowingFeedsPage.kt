@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.following
 
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,27 +9,28 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
-import androidx.compose.material3.Icon
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
-import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -48,6 +50,10 @@ import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
+import org.burnoutcrew.reorderable.ReorderableItem
+import org.burnoutcrew.reorderable.detectReorderAfterLongPress
+import org.burnoutcrew.reorderable.rememberReorderableLazyListState
+import org.burnoutcrew.reorderable.reorderable
 import org.jetbrains.compose.resources.stringResource
 
 class BskyFollowingFeedsPage(
@@ -84,6 +90,7 @@ class BskyFollowingFeedsPage(
             onExplorerClick = {
                 uiState.role?.let { navigator.push(ExplorerFeedsScreen(it)) }
             },
+            onFeedsReorder = viewModel::onFeedsOrderChanged,
         )
 
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
@@ -102,6 +109,7 @@ class BskyFollowingFeedsPage(
         onRefresh: () -> Unit,
         onFeedsClick: (BlueskyFeeds) -> Unit,
         onExplorerClick: () -> Unit = {},
+        onFeedsReorder: (Int, Int) -> Unit,
     ) {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
@@ -132,46 +140,93 @@ class BskyFollowingFeedsPage(
                     refreshing = uiState.refreshing,
                     onRefresh = onRefresh,
                 )
-                LazyColumn(
-                    modifier = Modifier.fillMaxSize()
-                        .padding(innerPadding)
-                        .pullRefresh(pullRefreshState),
-                ) {
-                    if (uiState.pageError != null) {
-                        item {
-                            Box(modifier = Modifier.fillMaxSize()) {
-                                DefaultFailed(
-                                    modifier = Modifier.fillMaxSize(),
-                                    exception = uiState.pageError,
-                                )
+                var feedsInUi by remember(uiState.followingFeeds) {
+                    mutableStateOf(uiState.followingFeeds)
+                }
+                key(uiState.followingFeeds) {
+                    val state = rememberReorderableLazyListState(
+                        onMove = { from, to ->
+                            if (feedsInUi.isEmpty()) return@rememberReorderableLazyListState
+                            feedsInUi = feedsInUi.toMutableList().apply {
+                                add(to.index, removeAt(from.index))
                             }
-                        }
-                    } else {
-                        if (uiState.followingFeeds.isNotEmpty()) {
-                            items(uiState.followingFeeds) {
-                                BlueskyFollowingFeeds(
-                                    modifier = Modifier.fillMaxSize(),
-                                    feeds = it,
-                                    onFeedsClick = onFeedsClick,
-                                )
-                                HorizontalDivider(
-                                    modifier = Modifier.fillMaxWidth().padding(horizontal = 16.dp)
-                                )
-                            }
+                        },
+                        onDragEnd = { startIndex, endIndex ->
+                            onFeedsReorder(startIndex, endIndex)
+                        },
+                    )
+                    LazyColumn(
+                        modifier = Modifier.fillMaxSize()
+                            .padding(innerPadding)
+                            .pullRefresh(pullRefreshState)
+                            .reorderable(state)
+                            .detectReorderAfterLongPress(state),
+                        state = state.listState,
+                    ) {
+                        if (uiState.pageError != null) {
                             item {
-                                Box(modifier = Modifier.fillMaxWidth()) {
-                                    Button(
-                                        modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
-                                            .align(Alignment.Center),
-                                        onClick = onExplorerClick,
-                                        colors = ButtonDefaults.buttonColors(
-                                            containerColor = MaterialTheme.colorScheme.secondaryContainer,
-                                            contentColor = Color.White,
-                                        ),
-                                    ) {
-                                        Text(
-                                            text = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more)
+                                Box(modifier = Modifier.fillMaxSize()) {
+                                    DefaultFailed(
+                                        modifier = Modifier.fillMaxSize(),
+                                        exception = uiState.pageError,
+                                    )
+                                }
+                            }
+                        } else {
+                            if (feedsInUi.isNotEmpty()) {
+                                items(
+                                    items = feedsInUi,
+                                    key = { it.uiKey },
+                                ) { feed ->
+                                    ReorderableItem(
+                                        state = state,
+                                        key = feed.uiKey,
+                                    ) { dragging ->
+                                        val elevation by animateDpAsState(
+                                            targetValue = if (dragging) 16.dp else 0.dp,
+                                            label = "BskyPinnedFeedsItemElevation",
                                         )
+                                        Surface(
+                                            modifier = Modifier
+                                                .fillMaxWidth(),
+                                            shadowElevation = elevation,
+                                        ) {
+                                            BlueskyFollowingFeeds(
+                                                modifier = Modifier.fillMaxSize(),
+                                                feeds = feed,
+                                                onFeedsClick = onFeedsClick,
+                                            )
+                                        }
+//                                        HorizontalDivider(
+//                                            modifier = Modifier.fillMaxWidth()
+//                                                .padding(horizontal = 16.dp)
+//                                        )
+                                    }
+                                }
+                                item {
+                                    Box(modifier = Modifier.fillMaxWidth()) {
+                                        TextButton(
+                                            modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
+                                                .align(Alignment.Center),
+                                            onClick = onExplorerClick,
+                                        ) {
+                                            Text(
+                                                text = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more)
+                                            )
+                                        }
+//                                        Button(
+//                                            modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
+//                                                .align(Alignment.Center),
+//                                            onClick = onExplorerClick,
+////                                            colors = ButtonDefaults.buttonColors(
+////                                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
+////                                                contentColor = Color.White,
+////                                            ),
+//                                        ) {
+//                                            Text(
+//                                                text = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more)
+//                                            )
+//                                        }
                                     }
                                 }
                             }
@@ -181,6 +236,8 @@ class BskyFollowingFeedsPage(
             }
         }
     }
+
+    private val BlueskyFeeds.uiKey: String get() = "${this::class.simpleName}@${this.id}"
 
     @Composable
     private fun InitializingPlaceholder(modifier: Modifier) {

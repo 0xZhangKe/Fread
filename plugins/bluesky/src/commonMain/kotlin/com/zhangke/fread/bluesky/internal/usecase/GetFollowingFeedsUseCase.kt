@@ -42,7 +42,7 @@ class GetFollowingFeedsUseCase @Inject constructor(
         val allListViews = allListViewsResult.getOrThrow()
         return followingFeeds.mapNotNull { feed ->
             mapFollowingFeeds(feed, generatorList, allListViews)
-        }.let { Result.success(it) }
+        }.let { Result.success(it.distinctBy { it.id }) }
     }
 
     private fun mapFollowingFeeds(

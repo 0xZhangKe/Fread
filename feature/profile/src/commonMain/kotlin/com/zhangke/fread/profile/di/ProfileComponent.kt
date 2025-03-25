@@ -1,7 +1,10 @@
 package com.zhangke.fread.profile.di
 
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelKey
+import com.zhangke.fread.commonbiz.shared.IProfileScreenVisitor
+import com.zhangke.fread.profile.ProfileScreenVisitor
 import com.zhangke.fread.profile.screen.home.ProfileHomeViewModel
 import com.zhangke.fread.profile.screen.setting.SettingScreenModel
 import com.zhangke.fread.profile.screen.setting.about.AboutViewModel
@@ -26,5 +29,11 @@ interface ProfileComponent {
     @Provides
     fun provideAboutViewModel(creator: () -> AboutViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return AboutViewModel::class to creator
+    }
+
+    @Provides
+    @ApplicationScope
+    fun provideProfileScreenVisitor(): IProfileScreenVisitor {
+        return ProfileScreenVisitor()
     }
 }

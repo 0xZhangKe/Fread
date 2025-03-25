@@ -127,9 +127,7 @@ class BskyUserDetailScreen(
             onCopyLinkClick = {
                 uiState.userHomePageUrl?.let { activityTextHandler.copyText(it) }
             },
-            onEditProfileClick = {
-                navigator.push(EditProfileScreen(role = role))
-            },
+            onEditProfileClick = { navigator.push(EditProfileScreen(role = role)) },
             onMuteClick = { viewModel.onMuteClick(true) },
             onUnmuteClick = { viewModel.onMuteClick(false) },
             onBlockedUserListClick = {
@@ -283,16 +281,23 @@ private fun UserDetailInfo(
             )
 
             // relationship button
-            RelationshipStateButton(
-                modifier = Modifier.constrainAs(relationRef) {
+            if (uiState.isOwner) {
+                Box(modifier = Modifier.constrainAs(relationRef) {
                     top.linkTo(bannerRef.bottom, 8.dp)
                     end.linkTo(parent.end, 16.dp)
-                },
-                relationship = uiState.relationship,
-                onFollowClick = onFollowClick,
-                onUnfollowClick = onUnfollowClick,
-                onUnblockClick = onUnblockClick,
-            )
+                })
+            } else {
+                RelationshipStateButton(
+                    modifier = Modifier.constrainAs(relationRef) {
+                        top.linkTo(bannerRef.bottom, 8.dp)
+                        end.linkTo(parent.end, 16.dp)
+                    },
+                    relationship = uiState.relationship,
+                    onFollowClick = onFollowClick,
+                    onUnfollowClick = onUnfollowClick,
+                    onUnblockClick = onUnblockClick,
+                )
+            }
 
             // title
             Text(

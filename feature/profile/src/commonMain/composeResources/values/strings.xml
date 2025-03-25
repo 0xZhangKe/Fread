@@ -43,4 +43,6 @@
     <string name="profile_setting_check_for_update">Check for update</string>
     <string name="profile_setting_already_latest_version">Your app is already up to date</string>
     <string name="profile_setting_have_new_version">New version available, click to update.</string>
+
+    <string name="profile_donate_page_title">Select how you’d like to donate</string>
 </resources>

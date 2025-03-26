@@ -9,6 +9,7 @@ data class BskyFeedsExplorerUiState(
     val pageError: Throwable?,
     val refreshing: Boolean,
     val followingFeeds: List<BlueskyFeeds>,
+    val reordering: Boolean,
 ) {
 
     companion object {
@@ -20,6 +21,7 @@ data class BskyFeedsExplorerUiState(
                 role = null,
                 pageError = null,
                 followingFeeds = emptyList(),
+                reordering = false,
             )
         }
     }

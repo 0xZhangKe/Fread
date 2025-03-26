@@ -1,11 +1,13 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.following
 
 import androidx.compose.animation.core.animateDpAsState
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
@@ -13,8 +15,10 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
@@ -39,6 +43,7 @@ import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_more
 import com.zhangke.fread.bluesky.internal.composable.BlueskyFollowingFeeds
@@ -219,6 +224,19 @@ class BskyFollowingFeedsPage(
                             }
                         }
                     }
+                }
+            }
+
+            if (uiState.reordering) {
+                Box(
+                    modifier = Modifier.fillMaxSize()
+                        .noRippleClick { }
+                        .background(color = MaterialTheme.colorScheme.surface.copy(alpha = 0.6F)),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(64.dp),
+                    )
                 }
             }
         }

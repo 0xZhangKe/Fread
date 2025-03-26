@@ -9,9 +9,10 @@
     <string name="bsky_edit_content_title">Edit Content</string>
 
     <string name="bsky_feeds_explorer_more">Dive into more feeds</string>
-    <string name="bsky_feeds_explorer_creator_label">Feed by %1$s</string>
+    <string name="bsky_feeds_explorer_creator_label">By %1$s</string>
     <string name="bsky_feeds_explorer_liked_by">Liked by %1$s users</string>
     <string name="bsky_feeds_detail_creator_prefix">By</string>
+    <string name="bsky_feeds_item_subtitle">By %1$s · Liked by %2$s users</string>
 
     <string name="bsky_feeds_following_name">Following</string>
 

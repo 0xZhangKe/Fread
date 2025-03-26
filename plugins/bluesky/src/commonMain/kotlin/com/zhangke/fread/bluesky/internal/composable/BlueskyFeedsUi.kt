@@ -37,6 +37,7 @@ import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_creator_label
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_liked_by
+import com.zhangke.fread.bluesky.bsky_feeds_item_subtitle
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import org.jetbrains.compose.resources.stringResource
 
@@ -52,16 +53,39 @@ fun BlueskyFollowingFeeds(
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FeedsAvatar(feeds.avatar, Modifier)
-
-        Text(
+        Column(
             modifier = Modifier.weight(1F).padding(horizontal = 16.dp),
-            text = feeds.displayName(),
-            style = MaterialTheme.typography.titleMedium,
-            maxLines = 1,
-            textAlign = TextAlign.Start,
-            overflow = TextOverflow.Ellipsis,
-        )
+        ) {
+            Text(
+                text = feeds.displayName(),
+                style = MaterialTheme.typography.titleMedium,
+                maxLines = 1,
+                textAlign = TextAlign.Start,
+                overflow = TextOverflow.Ellipsis,
+            )
+            val subtitle = buildFeedsSubtitle(feeds)
+            if (!subtitle.isNullOrEmpty()) {
+                Text(
+                    modifier = Modifier.padding(top = 1.dp),
+                    text = subtitle,
+                    style = MaterialTheme.typography.labelMedium,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+        }
     }
+}
+
+@Composable
+private fun buildFeedsSubtitle(feeds: BlueskyFeeds): String? {
+    if (feeds !is BlueskyFeeds.Feeds) return null
+    return stringResource(
+        Res.string.bsky_feeds_item_subtitle,
+        feeds.creator.prettyHandle,
+        (feeds.likeCount ?: 0).formatToHumanReadable(),
+    )
 }
 
 @Composable

@@ -99,6 +99,10 @@ class BlueskyClient(
         return runCatching { createSession(request) }.toResult()
     }
 
+    suspend fun refreshSessionCatching(): Result<RefreshSessionResponse> {
+        return kotlin.runCatching { refreshSession() }.toResult()
+    }
+
     suspend fun getProfileCatching(request: GetProfileQueryParams): Result<ProfileViewDetailed> {
         return runCatching { getProfile(request) }.toResult()
     }

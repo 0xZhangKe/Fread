@@ -66,4 +66,6 @@
     <string name="shared_publish_media_alt_dialog_input_tip">Descriptive alt text</string>
     <string name="shared_publish_media_alt_dialog_input_hint">Alt text</string>
 
+    <string name="shared_feeds_not_login_title">Oops! Your login info has expired. Please log back in to continue.</string>
+    <string name="shared_feeds_go_to_login">Sign in</string>
 </resources>

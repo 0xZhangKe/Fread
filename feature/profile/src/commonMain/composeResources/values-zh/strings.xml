@@ -45,4 +45,6 @@
     <string name="profile_setting_have_new_version">有新版本，点击更新。</string>
 
     <string name="profile_donate_page_title">请选择捐赠方式</string>
+
+    <string name="profile_account_not_login">登陆已失效</string>
 </resources>

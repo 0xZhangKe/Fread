@@ -70,4 +70,9 @@ class HomeFeedsViewModel(
             it.feeds.onEach { status -> status.preParseStatusUiState() }
         }
     }
+
+    fun onPageResume() {
+        if (uiState.value.pageErrorContent == null) return
+        initFeeds(true)
+    }
 }

@@ -1,6 +1,5 @@
 package com.zhangke.fread.feeds.pages.home.feeds
 
-import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.StatusUiState
@@ -11,7 +10,7 @@ data class MixedContentUiState(
     val initializing: Boolean,
     val refreshing: Boolean,
     val loadMoreState: LoadState,
-    val pageError: TextString?,
+    val pageError: Throwable?,
 ) {
 
     companion object {

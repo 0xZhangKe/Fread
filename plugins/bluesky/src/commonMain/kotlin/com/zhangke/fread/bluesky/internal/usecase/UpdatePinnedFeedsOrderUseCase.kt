@@ -29,12 +29,21 @@ class UpdatePinnedFeedsOrderUseCase @Inject constructor(
     }
 
     private fun reorder(list: List<SavedFeed>, newOrder: List<BlueskyFeeds>): List<SavedFeed> {
-        val idToFeedsMap = mutableMapOf<String, SavedFeed>()
+        val uriToFeedsMap = mutableMapOf<String, SavedFeed>()
         for (feed in list) {
-            idToFeedsMap[feed.id] = feed
+            uriToFeedsMap[feed.value] = feed
         }
         return newOrder.mapNotNull {
-            idToFeedsMap[it.id]
+            uriToFeedsMap[it.uri]
         }
     }
+
+    private val BlueskyFeeds.uri: String?
+        get() {
+            return when (this) {
+                is BlueskyFeeds.List -> uri
+                is BlueskyFeeds.Feeds -> uri
+                else -> null
+            }
+        }
 }

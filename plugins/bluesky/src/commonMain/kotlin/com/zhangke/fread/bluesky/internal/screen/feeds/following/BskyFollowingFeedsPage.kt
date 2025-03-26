@@ -148,7 +148,11 @@ class BskyFollowingFeedsPage(
                         onMove = { from, to ->
                             if (feedsInUi.isEmpty()) return@rememberReorderableLazyListState
                             feedsInUi = feedsInUi.toMutableList().apply {
-                                add(to.index, removeAt(from.index))
+                                if (to.index > feedsInUi.lastIndex) {
+                                    add(removeAt(from.index))
+                                } else {
+                                    add(to.index, removeAt(from.index))
+                                }
                             }
                         },
                         onDragEnd = { startIndex, endIndex ->
@@ -197,10 +201,6 @@ class BskyFollowingFeedsPage(
                                                 onFeedsClick = onFeedsClick,
                                             )
                                         }
-//                                        HorizontalDivider(
-//                                            modifier = Modifier.fillMaxWidth()
-//                                                .padding(horizontal = 16.dp)
-//                                        )
                                     }
                                 }
                                 item {
@@ -214,19 +214,6 @@ class BskyFollowingFeedsPage(
                                                 text = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more)
                                             )
                                         }
-//                                        Button(
-//                                            modifier = Modifier.padding(top = 16.dp, bottom = 32.dp)
-//                                                .align(Alignment.Center),
-//                                            onClick = onExplorerClick,
-////                                            colors = ButtonDefaults.buttonColors(
-////                                                containerColor = MaterialTheme.colorScheme.secondaryContainer,
-////                                                contentColor = Color.White,
-////                                            ),
-//                                        ) {
-//                                            Text(
-//                                                text = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more)
-//                                            )
-//                                        }
                                     }
                                 }
                             }

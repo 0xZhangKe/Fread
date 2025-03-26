@@ -7,7 +7,9 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.analytics.reportInfo
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.account.isAuthenticationFailure
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.Job
@@ -41,12 +43,11 @@ class ProfileHomeViewModel @Inject constructor(
         viewModelScope.launch {
             statusProvider.accountManager
                 .getAllAccountFlow()
-                .map { list -> list.groupBy(LoggedAccount::platform).map { it.key to it.value } }
+                .map { list -> list.map { ProfileAccountUiState(it, true) } }
+                .map { list -> list.groupBy { it.account.platform }.map { it.key to it.value } }
                 .collect { list ->
                     _uiState.update { it.copy(accountDataList = list) }
-                    reportInfo {
-                        put("accountCount", list.size.toString())
-                    }
+                    reportInfo { put("accountCount", list.size.toString()) }
                 }
         }
     }
@@ -54,7 +55,23 @@ class ProfileHomeViewModel @Inject constructor(
     fun refreshAccountInfo() {
         if (refreshAccountJob?.isActive == true) return
         refreshAccountJob = launchInViewModel {
-            statusProvider.accountManager.refreshAllAccountInfo()
+            val refreshedList = statusProvider.accountManager.refreshAllAccountInfo()
+            _uiState.update { state ->
+                state.copy(
+                    accountDataList = state.accountDataList.map { group ->
+                        group.first to group.second.map { account ->
+                            val result =
+                                refreshedList.firstOrNull { it.account.uri == account.account.uri }
+                            val logged = when (result) {
+                                is AccountRefreshResult.Success -> true
+                                is AccountRefreshResult.Failure -> !result.error.isAuthenticationFailure
+                                null -> account.logged
+                            }
+                            account.copy(logged = logged)
+                        }
+                    }
+                )
+            }
         }
     }
 
@@ -111,6 +128,12 @@ class ProfileHomeViewModel @Inject constructor(
             statusProvider.screenProvider
                 .getEditContentConfigScreenScreen(account)
                 ?.let { _openPageFlow.emit(it) }
+        }
+    }
+
+    fun onLoginClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.accountManager.triggerAuthBySource(account.platform)
         }
     }
 }

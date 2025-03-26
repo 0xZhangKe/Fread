@@ -1,6 +1,6 @@
 package com.zhangke.fread.status.account
 
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.combine
@@ -22,21 +22,16 @@ class AccountManager(
         }
     }
 
-    fun triggerAuthBySource(baseUrl: FormalBaseUrl) {
+    suspend fun triggerAuthBySource(platform: BlogPlatform) {
         for (manager in accountManagerList) {
-            manager.triggerLaunchAuth(baseUrl)
+            manager.triggerLaunchAuth(platform)
         }
     }
 
-    suspend fun refreshAllAccountInfo(): Result<Unit> {
-        val resultList = accountManagerList.map {
+    suspend fun refreshAllAccountInfo(): List<AccountRefreshResult> {
+        return accountManagerList.flatMap {
             it.refreshAllAccountInfo()
         }
-        val successResult = resultList.firstOrNull { it.isSuccess }
-        if (successResult == null) {
-            return resultList.first()
-        }
-        return successResult
     }
 
     suspend fun logout(uri: FormalUri) {
@@ -58,11 +53,23 @@ interface IAccountManager {
 
     fun getAllAccountFlow(): Flow<List<LoggedAccount>>?
 
-    fun triggerLaunchAuth(baseUrl: FormalBaseUrl)
+    suspend fun triggerLaunchAuth(platform: BlogPlatform)
 
-    suspend fun refreshAllAccountInfo(): Result<Unit>
+    suspend fun refreshAllAccountInfo(): List<AccountRefreshResult>
 
     suspend fun logout(uri: FormalUri): Boolean
 
     fun subscribeNotification()
+}
+
+sealed interface AccountRefreshResult {
+
+    val account: LoggedAccount
+
+    data class Success(override val account: LoggedAccount) : AccountRefreshResult
+
+    data class Failure(
+        override val account: LoggedAccount,
+        val error: Throwable,
+    ) : AccountRefreshResult
 }

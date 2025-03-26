@@ -130,4 +130,5 @@
     <string name="activity_pub_filter_edit_delete_content">确定删除吗？</string>
     <string name="activity_pub_filter_edit_back_dialog">确定退出吗？</string>
 
+    <string name="activity_pub_switch_account_dialog_title">切换账号</string>
 </resources>

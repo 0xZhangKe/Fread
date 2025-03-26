@@ -1,5 +1,6 @@
 package com.zhangke.fread.bluesky
 
+import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentViewModel
@@ -25,6 +26,12 @@ import me.tatarka.inject.annotations.Provides
 expect interface BlueskyPlatformComponent
 
 interface BlueskyComponent : BlueskyPlatformComponent {
+
+    @IntoSet
+    @Provides
+    fun bindBskyStartup(module: BskyStartup): ModuleStartup {
+        return module
+    }
 
     @IntoSet
     @Provides

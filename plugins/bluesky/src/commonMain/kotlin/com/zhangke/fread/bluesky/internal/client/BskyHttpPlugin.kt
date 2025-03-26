@@ -19,6 +19,7 @@ import io.ktor.http.HttpStatusCode.Companion.BadRequest
 import io.ktor.util.AttributeKey
 import kotlinx.serialization.json.Json
 import sh.christian.ozone.api.response.AtpErrorDescription
+import sh.christian.ozone.api.response.StatusCode
 
 internal class AtProtoProxyPlugin {
     companion object : HttpClientPlugin<Unit, AtProtoProxyPlugin> {
@@ -75,11 +76,14 @@ internal class XrpcAuthPlugin(
 
         override fun install(plugin: XrpcAuthPlugin, scope: HttpClient) {
             scope.plugin(HttpSend).intercept { context ->
-
                 if (!context.headers.contains(Authorization)) {
                     val account = plugin.accountProvider()
                     if (account != null) {
-                        context.bearerAuth(account.accessJwt)
+                        if (context.isRefreshTokenRequest) {
+                            context.bearerAuth(account.refreshJwt)
+                        } else {
+                            context.bearerAuth(account.accessJwt)
+                        }
                     }
                 }
 
@@ -120,9 +124,14 @@ internal class XrpcAuthPlugin(
             refreshToken: String,
         ): RefreshSessionResponse? {
             return runCatching {
-                scope.post(REFRESH_TOKEN_PATH) {
+                val response = scope.post(REFRESH_TOKEN_PATH) {
                     bearerAuth(refreshToken)
-                }.body<RefreshSessionResponse>()
+                }
+                if (StatusCode.fromCode(response.status.value) == StatusCode.Okay) {
+                    response.body<RefreshSessionResponse>()
+                } else {
+                    null
+                }
             }.getOrNull()
         }
     }

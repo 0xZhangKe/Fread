@@ -1,11 +1,20 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.SnackbarHostState
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -13,9 +22,13 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -33,6 +46,7 @@ import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.TextFieldUtils
 import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_switch_account_dialog_title
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
@@ -47,6 +61,7 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMediaAttachment
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.uri.FormalUri
 import org.jetbrains.compose.resources.stringResource
 import kotlin.time.Duration
@@ -242,23 +257,69 @@ class PostStatusScreen(
         )
 
         if (showAccountSwitchPopup) {
-            DropdownMenu(
-                expanded = showAccountSwitchPopup,
+            Dialog(
                 onDismissRequest = { showAccountSwitchPopup = false },
             ) {
-                uiState.availableAccountList.forEach {
-                    DropdownMenuItem(
-                        text = {
-                            Text(
-                                text = "${it.userName}@${it.platform.name}",
+                Surface(
+                    shape = RoundedCornerShape(16.dp),
+                    shadowElevation = 6.dp,
+                ) {
+                    Column(
+                        modifier = Modifier.fillMaxWidth()
+                            .padding(16.dp)
+                            .verticalScroll(rememberScrollState()),
+                    ) {
+                        Text(
+                            modifier = Modifier,
+                            text = stringResource(Res.string.activity_pub_switch_account_dialog_title),
+                            style = MaterialTheme.typography.titleMedium
+                                .copy(fontWeight = FontWeight.SemiBold),
+                        )
+                        for (account in uiState.availableAccountList) {
+                            Spacer(modifier = Modifier.height(16.dp))
+                            SelectableAccount(
+                                account = account,
+                                onClick = {
+                                    showAccountSwitchPopup = false
+                                    onSwitchAccount(account)
+                                },
                             )
-                        },
-                        onClick = {
-                            showAccountSwitchPopup = false
-                            onSwitchAccount(it)
-                        },
-                    )
+                        }
+                    }
                 }
+            }
+        }
+    }
+
+    @Composable
+    private fun SelectableAccount(
+        account: ActivityPubLoggedAccount,
+        onClick: (ActivityPubLoggedAccount) -> Unit,
+    ) {
+        Row(
+            modifier = Modifier.fillMaxWidth().clickable { onClick(account) },
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            BlogAuthorAvatar(
+                modifier = Modifier.size(42.dp),
+                imageUrl = account.avatar,
+            )
+            Column(
+                modifier = Modifier.padding(start = 16.dp)
+                    .fillMaxWidth(),
+            ) {
+                Text(
+                    text = account.userName,
+                    style = MaterialTheme.typography.titleMedium
+                        .copy(fontWeight = FontWeight.SemiBold),
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    text = account.prettyHandle,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
             }
         }
     }

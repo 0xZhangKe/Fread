@@ -98,6 +98,7 @@ class GetFollowingFeedsUseCase @Inject constructor(
     ): Result<List<GeneratorView>> {
         val feedsUris = feeds.filter { it.type == Type.Feed }
             .map { AtUri(it.value) }
+        if (feedsUris.isEmpty()) return Result.success(emptyList())
         return client.getFeedGeneratorsCatching(
             GetFeedGeneratorsQueryParams(feedsUris)
         ).map { it.feeds }

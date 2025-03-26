@@ -2,6 +2,7 @@ package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -35,6 +39,9 @@ import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazy
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.commonbiz.shared.screen.list_content_empty_placeholder
+import com.zhangke.fread.commonbiz.shared.screen.shared_feeds_go_to_login
+import com.zhangke.fread.commonbiz.shared.screen.shared_feeds_not_login_title
+import com.zhangke.fread.status.account.isAuthenticationFailure
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
@@ -59,6 +66,7 @@ fun FeedsContent(
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
     onScrollInProgress: ((Boolean) -> Unit)? = null,
+    onLoginClick: (() -> Unit)? = null,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
     FeedsContent(
@@ -76,6 +84,7 @@ fun FeedsContent(
         contentCanScrollBackward = contentCanScrollBackward,
         onImmersiveEvent = onImmersiveEvent,
         onScrollInProgress = onScrollInProgress,
+        onLoginClick = onLoginClick,
     )
 }
 
@@ -85,7 +94,7 @@ fun FeedsContent(
     refreshing: Boolean,
     loadMoreState: LoadState,
     showPagingLoadingPlaceholder: Boolean,
-    pageErrorContent: TextString?,
+    pageErrorContent: Throwable?,
     newStatusNotifyFlow: SharedFlow<Unit>?,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
@@ -95,12 +104,13 @@ fun FeedsContent(
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
     onScrollInProgress: ((Boolean) -> Unit)? = null,
+    onLoginClick: (() -> Unit)? = null,
 ) {
     if (feeds.isEmpty()) {
         if (showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
         } else if (pageErrorContent != null) {
-            InitErrorContent(pageErrorContent)
+            InitErrorContent(pageErrorContent, onLoginClick)
         } else {
             EmptyListContent()
         }
@@ -206,6 +216,47 @@ fun InitErrorContent(errorMessage: TextString) {
             text = textString(text = errorMessage),
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Composable
+fun InitErrorContent(
+    error: Throwable,
+    onLoginClick: (() -> Unit)? = null,
+) {
+    Column(
+        modifier = Modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        if (onLoginClick != null && error.isAuthenticationFailure) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_not_login_title),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                textAlign = TextAlign.Center,
+            )
+            if (!error.message.isNullOrEmpty()) {
+                Text(
+                    modifier = Modifier.padding(top = 2.dp),
+                    text = error.message.orEmpty(),
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                )
+            }
+            Button(
+                modifier = Modifier.padding(top = 16.dp),
+                onClick = onLoginClick,
+            ) {
+                Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_go_to_login))
+            }
+        } else {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = error.message.orEmpty(),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                textAlign = TextAlign.Center,
+            )
+        }
     }
 }
 

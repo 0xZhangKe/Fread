@@ -65,4 +65,6 @@
     <string name="shared_publish_media_alt_dialog_input_tip">扩充描述替代文本</string>
     <string name="shared_publish_media_alt_dialog_input_hint">替代文本</string>
 
+    <string name="shared_feeds_not_login_title">登录信息已失效，请重新登陆</string>
+    <string name="shared_feeds_go_to_login">登录</string>
 </resources>

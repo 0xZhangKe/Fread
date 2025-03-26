@@ -2,7 +2,6 @@ package com.zhangke.fread.feeds.pages.home.feeds
 
 import com.zhangke.framework.collections.updateItem
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
-import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
@@ -98,7 +97,7 @@ class MixedContentSubViewModel(
             _uiState.update { it.copy(initializing = true) }
             val mixedContent = contentRepo.getContent(configId) as? MixedContent
             if (mixedContent == null) {
-                _uiState.update { it.copy(pageError = textOf("Content($configId) does not exists!")) }
+                _uiState.update { it.copy(pageError = IllegalStateException("Content($configId) does not exists!")) }
             } else {
                 _uiState.update { it.copy(content = mixedContent) }
                 launch { mixedRepo.refresh(mixedContent) }

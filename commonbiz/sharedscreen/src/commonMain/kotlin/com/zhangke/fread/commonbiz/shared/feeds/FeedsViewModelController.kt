@@ -136,7 +136,7 @@ class FeedsViewModelController(
                         state.copy(
                             showPagingLoadingPlaceholder = false,
                             pageErrorContent = if (state.feeds.isEmpty()) {
-                                it.toTextStringOrNull()
+                                it
                             } else {
                                 null
                             },

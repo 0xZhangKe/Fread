@@ -1,6 +1,8 @@
 package com.zhangke.fread.bluesky.internal.utils
 
 import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.fread.bluesky.internal.client.expired
+import com.zhangke.fread.status.account.AuthenticationFailureException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.encodeToJsonElement
@@ -23,7 +25,10 @@ data class AtRequestException(
 
     companion object {
 
-        fun fromResponse(response: AtpResponse.Failure<*>): AtRequestException {
+        fun fromResponse(response: AtpResponse.Failure<*>): Throwable {
+            if (response.error?.expired == true) {
+                return AuthenticationFailureException(response.error!!.message)
+            }
             return AtRequestException(
                 statusCode = response.statusCode.code,
                 response = response.response,
@@ -42,4 +47,5 @@ internal val bskyJson by lazy {
     }
 }
 
-internal inline fun <reified T, reified R> T.bskyJson(): R = bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(this))
+internal inline fun <reified T, reified R> T.bskyJson(): R =
+    bskyJson.decodeFromJsonElement(bskyJson.encodeToJsonElement(this))

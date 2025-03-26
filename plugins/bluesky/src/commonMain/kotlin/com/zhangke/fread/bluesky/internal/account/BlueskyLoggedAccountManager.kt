@@ -11,6 +11,7 @@ import com.zhangke.fread.bluesky.internal.client.BlueskyClient
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
+import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
@@ -99,12 +100,16 @@ class BlueskyLoggedAccountManager @Inject constructor(
         accountRepo.updateAccount(account, newAccount)
     }
 
-    suspend fun refreshAccountProfile() {
-        accountRepo.queryAll().forEach { account ->
+    suspend fun refreshAccountProfile(): List<AccountRefreshResult> {
+        return accountRepo.queryAll().map { account ->
             val role = IdentityRole(accountUri = account.uri, baseUrl = account.platform.baseUrl)
-            clientManager.getClient(role).getProfile(account.did).getOrNull()?.let { profile ->
-                val newAccount = accountAdapter.updateProfile(account, profile)
+            val result = clientManager.getClient(role).getProfile(account.did)
+            if (result.isFailure) {
+                AccountRefreshResult.Failure(account, result.exceptionOrThrow())
+            } else {
+                val newAccount = accountAdapter.updateProfile(account, result.getOrThrow())
                 accountRepo.updateAccount(account, newAccount)
+                AccountRefreshResult.Success(newAccount)
             }
         }
     }

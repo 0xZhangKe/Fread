@@ -1,6 +1,7 @@
 package com.zhangke.fread.activitypub.app
 
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
@@ -11,8 +12,11 @@ import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLogged
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.notActivityPub
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.launch
@@ -52,33 +56,33 @@ class ActivityPubAccountManager @Inject constructor(
         return accountRepo.observeAccount(baseUrl)
     }
 
-    override suspend fun refreshAllAccountInfo(): Result<Unit> {
-        val results = accountRepo.queryAll()
-            .map { loggedAccount ->
-                val role =
-                    IdentityRole(accountUri = loggedAccount.uri, baseUrl = loggedAccount.baseUrl)
-                val client = clientManager.getClient(role)
-                client.accountRepo
-                    .getAccount(loggedAccount.userId)
-                    .mapCatching {
-                        val entity = accountAdapter.createFromAccount(
-                            platform = loggedAccount.platform,
-                            account = it,
-                            token = loggedAccount.token,
-                        )
-                        accountRepo.update(entity)
-                    }
+    override suspend fun refreshAllAccountInfo(): List<AccountRefreshResult> {
+        return accountRepo.queryAll().map { loggedAccount ->
+            val role =
+                IdentityRole(accountUri = loggedAccount.uri, baseUrl = loggedAccount.baseUrl)
+            val client = clientManager.getClient(role)
+            val result = client.accountRepo
+                .getAccount(loggedAccount.userId)
+                .mapCatching {
+                    val newAccount = accountAdapter.createFromAccount(
+                        platform = loggedAccount.platform,
+                        account = it,
+                        token = loggedAccount.token,
+                    )
+                    accountRepo.update(newAccount)
+                    newAccount
+                }
+            if (result.isFailure) {
+                AccountRefreshResult.Failure(loggedAccount, result.exceptionOrThrow())
+            } else {
+                AccountRefreshResult.Success(result.getOrThrow())
             }
-        if (results.isEmpty()) return Result.success(Unit)
-        val successResult = results.firstOrNull { it.isSuccess }
-        if (successResult == null) {
-            return results.first()
         }
-        return successResult
     }
 
-    override fun triggerLaunchAuth(baseUrl: FormalBaseUrl) {
-        oAuthor.startOauth(baseUrl)
+    override suspend fun triggerLaunchAuth(platform: BlogPlatform) {
+        if (platform.protocol.notActivityPub) return
+        oAuthor.startOauth(platform.baseUrl)
     }
 
     override suspend fun logout(uri: FormalUri): Boolean {

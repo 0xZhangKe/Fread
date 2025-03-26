@@ -12,6 +12,7 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.usecase.RefreshSessionUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateBlockUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipType
 import com.zhangke.fread.bluesky.internal.usecase.UpdateRelationshipUseCase
@@ -34,6 +35,7 @@ class BskyUserDetailViewModel @Inject constructor(
     private val updateRelationship: UpdateRelationshipUseCase,
     private val updateBlock: UpdateBlockUseCase,
     private val accountManager: BlueskyLoggedAccountManager,
+    private val refreshSession: RefreshSessionUseCase,
     @Assisted private val role: IdentityRole,
     @Assisted private val did: String,
 ) : ViewModel() {
@@ -53,6 +55,7 @@ class BskyUserDetailViewModel @Inject constructor(
     val snackBarMessage = _snackBarMessage
 
     private var loadJob: Job? = null
+    private var sessionRefreshed = false
 
     init {
         loadUserDetail()
@@ -80,6 +83,10 @@ class BskyUserDetailViewModel @Inject constructor(
                     }
                     if (isOwner) {
                         accountManager.updateAccountProfile(role, detailed)
+                        if (!sessionRefreshed) {
+                            refreshSession()
+                            sessionRefreshed = true
+                        }
                     }
                 }.onFailure {
                     _uiState.update { state ->

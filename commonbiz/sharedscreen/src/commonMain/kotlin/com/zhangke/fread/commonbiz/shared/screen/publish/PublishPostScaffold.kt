@@ -13,12 +13,12 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Scaffold
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Group
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -193,6 +193,7 @@ fun PublishPostScaffold(
                 }
                 if (showSwitchAccountIcon) {
                     SimpleIconButton(
+                        modifier = Modifier.padding(end = 8.dp),
                         onClick = onSwitchAccountClick,
                         imageVector = Icons.Default.Group,
                         contentDescription = "Switch Account",

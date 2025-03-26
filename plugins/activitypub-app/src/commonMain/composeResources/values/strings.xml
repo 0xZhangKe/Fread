@@ -130,4 +130,6 @@
     <string name="activity_pub_filter_edit_warning_desc">Still show posts that match this filter, but behind a content warning</string>
     <string name="activity_pub_filter_edit_delete_content">Are you sure you want to delete?</string>
     <string name="activity_pub_filter_edit_back_dialog">Are you sure you want to exit?</string>
+
+    <string name="activity_pub_switch_account_dialog_title">Switch Account</string>
 </resources>

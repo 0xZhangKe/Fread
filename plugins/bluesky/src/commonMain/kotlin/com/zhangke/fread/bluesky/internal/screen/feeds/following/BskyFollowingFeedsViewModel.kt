@@ -3,8 +3,10 @@ package com.zhangke.fread.bluesky.internal.screen.feeds.following
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.Log
+import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
@@ -131,6 +133,35 @@ class BskyFollowingFeedsViewModel @Inject constructor(
         }
     }
 
+    fun onFeedsOrderChanged(startIndex: Int, endIndex: Int) {
+        launchInViewModel {
+            _uiState.update { it.copy(reordering = true) }
+            val roleResult = getRole()
+            if (roleResult.isFailure) {
+                _uiState.update { it.copy(reordering = false) }
+                _snackBarMessage.emitTextMessageFromThrowable(roleResult.exceptionOrThrow())
+                return@launchInViewModel
+            }
+            val role = roleResult.getOrThrow()
+            val followingFeeds = _uiState.value.followingFeeds.toMutableList()
+            if (endIndex > followingFeeds.lastIndex) {
+                followingFeeds.add(followingFeeds.removeAt(startIndex))
+            } else {
+                followingFeeds.add(endIndex, followingFeeds.removeAt(startIndex))
+            }
+            updatePinnedFeedsOrder(
+                role = role,
+                feeds = followingFeeds,
+            ).onSuccess {
+                _uiState.update { it.copy(reordering = false) }
+                loadFeedsList(false)
+            }.onFailure {
+                _uiState.update { it.copy(reordering = false) }
+                _snackBarMessage.emitTextMessageFromThrowable(it)
+            }
+        }
+    }
+
     private suspend fun getRole(): Result<IdentityRole> {
         if (cachedRole != null) return Result.success(cachedRole!!)
         val content = contentId?.let { contentRepo.getContent(it) }?.let { it as? BlueskyContent }
@@ -141,11 +172,5 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                 baseUrl = content.baseUrl,
             )
         ).onSuccess { this.cachedRole = it }
-    }
-
-    fun onFeedsOrderChanged(startIndex: Int, endIndex: Int){
-        launchInViewModel {
-            updatePinnedFeedsOrder
-        }
     }
 }

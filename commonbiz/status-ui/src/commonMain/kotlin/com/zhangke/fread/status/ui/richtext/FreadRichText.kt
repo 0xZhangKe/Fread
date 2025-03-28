@@ -182,8 +182,8 @@ private fun rememberInlineContent(
     return remember(emojis) {
         val emojiContent = InlineTextContent(
             placeholder = Placeholder(
-                width = 1.em,
-                height = 1.em,
+                width = 1.5.em,
+                height = 1.5.em,
                 placeholderVerticalAlign = PlaceholderVerticalAlign.TextBottom,
             ),
         ) { shortCode ->

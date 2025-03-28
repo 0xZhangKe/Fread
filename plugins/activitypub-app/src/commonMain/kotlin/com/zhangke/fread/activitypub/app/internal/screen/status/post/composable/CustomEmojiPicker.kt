@@ -103,7 +103,7 @@ private fun CustomEmojiPickerPage(
                 val placePainter = rememberVectorPainter(Icons.Default.Tofu)
                 AutoSizeImage(
                     emoji.url,
-                    modifier = Modifier.size(20.dp),
+                    modifier = Modifier.size(26.dp),
                     errorPainter = { placePainter },
                     placeholderPainter = { placePainter },
                     contentDescription = emoji.shortcode,

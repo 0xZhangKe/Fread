@@ -39,6 +39,7 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.toast.toast
@@ -297,7 +298,7 @@ class PostStatusScreen(
         onClick: (ActivityPubLoggedAccount) -> Unit,
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth().clickable { onClick(account) },
+            modifier = Modifier.fillMaxWidth().noRippleClick { onClick(account) },
             verticalAlignment = Alignment.CenterVertically,
         ) {
             BlogAuthorAvatar(

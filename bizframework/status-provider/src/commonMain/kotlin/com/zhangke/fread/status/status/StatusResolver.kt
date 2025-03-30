@@ -88,12 +88,13 @@ class StatusResolver(
     }
 
     suspend fun getPublicTimeline(
+        platform: BlogPlatform,
         role: IdentityRole,
         limit: Int,
         maxId: String?,
     ): Result<List<StatusUiState>> {
         return resolverList.firstNotNullOf {
-            it.getPublicTimeline(role, limit, maxId)
+            it.getPublicTimeline(platform, role, limit, maxId)
         }
     }
 
@@ -149,6 +150,7 @@ interface IStatusResolver {
     suspend fun getHashtag(role: IdentityRole, limit: Int, offset: Int): Result<List<Hashtag>>?
 
     suspend fun getPublicTimeline(
+        platform: BlogPlatform,
         role: IdentityRole,
         limit: Int,
         maxId: String?,

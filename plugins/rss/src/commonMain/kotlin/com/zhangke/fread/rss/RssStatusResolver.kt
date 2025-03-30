@@ -103,6 +103,7 @@ class RssStatusResolver @Inject constructor(
     }
 
     override suspend fun getPublicTimeline(
+        platform: BlogPlatform,
         role: IdentityRole,
         limit: Int,
         maxId: String?

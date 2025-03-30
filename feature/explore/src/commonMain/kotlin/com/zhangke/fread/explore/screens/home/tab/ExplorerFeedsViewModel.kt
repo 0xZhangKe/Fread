@@ -9,19 +9,20 @@ import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
 import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.explore.model.ExplorerItem
 import com.zhangke.fread.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 
 class ExplorerFeedsViewModel(
     private val type: ExplorerFeedsTabType,
     private val role: IdentityRole,
+    private val platform: BlogPlatform,
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,
     private val getExplorerItem: GetExplorerItemUseCase,
@@ -89,7 +90,7 @@ class ExplorerFeedsViewModel(
         )
         launchInViewModel {
             loadController.initData(
-                getDataFromServer = { getExplorerItem(role, type, 0, "") },
+                getDataFromServer = { getExplorerItem(role, type, platform, 0, "") },
                 getDataFromLocal = null,
             )
         }
@@ -97,7 +98,7 @@ class ExplorerFeedsViewModel(
 
     fun onRefresh() {
         loadController.onRefresh(false) {
-            getExplorerItem(role, type, 0, "")
+            getExplorerItem(role, type, platform, 0, "")
         }
     }
 
@@ -108,6 +109,7 @@ class ExplorerFeedsViewModel(
             getExplorerItem(
                 role = role,
                 type = type,
+                platform = platform,
                 offset = loadController.uiState.value.dataList.size,
                 maxId = dataList.last().id,
             )

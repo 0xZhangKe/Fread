@@ -131,11 +131,14 @@ class BlueskyStatusResolver @Inject constructor(
     }
 
     override suspend fun getPublicTimeline(
+        platform: BlogPlatform,
         role: IdentityRole,
         limit: Int,
         maxId: String?
     ): Result<List<StatusUiState>>? {
-        TODO("Not yet implemented")
+        if (platform.protocol.notBluesky) return null
+        val client = clientManager.getClient(role)
+        return null
     }
 
     override suspend fun follow(

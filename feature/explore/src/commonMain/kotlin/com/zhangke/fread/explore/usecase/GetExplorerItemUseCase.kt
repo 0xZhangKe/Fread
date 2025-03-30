@@ -4,6 +4,7 @@ import com.zhangke.fread.explore.model.ExplorerItem
 import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTabType
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 
 class GetExplorerItemUseCase @Inject constructor(
@@ -18,6 +19,7 @@ class GetExplorerItemUseCase @Inject constructor(
     suspend operator fun invoke(
         role: IdentityRole,
         type: ExplorerFeedsTabType,
+        platform: BlogPlatform,
         offset: Int,
         maxId: String?,
     ): Result<List<ExplorerItem>> {
@@ -40,6 +42,7 @@ class GetExplorerItemUseCase @Inject constructor(
 
             ExplorerFeedsTabType.STATUS -> {
                 statusResolver.getPublicTimeline(
+                    platform = platform,
                     role = role,
                     limit = DEFAULT_LIMIT,
                     maxId = maxId,

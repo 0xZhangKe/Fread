@@ -133,13 +133,12 @@ class ActivityPubStatusResolver @Inject constructor(
     }
 
     override suspend fun getPublicTimeline(
+        platform: BlogPlatform,
         role: IdentityRole,
         limit: Int,
         maxId: String?,
-    ): Result<List<StatusUiState>> {
-        val platformResult = platformRepo.getPlatform(role)
-        if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
-        val platform = platformResult.getOrThrow()
+    ): Result<List<StatusUiState>>? {
+        if (platform.protocol.notActivityPub) return null
         val loggedAccount = loggedAccountProvider.getAccount(role)
         return clientManager.getClient(role)
             .timelinesRepo

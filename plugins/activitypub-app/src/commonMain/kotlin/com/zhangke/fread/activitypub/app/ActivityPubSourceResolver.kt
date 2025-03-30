@@ -2,13 +2,10 @@ package com.zhangke.fread.activitypub.app
 
 import com.zhangke.fread.activitypub.app.internal.repo.user.UserRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.source.IStatusSourceResolver
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.uri.FormalUri
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.emptyFlow
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubSourceResolver @Inject constructor(
@@ -26,10 +23,6 @@ class ActivityPubSourceResolver @Inject constructor(
             role = finalRole,
             userUriInsights = userUriInsights,
         )
-    }
-
-    override suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
-        return emptyFlow()
     }
 
     override suspend fun resolveRssSource(rssUrl: String): Result<StatusSource>? {

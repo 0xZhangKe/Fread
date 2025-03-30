@@ -7,6 +7,7 @@ import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.explore.usecase.GetExplorerItemUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.platform.BlogPlatform
 import me.tatarka.inject.annotations.Inject
 
 class ExplorerFeedsContainerViewModel @Inject constructor(
@@ -21,6 +22,7 @@ class ExplorerFeedsContainerViewModel @Inject constructor(
         return ExplorerFeedsViewModel(
             type = params.type,
             role = params.role,
+            platform = params.platform,
             statusUpdater = statusUpdater,
             statusProvider = statusProvider,
             getExplorerItem = getExplorerItem,
@@ -29,16 +31,21 @@ class ExplorerFeedsContainerViewModel @Inject constructor(
         )
     }
 
-    fun getSubViewModel(type: ExplorerFeedsTabType, role: IdentityRole): ExplorerFeedsViewModel {
-        return obtainSubViewModel(Params(type, role))
+    fun getSubViewModel(
+        type: ExplorerFeedsTabType,
+        role: IdentityRole,
+        platform: BlogPlatform,
+    ): ExplorerFeedsViewModel {
+        return obtainSubViewModel(Params(type, role, platform))
     }
 
     class Params(
         val type: ExplorerFeedsTabType,
         val role: IdentityRole,
+        val platform: BlogPlatform,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = type.name + role
+            get() = type.name + role + platform
     }
 }

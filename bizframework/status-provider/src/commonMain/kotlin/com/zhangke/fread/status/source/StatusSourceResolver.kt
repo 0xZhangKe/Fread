@@ -22,10 +22,6 @@ class StatusSourceResolver(
         return Result.success(null)
     }
 
-    suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor> {
-        return resolverList.map { it.getAuthorUpdateFlow() }.merge()
-    }
-
     suspend fun resolveRssSource(rssUrl: String): Result<StatusSource> {
         return resolverList.mapFirst { it.resolveRssSource(rssUrl) }
     }
@@ -34,8 +30,6 @@ class StatusSourceResolver(
 interface IStatusSourceResolver {
 
     suspend fun resolveSourceByUri(role: IdentityRole?, uri: FormalUri): Result<StatusSource?>
-
-    suspend fun getAuthorUpdateFlow(): Flow<BlogAuthor>
 
     suspend fun resolveRssSource(rssUrl: String): Result<StatusSource>?
 }

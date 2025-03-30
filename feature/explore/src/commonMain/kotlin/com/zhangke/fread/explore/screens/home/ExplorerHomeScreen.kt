@@ -85,21 +85,28 @@ class ExplorerHomeScreen : BaseScreen() {
                         LocalSnackbarHostState provides snackbarHostState,
                         LocalNestedTabConnection provides nestedTabConnection,
                     ) {
-                        val tabs = remember(selectedAccount) {
-                            listOf(
-                                ExplorerFeedsTab(
-                                    type = ExplorerFeedsTabType.STATUS,
-                                    role = uiState.role,
-                                ),
-                                ExplorerFeedsTab(
-                                    type = ExplorerFeedsTabType.HASHTAG,
-                                    role = uiState.role,
-                                ),
-                                ExplorerFeedsTab(
-                                    type = ExplorerFeedsTabType.USERS,
-                                    role = uiState.role,
-                                ),
-                            )
+                        val tabs: List<ExplorerFeedsTab> = remember(uiState) {
+                            if (uiState.role != null && uiState.platform != null) {
+                                listOf(
+                                    ExplorerFeedsTab(
+                                        type = ExplorerFeedsTabType.STATUS,
+                                        role = uiState.role!!,
+                                        platform = uiState.platform!!,
+                                    ),
+                                    ExplorerFeedsTab(
+                                        type = ExplorerFeedsTabType.HASHTAG,
+                                        role = uiState.role!!,
+                                        platform = uiState.platform!!,
+                                    ),
+                                    ExplorerFeedsTab(
+                                        type = ExplorerFeedsTabType.USERS,
+                                        role = uiState.role!!,
+                                        platform = uiState.platform!!,
+                                    ),
+                                )
+                            } else {
+                                emptyList()
+                            }
                         }
                         val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
                         HorizontalPagerWithTab(

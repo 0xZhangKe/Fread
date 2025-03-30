@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
-import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -43,6 +42,7 @@ import com.zhangke.fread.explore.explorer_tab_status_title
 import com.zhangke.fread.explore.explorer_tab_users_title
 import com.zhangke.fread.explore.model.ExplorerItem
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.RecommendAuthorUi
 import com.zhangke.fread.status.ui.StatusListPlaceholder
@@ -53,6 +53,7 @@ import org.jetbrains.compose.resources.stringResource
 internal class ExplorerFeedsTab(
     private val type: ExplorerFeedsTabType,
     private val role: IdentityRole,
+    private val platform: BlogPlatform,
 ) : BasePagerTab() {
 
     override val options: PagerTabOptions
@@ -69,7 +70,7 @@ internal class ExplorerFeedsTab(
         super.TabContent(screen, nestedScrollConnection)
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = with(screen) {
-            getViewModel<ExplorerFeedsContainerViewModel>().getSubViewModel(type, role)
+            getViewModel<ExplorerFeedsContainerViewModel>().getSubViewModel(type, role, platform)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackbarHostState = LocalSnackbarHostState.current

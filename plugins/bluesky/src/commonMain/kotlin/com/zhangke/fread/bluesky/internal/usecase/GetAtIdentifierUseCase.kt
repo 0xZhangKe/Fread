@@ -12,10 +12,14 @@ class GetAtIdentifierUseCase @Inject constructor() {
     operator fun invoke(text: String): AtIdentifier? {
         // did, handle, homePageUrl
         if (RegexFactory.didRegex.matches(text)) return Did(text)
-        if (WebFinger.create(text) != null) return Handle(text)
-        text.substringAfterLast("/")
+        val webFinger = WebFinger.create(text)
+        if (webFinger != null) {
+            val handle = webFinger.toString().let { runCatching { Handle(it) } }.getOrNull()
+            if (handle != null) return handle
+        }
+        return text.substringAfterLast("/")
             .let { WebFinger.create(it) }
-            ?.let { return Handle(it.toString()) }
-        return null
+            ?.let { runCatching { Handle(it.toString()) } }
+            ?.getOrNull()
     }
 }

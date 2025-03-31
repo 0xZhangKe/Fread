@@ -38,7 +38,6 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.successDataOrNull
-import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.composable.RemovableStatusSource
@@ -47,7 +46,6 @@ import com.zhangke.fread.feeds.feeds_mixed_config_edit_delete_content_dialog_mes
 import com.zhangke.fread.feeds.feeds_mixed_config_edit_new_name_dialog_label
 import com.zhangke.fread.feeds.feeds_mixed_config_edit_new_name_dialog_title
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
-import com.zhangke.fread.status.uri.FormalUri
 import org.jetbrains.compose.resources.stringResource
 
 class EditMixedContentScreen(private val contentId: String) : BaseScreen() {
@@ -66,19 +64,14 @@ class EditMixedContentScreen(private val contentId: String) : BaseScreen() {
             onEditNameClick = viewModel::onEditName,
             onBackClick = navigator::pop,
             onAddSourceClick = {
-                navigator.push(SearchSourceForAddScreen())
+                navigator.push(SearchSourceForAddScreen().apply {
+                    onSourceSelected = { viewModel.onAddSource(it) }
+                })
             },
             onDeleteClick = viewModel::onDeleteFeeds,
         )
         ConsumeFlow(viewModel.finishScreenFlow) {
             navigator.pop()
-        }
-        val resultNavigator = navigator.navigationResult
-        val addedUri by resultNavigator.getResult<FormalUri>(SearchSourceForAddScreen.SCREEN_KEY)
-        if (addedUri != null) {
-            LaunchedEffect(addedUri) {
-                viewModel.onAddSource(addedUri!!)
-            }
         }
     }
 

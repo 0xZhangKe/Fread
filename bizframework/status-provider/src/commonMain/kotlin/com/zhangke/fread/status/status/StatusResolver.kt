@@ -5,7 +5,6 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
@@ -77,27 +76,6 @@ class StatusResolver(
         return resolverList.mapFirst { it.getStatusContext(role, status) }
     }
 
-    suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>> {
-        return resolverList.mapFirst {
-            it.getSuggestionAccounts(role)
-        }
-    }
-
-    suspend fun getHashtag(role: IdentityRole, limit: Int, offset: Int): Result<List<Hashtag>> {
-        return resolverList.mapFirst { it.getHashtag(role, limit, offset) }
-    }
-
-    suspend fun getPublicTimeline(
-        platform: BlogPlatform,
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?,
-    ): Result<List<StatusUiState>> {
-        return resolverList.firstNotNullOf {
-            it.getPublicTimeline(platform, role, limit, maxId)
-        }
-    }
-
     suspend fun isFollowing(
         role: IdentityRole,
         target: BlogAuthor,
@@ -144,17 +122,6 @@ interface IStatusResolver {
     ): Result<Status>?
 
     suspend fun getStatusContext(role: IdentityRole, status: Status): Result<StatusContext>?
-
-    suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>?
-
-    suspend fun getHashtag(role: IdentityRole, limit: Int, offset: Int): Result<List<Hashtag>>?
-
-    suspend fun getPublicTimeline(
-        platform: BlogPlatform,
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?,
-    ): Result<List<StatusUiState>>?
 
     suspend fun follow(
         role: IdentityRole,

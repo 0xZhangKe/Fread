@@ -9,7 +9,6 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.BlogTranslationUiState
-import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
@@ -88,27 +87,6 @@ class RssStatusResolver @Inject constructor(
                 descendants = emptyList(),
             )
         )
-    }
-
-    override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {
-        return null
-    }
-
-    override suspend fun getHashtag(
-        role: IdentityRole,
-        limit: Int,
-        offset: Int
-    ): Result<List<Hashtag>>? {
-        return null
-    }
-
-    override suspend fun getPublicTimeline(
-        platform: BlogPlatform,
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?
-    ): Result<List<StatusUiState>>? {
-        return null
     }
 
     override suspend fun follow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {

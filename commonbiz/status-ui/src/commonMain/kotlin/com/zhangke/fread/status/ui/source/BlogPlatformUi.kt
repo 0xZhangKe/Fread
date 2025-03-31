@@ -32,7 +32,7 @@ fun BlogPlatformSnapshotUi(
         modifier = modifier,
         thumbnail = platform.thumbnail,
         title = platform.domain,
-        subtitle = null,
+        subtitle = platform.domain,
         description = platform.description,
         protocolLogo = platform.protocol.logo,
     )

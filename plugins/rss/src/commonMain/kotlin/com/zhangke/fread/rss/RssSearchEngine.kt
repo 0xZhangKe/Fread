@@ -13,7 +13,6 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
-import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
@@ -68,12 +67,6 @@ class RssSearchEngine @Inject constructor(
         return searchAuthorByUrl(query).map {
             it?.let { listOf(it) } ?: emptyList()
         }
-    }
-
-    override fun searchAuthablePlatform(
-        query: String,
-    ): Flow<List<PlatformSnapshot>>? {
-        return null
     }
 
     override suspend fun searchSource(

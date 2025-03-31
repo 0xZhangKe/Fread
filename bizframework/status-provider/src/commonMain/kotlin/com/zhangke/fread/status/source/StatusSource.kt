@@ -10,6 +10,7 @@ import com.zhangke.fread.status.uri.FormalUri
 data class StatusSource(
     val uri: FormalUri,
     val name: String,
+    val handle: String,
     val description: String,
     val thumbnail: String?,
     val protocol: StatusProviderProtocol,

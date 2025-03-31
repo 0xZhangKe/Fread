@@ -14,7 +14,7 @@ fun StatusSourceUi(
         modifier = modifier,
         thumbnail = source.thumbnail.orEmpty(),
         title = source.name,
-        subtitle = null,
+        subtitle = source.handle,
         description = source.description,
         protocolLogo = source.protocol.logo,
     )

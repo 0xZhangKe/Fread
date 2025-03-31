@@ -1,12 +1,14 @@
 package com.zhangke.fread.bluesky.internal.screen.feeds.explorer
 
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.ScaffoldDefaults
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
@@ -33,7 +35,10 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
 import org.jetbrains.compose.resources.stringResource
 
-class ExplorerFeedsScreen(private val role: IdentityRole) : BaseScreen() {
+class ExplorerFeedsScreen(
+    private val role: IdentityRole,
+    private val inlineMode: Boolean = false,
+) : BaseScreen() {
 
     @Composable
     override fun Content() {
@@ -77,10 +82,17 @@ class ExplorerFeedsScreen(private val role: IdentityRole) : BaseScreen() {
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
-                Toolbar(
-                    title = stringResource(Res.string.bsky_feeds_explorer_more),
-                    onBackClick = onBackClick,
-                )
+                if (!inlineMode) {
+                    Toolbar(
+                        title = stringResource(Res.string.bsky_feeds_explorer_more),
+                        onBackClick = onBackClick,
+                    )
+                }
+            },
+            contentWindowInsets = if (inlineMode) {
+                WindowInsets(0)
+            } else {
+                ScaffoldDefaults.contentWindowInsets
             },
             snackbarHost = {
                 SnackbarHost(hostState = snackBarState)

@@ -4,7 +4,6 @@ import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.explore.screens.home.ExplorerHomeViewModel
-import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsContainerViewModel
 import com.zhangke.fread.explore.screens.search.SearchViewModel
 import com.zhangke.fread.explore.screens.search.author.SearchAuthorViewModel
 import com.zhangke.fread.explore.screens.search.bar.SearchBarViewModel
@@ -16,12 +15,6 @@ import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.Provides
 
 interface ExploreComponent {
-
-    @IntoMap
-    @Provides
-    fun provideExplorerFeedsContainerViewModel(creator: () -> ExplorerFeedsContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return ExplorerFeedsContainerViewModel::class to creator
-    }
 
     @IntoMap
     @Provides

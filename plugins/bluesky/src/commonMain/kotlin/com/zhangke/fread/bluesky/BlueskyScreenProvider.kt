@@ -7,6 +7,7 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.bluesky.internal.screen.explorer.ExplorerTab
 import com.zhangke.fread.bluesky.internal.screen.feeds.following.BskyFollowingFeedsPage
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsScreen
 import com.zhangke.fread.bluesky.internal.screen.home.BlueskyHomeTab
@@ -165,6 +166,7 @@ class BlueskyScreenProvider @Inject constructor(
     }
 
     override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
-        return null
+        if (platform.protocol.notBluesky) return null
+        return ExplorerTab(role, platform)
     }
 }

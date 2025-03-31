@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubConte
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.timeline.ActivityPubTimelineContainerViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineContainerViewModel
@@ -106,6 +107,12 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
     @Provides
     fun provideHashtagTimelineContainerViewModel(creator: () -> HashtagTimelineContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return HashtagTimelineContainerViewModel::class to creator
+    }
+
+    @IntoMap
+    @Provides
+    fun provideExplorerContainerViewModel(creator: () -> ExplorerContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return ExplorerContainerViewModel::class to creator
     }
 
     @IntoMap

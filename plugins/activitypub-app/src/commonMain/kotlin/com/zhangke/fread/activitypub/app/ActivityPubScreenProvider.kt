@@ -8,6 +8,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
+import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
@@ -24,6 +25,7 @@ import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notActivityPub
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -170,5 +172,10 @@ class ActivityPubScreenProvider @Inject constructor(
     ): String? {
         if (protocol.notActivityPub) return null
         return PlatformDetailRoute.buildRoute(baseUrl)
+    }
+
+    override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
+        if (platform.protocol.notActivityPub) return null
+        return ExplorerContainerTab(role = role, platform = platform)
     }
 }

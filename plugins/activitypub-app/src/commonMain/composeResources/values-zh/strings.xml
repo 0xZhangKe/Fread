@@ -131,4 +131,8 @@
     <string name="activity_pub_filter_edit_back_dialog">确定退出吗？</string>
 
     <string name="activity_pub_switch_account_dialog_title">切换账号</string>
+
+    <string name="activity_pub_explorer_tab_status_title">嘟文</string>
+    <string name="activity_pub_explorer_tab_users_title">用户</string>
+    <string name="activity_pub_explorer_tab_hashtag_title">话题</string>
 </resources>

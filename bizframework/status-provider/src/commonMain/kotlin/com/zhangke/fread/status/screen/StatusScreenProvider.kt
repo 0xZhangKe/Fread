@@ -9,6 +9,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 
 class StatusScreenProvider(
@@ -132,6 +133,10 @@ class StatusScreenProvider(
     ): String? {
         return providerList.firstNotNullOfOrNull { it.getInstanceDetailScreen(protocol, baseUrl) }
     }
+
+    fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab?{
+        return providerList.firstNotNullOfOrNull { it.getExplorerTab(role, platform) }
+    }
 }
 
 interface IStatusScreenProvider {
@@ -200,4 +205,5 @@ interface IStatusScreenProvider {
         baseUrl: FormalBaseUrl,
     ): String?
 
+    fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab?
 }

@@ -18,7 +18,6 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
@@ -112,47 +111,6 @@ class ActivityPubStatusResolver @Inject constructor(
 
     private fun Status.notThisPlatform(): Boolean {
         return this.platform.protocol.notActivityPub
-    }
-
-    override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {
-        return clientManager.getClient(role)
-            .accountRepo
-            .getSuggestions()
-            .map { list -> list.map { accountAdapter.toAuthor(it.account) } }
-    }
-
-    override suspend fun getHashtag(
-        role: IdentityRole,
-        limit: Int,
-        offset: Int,
-    ): Result<List<Hashtag>> {
-        return clientManager.getClient(role)
-            .instanceRepo
-            .getTrendsTags(limit = limit, offset = offset)
-            .map { list -> list.map { hashtagAdapter.adapt(it) } }
-    }
-
-    override suspend fun getPublicTimeline(
-        platform: BlogPlatform,
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?,
-    ): Result<List<StatusUiState>>? {
-        if (platform.protocol.notActivityPub) return null
-        val loggedAccount = loggedAccountProvider.getAccount(role)
-        return clientManager.getClient(role)
-            .timelinesRepo
-            .publicTimelines(limit = limit, maxId = maxId)
-            .map { list ->
-                list.map {
-                    activityPubStatusAdapter.toStatusUiState(
-                        entity = it,
-                        platform = platform,
-                        role = role,
-                        loggedAccount = loggedAccount,
-                    )
-                }
-            }
     }
 
     override suspend fun follow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {

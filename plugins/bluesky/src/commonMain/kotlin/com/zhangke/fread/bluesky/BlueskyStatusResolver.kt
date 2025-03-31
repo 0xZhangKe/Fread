@@ -16,7 +16,6 @@ import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PagedData
 import com.zhangke.fread.status.model.StatusActionType
@@ -116,29 +115,6 @@ class BlueskyStatusResolver @Inject constructor(
     ): Result<StatusContext>? {
         if (status.platform.protocol.notBluesky) return null
         return getStatusContextFunction(role, status)
-    }
-
-    override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getHashtag(
-        role: IdentityRole,
-        limit: Int,
-        offset: Int
-    ): Result<List<Hashtag>>? {
-        TODO("Not yet implemented")
-    }
-
-    override suspend fun getPublicTimeline(
-        platform: BlogPlatform,
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?
-    ): Result<List<StatusUiState>>? {
-        if (platform.protocol.notBluesky) return null
-        val client = clientManager.getClient(role)
-        return null
     }
 
     override suspend fun follow(

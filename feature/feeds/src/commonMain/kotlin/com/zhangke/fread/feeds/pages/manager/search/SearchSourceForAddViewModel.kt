@@ -5,7 +5,6 @@ import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.updateToFailed
 import com.zhangke.framework.composable.updateToLoading
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
@@ -17,7 +16,6 @@ import me.tatarka.inject.annotations.Inject
 
 class SearchSourceForAddViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -55,8 +53,8 @@ class SearchSourceForAddViewModel @Inject constructor(
     }
 
     private fun StatusSource.toUiState(): StatusSourceUiState {
-        return statusSourceUiStateAdapter.adapt(
-            this,
+        return StatusSourceUiState(
+            source = this,
             addEnabled = false,
             removeEnabled = false,
         )

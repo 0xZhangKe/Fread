@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.source
 
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.framework.utils.prettyHandle
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
@@ -24,6 +25,7 @@ class UserSourceTransformer @Inject constructor(
         return StatusSource(
             uri = uri,
             name = entity.displayName,
+            handle = entity.acct.prettyHandle(),
             description = mapCustomEmoji(entity.note, emojis),
             thumbnail = entity.avatar,
             protocol = createActivityPubProtocol(),

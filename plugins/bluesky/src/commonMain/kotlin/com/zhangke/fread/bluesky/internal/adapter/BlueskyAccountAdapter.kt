@@ -7,6 +7,7 @@ import com.atproto.server.CreateSessionResponse
 import com.atproto.server.RefreshSessionResponse
 import com.zhangke.framework.architect.json.Empty
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.utils.prettyHandle
 import com.zhangke.fread.bluesky.createBlueskyProtocol
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.uri.user.UserUriTransformer
@@ -97,6 +98,20 @@ class BlueskyAccountAdapter @Inject constructor(
         return StatusSource(
             uri = userUriTransformer.createUserUri(profile.did.did),
             name = profile.displayName.orEmpty(),
+            handle = profile.handle.handle.prettyHandle(),
+            description = profile.description.orEmpty(),
+            protocol = createBlueskyProtocol(),
+            thumbnail = profile.avatar?.uri,
+        )
+    }
+
+    fun createSource(
+        profile: ProfileView,
+    ): StatusSource {
+        return StatusSource(
+            uri = userUriTransformer.createUserUri(profile.did.did),
+            name = profile.displayName.orEmpty(),
+            handle = profile.handle.handle.prettyHandle(),
             description = profile.description.orEmpty(),
             protocol = createBlueskyProtocol(),
             thumbnail = profile.avatar?.uri,

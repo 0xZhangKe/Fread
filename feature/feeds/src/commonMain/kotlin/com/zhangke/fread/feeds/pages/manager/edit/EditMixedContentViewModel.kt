@@ -7,11 +7,10 @@ import com.zhangke.framework.composable.updateOnSuccess
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.content.MixedContent
-import com.zhangke.fread.status.uri.FormalUri
+import com.zhangke.fread.status.source.StatusSource
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -22,7 +21,6 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 class EditMixedContentViewModel @Inject constructor(
-    private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
     private val configRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
     @Assisted private val configId: String,
@@ -63,27 +61,22 @@ class EditMixedContentViewModel @Inject constructor(
         }
     }
 
-    fun onAddSource(uri: FormalUri) {
+    fun onAddSource(source: StatusSource) {
         launchInViewModel {
             val sourceList = _uiState.value.requireSuccessData().sourceList.toMutableList()
-            if (sourceList.any { it.uri == uri }) return@launchInViewModel
-            statusProvider.statusSourceResolver.resolveSourceByUri(null, uri)
-                .onSuccess { source ->
-                    source?.let {
-                        statusSourceUiStateAdapter.adapt(
-                            source = it,
-                            addEnabled = true,
-                            removeEnabled = false
-                        )
-                    }?.let { sourceList += it }
-                }
+            if (sourceList.any { it.source.uri == source.uri }) return@launchInViewModel
+            sourceList += StatusSourceUiState(
+                source = source,
+                addEnabled = true,
+                removeEnabled = false
+            )
             updateSourceList(sourceList)
             loadFeedsDetail()
         }
     }
 
     private suspend fun updateSourceList(sourceList: List<StatusSourceUiState>) {
-        getMixedContent()?.copy(sourceUriList = sourceList.map { it.uri })
+        getMixedContent()?.copy(sourceUriList = sourceList.map { it.source.uri })
             ?.let { configRepo.insertContent(it) }
     }
 
@@ -101,8 +94,8 @@ class EditMixedContentViewModel @Inject constructor(
             val sourceList = contentConfig.sourceUriList.mapNotNull {
                 statusProvider.statusSourceResolver.resolveSourceByUri(null, it).getOrNull()
             }.map { source ->
-                statusSourceUiStateAdapter.adapt(
-                    source,
+                StatusSourceUiState(
+                    source = source,
                     addEnabled = false,
                     removeEnabled = true,
                 )
@@ -132,9 +125,5 @@ class EditMixedContentViewModel @Inject constructor(
 
     private suspend fun getMixedContent(): MixedContent? {
         return configRepo.getContent(configId) as? MixedContent
-    }
-
-    private fun MutableStateFlow<LoadableState<EditMixedContentUiState>>.getUriList(): List<FormalUri> {
-        return value.requireSuccessData().sourceList.map { it.uri }
     }
 }

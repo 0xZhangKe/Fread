@@ -13,6 +13,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -22,6 +24,7 @@ fun CardInfoSection(
     modifier: Modifier,
     avatar: String?,
     title: String,
+    handle: String,
     description: String?,
     onUrlClick: (String) -> Unit,
     actions: (@Composable RowScope.() -> Unit)? = null
@@ -31,7 +34,6 @@ fun CardInfoSection(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             BlogAuthorAvatar(
                 modifier = Modifier
@@ -48,8 +50,15 @@ fun CardInfoSection(
                 Text(
                     maxLines = 1,
                     text = title,
-                    color = MaterialTheme.colorScheme.onSurface,
-                    style = MaterialTheme.typography.bodyLarge,
+                    style = MaterialTheme.typography.titleMedium
+                        .copy(fontWeight = FontWeight.SemiBold),
+                    overflow = TextOverflow.Ellipsis,
+                )
+                Text(
+                    maxLines = 1,
+                    text = handle,
+                    color = MaterialTheme.colorScheme.onSurfaceVariant,
+                    style = MaterialTheme.typography.labelMedium,
                 )
                 if (description.isNullOrEmpty().not()) {
                     FreadRichText(
@@ -65,7 +74,7 @@ fun CardInfoSection(
                     )
                 }
             }
-            Box(modifier = Modifier) {
+            Box(modifier = Modifier.align(Alignment.CenterVertically)) {
                 if (actions != null) {
                     Row(
                         modifier = Modifier.padding(start = 8.dp, end = 8.dp),

@@ -13,7 +13,6 @@ import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
@@ -97,16 +96,16 @@ class BlueskySearchEngine @Inject constructor(
             }
     }
 
-    override fun searchAuthablePlatform(query: String): Flow<List<PlatformSnapshot>>? {
-        return null
-    }
-
     override suspend fun searchSource(
         role: IdentityRole,
         query: String,
     ): Result<List<StatusSource>> {
         val client = clientManager.getClient(role)
-        val identifier = getAtIdentifier(query) ?: return Result.success(emptyList())
+        val identifier = getAtIdentifier(query)
+            ?: return client.searchActorsCatching(SearchActorsQueryParams(q = query))
+                .map { result ->
+                    result.actors.map { accountAdapter.createSource(it) }
+                }
         return client.getProfileCatching(GetProfileQueryParams(identifier))
             .map { profile -> listOf(accountAdapter.createSource(profile)) }
     }
@@ -120,6 +119,20 @@ class BlueskySearchEngine @Inject constructor(
                 .filter { it.compareWithQuery(query) }
                 .map { it.toContentResult() }
                 .let { emit(it) }
+            val finalRole = role.takeUnless { it.nonRole }
+                ?: blueskyPlatformRepo.getAllPlatform().first()
+                    .let { IdentityRole(baseUrl = it.baseUrl) }
+            searchSource(finalRole, query = query)
+                .onSuccess { list ->
+                    emit(list.map { SearchContentResult.Source(it) })
+                }
+            clientManager.getClient(finalRole)
+                .searchActorsCatching(SearchActorsQueryParams(q = query))
+                .map { result ->
+                    result.actors.map { accountAdapter.createSource(it) }
+                }.onSuccess { list ->
+                    emit(list.map { SearchContentResult.Source(it) })
+                }
         }
     }
 

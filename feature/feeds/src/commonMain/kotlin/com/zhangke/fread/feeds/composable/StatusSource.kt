@@ -19,15 +19,12 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.feeds_delete_confirm_content
+import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.ui.utils.CardInfoSection
-import com.zhangke.fread.status.uri.FormalUri
 import org.jetbrains.compose.resources.stringResource
 
 data class StatusSourceUiState(
-    val uri: FormalUri,
-    val name: String,
-    val description: String,
-    val thumbnail: String?,
+    val source: StatusSource,
     val addEnabled: Boolean,
     val removeEnabled: Boolean,
 )
@@ -55,12 +52,11 @@ internal fun StatusSourceNode(
     val browserLauncher = LocalActivityBrowserLauncher.current
     CardInfoSection(
         modifier = modifier.padding(start = 16.dp, end = 16.dp, bottom = 16.dp),
-        avatar = source.thumbnail,
-        title = source.name,
-        description = source.description,
-        onUrlClick = {
-            browserLauncher.launchWebTabInApp(it)
-        },
+        avatar = source.source.thumbnail,
+        title = source.source.name,
+        handle = source.source.handle,
+        description = source.source.description,
+        onUrlClick = { browserLauncher.launchWebTabInApp(it) },
         actions = {
             if (source.addEnabled) {
                 IconButton(

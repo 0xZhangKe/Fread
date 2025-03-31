@@ -2,6 +2,7 @@ package com.zhangke.fread.status.author
 
 import com.zhangke.framework.utils.PlatformSerializable
 import com.zhangke.framework.utils.WebFinger
+import com.zhangke.framework.utils.prettyHandle
 import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.buildRichText
@@ -29,5 +30,5 @@ data class BlogAuthor(
         )
     }
 
-    val prettyHandle: String = if (handle.startsWith('@')) handle else "@$handle"
+    val prettyHandle: String = handle.prettyHandle()
 }

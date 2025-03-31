@@ -44,14 +44,6 @@ class SearchEngine(
         return engineList.map { it.searchAuthor(role, query, offset) }.collect()
     }
 
-    fun searchAuthablePlatform(
-        query: String,
-    ): Flow<Pair<String, List<PlatformSnapshot>>> {
-        return engineList.mapNotNull { it.searchAuthablePlatform(query) }.merge().map {
-            query to it
-        }
-    }
-
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>> {
         return engineList.map { it.searchSource(role, query.trim()) }.collect()
     }
@@ -87,10 +79,6 @@ interface ISearchEngine {
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>>
-
-    fun searchAuthablePlatform(
-        query: String,
-    ): Flow<List<PlatformSnapshot>>?
 
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>>
 

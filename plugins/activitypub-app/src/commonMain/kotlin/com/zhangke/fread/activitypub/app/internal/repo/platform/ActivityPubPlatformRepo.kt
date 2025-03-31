@@ -10,8 +10,6 @@ import com.zhangke.fread.activitypub.app.internal.usecase.ResolveBaseUrlUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.platform.PlatformSnapshot
-import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubPlatformRepo @Inject constructor(
@@ -55,29 +53,6 @@ class ActivityPubPlatformRepo @Inject constructor(
 
     suspend fun searchPlatformFromServer(query: String): Result<List<PlatformSnapshot>> {
         return mastodonInstanceRepo.searchWithName(query)
-    }
-
-    fun searchAuthablePlatform(query: String): Flow<List<PlatformSnapshot>> {
-        return flow {
-            getPlatformAsUrl(query)?.let { emit(listOf(it)) }
-            emit(searchPlatformSnapshotFromLocal(query))
-            searchPlatformFromServer(query).onSuccess { emit(it) }
-        }
-    }
-
-    private suspend fun getPlatformAsUrl(query: String): PlatformSnapshot? {
-        val baseUrl = FormalBaseUrl.parse(query) ?: return null
-        return getPlatform(baseUrl).getOrNull()?.toSnapshot()
-
-    }
-
-    private fun BlogPlatform.toSnapshot(): PlatformSnapshot {
-        return PlatformSnapshot(
-            domain = baseUrl.toString(),
-            description = this.description,
-            thumbnail = this.thumbnail.orEmpty(),
-            protocol = this.protocol,
-        )
     }
 
     private suspend fun getAllLocalPlatformSnapshot(): List<PlatformSnapshot> {

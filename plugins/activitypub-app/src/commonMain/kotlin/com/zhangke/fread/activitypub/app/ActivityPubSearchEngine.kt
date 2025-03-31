@@ -16,7 +16,6 @@ import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
@@ -96,10 +95,6 @@ class ActivityPubSearchEngine @Inject constructor(
                 list.map { accountAdapter.toAuthor(it) }
             }
         }
-    }
-
-    override fun searchAuthablePlatform(query: String): Flow<List<PlatformSnapshot>>? {
-        return platformRepo.searchAuthablePlatform(query)
     }
 
     private suspend fun <T> doSearch(

@@ -7,6 +7,7 @@ import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.adapter.BlueskyAccountAdapter
 import com.zhangke.fread.bluesky.internal.repo.BlueskyLoggedAccountRepo
+import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.launch
@@ -16,6 +17,7 @@ import me.tatarka.inject.annotations.Inject
 class BlueskyClientManager @Inject constructor(
     private val loggedAccountRepo: BlueskyLoggedAccountRepo,
     private val accountAdapter: BlueskyAccountAdapter,
+    private val blueskyPlatformRepo: BlueskyPlatformRepo,
 ) {
 
     private val cachedClient = mutableMapOf<IdentityRole, BlueskyClient>()
@@ -40,8 +42,13 @@ class BlueskyClientManager @Inject constructor(
 
     fun getClient(role: IdentityRole): BlueskyClient {
         cachedClient[role]?.let { return it }
-        val loggedAccountProvider = suspend { getLoggedAccount(role) }
-        return createClient(role, loggedAccountProvider).also { cachedClient[role] = it }
+        val finalRole = if (role.baseUrl == null) {
+            IdentityRole(baseUrl = blueskyPlatformRepo.getAllPlatform().first().baseUrl)
+        } else {
+            role
+        }
+        val loggedAccountProvider = suspend { getLoggedAccount(finalRole) }
+        return createClient(finalRole, loggedAccountProvider).also { cachedClient[role] = it }
     }
 
     private fun createClient(

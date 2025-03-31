@@ -1,14 +1,14 @@
 [versions]
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.28"
+kotlin = "2.1.10"
+ksp = "2.1.10-1.0.29"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
-kotlinx-serialization = "1.7.3"
-kotlinx-datetime = "0.6.1"
+kotlinx-serialization = "1.8.0"
+kotlinx-datetime = "0.6.2"
 
 arrow = "1.2.4"
 
-compose-multiplatform = "1.7.1"
+compose-multiplatform = "1.8.0-alpha04"
 
 androidx-core = "1.13.1"
 androidx-fragment = "1.7.1"
@@ -44,7 +44,7 @@ krouter = "1.2.1"
 
 multiplatformsettings = "1.2.0"
 
-androidGradlePlugin = "8.7.2"
+androidGradlePlugin = "8.7.3"
 
 mockk = "1.13.8"
 junit = "4.13.2"

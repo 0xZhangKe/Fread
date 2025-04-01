@@ -143,6 +143,7 @@ class ActivityPubStatusAdapter @Inject constructor(
             createAt = createAt,
             formattedCreateAt = createAt.formatDefault(),
             url = entity.url.ifNullOrEmpty { entity.uri },
+            link = entity.url.ifNullOrEmpty { entity.uri },
             language = entity.language,
             like = Blog.Like(
                 support = true,

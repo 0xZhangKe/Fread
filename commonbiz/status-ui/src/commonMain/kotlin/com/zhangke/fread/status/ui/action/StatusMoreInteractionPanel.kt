@@ -16,13 +16,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.framework.composable.FreadDialog
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.StatusActionType
-import com.zhangke.fread.status.ui.StatusDataElements
 import com.zhangke.fread.status.ui.reportStatusInteractionClickEvent
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
@@ -49,10 +47,7 @@ fun StatusMoreInteractionIcon(
         StatusIconButton(
             modifier = Modifier
                 .size(style.bottomPanelStyle.iconSize),
-            onClick = {
-                reportClick(StatusDataElements.MORE)
-                showMorePopup = !showMorePopup
-            },
+            onClick = { showMorePopup = !showMorePopup },
         ) {
             Icon(
                 imageVector = vectorResource(Res.drawable.ic_more),
@@ -65,7 +60,7 @@ fun StatusMoreInteractionIcon(
             onDismissRequest = { showMorePopup = false },
         ) {
             AdditionalMoreOptions(
-                blogUrl = blog.url,
+                blog = blog,
                 blogTranslationState = blogTranslationState,
                 onDismissRequest = { showMorePopup = false },
                 onTranslateClick = onTranslateClick,
@@ -152,7 +147,7 @@ private fun InteractionItem(
 
 @Composable
 private fun AdditionalMoreOptions(
-    blogUrl: String,
+    blog: Blog,
     blogTranslationState: BlogTranslationUiState,
     onDismissRequest: () -> Unit,
     onTranslateClick: () -> Unit,
@@ -160,21 +155,18 @@ private fun AdditionalMoreOptions(
     val textHandler = LocalActivityTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
     DropDownOpenInBrowserItem {
-        reportClick(StatusDataElements.OPEN_IN_BROWSER)
         onDismissRequest()
-        browserLauncher.launchWebTabInApp(blogUrl, checkAppSupportPage = false)
+        browserLauncher.launchWebTabInApp(blog.link, checkAppSupportPage = false)
     }
     DropDownCopyLinkItem {
-        reportClick(StatusDataElements.COPY_BLOG_LINK)
         onDismissRequest()
-        textHandler.copyText(blogUrl)
+        textHandler.copyText(blog.link)
     }
     if (blogTranslationState.support) {
         ModalDropdownMenuItem(
             text = stringResource(Res.string.status_ui_interaction_translate),
             imageVector = Icons.Default.Language,
             onClick = {
-                reportClick(StatusDataElements.TRANSLATE)
                 onDismissRequest()
                 onTranslateClick()
             },

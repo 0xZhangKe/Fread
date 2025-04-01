@@ -14,14 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
-import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
-import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusMentionOnlyLabel
@@ -149,7 +149,7 @@ fun BlogUi(
             onInteractive = { type, blog ->
                 reportStatusInteractionClickEvent(type)
                 if (type == StatusActionType.SHARE) {
-                    textHandler.shareUrl(blog.url, blog.content)
+                    textHandler.shareUrl(blog.link, blog.content)
                     return@StatusBottomInteractionPanel
                 }
                 onInteractive(type, blog)

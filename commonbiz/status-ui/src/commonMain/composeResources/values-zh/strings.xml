@@ -69,4 +69,6 @@
 
     <string name="status_ui_update_dialog_title">更新</string>
     <string name="status_ui_update_dialog_release_note">%1$s 版本更新日志：\n%2$s </string>
+
+    <string name="status_ui_switch_account_dialog_title">切换账号</string>
 </resources>

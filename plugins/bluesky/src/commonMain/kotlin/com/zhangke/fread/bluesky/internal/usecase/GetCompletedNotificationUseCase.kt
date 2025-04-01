@@ -16,6 +16,9 @@ import com.zhangke.fread.bluesky.internal.model.CompletedBskyNotification
 import com.zhangke.fread.bluesky.internal.model.PagedCompletedBskyNotifications
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.status.model.IdentityRole
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
+import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Inject
 import sh.christian.ozone.api.AtUri
 
@@ -41,7 +44,7 @@ class GetCompletedNotificationUseCase @Inject constructor(
                 }
                 PagedCompletedBskyNotifications(
                     cursor = notification.cursor,
-                    notifications = notification.notifications.map {
+                    notifications = notification.notifications.mapNotNull {
                         it.convert(postList, notificationSerializedCache, loggedAccount)
                     },
                     priority = notification.priority,
@@ -54,13 +57,13 @@ class GetCompletedNotificationUseCase @Inject constructor(
         posList: List<PostView>?,
         serializedCache: MutableMap<ListNotificationsNotification, Any>,
         loggedAccount: BlueskyLoggedAccount?,
-    ): CompletedBskyNotification {
+    ): CompletedBskyNotification? {
         val isOwner = loggedAccount?.did == author.did.did
         val record: CompletedBskyNotification.Record = when (reason) {
             ListNotificationsReason.Like -> {
                 val like: Like = (serializedCache[this] as? Like) ?: record.bskyJson()
                 CompletedBskyNotification.Record.Like(
-                    post = posList!!.first { it.uri == like.subject.uri },
+                    post = posList!!.firstOrNull { it.uri == like.subject.uri } ?: return null,
                     createAt = Instant(like.createdAt),
                 )
             }
@@ -68,7 +71,7 @@ class GetCompletedNotificationUseCase @Inject constructor(
             ListNotificationsReason.Repost -> {
                 val repost: Repost = (serializedCache[this] as? Repost) ?: record.bskyJson()
                 CompletedBskyNotification.Record.Repost(
-                    post = posList!!.first { it.uri == repost.subject.uri },
+                    post = posList!!.firstOrNull { it.uri == repost.subject.uri } ?: return null,
                     createAt = Instant(repost.createdAt),
                 )
             }
@@ -103,7 +106,7 @@ class GetCompletedNotificationUseCase @Inject constructor(
                     quote = this.record.bskyJson(),
                     cid = this.cid.cid,
                     uri = this.uri.atUri,
-                    post = posList!!.first { it.uri == this.reasonSubject!! },
+                    post = posList!!.firstOrNull { it.uri == this.reasonSubject!! } ?: return null,
                     isOwner = isOwner,
                 )
             }
@@ -137,7 +140,18 @@ class GetCompletedNotificationUseCase @Inject constructor(
         client: BlueskyClient,
         uriList: List<AtUri>,
     ): Result<List<PostView>> {
-        return client.getPostsCatching(GetPostsQueryParams(uris = uriList)).map { it.posts }
+        if (uriList.isEmpty()) return Result.success(emptyList())
+        val resultList: List<Result<List<PostView>>> = supervisorScope {
+            val grouped = uriList.chunked(15)
+            grouped.map { itemList ->
+                async { client.getPostsCatching(GetPostsQueryParams(uris = itemList)) }
+            }.awaitAll().map { result -> result.map { it.posts } }
+        }
+        val error = resultList.firstOrNull { it.isFailure }
+        if (error != null) {
+            return error
+        }
+        return Result.success(resultList.flatMap { it.getOrThrow() })
     }
 
     private fun List<ListNotificationsNotification>.getNeedFetchPostUris(

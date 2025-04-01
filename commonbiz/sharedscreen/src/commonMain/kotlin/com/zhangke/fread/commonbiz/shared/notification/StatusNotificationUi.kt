@@ -4,6 +4,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.calculateEndPadding
+import androidx.compose.foundation.layout.calculateStartPadding
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
@@ -12,6 +14,7 @@ import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalLayoutDirection
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
@@ -19,6 +22,7 @@ import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_new_status_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_quote_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reblog_desc
+import com.zhangke.fread.commonbiz.shared.screen.shared_notification_reply_desc
 import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.BlogDivider
@@ -41,7 +45,7 @@ fun StatusNotificationUi(
     composedStatusInteraction: ComposedStatusInteraction,
 ) {
     Column(modifier = modifier) {
-        Box(modifier = Modifier.padding(style.containerPaddings)) {
+        Box(modifier = Modifier) {
             when (notification) {
                 is StatusNotification.Like -> {
                     FavouriteNotification(
@@ -60,6 +64,7 @@ fun StatusNotificationUi(
                         statusUiState = notification.status,
                         indexInList = indexInList,
                         style = style.statusStyle,
+                        showDivider = false,
                         composedStatusInteraction = composedStatusInteraction,
                     )
                 }
@@ -70,7 +75,7 @@ fun StatusNotificationUi(
                         author = notification.status.status.triggerAuthor,
                         indexInList = indexInList,
                         icon = replyIcon(),
-                        interactionDesc = stringResource(Res.string.shared_notification_update_desc),
+                        interactionDesc = stringResource(Res.string.shared_notification_reply_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
                     )
@@ -172,7 +177,13 @@ fun StatusNotificationUi(
                 }
             }
         }
-        BlogDivider()
+        val layoutDirection = LocalLayoutDirection.current
+        BlogDivider(
+            modifier = Modifier.padding(
+                start = style.containerPaddings.calculateStartPadding(layoutDirection),
+                end = style.containerPaddings.calculateEndPadding(layoutDirection),
+            )
+        )
     }
 }
 

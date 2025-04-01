@@ -27,10 +27,11 @@ fun PollNotification(
     val role = notification.role
     Column(
         modifier = Modifier
-            .fillMaxWidth()
             .clickable {
                 composedStatusInteraction.onBlockClick(role, notification.blog)
-            },
+            }
+            .fillMaxWidth()
+            .padding(style.containerPaddings),
     ) {
         NotificationHeadLine(
             modifier = Modifier,

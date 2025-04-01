@@ -38,7 +38,7 @@ fun FollowRequestNotification(
     onRejectClick: (StatusNotification.FollowRequest) -> Unit,
     onAcceptClick: (StatusNotification.FollowRequest) -> Unit,
 ) {
-    Column(modifier = Modifier.fillMaxWidth()) {
+    Column(modifier = Modifier.fillMaxWidth().padding(style.containerPaddings)) {
         NotificationHeadLine(
             modifier = Modifier.clickable {
                 onUserInfoClick(notification.author)

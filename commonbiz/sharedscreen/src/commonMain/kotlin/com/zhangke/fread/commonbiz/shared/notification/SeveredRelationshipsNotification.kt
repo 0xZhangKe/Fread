@@ -26,7 +26,8 @@ fun SeveredRelationshipsNotification(
     Column(
         modifier = Modifier
             .fillMaxWidth()
-            .clickable { onUserInfoClick(notification.author) },
+            .clickable { onUserInfoClick(notification.author) }
+            .padding(style.containerPaddings),
     ) {
         NotificationHeadLine(
             modifier = Modifier,

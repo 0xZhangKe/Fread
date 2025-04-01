@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
 import com.zhangke.fread.commonbiz.shared.composable.WholeBlogUi
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.StatusUiState
@@ -25,9 +24,9 @@ fun NotificationWithWholeStatus(
 ) {
     Column(
         modifier = Modifier
-            .fillMaxWidth()
             .clickable { composedStatusInteraction.onStatusClick(status) }
-            .padding(vertical = 8.dp)
+            .fillMaxWidth()
+            .padding(style.containerPaddings)
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {

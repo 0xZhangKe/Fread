@@ -37,6 +37,7 @@ import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
+import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
@@ -120,9 +121,9 @@ class PostStatusViewModel @Inject constructor(
         }
     }
 
-    fun onSwitchAccountClick(account: ActivityPubLoggedAccount) {
+    fun onSwitchAccountClick(account: LoggedAccount) {
         _uiState.updateOnSuccess {
-            it.copy(account = account)
+            it.copy(account = account as ActivityPubLoggedAccount)
         }
     }
 

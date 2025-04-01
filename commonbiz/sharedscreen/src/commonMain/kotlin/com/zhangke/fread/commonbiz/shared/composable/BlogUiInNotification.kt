@@ -81,7 +81,7 @@ fun WholeBlogUi(
             indexInList = indexInList,
             following = statusUiState.following,
             style = style,
-            onInteractive = { type, blog ->
+            onInteractive = { type, _ ->
                 composedStatusInteraction.onStatusInteractive(statusUiState, type)
             },
             onUserInfoClick = {

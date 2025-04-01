@@ -34,7 +34,7 @@ fun FollowNotification(
             .clickable {
                 onUserInfoClick(notification.author)
             }
-            .padding(vertical = 8.dp),
+            .padding(style.containerPaddings),
         verticalAlignment = Alignment.CenterVertically,
     ) {
 

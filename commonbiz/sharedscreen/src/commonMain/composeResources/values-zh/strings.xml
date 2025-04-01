@@ -27,6 +27,7 @@
     <string name="shared_notification_new_status_desc">发布了新帖子</string>
     <string name="shared_notification_severed_desc">和你中断了关系</string>
     <string name="shared_notification_quote_desc">引用了你的帖子</string>
+    <string name="shared_notification_reply_desc">回复了你的帖子</string>
 
     <string name="shared_user_list_title_following">正在关注的用户</string>
     <string name="shared_user_list_title_followers">关注你的用户</string>

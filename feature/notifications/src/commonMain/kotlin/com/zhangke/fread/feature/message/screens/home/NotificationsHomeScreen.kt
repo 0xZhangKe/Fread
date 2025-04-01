@@ -17,11 +17,8 @@ import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -36,6 +33,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -46,15 +44,14 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.illustration_message
-import com.zhangke.fread.feature.message.NotificationElements
 import com.zhangke.fread.feature.notifications.Res
 import com.zhangke.fread.feature.notifications.notification_tab_title
 import com.zhangke.fread.feature.notifications.notifications_account_empty_tip
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -71,12 +68,7 @@ class NotificationsHomeScreen : BaseScreen() {
         ) {
             NotificationsHomeScreenContent(
                 uiState = uiState,
-                onAccountSelected = {
-                    reportClick(NotificationElements.SWITCH_ACCOUNT) {
-                        put("accountCount", "${uiState.accountList.size}")
-                    }
-                    viewModel.onAccountSelected(it)
-                },
+                onAccountSelected = viewModel::onAccountSelected,
             )
         }
     }
@@ -186,13 +178,13 @@ class NotificationsHomeScreen : BaseScreen() {
             )
             Spacer(modifier = Modifier.weight(1F))
             Spacer(modifier = Modifier.width(8.dp))
-            var selectAccountPopupExpanded by remember {
+            var showSelectAccountPopup by remember {
                 mutableStateOf(false)
             }
             Box(modifier = Modifier.padding(end = 8.dp)) {
                 Row(
                     modifier = Modifier.noRippleClick {
-                        selectAccountPopupExpanded = !selectAccountPopupExpanded
+                        showSelectAccountPopup = !showSelectAccountPopup
                     },
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
@@ -201,58 +193,34 @@ class NotificationsHomeScreen : BaseScreen() {
                         imageUrl = account.avatar,
                     )
                     Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = account.userName,
-                        style = MaterialTheme.typography.bodyLarge,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
+                    Column {
+                        Text(
+                            text = account.userName,
+                            style = MaterialTheme.typography.titleMedium
+                                .copy(fontWeight = FontWeight.SemiBold),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                        Text(
+                            text = account.prettyHandle,
+                            style = MaterialTheme.typography.labelSmall,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                        )
+                    }
                     Icon(
                         imageVector = Icons.Default.ArrowDropDown,
                         contentDescription = "Select Account",
                     )
                 }
-                DropdownMenu(
-                    modifier = Modifier.align(Alignment.BottomEnd),
-                    expanded = selectAccountPopupExpanded,
-                    onDismissRequest = { selectAccountPopupExpanded = false },
-                ) {
-                    accountList.forEach { accountItem ->
-                        DropdownMenuItem(
-                            text = {
-                                Row(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    verticalAlignment = Alignment.CenterVertically,
-                                ) {
-                                    BlogAuthorAvatar(
-                                        modifier = Modifier.size(32.dp),
-                                        imageUrl = accountItem.avatar,
-                                    )
-                                    Spacer(modifier = Modifier.width(16.dp))
-                                    Text(
-                                        modifier = Modifier.width(100.dp),
-                                        text = accountItem.userName,
-                                        style = MaterialTheme.typography.bodyLarge,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis,
-                                    )
-                                    Spacer(modifier = Modifier.width(4.dp))
-                                    RadioButton(
-                                        selected = accountItem == account,
-                                        onClick = {
-                                            onAccountSelected(accountItem)
-                                            selectAccountPopupExpanded = false
-                                        },
-                                    )
-                                    Spacer(modifier = Modifier.width(6.dp))
-                                }
-                            },
-                            onClick = {
-                                selectAccountPopupExpanded = false
-                                onAccountSelected(accountItem)
-                            },
-                        )
-                    }
+                if (showSelectAccountPopup) {
+                    SelectAccountDialog(
+                        accountList = accountList,
+                        selectedAccount = account,
+                        onDismissRequest = { showSelectAccountPopup = false },
+                        onSwitchAccount = onAccountSelected,
+                    )
                 }
             }
         }

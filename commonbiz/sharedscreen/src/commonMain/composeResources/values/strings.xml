@@ -28,6 +28,7 @@
     <string name="shared_notification_new_status_desc">post a new blog</string>
     <string name="shared_notification_severed_desc">has severed ties with you</string>
     <string name="shared_notification_quote_desc">quoted your post</string>
+    <string name="shared_notification_reply_desc">Replied to your post</string>
 
     <string name="shared_user_list_title_following">Following</string>
     <string name="shared_user_list_title_followers">Followers</string>

@@ -23,7 +23,6 @@ fun FeedsStatusNode(
     val transparentNavigator = LocalTransparentNavigator.current
     StatusUi(
         modifier = modifier.clickable {
-            reportClick(StatusDataElements.CONTENT)
             composedStatusInteraction.onStatusClick(status)
         },
         status = status,

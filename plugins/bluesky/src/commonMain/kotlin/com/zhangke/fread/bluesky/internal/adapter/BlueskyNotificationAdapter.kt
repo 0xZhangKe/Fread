@@ -38,7 +38,7 @@ class BlueskyNotificationAdapter @Inject constructor(
                         id = this.record.post.cid.cid,
                         url = this.record.post.uri.atUri,
                         platform = blogPlatform,
-                        author = author,
+                        author = accountAdapter.convertToBlogAuthor(this.record.post.author),
                     ),
                     createAt = this.record.createAt,
                 )

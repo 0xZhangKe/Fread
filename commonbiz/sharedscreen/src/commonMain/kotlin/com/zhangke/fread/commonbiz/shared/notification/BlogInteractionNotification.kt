@@ -39,8 +39,9 @@ fun BlogInteractionNotification(
     val browserLauncher = LocalActivityBrowserLauncher.current
     Column(
         modifier = Modifier
+            .clickable { composedStatusInteraction.onBlogClick(role, blog) }
             .fillMaxWidth()
-            .clickable { composedStatusInteraction.onBlogClick(role, blog) },
+            .padding(style.containerPaddings),
     ) {
         NotificationHeadLine(
             modifier = Modifier.clickable {

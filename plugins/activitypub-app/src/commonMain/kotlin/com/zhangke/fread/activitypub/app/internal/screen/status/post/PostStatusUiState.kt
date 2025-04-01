@@ -31,13 +31,6 @@ data class PostStatusUiState(
     val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
 ) {
 
-    val allowedSelectCount: Int
-        get() {
-            val imageList =
-                attachment?.asImageOrNull?.imageList ?: return rules.maxMediaCount
-            return (rules.maxMediaCount - imageList.size).coerceAtLeast(0)
-        }
-
     val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
 
     fun hasInputtedData(): Boolean {

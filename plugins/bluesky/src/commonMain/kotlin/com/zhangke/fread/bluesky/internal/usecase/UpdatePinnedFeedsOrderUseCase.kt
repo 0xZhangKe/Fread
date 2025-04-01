@@ -33,8 +33,8 @@ class UpdatePinnedFeedsOrderUseCase @Inject constructor(
         for (feed in list) {
             uriToFeedsMap[feed.value] = feed
         }
-        return newOrder.mapNotNull {
-            uriToFeedsMap[it.uri]
+        return newOrder.map {
+            uriToFeedsMap[it.uri]!!
         }
     }
 

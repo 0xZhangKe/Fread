@@ -8,12 +8,12 @@ import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.PushPin
-import androidx.compose.material.icons.outlined.FormatQuote
 import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.fread.statusui.Res
+import com.zhangke.fread.statusui.ic_format_quote
 import com.zhangke.fread.statusui.ic_share
 import com.zhangke.fread.statusui.ic_status_comment
 import com.zhangke.fread.statusui.ic_status_forward
@@ -42,8 +42,8 @@ internal fun forwardIcon(): ImageVector {
 }
 
 @Composable
-internal fun quoteIcon(): ImageVector {
-    return Icons.Outlined.FormatQuote
+fun quoteIcon(): ImageVector {
+    return vectorResource(Res.drawable.ic_format_quote)
 }
 
 @Composable

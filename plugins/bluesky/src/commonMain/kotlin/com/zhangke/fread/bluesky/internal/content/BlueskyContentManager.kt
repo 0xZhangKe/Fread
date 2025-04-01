@@ -16,6 +16,7 @@ class BlueskyContentManager @Inject constructor() : IContentManager {
         action: AddContentAction
     ) {
         if (platform.protocol.notBluesky) return
+        action.onFinishPage()
         action.onOpenNewPage(AddBlueskyContentScreen(platform.baseUrl))
     }
 

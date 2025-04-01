@@ -16,7 +16,11 @@ class AndroidActivityBrowserLauncher @Inject constructor(
 
     override fun launchBySystemBrowser(uri: PlatformUri) {
         val intent = Intent(Intent.ACTION_VIEW, uri.toAndroidUri())
-        activity.startActivity(intent)
+        try {
+            activity.startActivity(intent)
+        } catch (_: Throwable) {
+            // ignore
+        }
     }
 
     override fun launchWebTabInApp(
@@ -30,6 +34,10 @@ class AndroidActivityBrowserLauncher @Inject constructor(
         }
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
-        customTabsIntent.launchUrl(activity, uri.toAndroidUri())
+        try {
+            customTabsIntent.launchUrl(activity, uri.toAndroidUri())
+        } catch (_: Throwable) {
+            // ignore
+        }
     }
 }

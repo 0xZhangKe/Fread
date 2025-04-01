@@ -39,6 +39,7 @@ class RssStatusAdapter @Inject constructor(
             author = blogAuthorAdapter.createAuthor(uriInsight, source),
             title = removeMeaninglessTitle(this.title),
             url = this.link.ifNullOrEmpty { uriInsight.url },
+            link = this.link.ifNullOrEmpty { uriInsight.url },
             content = this.content.ifNullOrEmpty { this.description.ifNullOrEmpty { this.link.orEmpty() } },
             description = this.description,
             createAt = createAt,

@@ -7,10 +7,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.StickyNote2
-import androidx.compose.material.icons.filled.Check
+import androidx.compose.material.icons.filled.Error
+import androidx.compose.material.icons.outlined.Check
+import androidx.compose.material.icons.outlined.CheckCircle
+import androidx.compose.material.icons.outlined.Error
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
@@ -90,7 +94,7 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
             ) { state ->
                 Column(
                     modifier = Modifier.fillMaxSize()
-                        .padding(top = 42.dp)
+                        .padding(top = 36.dp)
                         .padding(horizontal = 16.dp),
                 ) {
                     ContentAddingState(
@@ -126,8 +130,9 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
         ) {
             if (contentExists) {
                 Icon(
-                    modifier = Modifier,
-                    imageVector = Icons.AutoMirrored.Filled.StickyNote2,
+                    modifier = Modifier.size(48.dp),
+                    imageVector = Icons.Outlined.Error,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null,
                 )
                 Text(
@@ -136,8 +141,9 @@ class AddActivityPubContentScreen(private val platform: BlogPlatform) : BaseScre
                 )
             } else {
                 Icon(
-                    modifier = Modifier,
-                    imageVector = Icons.Default.Check,
+                    modifier = Modifier.size(48.dp),
+                    imageVector = Icons.Outlined.Check,
+                    tint = MaterialTheme.colorScheme.primary,
                     contentDescription = null,
                 )
                 Text(

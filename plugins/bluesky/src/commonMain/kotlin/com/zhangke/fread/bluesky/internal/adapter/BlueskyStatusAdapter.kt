@@ -188,6 +188,10 @@ class BlueskyStatusAdapter @Inject constructor(
             description = null,
             content = post.text,
             url = url,
+            link = buildLink(
+                url = url,
+                handle = author.handle,
+            ),
             createAt = createAt,
             formattedCreateAt = createAt.formatDefault(),
             like = Blog.Like(
@@ -224,6 +228,19 @@ class BlueskyStatusAdapter @Inject constructor(
             embeds = embedList,
             supportTranslate = false,
         )
+    }
+
+    private fun buildLink(
+        url: String,
+        handle: String,
+    ): String {
+        //https://bsky.app/profile/lotuscat.bsky.social/post/3llqkin45722p
+        return buildString {
+            append("https://bsky.app/profile/")
+            append(handle.removePrefix("@"))
+            append("/post/")
+            append(url.substringAfterLast("/"))
+        }
     }
 
     private fun convertToMedia(embedUnion: PostViewEmbedUnion): List<BlogMedia> {

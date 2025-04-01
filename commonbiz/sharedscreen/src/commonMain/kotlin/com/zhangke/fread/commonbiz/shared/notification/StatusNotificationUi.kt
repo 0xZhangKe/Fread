@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.FormatQuote
 import androidx.compose.material.icons.filled.NotificationsNone
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
@@ -27,6 +26,7 @@ import com.zhangke.fread.commonbiz.shared.screen.shared_notification_update_desc
 import com.zhangke.fread.status.notification.StatusNotification
 import com.zhangke.fread.status.ui.BlogDivider
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.status.ui.action.quoteIcon
 import com.zhangke.fread.status.ui.action.replyIcon
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
@@ -154,7 +154,7 @@ fun StatusNotificationUi(
                         status = notification.status,
                         author = notification.status.status.triggerAuthor,
                         indexInList = indexInList,
-                        icon = Icons.Default.FormatQuote,
+                        icon = quoteIcon(),
                         interactionDesc = stringResource(Res.string.shared_notification_quote_desc),
                         style = style,
                         composedStatusInteraction = composedStatusInteraction,
@@ -170,7 +170,6 @@ fun StatusNotificationUi(
                         },
                     )
                 }
-
 
                 is StatusNotification.Unknown -> {
                     UnknownNotification(notification = notification)

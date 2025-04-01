@@ -34,17 +34,6 @@ fun StatusBottomInteractionPanel(
     ) {
         StatusActionIcon(
             modifier = Modifier,
-            imageVector = replyIcon(),
-            enabled = logged && blog.reply.support,
-            style = style,
-            contentDescription = replyAlt(),
-            text = blog.reply.repliesCount?.countToLabel(),
-            highLight = false,
-            onClick = { onInteractive(StatusActionType.REPLY, blog) },
-        )
-        Spacer(modifier = Modifier.weight(1F))
-        StatusActionIcon(
-            modifier = Modifier,
             imageVector = forwardIcon(),
             enabled = logged && blog.forward.support,
             style = style,
@@ -52,6 +41,17 @@ fun StatusBottomInteractionPanel(
             text = blog.forward.forwardCount?.countToLabel(),
             highLight = blog.forward.forward == true,
             onClick = { onInteractive(StatusActionType.FORWARD, blog) },
+        )
+        Spacer(modifier = Modifier.weight(1F))
+        StatusActionIcon(
+            modifier = Modifier,
+            imageVector = replyIcon(),
+            enabled = logged && blog.reply.support,
+            style = style,
+            contentDescription = replyAlt(),
+            text = blog.reply.repliesCount?.countToLabel(),
+            highLight = false,
+            onClick = { onInteractive(StatusActionType.REPLY, blog) },
         )
         if (blog.quote.support){
             Spacer(modifier = Modifier.weight(1F))

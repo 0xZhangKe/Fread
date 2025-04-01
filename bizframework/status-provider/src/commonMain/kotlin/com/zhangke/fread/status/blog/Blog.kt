@@ -22,6 +22,8 @@ data class Blog(
     val description: String?,
     val content: String,
     val url: String,
+    // http link
+    val link: String,
     val createAt: Instant,
     val formattedCreateAt: String,
     val supportEdit: Boolean,

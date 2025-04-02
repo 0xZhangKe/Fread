@@ -27,7 +27,7 @@ data class IdentityRole(
 
     companion object {
 
-        val nonIdentityRole by lazy { IdentityRole(null, null) }
+        val nonIdentityRole = IdentityRole(null, null)
 
         fun decodeFromString(text: String): IdentityRole? {
             return try {

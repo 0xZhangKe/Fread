@@ -91,7 +91,3 @@ class FormalUri private constructor(
         }
     }
 }
-
-fun FormalUri.encode(): String {
-    return UrlEncoder.encode(toRawString())
-}

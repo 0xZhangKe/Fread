@@ -134,6 +134,10 @@ class BskyFollowingFeedsViewModel @Inject constructor(
     }
 
     fun onFeedsOrderChanged(startIndex: Int, endIndex: Int) {
+        val followingFeeds = _uiState.value.followingFeeds.toMutableList()
+        if (startIndex > followingFeeds.lastIndex || endIndex > followingFeeds.lastIndex) {
+            return
+        }
         launchInViewModel {
             _uiState.update { it.copy(reordering = true) }
             val roleResult = getRole()
@@ -143,7 +147,6 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                 return@launchInViewModel
             }
             val role = roleResult.getOrThrow()
-            val followingFeeds = _uiState.value.followingFeeds.toMutableList()
             if (endIndex > followingFeeds.lastIndex) {
                 followingFeeds.add(followingFeeds.removeAt(startIndex))
             } else {

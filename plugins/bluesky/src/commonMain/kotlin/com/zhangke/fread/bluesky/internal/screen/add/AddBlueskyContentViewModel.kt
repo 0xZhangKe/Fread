@@ -2,6 +2,8 @@ package com.zhangke.fread.bluesky.internal.screen.add
 
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.getString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
@@ -10,6 +12,9 @@ import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.commonbiz.Res
+import com.zhangke.fread.commonbiz.content_exist_tips
+import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -66,7 +71,7 @@ class AddBlueskyContentViewModel @Inject constructor(
 
     fun onSkipClick() {
         launchInViewModel {
-            saveBlueskyContent()
+            checkAndSaveContent()
             _finishPageFlow.emit(Unit)
         }
     }
@@ -79,15 +84,20 @@ class AddBlueskyContentViewModel @Inject constructor(
         val password = uiState.value.password.trim()
         loggingJob = launchInViewModel {
             _uiState.update { it.copy(logging = true) }
-            loginToBluesky(hosting, username, password)
+            checkAndSaveContent().onFailure { t ->
+                _uiState.update { it.copy(logging = false) }
+                _snackBarMessage.emitTextMessageFromThrowable(t)
+                return@launchInViewModel
+            }
+            val baseUrl = FormalBaseUrl.parse(hosting)!!
+            loginToBluesky(baseUrl, username, password)
                 .onSuccess {
-                    saveBlueskyContent()
                     _uiState.update { it.copy(logging = false) }
                     _finishPageFlow.emit(Unit)
                 }
-                .onFailure {
+                .onFailure { t ->
                     _uiState.update { it.copy(logging = false) }
-                    _snackBarMessage.emit(textOf(it.message ?: "Login Failed!"))
+                    _snackBarMessage.emit(textOf(t.message ?: "Login Failed!"))
                 }
         }
     }
@@ -97,13 +107,26 @@ class AddBlueskyContentViewModel @Inject constructor(
         _uiState.update { it.copy(logging = false) }
     }
 
-    private suspend fun saveBlueskyContent() {
-        if (loginMode) return
+    private suspend fun checkAndSaveContent(): Result<Unit> {
+        val hosting = uiState.value.hosting.trim()
+        val baseUrl = FormalBaseUrl.parse(hosting)
+            ?: return Result.failure(IllegalArgumentException("Invalid host!"))
         val platform = platformRepo.getPlatform(baseUrl)
         val id = platform.baseUrl.toString()
-        if (contentRepo.getContent(id) != null) return
+        if (contentRepo.getContent(id) != null) {
+            return Result.failure(IllegalStateException(textOf(Res.string.content_exist_tips).getString()))
+        }
+        saveBlueskyContent(platform, id)
+        return Result.success(Unit)
+    }
+
+    private suspend fun saveBlueskyContent(
+        platform: BlogPlatform,
+        id: String,
+    ) {
+        if (loginMode) return
         val content = BlueskyContent(
-            id = platform.baseUrl.toString(),
+            id = id,
             order = contentRepo.getMaxOrder() + 1,
             name = platform.name,
             baseUrl = platform.baseUrl,

@@ -58,7 +58,6 @@ import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
-import com.zhangke.fread.status.uri.encode
 import kotlinx.coroutines.launch
 
 internal class ActivityPubContentScreen(

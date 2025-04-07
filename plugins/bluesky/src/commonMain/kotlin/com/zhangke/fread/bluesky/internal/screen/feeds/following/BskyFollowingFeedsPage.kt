@@ -153,10 +153,12 @@ class BskyFollowingFeedsPage(
                         onMove = { from, to ->
                             if (feedsInUi.isEmpty()) return@rememberReorderableLazyListState
                             feedsInUi = feedsInUi.toMutableList().apply {
-                                if (to.index > feedsInUi.lastIndex) {
-                                    add(removeAt(from.index))
-                                } else {
-                                    add(to.index, removeAt(from.index))
+                                if (from.index <= feedsInUi.lastIndex) {
+                                    if (to.index > feedsInUi.lastIndex) {
+                                        add(removeAt(from.index))
+                                    } else {
+                                        add(to.index, removeAt(from.index))
+                                    }
                                 }
                             }
                         },

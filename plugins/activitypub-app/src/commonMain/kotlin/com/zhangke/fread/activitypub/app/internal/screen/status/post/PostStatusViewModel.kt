@@ -61,7 +61,6 @@ class PostStatusViewModel @Inject constructor(
     private val getCustomEmoji: GetCustomEmojiUseCase,
     private val getInstancePostStatusRules: GetInstancePostStatusRulesUseCase,
     private val generateInitPostStatusUiState: GenerateInitPostStatusUiStateUseCase,
-    private val uploadMediaAttachment: UploadMediaAttachmentUseCase,
     private val clientManager: ActivityPubClientManager,
     private val publishPost: PublishPostUseCase,
     private val platformUriTransformer: PlatformUriTransformer,

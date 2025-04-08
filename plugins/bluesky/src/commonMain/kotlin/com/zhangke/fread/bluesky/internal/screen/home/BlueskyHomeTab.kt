@@ -48,9 +48,11 @@ import com.zhangke.fread.analytics.HomeTabElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
+import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
 import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostScreen
 import com.zhangke.fread.common.page.BasePagerTab
+import com.zhangke.fread.commonbiz.shared.composable.NotLoginPageError
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -81,6 +83,16 @@ class BlueskyHomeTab(
             snackBarHostState = snackBarHostState,
             onPostBlogClick = { navigator.push(PublishPostScreen(uiState.role)) },
             onTitleClick = {},
+            onLoginClick = {
+                uiState.content?.baseUrl?.let { baseUrl ->
+                    navigator.push(
+                        AddBlueskyContentScreen(
+                            baseUrl = baseUrl,
+                            loginMode = true
+                        )
+                    )
+                }
+            },
         )
     }
 
@@ -92,6 +104,7 @@ class BlueskyHomeTab(
         snackBarHostState: SnackbarHostState,
         onPostBlogClick: (BlueskyLoggedAccount) -> Unit,
         onTitleClick: (BlueskyContent) -> Unit,
+        onLoginClick: () -> Unit,
     ) {
         val coroutineScope = rememberCoroutineScope()
         val mainTabConnection = LocalNestedTabConnection.current
@@ -150,71 +163,77 @@ class BlueskyHomeTab(
                     if (uiState.content != null) {
                         val tabList =
                             remember(uiState) { createTabList(uiState.content, uiState.role) }
-                        val pagerState = rememberPagerState(0) {
-                            tabList.size
-                        }
-                        TopBarWithTabLayout(
-                            topBarContent = {
-                                ContentToolbar(
-                                    title = uiState.content.name,
-                                    showNextIcon = !isLatestContent,
-                                    onMenuClick = {
-                                        reportClick(HomeTabElements.SHOW_DRAWER)
-                                        coroutineScope.launch {
-                                            mainTabConnection.openDrawer()
+                        if (tabList.isEmpty() && uiState.account == null) {
+                            NotLoginPageError(
+                                modifier = Modifier.padding(top = 64.dp),
+                                message = null,
+                                onLoginClick = onLoginClick,
+                            )
+                        } else {
+                            val pagerState = rememberPagerState(0) { tabList.size }
+                            TopBarWithTabLayout(
+                                topBarContent = {
+                                    ContentToolbar(
+                                        title = uiState.content.name,
+                                        showNextIcon = !isLatestContent,
+                                        onMenuClick = {
+                                            reportClick(HomeTabElements.SHOW_DRAWER)
+                                            coroutineScope.launch {
+                                                mainTabConnection.openDrawer()
+                                            }
+                                        },
+                                        onNextClick = {
+                                            reportClick(HomeTabElements.NEXT)
+                                            coroutineScope.launch {
+                                                mainTabConnection.switchToNextTab()
+                                            }
+                                        },
+                                        onRefreshClick = {
+                                            reportClick(HomeTabElements.REFRESH)
+                                            coroutineScope.launch {
+                                                mainTabConnection.scrollToTop()
+                                                mainTabConnection.refresh()
+                                            }
+                                        },
+                                        onTitleClick = {
+                                            reportClick(HomeTabElements.TITLE)
+                                            onTitleClick(uiState.content)
+                                        },
+                                        onDoubleClick = {
+                                            reportClick(HomeTabElements.TITLE_DOUBLE_CLICK)
+                                            coroutineScope.launch {
+                                                mainTabConnection.scrollToTop()
+                                            }
+                                        },
+                                    )
+                                },
+                                tabContent = {
+                                    FreadTabRow(
+                                        modifier = Modifier.fillMaxWidth(),
+                                        selectedTabIndex = pagerState.currentPage,
+                                        tabCount = tabList.size,
+                                        tabContent = {
+                                            Text(
+                                                text = tabList[it].options.title,
+                                                maxLines = 1,
+                                            )
+                                        },
+                                        onTabClick = {
+                                            coroutineScope.launch {
+                                                pagerState.scrollToPage(it)
+                                            }
                                         }
-                                    },
-                                    onNextClick = {
-                                        reportClick(HomeTabElements.NEXT)
-                                        coroutineScope.launch {
-                                            mainTabConnection.switchToNextTab()
-                                        }
-                                    },
-                                    onRefreshClick = {
-                                        reportClick(HomeTabElements.REFRESH)
-                                        coroutineScope.launch {
-                                            mainTabConnection.scrollToTop()
-                                            mainTabConnection.refresh()
-                                        }
-                                    },
-                                    onTitleClick = {
-                                        reportClick(HomeTabElements.TITLE)
-                                        onTitleClick(uiState.content)
-                                    },
-                                    onDoubleClick = {
-                                        reportClick(HomeTabElements.TITLE_DOUBLE_CLICK)
-                                        coroutineScope.launch {
-                                            mainTabConnection.scrollToTop()
-                                        }
-                                    },
-                                )
-                            },
-                            tabContent = {
-                                FreadTabRow(
-                                    modifier = Modifier.fillMaxWidth(),
-                                    selectedTabIndex = pagerState.currentPage,
-                                    tabCount = tabList.size,
-                                    tabContent = {
-                                        Text(
-                                            text = tabList[it].options.title,
-                                            maxLines = 1,
-                                        )
-                                    },
-                                    onTabClick = {
-                                        coroutineScope.launch {
-                                            pagerState.scrollToPage(it)
-                                        }
-                                    }
-                                )
-                            },
-                        ) {
-                            val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
-                            HorizontalPager(
-                                modifier = Modifier.fillMaxSize(),
-                                state = pagerState,
-                                userScrollEnabled = !contentScrollInProgress,
-                            ) { pageIndex ->
-                                tabList[pageIndex].TabContent(screen, null)
+                                    )
+                                },
+                            ) {
+                                val contentScrollInProgress by mainTabConnection.contentScrollInpProgress.collectAsState()
+                                HorizontalPager(
+                                    modifier = Modifier.fillMaxSize(),
+                                    state = pagerState,
+                                    userScrollEnabled = !contentScrollInProgress,
+                                ) { pageIndex ->
+                                    tabList[pageIndex].TabContent(screen, null)
+                                }
                             }
                         }
                     } else if (uiState.errorMessage != null) {
@@ -230,6 +249,11 @@ class BlueskyHomeTab(
                         }
                     } else if (uiState.account == null) {
                         // not login
+                        NotLoginPageError(
+                            modifier = Modifier.padding(top = 64.dp),
+                            message = null,
+                            onLoginClick = onLoginClick,
+                        )
                     }
                 }
             }

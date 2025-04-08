@@ -224,38 +224,52 @@ fun InitErrorContent(
     error: Throwable,
     onLoginClick: (() -> Unit)? = null,
 ) {
-    Column(
-        modifier = Modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
-        horizontalAlignment = Alignment.CenterHorizontally,
-    ) {
-        if (onLoginClick != null && error.isAuthenticationFailure) {
-            Text(
-                modifier = Modifier.fillMaxWidth(),
-                text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_not_login_title),
-                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
-                textAlign = TextAlign.Center,
-            )
-            if (!error.message.isNullOrEmpty()) {
-                Text(
-                    modifier = Modifier.padding(top = 2.dp),
-                    text = error.message.orEmpty(),
-                    style = MaterialTheme.typography.labelMedium,
-                    color = MaterialTheme.colorScheme.onSurfaceVariant,
-                )
-            }
-            Button(
-                modifier = Modifier.padding(top = 16.dp),
-                onClick = onLoginClick,
-            ) {
-                Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_go_to_login))
-            }
-        } else {
+    if (onLoginClick != null && error.isAuthenticationFailure) {
+        NotLoginPageError(Modifier, error.message, onLoginClick)
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
             Text(
                 modifier = Modifier.fillMaxWidth(),
                 text = error.message.orEmpty(),
                 style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
                 textAlign = TextAlign.Center,
             )
+        }
+    }
+}
+
+@Composable
+fun NotLoginPageError(
+    modifier: Modifier,
+    message: String?,
+    onLoginClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_not_login_title),
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+            textAlign = TextAlign.Center,
+        )
+        if (!message.isNullOrEmpty()) {
+            Text(
+                modifier = Modifier.padding(top = 2.dp),
+                text = message,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Button(
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = onLoginClick,
+        ) {
+            Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_go_to_login))
         }
     }
 }

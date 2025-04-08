@@ -111,6 +111,7 @@ class AddBlueskyContentViewModel @Inject constructor(
         val hosting = uiState.value.hosting.trim()
         val baseUrl = FormalBaseUrl.parse(hosting)
             ?: return Result.failure(IllegalArgumentException("Invalid host!"))
+        if (loginMode) return Result.success(Unit)
         val platform = platformRepo.getPlatform(baseUrl)
         val id = platform.baseUrl.toString()
         if (contentRepo.getContent(id) != null) {

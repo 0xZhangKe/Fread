@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.style.TextAlign
@@ -39,6 +40,8 @@ import com.zhangke.fread.bluesky.bsky_feeds_explorer_creator_label
 import com.zhangke.fread.bluesky.bsky_feeds_explorer_liked_by
 import com.zhangke.fread.bluesky.bsky_feeds_item_subtitle
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
+import com.zhangke.fread.statusui.ic_drag_indicator
+import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
 @Composable
@@ -49,7 +52,7 @@ fun BlueskyFollowingFeeds(
 ) {
     Row(
         modifier = modifier.clickable { onFeedsClick(feeds) }
-            .padding(horizontal = 16.dp, vertical = 16.dp),
+            .padding(start = 16.dp, end = 8.dp, top = 16.dp, bottom = 16.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
         FeedsAvatar(feeds.avatar, Modifier)
@@ -75,6 +78,15 @@ fun BlueskyFollowingFeeds(
                 )
             }
         }
+        Icon(
+            modifier = Modifier
+                .align(Alignment.CenterVertically)
+                .size(24.dp)
+                .alpha(0.7F)
+                .padding(2.dp),
+            painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_drag_indicator),
+            contentDescription = "Drag for reorder Content Config",
+        )
     }
 }
 

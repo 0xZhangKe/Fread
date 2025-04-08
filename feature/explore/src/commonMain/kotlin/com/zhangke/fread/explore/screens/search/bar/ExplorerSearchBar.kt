@@ -17,12 +17,9 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowDropDown
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material3.DropdownMenu
-import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.SearchBar
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Text
@@ -53,9 +50,7 @@ import com.zhangke.framework.composable.inline.InlineVideoLazyColumn
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.commonbiz.shared.composable.SearchResultUi
-import com.zhangke.fread.explore.ExplorerElements
 import com.zhangke.fread.explore.Res
 import com.zhangke.fread.explore.explorer_search_bar_hint
 import com.zhangke.fread.explore.explorer_search_bar_hint_specialize_platform
@@ -63,6 +58,7 @@ import com.zhangke.fread.explore.screens.search.SearchScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
+import com.zhangke.fread.status.ui.common.SelectAccountDialog
 import kotlinx.coroutines.flow.Flow
 import org.jetbrains.compose.resources.stringResource
 
@@ -137,12 +133,7 @@ fun Screen.ExplorerSearchBar(
             navigator.push(SearchScreen(uiState.role, uiState.query))
         },
         active = active,
-        onActiveChange = {
-            active = it
-            reportClick(ExplorerElements.SEARCH) {
-                put("active", "$it")
-            }
-        },
+        onActiveChange = { active = it },
     ) {
         if (active) {
             BackHandler(true) {
@@ -231,47 +222,13 @@ private fun SearchBarTrailing(
                     imageUrl = selectedAccount?.avatar,
                 )
             }
-            DropdownMenu(
-                modifier = Modifier,
-                expanded = showSelectAccountPopup,
-                onDismissRequest = { showSelectAccountPopup = false },
-            ) {
-                accountList.forEach { account ->
-                    DropdownMenuItem(
-                        text = {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                verticalAlignment = Alignment.CenterVertically,
-                            ) {
-                                BlogAuthorAvatar(
-                                    modifier = Modifier.size(32.dp),
-                                    imageUrl = account.avatar,
-                                )
-                                Spacer(modifier = Modifier.width(16.dp))
-                                Text(
-                                    modifier = Modifier.width(100.dp),
-                                    text = account.userName,
-                                    style = MaterialTheme.typography.bodyLarge,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis,
-                                )
-                                Spacer(modifier = Modifier.width(4.dp))
-                                RadioButton(
-                                    selected = selectedAccount == account,
-                                    onClick = {
-                                        onAccountSelected(account)
-                                        showSelectAccountPopup = false
-                                    },
-                                )
-                                Spacer(modifier = Modifier.width(6.dp))
-                            }
-                        },
-                        onClick = {
-                            showSelectAccountPopup = false
-                            onAccountSelected(account)
-                        },
-                    )
-                }
+            if (showSelectAccountPopup) {
+                SelectAccountDialog(
+                    accountList = accountList,
+                    selectedAccount = selectedAccount,
+                    onDismissRequest = { showSelectAccountPopup = false },
+                    onSwitchAccount = onAccountSelected,
+                )
             }
         }
     }

@@ -9,9 +9,10 @@ import com.zhangke.fread.rss.internal.uri.RssUriTransformer
 import com.zhangke.fread.rss.internal.uri.isRssUri
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -20,34 +21,38 @@ class RssScreenProvider @Inject constructor(
     private val uriTransformer: RssUriTransformer,
 ) : IStatusScreenProvider {
 
-    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return null
     }
 
-    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return null
     }
 
-    override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
+    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return null
     }
 
-    override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
+    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
         return null
     }
 
-    override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
+    override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         return null
     }
 
-    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
+    override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
+        return null
+    }
+
+    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val url = uriInsight.url
         return RssSourceScreen(url)
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
@@ -73,31 +78,31 @@ class RssScreenProvider @Inject constructor(
 
     override fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
     override fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
     override fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
     override fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         return null
     }
 
@@ -112,6 +117,10 @@ class RssScreenProvider @Inject constructor(
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl
     ): String? {
+        return null
+    }
+
+    override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
         return null
     }
 }

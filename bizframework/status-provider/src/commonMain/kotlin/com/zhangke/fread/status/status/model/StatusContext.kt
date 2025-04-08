@@ -1,6 +1,9 @@
 package com.zhangke.fread.status.status.model
 
+import com.zhangke.fread.status.model.StatusUiState
+
 data class StatusContext(
-    val ancestors: List<Status>,
-    val descendants: List<Status>,
+    val ancestors: List<StatusUiState>,
+    val status: StatusUiState?,
+    val descendants: List<StatusUiState>,
 )

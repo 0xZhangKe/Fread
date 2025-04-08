@@ -3,10 +3,12 @@ package com.zhangke.fread.feeds.pages.home
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentScreen
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.drop
@@ -14,7 +16,7 @@ import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Inject
 
 class ContentHomeViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
@@ -24,7 +26,7 @@ class ContentHomeViewModel @Inject constructor(
     init {
         launchInViewModel {
             _uiState.update { it.copy(loading = true) }
-            val allConfig = contentConfigRepo.getAllConfig()
+            val allConfig = contentRepo.getAllContent()
             _uiState.update { currentState ->
                 currentState.copy(
                     currentPageIndex = 0,
@@ -34,7 +36,7 @@ class ContentHomeViewModel @Inject constructor(
             }
         }
         launchInViewModel {
-            contentConfigRepo.getAllConfigFlow()
+            contentRepo.getAllContentFlow()
                 .drop(1)
                 .collect {
                     _uiState.update { currentState ->
@@ -48,10 +50,10 @@ class ContentHomeViewModel @Inject constructor(
     }
 
     fun getContentScreen(
-        contentConfig: ContentConfig,
+        contentConfig: FreadContent,
         isLatestTab: Boolean,
     ): PagerTab? {
-        if (contentConfig is ContentConfig.MixedContent) {
+        if (contentConfig is MixedContent) {
             return MixedContentScreen(
                 configId = contentConfig.id,
                 isLatestTab = isLatestTab,

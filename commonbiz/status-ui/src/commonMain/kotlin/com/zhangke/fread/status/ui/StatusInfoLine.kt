@@ -22,9 +22,10 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
-import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusMoreInteractionIcon
 import com.zhangke.fread.status.ui.richtext.FreadRichText
@@ -37,40 +38,37 @@ import org.jetbrains.compose.resources.stringResource
 
 /**
  * Status 头部信息行，主要包括头像，
- * 用户名，WebFinger，时间，更多按钮等。
+ * 用户名，Handle，时间，更多按钮等。
  */
 @Composable
 fun StatusInfoLine(
     modifier: Modifier,
-    blogAuthor: BlogAuthor,
+    blog: Blog,
     blogTranslationState: BlogTranslationUiState,
-    blogUrl: String,
+    isOwner: Boolean,
     displayTime: String,
     style: StatusStyle,
     visibility: StatusVisibility,
     showFollowButton: Boolean,
-    moreInteractions: List<StatusUiInteraction>,
-    onInteractive: (StatusUiInteraction) -> Unit,
-    onUserInfoClick: (BlogAuthor) -> Unit,
-    onUrlClick: (url: String) -> Unit,
+    showMoreOperationIcon: Boolean = true,
+    onUrlClick: (url: String) -> Unit = {},
+    onInteractive: (StatusActionType, Blog) -> Unit = { _, _ -> },
+    onUserInfoClick: ((BlogAuthor) -> Unit)? = null,
     onFollowClick: ((BlogAuthor) -> Unit)? = null,
-    onTranslateClick: () -> Unit,
+    onTranslateClick: () -> Unit = {},
     reblogAuthor: BlogAuthor? = null,
     editedAt: Instant? = null,
 ) {
+    val blogAuthor = blog.author
     Row(
         modifier = modifier.padding(start = style.containerStartPadding),
     ) {
         BlogAuthorAvatar(
             modifier = Modifier
-                .size(style.infoLineStyle.avatarSize)
-                .clickable {
-                    reportClick(StatusDataElements.USER_INFO)
-                    onUserInfoClick(blogAuthor)
-                },
+                .size(style.infoLineStyle.avatarSize),
             onClick = {
                 reportClick(StatusDataElements.USER_INFO)
-                onUserInfoClick(blogAuthor)
+                onUserInfoClick?.invoke(blogAuthor)
             },
             reblogAvatar = reblogAuthor?.avatar,
             authorAvatar = blogAuthor.avatar,
@@ -83,9 +81,9 @@ fun StatusInfoLine(
             FreadRichText(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable {
+                    .clickable(enabled = onUserInfoClick != null) {
                         reportClick(StatusDataElements.USER_INFO)
-                        onUserInfoClick(blogAuthor)
+                        onUserInfoClick?.invoke(blogAuthor)
                     },
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
@@ -138,7 +136,7 @@ fun StatusInfoLine(
                 )
                 Text(
                     modifier = Modifier.padding(start = 4.dp),
-                    text = blogAuthor.webFinger.toString(),
+                    text = blogAuthor.prettyHandle,
                     style = style.infoLineStyle.descStyle,
                     maxLines = 1,
                     color = fontColor,
@@ -160,21 +158,23 @@ fun StatusInfoLine(
             )
         }
 
-        val moreIconAlign = if (showFollowButton) {
-            Alignment.CenterVertically
-        } else {
-            Alignment.Top
+        if (showMoreOperationIcon) {
+            val moreIconAlign = if (showFollowButton) {
+                Alignment.CenterVertically
+            } else {
+                Alignment.Top
+            }
+            StatusMoreInteractionIcon(
+                modifier = Modifier
+                    .align(moreIconAlign)
+                    .padding(end = style.containerEndPadding / 2),
+                blog = blog,
+                isOwner = isOwner,
+                blogTranslationState = blogTranslationState,
+                style = style,
+                onActionClick = onInteractive,
+                onTranslateClick = onTranslateClick,
+            )
         }
-        StatusMoreInteractionIcon(
-            modifier = Modifier
-                .align(moreIconAlign)
-                .padding(end = style.containerEndPadding / 2),
-            blogUrl = blogUrl,
-            blogTranslationState = blogTranslationState,
-            style = style,
-            moreActionList = moreInteractions,
-            onActionClick = onInteractive,
-            onTranslateClick = onTranslateClick,
-        )
     }
 }

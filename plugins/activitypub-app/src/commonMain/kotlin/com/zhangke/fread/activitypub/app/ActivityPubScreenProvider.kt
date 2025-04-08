@@ -5,24 +5,27 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
-import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigRoute
+import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
+import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListRoute
-import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreenRoute
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
+import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
+import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
 import com.zhangke.fread.status.model.notActivityPub
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -32,23 +35,20 @@ class ActivityPubScreenProvider @Inject constructor(
     private val loggedAccountProvider: LoggedAccountProvider,
 ) : IStatusScreenProvider {
 
-    override suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = role.accountUri
         if (accountUri == null && role.baseUrl != null) {
             accountUri = loggedAccountProvider.getAccount(role.baseUrl!!)?.uri
         }
         accountUri ?: return null
-        return PostStatusScreenRoute.buildRoute(
+        return PostStatusScreenRoute.buildReplyScreen(
             accountUri = accountUri,
-            replyToBlogWebFinger = blog.author.webFinger,
-            replyToBlogId = blog.id,
-            replyAuthorName = blog.author.name,
-            replyVisibility = blog.visibility,
+            blog = blog,
         )
     }
 
-    override suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+    override fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         if (blog.platform.protocol.notActivityPub) return null
         var accountUri = role.accountUri
         if (accountUri == null && role.baseUrl != null) {
@@ -61,28 +61,30 @@ class ActivityPubScreenProvider @Inject constructor(
         )
     }
 
-    override fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
-        if (contentConfig !is ContentConfig.ActivityPubContent) return null
-        return ActivityPubContentScreen(contentConfig.id, isLatestTab)
+    override fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+        return null
     }
 
-    override fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
-        if (contentConfig !is ContentConfig.ActivityPubContent) return null
-        return EditContentConfigRoute.buildRoute(contentConfig.id)
+    override fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
+        if (content !is ActivityPubContent) return null
+        return ActivityPubContentScreen(content.id, isLatestTab)
     }
 
-    override fun getNotificationScreen(account: LoggedAccount): PagerTab? {
-        if (account.platform.protocol.notActivityPub) return null
-        val userInsights = userUriTransformer.parse(account.uri) ?: return null
-        return ActivityPubNotificationsScreen(userInsights)
+    override fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
+        if (content !is ActivityPubContent) return null
+        return EditContentConfigScreen(content.id)
     }
 
-    override fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
+    override suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
+        return null
+    }
+
+    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
         userUriTransformer.parse(uri) ?: return null
         return UserDetailScreen(role = role, userUri = uri)
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
@@ -110,42 +112,50 @@ class ActivityPubScreenProvider @Inject constructor(
 
     override fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return UserListRoute.buildBlogFavouritedRoute(
+        return UserListScreen(
             role = role,
-            blogId = blogId,
+            type = UserListType.FAVOURITES,
+            statusId = blog.id,
         )
     }
 
     override fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return UserListRoute.buildBlogBoostedRoute(
+        return UserListScreen(
             role = role,
-            blogId = blogId,
+            type = UserListType.REBLOGS,
+            statusId = blog.id,
         )
     }
 
     override fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return StatusListScreenRoute.buildRoute(role, StatusListType.BOOKMARKS)
+        return StatusListScreen(
+            role = role,
+            type = StatusListType.BOOKMARKS,
+        )
     }
 
     override fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return StatusListScreenRoute.buildRoute(role, StatusListType.FAVOURITES)
+        return StatusListScreen(
+            role = role,
+            type = StatusListType.FAVOURITES,
+        )
     }
 
     override fun getFollowedHashtagScreen(
@@ -162,5 +172,10 @@ class ActivityPubScreenProvider @Inject constructor(
     ): String? {
         if (protocol.notActivityPub) return null
         return PlatformDetailRoute.buildRoute(baseUrl)
+    }
+
+    override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
+        if (platform.protocol.notActivityPub) return null
+        return ExplorerContainerTab(role = role, platform = platform)
     }
 }

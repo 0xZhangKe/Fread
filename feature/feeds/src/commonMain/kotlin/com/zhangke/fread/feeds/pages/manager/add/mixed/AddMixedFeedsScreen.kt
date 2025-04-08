@@ -20,9 +20,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
@@ -37,9 +35,6 @@ import com.zhangke.framework.composable.StyledIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.composable.snackbarHost
-import com.zhangke.framework.voyager.navigationResult
-import com.zhangke.fread.analytics.AddMixedFeedsElements
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.LocalToastHelper
 import com.zhangke.fread.feeds.Res
@@ -52,7 +47,6 @@ import com.zhangke.fread.feeds.composable.RemovableStatusSource
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen
 import com.zhangke.fread.status.source.StatusSource
-import com.zhangke.fread.status.uri.FormalUri
 import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.stringResource
 
@@ -77,16 +71,15 @@ internal class AddMixedFeedsScreen(
             snackbarHostState = snackbarHostState,
             onBackClick = navigator::pop,
             onAddSourceClick = {
-                reportClick(AddMixedFeedsElements.ADD_SOURCE)
-                navigator.push(SearchSourceForAddScreen())
+                navigator.push(SearchSourceForAddScreen().apply {
+                    onSourceSelected = { viewModel.onAddSource(it) }
+                })
             },
             onConfirmClick = {
-                reportClick(AddMixedFeedsElements.CONFIRM)
                 viewModel.onConfirmClick()
             },
             onNameInputValueChanged = viewModel::onSourceNameInput,
             onRemoveSourceClick = {
-                reportClick(AddMixedFeedsElements.DELETE)
                 viewModel.onRemoveSource(it)
             },
         )
@@ -94,13 +87,6 @@ internal class AddMixedFeedsScreen(
         ConsumeFlow(viewModel.addContentSuccessFlow) {
             toastHelper.showToast(getString(Res.string.add_content_success_snackbar))
             navigator.pop()
-        }
-        val resultNavigator = navigator.navigationResult
-        val addedUri by resultNavigator.getResult<FormalUri>(SearchSourceForAddScreen.SCREEN_KEY)
-        if (addedUri != null) {
-            LaunchedEffect(addedUri) {
-                viewModel.onAddSource(addedUri!!)
-            }
         }
     }
 

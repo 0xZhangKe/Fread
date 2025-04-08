@@ -30,6 +30,8 @@ kotlin {
 
                 implementation(compose.components.resources)
 
+                implementation(libs.arrow.core)
+
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
 

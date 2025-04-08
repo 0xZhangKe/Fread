@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.auth
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.uri.FormalUri
 import io.github.charlietap.leftright.LeftRight
 import me.tatarka.inject.annotations.Inject
@@ -34,6 +35,17 @@ class LoggedAccountProvider @Inject constructor() {
         return accountSet.read { set ->
             set.find { it.platform.baseUrl.equalsDomain(baseUrl) }
         }
+    }
+
+    fun getAccount(role: IdentityRole): ActivityPubLoggedAccount? {
+        var account: ActivityPubLoggedAccount? = null
+        if (role.accountUri != null) {
+            account = getAccount(role.accountUri!!)
+        }
+        if (account == null && role.baseUrl != null) {
+            account = getAccount(role.baseUrl!!)
+        }
+        return account
     }
 
     fun removeAccount(uri: FormalUri) {

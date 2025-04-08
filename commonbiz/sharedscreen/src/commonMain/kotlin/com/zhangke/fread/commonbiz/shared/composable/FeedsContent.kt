@@ -2,6 +2,7 @@ package com.zhangke.fread.commonbiz.shared.composable
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -9,6 +10,8 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Button
+import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -22,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
@@ -32,8 +36,13 @@ import com.zhangke.framework.composable.applyNestedScrollConnection
 import com.zhangke.framework.composable.textString
 import com.zhangke.framework.loadable.lazycolumn.LoadableInlineVideoLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableInlineVideoLazyColumnState
+import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.commonbiz.shared.screen.list_content_empty_placeholder
+import com.zhangke.fread.commonbiz.shared.screen.shared_feeds_go_to_login
+import com.zhangke.fread.commonbiz.shared.screen.shared_feeds_not_login_title
+import com.zhangke.fread.status.account.isAuthenticationFailure
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.StatusListPlaceholder
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -48,7 +57,7 @@ import kotlin.time.Duration.Companion.seconds
 fun FeedsContent(
     uiState: CommonFeedsUiState,
     openScreenFlow: SharedFlow<Screen>,
-    newStatusNotifyFlow: SharedFlow<Unit>,
+    newStatusNotifyFlow: SharedFlow<Unit>?,
     onRefresh: () -> Unit,
     onLoadMore: () -> Unit,
     composedStatusInteraction: ComposedStatusInteraction,
@@ -57,20 +66,58 @@ fun FeedsContent(
     contentCanScrollBackward: MutableState<Boolean>? = null,
     onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
     onScrollInProgress: ((Boolean) -> Unit)? = null,
+    onLoginClick: (() -> Unit)? = null,
 ) {
     ConsumeOpenScreenFlow(openScreenFlow)
-    if (uiState.feeds.isEmpty()) {
-        if (uiState.showPagingLoadingPlaceholder) {
+    FeedsContent(
+        feeds = uiState.feeds,
+        refreshing = uiState.refreshing,
+        loadMoreState = uiState.loadMoreState,
+        showPagingLoadingPlaceholder = uiState.showPagingLoadingPlaceholder,
+        pageErrorContent = uiState.pageErrorContent,
+        newStatusNotifyFlow = newStatusNotifyFlow,
+        onRefresh = onRefresh,
+        onLoadMore = onLoadMore,
+        composedStatusInteraction = composedStatusInteraction,
+        nestedScrollConnection = nestedScrollConnection,
+        observeScrollToTopEvent = observeScrollToTopEvent,
+        contentCanScrollBackward = contentCanScrollBackward,
+        onImmersiveEvent = onImmersiveEvent,
+        onScrollInProgress = onScrollInProgress,
+        onLoginClick = onLoginClick,
+    )
+}
+
+@Composable
+fun FeedsContent(
+    feeds: List<StatusUiState>,
+    refreshing: Boolean,
+    loadMoreState: LoadState,
+    showPagingLoadingPlaceholder: Boolean,
+    pageErrorContent: Throwable?,
+    newStatusNotifyFlow: SharedFlow<Unit>?,
+    onRefresh: () -> Unit,
+    onLoadMore: () -> Unit,
+    composedStatusInteraction: ComposedStatusInteraction,
+    nestedScrollConnection: NestedScrollConnection? = null,
+    observeScrollToTopEvent: Boolean = false,
+    contentCanScrollBackward: MutableState<Boolean>? = null,
+    onImmersiveEvent: ((immersive: Boolean) -> Unit)? = null,
+    onScrollInProgress: ((Boolean) -> Unit)? = null,
+    onLoginClick: (() -> Unit)? = null,
+) {
+    if (feeds.isEmpty()) {
+        if (showPagingLoadingPlaceholder) {
             StatusListPlaceholder()
-        } else if (uiState.pageErrorContent != null) {
-            InitErrorContent(uiState.pageErrorContent)
+        } else if (pageErrorContent != null) {
+            InitErrorContent(pageErrorContent, onLoginClick)
         } else {
             EmptyListContent()
         }
     } else {
         Box(modifier = Modifier.fillMaxSize()) {
             val state = rememberLoadableInlineVideoLazyColumnState(
-                refreshing = uiState.refreshing,
+                refreshing = refreshing,
                 onRefresh = onRefresh,
                 onLoadMore = onLoadMore,
             )
@@ -109,13 +156,13 @@ fun FeedsContent(
                     .fillMaxSize()
                     .applyNestedScrollConnection(nestedScrollConnection),
                 state = state,
-                refreshing = uiState.refreshing,
-                loadState = uiState.loadMoreState,
+                refreshing = refreshing,
+                loadState = loadMoreState,
                 contentPadding = PaddingValues(
                     bottom = 80.dp,
                 ),
             ) {
-                itemsIndexed(uiState.feeds) { index, item ->
+                itemsIndexed(feeds) { index, item ->
                     FeedsStatusNode(
                         modifier = Modifier.fillMaxWidth(),
                         status = item,
@@ -127,12 +174,14 @@ fun FeedsContent(
             var showNewStatusNotifyBar by remember {
                 mutableStateOf(false)
             }
-            ConsumeFlow(newStatusNotifyFlow) {
-                delay(1000)
-                if (state.lazyListState.firstVisibleItemIndex > 0) {
-                    showNewStatusNotifyBar = true
+            if (newStatusNotifyFlow != null) {
+                ConsumeFlow(newStatusNotifyFlow) {
+                    delay(1000)
+                    if (state.lazyListState.firstVisibleItemIndex > 0) {
+                        showNewStatusNotifyBar = true
+                    }
+                    delay(20.seconds)
                 }
-                delay(20.seconds)
             }
             val coroutineScope = rememberCoroutineScope()
             AnimatedVisibility(
@@ -146,7 +195,7 @@ fun FeedsContent(
                     onClick = {
                         showNewStatusNotifyBar = false
                         coroutineScope.launch {
-                            if (uiState.feeds.isNotEmpty()) {
+                            if (feeds.isNotEmpty()) {
                                 state.lazyListState.animateScrollToItem(0)
                             }
                         }
@@ -167,6 +216,61 @@ fun InitErrorContent(errorMessage: TextString) {
             text = textString(text = errorMessage),
             textAlign = TextAlign.Center,
         )
+    }
+}
+
+@Composable
+fun InitErrorContent(
+    error: Throwable,
+    onLoginClick: (() -> Unit)? = null,
+) {
+    if (onLoginClick != null && error.isAuthenticationFailure) {
+        NotLoginPageError(Modifier, error.message, onLoginClick)
+    } else {
+        Column(
+            modifier = Modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                modifier = Modifier.fillMaxWidth(),
+                text = error.message.orEmpty(),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+                textAlign = TextAlign.Center,
+            )
+        }
+    }
+}
+
+@Composable
+fun NotLoginPageError(
+    modifier: Modifier,
+    message: String?,
+    onLoginClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier.fillMaxSize().padding(start = 32.dp, top = 64.dp, end = 32.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        Text(
+            modifier = Modifier.fillMaxWidth(),
+            text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_not_login_title),
+            style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.SemiBold),
+            textAlign = TextAlign.Center,
+        )
+        if (!message.isNullOrEmpty()) {
+            Text(
+                modifier = Modifier.padding(top = 2.dp),
+                text = message,
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onSurfaceVariant,
+            )
+        }
+        Button(
+            modifier = Modifier.padding(top = 16.dp),
+            onClick = onLoginClick,
+        ) {
+            Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.shared_feeds_go_to_login))
+        }
     }
 }
 

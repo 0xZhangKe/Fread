@@ -1,6 +1,6 @@
 package com.zhangke.fread.explore.model
 
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 

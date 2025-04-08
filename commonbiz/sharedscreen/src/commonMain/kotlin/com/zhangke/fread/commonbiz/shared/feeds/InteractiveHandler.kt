@@ -7,36 +7,37 @@ import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.framework.utils.languageCode
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.StatusUiInteraction
-import com.zhangke.fread.common.status.model.StatusUiState
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.blog.detail.BlogDetailScreen
+import com.zhangke.fread.commonbiz.shared.blog.detail.RssBlogDetailScreen
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.isRss
-import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.launch
+import kotlinx.serialization.serializer
 
 class InteractiveHandler(
     private val statusProvider: StatusProvider,
     private val statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
 ) : IInteractiveHandler {
 
     override val mutableErrorMessageFlow = MutableSharedFlow<TextString>()
@@ -50,8 +51,8 @@ class InteractiveHandler(
 
     override val composedStatusInteraction = object : ComposedStatusInteraction {
 
-        override fun onStatusInteractive(status: StatusUiState, interaction: StatusUiInteraction) {
-            this@InteractiveHandler.onStatusInteractive(status, interaction)
+        override fun onStatusInteractive(status: StatusUiState, type: StatusActionType) {
+            this@InteractiveHandler.onStatusInteractive(status, type)
         }
 
         override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
@@ -73,12 +74,24 @@ class InteractiveHandler(
             this@InteractiveHandler.onMentionClick(role, mention)
         }
 
-        override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
+        override fun onMentionClick(
+            role: IdentityRole,
+            did: String,
+            protocol: StatusProviderProtocol
+        ) {
             this@InteractiveHandler.onMentionClick(role, did, protocol)
         }
 
         override fun onStatusClick(status: StatusUiState) {
             this@InteractiveHandler.onStatusClick(status)
+        }
+
+        override fun onBlogClick(role: IdentityRole, blog: Blog) {
+            this@InteractiveHandler.onBlogClick(role, blog)
+        }
+
+        override fun onBlockClick(role: IdentityRole, blog: Blog) {
+            this@InteractiveHandler.onBlogClick(role, blog)
         }
 
         override fun onFollowClick(role: IdentityRole, target: BlogAuthor) {
@@ -123,26 +136,26 @@ class InteractiveHandler(
         }
     }
 
-    override fun onStatusInteractive(status: StatusUiState, uiInteraction: StatusUiInteraction) {
-        if (uiInteraction is StatusUiInteraction.Comment) {
-            coroutineScope.launch {
-                screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
-                    ?.let(::tryOpenScreenByRoute)
-            }
+    override fun onStatusInteractive(status: StatusUiState, type: StatusActionType) {
+        if (type == StatusActionType.REPLY) {
+            screenProvider.getReplyBlogScreen(status.role, status.status.intrinsicBlog)
+                ?.let(::openScreen)
             return
         }
-        if (uiInteraction is StatusUiInteraction.Edit) {
-            coroutineScope.launch {
-                screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
-                    ?.let(::tryOpenScreenByRoute)
-            }
+        if (type == StatusActionType.EDIT) {
+            screenProvider.getEditBlogScreen(status.role, status.status.intrinsicBlog)
+                ?.let(::openScreen)
+            return
+        }
+        if (type == StatusActionType.QUOTE) {
+            screenProvider.getQuoteBlogScreen(status.role, status.status.intrinsicBlog)
+                ?.let(::openScreen)
             return
         }
         coroutineScope.launch {
-            val interaction = uiInteraction.statusInteraction ?: return@launch
             val result = statusProvider.statusResolver
-                .interactive(status.role, status.status, interaction)
-                .map { s -> s?.let { buildStatusUiState(status.role, it) } }
+                .interactive(status.role, status.status, type)
+                .map { s -> s?.let { statusUiStateAdapter.toStatusUiState(status, it) } }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch
@@ -160,7 +173,7 @@ class InteractiveHandler(
 
     override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
         coroutineScope.launch {
-            screenProvider.getUserDetailRoute(role, blogAuthor.uri)
+            screenProvider.getUserDetailScreen(role, blogAuthor.uri)
                 ?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
@@ -168,14 +181,29 @@ class InteractiveHandler(
     override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
             val screen = if (status.status.intrinsicBlog.platform.protocol.isRss) {
-                BlogDetailScreen(status.status.intrinsicBlog)
+                RssBlogDetailScreen(status.status.intrinsicBlog)
             } else {
                 StatusContextScreen(
                     role = status.role,
-                    serializedStatus = refactorToNewBlog(status.status).let {
-                        globalJson.encodeToString(Status.serializer(), it)
+                    serializedStatus = refactorToNewStatus(status).let {
+                        globalJson.encodeToString(serializer(), it)
                     },
                     blogTranslationUiState = status.blogTranslationState,
+                )
+            }
+            mutableOpenScreenFlow.emit(screen)
+        }
+    }
+
+    override fun onBlogClick(role: IdentityRole, blog: Blog) {
+        coroutineScope.launch {
+            val screen = if (blog.platform.protocol.isRss) {
+                RssBlogDetailScreen(blog)
+            } else {
+                StatusContextScreen(
+                    role = role,
+                    serializedBlog = globalJson.encodeToString(serializer(), blog),
+                    blogTranslationUiState = null,
                 )
             }
             mutableOpenScreenFlow.emit(screen)
@@ -185,8 +213,8 @@ class InteractiveHandler(
     override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {
         coroutineScope.launch {
             val result = statusProvider.statusResolver
-                .votePoll(status.role, status.status, votedOption)
-                .map { buildStatusUiState(status.role, it) }
+                .votePoll(status.role, status.status.intrinsicBlog, votedOption)
+                .map { statusUiStateAdapter.toStatusUiState(status, it) }
             if (result.isFailure) {
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(result.exceptionOrThrow())
                 return@launch
@@ -232,7 +260,7 @@ class InteractiveHandler(
 
     override fun onMentionClick(role: IdentityRole, mention: Mention) {
         coroutineScope.launch {
-            screenProvider.getUserDetailRoute(
+            screenProvider.getUserDetailScreen(
                 role = role,
                 webFinger = mention.webFinger,
                 protocol = mention.protocol,
@@ -281,17 +309,17 @@ class InteractiveHandler(
     private fun onBoostedClick(role: IdentityRole, status: StatusUiState) {
         screenProvider.getBlogBoostedScreen(
             role = role,
-            blogId = status.status.intrinsicBlog.id,
+            blog = status.status.intrinsicBlog,
             protocol = status.status.intrinsicBlog.platform.protocol,
-        )?.let(::tryOpenScreenByRoute)
+        )?.let(::openScreen)
     }
 
     private fun onFavouritedClick(role: IdentityRole, status: StatusUiState) {
         screenProvider.getBlogFavouritedScreen(
             role = role,
-            blogId = status.status.intrinsicBlog.id,
+            blog = status.status.intrinsicBlog,
             protocol = status.status.intrinsicBlog.platform.protocol,
-        )?.let(::tryOpenScreenByRoute)
+        )?.let(::openScreen)
     }
 
     private fun onTranslateClick(role: IdentityRole, status: StatusUiState) {
@@ -345,6 +373,12 @@ class InteractiveHandler(
                 showingTranslation = true,
             )
         )
+    }
+
+    private fun openScreen(screen: Screen) {
+        coroutineScope.launch {
+            mutableOpenScreenFlow.emit(screen)
+        }
     }
 
     private fun tryOpenScreenByRoute(route: String) = coroutineScope.launch {

@@ -4,5 +4,6 @@ enum class ContentType {
 
     MIXED,
     ACTIVITY_PUB,
+    BLUESKY,
 
 }

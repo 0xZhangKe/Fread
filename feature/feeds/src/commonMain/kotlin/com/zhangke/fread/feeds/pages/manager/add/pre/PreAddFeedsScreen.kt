@@ -47,8 +47,6 @@ import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
-import com.zhangke.fread.analytics.PreAddContentElements
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.Res
 import com.zhangke.fread.feeds.add_feeds_page_title
@@ -82,17 +80,10 @@ class PreAddFeedsScreen : BaseScreen() {
             snackBarHostState = snackBarHostState,
             onBackClick = navigator::pop,
             onQueryChanged = viewModel::onQueryChanged,
-            onSearchClick = {
-                reportClick(PreAddContentElements.SEARCH)
-                viewModel.onSearchClick()
-            },
-            onContentClick = {
-                reportClick(PreAddContentElements.ITEM)
-                viewModel.onContentClick(it)
-            },
+            onSearchClick = viewModel::onSearchClick,
+            onContentClick = viewModel::onContentClick,
             onLoadingDismissRequest = viewModel::onLoadingDismissRequest,
             onImportClick = {
-                reportClick(PreAddContentElements.IMPORT)
                 navigator.push(ImportFeedsScreen())
             },
             onLoginDialogDismissRequest = viewModel::onLoginDialogDismissRequest,
@@ -100,12 +91,11 @@ class PreAddFeedsScreen : BaseScreen() {
                 navigator.pop()
             },
             onLoginClick = {
-                reportClick(PreAddContentElements.LOGIN)
                 viewModel.onLoginClick()
             },
         )
         ConsumeFlow(viewModel.openScreenFlow) {
-            navigator.replace(it)
+            navigator.push(it)
         }
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
         val bottomSheetIsVisible = bottomSheetNavigator.isVisible
@@ -213,20 +203,22 @@ class PreAddFeedsScreen : BaseScreen() {
                         LazyColumn(
                             modifier = Modifier.fillMaxSize(),
                         ) {
-                            item {
-                                Text(
-                                    modifier = Modifier
-                                        .fillMaxWidth()
-                                        .padding(
-                                            start = 16.dp,
-                                            top = 12.dp,
-                                            end = 16.dp,
-                                            bottom = 8.dp,
-                                        ),
-                                    lineHeight = 22.sp,
-                                    text = buildInputLabelText(),
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
+                            if (uiState.query.isEmpty()) {
+                                item {
+                                    Text(
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(
+                                                start = 16.dp,
+                                                top = 12.dp,
+                                                end = 16.dp,
+                                                bottom = 8.dp,
+                                            ),
+                                        lineHeight = 22.sp,
+                                        text = buildInputLabelText(),
+                                        style = MaterialTheme.typography.labelMedium,
+                                    )
+                                }
                             }
                             items(uiState.allSearchedResult) { content ->
                                 SearchContentResultUi(content, onContentClick)

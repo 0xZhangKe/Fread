@@ -12,14 +12,7 @@
     <string name="activity_pub_instance_detail_language_label">语言: %1$s</string>
     <string name="activity_pub_instance_detail_active_month_label">月活: %1$s</string>
 
-    <string name="activity_pub_user_detail_relationship_blocking">已屏蔽</string>
-    <string name="activity_pub_user_detail_relationship_following">已关注</string>
-    <string name="activity_pub_user_detail_relationship_not_follow">关注</string>
-    <string name="activity_pub_user_detail_relationship_requested">请求中</string>
-    <string name="activity_pub_user_detail_request_by_tip">对方正在请求关注你</string>
-    <string name="activity_pub_user_detail_posts">帖子</string>
-    <string name="activity_pub_user_detail_follower_info">关注者</string>
-    <string name="activity_pub_user_detail_following_info">正在关注</string>
+
     <string name="activity_pub_user_detail_tab_post">帖子</string>
     <string name="activity_pub_user_detail_tab_replies">回复</string>
     <string name="activity_pub_user_detail_tab_media">媒体</string>
@@ -82,59 +75,18 @@
     <string name="activity_pub_content_tab_public_timeline">跨站</string>
     <string name="activity_pub_content_tab_trending">趋势</string>
 
-    <string name="activity_pub_notification_tab_title_all">所有</string>
-    <string name="activity_pub_notification_tab_title_mention">提及</string>
-    <string name="activity_pub_notification_favourited_desc">喜欢了你的动态</string>
-    <string name="activity_pub_notification_reblog_desc">转发了你的动态</string>
-    <string name="activity_pub_notification_unknown_desc">未知通知</string>
-    <string name="activity_pub_notification_poll_desc">查看投票结果</string>
-    <string name="activity_pub_notification_poll_count">%1$s 票 · 已结束</string>
-    <string name="activity_pub_notification_follow_desc">关注了你</string>
-    <string name="activity_pub_notification_update_desc">编辑了一条博客</string>
-    <string name="activity_pub_notification_follow_request">你收到一条关注请求</string>
-    <string name="activity_pub_notification_new_status_desc">发布了新博客</string>
-    <string name="activity_pub_notification_severed_desc">和你中断了关系</string>
-
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow">您确认要取消关注对方吗？</string>
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_follow_request">您确定要撤回关注请求吗？</string>
-    <string name="activity_pub_relationship_btn_dialog_content_cancel_blocking">您确定要取消屏蔽对方吗？</string>
-
     <string name="activity_pub_hashtag_timeline_description">%1$s 条帖子 · %2$s 参与 · %3$s 条今日帖子</string>
     <string name="activity_pub_hashtag_unfollow_dialog_message">您确定要取消关注这个话题吗？</string>
 
-    <string name="activity_pub_edit_account_info_name_empty">请输入用户名</string>
-    <string name="activity_pub_edit_account_info_label_name">名字</string>
-    <string name="activity_pub_edit_account_info_label_note">简介</string>
     <string name="activity_pub_edit_account_info_label_about">关于</string>
-    <string name="activity_pub_edit_account_info_input_name_hint">请输入用户名</string>
-    <string name="activity_pub_edit_account_info_input_note_hint">"请输入简介"</string>
 
     <string name="activity_pub_edit_content_screen_config_not_found">配置未找到</string>
 
-    <string name="activity_pub_edit_content_config_showing_list_title">显示在首页中的列表</string>
-    <string name="activity_pub_edit_content_config_hidden_list_title">可添加到首页的列表</string>
-    <string name="activity_pub_edit_content_delete_dialog_content">确定删除这个内容？</string>
-    <string name="activity_pub_edit_content_name_title">修改内容名字</string>
-    <string name="activity_pub_edit_content_name_label">编辑内容名</string>
-    <string name="activity_pub_edit_content_name_hint">请输入内容的名字</string>
-
-    <string name="activity_pub_user_follower_list_title">关注者</string>
-    <string name="activity_pub_user_following_list_title">已关注</string>
-
     <string name="activity_pub_user_list_empty">暂无用户</string>
 
-    <string name="activity_pub_user_detail_follows_you">关注了你</string>
-
-    <string name="activity_pub_muted_user_list_title">隐藏的用户</string>
     <string name="activity_pub_muted_user_list_empty">暂无隐藏的用户</string>
-    <string name="activity_pub_muted_user_list_unmute">取消隐藏</string>
 
-    <string name="activity_pub_blocked_user_list_title">屏蔽的用户</string>
     <string name="activity_pub_blocked_user_list_empty">暂无屏蔽的用户</string>
-    <string name="activity_pub_blocked_user_list_unblock">取消屏蔽</string>
-
-    <string name="activity_pub_status_favourites_by_title">点赞的用户</string>
-    <string name="activity_pub_status_reblog_by_title">转发的用户</string>
 
     <string name="activity_pub_bookmarks_list_title">收藏的内容</string>
     <string name="activity_pub_favourites_list_title">点赞的内容</string>
@@ -178,4 +130,7 @@
     <string name="activity_pub_filter_edit_delete_content">确定删除吗？</string>
     <string name="activity_pub_filter_edit_back_dialog">确定退出吗？</string>
 
+    <string name="activity_pub_explorer_tab_status_title">嘟文</string>
+    <string name="activity_pub_explorer_tab_users_title">用户</string>
+    <string name="activity_pub_explorer_tab_hashtag_title">话题</string>
 </resources>

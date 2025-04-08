@@ -6,7 +6,7 @@ class RegexFactoryTest {
 
     @Test
     fun test(){
-        val find = RegexFactory.getDomainRegex().find("https://m3.material.io")
+        val find = RegexFactory.domainRegex.find("https://m3.material.io")
         println(find?.value)
     }
 }

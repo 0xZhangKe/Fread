@@ -4,23 +4,24 @@ import com.zhangke.framework.collections.container
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.utils.LoadState
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.feeds.model.RefreshResult
 import com.zhangke.fread.common.status.StatusConfigurationDefault
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.StatusUiInteraction
-import com.zhangke.fread.common.status.model.StatusUiState
-import com.zhangke.fread.common.status.model.updateStatus
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusProviderProtocol
-import com.zhangke.fread.status.richtext.preParseRichText
+import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.updateStatus
+import com.zhangke.fread.status.richtext.preParse
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import kotlinx.coroutines.CoroutineScope
@@ -33,23 +34,23 @@ import kotlinx.coroutines.launch
 
 class FeedsViewModelController(
     statusProvider: StatusProvider,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     statusUpdater: StatusUpdater,
-    refactorToNewBlog: RefactorToNewBlogUseCase,
+    refactorToNewStatus: RefactorToNewStatusUseCase,
 ) : IFeedsViewModelController {
 
     private lateinit var coroutineScope: CoroutineScope
     private lateinit var roleResolver: (Status) -> IdentityRole
-    private lateinit var loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>
+    private lateinit var loadFirstPageLocalFeeds: suspend () -> Result<List<StatusUiState>>
     private lateinit var loadNewFromServerFunction: suspend () -> Result<RefreshResult>
-    private lateinit var loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>
+    private lateinit var loadMoreFunction: suspend (maxId: String) -> Result<List<StatusUiState>>
     private lateinit var onStatusUpdate: suspend (Status) -> Unit
 
     private val interactiveHandler = InteractiveHandler(
         statusProvider = statusProvider,
         statusUpdater = statusUpdater,
-        buildStatusUiState = buildStatusUiState,
-        refactorToNewBlog = refactorToNewBlog,
+        statusUiStateAdapter = statusUiStateAdapter,
+        refactorToNewStatus = refactorToNewStatus,
     )
 
     override val mutableUiState = MutableStateFlow(
@@ -78,9 +79,9 @@ class FeedsViewModelController(
     override fun initController(
         coroutineScope: CoroutineScope,
         roleResolver: (Status) -> IdentityRole,
-        loadFirstPageLocalFeeds: suspend () -> Result<List<Status>>,
+        loadFirstPageLocalFeeds: suspend () -> Result<List<StatusUiState>>,
         loadNewFromServerFunction: suspend () -> Result<RefreshResult>,
-        loadMoreFunction: suspend (maxId: String) -> Result<List<Status>>,
+        loadMoreFunction: suspend (maxId: String) -> Result<List<StatusUiState>>,
         onStatusUpdate: suspend (Status) -> Unit
     ) {
         this.coroutineScope = coroutineScope
@@ -110,8 +111,8 @@ class FeedsViewModelController(
             if (needLocalData) {
                 loadFirstPageLocalFeeds()
                     .map { list ->
-                        list.preParseRichText()
-                        list.map { it.toUiState() }
+                        list.preParse()
+                        list
                     }
                     .onSuccess { localStatus ->
                         if (localStatus.isNotEmpty()) {
@@ -127,15 +128,15 @@ class FeedsViewModelController(
             loadNewFromServerFunction()
                 .map { result ->
                     val newStatus = result.newStatus
-                    newStatus.preParseRichText()
-                    newStatus.map { it.toUiState() }
+                    newStatus.preParse()
+                    newStatus
                 }
                 .onFailure {
                     mutableUiState.update { state ->
                         state.copy(
                             showPagingLoadingPlaceholder = false,
                             pageErrorContent = if (state.feeds.isEmpty()) {
-                                it.toTextStringOrNull()
+                                it
                             } else {
                                 null
                             },
@@ -168,12 +169,12 @@ class FeedsViewModelController(
     private suspend fun autoFetchNewerFeeds() {
         loadNewFromServerFunction()
             .map {
-                it.newStatus.preParseRichText()
+                it.newStatus.preParse()
                 it
             }
             .onSuccess {
                 val oldFirstId = mutableUiState.value.feeds.firstOrNull()?.status?.id
-                val newFirstId = it.newStatus.firstOrNull()?.id
+                val newFirstId = it.newStatus.firstOrNull()?.status?.id
                 mutableUiState.update { state ->
                     state.copy(
                         feeds = state.feeds.applyRefreshResult(it),
@@ -198,9 +199,9 @@ class FeedsViewModelController(
 
     override fun onStatusInteractive(
         status: StatusUiState,
-        uiInteraction: StatusUiInteraction
+        type: StatusActionType
     ) {
-        interactiveHandler.onStatusInteractive(status, uiInteraction)
+        interactiveHandler.onStatusInteractive(status, type)
     }
 
     override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
@@ -209,6 +210,10 @@ class FeedsViewModelController(
 
     override fun onStatusClick(status: StatusUiState) {
         interactiveHandler.onStatusClick(status)
+    }
+
+    override fun onBlogClick(role: IdentityRole, blog: Blog) {
+        interactiveHandler.onBlogClick(role, blog)
     }
 
     override fun onVoted(status: StatusUiState, votedOption: List<BlogPoll.Option>) {
@@ -273,9 +278,6 @@ class FeedsViewModelController(
         loadMoreJob = coroutineScope.launch {
             mutableUiState.update { it.copy(loadMoreState = LoadState.Loading) }
             loadMoreFunction(feeds.last().status.id)
-                .map { list ->
-                    list.map { it.toUiState() }
-                }
                 .onFailure { e ->
                     mutableUiState.update {
                         it.copy(
@@ -295,21 +297,20 @@ class FeedsViewModelController(
         }
     }
 
-    private suspend fun List<StatusUiState>.applyRefreshResult(
+    private fun List<StatusUiState>.applyRefreshResult(
         refreshResult: RefreshResult,
     ): List<StatusUiState> {
         if (refreshResult.useOldData) {
             val deletedIdsSet = refreshResult.deletedStatus
-                .map { it.id }
+                .map { it.status.id }
                 .toSet()
             val oldList = this.filter { !deletedIdsSet.contains(it.status.id) }
             val addedNewList = refreshResult.newStatus
-                .map { statusItem -> statusItem.toUiState() }
                 .toMutableList()
             addedNewList.addAllIgnoreDuplicate(oldList)
             return addedNewList
         } else {
-            return refreshResult.newStatus.map { statusItem -> statusItem.toUiState() }
+            return refreshResult.newStatus
         }
     }
 
@@ -343,9 +344,5 @@ class FeedsViewModelController(
 
             }
         )
-    }
-
-    private suspend fun Status.toUiState(): StatusUiState {
-        return buildStatusUiState(roleResolver(this), this)
     }
 }

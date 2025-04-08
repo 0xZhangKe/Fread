@@ -18,6 +18,7 @@ import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
+import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -25,15 +26,13 @@ import com.zhangke.fread.analytics.HomeTabElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.commonbiz.shared.composable.FeedsContent
-import com.zhangke.fread.commonbiz.shared.feeds.CommonFeedsUiState
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
 
 internal class MixedContentScreen(
-    private val configId: Long,
+    private val configId: String,
     private val isLatestTab: Boolean,
 ) : BasePagerTab() {
 
@@ -46,14 +45,11 @@ internal class MixedContentScreen(
         val snackBarHostState = rememberSnackbarHostState()
         val viewModel = screen.getViewModel<MixedContentViewModel>().getSubViewModel(configId)
         val uiState by viewModel.uiState.collectAsState()
-        val configUiState by viewModel.configUiState.collectAsState()
         ConsumeSnackbarFlow(snackBarHostState, viewModel.errorMessageFlow)
+        ConsumeOpenScreenFlow(viewModel.openScreenFlow)
         MixedContentUi(
             uiState = uiState,
-            configUiState = configUiState,
             snackBarHostState = snackBarHostState,
-            openScreenFlow = viewModel.openScreenFlow,
-            newStatusNotifyFlow = viewModel.newStatusNotifyFlow,
             composedStatusInteraction = viewModel.composedStatusInteraction,
             onTitleClick = viewModel::onContentTitleClick,
             onRefresh = viewModel::onRefresh,
@@ -64,11 +60,8 @@ internal class MixedContentScreen(
     @OptIn(ExperimentalMaterial3Api::class)
     @Composable
     private fun MixedContentUi(
-        uiState: CommonFeedsUiState,
-        configUiState: MixedContentUiState,
+        uiState: MixedContentUiState,
         snackBarHostState: SnackbarHostState,
-        openScreenFlow: SharedFlow<Screen>,
-        newStatusNotifyFlow: SharedFlow<Unit>,
         onTitleClick: () -> Unit,
         onRefresh: () -> Unit,
         onLoadMore: () -> Unit,
@@ -80,7 +73,7 @@ internal class MixedContentScreen(
         Scaffold(
             topBar = {
                 ContentToolbar(
-                    title = configUiState.config?.name.orEmpty(),
+                    title = uiState.content?.name.orEmpty(),
                     showNextIcon = !isLatestTab,
                     scrollBehavior = scrollBehavior,
                     onMenuClick = {
@@ -128,9 +121,12 @@ internal class MixedContentScreen(
             ) {
                 val nestedTabConnection = LocalNestedTabConnection.current
                 FeedsContent(
-                    uiState = uiState,
-                    openScreenFlow = openScreenFlow,
-                    newStatusNotifyFlow = newStatusNotifyFlow,
+                    feeds = uiState.dataList,
+                    refreshing = uiState.refreshing,
+                    loadMoreState = uiState.loadMoreState,
+                    showPagingLoadingPlaceholder = uiState.initializing,
+                    pageErrorContent = uiState.pageError,
+                    newStatusNotifyFlow = null,
                     onRefresh = onRefresh,
                     onLoadMore = onLoadMore,
                     composedStatusInteraction = composedStatusInteraction,

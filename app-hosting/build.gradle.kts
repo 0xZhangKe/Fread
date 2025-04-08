@@ -34,6 +34,7 @@ kotlin {
                 implementation(project(path = ":feature:notifications"))
                 implementation(project(path = ":plugins:activitypub-app"))
                 implementation(project(path = ":plugins:rss"))
+                implementation(project(path = ":plugins:bluesky"))
 
                 implementation(compose.components.resources)
 

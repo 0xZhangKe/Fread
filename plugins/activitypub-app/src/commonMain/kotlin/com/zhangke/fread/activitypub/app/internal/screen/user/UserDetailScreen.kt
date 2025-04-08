@@ -1,7 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -52,14 +51,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.ScreenKey
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
@@ -74,10 +69,10 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.utils.formatToHumanReadable
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_bookmarks_list_title
@@ -92,9 +87,6 @@ import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_rol
 import com.zhangke.fread.activitypub.app.activity_pub_mute_user_bottom_sheet_title
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_dialog_content_block_domain
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_follower_info
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_following_info
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_follows_you
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_block_domain
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_private_note
@@ -102,11 +94,9 @@ import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_edit_priv
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_mute_user
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unblock_domain
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unmute_user
-import com.zhangke.fread.activitypub.app.activity_pub_user_detail_posts
 import com.zhangke.fread.activitypub.app.activity_pub_user_menu_blocked_user_list
 import com.zhangke.fread.activitypub.app.activity_pub_user_menu_muted_user_list
 import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
-import com.zhangke.fread.activitypub.app.internal.composable.ScrollUpTopBarLayout
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
@@ -134,12 +124,14 @@ import com.zhangke.fread.status.ui.action.DropDownOpenOriginalInstanceItem
 import com.zhangke.fread.status.ui.action.ModalDropdownMenuItem
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.status.ui.common.NestedTabConnection
+import com.zhangke.fread.status.ui.common.RelationshipUiState
+import com.zhangke.fread.status.ui.common.UserFollowLine
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.ic_status_forward
+import com.zhangke.fread.statusui.status_ui_user_detail_follows_you
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.launch
-import org.jetbrains.compose.resources.StringResource
 import org.jetbrains.compose.resources.stringResource
 import org.jetbrains.compose.resources.vectorResource
 
@@ -412,7 +404,7 @@ data class UserDetailScreen(
                                             )
                                             .padding(horizontal = 4.dp),
                                         color = MaterialTheme.colorScheme.onSurfaceVariant,
-                                        text = stringResource(Res.string.activity_pub_user_detail_follows_you),
+                                        text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_user_detail_follows_you),
                                         style = MaterialTheme.typography.bodySmall
                                             .copy(fontWeight = FontWeight.Normal),
                                     )
@@ -420,9 +412,11 @@ data class UserDetailScreen(
                             }
                         },
                         followInfo = {
-                            FollowInfoLine(
+                            UserFollowLine(
                                 modifier = Modifier,
-                                account = account,
+                                followersCount = account?.followersCount?.toLong(),
+                                followingCount = account?.followingCount?.toLong(),
+                                statusesCount = account?.statusesCount?.toLong(),
                                 onFollowerClick = onFollowerClick,
                                 onFollowingClick = onFollowingClick,
                             )
@@ -487,86 +481,6 @@ data class UserDetailScreen(
                     }
                 }
             }
-        }
-    }
-
-    @Composable
-    private fun FollowInfoLine(
-        modifier: Modifier,
-        account: ActivityPubAccountEntity?,
-        onFollowerClick: () -> Unit,
-        onFollowingClick: () -> Unit,
-    ) {
-        Row(
-            modifier = modifier,
-            verticalAlignment = Alignment.CenterVertically,
-        ) {
-            CountInfoItem(
-                count = account?.followersCount,
-                descId = Res.string.activity_pub_user_detail_follower_info,
-                onClick = onFollowerClick,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp),
-                text = "·",
-                style = MaterialTheme.typography.bodySmall,
-            )
-            CountInfoItem(
-                count = account?.followingCount,
-                descId = Res.string.activity_pub_user_detail_following_info,
-                onClick = onFollowingClick,
-            )
-            Text(
-                modifier = Modifier
-                    .padding(horizontal = 4.dp),
-                text = "·",
-                style = MaterialTheme.typography.bodySmall,
-            )
-            CountInfoItem(
-                count = account?.statusesCount,
-                descId = Res.string.activity_pub_user_detail_posts,
-            )
-        }
-    }
-
-    @Composable
-    private fun CountInfoItem(
-        count: Int?,
-        descId: StringResource,
-        onClick: (() -> Unit)? = null,
-    ) {
-        val descSuffix = stringResource(descId)
-        val info = remember(count) {
-            if (count == null) {
-                buildAnnotatedString { append("    ") }
-            } else {
-                buildCountedDesc(count, descSuffix)
-            }
-        }
-        Text(
-            modifier = Modifier.clickable(count != null && onClick != null) {
-                onClick?.invoke()
-            },
-            text = info,
-            style = MaterialTheme.typography.bodySmall,
-        )
-    }
-
-    private fun buildCountedDesc(count: Int, desc: String): AnnotatedString {
-        val formattedCount = count.formatToHumanReadable()
-        return buildAnnotatedString {
-            append(formattedCount)
-            addStyle(
-                style = SpanStyle(
-                    fontSize = 16.sp,
-                    fontWeight = FontWeight.Medium,
-                ),
-                start = 0,
-                end = formattedCount.length,
-            )
-            append(" ")
-            append(desc)
         }
     }
 
@@ -974,7 +888,7 @@ data class UserDetailScreen(
                         }
                     },
                 ) {
-                    Text(text = org.jetbrains.compose.resources.stringResource(com.zhangke.fread.framework.Res.string.cancel))
+                    Text(text = stringResource(com.zhangke.fread.framework.Res.string.cancel))
                 }
             }
         }

@@ -1,14 +1,11 @@
 package com.zhangke.fread.explore.usecase
 
 import com.zhangke.fread.common.status.model.SearchResultUiState
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.search.SearchResult
 import me.tatarka.inject.annotations.Inject
 
-class BuildSearchResultUiStateUseCase @Inject constructor(
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-) {
+class BuildSearchResultUiStateUseCase @Inject constructor() {
 
     suspend operator fun invoke(role: IdentityRole, result: SearchResult): SearchResultUiState {
         return when (result) {
@@ -21,9 +18,7 @@ class BuildSearchResultUiStateUseCase @Inject constructor(
             }
 
             is SearchResult.SearchedStatus -> {
-                SearchResultUiState.SearchedStatus(
-                    buildStatusUiState(role, result.status)
-                )
+                SearchResultUiState.SearchedStatus(result.status)
             }
 
             is SearchResult.SearchedHashtag -> {

@@ -7,18 +7,16 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.ktx.map
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
+import com.zhangke.fread.commonbiz.add_feeds_page_empty_name_exist
 import com.zhangke.fread.feeds.Res
-import com.zhangke.fread.feeds.adapter.StatusSourceUiStateAdapter
-import com.zhangke.fread.feeds.add_feeds_page_empty_name_exist
 import com.zhangke.fread.feeds.add_feeds_page_empty_name_tips
 import com.zhangke.fread.feeds.add_feeds_page_empty_source_tips
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.content.MixedContent
 import com.zhangke.fread.status.source.StatusSource
-import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -28,12 +26,12 @@ import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class AddMixedFeedsViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
-    private val statusSourceUiStateAdapter: StatusSourceUiStateAdapter,
-    private val contentConfigRepo: ContentConfigRepo,
-    private val configRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     @Assisted private val statusSource: StatusSource? = null
 ) : ViewModel() {
 
@@ -66,15 +64,13 @@ class AddMixedFeedsViewModel @Inject constructor(
         }
     }
 
-    fun onAddSource(uri: FormalUri) {
+    fun onAddSource(source: StatusSource) {
         launchInViewModel {
             val sourceList = mutableListOf<StatusSource>()
             sourceList.addAll(viewModelState.value.sourceList)
-            statusProvider.statusSourceResolver.resolveSourceByUri(null, uri)
-                .onSuccess { source ->
-                    source?.takeIf { item -> !sourceList.container { it.uri == item.uri } }
-                        ?.let { sourceList += it }
-                }
+            if (!sourceList.container { it.uri == source.uri }) {
+                sourceList += source
+            }
             viewModelState.update {
                 it.copy(sourceList = sourceList)
             }
@@ -84,7 +80,7 @@ class AddMixedFeedsViewModel @Inject constructor(
     fun onRemoveSource(source: StatusSourceUiState) {
         viewModelState.update { state ->
             state.copy(
-                sourceList = state.sourceList.filter { it.uri != source.uri }
+                sourceList = state.sourceList.filter { it.uri != source.source.uri }
             )
         }
     }
@@ -102,8 +98,8 @@ class AddMixedFeedsViewModel @Inject constructor(
                 _errorMessageFlow.emit(textOf(Res.string.add_feeds_page_empty_name_tips))
                 return@launchInViewModel
             }
-            if (contentConfigRepo.checkNameExist(currentState.sourceName)) {
-                _errorMessageFlow.emit(textOf(Res.string.add_feeds_page_empty_name_exist))
+            if (contentRepo.checkNameExist(currentState.sourceName)) {
+                _errorMessageFlow.emit(textOf(com.zhangke.fread.commonbiz.Res.string.add_feeds_page_empty_name_exist))
                 return@launchInViewModel
             }
             val sourceList = currentState.sourceList
@@ -115,19 +111,20 @@ class AddMixedFeedsViewModel @Inject constructor(
         }
     }
 
+    @OptIn(ExperimentalUuidApi::class)
     private fun performAddContent() {
         val currentState = viewModelState.value
         val sourceUriList = currentState.sourceList.map { it.uri }
         val sourceName = currentState.sourceName
         launchInViewModel {
-            val order = configRepo.generateNextOrder()
-            val contentConfig = ContentConfig.MixedContent(
-                id = 0,
+            val order = contentRepo.getMaxOrder() + 1
+            val contentConfig = MixedContent(
+                id = Uuid.random().toHexString(),
                 order = order,
                 name = sourceName,
                 sourceUriList = sourceUriList,
             )
-            contentConfigRepo.insert(contentConfig)
+            contentRepo.insertContent(contentConfig)
             _addContentSuccessFlow.emit(Unit)
         }
     }
@@ -151,8 +148,8 @@ class AddMixedFeedsViewModel @Inject constructor(
         addEnabled: Boolean = false,
         removeEnabled: Boolean = true,
     ): StatusSourceUiState {
-        return statusSourceUiStateAdapter.adapt(
-            this,
+        return StatusSourceUiState(
+            source = this,
             addEnabled = addEnabled,
             removeEnabled = removeEnabled,
         )

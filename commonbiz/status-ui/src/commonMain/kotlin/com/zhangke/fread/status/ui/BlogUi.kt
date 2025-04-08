@@ -14,13 +14,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.layout.positionInParent
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
-import com.zhangke.fread.common.status.model.StatusUiInteraction
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.action.StatusBottomInteractionPanel
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
@@ -34,17 +34,14 @@ fun BlogUi(
     modifier: Modifier,
     blog: Blog,
     blogTranslationState: BlogTranslationUiState,
-    specificTime: String,
-    displayTime: String,
-    editedTime: String?,
     following: Boolean?,
+    isOwner: Boolean,
+    logged: Boolean,
     indexInList: Int,
     style: StatusStyle,
-    bottomPanelInteractions: List<StatusUiInteraction>,
-    moreInteractions: List<StatusUiInteraction>,
     topLabel: (@Composable () -> Unit)? = null,
     reblogAuthor: BlogAuthor? = null,
-    onInteractive: (StatusUiInteraction) -> Unit,
+    onInteractive: (StatusActionType, Blog) -> Unit,
     onMediaClick: OnBlogMediaClick,
     onUserInfoClick: (BlogAuthor) -> Unit,
     onVoted: (List<BlogPoll.Option>) -> Unit,
@@ -53,6 +50,7 @@ fun BlogUi(
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
     onShowOriginalClick: () -> Unit,
+    onBlogClick: (Blog) -> Unit,
     onTranslateClick: () -> Unit,
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
@@ -96,13 +94,12 @@ fun BlogUi(
                         it
                     }
                 },
+            blog = blog,
             blogTranslationState = blogTranslationState,
-            blogAuthor = blog.author,
-            displayTime = displayTime,
+            displayTime = blog.formattingDisplayTime.formattedTime(),
             visibility = blog.visibility,
-            blogUrl = blog.url,
-            showFollowButton = !blog.isSelf && detailModel && following == false,
-            moreInteractions = moreInteractions,
+            isOwner = isOwner,
+            showFollowButton = !isOwner && detailModel && following == false,
             onInteractive = onInteractive,
             onUserInfoClick = onUserInfoClick,
             onUrlClick = onUrlClick,
@@ -121,8 +118,8 @@ fun BlogUi(
                     end = style.containerEndPadding,
                 ),
             blog = blog,
+            isOwner = isOwner,
             blogTranslationState = blogTranslationState,
-            specificTime = specificTime,
             detailModel = detailModel,
             indexOfFeeds = indexInList,
             style = style,
@@ -131,13 +128,12 @@ fun BlogUi(
             onUrlClick = onUrlClick,
             onBoostedClick = onBoostedClick,
             onFavouritedClick = onFavouritedClick,
-            editedTime = editedTime,
-            favouritedCount = bottomPanelInteractions.favouritedCount,
-            boostedCount = bottomPanelInteractions.boostedCount,
+            editedTime = blog.formattedEditAt,
             onHashtagInStatusClick = onHashtagInStatusClick,
             onMentionClick = onMentionClick,
             onMentionDidClick = onMentionDidClick,
             onShowOriginalClick = onShowOriginalClick,
+            onBlogClick = onBlogClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier
@@ -148,14 +144,15 @@ fun BlogUi(
                     style.containerEndPadding / 2
                 ),
             style = style,
-            interactions = bottomPanelInteractions,
-            onInteractive = {
-                reportStatusInteractionClickEvent(it)
-                if (it is StatusUiInteraction.Share) {
-                    textHandler.shareUrl(blog.url, blog.content)
+            blog = blog,
+            logged = logged,
+            onInteractive = { type, blog ->
+                reportStatusInteractionClickEvent(type)
+                if (type == StatusActionType.SHARE) {
+                    textHandler.shareUrl(blog.link, blog.content)
                     return@StatusBottomInteractionPanel
                 }
-                onInteractive(it)
+                onInteractive(type, blog)
             },
         )
         Spacer(
@@ -168,15 +165,3 @@ fun BlogUi(
         }
     }
 }
-
-private val List<StatusUiInteraction>.favouritedCount: Int?
-    get() {
-        return this.firstNotNullOfOrNull { it as? StatusUiInteraction.Like }
-            ?.interaction?.likeCount
-    }
-
-private val List<StatusUiInteraction>.boostedCount: Int?
-    get() {
-        return this.firstNotNullOfOrNull { it as? StatusUiInteraction.Forward }
-            ?.interaction?.forwardCount
-    }

@@ -9,21 +9,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
-import com.zhangke.framework.composable.HorizontalPagerWithTab
 import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.explore.ExplorerElements
-import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTab
-import com.zhangke.fread.explore.screens.home.tab.ExplorerFeedsTabType
 import com.zhangke.fread.explore.screens.search.bar.ExplorerSearchBar
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
@@ -37,15 +33,10 @@ class ExplorerHomeScreen : BaseScreen() {
         val viewModel = getViewModel<ExplorerHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val navigator = LocalNavigator.currentOrThrow.rootNavigator
-        CompositionLocalProvider(
-            LocalNavigator provides navigator
-        ) {
+        CompositionLocalProvider(LocalNavigator provides navigator) {
             ExplorerHomeContent(
                 uiState = uiState,
                 onAccountSelected = {
-                    reportClick(ExplorerElements.SWITCH_ACCOUNT) {
-                        put("accountCount", uiState.loggedAccountsList.size.toString())
-                    }
                     viewModel.onAccountSelected(it)
                 },
             )
@@ -71,13 +62,12 @@ class ExplorerHomeScreen : BaseScreen() {
                     .padding(paddingValues)
                     .fillMaxSize()
             ) {
-                val selectedAccount = uiState.selectedAccount
                 ExplorerSearchBar(
                     selectedAccount = uiState.selectedAccount,
                     accountList = uiState.loggedAccountsList,
                     onAccountSelected = onAccountSelected,
                 )
-                if (uiState.selectedAccount != null) {
+                if (uiState.tab != null) {
                     val nestedTabConnection = remember {
                         NestedTabConnection()
                     }
@@ -85,27 +75,9 @@ class ExplorerHomeScreen : BaseScreen() {
                         LocalSnackbarHostState provides snackbarHostState,
                         LocalNestedTabConnection provides nestedTabConnection,
                     ) {
-                        val tabs = remember(selectedAccount) {
-                            listOf(
-                                ExplorerFeedsTab(
-                                    type = ExplorerFeedsTabType.STATUS,
-                                    role = uiState.role,
-                                ),
-                                ExplorerFeedsTab(
-                                    type = ExplorerFeedsTabType.HASHTAG,
-                                    role = uiState.role,
-                                ),
-                                ExplorerFeedsTab(
-                                    type = ExplorerFeedsTabType.USERS,
-                                    role = uiState.role,
-                                ),
-                            )
+                        key(uiState.tab) {
+                            uiState.tab.TabContent(this@ExplorerHomeScreen, null)
                         }
-                        val contentScrollInProgress by nestedTabConnection.contentScrollInpProgress.collectAsState()
-                        HorizontalPagerWithTab(
-                            tabList = tabs,
-                            pagerUserScrollEnabled = !contentScrollInProgress,
-                        )
                     }
                 }
             }

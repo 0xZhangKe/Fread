@@ -47,3 +47,9 @@ fun buildPickVisualImageRequest(): PickVisualMediaRequest {
         .setMediaType(ActivityResultContracts.PickVisualMedia.ImageOnly)
         .build()
 }
+
+fun buildPickVisualVideoRequest(): PickVisualMediaRequest {
+    return PickVisualMediaRequest.Builder()
+        .setMediaType(ActivityResultContracts.PickVisualMedia.VideoOnly)
+        .build()
+}

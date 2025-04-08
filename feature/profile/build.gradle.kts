@@ -23,6 +23,8 @@ kotlin {
 
                 implementation(libs.bundles.voyager)
 
+                implementation(libs.arrow.core)
+
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 
                 implementation(libs.androidx.paging.common)

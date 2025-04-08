@@ -18,9 +18,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import org.jetbrains.compose.resources.stringResource
 import androidx.compose.ui.unit.dp
-import cafe.adriel.voyager.core.annotation.ExperimentalVoyagerApi
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -32,47 +30,39 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.loadable.lazycolumn.LoadableLazyColumn
 import com.zhangke.framework.loadable.lazycolumn.rememberLoadableLazyColumnState
 import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_blocked_user_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_blocked_user_list_unblock
-import com.zhangke.fread.activitypub.app.activity_pub_muted_user_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_muted_user_list_unmute
-import com.zhangke.fread.activitypub.app.activity_pub_status_favourites_by_title
-import com.zhangke.fread.activitypub.app.activity_pub_status_reblog_by_title
-import com.zhangke.fread.activitypub.app.activity_pub_user_follower_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_user_following_list_title
 import com.zhangke.fread.activitypub.app.activity_pub_user_list_empty
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
-import com.zhangke.fread.activitypub.app.internal.screen.user.common.users.CommonUserPlaceHolder
-import com.zhangke.fread.activitypub.app.internal.screen.user.common.users.CommonUserUi
 import com.zhangke.fread.common.page.BaseScreen
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_blocked
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_action_muted
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_blocks
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_followers
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_following
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_likes
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_mutes
+import com.zhangke.fread.commonbiz.shared.screen.shared_user_list_title_reblog
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.ui.user.CommonUserPlaceHolder
+import com.zhangke.fread.status.ui.user.CommonUserUi
 import com.zhangke.fread.status.uri.FormalUri
 import com.zhangke.fread.statusui.status_ui_follow
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteUri
+import org.jetbrains.compose.resources.stringResource
+import com.zhangke.fread.commonbiz.shared.screen.Res as SharedRes
 
-@Destination(UserListRoute.ROUTE)
 class UserListScreen(
-    @RouteUri private val route: String = "",
-    private val role: IdentityRole? = null,
-    private val type: UserListType? = null,
+    private val role: IdentityRole,
+    private val type: UserListType,
     private val statusId: String? = null,
     private val userUri: FormalUri? = null,
 ) : BaseScreen() {
 
-    @OptIn(ExperimentalVoyagerApi::class)
     @Composable
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<UserListViewModel, UserListViewModel.Factory> {
-            if (route.isEmpty()) {
-                it.create(role = role!!, type = type!!, statusId = statusId, userUri = userUri)
-            } else {
-                val (role, type, statusId) = UserListRoute.parseRouteAsReblogOrFavourited(route)!!
-                it.create(role = role, type = type, statusId = statusId, userUri = null)
-            }
+            it.create(role = role, type = type, statusId = statusId, userUri = userUri)
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()
@@ -185,7 +175,7 @@ class UserListScreen(
                 Spacer(modifier = Modifier.width(6.dp))
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(Res.string.activity_pub_blocked_user_list_unblock),
+                    text = stringResource(SharedRes.string.shared_user_list_action_blocked),
                     style = TextButtonStyle.STANDARD,
                     onClick = {
                         onUnblockClick(author)
@@ -197,7 +187,7 @@ class UserListScreen(
                 Spacer(modifier = Modifier.width(6.dp))
                 StyledTextButton(
                     modifier = Modifier.align(Alignment.CenterVertically),
-                    text = stringResource(Res.string.activity_pub_muted_user_list_unmute),
+                    text = stringResource(SharedRes.string.shared_user_list_action_muted),
                     style = TextButtonStyle.STANDARD,
                     onClick = {
                         onUnmuteClick(author)
@@ -225,11 +215,11 @@ class UserListScreen(
 
     private val UserListType.title: String
         @Composable get() = when (this) {
-            UserListType.FAVOURITES -> stringResource(Res.string.activity_pub_status_favourites_by_title)
-            UserListType.REBLOGS -> stringResource(Res.string.activity_pub_status_reblog_by_title)
-            UserListType.MUTED -> stringResource(Res.string.activity_pub_muted_user_list_title)
-            UserListType.BLOCKED -> stringResource(Res.string.activity_pub_blocked_user_list_title)
-            UserListType.FOLLOWERS -> stringResource(Res.string.activity_pub_user_follower_list_title)
-            UserListType.FOLLOWING -> stringResource(Res.string.activity_pub_user_following_list_title)
+            UserListType.FAVOURITES -> stringResource(SharedRes.string.shared_user_list_title_likes)
+            UserListType.REBLOGS -> stringResource(SharedRes.string.shared_user_list_title_reblog)
+            UserListType.MUTED -> stringResource(SharedRes.string.shared_user_list_title_mutes)
+            UserListType.BLOCKED -> stringResource(SharedRes.string.shared_user_list_title_blocks)
+            UserListType.FOLLOWERS -> stringResource(SharedRes.string.shared_user_list_title_followers)
+            UserListType.FOLLOWING -> stringResource(SharedRes.string.shared_user_list_title_following)
         }
 }

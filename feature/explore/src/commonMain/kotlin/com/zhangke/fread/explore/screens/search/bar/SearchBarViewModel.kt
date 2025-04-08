@@ -3,19 +3,19 @@ package com.zhangke.fread.explore.screens.search.bar
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
 import com.zhangke.fread.common.status.model.SearchResultUiState
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.handle
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.explore.usecase.BuildSearchResultUiStateUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.richtext.preParseRichText
+import com.zhangke.fread.status.richtext.preParse
 import com.zhangke.fread.status.search.SearchResult
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,13 +27,13 @@ class SearchBarViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,
     private val buildSearchResultUiState: BuildSearchResultUiStateUseCase,
-    buildStatusUiState: BuildStatusUiStateUseCase,
-    refactorToNewBlog: RefactorToNewBlogUseCase,
+    statusUiStateAdapter: StatusUiStateAdapter,
+    refactorToNewStatus: RefactorToNewStatusUseCase,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     var selectedAccount: LoggedAccount? = null
@@ -45,7 +45,10 @@ class SearchBarViewModel @Inject constructor(
     private val role: IdentityRole
         get() {
             val accountUri = selectedAccount?.uri
-            return IdentityRole(accountUri, null)
+            return IdentityRole(
+                accountUri = accountUri,
+                baseUrl = selectedAccount?.platform?.baseUrl,
+            )
         }
 
     private var searchJob: Job? = null
@@ -82,7 +85,7 @@ class SearchBarViewModel @Inject constructor(
                 .map { list ->
                     list.filterIsInstance<SearchResult.SearchedStatus>()
                         .map { it.status }
-                        .preParseRichText()
+                        .preParse()
                     list
                 }.map { list ->
                     list.map { buildSearchResultUiState(role, it) }

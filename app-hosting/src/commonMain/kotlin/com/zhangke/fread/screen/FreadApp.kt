@@ -19,7 +19,6 @@ import cafe.adriel.voyager.navigator.bottomSheet.BottomSheetNavigator
 import cafe.adriel.voyager.transitions.SlideTransition
 import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
-import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
 import com.zhangke.fread.common.config.FreadConfigManager
@@ -43,10 +42,14 @@ import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.ThumbnailHelper
 import com.zhangke.fread.common.utils.ToastHelper
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
+import com.zhangke.fread.commonbiz.shared.ModuleScreenVisitor
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusUiConfig
 import com.zhangke.fread.utils.ActivityHelper
 import com.zhangke.fread.utils.LocalActivityHelper
+import kotlinx.coroutines.flow.debounce
+import kotlinx.coroutines.flow.distinctUntilChanged
 import me.tatarka.inject.annotations.Inject
 
 typealias FreadApp = @Composable () -> Unit
@@ -68,6 +71,7 @@ internal fun FreadApp(
     activityLanguageHelper: ActivityLanguageHelper,
     activityTextHandler: ActivityTextHandler,
     activityHelper: ActivityHelper,
+    moduleScreenVisitor: ModuleScreenVisitor,
 ) {
     val statusConfig by freadConfigManager.statusConfigFlow.collectAsState()
     CompositionLocalProvider(
@@ -85,6 +89,7 @@ internal fun FreadApp(
         LocalActivityTextHandler provides activityTextHandler,
         LocalToastHelper provides toastHelper,
         LocalActivityHelper provides activityHelper,
+        LocalModuleScreenVisitor provides moduleScreenVisitor,
     ) {
         ProvideNavigatorLifecycleKMPSupport {
             TransparentNavigator {
@@ -101,9 +106,12 @@ internal fun FreadApp(
                             disposeScreenAfterTransitionEnd = false,
                         )
                         LaunchedEffect(Unit) {
-                            GlobalScreenNavigation.openScreenFlow.collect { screen ->
-                                navigator.push(screen)
-                            }
+                            GlobalScreenNavigation.openScreenFlow
+                                .debounce(300)
+                                .distinctUntilChanged()
+                                .collect { screen ->
+                                    navigator.push(screen)
+                                }
                         }
                     }
                 }

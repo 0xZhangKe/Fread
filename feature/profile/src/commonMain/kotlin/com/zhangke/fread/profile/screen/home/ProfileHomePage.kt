@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
@@ -20,10 +21,12 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tag
 import androidx.compose.material.icons.outlined.BookmarkBorder
 import androidx.compose.material.icons.outlined.FavoriteBorder
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.CompositionLocalProvider
 import androidx.compose.runtime.LaunchedEffect
@@ -35,11 +38,10 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.FreadDialog
@@ -50,14 +52,16 @@ import com.zhangke.fread.analytics.ProfileElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.login.LoginBottomSheetScreen
+import com.zhangke.fread.common.resources.PlatformLogo
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feature.profile.Res
+import com.zhangke.fread.feature.profile.profile_account_not_login
 import com.zhangke.fread.feature.profile.profile_page_logout_dialog_content
 import com.zhangke.fread.feature.profile.profile_page_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import org.jetbrains.compose.resources.stringResource
@@ -67,10 +71,10 @@ class ProfileHomePage : BaseScreen() {
     @Composable
     override fun Content() {
         super.Content()
-        val bottomSheetNavigator = LocalBottomSheetNavigator.current
         val viewModel = getViewModel<ProfileHomeViewModel>()
         val uiState by viewModel.uiState.collectAsState()
         val rootNavigator = LocalNavigator.currentOrThrow.rootNavigator
+        val moduleScreenVisitor = LocalModuleScreenVisitor.current
         LaunchedEffect(Unit) {
             viewModel.refreshAccountInfo()
         }
@@ -82,7 +86,7 @@ class ProfileHomePage : BaseScreen() {
                 uiState = uiState,
                 onAddAccountClick = {
                     reportClick(ProfileElements.ADD_ACCOUNT)
-                    bottomSheetNavigator.show(LoginBottomSheetScreen())
+                    rootNavigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
                 },
                 onSettingClick = {
                     reportClick(ProfileElements.SETTING)
@@ -108,6 +112,11 @@ class ProfileHomePage : BaseScreen() {
                     reportClick(ProfileElements.HASHTAG)
                     viewModel.onFollowedHashtagClick(it)
                 },
+                onPinnedFeedsClick = {
+                    reportClick(ProfileElements.PINNED_FEEDS)
+                    viewModel.onPinnedFeedsClick(it)
+                },
+                onLoginClick = viewModel::onLoginClick,
             )
             ConsumeFlow(viewModel.openPageFlow) {
                 navigator.push(it)
@@ -125,6 +134,8 @@ class ProfileHomePage : BaseScreen() {
         onFavouritedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
+        onLoginClick: (LoggedAccount) -> Unit,
     ) {
         Surface(
             modifier = Modifier
@@ -166,13 +177,14 @@ class ProfileHomePage : BaseScreen() {
                 ) {
                     items(uiState.accountDataList) { item ->
                         AccountGroupItem(
-                            platform = item.first,
                             accountList = item.second,
                             onLogoutClick = onLogoutClick,
                             onAccountClick = onAccountClick,
                             onFavouritedClick = onFavouritedClick,
                             onBookmarkedClick = onBookmarkedClick,
                             onFollowedHashtagClick = onFollowedHashtagClick,
+                            onPinnedFeedsClick = onPinnedFeedsClick,
+                            onLoginClick = onLoginClick,
                         )
                     }
                 }
@@ -182,13 +194,14 @@ class ProfileHomePage : BaseScreen() {
 
     @Composable
     private fun AccountGroupItem(
-        platform: BlogPlatform,
-        accountList: List<LoggedAccount>,
+        accountList: List<ProfileAccountUiState>,
         onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
         onFavouritedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
+        onLoginClick: (LoggedAccount) -> Unit,
     ) {
         Card(
             modifier = Modifier
@@ -197,30 +210,18 @@ class ProfileHomePage : BaseScreen() {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(
-                        start = 16.dp,
-                        top = 16.dp,
-                        end = 16.dp,
-                        bottom = 8.dp
-                    )
+                    .padding(start = 16.dp, top = 16.dp)
             ) {
-                Text(
-                    modifier = Modifier.padding(bottom = 16.dp),
-                    text = platform.name,
-                    style = MaterialTheme.typography.titleLarge,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
                 accountList.forEach { account ->
                     LoggedAccountSection(
-                        account = account,
-                        onLogoutClick = {
-                            onLogoutClick(account)
-                        },
+                        accountUiState = account,
+                        onLogoutClick = onLogoutClick,
                         onAccountClick = onAccountClick,
                         onFavouritedClick = onFavouritedClick,
                         onBookmarkedClick = onBookmarkedClick,
                         onFollowedHashtagClick = onFollowedHashtagClick,
+                        onPinnedFeedsClick = onPinnedFeedsClick,
+                        onLoginClick = onLoginClick,
                     )
                 }
             }
@@ -229,20 +230,21 @@ class ProfileHomePage : BaseScreen() {
 
     @Composable
     private fun LoggedAccountSection(
-        account: LoggedAccount,
-        onLogoutClick: () -> Unit,
+        accountUiState: ProfileAccountUiState,
+        onLogoutClick: (LoggedAccount) -> Unit,
         onAccountClick: (LoggedAccount) -> Unit,
         onFavouritedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
+        onLoginClick: (LoggedAccount) -> Unit,
     ) {
+        val account = accountUiState.account
         val browserLauncher = LocalActivityBrowserLauncher.current
-        var showLogoutDialog by remember {
-            mutableStateOf(false)
-        }
-        Row(modifier = Modifier
-            .fillMaxWidth()
-            .noRippleClick { onAccountClick(account) }) {
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClick { onAccountClick(account) }) {
             BlogAuthorAvatar(
                 modifier = Modifier
                     .size(48.dp)
@@ -250,67 +252,133 @@ class ProfileHomePage : BaseScreen() {
                 imageUrl = account.avatar,
             )
             Column(
-                modifier = Modifier
-                    .fillMaxWidth()
+                modifier = Modifier.fillMaxWidth()
             ) {
-                FreadRichText(
-                    modifier = Modifier
-                        .padding(start = 16.dp),
-                    maxLines = 1,
-                    content = account.userName,
-                    emojis = account.emojis,
-                    fontSizeSp = 22F,
-                    onUrlClick = {
-                        browserLauncher.launchWebTabInApp(it, account.role)
-                    },
-                )
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Column(
+                        modifier = Modifier.weight(1F),
+                    ) {
+                        Row(
+                            modifier = Modifier.fillMaxWidth(),
+                            verticalAlignment = Alignment.CenterVertically,
+                        ) {
+                            FreadRichText(
+                                modifier = Modifier.padding(start = 16.dp),
+                                maxLines = 1,
+                                content = account.userName,
+                                emojis = account.emojis,
+                                fontSizeSp = 18F,
+                                fontWeight = FontWeight.SemiBold,
+                                onUrlClick = {
+                                    browserLauncher.launchWebTabInApp(it, account.role)
+                                },
+                            )
+                            Spacer(modifier = Modifier.width(4.dp))
+                            PlatformLogo(
+                                modifier = Modifier.size(14.dp),
+                                protocol = account.platform.protocol,
+                            )
+                        }
+                        Text(
+                            modifier = Modifier.padding(start = 16.dp, top = 2.dp),
+                            text = account.prettyHandle,
+                            style = MaterialTheme.typography.labelMedium,
+                            color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        )
+                    }
+                    if (!accountUiState.logged) {
+                        TextButton(
+                            modifier = Modifier.padding(end = 8.dp),
+                            onClick = { onLoginClick(account) },
+                            colors = ButtonDefaults.textButtonColors(
+                                contentColor = MaterialTheme.colorScheme.error,
+                            ),
+                        ) {
+                            Text(text = stringResource(Res.string.profile_account_not_login))
+                        }
+                    } else {
+                        Spacer(modifier = Modifier.width(16.dp))
+                    }
+                }
                 FreadRichText(
                     modifier = Modifier.padding(start = 16.dp, top = 4.dp),
-                    maxLines = 3,
+                    maxLines = 5,
                     content = account.description.orEmpty(),
                     emojis = account.emojis,
                     fontSizeSp = 16F,
                     onUrlClick = {
                         browserLauncher.launchWebTabInApp(it, account.role)
-                    }
+                    },
                 )
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 8.dp),
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = { onFavouritedClick(account) },
-                        imageVector = Icons.Outlined.FavoriteBorder,
-                        contentDescription = "Favorite",
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = { onBookmarkedClick(account) },
-                        imageVector = Icons.Outlined.BookmarkBorder,
-                        contentDescription = "Bookmarks",
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = {
-                            onFollowedHashtagClick(account)
-                        },
-                        imageVector = Icons.Default.Tag,
-                        contentDescription = "Followed Tags",
-                    )
-                    Spacer(modifier = Modifier.weight(1F))
-                    SimpleIconButton(
-                        iconModifier = Modifier.size(20.dp),
-                        onClick = { showLogoutDialog = true },
-                        imageVector = Icons.AutoMirrored.Filled.Logout,
-                        contentDescription = "Followed Tags",
-                    )
-                }
+                AccountInteractionPanel(
+                    modifier = Modifier.padding(end = 8.dp),
+                    account = account,
+                    onLikedClick = onFavouritedClick,
+                    onBookmarkedClick = onBookmarkedClick,
+                    onLogoutClick = onLogoutClick,
+                    onFollowedHashtagClick = onFollowedHashtagClick,
+                    onPinnedFeedsClick = onPinnedFeedsClick,
+                )
             }
+        }
+    }
+
+    @Composable
+    private fun AccountInteractionPanel(
+        modifier: Modifier,
+        account: LoggedAccount,
+        onLikedClick: (LoggedAccount) -> Unit,
+        onBookmarkedClick: (LoggedAccount) -> Unit,
+        onLogoutClick: (LoggedAccount) -> Unit,
+        onFollowedHashtagClick: (LoggedAccount) -> Unit,
+        onPinnedFeedsClick: (LoggedAccount) -> Unit,
+    ) {
+        var showLogoutDialog by remember { mutableStateOf(false) }
+        val isBluesky = account.platform.protocol.isBluesky
+        val iconSize = 20.dp
+        Row(
+            modifier = modifier.fillMaxWidth()
+                .padding(end = 8.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            SimpleIconButton(
+                iconModifier = Modifier.size(iconSize),
+                onClick = { onLikedClick(account) },
+                imageVector = Icons.Outlined.FavoriteBorder,
+                contentDescription = "Liked",
+            )
+            if (!isBluesky) {
+                Spacer(modifier = Modifier.weight(1F))
+                SimpleIconButton(
+                    iconModifier = Modifier.size(iconSize),
+                    onClick = { onBookmarkedClick(account) },
+                    imageVector = Icons.Outlined.BookmarkBorder,
+                    contentDescription = "Bookmarks",
+                )
+            }
+            Spacer(modifier = Modifier.weight(1F))
+            SimpleIconButton(
+                iconModifier = Modifier.size(iconSize),
+                onClick = {
+                    if (isBluesky) {
+                        onPinnedFeedsClick(account)
+                    } else {
+                        onFollowedHashtagClick(account)
+                    }
+                },
+                imageVector = Icons.Default.Tag,
+                contentDescription = "Tags",
+            )
+            Spacer(modifier = Modifier.weight(1F))
+            SimpleIconButton(
+                iconModifier = Modifier.size(iconSize),
+                onClick = { showLogoutDialog = true },
+                imageVector = Icons.AutoMirrored.Filled.Logout,
+                contentDescription = "Logout",
+            )
         }
         if (showLogoutDialog) {
             FreadDialog(
@@ -318,7 +386,7 @@ class ProfileHomePage : BaseScreen() {
                 contentText = stringResource(Res.string.profile_page_logout_dialog_content),
                 onPositiveClick = {
                     showLogoutDialog = false
-                    onLogoutClick()
+                    onLogoutClick(account)
                 },
                 onNegativeClick = {
                     showLogoutDialog = false

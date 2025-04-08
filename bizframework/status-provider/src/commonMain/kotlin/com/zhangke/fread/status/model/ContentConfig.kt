@@ -14,6 +14,7 @@ sealed interface ContentConfig {
         get() = when (this) {
             is MixedContent -> name
             is ActivityPubContent -> name
+            is BlueskyContent -> name
         }
 
     @Serializable
@@ -94,11 +95,64 @@ sealed interface ContentConfig {
             }
         }
     }
+
+    @Serializable
+    data class BlueskyContent(
+        override val id: Long,
+        override val order: Int,
+        val name: String,
+        val baseUrl: FormalBaseUrl,
+        val tabList: List<BlueskyTab>,
+    ) : ContentConfig {
+
+        @Serializable
+        sealed interface BlueskyTab {
+
+            val order: Int
+            val title: String
+            val hide: Boolean
+
+            @Serializable
+            data class FollowingTab(
+                override val title: String,
+                override val order: Int,
+                override val hide: Boolean,
+            ) : BlueskyTab {
+
+                companion object {
+
+                    fun default(): FollowingTab {
+                        return FollowingTab(
+                            title = "Following",
+                            order = 0,
+                            hide = false,
+                        )
+                    }
+                }
+            }
+
+            @Serializable
+            data class FeedsTab(
+                val feedUri: String,
+                override val title: String,
+                override val order: Int,
+                override val hide: Boolean,
+            ) : BlueskyTab
+
+            @Serializable
+            data class ListTab(
+                val listUri: String,
+                override val title: String,
+                override val order: Int,
+                override val hide: Boolean,
+            ) : BlueskyTab
+        }
+    }
 }
 
 fun List<ContentConfig.ActivityPubContent.ContentTab>.dropNotExistListTab(
     allListId: Set<String>
-): List<ContentConfig.ActivityPubContent.ContentTab>{
+): List<ContentConfig.ActivityPubContent.ContentTab> {
     return this.filter {
         if (it is ContentConfig.ActivityPubContent.ContentTab.ListTimeline) {
             it.listId in allListId

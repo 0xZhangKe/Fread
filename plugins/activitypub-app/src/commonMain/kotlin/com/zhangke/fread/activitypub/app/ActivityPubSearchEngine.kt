@@ -8,18 +8,18 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubSearchAdapt
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.usecase.source.user.SearchUserSourceUseCase
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
-import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.search.SearchContentResult
 import com.zhangke.fread.status.search.SearchResult
 import com.zhangke.fread.status.source.StatusSource
-import com.zhangke.fread.status.status.model.Status
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import me.tatarka.inject.annotations.Inject
@@ -32,12 +32,14 @@ class ActivityPubSearchEngine @Inject constructor(
     private val statusAdapter: ActivityPubStatusAdapter,
     private val hashtagAdapter: ActivityPubTagAdapter,
     private val accountAdapter: ActivityPubAccountEntityAdapter,
+    private val loggedAccountProvider: LoggedAccountProvider,
 ) : ISearchEngine {
 
     override suspend fun search(role: IdentityRole, query: String): Result<List<SearchResult>> {
+        val account = loggedAccountProvider.getAccount(role)
         return doSearch(role) { searchRepo, platform ->
             searchRepo.query(query).map {
-                searchAdapter.toSearchResult(it, platform)
+                searchAdapter.toSearchResult(it, platform, role, account)
             }
         }
     }
@@ -46,13 +48,21 @@ class ActivityPubSearchEngine @Inject constructor(
         role: IdentityRole,
         query: String,
         maxId: String?,
-    ): Result<List<Status>> {
+    ): Result<List<StatusUiState>> {
+        val account = loggedAccountProvider.getAccount(role)
         return doSearch(role) { searchRepo, blogPlatform ->
             searchRepo.queryStatus(
                 query = query,
                 maxId = maxId,
             ).map { list ->
-                list.map { statusAdapter.toStatus(it, blogPlatform) }
+                list.map {
+                    statusAdapter.toStatusUiState(
+                        entity = it,
+                        platform = blogPlatform,
+                        role = role,
+                        loggedAccount = account,
+                    )
+                }
             }
         }
     }
@@ -85,10 +95,6 @@ class ActivityPubSearchEngine @Inject constructor(
                 list.map { accountAdapter.toAuthor(it) }
             }
         }
-    }
-
-    override fun searchAuthablePlatform(query: String): Flow<List<PlatformSnapshot>>? {
-        return platformRepo.searchAuthablePlatform(query)
     }
 
     private suspend fun <T> doSearch(
@@ -125,18 +131,18 @@ class ActivityPubSearchEngine @Inject constructor(
             searchUserSource(role, query).getOrNull()
                 ?.let { emit(listOf(SearchContentResult.Source(it))) }
             platformRepo.searchPlatformSnapshotFromLocal(query)
-                .map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                .map { SearchContentResult.SearchedPlatformSnapshot(it) }
                 .takeIf { it.isNotEmpty() }
                 ?.let { emit(it) }
             FormalBaseUrl.parse(query)
                 ?.let { platformRepo.getPlatform(it).getOrNull() }
-                ?.let { emit(listOf(SearchContentResult.ActivityPubPlatform(it))) }
+                ?.let { emit(listOf(SearchContentResult.Platform(it))) }
             platformRepo.searchPlatformFromServer(query)
                 .also {
                     Log.i("F_TEST") { it.toString() }
                 }
                 .getOrNull()
-                ?.map { SearchContentResult.ActivityPubPlatformSnapshot(it) }
+                ?.map { SearchContentResult.SearchedPlatformSnapshot(it) }
                 ?.takeIf { it.isNotEmpty() }
                 ?.let { emit(it) }
         }

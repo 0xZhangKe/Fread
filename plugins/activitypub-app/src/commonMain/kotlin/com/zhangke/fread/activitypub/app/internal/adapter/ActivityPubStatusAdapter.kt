@@ -2,36 +2,88 @@ package com.zhangke.fread.activitypub.app.internal.adapter
 
 import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusEntity
-import com.zhangke.framework.datetime.Instant
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.utils.WebFinger
-import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.createActivityPubProtocol
-import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusInteractionUseCase
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
+import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.blog.BlogEmbed
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.blog.PostingApplication
-import com.zhangke.fread.status.blog.PreviewCard
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
+import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.Mention
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
-import com.zhangke.fread.status.status.model.StatusInteraction
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubStatusAdapter @Inject constructor(
-    private val accountManager: ActivityPubAccountManager,
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
-    private val getStatusSupportInteraction: GetStatusInteractionUseCase,
     private val activityPubAccountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val metaAdapter: ActivityPubBlogMetaAdapter,
     private val pollAdapter: ActivityPubPollAdapter,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
 ) {
+
+    fun toStatusUiState(
+        status: Status,
+        role: IdentityRole,
+        logged: Boolean,
+        isOwner: Boolean,
+    ): StatusUiState {
+        return StatusUiState(
+            status = status,
+            role = role,
+            logged = logged,
+            isOwner = isOwner,
+            blogTranslationState = BlogTranslationUiState(
+                support = status.intrinsicBlog.supportTranslate,
+                translating = false,
+                showingTranslation = false,
+                blogTranslation = null,
+            ),
+        )
+    }
+
+    fun toStatusUiState(
+        status: Status,
+        role: IdentityRole,
+        loggedAccount: ActivityPubLoggedAccount?,
+    ): StatusUiState {
+        return toStatusUiState(
+            status = status,
+            role = role,
+            logged = loggedAccount != null,
+            isOwner = loggedAccount?.webFinger?.equalsDomain(status.intrinsicBlog.author.webFinger) == true,
+        )
+    }
+
+    suspend fun toStatusUiState(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
+        role: IdentityRole,
+        loggedAccount: ActivityPubLoggedAccount?,
+    ): StatusUiState {
+        val status = toStatus(entity, platform)
+        return toStatusUiState(status, role, loggedAccount)
+    }
+
+    suspend fun toStatusUiState(
+        entity: ActivityPubStatusEntity,
+        platform: BlogPlatform,
+        role: IdentityRole,
+        isOwner: Boolean,
+        logged: Boolean,
+    ): StatusUiState {
+        val status = toStatus(entity, platform)
+        return toStatusUiState(status, role, logged = logged, isOwner = isOwner)
+    }
 
     suspend fun toStatus(
         entity: ActivityPubStatusEntity,
@@ -48,49 +100,38 @@ class ActivityPubStatusAdapter @Inject constructor(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.NewBlog {
-        val (blog, supportActions) = getBlogAndInteractions(entity, platform)
-        return Status.NewBlog(blog, supportActions)
+        val blog = getBlogAndInteractions(entity, platform)
+        return Status.NewBlog(blog)
     }
 
     private suspend fun transformReblog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
     ): Status.Reblog {
-        val (blog, supportActions) = getBlogAndInteractions(entity.reblog!!, platform)
+        val blog = getBlogAndInteractions(entity.reblog!!, platform)
         return Status.Reblog(
             author = activityPubAccountEntityAdapter.toAuthor(entity.account),
             id = entity.id,
-            datetime = formatDatetimeToDate(entity.createdAt).toEpochMilliseconds(),
+            createAt = DateParser.parseOrCurrent(entity.createdAt),
             reblog = blog,
-            supportInteraction = supportActions,
         )
     }
 
     private suspend fun getBlogAndInteractions(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform
-    ): Pair<Blog, List<StatusInteraction>> {
-        val currentLoginAccount = accountManager.getAllLoggedAccount()
-            .firstOrNull { it.platform.baseUrl.equalsDomain(platform.baseUrl) }
+    ): Blog {
         val statusAuthor = activityPubAccountEntityAdapter.toAuthor(entity.account)
-        val isSelfStatus =
-            currentLoginAccount?.webFinger?.equalsDomain(statusAuthor.webFinger) == true
-        val blog = transformBlog(entity, platform, statusAuthor, isSelfStatus)
-        val supportActions = getStatusSupportInteraction(
-            entity = entity,
-            isSelfStatus = isSelfStatus,
-            logged = currentLoginAccount != null,
-        )
-        return blog to supportActions
+        return transformBlog(entity, platform, statusAuthor)
     }
 
     private suspend fun transformBlog(
         entity: ActivityPubStatusEntity,
         platform: BlogPlatform,
         author: BlogAuthor,
-        isSelfStatus: Boolean,
     ): Blog {
         val emojis = entity.emojis.map(emojiEntityAdapter::toEmoji)
+        val createAt = DateParser.parseOrCurrent(entity.createdAt)
         return Blog(
             id = entity.id,
             author = author,
@@ -99,24 +140,42 @@ class ActivityPubStatusAdapter @Inject constructor(
             content = entity.content.orEmpty(),
             sensitive = entity.sensitive,
             spoilerText = entity.spoilerText,
-            date = Instant(formatDatetimeToDate(entity.createdAt)),
+            createAt = createAt,
+            formattedCreateAt = createAt.formatDefault(),
             url = entity.url.ifNullOrEmpty { entity.uri },
+            link = entity.url.ifNullOrEmpty { entity.uri },
             language = entity.language,
-            forwardCount = entity.reblogsCount,
-            likeCount = entity.favouritesCount,
-            repliesCount = entity.repliesCount,
+            like = Blog.Like(
+                support = true,
+                liked = entity.favourited,
+                likedCount = entity.favouritesCount.toLong()
+            ),
+            forward = Blog.Forward(
+                support = true,
+                forward = entity.reblogged,
+                forwardCount = entity.reblogsCount.toLong(),
+            ),
+            bookmark = Blog.Bookmark(
+                support = true,
+            ),
+            reply = Blog.Reply(
+                support = true,
+                repliesCount = entity.repliesCount.toLong(),
+            ),
+            supportEdit = true,
+            quote = Blog.Quote(support = false),
             platform = platform,
             mediaList = entity.mediaAttachments?.map { it.toBlogMedia() } ?: emptyList(),
             poll = entity.poll?.let(pollAdapter::adapt),
             emojis = emojis,
-            pinned = entity.pinned ?: false,
-            isSelf = isSelfStatus,
+            pinned = entity.pinned == true,
+            facets = emptyList(),
             supportTranslate = true,
             mentions = entity.mentions.mapNotNull { it.toMention() },
             tags = entity.tags.map { it.toTag() },
             visibility = entity.visibility.convertActivityPubVisibility(),
-            card = entity.card?.toCard(),
-            editedAt = entity.editedAt?.let { formatDatetimeToDate(it) }?.let { Instant(it) },
+            embeds = entity.card?.toEmbed()?.let { listOf(it) } ?: emptyList(),
+            editedAt = entity.editedAt?.let { DateParser.parseOrCurrent(it) },
             application = entity.application?.toApplication(),
         )
     }
@@ -175,12 +234,12 @@ class ActivityPubStatusAdapter @Inject constructor(
         )
     }
 
-    private fun ActivityPubStatusEntity.PreviewCard.toCard(): PreviewCard {
-        return PreviewCard(
-            type = type.convertCardType(),
+    private fun ActivityPubStatusEntity.PreviewCard.toEmbed(): BlogEmbed {
+        return BlogEmbed.Link(
             url = url,
             title = title,
             description = description,
+            video = type == ActivityPubStatusEntity.PreviewCard.TYPE_VIDEO,
             authorName = authorName,
             authorUrl = authorUrl,
             providerName = providerName,
@@ -192,16 +251,6 @@ class ActivityPubStatusAdapter @Inject constructor(
             embedUrl = embedUrl,
             blurhash = blurhash,
         )
-    }
-
-    private fun String.convertCardType(): PreviewCard.CardType {
-        return when (this) {
-            ActivityPubStatusEntity.PreviewCard.TYPE_LINK -> PreviewCard.CardType.LINK
-            ActivityPubStatusEntity.PreviewCard.TYPE_PHOTO -> PreviewCard.CardType.PHOTO
-            ActivityPubStatusEntity.PreviewCard.TYPE_VIDEO -> PreviewCard.CardType.VIDEO
-            ActivityPubStatusEntity.PreviewCard.TYPE_RICH -> PreviewCard.CardType.RICH
-            else -> PreviewCard.CardType.PHOTO
-        }
     }
 
     private fun ActivityPubStatusEntity.Application.toApplication(): PostingApplication {

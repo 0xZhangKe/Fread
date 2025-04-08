@@ -1,9 +1,8 @@
 package com.zhangke.fread.rss
 
-import com.zhangke.framework.network.FormalBaseUrl
+import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.notRss
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -15,23 +14,16 @@ class RssAccountManager @Inject constructor() : IAccountManager {
         return emptyList()
     }
 
-    override suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>? {
-        if (platform.protocol.notRss) {
-            return null
-        }
-        return Result.success(true)
-    }
-
     override fun getAllAccountFlow(): Flow<List<LoggedAccount>>? {
         return null
     }
 
-    override fun triggerLaunchAuth(baseUrl: FormalBaseUrl) {
+    override suspend fun triggerLaunchAuth(platform: BlogPlatform) {
         // no-op
     }
 
-    override suspend fun refreshAllAccountInfo(): Result<Unit> {
-        return Result.success(Unit)
+    override suspend fun refreshAllAccountInfo(): List<AccountRefreshResult> {
+        return emptyList()
     }
 
     override suspend fun logout(uri: FormalUri): Boolean {

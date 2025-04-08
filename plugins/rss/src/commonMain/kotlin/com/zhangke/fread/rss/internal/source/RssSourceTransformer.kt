@@ -15,6 +15,7 @@ class RssSourceTransformer @Inject constructor() {
         return StatusSource(
             uri = uriInsight.rawUri,
             name = source.title,
+            handle = source.url,
             description = source.description.orEmpty(),
             thumbnail = source.thumbnail,
             protocol = createRssProtocol(),

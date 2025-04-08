@@ -1,134 +1,163 @@
 package com.zhangke.fread.feeds.pages.home.feeds
 
+import com.zhangke.framework.collections.updateItem
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.toTextStringOrNull
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
-import com.zhangke.fread.common.feeds.model.RefreshResult
-import com.zhangke.fread.common.feeds.repo.FeedsRepo
-import com.zhangke.fread.common.status.StatusConfigurationDefault
+import com.zhangke.framework.utils.LoadState
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
+import com.zhangke.fread.common.content.FreadContentRepo
+import com.zhangke.fread.common.mixed.MixedStatusRepo
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.feeds.FeedsViewModelController
-import com.zhangke.fread.commonbiz.shared.feeds.IFeedsViewModelController
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
+import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
+import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.feeds.pages.manager.edit.EditMixedContentScreen
 import com.zhangke.fread.status.StatusProvider
-import com.zhangke.fread.status.model.ContentConfig
-import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.status.model.Status
+import com.zhangke.fread.status.content.MixedContent
+import com.zhangke.fread.status.model.StatusUiState
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.drop
+import kotlinx.coroutines.flow.mapNotNull
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 
 class MixedContentSubViewModel(
-    private val contentConfigRepo: ContentConfigRepo,
-    private val feedsRepo: FeedsRepo,
+    private val contentRepo: FreadContentRepo,
+    private val mixedRepo: MixedStatusRepo,
     statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
     private val statusProvider: StatusProvider,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
-    private val configId: Long,
-) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
+    private val configId: String,
+) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
-    private val _configUiState = MutableStateFlow(MixedContentUiState(null))
-    val configUiState = _configUiState.asStateFlow()
+    private val _uiState = MutableStateFlow(MixedContentUiState.default())
+    val uiState = _uiState.asStateFlow()
 
-    private val config = StatusConfigurationDefault.config
-    private var mixedContent: ContentConfig.MixedContent? = null
+    private var refreshJob: Job? = null
+    private var loadMoreJob: Job? = null
 
     init {
-        initController(
+        initInteractiveHandler(
             coroutineScope = viewModelScope,
-            roleResolver = {
-                generateRole(it)
+            onInteractiveHandleResult = { interaction ->
+                when (interaction) {
+                    is InteractiveHandleResult.UpdateStatus -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                dataList = state.dataList
+                                    .updateItem(interaction.status) { interaction.status }
+                            )
+                        }
+                        mixedRepo.updateStatus(interaction.status)
+                    }
+
+                    is InteractiveHandleResult.DeleteStatus -> {
+                        _uiState.update { state ->
+                            state.copy(
+                                dataList = state.dataList
+                                    .filter { it.status.id != interaction.statusId }
+                            )
+                        }
+                        mixedRepo.deleteStatus(interaction.statusId)
+                    }
+
+                    is InteractiveHandleResult.UpdateFollowState -> {
+                        var updatedStatus: StatusUiState? = null
+                        _uiState.update { state ->
+                            state.copy(
+                                dataList = state.dataList.map { status ->
+                                    if (status.status.intrinsicBlog.author.uri == interaction.userUri) {
+                                        status.copy(following = interaction.following).also {
+                                            updatedStatus = it
+                                        }
+                                    } else {
+                                        status
+                                    }
+                                }
+                            )
+                        }
+                        updatedStatus?.let { mixedRepo.updateStatus(it) }
+                    }
+                }
             },
-            loadFirstPageLocalFeeds = ::loadFirstPageLocalFeeds,
-            loadNewFromServerFunction = ::loadNewFromServer,
-            loadMoreFunction = ::loadMore,
-            onStatusUpdate = ::onStatusUpdate,
         )
         launchInViewModel {
-            mixedContent = contentConfigRepo.getConfigById(configId) as? ContentConfig.MixedContent
-            _configUiState.update {
-                it.copy(config = mixedContent)
-            }
-            initFeeds(true)
-            startAutoFetchNewerFeeds()
-        }
-        launchInViewModel {
-            statusProvider.accountManager
-                .getAllAccountFlow()
-                .drop(1)
-                .collect {
-                    delay(200)
-                    initFeeds(false)
-                }
-        }
-        launchInViewModel {
-            feedsRepo.feedsInfoChangedFlow
-                .collect {
-                    delay(50)
-                    initFeeds(false)
-                }
-        }
-        launchInViewModel {
-            contentConfigRepo.getConfigFlow(configId)
-                .drop(1)
-                .collect {
-                    delay(50)
-                    mixedContent = it as? ContentConfig.MixedContent
-                    _configUiState.update { state ->
-                        state.copy(config = mixedContent)
+            _uiState.update { it.copy(initializing = true) }
+            val mixedContent = contentRepo.getContent(configId) as? MixedContent
+            if (mixedContent == null) {
+                _uiState.update { it.copy(pageError = IllegalStateException("Content($configId) does not exists!")) }
+            } else {
+                _uiState.update { it.copy(content = mixedContent) }
+                launch { mixedRepo.refresh(mixedContent) }
+                mixedRepo.getLocalStatusFlow(mixedContent)
+                    .collect { data ->
+                        _uiState.update { it.copy(dataList = data, initializing = false) }
                     }
-                    initFeeds(false)
+            }
+        }
+
+        launchInViewModel {
+            contentRepo.getContentFlow(configId)
+                .drop(1)
+                .mapNotNull { it as? MixedContent }
+                .collect { content ->
+                    delay(50)
+                    _uiState.update { it.copy(content = content) }
+                    mixedRepo.refresh(content)
                 }
         }
     }
 
     fun onContentTitleClick() {
-        val mixedContent = mixedContent ?: return
+        val mixedContent = uiState.value.content ?: return
         launchInViewModel {
             mutableOpenScreenFlow.emit(EditMixedContentScreen(mixedContent.id))
         }
     }
 
-    private suspend fun loadFirstPageLocalFeeds(): Result<List<Status>> {
-        if (mixedContent == null) return Result.success(emptyList())
-        return feedsRepo.getLocalFirstPageStatus(
-            sourceUriList = mixedContent!!.sourceUriList,
-            limit = config.loadFromLocalLimit,
-        ).let { Result.success(it) }
+    fun onRefresh() {
+        val content = uiState.value.content ?: return
+        if (refreshJob?.isActive == true || loadMoreJob?.isActive == true) return
+        refreshJob?.cancel()
+        loadMoreJob?.cancel()
+        refreshJob = launchInViewModel {
+            _uiState.update { it.copy(refreshing = true) }
+            mixedRepo.refresh(content)
+                .onSuccess {
+                    _uiState.update { it.copy(refreshing = false) }
+                }.onFailure { t ->
+                    _uiState.update { it.copy(refreshing = false) }
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
+                }
+        }
     }
 
-    private suspend fun loadNewFromServer(): Result<RefreshResult> {
-        if (mixedContent == null) return Result.failure(Exception("mixedContent is null"))
-        return feedsRepo.refresh(
-            sourceUriList = mixedContent!!.sourceUriList,
-            limit = config.loadFromServerLimit,
-        )
-    }
-
-    private suspend fun loadMore(maxId: String): Result<List<Status>> {
-        if (mixedContent == null) return Result.failure(Exception("mixedContent is null"))
-        return feedsRepo.getStatus(
-            sourceUriList = mixedContent!!.sourceUriList,
-            limit = config.loadFromServerLimit,
-            maxId = maxId,
-        )
-    }
-
-    private suspend fun onStatusUpdate(status: Status) {
-        feedsRepo.updateStatus(status)
-    }
-
-    private fun generateRole(status: Status): IdentityRole {
-        return IdentityRole(status.triggerAuthor.uri, null)
+    fun onLoadMore() {
+        val content = uiState.value.content ?: return
+        if (refreshJob?.isActive == true || loadMoreJob?.isActive == true) return
+        refreshJob?.cancel()
+        loadMoreJob?.cancel()
+        loadMoreJob = launchInViewModel {
+            _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
+            mixedRepo.loadMoreStatus(content)
+                .onSuccess {
+                    _uiState.update { it.copy(loadMoreState = LoadState.Idle) }
+                }.onFailure { t ->
+                    _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
+                    mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
+                }
+        }
     }
 }

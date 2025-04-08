@@ -3,6 +3,7 @@ package com.zhangke.fread.status.search
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.PlatformSnapshot
 import com.zhangke.fread.status.source.StatusSource
 import com.zhangke.fread.status.status.model.Status
@@ -23,7 +24,7 @@ class SearchEngine(
         role: IdentityRole,
         query: String,
         maxId: String?
-    ): Result<List<Status>> {
+    ): Result<List<StatusUiState>> {
         return engineList.map { it.searchStatus(role, query, maxId) }.collect()
     }
 
@@ -41,14 +42,6 @@ class SearchEngine(
         offset: Int?
     ): Result<List<BlogAuthor>> {
         return engineList.map { it.searchAuthor(role, query, offset) }.collect()
-    }
-
-    fun searchAuthablePlatform(
-        query: String,
-    ): Flow<Pair<String, List<PlatformSnapshot>>> {
-        return engineList.mapNotNull { it.searchAuthablePlatform(query) }.merge().map {
-            query to it
-        }
     }
 
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>> {
@@ -73,7 +66,7 @@ interface ISearchEngine {
         role: IdentityRole,
         query: String,
         maxId: String?,
-    ): Result<List<Status>>
+    ): Result<List<StatusUiState>>
 
     suspend fun searchHashtag(
         role: IdentityRole,
@@ -86,10 +79,6 @@ interface ISearchEngine {
         query: String,
         offset: Int?,
     ): Result<List<BlogAuthor>>
-
-    fun searchAuthablePlatform(
-        query: String,
-    ): Flow<List<PlatformSnapshot>>?
 
     suspend fun searchSource(role: IdentityRole, query: String): Result<List<StatusSource>>
 

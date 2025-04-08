@@ -2,6 +2,7 @@ package com.zhangke.fread.di
 
 import com.seiko.imageloader.ImageLoader
 import com.zhangke.fread.activitypub.app.di.ActivityPubComponent
+import com.zhangke.fread.bluesky.BlueskyComponent
 import com.zhangke.fread.common.CommonComponent
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
@@ -27,7 +28,8 @@ interface HostingApplicationComponent : CommonComponent,
     NotificationsComponent,
     ProfileComponent,
     ActivityPubComponent,
-    RssComponent {
+    RssComponent,
+    BlueskyComponent {
 
     val imageLoader: ImageLoader
 

@@ -19,11 +19,11 @@ import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.framework.composable.LoadableLayout
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.composable.SearchToolbar
-import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.feeds.composable.StatusSourceNode
 import com.zhangke.fread.feeds.composable.StatusSourceUiState
 import com.zhangke.fread.feeds.search_feeds_title_hint
+import com.zhangke.fread.status.source.StatusSource
 import org.jetbrains.compose.resources.stringResource
 
 internal class SearchSourceForAddScreen : BaseScreen() {
@@ -34,6 +34,8 @@ internal class SearchSourceForAddScreen : BaseScreen() {
             "com.zhangke.fread.feeds.pages.manager.search.SearchSourceForAddScreen"
     }
 
+    var onSourceSelected: ((StatusSource) -> Unit)? = null
+
     override val key: ScreenKey
         get() = SCREEN_KEY
 
@@ -41,7 +43,6 @@ internal class SearchSourceForAddScreen : BaseScreen() {
     override fun Content() {
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
-        val resultNavigator = navigator.navigationResult
         val viewModel: SearchSourceForAddViewModel = getViewModel()
         val uiState by viewModel.uiState.collectAsState()
         SearchSourceForAdd(
@@ -50,7 +51,8 @@ internal class SearchSourceForAddScreen : BaseScreen() {
             onQueryChanged = viewModel::onQueryChanged,
             onSearchClick = viewModel::onSearchClick,
             onAddClick = {
-                resultNavigator.popWithResult(it.uri)
+                onSourceSelected?.invoke(it.source)
+                navigator.pop()
             },
         )
     }

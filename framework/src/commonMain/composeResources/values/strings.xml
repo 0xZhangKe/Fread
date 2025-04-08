@@ -17,11 +17,15 @@
 
     <string name="ok">Yes</string>
 
+    <string name="empty">This space is empty～</string>
+
     <string name="duration_selector_title">Set duration</string>
 
     <string name="retry">Try Again</string>
 
     <string name="load_more_error">Oops! Couldn\'t load.</string>
+
+    <string name="unknown_error">Unknown Error</string>
 
     <string name="image_saving">Saving…</string>
     <string name="image_save_success">Save successful</string>

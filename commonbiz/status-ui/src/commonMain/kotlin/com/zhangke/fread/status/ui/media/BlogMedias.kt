@@ -24,7 +24,7 @@ import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.utils.pxToDp
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.ui.image.BlogImageMedias
@@ -42,10 +42,11 @@ private var cachedContainerWidth: Dp? = null
 fun BlogMedias(
     modifier: Modifier,
     mediaList: List<BlogMedia>,
-    blogTranslationState: BlogTranslationUiState,
     indexInList: Int,
     sensitive: Boolean,
     onMediaClick: OnBlogMediaClick,
+    showAlt: Boolean = true,
+    blogTranslationState: BlogTranslationUiState? = null,
 ) {
     val density = LocalDensity.current
     var containerWidth: Dp? by remember {
@@ -74,6 +75,7 @@ fun BlogMedias(
                 indexInList = indexInList,
                 containerWidth = containerWidth!!,
                 onMediaClick = onMediaClick,
+                showAlt = showAlt,
             )
         }
         if (sensitive) {
@@ -115,10 +117,11 @@ fun BlogMedias(
 @Composable
 private fun BlogMediaContent(
     mediaList: List<BlogMedia>,
-    blogTranslationState: BlogTranslationUiState,
+    blogTranslationState: BlogTranslationUiState?,
     hideContent: Boolean,
     indexInList: Int,
     containerWidth: Dp,
+    showAlt: Boolean,
     onMediaClick: OnBlogMediaClick,
 ) {
     if (mediaList.firstOrNull()?.type == BlogMediaType.VIDEO) {
@@ -138,14 +141,16 @@ private fun BlogMediaContent(
             onMediaClick = {
                 onMediaClick(it.transformTranslatedEvent(blogTranslationState))
             },
+            showAlt = showAlt,
         )
     }
 }
 
 private fun BlogMediaClickEvent.transformTranslatedEvent(
-    blogTranslationState: BlogTranslationUiState,
+    blogTranslationState: BlogTranslationUiState?,
 ): BlogMediaClickEvent {
     val imageEvent = (this as? BlogMediaClickEvent.BlogImageClickEvent) ?: return this
+    if (blogTranslationState == null) return this
     if (!blogTranslationState.showingTranslation) return this
     val attachment = blogTranslationState.blogTranslation?.attachments ?: return this
     val mediaList = imageEvent.mediaList

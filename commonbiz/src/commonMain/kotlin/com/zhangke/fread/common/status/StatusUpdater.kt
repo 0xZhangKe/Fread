@@ -1,7 +1,7 @@
 package com.zhangke.fread.common.status
 
 import com.zhangke.fread.common.di.ApplicationScope
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.asSharedFlow

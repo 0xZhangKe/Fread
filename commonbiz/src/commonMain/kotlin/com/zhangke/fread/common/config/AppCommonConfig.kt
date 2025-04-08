@@ -18,5 +18,7 @@ object AppCommonConfig {
 
     const val TELEGRAM_GROUP = "https://t.me/+-SlbKcNbJSphNWI1"
 
-    const val DONATE_LINK = "https://ko-fi.com/zhangke"
+    const val DONATE_KO_FI_LINK = "https://ko-fi.com/zhangke"
+
+    const val DONATE_AF_DIAN_LINK = "https://afdian.com/a/_0cdc1"
 }

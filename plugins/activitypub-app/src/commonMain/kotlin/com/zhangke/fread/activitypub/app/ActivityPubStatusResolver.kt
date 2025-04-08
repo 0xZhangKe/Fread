@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapt
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTranslationEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
@@ -14,16 +15,18 @@ import com.zhangke.fread.activitypub.app.internal.usecase.status.GetUserStatusUs
 import com.zhangke.fread.activitypub.app.internal.usecase.status.StatusInteractiveUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.VotePollUseCase
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PagedData
+import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.IStatusResolver
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
-import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
 
@@ -39,59 +42,63 @@ class ActivityPubStatusResolver @Inject constructor(
     private val accountAdapter: ActivityPubAccountEntityAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
+    private val loggedAccountProvider: LoggedAccountProvider,
     private val translationAdapter: ActivityPubTranslationEntityAdapter,
 ) : IStatusResolver {
 
     override suspend fun getStatus(
         role: IdentityRole,
-        statusId: String,
+        blog: Blog,
         platform: BlogPlatform
-    ): Result<Status>? {
+    ): Result<StatusUiState>? {
         if (platform.protocol.notActivityPub) return null
         val statusRepo = clientManager.getClient(role).statusRepo
-        return statusRepo.getStatuses(statusId)
+        val loggedAccount = loggedAccountProvider.getAccount(role)
+        return statusRepo.getStatuses(blog.id)
             .mapCatching { entity ->
-                if (entity == null) throw RuntimeException("Can't find status(${statusId})")
-                activityPubStatusAdapter.toStatus(entity, platform)
+                if (entity == null) throw RuntimeException("Can't find status(${blog.id})")
+                activityPubStatusAdapter.toStatusUiState(
+                    entity = entity,
+                    platform = platform,
+                    role = role,
+                    loggedAccount = loggedAccount,
+                )
             }
     }
 
     override suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
         limit: Int,
-        minId: String?,
         maxId: String?,
-    ): Result<List<Status>>? {
-        val userInsights = userUriTransformer.parse(uri)
-        if (userInsights != null) {
-            return getUserStatus(
-                role = role,
-                userInsights = userInsights,
-                limit = limit,
-                minId = minId,
-                maxId = maxId,
-            )
+    ): Result<PagedData<StatusUiState>>? {
+        val userInsights = userUriTransformer.parse(uri) ?: return null
+        val role = IdentityRole(baseUrl = userInsights.baseUrl)
+        return getUserStatus(
+            role = role,
+            userInsights = userInsights,
+            limit = limit,
+            maxId = maxId,
+        ).map {
+            PagedData(it, it.lastOrNull()?.status?.id)
         }
-        return null
     }
 
     override suspend fun interactive(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction,
+        type: StatusActionType,
     ): Result<Status?>? {
         if (status.notThisPlatform()) return null
-        return statusInteractive(role, status, interaction)
+        return statusInteractive(role, status, type)
     }
 
     override suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>
     ): Result<Status>? {
-        if (status.notThisPlatform()) return null
-        return votePollUseCase(role, status, votedOption)
+        if (blog.platform.protocol.notActivityPub) return null
+        return votePollUseCase(role, blog, votedOption)
     }
 
     override suspend fun getStatusContext(
@@ -104,38 +111,6 @@ class ActivityPubStatusResolver @Inject constructor(
 
     private fun Status.notThisPlatform(): Boolean {
         return this.platform.protocol.notActivityPub
-    }
-
-    override suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>? {
-        return clientManager.getClient(role)
-            .accountRepo
-            .getSuggestions()
-            .map { list -> list.map { accountAdapter.toAuthor(it.account) } }
-    }
-
-    override suspend fun getHashtag(
-        role: IdentityRole,
-        limit: Int,
-        offset: Int,
-    ): Result<List<Hashtag>> {
-        return clientManager.getClient(role)
-            .instanceRepo
-            .getTrendsTags(limit = limit, offset = offset)
-            .map { list -> list.map { hashtagAdapter.adapt(it) } }
-    }
-
-    override suspend fun getPublicTimeline(
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?,
-    ): Result<List<Status>> {
-        val platformResult = platformRepo.getPlatform(role)
-        if (platformResult.isFailure) return Result.failure(platformResult.exceptionOrNull()!!)
-        val platform = platformResult.getOrThrow()
-        return clientManager.getClient(role)
-            .timelinesRepo
-            .publicTimelines(limit = limit, maxId = maxId)
-            .map { list -> list.map { activityPubStatusAdapter.toStatus(it, platform) } }
     }
 
     override suspend fun follow(role: IdentityRole, target: BlogAuthor): Result<Unit>? {

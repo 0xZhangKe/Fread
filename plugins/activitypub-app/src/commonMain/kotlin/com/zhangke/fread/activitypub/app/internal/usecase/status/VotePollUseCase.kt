@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.usecase.status
 
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPollAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
@@ -14,26 +15,18 @@ class VotePollUseCase @Inject constructor(
 
     suspend operator fun invoke(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status> {
         return clientManager.getClient(role)
             .statusRepo
             .votes(
-                id = status.intrinsicBlog.poll!!.id,
+                id = blog.poll!!.id,
                 choices = votedOption.map { it.index },
             )
             .map { pollAdapter.adapt(it) }
             .map { poll ->
-                when (status) {
-                    is Status.NewBlog -> {
-                        status.copy(blog = status.blog.copy(poll = poll))
-                    }
-
-                    is Status.Reblog -> {
-                        status.copy(reblog = status.reblog.copy(poll = poll))
-                    }
-                }
+                Status.NewBlog(blog.copy(poll = poll))
             }
     }
 }

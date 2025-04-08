@@ -2,7 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.user.timeline
 
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.utils.LoadState
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 
 data class UserTimelineUiState(
     val feeds: List<StatusUiState>,

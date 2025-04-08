@@ -11,12 +11,13 @@ import com.russhwolf.settings.datastore.DataStoreSettings
 import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.browser.OAuthHandler
+import com.zhangke.fread.common.db.ContentConfigDatabases
+import com.zhangke.fread.common.db.FreadContentDatabase
+import com.zhangke.fread.common.db.MixedStatusDatabases
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.startup.FeedsRepoModuleStartup
 import com.zhangke.fread.common.startup.LanguageModuleStartup
-import com.zhangke.fread.common.status.repo.db.ContentConfigDatabases
-import com.zhangke.fread.common.status.repo.db.StatusDatabase
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -39,20 +40,6 @@ actual interface CommonPlatformComponent {
 
     @ApplicationScope
     @Provides
-    fun provideStatusDatabases(
-        context: ApplicationContext,
-    ): StatusDatabase {
-        return Room.databaseBuilder(
-            context,
-            StatusDatabase::class.java,
-            StatusDatabase.DB_NAME,
-        ).addMigrations(
-            StatusDatabase.Status1to2Migration(),
-        ).build()
-    }
-
-    @ApplicationScope
-    @Provides
     fun provideContentConfigDatabases(
         context: ApplicationContext,
     ): ContentConfigDatabases {
@@ -60,6 +47,28 @@ actual interface CommonPlatformComponent {
             context,
             ContentConfigDatabases::class.java,
             ContentConfigDatabases.DB_NAME,
+        ).build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideFreadContentDatabases(
+        context: ApplicationContext,
+    ): FreadContentDatabase {
+        return Room.databaseBuilder(
+            context,
+            FreadContentDatabase::class.java,
+            FreadContentDatabase.DB_NAME,
+        ).build()
+    }
+
+    @ApplicationScope
+    @Provides
+    fun provideMixedStatusDatabases(context: ApplicationContext): MixedStatusDatabases {
+        return Room.databaseBuilder(
+            context,
+            MixedStatusDatabases::class.java,
+            MixedStatusDatabases.DB_NAME,
         ).build()
     }
 

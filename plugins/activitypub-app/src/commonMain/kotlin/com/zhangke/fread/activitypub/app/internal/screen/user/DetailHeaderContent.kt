@@ -1,40 +1,30 @@
 package com.zhangke.fread.activitypub.app.internal.screen.user
 
-import androidx.compose.foundation.Image
-import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.widthIn
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawWithContent
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.constraintlayout.compose.ConstraintLayout
 import androidx.constraintlayout.compose.Dimension
-import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.freadPlaceholder
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.detail_page_banner_background
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
+import com.zhangke.fread.status.ui.common.ProgressedAvatar
+import com.zhangke.fread.status.ui.common.ProgressedBanner
+import com.zhangke.fread.status.ui.common.RelationshipStateButton
+import com.zhangke.fread.status.ui.common.RelationshipUiState
 import com.zhangke.fread.status.ui.richtext.SelectableRichText
-import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun DetailHeaderContent(
@@ -59,14 +49,12 @@ fun DetailHeaderContent(
     onFollowAccountClick: (() -> Unit)? = null,
     onUnfollowAccountClick: (() -> Unit)? = null,
 ) {
-    val bannerHeight = 180.dp
-    val avatarSize = 80.dp
     ConstraintLayout(
         modifier = Modifier.fillMaxWidth(),
     ) {
         val (bannerRef, avatarRef, relationBtnRef, nameRef) = createRefs()
         val (acctRef, privateNoteRef, noteRef, followRef) = createRefs()
-        Banner(
+        ProgressedBanner(
             modifier = Modifier
                 .clickable { onBannerClick() }
                 .constrainAs(bannerRef) {
@@ -74,29 +62,22 @@ fun DetailHeaderContent(
                     start.linkTo(parent.start)
                     end.linkTo(parent.end)
                     width = Dimension.fillToConstraints
-                    height = Dimension.value(bannerHeight)
                 },
             url = banner,
         )
 
         // avatar
-        AutoSizeImage(
-            avatar.orEmpty(),
+        ProgressedAvatar(
             modifier = Modifier
-                .scale(1F - progress)
-                .clip(CircleShape)
-                .border(2.dp, Color.White, CircleShape)
-                .clickable { onAvatarClick() }
-                .freadPlaceholder(loading)
                 .constrainAs(avatarRef) {
                     start.linkTo(parent.start, 16.dp)
                     top.linkTo(bannerRef.bottom)
                     bottom.linkTo(bannerRef.bottom)
-                    width = Dimension.value(avatarSize)
-                    height = Dimension.value(avatarSize)
                 },
-            contentScale = ContentScale.Crop,
-            contentDescription = "avatar",
+            avatar = avatar,
+            progress = progress,
+            loading = loading,
+            onAvatarClick = onAvatarClick,
         )
 
         // relationship button
@@ -217,39 +198,5 @@ fun DetailHeaderContent(
         ) {
             followInfo()
         }
-    }
-}
-
-@Composable
-private fun Banner(
-    modifier: Modifier,
-    url: String?,
-) {
-    Box(modifier = modifier) {
-        Image(
-            modifier = Modifier.fillMaxSize(),
-            painter = painterResource(Res.drawable.detail_page_banner_background),
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-        )
-        val maskColor = MaterialTheme.colorScheme.inverseSurface
-        AutoSizeImage(
-            url.orEmpty(),
-            modifier = Modifier
-                .fillMaxSize()
-                .drawWithContent {
-                    drawContent()
-                    drawRect(
-                        brush = Brush.verticalGradient(
-                            colors = listOf(
-                                maskColor.copy(alpha = 0.3F),
-                                maskColor.copy(alpha = 0F),
-                            ),
-                        ),
-                    )
-                },
-            contentScale = ContentScale.Crop,
-            contentDescription = "banner",
-        )
     }
 }

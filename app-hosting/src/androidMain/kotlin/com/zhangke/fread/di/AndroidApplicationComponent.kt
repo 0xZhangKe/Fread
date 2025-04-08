@@ -14,7 +14,6 @@ import com.zhangke.fread.common.CommonComponentProvider
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.StorageHelper
-import com.zhangke.fread.status.StatusProvider
 import me.tatarka.inject.annotations.Component
 import me.tatarka.inject.annotations.Provides
 
@@ -24,8 +23,6 @@ import me.tatarka.inject.annotations.Provides
 abstract class AndroidApplicationComponent(
     @get:Provides val application: Application,
 ) : HostingApplicationComponent {
-
-    abstract val statusProvider: StatusProvider
 
     @Provides
     fun provideApplicationContext(): ApplicationContext {

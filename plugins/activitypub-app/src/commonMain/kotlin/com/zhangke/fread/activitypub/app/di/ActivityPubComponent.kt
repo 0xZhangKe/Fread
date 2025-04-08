@@ -1,21 +1,23 @@
 package com.zhangke.fread.activitypub.app.di
 
+import com.zhangke.framework.module.ModuleStartup
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.ActivityPubProvider
+import com.zhangke.fread.activitypub.app.ActivityPubStartup
 import com.zhangke.fread.activitypub.app.ActivityPubUrlInterceptor
-import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.add.AddActivityPubContentViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.content.timeline.ActivityPubTimelineContainerViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.filters.edit.EditFilterViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTrendsTagsViewModel
-import com.zhangke.fread.activitypub.app.internal.screen.notifications.ActivityPubNotificationsViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusViewModel
@@ -33,6 +35,7 @@ import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
 import com.zhangke.fread.status.IStatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.IntoSet
@@ -66,7 +69,7 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideEditContentConfigViewModel(creator: (Long) -> EditContentConfigViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideEditContentConfigViewModel(creator: (String) -> EditContentConfigViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return EditContentConfigViewModel::class to EditContentConfigViewModel.Factory { configId ->
             creator(configId)
         }
@@ -108,6 +111,12 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
+    fun provideExplorerContainerViewModel(creator: () -> ExplorerContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
+        return ExplorerContainerViewModel::class to creator
+    }
+
+    @IntoMap
+    @Provides
     fun provideServerAboutViewModel(creator: () -> ServerAboutViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return ServerAboutViewModel::class to creator
     }
@@ -124,12 +133,6 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
         return InstanceDetailViewModel::class to InstanceDetailViewModel.Factory { serverBaseUrl ->
             creator(serverBaseUrl)
         }
-    }
-
-    @IntoMap
-    @Provides
-    fun provideActivityPubNotificationsViewModel(creator: () -> ActivityPubNotificationsViewModel): Pair<ViewModelKey, ViewModelCreator> {
-        return ActivityPubNotificationsViewModel::class to creator
     }
 
     @IntoMap
@@ -186,5 +189,19 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
     @Provides
     fun provideUserDetailContainerViewModel(creator: () -> UserDetailContainerViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return UserDetailContainerViewModel::class to creator
+    }
+
+    @IntoMap
+    @Provides
+    fun provideAddContentViewModel(creator: (BlogPlatform) -> AddActivityPubContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return AddActivityPubContentViewModel::class to AddActivityPubContentViewModel.Factory { role ->
+            creator(role)
+        }
+    }
+
+    @IntoSet
+    @Provides
+    fun bindActivityPubStartup(module: ActivityPubStartup): ModuleStartup {
+        return module
     }
 }

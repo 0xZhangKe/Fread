@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.LoadableState
 import com.zhangke.framework.utils.ContentProviderFile
@@ -7,6 +8,8 @@ import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.GroupedCustomEmojiCell
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.StatusVisibility
 import kotlin.time.Duration
 
@@ -14,33 +17,26 @@ data class PostStatusUiState(
     val account: ActivityPubLoggedAccount,
     val availableAccountList: List<ActivityPubLoggedAccount>,
     val accountChangeable: Boolean,
-    val content: String,
-    val initialContent: String?,
+    val content: TextFieldValue,
     val attachment: PostStatusAttachment?,
     val visibility: StatusVisibility,
     val visibilityChangeable: Boolean,
     val sensitive: Boolean,
-    val warningContent: String,
-    val replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+    val warningContent: TextFieldValue,
+    val replyToBlog: Blog?,
     val emojiList: List<GroupedCustomEmojiCell>,
     val language: Locale,
     val rules: PostBlogRules,
+    val publishing: Boolean,
     val mentionState: LoadableState<List<ActivityPubAccountEntity>>,
 ) {
 
-    val allowedSelectCount: Int
-        get() {
-            val imageList =
-                attachment?.asImageOrNull?.imageList ?: return rules.maxMediaCount
-            return (rules.maxMediaCount - imageList.size).coerceAtLeast(0)
-        }
-
-    val allowedInputCount: Int get() = rules.maxCharacters - content.length
+    val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
 
     fun hasInputtedData(): Boolean {
-        if (content.isNotEmpty()) return true
+        if (content.text.isNotEmpty()) return true
         if (attachment != null) return true
-        if (sensitive && warningContent.isNotEmpty()) return true
+        if (sensitive && warningContent.text.isNotEmpty()) return true
         return false
     }
 
@@ -49,11 +45,11 @@ data class PostStatusUiState(
         fun default(
             account: ActivityPubLoggedAccount,
             allLoggedAccount: List<ActivityPubLoggedAccount>,
-            initialContent: String?,
             visibility: StatusVisibility,
             replyToAuthorInfo: PostStatusScreenParams.ReplyStatusParams?,
+            content: TextFieldValue = TextFieldValue(""),
             sensitive: Boolean = false,
-            warningContent: String = "",
+            warningContent: TextFieldValue = TextFieldValue(""),
             language: Locale? = null,
             accountChangeable: Boolean = true,
             visibilityChangeable: Boolean = true,
@@ -62,18 +58,18 @@ data class PostStatusUiState(
             return PostStatusUiState(
                 account = account,
                 availableAccountList = allLoggedAccount,
-                content = "",
-                initialContent = initialContent,
+                content = content,
                 attachment = attachment,
                 visibility = visibility,
                 sensitive = sensitive,
-                replyToAuthorInfo = replyToAuthorInfo,
+                replyToBlog = replyToAuthorInfo?.replyingToBlog,
                 warningContent = warningContent,
                 emojiList = emptyList(),
                 language = language ?: getDefaultLocale(),
                 rules = PostBlogRules.default(),
                 accountChangeable = accountChangeable,
                 visibilityChangeable = visibilityChangeable,
+                publishing = false,
                 mentionState = LoadableState.idle(),
             )
         }
@@ -101,43 +97,38 @@ sealed interface PostStatusAttachment {
     val asPollAttachmentOrNull: Poll? get() = this as? Poll
 }
 
-sealed interface PostStatusMediaAttachmentFile {
+sealed interface PostStatusMediaAttachmentFile : PublishPostMedia {
 
     val previewUri: String
 
-    val description: String?
-
-    val fileId: String?
-        get() = when (this) {
-            is LocalFile -> {
-                uploadJob.uploadState.value.successIdOrNull
-            }
-
-            is RemoteFile -> {
-                id
-            }
-        }
-
     data class LocalFile(
         val file: ContentProviderFile,
-        override val description: String?,
-        val uploadJob: UploadMediaJob,
+        override val alt: String?,
     ) : PostStatusMediaAttachmentFile {
 
-        val isVideo: Boolean
+        override val isVideo: Boolean
             get() = file.isVideo
 
         override val previewUri: String
             get() = file.uri.toString()
+
+        override val uri: String
+            get() = file.uri.toString()
+
     }
 
     data class RemoteFile(
         val id: String,
         val url: String,
-        override val description: String?,
+        val originalAlt: String?,
+        override val alt: String?,
+        override val isVideo: Boolean,
     ) : PostStatusMediaAttachmentFile {
 
         override val previewUri: String
+            get() = url
+
+        override val uri: String
             get() = url
     }
 }
@@ -146,14 +137,21 @@ data class PostBlogRules(
     val maxCharacters: Int,
     val maxMediaCount: Int,
     val maxPollOptions: Int,
+    val altMaxCharacters: Int,
 ) {
     companion object {
 
-        fun default(): PostBlogRules {
+        fun default(
+            maxCharacters: Int = 1000,
+            maxMediaCount: Int = 4,
+            maxPollOptions: Int = 4,
+            altMaxCharacters: Int = 1500,
+        ): PostBlogRules {
             return PostBlogRules(
-                maxCharacters = 1000,
-                maxMediaCount = 4,
-                maxPollOptions = 4,
+                maxCharacters = maxCharacters,
+                maxMediaCount = maxMediaCount,
+                maxPollOptions = maxPollOptions,
+                altMaxCharacters = altMaxCharacters,
             )
         }
     }

@@ -280,7 +280,7 @@ private fun ContentConfigItem(
                 .alpha(0.7F)
                 .padding(2.dp),
             painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_drag_indicator),
-            contentDescription = "Edit Content Config",
+            contentDescription = "Drag for reorder Content Config",
         )
     }
 }

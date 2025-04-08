@@ -12,12 +12,11 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Explore
 import androidx.compose.material.pullrefresh.pullRefresh
 import androidx.compose.material.pullrefresh.rememberPullRefreshState
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -40,8 +39,11 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
+import com.zhangke.framework.composable.FreadDialog
+import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.composable.rememberSnackbarHostState
@@ -55,6 +57,7 @@ import com.zhangke.fread.commonbiz.Res
 import com.zhangke.fread.commonbiz.feeds
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.placeholder.TitleWithAvatarItemPlaceholder
+import com.zhangke.fread.statusui.status_ui_edit_content_delete_dialog_content
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
@@ -96,9 +99,14 @@ class BskyFollowingFeedsPage(
                 uiState.role?.let { navigator.push(ExplorerFeedsScreen(it)) }
             },
             onFeedsReorder = viewModel::onFeedsOrderChanged,
+            onDeleteClick = viewModel::onDeleteClick,
         )
 
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarMessage)
+
+        ConsumeFlow(viewModel.finishPageFlow) {
+            navigator.pop()
+        }
 
         LaunchedEffect(Unit) {
             viewModel.onPageResume()
@@ -113,9 +121,13 @@ class BskyFollowingFeedsPage(
         onBackClick: () -> Unit,
         onRefresh: () -> Unit,
         onFeedsClick: (BlueskyFeeds) -> Unit,
-        onExplorerClick: () -> Unit = {},
+        onExplorerClick: () -> Unit,
         onFeedsReorder: (Int, Int) -> Unit,
+        onDeleteClick: () -> Unit,
     ) {
+        var showDeleteConfirmDialog by remember {
+            mutableStateOf(false)
+        }
         Scaffold(
             modifier = Modifier.fillMaxSize(),
             topBar = {
@@ -123,14 +135,17 @@ class BskyFollowingFeedsPage(
                     title = stringResource(Res.string.feeds),
                     onBackClick = onBackClick,
                     actions = {
-                        IconButton(
+                        SimpleIconButton(
                             onClick = onExplorerClick,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Explore,
-                                contentDescription = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more),
-                            )
-                        }
+                            imageVector = Icons.Default.Explore,
+                            contentDescription = stringResource(com.zhangke.fread.bluesky.Res.string.bsky_feeds_explorer_more),
+                        )
+
+                        SimpleIconButton(
+                            onClick = { showDeleteConfirmDialog = true },
+                            imageVector = Icons.Default.Delete,
+                            contentDescription = "Delete content",
+                        )
                     }
                 )
             },
@@ -241,6 +256,19 @@ class BskyFollowingFeedsPage(
                     )
                 }
             }
+        }
+        if (showDeleteConfirmDialog) {
+            FreadDialog(
+                onDismissRequest = { showDeleteConfirmDialog = false },
+                contentText = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_delete_dialog_content),
+                onNegativeClick = {
+                    showDeleteConfirmDialog = false
+                },
+                onPositiveClick = {
+                    showDeleteConfirmDialog = false
+                    onDeleteClick()
+                },
+            )
         }
     }
 

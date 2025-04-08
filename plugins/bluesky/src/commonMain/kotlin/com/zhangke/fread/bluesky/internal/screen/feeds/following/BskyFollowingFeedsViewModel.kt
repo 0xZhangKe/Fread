@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.framework.utils.Log
 import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.model.BlueskyFeeds
 import com.zhangke.fread.bluesky.internal.usecase.GetFollowingFeedsUseCase
@@ -28,6 +28,7 @@ class BskyFollowingFeedsViewModel @Inject constructor(
     private val getFollowingFeeds: GetFollowingFeedsUseCase,
     private val contentRepo: FreadContentRepo,
     private val updatePinnedFeedsOrder: UpdatePinnedFeedsOrderUseCase,
+    private val accountManager: BlueskyLoggedAccountManager,
     @Assisted private val contentId: String?,
     @Assisted private val role: IdentityRole?,
 ) : ViewModel() {
@@ -45,6 +46,9 @@ class BskyFollowingFeedsViewModel @Inject constructor(
 
     private val _snackBarMessage = MutableSharedFlow<TextString>()
     val snackBarMessage = _snackBarMessage.asSharedFlow()
+
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow = _finishPageFlow.asSharedFlow()
 
     private var initJob: Job? = null
 
@@ -113,7 +117,6 @@ class BskyFollowingFeedsViewModel @Inject constructor(
             _uiState.update { it.copy(role = role) }
             getFollowingFeeds(role)
                 .onSuccess { list ->
-                    list.joinToString { it.id }.let { Log.d("F_TEST") { it } }
                     _uiState.update {
                         it.copy(
                             initializing = false,
@@ -162,6 +165,26 @@ class BskyFollowingFeedsViewModel @Inject constructor(
                 _uiState.update { it.copy(reordering = false) }
                 _snackBarMessage.emitTextMessageFromThrowable(it)
             }
+        }
+    }
+
+    fun onDeleteClick() {
+        launchInViewModel {
+            if (!contentId.isNullOrEmpty()) {
+                contentRepo.delete(contentId)
+            } else {
+                contentRepo.getAllContent().filterIsInstance<BlueskyContent>()
+                    .firstOrNull { it.baseUrl == role?.baseUrl }
+                    ?.let { contentRepo.delete(it.id) }
+            }
+            getRole().onSuccess { role ->
+                accountManager.getAllAccount().firstOrNull {
+                    it.fromPlatform.baseUrl == role.baseUrl
+                }?.let {
+                    accountManager.logout(it.uri)
+                }
+            }
+            _finishPageFlow.emit(Unit)
         }
     }
 

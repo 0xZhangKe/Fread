@@ -23,13 +23,27 @@
 
     <string name="donate">Donate</string>
 
-    <string name="status_provider_type_mixed">Mixed Content</string>
+    <string name="feeds">Feeds</string>
+
+    <string name="save">Save</string>
+
+    <string name="done">All done!</string>
+
     <string name="status_provider_type_activity_pub">Mastodon</string>
 
+    <string name="add_content_title">Add Content</string>
+    <string name="add_content_success_with_account">Added successfully. Current account:</string>
+    <string name="add_content_success_with_login_reminder">Added successfully. Log in now?</string>
 
-    <string name="date_time_ago">&#160;ago</string>
-    <string name="date_time_day">day</string>
-    <string name="date_time_hour">hour</string>
-    <string name="date_time_minute">min</string>
-    <string name="date_time_second">sec</string>
+    <string name="content_exist_tips">Oops! This content is already here.</string>
+    <string name="content_add_success">All set! Your content is good to go.</string>
+
+    <string name="add_feeds_page_empty_name_exist">This username is already taken.</string>
+
+    <string name="edit_profile_name_empty">Please enter your username</string>
+    <string name="edit_profile_label_name">Name</string>
+    <string name="edit_profile_label_note">Bio</string>
+    <string name="edit_profile_input_name_hint">Please enter your username</string>
+    <string name="edit_profile_input_note_hint">Please enter bio</string>
+    <string name="edit_profile_edit_confirm_message">Are you sure you want to exit editing?</string>
 </resources>

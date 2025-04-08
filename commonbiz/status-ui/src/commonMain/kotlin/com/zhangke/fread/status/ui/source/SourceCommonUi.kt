@@ -1,9 +1,11 @@
 package com.zhangke.fread.status.ui.source
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.size
@@ -16,7 +18,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
@@ -33,7 +37,7 @@ fun SourceCommonUi(
     title: String,
     subtitle: String?,
     description: String,
-    protocolName: String,
+    protocolLogo: ImageVector?,
     modifier: Modifier = Modifier,
     showDivider: Boolean = true,
 ) {
@@ -44,43 +48,47 @@ fun SourceCommonUi(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Spacer(Modifier.width(16.dp))
-            AutoSizeBox(
-                thumbnail,
+            Box(
                 modifier = Modifier.size(48.dp),
-            ) { action ->
-                Image(
-                    rememberImageActionPainter(action),
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .freadPlaceholder(
-                            action is ImageAction.Loading,
-                            shape = CircleShape,
-                        )
-                        .matchParentSize()
-                        .clip(CircleShape),
-                )
+            ) {
+                AutoSizeBox(
+                    url = thumbnail,
+                    modifier = Modifier.fillMaxSize(),
+                ) { action ->
+                    Image(
+                        modifier = Modifier
+                            .freadPlaceholder(
+                                visible = action !is ImageAction.Success,
+                                shape = CircleShape,
+                            )
+                            .matchParentSize()
+                            .clip(CircleShape),
+                        painter = rememberImageActionPainter(action),
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                    )
+                }
             }
             Spacer(modifier = Modifier.width(8.dp))
             Column {
                 Row(
-                    verticalAlignment = Alignment.Bottom,
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     Text(
                         text = title,
                         maxLines = 1,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleMedium,
+                        style = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
                     )
-                    Spacer(modifier = Modifier.width(6.dp))
-                    Text(
-                        text = protocolName,
-                        maxLines = 1,
-                        textAlign = TextAlign.Start,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.labelMedium,
-                    )
+                    if (protocolLogo != null) {
+                        Spacer(modifier = Modifier.width(4.dp))
+                        Image(
+                            modifier = Modifier.size(12.dp),
+                            imageVector = protocolLogo,
+                            contentDescription = null,
+                        )
+                    }
                 }
                 if (subtitle.isNullOrEmpty()) {
                     Spacer(modifier = Modifier.height(0.5.dp))
@@ -91,10 +99,11 @@ fun SourceCommonUi(
                         maxLines = 1,
                         textAlign = TextAlign.Start,
                         overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.bodyMedium,
+                        color = MaterialTheme.colorScheme.onSurfaceVariant,
+                        style = MaterialTheme.typography.labelSmall,
                     )
                 }
-                Spacer(Modifier.height(4.dp))
+                Spacer(Modifier.height(2.dp))
                 FreadRichText(
                     content = description,
                     maxLines = 3,
@@ -107,8 +116,8 @@ fun SourceCommonUi(
                         browserLauncher.launchWebTabInApp(it)
                     },
                 )
+                Spacer(modifier = Modifier.width(16.dp))
             }
-            Spacer(Modifier.width(16.dp))
         }
         Spacer(Modifier.height(8.dp))
         if (showDivider) {

@@ -44,26 +44,24 @@ import com.zhangke.framework.composable.PagerTab
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.screen.content.timeline.ActivityPubTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusTab
 import com.zhangke.fread.analytics.HomeTabElements
 import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
-import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
-import com.zhangke.fread.status.uri.encode
 import kotlinx.coroutines.launch
 
 internal class ActivityPubContentScreen(
-    private val configId: Long,
+    private val configId: String,
     private val isLatestContent: Boolean,
 ) : BasePagerTab() {
 
@@ -83,7 +81,7 @@ internal class ActivityPubContentScreen(
                 navigator.push(InstanceDetailScreen(PlatformDetailRoute.buildRoute(it.baseUrl)))
             },
             onPostBlogClick = {
-                navigator.push(PostStatusScreen(accountUri = it.uri.encode()))
+                navigator.push(PostStatusScreen(accountUri = it.uri))
             },
         )
     }
@@ -93,7 +91,7 @@ internal class ActivityPubContentScreen(
     private fun ActivityPubContentUi(
         screen: Screen,
         uiState: ActivityPubContentUiState,
-        onTitleClick: (ContentConfig.ActivityPubContent) -> Unit,
+        onTitleClick: (ActivityPubContent) -> Unit,
         onPostBlogClick: (ActivityPubLoggedAccount) -> Unit,
     ) {
         val (role, config, account, errorMessage) = uiState
@@ -162,7 +160,7 @@ internal class ActivityPubContentScreen(
                         TopBarWithTabLayout(
                             topBarContent = {
                                 ContentToolbar(
-                                    title = config.configName,
+                                    title = config.name,
                                     showNextIcon = !isLatestContent,
                                     onMenuClick = {
                                         reportClick(HomeTabElements.SHOW_DRAWER)
@@ -223,14 +221,14 @@ internal class ActivityPubContentScreen(
                                 tabList[pageIndex].TabContent(screen, null)
                             }
                         }
-                    } else if (errorMessage.isNullOrBlank().not()) {
+                    } else if (!errorMessage.isNullOrBlank()) {
                         Box(modifier = Modifier.fillMaxSize()) {
                             Text(
                                 modifier = Modifier
                                     .padding(start = 16.dp, top = 64.dp, end = 16.dp)
                                     .fillMaxWidth()
                                     .align(Alignment.TopCenter),
-                                text = errorMessage.orEmpty(),
+                                text = errorMessage,
                                 textAlign = TextAlign.Center,
                             )
                         }
@@ -242,46 +240,47 @@ internal class ActivityPubContentScreen(
 
     private fun createTabs(
         role: IdentityRole,
-        config: ContentConfig.ActivityPubContent,
+        config: ActivityPubContent,
     ): List<PagerTab> {
         return config
-            .showingTabList
+            .tabList
+            .filter { !it.hide }
             .sortedBy { it.order }
             .map { it.toPagerTab(role) }
     }
 
-    private fun ContentConfig.ActivityPubContent.ContentTab.toPagerTab(
+    private fun ActivityPubContent.ContentTab.toPagerTab(
         role: IdentityRole,
     ): PagerTab {
         return when (this) {
-            is ContentConfig.ActivityPubContent.ContentTab.HomeTimeline -> {
+            is ActivityPubContent.ContentTab.HomeTimeline -> {
                 ActivityPubTimelineTab(
                     role = role,
                     type = ActivityPubStatusSourceType.TIMELINE_HOME,
                 )
             }
 
-            is ContentConfig.ActivityPubContent.ContentTab.LocalTimeline -> {
+            is ActivityPubContent.ContentTab.LocalTimeline -> {
                 ActivityPubTimelineTab(
                     role = role,
                     type = ActivityPubStatusSourceType.TIMELINE_LOCAL,
                 )
             }
 
-            is ContentConfig.ActivityPubContent.ContentTab.PublicTimeline -> {
+            is ActivityPubContent.ContentTab.PublicTimeline -> {
                 ActivityPubTimelineTab(
                     role = role,
                     type = ActivityPubStatusSourceType.TIMELINE_PUBLIC,
                 )
             }
 
-            is ContentConfig.ActivityPubContent.ContentTab.Trending -> {
+            is ActivityPubContent.ContentTab.Trending -> {
                 TrendingStatusTab(
                     role = role,
                 )
             }
 
-            is ContentConfig.ActivityPubContent.ContentTab.ListTimeline -> {
+            is ActivityPubContent.ContentTab.ListTimeline -> {
                 ActivityPubTimelineTab(
                     role = role,
                     type = ActivityPubStatusSourceType.LIST,

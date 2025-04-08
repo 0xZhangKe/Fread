@@ -3,14 +3,13 @@ package com.zhangke.fread.profile.screen.home
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.framework.collections.container
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.analytics.reportInfo
 import com.zhangke.fread.common.routeScreen
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
 import com.zhangke.fread.status.StatusProvider
+import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.LoggedAccount
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.account.isAuthenticationFailure
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.Job
@@ -25,7 +24,6 @@ import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 
 class ProfileHomeViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
     private val statusProvider: StatusProvider,
 ) : ViewModel() {
 
@@ -42,29 +40,14 @@ class ProfileHomeViewModel @Inject constructor(
     }
 
     private fun observeAccountFlow() {
-        var latestAccountList: List<LoggedAccount>? = null
         viewModelScope.launch {
             statusProvider.accountManager
                 .getAllAccountFlow()
-                .map { list -> list.groupBy(LoggedAccount::platform).map { it.key to it.value } }
+                .map { list -> list.map { ProfileAccountUiState(it, true) } }
+                .map { list -> list.groupBy { it.account.platform }.map { it.key to it.value } }
                 .collect { list ->
-                    _uiState.update {
-                        it.copy(accountDataList = list)
-                    }
-                    val newAccountList = list.flatMap { it.second }
-                    if (latestAccountList != null && latestAccountList!!.size < newAccountList.size) {
-                        // has new added account
-                        val newAccount = newAccountList.firstOrNull { account ->
-                            !latestAccountList!!.container { it.uri == account.uri }
-                        }
-                        newAccount?.let {
-                            onNewAccountAdded(it)
-                        }
-                    }
-                    latestAccountList = newAccountList
-                    reportInfo {
-                        put("accountCount", newAccountList.size.toString())
-                    }
+                    _uiState.update { it.copy(accountDataList = list) }
+                    reportInfo { put("accountCount", list.size.toString()) }
                 }
         }
     }
@@ -72,16 +55,24 @@ class ProfileHomeViewModel @Inject constructor(
     fun refreshAccountInfo() {
         if (refreshAccountJob?.isActive == true) return
         refreshAccountJob = launchInViewModel {
-            statusProvider.accountManager.refreshAllAccountInfo()
+            val refreshedList = statusProvider.accountManager.refreshAllAccountInfo()
+            _uiState.update { state ->
+                state.copy(
+                    accountDataList = state.accountDataList.map { group ->
+                        group.first to group.second.map { account ->
+                            val result =
+                                refreshedList.firstOrNull { it.account.uri == account.account.uri }
+                            val logged = when (result) {
+                                is AccountRefreshResult.Success -> true
+                                is AccountRefreshResult.Failure -> !result.error.isAuthenticationFailure
+                                null -> account.logged
+                            }
+                            account.copy(logged = logged)
+                        }
+                    }
+                )
+            }
         }
-    }
-
-    private suspend fun onNewAccountAdded(account: LoggedAccount) {
-        val hasContentOfThisAccountPlatform = contentConfigRepo.getAllConfig()
-            .filterIsInstance<ContentConfig.ActivityPubContent>()
-            .firstOrNull { it.baseUrl == account.platform.baseUrl } != null
-        if (hasContentOfThisAccountPlatform) return
-        contentConfigRepo.insertActivityPubContent(account.platform)
     }
 
     fun onLogoutClick(account: LoggedAccount) {
@@ -93,8 +84,10 @@ class ProfileHomeViewModel @Inject constructor(
     fun onAccountClick(account: LoggedAccount) {
         launchInViewModel {
             statusProvider.screenProvider
-                .getUserDetailRoute(IdentityRole(account.uri, null), account.uri)
-                ?.let { _openPageFlow.emit(it) }
+                .getUserDetailScreen(
+                    role = IdentityRole(account.uri, account.platform.baseUrl),
+                    uri = account.uri,
+                )?.let { _openPageFlow.emit(it) }
         }
     }
 
@@ -102,11 +95,9 @@ class ProfileHomeViewModel @Inject constructor(
         launchInViewModel {
             statusProvider.screenProvider
                 .getFavouritedScreen(
-                    role = IdentityRole(account.uri, null),
+                    role = IdentityRole(account.uri, baseUrl = account.platform.baseUrl),
                     protocol = account.platform.protocol,
-                )
-                ?.let { KRouter.routeScreen(it) }
-                ?.let { _openPageFlow.emit(it) }
+                )?.let { _openPageFlow.emit(it) }
         }
     }
 
@@ -116,9 +107,7 @@ class ProfileHomeViewModel @Inject constructor(
                 .getBookmarkedScreen(
                     role = IdentityRole(account.uri, null),
                     protocol = account.platform.protocol,
-                )
-                ?.let { KRouter.routeScreen(it) }
-                ?.let { _openPageFlow.emit(it) }
+                )?.let { _openPageFlow.emit(it) }
         }
     }
 
@@ -131,6 +120,20 @@ class ProfileHomeViewModel @Inject constructor(
                 )
                 ?.let { KRouter.routeScreen(it) }
                 ?.let { _openPageFlow.emit(it) }
+        }
+    }
+
+    fun onPinnedFeedsClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.screenProvider
+                .getEditContentConfigScreenScreen(account)
+                ?.let { _openPageFlow.emit(it) }
+        }
+    }
+
+    fun onLoginClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.accountManager.triggerAuthBySource(account.platform)
         }
     }
 }

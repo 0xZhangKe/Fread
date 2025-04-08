@@ -28,8 +28,8 @@ class ActivityPubBlogMetaAdapter @Inject constructor() {
 
     private fun ActivityPubMediaMetaEntity.LayoutMeta.toImageLayoutMeta() =
         BlogMediaMeta.ImageMeta.LayoutMeta(
-            width = width,
-            height = height,
+            width = width?.toLong(),
+            height = height?.toLong(),
             size = size,
             aspect = aspect,
         )
@@ -45,8 +45,8 @@ class ActivityPubBlogMetaAdapter @Inject constructor() {
         duration = duration,
         fps = fps,
         size = size,
-        width = width,
-        height = height,
+        width = width?.toLong(),
+        height = height?.toLong(),
         aspect = aspect,
         audioEncode = audioEncode,
         audioBitrate = audioBitrate,
@@ -57,8 +57,8 @@ class ActivityPubBlogMetaAdapter @Inject constructor() {
 
     private fun ActivityPubMediaMetaEntity.LayoutMeta.toVideoLayoutMeta() =
         BlogMediaMeta.VideoMeta.LayoutMeta(
-            width = width,
-            height = height,
+            width = width?.toLong(),
+            height = height?.toLong(),
             size = size,
             frameRate = frameRate,
             duration = duration,
@@ -80,8 +80,8 @@ class ActivityPubBlogMetaAdapter @Inject constructor() {
 
     private fun ActivityPubMediaMetaEntity.LayoutMeta.toGifvLayoutMeta() =
         BlogMediaMeta.GifvMeta.LayoutMeta(
-            width = width,
-            height = height,
+            width = width?.toLong(),
+            height = height?.toLong(),
             size = size,
             frameRate = frameRate,
             duration = duration,

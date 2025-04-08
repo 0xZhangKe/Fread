@@ -3,10 +3,11 @@ package com.zhangke.fread.activitypub.app.internal.screen.hashtag
 import com.zhangke.framework.lifecycle.ContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
 import me.tatarka.inject.annotations.Inject
@@ -17,8 +18,9 @@ class HashtagTimelineContainerViewModel @Inject constructor(
     private val statusUpdater: StatusUpdater,
     private val statusAdapter: ActivityPubStatusAdapter,
     private val platformRepo: ActivityPubPlatformRepo,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    private val refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
+    private val refactorToNewStatus: RefactorToNewStatusUseCase,
+    private val loggedAccountProvider: LoggedAccountProvider,
 ) : ContainerViewModel<HashtagTimelineViewModel, HashtagTimelineContainerViewModel.Params>() {
 
     override fun createSubViewModel(params: Params): HashtagTimelineViewModel {
@@ -28,10 +30,11 @@ class HashtagTimelineContainerViewModel @Inject constructor(
             statusUpdater = statusUpdater,
             statusAdapter = statusAdapter,
             platformRepo = platformRepo,
-            buildStatusUiState = buildStatusUiState,
-            refactorToNewBlog = refactorToNewBlog,
+            statusUiStateAdapter = statusUiStateAdapter,
+            refactorToNewStatus = refactorToNewStatus,
             role = params.role,
             hashtag = params.tag,
+            loggedAccountProvider = loggedAccountProvider,
         )
     }
 

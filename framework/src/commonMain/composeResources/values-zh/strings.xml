@@ -9,7 +9,7 @@
 
     <string name="alert">提示</string>
 
-
+    <string name="empty">这里是空的～</string>
 
     <string name="duration_minute">分钟</string>
 
@@ -22,6 +22,8 @@
     <string name="duration_selector_title">设置时长</string>
 
     <string name="retry">重试</string>
+
+    <string name="unknown_error">未知错误</string>
 
     <string name="load_more_error">哦！加载失败</string>
 

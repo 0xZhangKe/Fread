@@ -5,7 +5,7 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.ext.formatDefault
+import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.rss.internal.repo.RssRepo
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow

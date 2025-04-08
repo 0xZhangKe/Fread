@@ -4,9 +4,10 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
+import com.zhangke.fread.activitypub.app.internal.usecase.UpdateActivityPubUserListUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -16,10 +17,11 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 
 class ActivityPubContentSubViewModel(
-    private val contentConfigRepo: ContentConfigRepo,
+    private val contentRepo: FreadContentRepo,
     private val getUserCreatedList: GetUserCreatedListUseCase,
     private val accountManager: ActivityPubAccountManager,
-    val configId: Long,
+    private val updateActivityPubUserList: UpdateActivityPubUserListUseCase,
+    val contentId: String,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(ActivityPubContentUiState.DEFAULT)
@@ -31,23 +33,21 @@ class ActivityPubContentSubViewModel(
 
     init {
         launchInViewModel {
-            contentConfigRepo.getConfigFlowById(configId)
-                .map { it as? ContentConfig.ActivityPubContent }
+            contentRepo.getContentFlow(contentId)
+                .distinctUntilChanged()
+                .map { it as? ActivityPubContent }
                 .collect { contentConfig ->
                     if (contentConfig != null) {
                         val role = IdentityRole(accountUri = null, baseUrl = contentConfig.baseUrl)
                         _uiState.update {
-                            it.copy(
-                                role = role,
-                                config = contentConfig,
-                            )
+                            it.copy(role = role, config = contentConfig)
                         }
                         startObserveAccount(contentConfig.baseUrl)
                         updateUserCreateList()
                     } else {
                         _uiState.update {
                             it.copy(
-                                errorMessage = "Cant find validate config by id: $configId"
+                                errorMessage = "Cant find validate config by id: $contentId"
                             )
                         }
                     }
@@ -79,15 +79,15 @@ class ActivityPubContentSubViewModel(
                 .map { list ->
                     list.map {
                         // 此处的 order 并不会使用，repo 内部会重新计算，因此次数放一个较大的值填充即可。
-                        ContentConfig.ActivityPubContent.ContentTab.ListTimeline(
+                        ActivityPubContent.ContentTab.ListTimeline(
                             listId = it.id,
                             name = it.title,
                             order = 1000,
                         )
                     }
                 }
-                .onSuccess {
-                    contentConfigRepo.updateActivityPubUserList(configId, it)
+                .onSuccess { list ->
+                    _uiState.value.config?.let { updateActivityPubUserList(it, list) }
                 }
         }
     }

@@ -29,6 +29,8 @@ kotlin {
 
                 implementation(compose.components.resources)
 
+                implementation(libs.arrow.core)
+
                 implementation(libs.androidx.annotation)
                 implementation(libs.bundles.androidx.datastore)
 
@@ -84,11 +86,13 @@ kotlin {
             }
         }
     }
+    configureCommonMainKsp()
 }
 
 dependencies {
     kspAll(libs.androidx.room.compiler)
     kspAll(libs.kotlinInject.compiler)
+    kspCommonMainMetadata(libs.krouter.collecting.compiler)
 }
 
 compose {

@@ -43,4 +43,8 @@
     <string name="profile_setting_check_for_update">检查更新</string>
     <string name="profile_setting_already_latest_version">当前版本已经是最新了</string>
     <string name="profile_setting_have_new_version">有新版本，点击更新。</string>
+
+    <string name="profile_donate_page_title">请选择捐赠方式</string>
+
+    <string name="profile_account_not_login">登陆已失效</string>
 </resources>

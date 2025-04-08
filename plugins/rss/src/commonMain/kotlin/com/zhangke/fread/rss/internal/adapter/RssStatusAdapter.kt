@@ -2,6 +2,7 @@ package com.zhangke.fread.rss.internal.adapter
 
 import com.zhangke.framework.datetime.Instant
 import com.zhangke.framework.ktx.ifNullOrEmpty
+import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.rss.internal.model.RssChannelItem
 import com.zhangke.fread.rss.internal.model.RssSource
 import com.zhangke.fread.rss.internal.platform.RssPlatformTransformer
@@ -28,30 +29,28 @@ class RssStatusAdapter @Inject constructor(
     ): Status {
         return Status.NewBlog(
             blog = rssItem.toBlog(uriInsight, source),
-            supportInteraction = listOf(
-                // TODO support book mark
-//                StatusInteraction.Bookmark(
-//                    bookmarkCount = null,
-//                    bookmarked = false,
-//                    enable = true,
-//                ),
-            ),
         )
     }
 
     private suspend fun RssChannelItem.toBlog(uriInsight: RssUriInsight, source: RssSource): Blog {
+        val createAt = Instant(this.pubDate)
         return Blog(
             id = this.id,
             author = blogAuthorAdapter.createAuthor(uriInsight, source),
             title = removeMeaninglessTitle(this.title),
             url = this.link.ifNullOrEmpty { uriInsight.url },
+            link = this.link.ifNullOrEmpty { uriInsight.url },
             content = this.content.ifNullOrEmpty { this.description.ifNullOrEmpty { this.link.orEmpty() } },
             description = this.description,
-            date = Instant(this.pubDate),
-            forwardCount = null,
-            likeCount = null,
-            repliesCount = null,
+            createAt = createAt,
+            formattedCreateAt = createAt.formatDefault(),
+            like = Blog.Like(false),
+            forward = Blog.Forward(false),
+            bookmark = Blog.Bookmark(false),
+            reply = Blog.Reply(false),
+            quote = Blog.Quote(false),
             sensitive = false,
+            supportEdit = false,
             spoilerText = "",
             platform = rssPlatformTransformer.create(uriInsight, source),
             mediaList = emptyList(),
@@ -59,9 +58,10 @@ class RssStatusAdapter @Inject constructor(
             emojis = emptyList(),
             mentions = emptyList(),
             tags = emptyList(),
+            facets = emptyList(),
             pinned = false,
             visibility = StatusVisibility.PUBLIC,
-            card = null,
+            embeds = emptyList(),
             language = null,
         )
     }

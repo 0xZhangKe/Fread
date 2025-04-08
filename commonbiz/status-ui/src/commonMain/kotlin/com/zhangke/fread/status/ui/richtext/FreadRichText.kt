@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.Placeholder
 import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.em
@@ -39,6 +40,8 @@ fun FreadRichText(
     overflow: TextOverflow = TextOverflow.Ellipsis,
     maxLines: Int = Int.MAX_VALUE,
     fontSizeSp: Float = 14F,
+    fontStyle: FontStyle? = null,
+    fontWeight: FontWeight? = null,
 ) {
     val richText = remember(content, mentions) {
         buildRichText(
@@ -54,6 +57,8 @@ fun FreadRichText(
         // layoutDirection = layoutDirection,
         overflow = overflow,
         maxLines = maxLines,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
         onMentionClick = onMentionClick,
         onHashtagClick = onHashtagClick,
         fontSizeSp = fontSizeSp,
@@ -66,6 +71,7 @@ fun FreadRichText(
     modifier: Modifier,
     richText: RichText,
     color: Color = Color.Unspecified,
+    fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
@@ -97,8 +103,9 @@ fun FreadRichText(
         modifier = modifier,
         color = color,
         overflow = overflow,
-        fontWeight = fontWeight,
         maxLines = maxLines,
+        fontStyle = fontStyle,
+        fontWeight = fontWeight,
         fontSize = fontSizeSp.sp,
         inlineContent = rememberInlineContent(richText.emojis),
     )
@@ -175,8 +182,8 @@ private fun rememberInlineContent(
     return remember(emojis) {
         val emojiContent = InlineTextContent(
             placeholder = Placeholder(
-                width = 1.em,
-                height = 1.em,
+                width = 1.5.em,
+                height = 1.5.em,
                 placeholderVerticalAlign = PlaceholderVerticalAlign.TextBottom,
             ),
         ) { shortCode ->

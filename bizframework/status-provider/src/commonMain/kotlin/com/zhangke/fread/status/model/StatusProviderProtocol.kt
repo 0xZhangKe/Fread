@@ -7,6 +7,7 @@ import kotlinx.serialization.Serializable
 
 const val ACTIVITY_PUB_PROTOCOL_ID = "ActivityPub"
 const val RSS_PROTOCOL_ID = "RSS"
+const val BLUESKY_PROTOCOL_ID = "Bluesky"
 
 @Serializable
 @Parcelize
@@ -26,3 +27,9 @@ val StatusProviderProtocol.isRss: Boolean
 
 val StatusProviderProtocol.notRss: Boolean
     get() = !isRss
+
+val StatusProviderProtocol.isBluesky: Boolean
+    get() = id == BLUESKY_PROTOCOL_ID
+
+val StatusProviderProtocol.notBluesky: Boolean
+    get() = !isBluesky

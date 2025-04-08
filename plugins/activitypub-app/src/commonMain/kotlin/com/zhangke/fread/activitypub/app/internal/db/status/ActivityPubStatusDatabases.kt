@@ -17,8 +17,8 @@ import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatus
 import com.zhangke.fread.activitypub.app.internal.db.converter.ActivityPubStatusSourceTypeConverter
 import com.zhangke.fread.activitypub.app.internal.db.converter.FormalBaseUrlConverter
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
-import com.zhangke.fread.common.status.repo.db.converts.IdentityRoleConverter
-import com.zhangke.fread.common.status.repo.db.converts.StatusConverter
+import com.zhangke.fread.common.db.converts.IdentityRoleConverter
+import com.zhangke.fread.common.db.converts.StatusConverter
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.status.model.Status
 
@@ -114,6 +114,13 @@ abstract class ActivityPubStatusDatabases : RoomDatabase() {
         override fun migrate(connection: SQLiteConnection) {
             connection.execSQL("DELETE FROM $TABLE_NAME")
         }
+    }
+}
+
+internal class ActivityPubStatus1to2Migration : Migration(1, 2) {
+
+    override fun migrate(connection: SQLiteConnection) {
+        connection.execSQL("DELETE FROM ${TABLE_NAME}")
     }
 }
 

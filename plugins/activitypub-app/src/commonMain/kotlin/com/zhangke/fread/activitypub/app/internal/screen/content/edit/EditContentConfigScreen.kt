@@ -14,14 +14,11 @@ import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Delete
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.Surface
@@ -41,24 +38,16 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
-import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.TextString
-import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_config_hidden_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_config_showing_list_title
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_delete_dialog_content
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_hint
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_label
-import com.zhangke.fread.activitypub.app.activity_pub_edit_content_name_title
 import com.zhangke.fread.activitypub.app.internal.composable.tabName
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.ContentConfig
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
+import com.zhangke.fread.status.ui.bar.EditContentTopBar
+import com.zhangke.fread.statusui.status_ui_edit_content_config_hidden_list_title
+import com.zhangke.fread.statusui.status_ui_edit_content_config_showing_list_title
 import kotlinx.coroutines.flow.Flow
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -66,9 +55,8 @@ import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(EditContentConfigRoute.ROUTE)
 class EditContentConfigScreen(
-    @RouteParam(EditContentConfigRoute.PARAM_CONTENT_ID) private val contentId: Long,
+    private val contentId: String,
 ) : BaseScreen() {
 
     companion object {
@@ -106,8 +94,8 @@ class EditContentConfigScreen(
         snackbarMessageFlow: Flow<TextString>,
         onBackClick: () -> Unit,
         onShowingTabMove: (from: Int, to: Int) -> Unit,
-        onShowingTabMoveDown: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
-        onHiddenTabMoveUp: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onShowingTabMoveDown: (ActivityPubContent.ContentTab) -> Unit,
+        onHiddenTabMoveUp: (ActivityPubContent.ContentTab) -> Unit,
         onEditNameClick: (String) -> Unit,
         onDeleteClick: () -> Unit,
     ) {
@@ -118,54 +106,12 @@ class EditContentConfigScreen(
                 SnackbarHost(snackbarHostState)
             },
             topBar = {
-                var showDeleteConfirmDialog by remember {
-                    mutableStateOf(false)
-                }
-                var showEditNameDialog by remember {
-                    mutableStateOf(false)
-                }
-                Toolbar(
-                    title = uiState?.config?.configName.orEmpty(),
+                EditContentTopBar(
+                    contentName = uiState?.content?.name.orEmpty(),
                     onBackClick = onBackClick,
-                    actions = {
-                        SimpleIconButton(
-                            onClick = {
-                                showEditNameDialog = true
-                            },
-                            imageVector = Icons.Default.Edit,
-                            contentDescription = "Edit content name",
-                        )
-                        SimpleIconButton(
-                            onClick = {
-                                showDeleteConfirmDialog = true
-                            },
-                            imageVector = Icons.Default.Delete,
-                            contentDescription = "Delete content",
-                        )
-                    }
+                    onNameEdit = onEditNameClick,
+                    onDeleteClick = onDeleteClick,
                 )
-                if (showDeleteConfirmDialog) {
-                    FreadDialog(
-                        onDismissRequest = { showDeleteConfirmDialog = false },
-                        contentText = stringResource(Res.string.activity_pub_edit_content_delete_dialog_content),
-                        onNegativeClick = {
-                            showDeleteConfirmDialog = false
-                        },
-                        onPositiveClick = {
-                            showDeleteConfirmDialog = false
-                            onDeleteClick()
-                        },
-                    )
-                }
-                if (showEditNameDialog && uiState != null) {
-                    EditContentNameDialog(
-                        name = uiState.config.name,
-                        onConfirmClick = onEditNameClick,
-                        onDismissRequest = {
-                            showEditNameDialog = false
-                        },
-                    )
-                }
             }
         ) { innerPaddings ->
             Column(
@@ -195,17 +141,17 @@ class EditContentConfigScreen(
     private fun ShowingUserList(
         uiState: EditContentConfigUiState,
         onShowingTabMove: (from: Int, to: Int) -> Unit,
-        onMoveDown: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onMoveDown: (ActivityPubContent.ContentTab) -> Unit,
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(Res.string.activity_pub_edit_content_config_showing_list_title),
+            text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_config_showing_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
-        var tabsInUi by remember(uiState.config.showingTabList) {
-            mutableStateOf(uiState.config.showingTabList)
+        var tabsInUi by remember(uiState.content.showingTabList) {
+            mutableStateOf(uiState.content.showingTabList)
         }
-        key(uiState.config.showingTabList) {
+        key(uiState.content.showingTabList) {
             val state = rememberReorderableLazyListState(
                 onMove = { from, to ->
                     if (tabsInUi.isEmpty()) return@rememberReorderableLazyListState
@@ -215,7 +161,7 @@ class EditContentConfigScreen(
                 },
                 onDragEnd = { startIndex, endIndex ->
                     onShowingTabMove(startIndex, endIndex)
-                }
+                },
             )
             LazyColumn(
                 state = state.listState,
@@ -270,14 +216,14 @@ class EditContentConfigScreen(
     @Composable
     private fun HiddenUserList(
         uiState: EditContentConfigUiState,
-        onMoveUp: (ContentConfig.ActivityPubContent.ContentTab) -> Unit,
+        onMoveUp: (ActivityPubContent.ContentTab) -> Unit,
     ) {
         Text(
             modifier = Modifier.padding(start = 16.dp, top = 16.dp),
-            text = stringResource(Res.string.activity_pub_edit_content_config_hidden_list_title),
+            text = stringResource(com.zhangke.fread.statusui.Res.string.status_ui_edit_content_config_hidden_list_title),
             style = MaterialTheme.typography.titleMedium,
         )
-        uiState.config.hiddenTabList.forEach { tabItem ->
+        uiState.content.hidingTabList.forEach { tabItem ->
             Surface(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -304,51 +250,12 @@ class EditContentConfigScreen(
         }
     }
 
-    @Composable
-    private fun EditContentNameDialog(
-        name: String,
-        onConfirmClick: (String) -> Unit,
-        onDismissRequest: () -> Unit,
-    ) {
-        var inputtingNote by remember { mutableStateOf(name) }
-        FreadDialog(
-            onDismissRequest = {
-                onDismissRequest()
-            },
-            title = stringResource(Res.string.activity_pub_edit_content_name_title),
-            content = {
-                OutlinedTextField(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(start = 16.dp, top = 8.dp, bottom = 8.dp, end = 16.dp),
-                    value = inputtingNote,
-                    onValueChange = {
-                        inputtingNote = it
-                    },
-                    label = {
-                        Text(
-                            text = stringResource(Res.string.activity_pub_edit_content_name_label)
-                        )
-                    },
-                    placeholder = {
-                        Text(
-                            text = stringResource(Res.string.activity_pub_edit_content_name_hint)
-                        )
-                    },
-                )
-            },
-            onNegativeClick = {
-                onDismissRequest()
-            },
-            onPositiveClick = {
-                if (inputtingNote.isNotEmpty()) {
-                    onDismissRequest()
-                    onConfirmClick(inputtingNote)
-                }
-            },
-        )
-    }
+    private val ActivityPubContent.showingTabList: List<ActivityPubContent.ContentTab>
+        get() = tabList.filter { !it.hide }
 
-    private val ContentConfig.ActivityPubContent.ContentTab.uiKey: String
+    private val ActivityPubContent.hidingTabList: List<ActivityPubContent.ContentTab>
+        get() = tabList.filter { it.hide }
+
+    private val ActivityPubContent.ContentTab.uiKey: String
         get() = "${this::class.simpleName}@${hashCode()}"
 }

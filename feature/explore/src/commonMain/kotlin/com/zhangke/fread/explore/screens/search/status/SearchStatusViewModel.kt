@@ -3,18 +3,18 @@ package com.zhangke.fread.explore.screens.search.status
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.zhangke.framework.controller.CommonLoadableUiState
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.model.StatusUiState
-import com.zhangke.fread.common.status.model.updateStatus
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.commonbiz.shared.utils.LoadableStatusController
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.model.updateStatus
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.update
 import me.tatarka.inject.annotations.Assisted
@@ -23,24 +23,21 @@ import me.tatarka.inject.annotations.Inject
 class SearchStatusViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,
-    buildStatusUiState: BuildStatusUiStateUseCase,
-    refactorToNewBlog: RefactorToNewBlogUseCase,
+    statusUiStateAdapter: StatusUiStateAdapter,
+    refactorToNewStatus: RefactorToNewStatusUseCase,
     @Assisted val role: IdentityRole,
 ) : ViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     fun interface Factory : ViewModelFactory {
         fun create(role: IdentityRole): SearchStatusViewModel
     }
 
-    private val loadStatusController = LoadableStatusController(
-        coroutineScope = viewModelScope,
-        buildStatusUiState = buildStatusUiState,
-    )
+    private val loadStatusController = LoadableStatusController(viewModelScope)
 
     val uiState: StateFlow<CommonLoadableUiState<StatusUiState>> get() = loadStatusController.uiState
 

@@ -1,8 +1,11 @@
 package com.zhangke.fread.feeds.di
 
+import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
+import com.zhangke.fread.commonbiz.shared.IFeedsScreenVisitor
+import com.zhangke.fread.feeds.FeedsScreenVisitor
 import com.zhangke.fread.feeds.pages.home.ContentHomeViewModel
 import com.zhangke.fread.feeds.pages.home.feeds.MixedContentViewModel
 import com.zhangke.fread.feeds.pages.manager.add.mixed.AddMixedFeedsViewModel
@@ -44,7 +47,7 @@ interface FeedsComponent {
 
     @IntoMap
     @Provides
-    fun provideEditMixedContentViewModel(creator: (Long) -> EditMixedContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
+    fun provideEditMixedContentViewModel(creator: (String) -> EditMixedContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return EditMixedContentViewModel::class to EditMixedContentViewModel.Factory { configId ->
             creator(configId)
         }
@@ -60,5 +63,11 @@ interface FeedsComponent {
     @Provides
     fun provideSearchSourceForAddViewModel(creator: () -> SearchSourceForAddViewModel): Pair<ViewModelKey, ViewModelCreator> {
         return SearchSourceForAddViewModel::class to creator
+    }
+
+    @Provides
+    @ApplicationScope
+    fun provideScreenVisitor(): IFeedsScreenVisitor {
+        return FeedsScreenVisitor()
     }
 }

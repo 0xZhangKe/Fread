@@ -1,12 +1,14 @@
 [versions]
-kotlin = "2.1.0"
-ksp = "2.1.0-1.0.28"
+kotlin = "2.1.10"
+ksp = "2.1.10-1.0.29"
 kotlin-coroutine = "1.8.1"
 kotlin-coroutine-test = "1.8.1"
-kotlinx-serialization = "1.7.3"
-kotlinx-datetime = "0.6.1"
+kotlinx-serialization = "1.8.0"
+kotlinx-datetime = "0.6.2"
 
-compose-multiplatform = "1.7.1"
+arrow = "1.2.4"
+
+compose-multiplatform = "1.8.0-alpha04"
 
 androidx-core = "1.13.1"
 androidx-fragment = "1.7.1"
@@ -20,7 +22,7 @@ androidx-room = "2.7.0-alpha08"
 androidx-datastore = "1.1.1"
 androidx-browser = "1.4.0"
 androidx-paging = "3.3.2"
-androidx-media3 = "1.0.0-rc01"
+androidx-media3 = "1.5.1"
 
 compose-runtime-tracing = "1.7.3"
 
@@ -38,11 +40,11 @@ auto_service = "1.0.1"
 
 voyager = "1.1.0-beta02"
 
-krouter = "1.1.0"
+krouter = "1.2.1"
 
 multiplatformsettings = "1.2.0"
 
-androidGradlePlugin = "8.7.2"
+androidGradlePlugin = "8.7.3"
 
 mockk = "1.13.8"
 junit = "4.13.2"
@@ -62,6 +64,8 @@ firebaseKmp = "2.1.0"
 goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
+bluesky = "0.3.2"
+
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
 androidx-activity = ["androidx.activity", "androidx.activity.ktx", "androidx.activity.compose"]
@@ -69,7 +73,7 @@ androidx-preference = ["androidx.preference", "androidx.preference.ktx"]
 androidx-datastore = ["androidx-datastore", "androidx.datastore-preferences"]
 androidx-collection = ["androidx.collection", "androidx.collection.ktx"]
 
-androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okhttp", "androidx.media3.ui", "androidx.media3.session", "androidx.media3.database", "androidx.media3.decoder", "androidx.media3.datasource", "androidx.media3.common"]
+androidx-media3 = ["androidx.media3.exoplayer", "androidx.media3.datasource.okhttp", "androidx.media3.ui", "androidx.media3.session", "androidx.media3.database", "androidx.media3.decoder", "androidx.media3.datasource", "androidx.media3.common", "androidx-media3-hls"]
 
 kotlin = ["kotlin.stdlib", "kotlin.coroutine.core", "kotlin.coroutine.android"]
 
@@ -119,6 +123,7 @@ androidx-media3-database = { group = "androidx.media3", name = "media3-database"
 androidx-media3-decoder = { group = "androidx.media3", name = "media3-decoder", version.ref = "androidx.media3"}
 androidx-media3-datasource = { group = "androidx.media3", name = "media3-datasource", version.ref = "androidx.media3"}
 androidx-media3-common = { group = "androidx.media3", name = "media3-common", version.ref = "androidx.media3"}
+androidx-media3-hls = { group = "androidx.media3", name = "media3-exoplayer-hls", version.ref = "androidx.media3"}
 
 accompanist-permissions = { group = "com.google.accompanist", name = "accompanist-permissions", version.ref = "accompanist" }
 
@@ -153,6 +158,8 @@ ktorfit-converters-response = { module = "de.jensklingenberg.ktorfit:ktorfit-con
 
 auto-service-annotations = { group = "com.google.auto.service", name = "auto-service-annotations", version.ref = "auto.service" }
 auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", version = "1.2.0" }
+
+arrow-core= {group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow"}
 
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
 
@@ -202,6 +209,8 @@ googlePlayReview = { group = "com.google.android.play", name = "review", version
 googlePlayReviewKtx = { group = "com.google.android.play", name = "review-ktx", version.ref = "goolgePlayReview" }
 
 composeRuntimeTracing = { group = "androidx.compose.runtime", name = "runtime-tracing", version.ref = "compose-runtime-tracing" }
+
+bluesky = { module = "sh.christian.ozone:bluesky", version.ref = "bluesky" }
 
 [plugins]
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }

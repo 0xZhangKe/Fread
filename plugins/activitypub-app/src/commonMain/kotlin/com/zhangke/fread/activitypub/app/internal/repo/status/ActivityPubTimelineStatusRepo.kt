@@ -50,7 +50,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
         statusList: List<Status>,
     ) {
         if (statusList.isEmpty()) return
-        val earlierStatus = statusList.minBy { it.datetime }
+        val earlierStatus = statusList.minBy { it.createAt.epochMillis }
         val localEarlierStatus = queryLocalStatus(
             role = role,
             type = type,
@@ -219,7 +219,7 @@ class ActivityPubTimelineStatusRepo @Inject constructor(
             id = this.id,
             role = role,
             type = type,
-            createTimestamp = this.datetime,
+            createTimestamp = this.createAt.epochMillis,
             listId = listId.orEmpty(),
             status = this,
         )

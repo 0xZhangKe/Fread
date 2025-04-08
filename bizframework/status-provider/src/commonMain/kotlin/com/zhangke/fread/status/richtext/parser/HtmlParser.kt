@@ -1,8 +1,6 @@
 package com.zhangke.fread.status.richtext.parser
 
 import androidx.compose.foundation.text.appendInlineContent
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.AnnotatedString
 import androidx.compose.ui.text.LinkAnnotation
 import androidx.compose.ui.text.SpanStyle
@@ -15,7 +13,10 @@ import com.fleeksoft.ksoup.nodes.Node
 import com.fleeksoft.ksoup.nodes.TextNode
 import com.fleeksoft.ksoup.select.NodeVisitor
 import com.zhangke.framework.architect.theme.primaryLight
+import com.zhangke.framework.network.SimpleUri
+import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.model.Emoji
+import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
@@ -25,12 +26,15 @@ object HtmlParser {
 
     fun parse(
         document: String,
-        emojis: List<Emoji>,
-        mentions: List<Mention>,
-        hashTags: List<HashtagInStatus>,
-        onLinkTargetClick: OnLinkTargetClick,
-        parsePossibleHashtag: Boolean = false,
+        emojis: List<Emoji> = emptyList(),
+        mentions: List<Mention> = emptyList(),
+        hashTags: List<HashtagInStatus> = emptyList(),
+        facets: List<Facet> = emptyList(),
+        onLinkTargetClick: OnLinkTargetClick = {},
     ): AnnotatedString {
+        if (facets.isNotEmpty()) {
+            return FacetHtmlParser().parse(document, facets, onLinkTargetClick)
+        }
         return buildAnnotatedString {
             Ksoup.parseBodyFragment(document)
                 .body()
@@ -41,7 +45,6 @@ object HtmlParser {
                         mentions = mentions,
                         hashTags = hashTags.map { it.copy(name = it.name.lowercase()) },
                         onLinkTargetClick = onLinkTargetClick,
-                        parsePossibleHashtag = parsePossibleHashtag,
                     )
                 )
         }
@@ -52,7 +55,6 @@ object HtmlParser {
         private val emojis: Map<String, Emoji>,
         private val mentions: List<Mention>,
         private val hashTags: List<HashtagInStatus>,
-        private val parsePossibleHashtag: Boolean,
         private val onLinkTargetClick: OnLinkTargetClick,
     ) : NodeVisitor {
 
@@ -80,15 +82,12 @@ object HtmlParser {
                         if (node.hasClass("hashtag")) {
                             val text = node.text()
                             if (text.startsWith("#")) {
-                                if (parsePossibleHashtag) {
-                                    linkTarget =
-                                        RichLinkTarget.MaybeHashtagTarget(text.substring(1))
+                                val hashtagText = text.substring(1).lowercase()
+                                val hashTag = hashTags.firstOrNull { it.name == hashtagText }
+                                linkTarget = if (hashTag != null) {
+                                    RichLinkTarget.HashtagTarget(hashTag)
                                 } else {
-                                    val hashtagText = text.substring(1).lowercase()
-                                    val hashTag = hashTags.firstOrNull { it.name == hashtagText }
-                                    if (hashTag != null) {
-                                        linkTarget = RichLinkTarget.HashtagTarget(hashTag)
-                                    }
+                                    RichLinkTarget.MaybeHashtagTarget(text.substring(1))
                                 }
                             } else {
                                 if (href.isNotEmpty()) {
@@ -161,6 +160,60 @@ object HtmlParser {
             }
         }
     }
+
+    fun parseToPlainText(document: String): String {
+        return buildString {
+            Ksoup.parseBodyFragment(document)
+                .body()
+                .traverse(ParseToPlainVisitor(this))
+        }
+    }
+
+    class ParseToPlainVisitor(private val builder: StringBuilder) : NodeVisitor {
+
+        private fun Element?.isMention(): Boolean {
+            if (this == null) return false
+            if (hasClass("hashtag")) return false
+            if (hasClass("mention")) return true
+            return parent().isMention()
+        }
+
+        private fun Element?.mentionHref(): String? {
+            if (this == null) return null
+            if (hasClass("mention")) {
+                return this.attr("href")
+            }
+            return parent().mentionHref()
+        }
+
+        override fun head(node: Node, depth: Int) {
+            if (node is Element) {
+                if (node.tagName() == "br") {
+                    builder.appendLine()
+                }
+                if (node.isMention()) {
+                    if (node.tagName() != "a") return
+                    val text = node.text()
+                    val href = node.mentionHref()
+                    builder.append(buildMentionText(text, href))
+                    return
+                }
+            }
+            if (node is TextNode) {
+                if ((node.parent() as? Element)?.isMention() == true) return
+                builder.append(node.text())
+            }
+        }
+
+        private fun buildMentionText(text: String, href: String?): String {
+            if (href.isNullOrBlank()) return text
+            val url = SimpleUri.parse(href) ?: return text
+            val textAsWebFinger = WebFinger.create(text)
+            if (textAsWebFinger != null) return text
+            return "$text@${url.host}"
+        }
+    }
+
 }
 
 private val EMOJI_CODE_PATTERN = (":(\\w+):").toRegex()

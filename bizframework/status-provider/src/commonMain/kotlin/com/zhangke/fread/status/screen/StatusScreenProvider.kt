@@ -6,56 +6,61 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusProviderProtocol
+import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 
 class StatusScreenProvider(
     private val providerList: List<IStatusScreenProvider>
 ) {
 
-    suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String? {
+    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return providerList.firstNotNullOfOrNull {
             it.getReplyBlogScreen(role, blog)
         }
     }
 
-    suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String? {
+    fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen? {
         return providerList.firstNotNullOfOrNull {
             it.getEditBlogScreen(role, blog)
         }
     }
 
-    fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab? {
+    fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getQuoteBlogScreen(role, blog) }
+    }
+
+    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab? {
         return providerList.firstNotNullOfOrNull {
-            it.getContentScreen(contentConfig, isLatestTab)
+            it.getContentScreen(content, isLatestTab)
         }
     }
 
-    fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String? {
+    fun getEditContentConfigScreenScreen(content: FreadContent): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getEditContentConfigScreenRoute(contentConfig)
+            it.getEditContentConfigScreenScreen(content)
         }
     }
 
-    fun getNotificationScreen(account: LoggedAccount): PagerTab? {
+    suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getNotificationScreen(account)
+            it.getEditContentConfigScreenScreen(account)
         }
     }
 
-    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen? {
-        return providerList.firstNotNullOfOrNull { it.getUserDetailRoute(role, uri) }
+    fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getUserDetailScreen(role, uri) }
     }
 
-    fun getUserDetailRoute(
+    fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol,
     ): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getUserDetailRoute(role, webFinger, protocol)
+            it.getUserDetailScreen(role, webFinger, protocol)
         }
     }
 
@@ -85,37 +90,33 @@ class StatusScreenProvider(
 
     fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getBlogFavouritedScreen(
-                role,
-                blogId,
-                protocol
-            )
+            it.getBlogFavouritedScreen(role, blog, protocol)
         }
     }
 
     fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String? {
-        return providerList.firstNotNullOfOrNull { it.getBlogBoostedScreen(role, blogId, protocol) }
+    ): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getBlogBoostedScreen(role, blog, protocol) }
     }
 
     fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull { it.getBookmarkedScreen(role, protocol) }
     }
 
     fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull { it.getFavouritedScreen(role, protocol) }
     }
 
@@ -132,23 +133,29 @@ class StatusScreenProvider(
     ): String? {
         return providerList.firstNotNullOfOrNull { it.getInstanceDetailScreen(protocol, baseUrl) }
     }
+
+    fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab?{
+        return providerList.firstNotNullOfOrNull { it.getExplorerTab(role, platform) }
+    }
 }
 
 interface IStatusScreenProvider {
 
-    suspend fun getReplyBlogScreen(role: IdentityRole, blog: Blog): String?
+    fun getReplyBlogScreen(role: IdentityRole, blog: Blog): Screen?
 
-    suspend fun getEditBlogScreen(role: IdentityRole, blog: Blog): String?
+    fun getEditBlogScreen(role: IdentityRole, blog: Blog): Screen?
 
-    fun getContentScreen(contentConfig: ContentConfig, isLatestTab: Boolean): PagerTab?
+    fun getQuoteBlogScreen(role: IdentityRole, blog: Blog): Screen?
 
-    fun getEditContentConfigScreenRoute(contentConfig: ContentConfig): String?
+    fun getContentScreen(content: FreadContent, isLatestTab: Boolean): PagerTab?
 
-    fun getNotificationScreen(account: LoggedAccount): PagerTab?
+    fun getEditContentConfigScreenScreen(content: FreadContent): Screen?
 
-    fun getUserDetailRoute(role: IdentityRole, uri: FormalUri): Screen?
+    suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen?
 
-    fun getUserDetailRoute(
+    fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen?
+
+    fun getUserDetailScreen(
         role: IdentityRole,
         webFinger: WebFinger,
         protocol: StatusProviderProtocol
@@ -168,25 +175,25 @@ interface IStatusScreenProvider {
 
     fun getBlogFavouritedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getBlogBoostedScreen(
         role: IdentityRole,
-        blogId: String,
+        blog: Blog,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getBookmarkedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getFavouritedScreen(
         role: IdentityRole,
         protocol: StatusProviderProtocol,
-    ): String?
+    ): Screen?
 
     fun getFollowedHashtagScreen(
         role: IdentityRole,
@@ -197,4 +204,6 @@ interface IStatusScreenProvider {
         protocol: StatusProviderProtocol,
         baseUrl: FormalBaseUrl,
     ): String?
+
+    fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab?
 }

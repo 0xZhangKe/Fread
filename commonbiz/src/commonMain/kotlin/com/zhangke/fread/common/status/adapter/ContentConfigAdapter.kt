@@ -1,6 +1,6 @@
 package com.zhangke.fread.common.status.adapter
 
-import com.zhangke.fread.common.status.repo.db.ContentConfigEntity
+import com.zhangke.fread.common.db.ContentConfigEntity
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentType
 import me.tatarka.inject.annotations.Inject
@@ -23,6 +23,14 @@ class ContentConfigAdapter @Inject constructor() {
                 baseUrl = entity.baseUrl!!,
                 showingTabList = entity.showingTabList,
                 hiddenTabList = entity.hiddenTabList,
+            )
+
+            ContentType.BLUESKY -> ContentConfig.BlueskyContent(
+                id = entity.id,
+                order = entity.order,
+                name = entity.name,
+                baseUrl = entity.baseUrl!!,
+                tabList = emptyList(),
             )
         }
     }
@@ -49,6 +57,17 @@ class ContentConfigAdapter @Inject constructor() {
                 baseUrl = config.baseUrl,
                 showingTabList = config.showingTabList,
                 hiddenTabList = config.hiddenTabList,
+            )
+
+            is ContentConfig.BlueskyContent -> ContentConfigEntity(
+                id = config.id,
+                name = config.name,
+                order = config.order,
+                type = ContentType.BLUESKY,
+                sourceUriList = null,
+                baseUrl = config.baseUrl,
+                showingTabList = emptyList(),
+                hiddenTabList = emptyList(),
             )
         }
     }

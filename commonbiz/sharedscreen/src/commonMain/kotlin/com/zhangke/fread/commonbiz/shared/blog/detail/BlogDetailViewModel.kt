@@ -3,11 +3,9 @@ package com.zhangke.fread.commonbiz.shared.blog.detail
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
-import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
@@ -23,7 +21,7 @@ class BlogDetailViewModel @Inject constructor(
     fun onUserInfoClick(author: BlogAuthor) {
         viewModelScope.launch {
             statusProvider.screenProvider
-                .getUserDetailRoute(IdentityRole.nonIdentityRole, author.uri)
+                .getUserDetailScreen(IdentityRole.nonIdentityRole, author.uri)
                 ?.let { _openScreenFlow.emit(it) }
         }
     }

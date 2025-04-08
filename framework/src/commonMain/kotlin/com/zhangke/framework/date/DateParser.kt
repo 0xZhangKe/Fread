@@ -1,9 +1,15 @@
 package com.zhangke.framework.date
 
 import com.zhangke.framework.utils.Rfc822InstantParser
+import kotlinx.datetime.Clock
 import kotlinx.datetime.Instant
 
 object DateParser {
+
+    fun parseOrCurrent(datetime: String): com.zhangke.framework.datetime.Instant {
+        val instant = parseAll(datetime) ?: Clock.System.now()
+        return com.zhangke.framework.datetime.Instant(instant)
+    }
 
     fun parseAll(datetime: String): Instant? {
         return parseISODate(datetime) ?: parseRfc822Date(datetime) ?: parseRfc3339Date(datetime)

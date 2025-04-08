@@ -4,7 +4,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.status.model.StatusUiState
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.ReblogTopLabel
@@ -30,20 +30,17 @@ fun StatusUi(
         BlogUi(
             modifier = Modifier,
             blog = rawStatus.intrinsicBlog,
+            isOwner = status.isOwner,
+            logged = status.logged,
             blogTranslationState = status.blogTranslationState,
             topLabel = getStatusTopLabel(status, style, composedStatusInteraction),
-            displayTime = status.displayTime,
-            specificTime = status.specificTime,
-            editedTime = status.editedTime,
-            bottomPanelInteractions = status.bottomInteractions,
-            moreInteractions = status.moreInteractions,
             indexInList = indexInList,
             threadsType = threadsType,
             detailModel = detailModel,
             following = status.following,
             style = if (detailModel) style else style.contentIndentStyle(),
-            onInteractive = {
-                composedStatusInteraction.onStatusInteractive(status, it)
+            onInteractive = { type, _ ->
+                composedStatusInteraction.onStatusInteractive(status, type)
             },
             showDivider = threadsType != ThreadsType.ANCESTOR && threadsType != ThreadsType.FIRST_ANCESTOR,
             onMediaClick = onMediaClick,
@@ -83,6 +80,9 @@ fun StatusUi(
             },
             onTranslateClick = {
                 composedStatusInteraction.onTranslateClick(status.role, status)
+            },
+            onBlogClick = {
+                composedStatusInteraction.onBlockClick(status.role, it)
             },
         )
     }

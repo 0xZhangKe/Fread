@@ -6,9 +6,11 @@ import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_edit_content_screen_config_not_found
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
+import com.zhangke.fread.activitypub.app.internal.usecase.content.ReorderActivityPubTabUseCase
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.status.repo.ContentConfigRepo
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.commonbiz.add_feeds_page_empty_name_exist
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
@@ -17,12 +19,13 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 class EditContentConfigViewModel @Inject constructor(
-    private val contentConfigRepo: ContentConfigRepo,
-    @Assisted private val configId: Long
+    private val contentRepo: FreadContentRepo,
+    private val reorderTab: ReorderActivityPubTabUseCase,
+    @Assisted private val contentId: String
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
-        fun create(configId: Long): EditContentConfigViewModel
+        fun create(contentId: String): EditContentConfigViewModel
     }
 
     private val _uiState = MutableStateFlow<EditContentConfigUiState?>(null)
@@ -34,55 +37,75 @@ class EditContentConfigViewModel @Inject constructor(
 
     init {
         launchInViewModel {
-            contentConfigRepo.getConfigFlowById(configId)
-                .collect { config ->
-                    if (config !is ContentConfig.ActivityPubContent) {
+            contentRepo.getContentFlow(contentId)
+                .collect { content ->
+                    if (content !is ActivityPubContent) {
                         _snackbarMessageFlow.emit(textOf(Res.string.activity_pub_edit_content_screen_config_not_found))
                         return@collect
                     }
-                    _uiState.value = EditContentConfigUiState(config)
+                    _uiState.value = EditContentConfigUiState(content)
                 }
         }
     }
 
     fun onShowingTabMove(from: Int, to: Int) {
         val uiState = _uiState.value ?: return
-        val config = uiState.config
-        val showingTabList = config.showingTabList
+        val content = uiState.content
         launchInViewModel {
-            contentConfigRepo.recorderActivityPubShowingTab(
-                configId = config.id,
-                fromTab = showingTabList[from],
-                toTab = showingTabList[to],
+            reorderTab(
+                content = content,
+                fromTab = content.tabList[from],
+                toTab = content.tabList[to],
             )
         }
     }
 
-    fun onShowingTabMoveDown(tab: ContentConfig.ActivityPubContent.ContentTab) {
+    fun onShowingTabMoveDown(tab: ActivityPubContent.ContentTab) {
         launchInViewModel {
-            contentConfigRepo.moveActivityPubTabToHide(configId, tab)
+            updateTabHideState(tab, true)
         }
     }
 
-    fun onHiddenTabMoveUp(tab: ContentConfig.ActivityPubContent.ContentTab) {
+    fun onHiddenTabMoveUp(tab: ActivityPubContent.ContentTab) {
         launchInViewModel {
-            contentConfigRepo.moveActivityPubTabToShowing(configId, tab)
+            updateTabHideState(tab, false)
         }
+    }
+
+    private suspend fun updateTabHideState(
+        tab: ActivityPubContent.ContentTab,
+        hide: Boolean,
+    ) {
+        val content = _uiState.value?.content ?: return
+        val newContent = content.copy(
+            tabList = content.tabList.map {
+                if (it == tab) {
+                    it.updateHide(hide)
+                } else {
+                    it
+                }
+            }
+        )
+        contentRepo.insertContent(newContent)
     }
 
     fun onDeleteClick() {
         launchInViewModel {
-            contentConfigRepo.deleteById(configId)
+            contentRepo.delete(contentId)
             _finishScreenFlow.emit(Unit)
         }
     }
 
     fun onEditNameClick(contentName: String) {
         launchInViewModel {
-            val newContent = contentConfigRepo.getConfigById(configId)
-                ?.let { it as? ContentConfig.ActivityPubContent }
+            if (contentRepo.checkNameExist(contentName)) {
+                _snackbarMessageFlow.emit(textOf(com.zhangke.fread.commonbiz.Res.string.add_feeds_page_empty_name_exist))
+                return@launchInViewModel
+            }
+            val newContent = contentRepo.getContent(contentId)
+                ?.let { it as? ActivityPubContent }
                 ?.copy(name = contentName) ?: return@launchInViewModel
-            contentConfigRepo.insert(newContent)
+            contentRepo.insertContent(newContent)
         }
     }
 }

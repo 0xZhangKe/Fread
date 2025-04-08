@@ -3,6 +3,8 @@
     <string name="shared_select_language_title">Select Language</string>
     <string name="shared_status_context_screen_title">Detail</string>
 
+    <string name="shared_alt_label">ALT</string>
+
     <string name="login_dialog_input_hint">Please input the server to log in to</string>
     <string name="login_dialog_title">Please select the server to log in to</string>
     <string name="login_dialog_input_tip">Input Server Host</string>
@@ -14,4 +16,57 @@
     <string name="profile_description">Fread supports adding multiple accounts. The added accounts can be used to post, like, forward, comment, etc. You can also view the list created by the added accounts.</string>
 
     <string name="list_content_empty_placeholder">No content available</string>
+    <string name="shared_notification_unknown_desc">Unknown Notification</string>
+
+    <string name="shared_notification_favourited_desc">favourited your post</string>
+    <string name="shared_notification_reblog_desc">reblog your post</string>
+    <string name="shared_notification_poll_desc">View previous voting results</string>
+    <string name="shared_notification_poll_count">%1$s votes · Closed</string>
+    <string name="shared_notification_follow_desc">followed you</string>
+    <string name="shared_notification_update_desc">edited a post</string>
+    <string name="shared_notification_follow_request">You have received a follow request</string>
+    <string name="shared_notification_new_status_desc">post a new blog</string>
+    <string name="shared_notification_severed_desc">has severed ties with you</string>
+    <string name="shared_notification_quote_desc">quoted your post</string>
+    <string name="shared_notification_reply_desc">Replied to your post</string>
+
+    <string name="shared_user_list_title_following">Following</string>
+    <string name="shared_user_list_title_followers">Followers</string>
+    <string name="shared_user_list_title_mutes">Muted Users</string>
+    <string name="shared_user_list_title_blocks">Blocked Users</string>
+    <string name="shared_user_list_title_likes">Favorited</string>
+    <string name="shared_user_list_title_reblog">Boosted</string>
+    <string name="shared_user_list_action_mute">Mute</string>
+    <string name="shared_user_list_action_block">Block</string>
+    <string name="shared_user_list_action_muted">Muted</string>
+    <string name="shared_user_list_action_blocked">Blocked</string>
+    <string name="shared_user_list_action_mute_dialog_message">Are you sure you want to mute this user?</string>
+    <string name="shared_user_list_action_block_dialog_message">Are you sure you want to block this user?</string>
+
+    <string name="shared_publish_blog_title">Post</string>
+    <string name="shared_publish_blog_text_hint">Type or paste what`s on your mind</string>
+    <string name="shared_publish_reply_input_hint">Replying to [[%1$s]]</string>
+
+    <string name="shared_publish_interaction_no_limit">Anybody can interact</string>
+    <string name="shared_publish_interaction_limited">Interaction limited</string>
+    <string name="shared_publish_interaction_dialog_title">Post interaction settings</string>
+    <string name="shared_publish_interaction_dialog_subtitle">Customize who can interact with this post.</string>
+    <string name="shared_publish_interaction_dialog_quote_title">Quote settings</string>
+    <string name="shared_publish_interaction_dialog_quote_allow">Allow quote posts</string>
+    <string name="shared_publish_interaction_dialog_reply_title">Reply settings</string>
+    <string name="shared_publish_interaction_dialog_reply_subtitle">Allow replies from:</string>
+    <string name="shared_publish_interaction_dialog_reply_all">Everybody</string>
+    <string name="shared_publish_interaction_dialog_reply_nobody">Nobody</string>
+    <string name="shared_publish_interaction_dialog_reply_combine_title">Or combine these options:</string>
+    <string name="shared_publish_interaction_dialog_mentioned">Mentioned users</string>
+    <string name="shared_publish_interaction_dialog_following">Users you follow</string>
+    <string name="shared_publish_interaction_dialog_follower">Your followers</string>
+    <string name="shared_publish_interaction_dialog_in_list">Users in "%1$s"</string>
+
+    <string name="shared_publish_media_alt_dialog_title">Add alt text</string>
+    <string name="shared_publish_media_alt_dialog_input_tip">Descriptive alt text</string>
+    <string name="shared_publish_media_alt_dialog_input_hint">Alt text</string>
+
+    <string name="shared_feeds_not_login_title">Oops! Your login info has expired. Please log back in to continue.</string>
+    <string name="shared_feeds_go_to_login">Sign in</string>
 </resources>

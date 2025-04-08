@@ -1,6 +1,7 @@
 plugins {
     id("fread.project.feature.kmp")
     id("com.google.devtools.ksp")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -29,6 +30,7 @@ kotlin {
                 implementation(libs.kotlinInject.runtime)
                 implementation(libs.auto.service.annotations)
                 implementation(libs.krouter.runtime)
+                implementation(libs.androidx.room)
             }
         }
         commonTest {
@@ -51,6 +53,7 @@ dependencies {
     kspAll(libs.auto.service.ksp)
     kspAll(libs.kotlinInject.compiler)
     kspCommonMainMetadata(libs.krouter.collecting.compiler)
+    kspAll(libs.androidx.room.compiler)
 }
 
 compose {
@@ -59,4 +62,8 @@ compose {
         packageOfResClass = "com.zhangke.fread.feature.notifications"
         generateResClass = always
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

@@ -8,27 +8,25 @@ import com.zhangke.fread.status.model.Emoji
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 
-class ActivityPubLoggedAccount(
+data class ActivityPubLoggedAccount(
     val userId: String,
-    uri: FormalUri,
-    webFinger: WebFinger,
-    platform: BlogPlatform,
     val baseUrl: FormalBaseUrl,
-    name: String,
-    description: String?,
-    avatar: String?,
     val url: String,
     val token: ActivityPubTokenEntity,
-    emojis: List<Emoji>,
-) : LoggedAccount(
-    uri = uri,
-    webFinger = webFinger,
-    platform = platform,
-    userName = name,
-    description = description,
-    avatar = avatar,
-    emojis = emojis,
-) {
+    override val uri: FormalUri,
+    override val webFinger: WebFinger,
+    override val platform: BlogPlatform,
+    override val userName: String,
+    override val description: String?,
+    override val avatar: String?,
+    override val emojis: List<Emoji>,
+) : LoggedAccount {
+
+    override val prettyHandle: String
+        get() {
+            val handle = webFinger.toString()
+            return if (handle.startsWith('@')) handle else "@$handle"
+        }
 
     override fun hashCode(): Int {
         var result = userId.hashCode()

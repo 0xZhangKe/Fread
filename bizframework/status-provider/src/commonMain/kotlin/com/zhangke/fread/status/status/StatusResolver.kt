@@ -2,14 +2,16 @@ package com.zhangke.fread.status.status
 
 import com.zhangke.framework.collections.mapFirst
 import com.zhangke.fread.status.author.BlogAuthor
+import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.blog.BlogTranslation
-import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.PagedData
+import com.zhangke.fread.status.model.StatusActionType
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
-import com.zhangke.fread.status.status.model.StatusInteraction
 import com.zhangke.fread.status.uri.FormalUri
 
 class StatusResolver(
@@ -18,25 +20,21 @@ class StatusResolver(
 
     suspend fun getStatus(
         role: IdentityRole,
-        statusId: String,
+        blog: Blog,
         platform: BlogPlatform,
-    ): Result<Status> {
-        return resolverList.mapFirst { it.getStatus(role, statusId, platform) }
+    ): Result<StatusUiState> {
+        return resolverList.mapFirst { it.getStatus(role, blog, platform) }
     }
 
     suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
         limit: Int,
-        minId: String? = null,
         maxId: String? = null,
-    ): Result<List<Status>> {
+    ): Result<PagedData<StatusUiState>> {
         for (statusResolver in resolverList) {
             val result = statusResolver.getStatusList(
-                role = role,
                 uri = uri,
                 limit = limit,
-                minId = minId,
                 maxId = maxId,
             )
             if (result != null) return result
@@ -47,9 +45,9 @@ class StatusResolver(
     suspend fun interactive(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction,
+        type: StatusActionType,
     ): Result<Status?> {
-        return resolverList.mapFirst { it.interactive(role, status, interaction) }
+        return resolverList.mapFirst { it.interactive(role, status, type) }
     }
 
     suspend fun follow(
@@ -68,34 +66,14 @@ class StatusResolver(
 
     suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status> {
-        return resolverList.mapFirst { it.votePoll(role, status, votedOption) }
+        return resolverList.mapFirst { it.votePoll(role, blog, votedOption) }
     }
 
     suspend fun getStatusContext(role: IdentityRole, status: Status): Result<StatusContext> {
         return resolverList.mapFirst { it.getStatusContext(role, status) }
-    }
-
-    suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>> {
-        return resolverList.mapFirst {
-            it.getSuggestionAccounts(role)
-        }
-    }
-
-    suspend fun getHashtag(role: IdentityRole, limit: Int, offset: Int): Result<List<Hashtag>> {
-        return resolverList.mapFirst { it.getHashtag(role, limit, offset) }
-    }
-
-    suspend fun getPublicTimeline(
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?,
-    ): Result<List<Status>> {
-        return resolverList.mapFirst {
-            it.getPublicTimeline(role, limit, maxId)
-        }
     }
 
     suspend fun isFollowing(
@@ -109,7 +87,7 @@ class StatusResolver(
         role: IdentityRole,
         status: Status,
         lan: String,
-    ): Result<BlogTranslation>{
+    ): Result<BlogTranslation> {
         return resolverList.firstNotNullOf { it.translate(role, status, lan) }
     }
 }
@@ -118,44 +96,32 @@ interface IStatusResolver {
 
     suspend fun getStatus(
         role: IdentityRole,
-        statusId: String,
+        blog: Blog,
         platform: BlogPlatform,
-    ): Result<Status>?
+    ): Result<StatusUiState>?
 
     /**
      * @return null if un-support
      */
     suspend fun getStatusList(
-        role: IdentityRole,
         uri: FormalUri,
         limit: Int,
-        minId: String?,
         maxId: String?
-    ): Result<List<Status>>?
+    ): Result<PagedData<StatusUiState>>?
 
     suspend fun interactive(
         role: IdentityRole,
         status: Status,
-        interaction: StatusInteraction,
+        type: StatusActionType,
     ): Result<Status?>?
 
     suspend fun votePoll(
         role: IdentityRole,
-        status: Status,
+        blog: Blog,
         votedOption: List<BlogPoll.Option>,
     ): Result<Status>?
 
     suspend fun getStatusContext(role: IdentityRole, status: Status): Result<StatusContext>?
-
-    suspend fun getSuggestionAccounts(role: IdentityRole): Result<List<BlogAuthor>>?
-
-    suspend fun getHashtag(role: IdentityRole, limit: Int, offset: Int): Result<List<Hashtag>>?
-
-    suspend fun getPublicTimeline(
-        role: IdentityRole,
-        limit: Int,
-        maxId: String?,
-    ): Result<List<Status>>?
 
     suspend fun follow(
         role: IdentityRole,

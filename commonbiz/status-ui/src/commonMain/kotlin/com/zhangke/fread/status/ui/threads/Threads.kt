@@ -4,23 +4,27 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.StrokeCap
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import com.zhangke.fread.status.ui.publish.PublishBlogStyle
 import com.zhangke.fread.status.ui.style.StatusStyle
 
 fun Modifier.threads(
     threadsType: ThreadsType,
     infoToTopSpacing: Float?,
-    style: StatusStyle,
+    threadStyle: StatusStyle.ThreadsStyle,
+    avatarSize: Dp,
+    containerStartPadding: Dp,
+    containerTopPadding: Dp,
 ): Modifier {
     if (threadsType == ThreadsType.NONE) return this
     infoToTopSpacing ?: return this
-    val threadsStyle = style.threadsStyle
-    val startMargin = style.containerStartPadding + style.infoLineStyle.avatarSize / 2
+    val startMargin = containerStartPadding + avatarSize / 2
     return this.drawBehind {
-        val topPaddingPx = style.containerTopPadding.toPx()
+        val topPaddingPx = containerTopPadding.toPx()
         val threadToAvatarSpacing = 2.dp.toPx()
-        val containerTopPaddingPx = style.containerTopPadding.toPx()
-        val strokeWidthPx = threadsStyle.lineWidth.toPx()
+        val containerTopPaddingPx = containerTopPadding.toPx()
+        val strokeWidthPx = threadStyle.lineWidth.toPx()
         val startMarginPx = startMargin.toPx()
         if (threadsType.drawTopOfAvatarLine) {
             val needDrawTwoLine = infoToTopSpacing > containerTopPaddingPx * 2
@@ -30,7 +34,7 @@ fun Modifier.threads(
                 topPaddingPx - threadToAvatarSpacing
             }
             drawLine(
-                color = threadsStyle.color,
+                color = threadStyle.color,
                 strokeWidth = strokeWidthPx,
                 start = Offset(x = startMarginPx, y = 0F),
                 end = Offset(
@@ -42,7 +46,7 @@ fun Modifier.threads(
             if (needDrawTwoLine) {
                 // draw avatar-top to top-label-bottom line
                 drawLine(
-                    color = threadsStyle.color,
+                    color = threadStyle.color,
                     strokeWidth = strokeWidthPx,
                     start = Offset(
                         x = startMarginPx,
@@ -55,9 +59,9 @@ fun Modifier.threads(
         }
         if (threadsType.drawBottomOfAvatarLine) {
             val lineOnBottomOfAvatarY =
-                infoToTopSpacing + style.infoLineStyle.avatarSize.toPx() + threadToAvatarSpacing
+                infoToTopSpacing + avatarSize.toPx() + threadToAvatarSpacing
             drawLine(
-                color = style.threadsStyle.color,
+                color = threadStyle.color,
                 start = Offset(x = startMarginPx, y = lineOnBottomOfAvatarY),
                 end = Offset(x = startMarginPx, y = size.height),
                 strokeWidth = strokeWidthPx,
@@ -65,6 +69,49 @@ fun Modifier.threads(
             )
         }
     }
+}
+
+fun Modifier.threads(
+    threadsType: ThreadsType,
+    infoToTopSpacing: Float?,
+    style: StatusStyle,
+): Modifier {
+    return this.threads(
+        threadsType = threadsType,
+        infoToTopSpacing = infoToTopSpacing,
+        avatarSize = style.infoLineStyle.avatarSize,
+        threadStyle = style.threadsStyle,
+        containerStartPadding = style.containerStartPadding,
+        containerTopPadding = style.containerTopPadding,
+    )
+}
+
+fun Modifier.blogBeReplyThreads(
+    threadsType: ThreadsType,
+    publishBlogStyle: PublishBlogStyle,
+): Modifier {
+    return this.threads(
+        threadsType = threadsType,
+        infoToTopSpacing = 0F,
+        threadStyle = publishBlogStyle.statusStyle.threadsStyle,
+        containerTopPadding = 0.dp,
+        containerStartPadding = publishBlogStyle.startPadding,
+        avatarSize = publishBlogStyle.statusStyle.infoLineStyle.avatarSize,
+    )
+}
+
+fun Modifier.blogInReplyingThreads(
+    threadsType: ThreadsType,
+    publishBlogStyle: PublishBlogStyle,
+): Modifier {
+    return this.threads(
+        threadsType = threadsType,
+        infoToTopSpacing = 0F,
+        threadStyle = publishBlogStyle.statusStyle.threadsStyle,
+        containerTopPadding = publishBlogStyle.topPadding,
+        containerStartPadding = publishBlogStyle.startPadding,
+        avatarSize = publishBlogStyle.statusStyle.infoLineStyle.avatarSize,
+    )
 }
 
 internal val ThreadsType.drawTopOfAvatarLine: Boolean

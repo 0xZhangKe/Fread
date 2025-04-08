@@ -2,14 +2,14 @@ package com.zhangke.fread.activitypub.app.internal.screen.user.about
 
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubCustomEmojiEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
-import com.zhangke.fread.activitypub.app.internal.usecase.FormatActivityPubDatetimeToDateUseCase
-import com.zhangke.fread.common.ext.formatDefault
+import com.zhangke.fread.common.utils.formatDefault
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -18,7 +18,6 @@ import kotlinx.coroutines.flow.asStateFlow
 
 class UserAboutViewModel(
     private val clientManager: ActivityPubClientManager,
-    private val formatDatetimeToDate: FormatActivityPubDatetimeToDateUseCase,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
     val role: IdentityRole,
@@ -54,7 +53,8 @@ class UserAboutViewModel(
                     e.message?.let { _messageFlow.emit(textOf(it)) }
                 }.onSuccess { entity ->
                     _uiState.value = _uiState.value.copy(
-                        joinedDatetime = formatDatetimeToDate(entity.createdAt).formatDefault(),
+                        joinedDatetime = DateParser.parseOrCurrent(entity.createdAt)
+                            .formatDefault(),
                         fieldList = entity.fields,
                         emojis = entity.emojis.map(emojiEntityAdapter::toEmoji),
                     )

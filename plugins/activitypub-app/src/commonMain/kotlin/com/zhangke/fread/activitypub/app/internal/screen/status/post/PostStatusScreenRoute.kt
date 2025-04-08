@@ -1,100 +1,56 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post
 
-import com.zhangke.framework.utils.UrlEncoder
-import com.zhangke.framework.utils.WebFinger
-import com.zhangke.framework.utils.encodeToUrlString
-import com.zhangke.fread.activitypub.app.internal.route.ActivityPubRoutes
+import cafe.adriel.voyager.core.screen.Screen
+import com.zhangke.framework.architect.json.fromJson
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.fread.status.blog.Blog
-import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.uri.FormalUri
-import com.zhangke.fread.status.uri.encode
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.serializer
 
 object PostStatusScreenRoute {
 
-    const val ROUTE = "${ActivityPubRoutes.ROOT}/status/post"
-
-    const val PARAM_ACCOUNT_URI = "accountUri"
-
-    const val PARAM_EDIT_BLOG = "editBlog"
-
-    const val PARAM_REPLY_TO_BLOG_ACCT = "replyToBlogAcct"
-    const val PARAM_REPLY_TO_BLOG_ID = "replyToBlogId"
-    const val PARAM_REPLY_TO_AUTHOR_NAME = "replyAuthorName"
-    const val PARAMS_REPLY_VISIBILITY = "replyVisibility"
-
-    fun buildRoute(accountUri: FormalUri): String {
-        return "$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}"
-    }
-
-    fun buildRoute(
+    fun buildReplyScreen(
         accountUri: FormalUri,
-        replyToBlogWebFinger: WebFinger,
-        replyToBlogId: String,
-        replyAuthorName: String,
-        replyVisibility: StatusVisibility = StatusVisibility.PUBLIC,
-    ): String {
-        val encodedName = replyAuthorName.encodeAsUri()
-        return buildString {
-            append("$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}")
-            append("&$PARAM_REPLY_TO_BLOG_ACCT=${replyToBlogWebFinger.encodeToUrlString()}")
-            append("&$PARAM_REPLY_TO_BLOG_ID=$replyToBlogId")
-            append("&$PARAM_REPLY_TO_AUTHOR_NAME=$encodedName")
-            append("&$PARAMS_REPLY_VISIBILITY=${replyVisibility.name}")
-        }
+        blog: Blog,
+    ): PostStatusScreen {
+        return PostStatusScreen(
+            accountUri = accountUri,
+            replyingBlogJsonString = globalJson.encodeToString(serializer(), blog)
+        )
     }
 
     fun buildEditBlogRoute(
         accountUri: FormalUri,
         blog: Blog,
-    ): String {
-        return buildString {
-            append("$ROUTE?$PARAM_ACCOUNT_URI=${accountUri.encode()}")
-            val blogString = Json.encodeToString(Blog.serializer(), blog)
-            append("&$PARAM_EDIT_BLOG=${blogString.encodeAsUri()}")
-        }
+    ): Screen {
+        return PostStatusScreen(
+            accountUri = accountUri,
+            editBlogJsonString = globalJson.encodeToString(serializer(), blog),
+        )
     }
 
     fun buildParams(
-        accountUri: String?,
+        accountUri: FormalUri,
         editBlog: String?,
-        replyBlogAcct: String?,
-        replyBlogId: String?,
-        replyAuthorName: String?,
-        replyVisibility: String?,
+        replyToBlogJsonString: String?,
     ): PostStatusScreenParams {
-        val formalAccountUri = accountUri?.decodeAsUri()?.let { FormalUri.from(it) }
-        val formalReplyToBlogAcct = replyBlogAcct?.let { WebFinger.decodeFromUrlString(it) }
-        val formalReplyVisibility = replyVisibility?.let(StatusVisibility::valueOf)
-        if (formalReplyToBlogAcct != null
-            && !replyAuthorName.isNullOrEmpty()
-            && !replyBlogId.isNullOrEmpty()
-        ) {
+        val replyToBlog = replyToBlogJsonString?.let {
+            runCatching { globalJson.fromJson<Blog>(it) }.getOrNull()
+        }
+        if (replyToBlog != null) {
             return PostStatusScreenParams.ReplyStatusParams(
-                accountUri = formalAccountUri,
-                replyToBlogWebFinger = formalReplyToBlogAcct,
-                replyToBlogId = replyBlogId,
-                replyAuthorName = replyAuthorName.decodeAsUri(),
-                replyVisibility = formalReplyVisibility ?: StatusVisibility.PUBLIC,
+                accountUri = accountUri,
+                replyingToBlog = replyToBlog,
             )
         }
         if (!editBlog.isNullOrEmpty()) {
-            val blog = editBlog.decodeAsUri().let {
-                runCatching { Json.decodeFromString<Blog>(it) }.getOrNull()
-            }
+            val blog = runCatching { Json.decodeFromString<Blog>(editBlog) }.getOrNull()
             if (blog != null) {
-                return PostStatusScreenParams.EditStatusParams(formalAccountUri, blog)
+                return PostStatusScreenParams.EditStatusParams(accountUri, blog)
             }
         }
-        return PostStatusScreenParams.PostStatusParams(formalAccountUri)
-    }
-
-    private fun String.encodeAsUri(): String {
-        return UrlEncoder.encode(this)
-    }
-
-    private fun String.decodeAsUri(): String {
-        return UrlEncoder.decode(this)
+        return PostStatusScreenParams.PostStatusParams(accountUri)
     }
 }
 
@@ -106,10 +62,7 @@ sealed interface PostStatusScreenParams {
 
     data class ReplyStatusParams(
         override val accountUri: FormalUri?,
-        val replyToBlogWebFinger: WebFinger,
-        val replyToBlogId: String,
-        val replyAuthorName: String,
-        val replyVisibility: StatusVisibility = StatusVisibility.PUBLIC,
+        val replyingToBlog: Blog,
     ) : PostStatusScreenParams
 
     data class EditStatusParams(

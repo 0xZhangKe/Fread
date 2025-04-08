@@ -8,6 +8,8 @@ import com.zhangke.framework.utils.WebFinger
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
@@ -16,14 +18,17 @@ import com.zhangke.fread.common.browser.BrowserInterceptor
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextScreen
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.status.model.Status
+import kotlinx.serialization.serializer
 import me.tatarka.inject.annotations.Inject
 
 class ActivityPubUrlInterceptor @Inject constructor(
     private val platformRepo: ActivityPubPlatformRepo,
     private val clientManager: ActivityPubClientManager,
     private val resolveBaseUrl: ResolveBaseUrlUseCase,
+    private val loggedAccountProvider: LoggedAccountProvider,
     private val accountEntityAdapter: ActivityPubAccountEntityAdapter,
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
 ) : BrowserInterceptor {
@@ -31,12 +36,13 @@ class ActivityPubUrlInterceptor @Inject constructor(
     override suspend fun intercept(role: IdentityRole, url: String): Boolean {
         val uri = SimpleUri.parse(url) ?: return false
         if (HttpScheme.validate(uri.scheme.orEmpty())) return false
-        val status = parseStatus(role, uri)
+        val account = loggedAccountProvider.getAccount(role)
+        val status = parseStatus(role, uri, account)
         if (status != null) {
             GlobalScreenNavigation.navigate(
                 StatusContextScreen(
                     role = role,
-                    serializedStatus = globalJson.encodeToString(Status.serializer(), status),
+                    serializedStatus = globalJson.encodeToString(serializer(), status),
                 )
             )
             return true
@@ -67,7 +73,11 @@ class ActivityPubUrlInterceptor @Inject constructor(
         return accountEntityAdapter.toWebFinger(account)
     }
 
-    private suspend fun parseStatus(role: IdentityRole, uri: SimpleUri): Status? {
+    private suspend fun parseStatus(
+        role: IdentityRole,
+        uri: SimpleUri,
+        account: ActivityPubLoggedAccount?,
+    ): StatusUiState? {
         if (uri.queries.isNotEmpty()) return null
         val baseUrl = FormalBaseUrl.parse(uri.toString()) ?: return null
         val path = uri.path.toString().removePrefix("/")
@@ -87,12 +97,26 @@ class ActivityPubUrlInterceptor @Inject constructor(
                 searchRepo.queryStatus(uri.toString(), resolve = true).getOrNull() ?: return null
             if (searchedStatusResult.size != 1) return null
             return searchedStatusResult.first()
-                .let { activityPubStatusAdapter.toStatus(it, platform) }
+                .let {
+                    activityPubStatusAdapter.toStatusUiState(
+                        entity = it,
+                        platform = platform,
+                        role = role,
+                        loggedAccount = account,
+                    )
+                }
         } else {
             // same platform
             return statusRepo.getStatuses(statusId)
                 .getOrNull()
-                ?.let { activityPubStatusAdapter.toStatus(it, platform) }
+                ?.let {
+                    activityPubStatusAdapter.toStatusUiState(
+                        entity = it,
+                        platform = platform,
+                        role = role,
+                        loggedAccount = account,
+                    )
+                }
         }
     }
 

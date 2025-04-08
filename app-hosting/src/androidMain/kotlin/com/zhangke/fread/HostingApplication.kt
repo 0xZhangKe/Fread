@@ -10,6 +10,7 @@ import com.zhangke.framework.utils.isDebugMode
 import com.zhangke.fread.di.AndroidApplicationComponent
 import com.zhangke.fread.di.ApplicationComponentProvider
 import com.zhangke.fread.di.create
+import com.zhangke.fread.common.commonComponentProvider
 
 abstract class HostingApplication : Application(),
     ApplicationComponentProvider,
@@ -23,6 +24,7 @@ abstract class HostingApplication : Application(),
         super.onCreate()
         initDebuggable(isDebugMode())
         initApplication(this)
+        commonComponentProvider = this
         initModuleStartups()
         TopActivityManager.init(this)
     }

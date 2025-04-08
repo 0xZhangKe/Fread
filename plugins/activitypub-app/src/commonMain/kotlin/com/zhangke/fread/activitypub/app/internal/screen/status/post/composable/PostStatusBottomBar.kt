@@ -4,7 +4,6 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -14,7 +13,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.ime
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -25,9 +23,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.EmojiEmotions
-import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.KeyboardArrowDown
-import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.Poll
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
@@ -41,8 +37,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
-import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.SimpleIconButton
@@ -50,10 +44,11 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.requireSuccessData
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.activitypub.app.internal.composable.PickVisualMediaLauncherContainer
+import com.zhangke.framework.utils.initLocale
+import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
-import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostBottomPanel
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_post_status_spoiler
@@ -71,158 +66,95 @@ internal fun PostStatusBottomBar(
     onMentionClick: (ActivityPubAccountEntity) -> Unit,
     onDeleteEmojiClick: () -> Unit,
 ) {
-    val bottomPaddingByIme = WindowInsets.ime
-        .asPaddingValues()
-        .calculateBottomPadding()
-    val modifier = if (bottomPaddingByIme > 0.dp) {
-        Modifier.padding(bottom = bottomPaddingByIme)
-    } else {
-        Modifier.navigationBarsPadding()
-    }
-    var showEmojiPicker by remember {
-        mutableStateOf(false)
-    }
-    Surface(modifier = modifier) {
-        Column(modifier = Modifier.fillMaxWidth()) {
-            BottomBarMentions(uiState, onMentionClick)
-            Row {
-                SelectedMediaIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onMediaSelected = onMediaSelected,
-                    allowedSelectCount = uiState.allowedSelectCount,
-                )
+    var showEmojiPicker by remember { mutableStateOf(false) }
+    PublishPostBottomPanel(
+        modifier = Modifier.fillMaxWidth(),
+        contentLength = uiState.content.text.length,
+        maxContentLimit = uiState.rules.maxCharacters,
+        mediaAvailableCount = uiState.rules.maxMediaCount,
+        onMediaSelected = onMediaSelected,
+        selectedLanguages = listOf(uiState.language.languageCode),
+        maxLanguageCount = 1,
+        onLanguageSelected = { onLanguageSelected(initLocale(it.first())) },
+        actions = {
+            SimpleIconButton(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 4.dp),
+                onClick = onPollClicked,
+                imageVector = Icons.Default.Poll,
+                contentDescription = "Add Poll",
+            )
+            if (uiState.emojiList.isNotEmpty()) {
                 SimpleIconButton(
                     modifier = Modifier
                         .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onClick = onPollClicked,
-                    imageVector = Icons.Default.Poll,
-                    contentDescription = "Add Poll",
-                )
-                if (uiState.emojiList.isNotEmpty()) {
-                    SimpleIconButton(
-                        modifier = Modifier
-                            .align(Alignment.CenterVertically)
-                            .padding(start = 16.dp),
-                        onClick = { showEmojiPicker = true },
-                        imageVector = Icons.Default.EmojiEmotions,
-                        contentDescription = "Pick Emoji",
-                    )
-                }
-                SimpleIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onClick = onSensitiveClick,
-                    painter = painterResource(Res.drawable.ic_post_status_spoiler),
-                    contentDescription = "Sensitive content",
-                )
-                SelectLanguageIconButton(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(start = 16.dp),
-                    onLanguageSelected = onLanguageSelected,
-                )
-                Spacer(modifier = Modifier.weight(1F))
-                Text(
-                    modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .padding(end = 16.dp),
-                    text = uiState.allowedInputCount.toString(),
+                        .padding(start = 4.dp),
+                    onClick = { showEmojiPicker = true },
+                    imageVector = Icons.Default.EmojiEmotions,
+                    contentDescription = "Pick Emoji",
                 )
             }
-            val bottomEmojiBarHeight = 48.dp
-            AnimatedVisibility(
-                visible = showEmojiPicker,
+            SimpleIconButton(
+                modifier = Modifier
+                    .align(Alignment.CenterVertically)
+                    .padding(start = 4.dp),
+                onClick = onSensitiveClick,
+                painter = painterResource(Res.drawable.ic_post_status_spoiler),
+                contentDescription = "Sensitive content",
+            )
+        },
+        floatingBar = { BottomBarMentions(uiState, onMentionClick) },
+    )
+
+    val bottomPaddingByIme = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    val bottomEmojiBarHeight = 48.dp
+    AnimatedVisibility(
+        visible = showEmojiPicker,
+        modifier = Modifier.padding(bottom = bottomPaddingByIme),
+    ) {
+        BackHandler(showEmojiPicker) {
+            showEmojiPicker = false
+        }
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(280.dp)
+        ) {
+            CustomEmojiPicker(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(start = 16.dp, end = 16.dp, bottom = bottomEmojiBarHeight),
+                emojiList = uiState.emojiList,
+                onEmojiPick = onEmojiPick,
+            )
+            Surface(
+                modifier = Modifier
+                    .height(bottomEmojiBarHeight)
+                    .align(Alignment.BottomCenter)
             ) {
-                BackHandler(showEmojiPicker) {
-                    showEmojiPicker = false
-                }
                 Box(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .height(280.dp)
+                    modifier = Modifier.fillMaxSize(),
                 ) {
-                    CustomEmojiPicker(
+                    SimpleIconButton(
                         modifier = Modifier
-                            .fillMaxSize()
-                            .padding(start = 16.dp, end = 16.dp, bottom = bottomEmojiBarHeight),
-                        emojiList = uiState.emojiList,
-                        onEmojiPick = onEmojiPick,
+                            .padding(start = 16.dp)
+                            .align(Alignment.CenterStart),
+                        onClick = { showEmojiPicker = false },
+                        imageVector = Icons.Default.KeyboardArrowDown,
+                        contentDescription = "Hide keyboard",
                     )
-                    Surface(
+                    SimpleIconButton(
                         modifier = Modifier
-                            .height(bottomEmojiBarHeight)
-                            .align(Alignment.BottomCenter)
-                    ) {
-                        Box(
-                            modifier = Modifier.fillMaxSize(),
-                        ) {
-                            SimpleIconButton(
-                                modifier = Modifier
-                                    .padding(start = 16.dp)
-                                    .align(Alignment.CenterStart),
-                                onClick = { showEmojiPicker = false },
-                                imageVector = Icons.Default.KeyboardArrowDown,
-                                contentDescription = "Hide keyboard",
-                            )
-                            SimpleIconButton(
-                                modifier = Modifier
-                                    .padding(end = 16.dp)
-                                    .align(Alignment.CenterEnd),
-                                onClick = onDeleteEmojiClick,
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "Delete emoji",
-                            )
-                        }
-                    }
+                            .padding(end = 16.dp)
+                            .align(Alignment.CenterEnd),
+                        onClick = onDeleteEmojiClick,
+                        imageVector = Icons.Default.Close,
+                        contentDescription = "Delete emoji",
+                    )
                 }
             }
         }
-    }
-}
-
-@Composable
-private fun SelectedMediaIconButton(
-    modifier: Modifier,
-    allowedSelectCount: Int,
-    onMediaSelected: (List<PlatformUri>) -> Unit,
-) {
-    PickVisualMediaLauncherContainer(
-        onResult = onMediaSelected,
-        maxItems = allowedSelectCount,
-    ) {
-        SimpleIconButton(
-            modifier = modifier,
-            onClick = {
-                launchMedia()
-            },
-            imageVector = Icons.Default.Image,
-            contentDescription = "Add Image",
-        )
-    }
-}
-
-@Composable
-private fun SelectLanguageIconButton(
-    modifier: Modifier,
-    onLanguageSelected: (Locale) -> Unit,
-) {
-    val navigator = LocalNavigator.currentOrThrow
-    Box(modifier = modifier) {
-        SimpleIconButton(
-            onClick = {
-                navigator.push(
-                    SelectLanguageScreen(
-                        onSelected = onLanguageSelected
-                    )
-                )
-            },
-            imageVector = Icons.Default.Language,
-            contentDescription = "Choose language",
-        )
     }
 }
 

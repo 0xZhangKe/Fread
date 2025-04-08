@@ -23,6 +23,8 @@ kotlin {
 
                 implementation(libs.androidx.annotation)
 
+                implementation(libs.arrow.core)
+
                 implementation(libs.jetbrains.lifecycle.runtime)
                 implementation(libs.jetbrains.lifecycle.viewmodel)
 

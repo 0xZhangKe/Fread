@@ -18,7 +18,7 @@ import kotlinx.serialization.json.Json
 @Parcelize
 @Serializable
 data class IdentityRole(
-    val accountUri: FormalUri?,
+    val accountUri: FormalUri? = null,
     val baseUrl: FormalBaseUrl? = null,
 ) : PlatformParcelable, PlatformSerializable {
 
@@ -27,14 +27,14 @@ data class IdentityRole(
 
     companion object {
 
-        val nonIdentityRole by lazy { IdentityRole(null, null) }
+        val nonIdentityRole = IdentityRole(null, null)
 
         fun decodeFromString(text: String): IdentityRole? {
             return try {
                 UrlEncoder.decode(text).let {
                     Json.decodeFromString(serializer(), it)
                 }
-            } catch (e: Throwable) {
+            } catch (_: Throwable) {
                 null
             }
         }

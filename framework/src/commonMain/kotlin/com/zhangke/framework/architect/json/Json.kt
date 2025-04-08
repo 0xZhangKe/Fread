@@ -1,5 +1,7 @@
 package com.zhangke.framework.architect.json
 
+import com.zhangke.framework.utils.Log
+import com.zhangke.krouter.KRouter
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
@@ -8,12 +10,20 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.decodeFromJsonElement
 import kotlinx.serialization.json.intOrNull
 import kotlinx.serialization.json.longOrNull
+import kotlinx.serialization.modules.SerializersModule
 
 val globalJson: Json by lazy {
     Json {
         ignoreUnknownKeys = true
         // use default value if JSON value is null but the property type is non-nullable.
         coerceInputValues = true
+
+        serializersModule = SerializersModule {
+            KRouter.getServices<JsonModuleBuilder>().forEach {
+                Log.d("F_TEST") { "service: $it" }
+                with(it) { buildSerializersModule() }
+            }
+        }
     }
 }
 
@@ -40,3 +50,5 @@ inline fun JsonObject.getIntOrNull(key: String): Int? {
 inline fun JsonObject.getJsonPrimitiveOrNull(key: String): JsonPrimitive? {
     return this[key]?.let { it as? JsonPrimitive }
 }
+
+val JsonObject.Companion.Empty get() = JsonObject(emptyMap())

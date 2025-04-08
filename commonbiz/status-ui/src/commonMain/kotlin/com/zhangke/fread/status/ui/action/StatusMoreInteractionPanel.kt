@@ -14,13 +14,13 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.vector.ImageVector
 import com.zhangke.framework.composable.FreadDialog
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
-import com.zhangke.fread.common.status.model.StatusUiInteraction
-import com.zhangke.fread.status.ui.StatusDataElements
+import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.BlogTranslationUiState
+import com.zhangke.fread.status.model.StatusActionType
 import com.zhangke.fread.status.ui.reportStatusInteractionClickEvent
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
@@ -33,11 +33,11 @@ import org.jetbrains.compose.resources.vectorResource
 @Composable
 fun StatusMoreInteractionIcon(
     modifier: Modifier,
-    blogUrl: String,
+    blog: Blog,
+    isOwner: Boolean,
     blogTranslationState: BlogTranslationUiState,
     style: StatusStyle,
-    moreActionList: List<StatusUiInteraction>,
-    onActionClick: (StatusUiInteraction) -> Unit,
+    onActionClick: (StatusActionType, Blog) -> Unit,
     onTranslateClick: () -> Unit,
 ) {
     var showMorePopup by remember {
@@ -47,10 +47,7 @@ fun StatusMoreInteractionIcon(
         StatusIconButton(
             modifier = Modifier
                 .size(style.bottomPanelStyle.iconSize),
-            onClick = {
-                reportClick(StatusDataElements.MORE)
-                showMorePopup = !showMorePopup
-            },
+            onClick = { showMorePopup = !showMorePopup },
         ) {
             Icon(
                 imageVector = vectorResource(Res.drawable.ic_more),
@@ -63,17 +60,37 @@ fun StatusMoreInteractionIcon(
             onDismissRequest = { showMorePopup = false },
         ) {
             AdditionalMoreOptions(
-                blogUrl = blogUrl,
+                blog = blog,
                 blogTranslationState = blogTranslationState,
                 onDismissRequest = { showMorePopup = false },
                 onTranslateClick = onTranslateClick,
             )
-            moreActionList.forEach { interaction ->
+
+            if (isOwner) {
                 InteractionItem(
-                    interaction = interaction,
+                    type = StatusActionType.PIN,
+                    icon = pinIcon(blog.pinned),
+                    actionName = pinAlt(blog.pinned),
                     onDismissRequest = { showMorePopup = false },
-                    onActionClick = onActionClick,
+                    onActionClick = { onActionClick(it, blog) },
                 )
+
+                InteractionItem(
+                    type = StatusActionType.DELETE,
+                    icon = deleteIcon(),
+                    actionName = deleteAlt(),
+                    onDismissRequest = { showMorePopup = false },
+                    onActionClick = { onActionClick(it, blog) },
+                )
+                if (blog.supportEdit) {
+                    InteractionItem(
+                        type = StatusActionType.EDIT,
+                        icon = editIcon(),
+                        actionName = editAlt(),
+                        onDismissRequest = { showMorePopup = false },
+                        onActionClick = { onActionClick(it, blog) },
+                    )
+                }
             }
         }
     }
@@ -81,30 +98,30 @@ fun StatusMoreInteractionIcon(
 
 @Composable
 private fun InteractionItem(
-    interaction: StatusUiInteraction,
+    type: StatusActionType,
+    actionName: String,
+    icon: ImageVector,
     onDismissRequest: () -> Unit,
-    onActionClick: (StatusUiInteraction) -> Unit,
+    onActionClick: (StatusActionType) -> Unit,
 ) {
-    var showDeleteConfirmDialog by remember(interaction) {
+    var showDeleteConfirmDialog by remember(type) {
         mutableStateOf(false)
     }
     DropdownMenuItem(
-        text = {
-            Text(text = interaction.actionName)
-        },
+        text = { Text(text = actionName) },
         leadingIcon = {
             Icon(
-                imageVector = interaction.logo,
-                contentDescription = interaction.actionName,
+                imageVector = icon,
+                contentDescription = actionName,
             )
         },
         onClick = {
-            reportStatusInteractionClickEvent(interaction)
-            if (interaction is StatusUiInteraction.Delete) {
+            reportStatusInteractionClickEvent(type)
+            if (type == StatusActionType.DELETE) {
                 showDeleteConfirmDialog = true
             } else {
                 onDismissRequest()
-                onActionClick(interaction)
+                onActionClick(type)
             }
         },
     )
@@ -122,7 +139,7 @@ private fun InteractionItem(
             onPositiveClick = {
                 onDismissRequest()
                 showDeleteConfirmDialog = false
-                onActionClick(interaction)
+                onActionClick(type)
             },
         )
     }
@@ -130,7 +147,7 @@ private fun InteractionItem(
 
 @Composable
 private fun AdditionalMoreOptions(
-    blogUrl: String,
+    blog: Blog,
     blogTranslationState: BlogTranslationUiState,
     onDismissRequest: () -> Unit,
     onTranslateClick: () -> Unit,
@@ -138,21 +155,18 @@ private fun AdditionalMoreOptions(
     val textHandler = LocalActivityTextHandler.current
     val browserLauncher = LocalActivityBrowserLauncher.current
     DropDownOpenInBrowserItem {
-        reportClick(StatusDataElements.OPEN_IN_BROWSER)
         onDismissRequest()
-        browserLauncher.launchWebTabInApp(blogUrl, checkAppSupportPage = false)
+        browserLauncher.launchWebTabInApp(blog.link, checkAppSupportPage = false)
     }
     DropDownCopyLinkItem {
-        reportClick(StatusDataElements.COPY_BLOG_LINK)
         onDismissRequest()
-        textHandler.copyText(blogUrl)
+        textHandler.copyText(blog.link)
     }
     if (blogTranslationState.support) {
         ModalDropdownMenuItem(
             text = stringResource(Res.string.status_ui_interaction_translate),
             imageVector = Icons.Default.Language,
             onClick = {
-                reportClick(StatusDataElements.TRANSLATE)
                 onDismissRequest()
                 onTranslateClick()
             },

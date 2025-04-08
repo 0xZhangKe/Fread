@@ -1,8 +1,8 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase
 
+import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
-import com.zhangke.framework.utils.htmlToText
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
@@ -10,11 +10,12 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusA
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusMediaAttachmentFile
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
-import com.zhangke.fread.common.ext.getCurrentTimeMillis
+import com.zhangke.fread.common.utils.getCurrentTimeMillis
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogMedia
 import com.zhangke.fread.status.blog.BlogMediaType
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.richtext.parser.HtmlParser
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration.Companion.days
 import kotlin.time.Duration.Companion.milliseconds
@@ -33,7 +34,6 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             is PostStatusScreenParams.PostStatusParams -> PostStatusUiState.default(
                 account = defaultAccount,
                 allLoggedAccount = allLoggedAccount,
-                initialContent = null,
                 visibility = StatusVisibility.PUBLIC,
                 replyToAuthorInfo = null,
             )
@@ -67,7 +67,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         allLoggedAccount: List<ActivityPubLoggedAccount>,
         replyParams: PostStatusScreenParams.ReplyStatusParams,
     ): PostStatusUiState {
-        val replyWebFinger = replyParams.replyToBlogWebFinger
+        val replyWebFinger = replyParams.replyingToBlog.author.webFinger
         val initialContent = if (defaultAccount.platform.baseUrl.host == replyWebFinger.host) {
             "@${replyWebFinger.name} "
         } else {
@@ -76,8 +76,8 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            initialContent = initialContent,
-            visibility = replyParams.replyVisibility,
+            content = TextFieldValue(initialContent),
+            visibility = replyParams.replyingToBlog.visibility,
             replyToAuthorInfo = replyParams,
         )
     }
@@ -91,11 +91,11 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            initialContent = blog.content.htmlToText(),
+            content = TextFieldValue(HtmlParser.parseToPlainText(blog.content)),
             visibility = blog.visibility,
             sensitive = editParams.blog.sensitive,
             language = editParams.blog.language?.let { initLocale(it) },
-            warningContent = editParams.blog.spoilerText.htmlToText(),
+            warningContent = TextFieldValue(HtmlParser.parseToPlainText(editParams.blog.spoilerText)),
             replyToAuthorInfo = null,
             visibilityChangeable = false,
             accountChangeable = false,
@@ -133,7 +133,9 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusMediaAttachmentFile.RemoteFile(
             id = this.id,
             url = this.previewUrl.ifNullOrEmpty { this.url },
-            description = this.description,
+            alt = this.description,
+            originalAlt = this.description,
+            isVideo = this.type == BlogMediaType.VIDEO,
         )
     }
 }

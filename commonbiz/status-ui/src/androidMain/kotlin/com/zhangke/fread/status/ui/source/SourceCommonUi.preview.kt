@@ -13,6 +13,8 @@ import com.zhangke.framework.architect.theme.FreadTheme
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.browser.ActivityBrowserLauncher
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
+import com.zhangke.fread.common.resources.blueskyLogo
+import com.zhangke.fread.common.resources.mastodonLogo
 import com.zhangke.fread.status.model.IdentityRole
 
 @Preview
@@ -28,7 +30,7 @@ fun PreviewSourceCommonUi() {
                 title = "Title",
                 subtitle = "Subtitle",
                 description = "Description",
-                protocolName = "Protocol",
+                protocolLogo = blueskyLogo(),
                 showDivider = false,
             )
         }
@@ -48,7 +50,7 @@ fun PreviewSourceCommonUiWithDivider() {
                 title = "Title",
                 subtitle = "Subtitle",
                 description = "Description",
-                protocolName = "Protocol",
+                protocolLogo = mastodonLogo(),
                 showDivider = true,
             )
         }

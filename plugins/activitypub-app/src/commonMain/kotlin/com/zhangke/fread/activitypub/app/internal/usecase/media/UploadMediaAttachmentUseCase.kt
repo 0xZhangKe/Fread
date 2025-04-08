@@ -1,37 +1,60 @@
 package com.zhangke.fread.activitypub.app.internal.usecase.media
 
-import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.activitypub.api.MediaRepo
+import com.zhangke.activitypub.entities.ActivityPubMediaAttachmentEntity
+import com.zhangke.activitypub.entities.ActivityPubResponse
+import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.framework.utils.exceptionOrThrow
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
-import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.model.IdentityRole
+import io.ktor.http.HttpStatusCode
+import kotlinx.coroutines.delay
 import me.tatarka.inject.annotations.Inject
+import kotlin.time.Duration.Companion.seconds
 
 class UploadMediaAttachmentUseCase @Inject constructor(
     private val clientManager: ActivityPubClientManager,
-    private val platformUriHelper: PlatformUriHelper,
 ) {
 
     suspend operator fun invoke(
         role: IdentityRole,
-        fileUri: PlatformUri,
-        onProgress: (Float) -> Unit,
+        file: ContentProviderFile,
+        onProgress: (Float) -> Unit = {},
     ): Result<String> {
-        val client = clientManager.getClient(role)
+        val mediaRepo = clientManager.getClient(role).mediaRepo
+        val response = mediaRepo.uploadFile(file, onProgress)
+        if (response.isFailure) return Result.failure(response.exceptionOrThrow())
+        val (code, attachment) = response.getOrThrow()
+        if (code != HttpStatusCode.Accepted.value) return Result.success(attachment.id)
+        var repeatCount = 0
+        val interval = 3.seconds
+        while (repeatCount < 10) {
+            val mediaResponse = mediaRepo.getMedia(attachment.id)
+            if (mediaResponse.isFailure || mediaResponse.getOrNull()?.code == HttpStatusCode.PartialContent.value) {
+                delay(interval)
+            } else {
+                return mediaResponse.map { it.response.id }
+            }
+            repeatCount++
+        }
+        return Result.failure(RuntimeException("File upload failed, processing timeout!"))
+    }
+
+    private suspend fun MediaRepo.uploadFile(
+        file: ContentProviderFile,
+        onProgress: (Float) -> Unit = {},
+    ): Result<ActivityPubResponse<ActivityPubMediaAttachmentEntity>> {
         return try {
-            val stream = platformUriHelper.read(fileUri)
+            val bytes = file.readBytes()
                 ?: return Result.failure(RuntimeException("File invalid!"))
-            val bytes = stream.readBytes()
-                ?: return Result.failure(RuntimeException("File invalid!"))
-            client.mediaRepo.postFile(
-                fileName = stream.fileName,
-                fileSize = stream.size.length,
+            this.postFile(
+                fileName = file.fileName,
+                fileSize = file.size.bytes,
                 byteArray = bytes,
-                fileMediaType = stream.mimeType,
-                onProgress = {
-                    onProgress(it)
-                },
-            ).map { it.id }
-        } catch (e: Throwable) {
+                fileMediaType = file.mimeType,
+                onProgress = onProgress,
+            )
+        } catch (t: Throwable) {
             Result.failure(RuntimeException("File invalid!"))
         }
     }

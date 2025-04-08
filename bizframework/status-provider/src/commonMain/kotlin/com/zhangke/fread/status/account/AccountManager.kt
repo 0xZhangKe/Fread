@@ -1,7 +1,5 @@
 package com.zhangke.fread.status.account
 
-import com.zhangke.framework.collections.mapFirst
-import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -24,27 +22,16 @@ class AccountManager(
         }
     }
 
-    suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean> {
-        return accountManagerList.mapFirst {
-            it.checkPlatformLogged(platform)
-        }
-    }
-
-    fun triggerAuthBySource(baseUrl: FormalBaseUrl) {
+    suspend fun triggerAuthBySource(platform: BlogPlatform) {
         for (manager in accountManagerList) {
-            manager.triggerLaunchAuth(baseUrl)
+            manager.triggerLaunchAuth(platform)
         }
     }
 
-    suspend fun refreshAllAccountInfo(): Result<Unit> {
-        val resultList = accountManagerList.map {
+    suspend fun refreshAllAccountInfo(): List<AccountRefreshResult> {
+        return accountManagerList.flatMap {
             it.refreshAllAccountInfo()
         }
-        val successResult = resultList.firstOrNull { it.isSuccess }
-        if (successResult == null) {
-            return resultList.first()
-        }
-        return successResult
     }
 
     suspend fun logout(uri: FormalUri) {
@@ -66,13 +53,23 @@ interface IAccountManager {
 
     fun getAllAccountFlow(): Flow<List<LoggedAccount>>?
 
-    suspend fun checkPlatformLogged(platform: BlogPlatform): Result<Boolean>?
+    suspend fun triggerLaunchAuth(platform: BlogPlatform)
 
-    fun triggerLaunchAuth(baseUrl: FormalBaseUrl)
-
-    suspend fun refreshAllAccountInfo(): Result<Unit>
+    suspend fun refreshAllAccountInfo(): List<AccountRefreshResult>
 
     suspend fun logout(uri: FormalUri): Boolean
 
     fun subscribeNotification()
+}
+
+sealed interface AccountRefreshResult {
+
+    val account: LoggedAccount
+
+    data class Success(override val account: LoggedAccount) : AccountRefreshResult
+
+    data class Failure(
+        override val account: LoggedAccount,
+        val error: Throwable,
+    ) : AccountRefreshResult
 }

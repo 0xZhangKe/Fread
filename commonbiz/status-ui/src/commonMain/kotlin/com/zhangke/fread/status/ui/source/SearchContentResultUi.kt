@@ -21,14 +21,14 @@ fun SearchContentResultUi(
             source = content.source,
         )
 
-        is SearchContentResult.ActivityPubPlatform -> BlogPlatformUi(
+        is SearchContentResult.Platform -> BlogPlatformUi(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onContentClick(content) },
             platform = content.platform,
         )
 
-        is SearchContentResult.ActivityPubPlatformSnapshot -> BlogPlatformSnapshotUi(
+        is SearchContentResult.SearchedPlatformSnapshot -> BlogPlatformSnapshotUi(
             modifier = Modifier
                 .fillMaxWidth()
                 .clickable { onContentClick(content) },

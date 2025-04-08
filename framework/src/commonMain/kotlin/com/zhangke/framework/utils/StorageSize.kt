@@ -4,14 +4,22 @@ import kotlin.jvm.JvmInline
 
 @Suppress("PropertyName")
 @JvmInline
-value class StorageSize(val length: Long) {
+value class StorageSize(val bytes: Long) {
 
-    val KB: Double get() = length.toDouble() / 1024
+    val KB: Double get() = bytes.toDouble() / 1024
 
     val MB: Double get() = KB / 1024
 
     val GB: Double get() = MB / 1024
+
+    operator fun compareTo(other: StorageSize): Int = bytes.compareTo(other.bytes)
 }
+
+val Int.KB: StorageSize get() = StorageSize(this.toLong() * 1024)
+
+val Int.MB: StorageSize get() = StorageSize(this.toLong() * 1024 * 1024)
+
+val Int.GB: StorageSize get() = StorageSize(this.toLong() * 1024 * 1024 * 1024)
 
 val StorageSize.prettyString: String
     get() {

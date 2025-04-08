@@ -3,14 +3,11 @@ package com.zhangke.fread.activitypub.app.di
 import android.content.Context
 import androidx.room.Room
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
-import com.zhangke.fread.activitypub.app.internal.db.notifications.Notification1to2Migration
-import com.zhangke.fread.activitypub.app.internal.db.notifications.NotificationsDatabase
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusDatabases
 import com.zhangke.fread.activitypub.app.internal.db.status.ActivityPubStatusReadStateDatabases
 import com.zhangke.fread.activitypub.app.internal.push.PushInfoDatabase
 import com.zhangke.fread.activitypub.app.internal.push.PushInfoRepo
 import com.zhangke.fread.activitypub.app.internal.push.notification.PushNotificationManager
-import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.common.di.ApplicationContext
 import com.zhangke.fread.common.di.ApplicationScope
 import me.tatarka.inject.annotations.Provides
@@ -28,20 +25,6 @@ actual interface ActivityPubPlatformComponent {
             context,
             ActivityPubDatabases::class.java,
             ActivityPubDatabases.DB_NAME,
-        ).build()
-    }
-
-    @ApplicationScope
-    @Provides
-    fun provideNotificationsDatabase(
-        context: ApplicationContext,
-    ): NotificationsDatabase {
-        return Room.databaseBuilder(
-            context,
-            NotificationsDatabase::class.java,
-            NotificationsDatabase.DB_NAME,
-        ).addMigrations(
-            Notification1to2Migration()
         ).build()
     }
 

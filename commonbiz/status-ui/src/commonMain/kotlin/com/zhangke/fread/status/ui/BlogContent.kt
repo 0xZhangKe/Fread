@@ -33,14 +33,15 @@ import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
+import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.HashtagInStatus
 import com.zhangke.fread.status.model.Mention
 import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.common.BlogTranslateLabel
+import com.zhangke.fread.status.ui.embed.BlogEmbedsUi
 import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusBottomEditedLabel
@@ -48,10 +49,10 @@ import com.zhangke.fread.status.ui.label.StatusBottomInteractionLabel
 import com.zhangke.fread.status.ui.label.StatusBottomTimeLabel
 import com.zhangke.fread.status.ui.media.BlogMedias
 import com.zhangke.fread.status.ui.poll.BlogPoll
-import com.zhangke.fread.status.ui.preview.StatusPreviewCardUi
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 import com.zhangke.fread.status.ui.style.LocalStatusUiConfig
 import com.zhangke.fread.status.ui.style.StatusStyle
+import com.zhangke.fread.status.ui.style.StatusStyle.ContentStyle
 
 /**
  * 博客正文部分，仅包含内容，投票，媒体，链接预览卡片。
@@ -60,21 +61,20 @@ import com.zhangke.fread.status.ui.style.StatusStyle
 fun BlogContent(
     modifier: Modifier,
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState,
-    specificTime: String,
+    isOwner: Boolean,
     style: StatusStyle,
     indexOfFeeds: Int,
-    onMediaClick: OnBlogMediaClick,
-    onVoted: (List<BlogPoll.Option>) -> Unit,
-    onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onBlogClick: (Blog) -> Unit,
+    onMediaClick: OnBlogMediaClick = {},
+    blogTranslationState: BlogTranslationUiState = BlogTranslationUiState.DEFAULT,
+    onVoted: (List<BlogPoll.Option>) -> Unit = {},
+    onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
-    onUrlClick: (url: String) -> Unit,
-    onMentionClick: (Mention) -> Unit,
-    onMentionDidClick: (String) -> Unit,
+    onUrlClick: (url: String) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
+    onMentionDidClick: (String) -> Unit = {},
     onShowOriginalClick: () -> Unit,
-    boostedCount: Int? = null,
-    favouritedCount: Int? = null,
     detailModel: Boolean = false,
     editedTime: String? = null,
 ) {
@@ -93,7 +93,7 @@ fun BlogContent(
                     BlogTextContentSection(
                         blog = blog,
                         blogTranslationState = blogTranslationState,
-                        style = style,
+                        style = style.contentStyle,
                         onHashtagInStatusClick = {
                             reportClick(StatusDataElements.HASHTAG)
                             onHashtagInStatusClick(it)
@@ -114,7 +114,7 @@ fun BlogContent(
             BlogTextContentSection(
                 blog = blog,
                 blogTranslationState = blogTranslationState,
-                style = style,
+                style = style.contentStyle,
                 onHashtagInStatusClick = {
                     reportClick(StatusDataElements.HASHTAG)
                     onHashtagInStatusClick(it)
@@ -137,7 +137,7 @@ fun BlogContent(
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
                 poll = blog.poll!!,
-                isSelf = blog.isSelf,
+                isSelf = isOwner,
                 blogTranslationState = blogTranslationState,
                 onVoted = {
                     reportClick(StatusDataElements.VOTE)
@@ -164,16 +164,15 @@ fun BlogContent(
                     onMediaClick(it)
                 },
             )
-        } else if (blog.card != null) {
-            StatusPreviewCardUi(
+        } else if (blog.embeds.isNotEmpty()) {
+            BlogEmbedsUi(
                 modifier = Modifier
                     .padding(top = style.contentStyle.contentVerticalSpacing)
                     .fillMaxWidth(),
-                card = blog.card!!,
+                embeds = blog.embeds,
                 style = style,
-                onCardClick = {
-                    onUrlClick(it.url)
-                },
+                onContentClick = onBlogClick,
+                onUrlClick = onUrlClick,
             )
         }
 
@@ -183,7 +182,7 @@ fun BlogContent(
                     .fillMaxWidth()
                     .padding(top = style.contentStyle.contentVerticalSpacing),
                 blog = blog,
-                specificTime = specificTime,
+                specificTime = blog.formattedCreateAt,
                 style = style,
                 onUrlClick = onUrlClick,
             )
@@ -195,13 +194,13 @@ fun BlogContent(
                     style = style,
                 )
             }
-            if (favouritedCount != null && boostedCount != null) {
+            if (blog.like.likedCount != null && blog.forward.forwardCount != null) {
                 StatusBottomInteractionLabel(
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(top = style.contentStyle.contentVerticalSpacing),
-                    boostedCount = boostedCount,
-                    favouritedCount = favouritedCount,
+                    boostedCount = blog.forward.forwardCount!!,
+                    favouritedCount = blog.like.likedCount!!,
                     style = style,
                     onBoostedClick = { onBoostedClick?.invoke(blog.id) },
                     onFavouritedClick = { onFavouritedClick?.invoke(blog.id) },
@@ -212,17 +211,17 @@ fun BlogContent(
 }
 
 @Composable
-private fun BlogTextContentSection(
+fun BlogTextContentSection(
     blog: Blog,
-    blogTranslationState: BlogTranslationUiState,
-    style: StatusStyle,
-    onHashtagInStatusClick: (HashtagInStatus) -> Unit,
-    onMentionClick: (Mention) -> Unit,
-    onMentionDidClick: (String) -> Unit,
-    onUrlClick: (url: String) -> Unit,
+    style: ContentStyle,
+    blogTranslationState: BlogTranslationUiState? = null,
+    onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
+    onMentionClick: (Mention) -> Unit = {},
+    onMentionDidClick: (String) -> Unit = {},
+    onUrlClick: (url: String) -> Unit = {},
 ) {
-    val contentMaxLine = if (blog.platform.protocol.isRss) {
-        style.contentStyle.maxLine
+    val contentMaxLine: Int = if (blog.platform.protocol.isRss) {
+        style.maxLine
     } else {
         Int.MAX_VALUE
     }
@@ -232,7 +231,7 @@ private fun BlogTextContentSection(
         var hideContent by rememberSaveable(spoilerText, statusConfig.alwaysShowSensitiveContent) {
             mutableStateOf(!statusConfig.alwaysShowSensitiveContent)
         }
-        val humanizedSpoilerText = if (blogTranslationState.showingTranslation) {
+        val humanizedSpoilerText = if (blogTranslationState?.showingTranslation == true) {
             blogTranslationState.blogTranslation!!.getHumanizedSpoilerText(blog)
         } else {
             blog.humanizedSpoilerText
@@ -241,7 +240,7 @@ private fun BlogTextContentSection(
             modifier = Modifier,
             hideContent = hideContent,
             spoilerText = humanizedSpoilerText,
-            fontSize = style.contentStyle.contentSize,
+            fontSize = style.contentSize,
             onShowContent = { hideContent = false },
             onHideContent = { hideContent = true },
             onHashtagInStatusClick = onHashtagInStatusClick,
@@ -255,7 +254,7 @@ private fun BlogTextContentSection(
                 enter = expandVertically(),
                 exit = shrinkVertically(),
             ) {
-                val humanizedContent = if (blogTranslationState.showingTranslation) {
+                val humanizedContent = if (blogTranslationState?.showingTranslation == true) {
                     blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
                 } else {
                     blog.humanizedContent
@@ -271,7 +270,7 @@ private fun BlogTextContentSection(
                     onMentionDidClick = onMentionDidClick,
                     onHashtagClick = onHashtagInStatusClick,
                     onUrlClick = onUrlClick,
-                    fontSizeSp = style.contentStyle.contentSize.value,
+                    fontSizeSp = style.contentSize.value,
                 )
             }
         }
@@ -281,7 +280,7 @@ private fun BlogTextContentSection(
                 modifier = Modifier,
                 text = blog.title!!,
                 fontWeight = FontWeight.Bold,
-                fontSize = style.contentStyle.titleSize,
+                fontSize = style.titleSize,
                 overflow = TextOverflow.Ellipsis,
                 maxLines = 1,
                 style = MaterialTheme.typography.titleMedium,
@@ -289,9 +288,9 @@ private fun BlogTextContentSection(
         }
         if (!blog.description.isNullOrEmpty()) {
             val topPadding = if (blog.title.isNullOrEmpty()) {
-                style.contentStyle.contentVerticalSpacing
+                style.contentVerticalSpacing
             } else {
-                style.contentStyle.contentVerticalSpacing / 2
+                style.contentVerticalSpacing / 2
             }
             FreadRichText(
                 modifier = Modifier
@@ -302,7 +301,7 @@ private fun BlogTextContentSection(
                 onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
                 onUrlClick = onUrlClick,
-                fontSizeSp = style.contentStyle.contentSize.value,
+                fontSizeSp = style.contentSize.value,
             )
         }
         if (
@@ -310,7 +309,7 @@ private fun BlogTextContentSection(
             blog.description.isNullOrEmpty() &&
             blog.content.isNotEmpty()
         ) {
-            val humanizedContent = if (blogTranslationState.showingTranslation) {
+            val humanizedContent = if (blogTranslationState?.showingTranslation == true) {
                 blogTranslationState.blogTranslation!!.getHumanizedContent(blog)
             } else {
                 blog.humanizedContent
@@ -324,7 +323,7 @@ private fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
-                fontSizeSp = style.contentStyle.contentSize.value,
+                fontSizeSp = style.contentSize.value,
                 onUrlClick = onUrlClick,
             )
         }

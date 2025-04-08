@@ -1,14 +1,21 @@
 package com.zhangke.framework.composable
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.sp
+import com.zhangke.fread.framework.Res
+import com.zhangke.fread.framework.empty
+import com.zhangke.fread.framework.retry
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.update
 
@@ -92,14 +99,52 @@ fun BoxScope.DefaultLoading(modifier: Modifier = Modifier) {
 @Composable
 fun BoxScope.DefaultFailed(
     modifier: Modifier = Modifier,
-    exception: Throwable,
+    errorMessage: String,
+    onRetryClick: (() -> Unit)? = null,
 ) {
-    Text(
-        modifier = modifier
-            .align(Alignment.Center),
-        fontSize = 18.sp,
-        text = exception.message.orEmpty(),
+    Column(
+        modifier = modifier.align(Alignment.Center),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center,
+    ) {
+        Text(
+            fontSize = 18.sp,
+            text = errorMessage,
+        )
+        if (onRetryClick != null) {
+            Button(
+                onClick = onRetryClick,
+            ) {
+                Text(org.jetbrains.compose.resources.stringResource(Res.string.retry))
+            }
+        }
+    }
+}
+
+@Composable
+fun BoxScope.DefaultFailed(
+    modifier: Modifier = Modifier,
+    exception: Throwable,
+    onRetryClick: (() -> Unit)? = null,
+) {
+    DefaultFailed(
+        modifier = modifier,
+        errorMessage = exception.message.orEmpty(),
+        onRetryClick = onRetryClick,
     )
+}
+
+@Composable
+fun BoxScope.DefaultEmpty(
+    modifier: Modifier = Modifier,
+    message: String = org.jetbrains.compose.resources.stringResource(Res.string.empty),
+) {
+    Box(
+        modifier = modifier.fillMaxSize(),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(text = message)
+    }
 }
 
 @Composable

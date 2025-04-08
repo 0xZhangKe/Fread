@@ -1,7 +1,6 @@
 package com.zhangke.fread.screen.main.drawer
 
 import androidx.compose.animation.core.animateDpAsState
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -30,41 +29,32 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.produceState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.text.AnnotatedString
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
+import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.fread.analytics.MainDrawerElements
 import com.zhangke.fread.analytics.reportClick
-import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
-import com.zhangke.fread.common.config.AppCommonConfig
-import com.zhangke.fread.commonbiz.mastodon_logo
+import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
 import com.zhangke.fread.hosting.Res
 import com.zhangke.fread.hosting.main_drawer_donate
-import com.zhangke.fread.hosting.main_drawer_mixed_item_subtitle_1
-import com.zhangke.fread.hosting.main_drawer_mixed_item_subtitle_2
 import com.zhangke.fread.hosting.main_drawer_settings
 import com.zhangke.fread.hosting.main_drawer_title
 import com.zhangke.fread.profile.screen.setting.SettingScreen
-import com.zhangke.fread.status.model.ContentConfig
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.statusui.ic_drag_indicator
 import com.zhangke.fread.statusui.ic_mode_edit
@@ -73,7 +63,6 @@ import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
 import org.burnoutcrew.reorderable.rememberReorderableLazyListState
 import org.burnoutcrew.reorderable.reorderable
-import org.jetbrains.compose.resources.getString
 import org.jetbrains.compose.resources.painterResource
 import org.jetbrains.compose.resources.stringResource
 
@@ -82,11 +71,12 @@ fun Screen.MainDrawer(
     onDismissRequest: () -> Unit,
 ) {
     val navigator = LocalNavigator.currentOrThrow
+    val bottomSheetNavigator = LocalBottomSheetNavigator.current
+    val screenVisitor = LocalModuleScreenVisitor.current
     val viewModel = getViewModel<MainDrawerViewModel>()
     val uiState by viewModel.uiState.collectAsState()
     val mainTabConnection = LocalNestedTabConnection.current
     val coroutineScope = rememberCoroutineScope()
-    val browserLauncher = LocalActivityBrowserLauncher.current
     MainDrawerContent(
         uiState = uiState,
         onContentConfigClick = {
@@ -113,12 +103,9 @@ fun Screen.MainDrawer(
             navigator.push(SettingScreen())
         },
         onDonateClick = {
-            onDismissRequest()
+//            onDismissRequest()
             reportClick(MainDrawerElements.DONATE)
-            browserLauncher.launchWebTabInApp(
-                AppCommonConfig.DONATE_LINK,
-                checkAppSupportPage = false,
-            )
+            bottomSheetNavigator.show(screenVisitor.profileScreenVisitor.getDonateScreen())
         },
     )
     ConsumeOpenScreenFlow(viewModel.openScreenFlow)
@@ -128,10 +115,10 @@ fun Screen.MainDrawer(
 @Composable
 private fun MainDrawerContent(
     uiState: MainDrawerUiState,
-    onContentConfigClick: (ContentConfig) -> Unit,
+    onContentConfigClick: (FreadContent) -> Unit,
     onAddContentClick: () -> Unit,
     onMove: (from: Int, to: Int) -> Unit,
-    onEditClick: (ContentConfig) -> Unit,
+    onEditClick: (FreadContent) -> Unit,
     onSettingClick: () -> Unit,
     onDonateClick: () -> Unit,
 ) {
@@ -145,7 +132,7 @@ private fun MainDrawerContent(
             ) {
                 TopAppBar(
                     title = {
-                        Text(text = stringResource(com.zhangke.fread.hosting.Res.string.main_drawer_title))
+                        Text(text = stringResource(Res.string.main_drawer_title))
                     },
                     actions = {
                         SimpleIconButton(
@@ -249,9 +236,9 @@ private fun MainDrawerContent(
 @Composable
 private fun ContentConfigItem(
     modifier: Modifier,
-    contentConfig: ContentConfig,
+    contentConfig: FreadContent,
     onClick: () -> Unit,
-    onEditClick: (ContentConfig) -> Unit,
+    onEditClick: (FreadContent) -> Unit,
 ) {
     Row(
         modifier = modifier
@@ -267,45 +254,13 @@ private fun ContentConfigItem(
         ) {
             Text(
                 modifier = Modifier,
-                text = contentConfig.configName,
+                text = contentConfig.name,
                 style = MaterialTheme.typography.titleMedium,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
             Spacer(modifier = Modifier.height(4.dp))
-            when (contentConfig) {
-                is ContentConfig.ActivityPubContent -> {
-                    Row(verticalAlignment = Alignment.CenterVertically) {
-                        Image(
-                            modifier = Modifier.size(14.dp),
-                            painter = painterResource(com.zhangke.fread.commonbiz.Res.drawable.mastodon_logo),
-                            contentDescription = null,
-                        )
-                        Text(
-                            modifier = Modifier
-                                .padding(start = 4.dp)
-                                .align(Alignment.Bottom),
-                            text = contentConfig.baseUrl.host,
-                            style = MaterialTheme.typography.labelMedium,
-                            maxLines = 1,
-                            overflow = TextOverflow.Ellipsis,
-                        )
-                    }
-                }
-
-                is ContentConfig.MixedContent -> {
-                    val subTitle by produceState(AnnotatedString(""), contentConfig) {
-                        value = buildSubtitle(contentConfig)
-                    }
-                    Text(
-                        modifier = Modifier,
-                        text = subTitle,
-                        style = MaterialTheme.typography.labelMedium,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                    )
-                }
-            }
+            contentConfig.Subtitle()
         }
         SimpleIconButton(
             modifier = Modifier
@@ -325,28 +280,7 @@ private fun ContentConfigItem(
                 .alpha(0.7F)
                 .padding(2.dp),
             painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_drag_indicator),
-            contentDescription = "Edit Content Config",
+            contentDescription = "Drag for reorder Content Config",
         )
-    }
-}
-
-private suspend fun buildSubtitle(
-    config: ContentConfig.MixedContent,
-): AnnotatedString {
-    return buildAnnotatedString {
-        val prefix = getString(Res.string.main_drawer_mixed_item_subtitle_1)
-        val suffix = getString(Res.string.main_drawer_mixed_item_subtitle_2)
-        append(prefix)
-        val sizeString = " " + config.sourceUriList.size.toString() + " "
-        append(sizeString)
-        addStyle(
-            style = SpanStyle(
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Medium,
-            ),
-            start = prefix.length,
-            end = prefix.length + sizeString.length,
-        )
-        append(suffix)
     }
 }

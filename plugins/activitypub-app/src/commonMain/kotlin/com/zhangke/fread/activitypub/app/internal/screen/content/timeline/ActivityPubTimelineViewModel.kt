@@ -7,44 +7,46 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.lifecycle.SubViewModel
 import com.zhangke.framework.utils.LoadState
 import com.zhangke.fread.activitypub.app.ActivityPubAccountManager
+import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
+import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubStatusSourceType
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubStatusReadStateRepo
 import com.zhangke.fread.activitypub.app.internal.repo.status.ActivityPubTimelineStatusRepo
+import com.zhangke.fread.common.adapter.StatusUiStateAdapter
 import com.zhangke.fread.common.status.StatusUpdater
-import com.zhangke.fread.common.status.usecase.BuildStatusUiStateUseCase
 import com.zhangke.fread.commonbiz.shared.feeds.IInteractiveHandler
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandleResult
 import com.zhangke.fread.commonbiz.shared.feeds.InteractiveHandler
-import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewBlogUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.RefactorToNewStatusUseCase
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.fread.status.richtext.preParseRichText
+import com.zhangke.fread.status.richtext.preParseStatus
+import com.zhangke.fread.status.richtext.preParseStatusList
 import com.zhangke.fread.status.status.model.Status
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-// Auto delete expired status
-// Double top to scroll to top
-// pull to refresh to load previous page
 class ActivityPubTimelineViewModel(
     private val statusProvider: StatusProvider,
     statusUpdater: StatusUpdater,
-    private val buildStatusUiState: BuildStatusUiStateUseCase,
-    refactorToNewBlog: RefactorToNewBlogUseCase,
+    private val statusUiStateAdapter: StatusUiStateAdapter,
+    private val statusAdapter: ActivityPubStatusAdapter,
+    refactorToNewStatus: RefactorToNewStatusUseCase,
     private val timelineRepo: ActivityPubTimelineStatusRepo,
     private val statusReadStateRepo: ActivityPubStatusReadStateRepo,
     private val accountManager: ActivityPubAccountManager,
+    private val loggedAccountProvider: LoggedAccountProvider,
     private val role: IdentityRole,
     private val type: ActivityPubStatusSourceType,
     private val listId: String?,
 ) : SubViewModel(), IInteractiveHandler by InteractiveHandler(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
-    buildStatusUiState = buildStatusUiState,
-    refactorToNewBlog = refactorToNewBlog,
+    statusUiStateAdapter = statusUiStateAdapter,
+    refactorToNewStatus = refactorToNewStatus,
 ) {
 
     private val _uiState = MutableStateFlow(ActivityPubTimelineUiState.default())
@@ -97,15 +99,16 @@ class ActivityPubTimelineViewModel(
                 type = type,
                 listId = listId,
             ).map {
-                it.preParseRichText()
+                it.preParseStatus()
                 it
             }
+            val account = loggedAccountProvider.getAccount(role)
             if (localStatus.isNotEmpty()) {
                 val latestReadStatus = statusReadStateRepo.getLatestReadId(role, type, listId)
                 val initialIndex = localStatus.indexOfFirst { it.id == latestReadStatus }
                 _uiState.update {
                     it.copy(
-                        items = localStatus.toTimelineItems(),
+                        items = localStatus.toTimelineItems(account),
                         initialShowIndex = if (initialIndex in localStatus.indices) initialIndex else 0,
                         showPagingLoadingPlaceholder = false,
                     )
@@ -126,8 +129,8 @@ class ActivityPubTimelineViewModel(
                     listId = listId,
                 )
             }.map {
-                it.preParseRichText()
-                it.toTimelineItems()
+                it.preParseStatusList()
+                it.toTimelineItems(account)
             }.onFailure { t ->
                 if (_uiState.value.items.isEmpty()) {
                     _uiState.update {
@@ -161,13 +164,14 @@ class ActivityPubTimelineViewModel(
         refreshJob?.cancel()
         refreshJob = launchInViewModel {
             _uiState.update { it.copy(refreshing = true) }
+            val account = loggedAccountProvider.getAccount(role)
             timelineRepo.getFresherStatus(
                 role = role,
                 type = type,
                 listId = listId,
             ).map {
-                it.preParseRichText()
-                it.toTimelineItems()
+                it.preParseStatusList()
+                it.toTimelineItems(account)
             }.onFailure { t ->
                 _uiState.update { it.copy(refreshing = false) }
                 mutableErrorMessageFlow.emitTextMessageFromThrowable(t)
@@ -195,6 +199,7 @@ class ActivityPubTimelineViewModel(
         if (initFeedsJob?.isActive == true) return
         if (loadPreviousJob?.isActive == true) return
         val minId = uiState.value.items.getStatusIdOrNull(0) ?: return
+        val account = loggedAccountProvider.getAccount(role)
         loadPreviousJob = launchInViewModel {
             timelineRepo.loadPreviousPageStatus(
                 role = role,
@@ -202,8 +207,8 @@ class ActivityPubTimelineViewModel(
                 minId = minId,
                 listId = listId,
             ).map {
-                it.preParseRichText()
-                it.toTimelineItems()
+                it.preParseStatusList()
+                it.toTimelineItems(account)
             }.onSuccess { list ->
                 _uiState.update {
                     it.copy(
@@ -225,14 +230,15 @@ class ActivityPubTimelineViewModel(
         loadMoreJob?.cancel()
         loadMoreJob = launchInViewModel {
             _uiState.update { it.copy(loadMoreState = LoadState.Loading) }
+            val account = loggedAccountProvider.getAccount(role)
             timelineRepo.loadMore(
                 role = role,
                 type = type,
                 maxId = maxId,
                 listId = listId,
             ).map {
-                it.preParseRichText()
-                it.toTimelineItems()
+                it.preParseStatusList()
+                it.toTimelineItems(account)
             }.onFailure { t ->
                 _uiState.update { it.copy(loadMoreState = LoadState.Failed(t.toTextStringOrNull())) }
             }.onSuccess { list ->
@@ -310,7 +316,17 @@ class ActivityPubTimelineViewModel(
             }
         }
 
-    private suspend fun List<Status>.toTimelineItems(): List<ActivityPubTimelineItem> {
-        return map { ActivityPubTimelineItem.StatusItem(buildStatusUiState(role, it)) }
+    private fun List<Status>.toTimelineItems(
+        loggedAccount: ActivityPubLoggedAccount?,
+    ): List<ActivityPubTimelineItem> {
+        return this.map {
+            ActivityPubTimelineItem.StatusItem(
+                statusAdapter.toStatusUiState(
+                    status = it,
+                    role = role,
+                    loggedAccount = loggedAccount,
+                ),
+            )
+        }
     }
 }

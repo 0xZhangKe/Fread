@@ -23,7 +23,7 @@
     <string name="pre_add_feeds_input_label_2">Please enter the Mastodon instance [[name]], instance [[address]], Mastodon user [[homepage URL]], or the [[RSS]] feed URL here.</string>
 
     <string name="empty_content_hint_title">Please add some content first</string>
-    <string name="empty_content_hint_desc">You\'ll need to add some subscription sources first. Fread supports a variety of content types and content from different platforms, enabling you to build your own information feed.</string>
+    <string name="empty_content_hint_desc">You'll need to add some subscription sources first. Fread supports a variety of content types and content from different platforms, enabling you to build your own information feed.</string>
 
     <string name="feeds_add_content">Add Content</string>
 
@@ -32,9 +32,7 @@
     <string name="feeds_pre_add_login_dialog_content">Content Successfully Added. Would You Like to Log In Now?</string>
 
     <string name="add_feeds_page_empty_name_tips">Please enter a name</string>
-    <string name="add_feeds_page_empty_name_exist">This username is already taken.</string>
     <string name="add_feeds_page_empty_source_tips">Please add a subscription source</string>
-    <string name="add_feeds_page_empty_content_exist">This content already exists</string>
 
     <string name="add_feeds_choose_auth_dialog_title">Please select login server</string>
 

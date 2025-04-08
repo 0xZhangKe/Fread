@@ -1,8 +1,8 @@
 package com.zhangke.fread.common.status.usecase
 
-import com.zhangke.fread.common.utils.DateTimeFormatter
-import com.zhangke.fread.common.utils.DatetimeFormatConfig
-import com.zhangke.fread.common.utils.defaultFormatConfig
+import com.zhangke.fread.status.utils.DateTimeFormatter
+import com.zhangke.fread.status.utils.DatetimeFormatConfig
+import com.zhangke.fread.status.utils.defaultFormatConfig
 import me.tatarka.inject.annotations.Inject
 
 class FormatStatusDisplayTimeUseCase @Inject constructor(

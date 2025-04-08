@@ -18,6 +18,7 @@ import com.zhangke.fread.common.startup.StartupManager
 import com.zhangke.fread.common.utils.MediaFileHelper
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.common.utils.ThumbnailHelper
+import com.zhangke.fread.status.StatusProvider
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
 
@@ -28,6 +29,8 @@ interface CommonComponent : CommonPlatformComponent {
     val dayNightHelper: DayNightHelper
 
     val startupManager: StartupManager
+
+    val statusProvider: StatusProvider
 
     @ApplicationScope
     @Provides
@@ -57,3 +60,5 @@ interface CommonComponent : CommonPlatformComponent {
 interface CommonComponentProvider {
     val component: CommonComponent
 }
+
+lateinit var commonComponentProvider: CommonComponentProvider

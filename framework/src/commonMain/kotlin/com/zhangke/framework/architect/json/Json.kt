@@ -1,6 +1,5 @@
 package com.zhangke.framework.architect.json
 
-import com.zhangke.framework.utils.Log
 import com.zhangke.krouter.KRouter
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.JsonElement
@@ -20,7 +19,6 @@ val globalJson: Json by lazy {
 
         serializersModule = SerializersModule {
             KRouter.getServices<JsonModuleBuilder>().forEach {
-                Log.d("F_TEST") { "service: $it" }
                 with(it) { buildSerializersModule() }
             }
         }

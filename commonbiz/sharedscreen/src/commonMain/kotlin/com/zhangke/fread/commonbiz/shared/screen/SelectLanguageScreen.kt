@@ -35,10 +35,11 @@ import kotlin.jvm.Transient
 
 class SelectLanguageScreen(
     private val selectedLanguages: List<String> = emptyList(),
-    private val multipleSelection: Boolean = false,
     private val maxSelectCount: Int = 1,
     @Transient private val onSelected: (List<String>) -> Unit,
 ) : BaseScreen() {
+
+    private val multipleSelection = maxSelectCount > 1
 
     @Composable
     override fun Content() {

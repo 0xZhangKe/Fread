@@ -114,7 +114,6 @@ private fun SelectLanguageIconButton(
             SelectLanguageScreen(
                 selectedLanguages = selectedLanguages,
                 maxSelectCount = maxLanguageCount,
-                multipleSelection = true,
                 onSelected = onLanguageSelected,
             )
         )

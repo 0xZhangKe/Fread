@@ -133,4 +133,6 @@
     <string name="activity_pub_explorer_tab_status_title">嘟文</string>
     <string name="activity_pub_explorer_tab_users_title">用户</string>
     <string name="activity_pub_explorer_tab_hashtag_title">话题</string>
+
+    <string name="activity_pub_created_list_title">创建的列表</string>
 </resources>

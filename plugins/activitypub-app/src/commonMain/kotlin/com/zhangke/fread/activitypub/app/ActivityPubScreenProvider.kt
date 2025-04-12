@@ -11,6 +11,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditConten
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
+import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListScreen
@@ -177,5 +178,15 @@ class ActivityPubScreenProvider @Inject constructor(
     override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
         if (platform.protocol.notActivityPub) return null
         return ExplorerContainerTab(role = role, platform = platform)
+    }
+
+    override fun getCreatedListScreen(
+        role: IdentityRole,
+        platform: BlogPlatform
+    ): Screen? {
+        if (platform.protocol.notActivityPub) return null
+        return CreatedListsScreen(
+            role = role,
+        )
     }
 }

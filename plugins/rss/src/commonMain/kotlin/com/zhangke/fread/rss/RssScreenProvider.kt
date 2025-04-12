@@ -123,4 +123,11 @@ class RssScreenProvider @Inject constructor(
     override fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
         return null
     }
+
+    override fun getCreatedListScreen(
+        role: IdentityRole,
+        platform: BlogPlatform
+    ): Screen? {
+        return null
+    }
 }

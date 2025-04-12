@@ -136,4 +136,14 @@ class ProfileHomeViewModel @Inject constructor(
             statusProvider.accountManager.triggerAuthBySource(account.platform)
         }
     }
+
+    fun onListsClick(account: LoggedAccount) {
+        launchInViewModel {
+            statusProvider.screenProvider
+                .getCreatedListScreen(
+                    role = IdentityRole(account.uri, null),
+                    platform = account.platform,
+                )?.let { _openPageFlow.emit(it) }
+        }
+    }
 }

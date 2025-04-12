@@ -134,4 +134,6 @@
     <string name="activity_pub_explorer_tab_status_title">Posts</string>
     <string name="activity_pub_explorer_tab_users_title">Users</string>
     <string name="activity_pub_explorer_tab_hashtag_title">Hashtags</string>
+
+    <string name="activity_pub_created_list_title">Lists</string>
 </resources>

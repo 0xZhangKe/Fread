@@ -169,4 +169,11 @@ class BlueskyScreenProvider @Inject constructor(
         if (platform.protocol.notBluesky) return null
         return ExplorerTab(role, platform)
     }
+
+    override fun getCreatedListScreen(
+        role: IdentityRole,
+        platform: BlogPlatform
+    ): Screen? {
+        return null
+    }
 }

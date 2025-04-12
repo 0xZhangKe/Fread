@@ -127,7 +127,7 @@ internal class ActivityPubContentScreen(
                         FloatingActionButton(
                             onClick = {
                                 reportClick(HomeTabElements.POST_STATUS)
-                                account?.let(onPostBlogClick)
+                                onPostBlogClick(account)
                             },
                             containerColor = MaterialTheme.colorScheme.surface,
                             contentColor = MaterialTheme.colorScheme.primary,

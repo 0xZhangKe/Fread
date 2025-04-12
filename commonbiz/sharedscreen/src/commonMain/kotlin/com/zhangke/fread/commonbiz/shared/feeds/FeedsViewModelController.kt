@@ -86,16 +86,16 @@ class FeedsViewModelController(
     ) {
         this.coroutineScope = coroutineScope
         this.roleResolver = roleResolver
+        this.loadFirstPageLocalFeeds = loadFirstPageLocalFeeds
+        this.loadNewFromServerFunction = loadNewFromServerFunction
+        this.loadMoreFunction = loadMoreFunction
+        this.onStatusUpdate = onStatusUpdate
         interactiveHandler.initInteractiveHandler(
             coroutineScope = coroutineScope,
             onInteractiveHandleResult = {
                 it.handleResult()
             },
         )
-        this.loadFirstPageLocalFeeds = loadFirstPageLocalFeeds
-        this.loadNewFromServerFunction = loadNewFromServerFunction
-        this.loadMoreFunction = loadMoreFunction
-        this.onStatusUpdate = onStatusUpdate
     }
 
     override fun initFeeds(needLocalData: Boolean) {

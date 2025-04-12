@@ -181,7 +181,9 @@ class InteractiveHandler(
     override fun onStatusClick(status: StatusUiState) {
         coroutineScope.launch {
             val screen = if (status.status.intrinsicBlog.platform.protocol.isRss) {
-                RssBlogDetailScreen(status.status.intrinsicBlog)
+                RssBlogDetailScreen(
+                    serializedBlog = globalJson.encodeToString(status.status.intrinsicBlog),
+                )
             } else {
                 StatusContextScreen(
                     role = status.role,
@@ -198,7 +200,9 @@ class InteractiveHandler(
     override fun onBlogClick(role: IdentityRole, blog: Blog) {
         coroutineScope.launch {
             val screen = if (blog.platform.protocol.isRss) {
-                RssBlogDetailScreen(blog)
+                RssBlogDetailScreen(
+                    serializedBlog = globalJson.encodeToString(serializer(), blog),
+                )
             } else {
                 StatusContextScreen(
                     role = role,

@@ -134,8 +134,12 @@ class StatusScreenProvider(
         return providerList.firstNotNullOfOrNull { it.getInstanceDetailScreen(protocol, baseUrl) }
     }
 
-    fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab?{
+    fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab? {
         return providerList.firstNotNullOfOrNull { it.getExplorerTab(role, platform) }
+    }
+
+    fun getCreatedListScreen(role: IdentityRole, platform: BlogPlatform): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getCreatedListScreen(role, platform) }
     }
 }
 
@@ -206,4 +210,6 @@ interface IStatusScreenProvider {
     ): String?
 
     fun getExplorerTab(role: IdentityRole, platform: BlogPlatform): PagerTab?
+
+    fun getCreatedListScreen(role: IdentityRole, platform: BlogPlatform): Screen?
 }

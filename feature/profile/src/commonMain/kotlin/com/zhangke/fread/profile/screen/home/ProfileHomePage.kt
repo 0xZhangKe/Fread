@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Logout
+import androidx.compose.material.icons.automirrored.outlined.ListAlt
 import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Tag
@@ -117,6 +118,7 @@ class ProfileHomePage : BaseScreen() {
                     viewModel.onPinnedFeedsClick(it)
                 },
                 onLoginClick = viewModel::onLoginClick,
+                onListsClick = viewModel::onListsClick,
             )
             ConsumeFlow(viewModel.openPageFlow) {
                 navigator.push(it)
@@ -136,6 +138,7 @@ class ProfileHomePage : BaseScreen() {
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
         onPinnedFeedsClick: (LoggedAccount) -> Unit,
         onLoginClick: (LoggedAccount) -> Unit,
+        onListsClick: (LoggedAccount) -> Unit,
     ) {
         Surface(
             modifier = Modifier
@@ -185,6 +188,7 @@ class ProfileHomePage : BaseScreen() {
                             onFollowedHashtagClick = onFollowedHashtagClick,
                             onPinnedFeedsClick = onPinnedFeedsClick,
                             onLoginClick = onLoginClick,
+                            onListsClick = onListsClick,
                         )
                     }
                 }
@@ -202,6 +206,7 @@ class ProfileHomePage : BaseScreen() {
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
         onPinnedFeedsClick: (LoggedAccount) -> Unit,
         onLoginClick: (LoggedAccount) -> Unit,
+        onListsClick: (LoggedAccount) -> Unit,
     ) {
         Card(
             modifier = Modifier
@@ -222,6 +227,7 @@ class ProfileHomePage : BaseScreen() {
                         onFollowedHashtagClick = onFollowedHashtagClick,
                         onPinnedFeedsClick = onPinnedFeedsClick,
                         onLoginClick = onLoginClick,
+                        onListsClick = onListsClick,
                     )
                 }
             }
@@ -238,6 +244,7 @@ class ProfileHomePage : BaseScreen() {
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
         onPinnedFeedsClick: (LoggedAccount) -> Unit,
         onLoginClick: (LoggedAccount) -> Unit,
+        onListsClick: (LoggedAccount) -> Unit,
     ) {
         val account = accountUiState.account
         val browserLauncher = LocalActivityBrowserLauncher.current
@@ -321,6 +328,7 @@ class ProfileHomePage : BaseScreen() {
                     onLogoutClick = onLogoutClick,
                     onFollowedHashtagClick = onFollowedHashtagClick,
                     onPinnedFeedsClick = onPinnedFeedsClick,
+                    onListsClick = onListsClick,
                 )
             }
         }
@@ -332,6 +340,7 @@ class ProfileHomePage : BaseScreen() {
         account: LoggedAccount,
         onLikedClick: (LoggedAccount) -> Unit,
         onBookmarkedClick: (LoggedAccount) -> Unit,
+        onListsClick: (LoggedAccount) -> Unit,
         onLogoutClick: (LoggedAccount) -> Unit,
         onFollowedHashtagClick: (LoggedAccount) -> Unit,
         onPinnedFeedsClick: (LoggedAccount) -> Unit,
@@ -357,6 +366,13 @@ class ProfileHomePage : BaseScreen() {
                     onClick = { onBookmarkedClick(account) },
                     imageVector = Icons.Outlined.BookmarkBorder,
                     contentDescription = "Bookmarks",
+                )
+                Spacer(modifier = Modifier.weight(1F))
+                SimpleIconButton(
+                    iconModifier = Modifier.size(iconSize),
+                    onClick = { onListsClick(account) },
+                    imageVector = Icons.AutoMirrored.Outlined.ListAlt,
+                    contentDescription = "Lists",
                 )
             }
             Spacer(modifier = Modifier.weight(1F))

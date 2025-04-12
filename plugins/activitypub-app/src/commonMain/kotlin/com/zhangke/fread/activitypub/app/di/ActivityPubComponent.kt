@@ -18,6 +18,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimeline
 import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetailViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTrendsTagsViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusViewModel
@@ -195,6 +196,14 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
     @Provides
     fun provideAddContentViewModel(creator: (BlogPlatform) -> AddActivityPubContentViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return AddActivityPubContentViewModel::class to AddActivityPubContentViewModel.Factory { role ->
+            creator(role)
+        }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideCreatedListListViewModel(creator: (IdentityRole) -> CreatedListsViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return CreatedListsViewModel::class to CreatedListsViewModel.Factory { role ->
             creator(role)
         }
     }

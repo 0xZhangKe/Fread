@@ -265,12 +265,10 @@ class ImageViewerScreen(
                 },
                 tint = MaterialTheme.colorScheme.inverseOnSurface,
             )
-            if (image.description != null) {
+            if (!image.description.isNullOrEmpty()) {
                 Spacer(modifier = Modifier.width(16.dp))
                 SimpleIconButton(
-                    onClick = {
-                        showBottomSheet = true
-                    },
+                    onClick = { showBottomSheet = true },
                     tint = MaterialTheme.colorScheme.inverseOnSurface,
                     imageVector = Icons.Default.Info,
                     contentDescription = "Image description",

@@ -3,7 +3,6 @@ package com.zhangke.fread.activitypub.app.internal.screen.list
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.ktx.launchInViewModel
-import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.usecase.content.GetUserCreatedListUseCase
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
@@ -17,7 +16,6 @@ import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
 class CreatedListsViewModel @Inject constructor(
-    private val clientManager: ActivityPubClientManager,
     private val getUserCreatedList: GetUserCreatedListUseCase,
     @Assisted private val role: IdentityRole,
 ) : ViewModel() {
@@ -39,7 +37,7 @@ class CreatedListsViewModel @Inject constructor(
         getUserLists()
     }
 
-    fun onRetryClick(){
+    fun onRetryClick() {
         getUserLists()
     }
 

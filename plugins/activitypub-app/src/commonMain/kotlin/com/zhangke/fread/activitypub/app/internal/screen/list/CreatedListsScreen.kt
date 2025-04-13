@@ -26,12 +26,14 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.activitypub.entities.ActivityPubListEntity
+import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_created_list_title
+import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 import org.jetbrains.compose.resources.stringResource
@@ -53,7 +55,11 @@ class CreatedListsScreen(
             snackBarState = snackBarState,
             onBackClick = navigator::pop,
             onRetryClick = viewModel::onRetryClick,
-            onListClick = {},
+            onListClick = {
+                navigator.push(
+                    EditListScreen(role = role, serializedList = globalJson.encodeToString(it))
+                )
+            },
             onAddListClick = {},
         )
         LaunchedEffect(Unit) { viewModel.onPageResume() }

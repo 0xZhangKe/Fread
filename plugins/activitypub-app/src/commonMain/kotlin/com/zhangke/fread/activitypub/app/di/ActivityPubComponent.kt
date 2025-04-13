@@ -19,6 +19,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetail
 import com.zhangke.fread.activitypub.app.internal.screen.instance.about.ServerAboutViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.instance.tags.ServerTrendsTagsViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenParams
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusViewModel
@@ -205,6 +206,14 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
     fun provideCreatedListListViewModel(creator: (IdentityRole) -> CreatedListsViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return CreatedListsViewModel::class to CreatedListsViewModel.Factory { role ->
             creator(role)
+        }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideEditListViewModel(creator: (IdentityRole, String) -> EditListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return EditListViewModel::class to EditListViewModel.Factory { role, serializedList ->
+            creator(role, serializedList)
         }
     }
 

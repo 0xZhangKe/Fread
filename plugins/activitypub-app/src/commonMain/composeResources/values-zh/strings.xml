@@ -135,4 +135,14 @@
     <string name="activity_pub_explorer_tab_hashtag_title">话题</string>
 
     <string name="activity_pub_created_list_title">创建的列表</string>
+    <string name="activity_pub_add_list_title">创建列表</string>
+    <string name="activity_pub_add_list_name">列表名称</string>
+    <string name="activity_pub_add_list_replies">回复显示范围</string>
+    <string name="activity_pub_add_list_replies_non">不显示</string>
+    <string name="activity_pub_add_list_replies_list">列表成员</string>
+    <string name="activity_pub_add_list_replies_followers">我关注的所有人</string>
+    <string name="activity_pub_add_list_accounts">列表成员</string>
+    <string name="activity_pub_add_list_hide_in_timeline">在主页时间线中隐藏成员</string>
+    <string name="activity_pub_add_list_hide_in_timeline_desc">列表成员的嘟文将不会在你的主页时间线中显示以免重复阅读。</string>
+    <string name="activity_pub_add_list_remove_user_message">确定移除该用户？</string>
 </resources>

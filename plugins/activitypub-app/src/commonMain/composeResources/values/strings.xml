@@ -136,4 +136,14 @@
     <string name="activity_pub_explorer_tab_hashtag_title">Hashtags</string>
 
     <string name="activity_pub_created_list_title">Lists</string>
+    <string name="activity_pub_add_list_title">Create List</string>
+    <string name="activity_pub_add_list_name">List Name</string>
+    <string name="activity_pub_add_list_replies">Show replies to</string>
+    <string name="activity_pub_add_list_replies_non">No one</string>
+    <string name="activity_pub_add_list_replies_list">Members of the list</string>
+    <string name="activity_pub_add_list_replies_followers">Anyone I follow</string>
+    <string name="activity_pub_add_list_accounts">List members</string>
+    <string name="activity_pub_add_list_hide_in_timeline">Hide members in Following</string>
+    <string name="activity_pub_add_list_hide_in_timeline_desc">If someone is on this list, hide them in your Following timeline to avoid seeing their posts twice.</string>
+    <string name="activity_pub_add_list_remove_user_message">Are you sure you want to remove this user?</string>
 </resources>

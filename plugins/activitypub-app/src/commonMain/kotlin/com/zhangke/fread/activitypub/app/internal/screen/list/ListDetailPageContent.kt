@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.list
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.focusable
+import androidx.compose.foundation.gestures.awaitEachGesture
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -32,7 +33,6 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Switch
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -40,16 +40,17 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.focus.onFocusChanged
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.input.pointer.PointerEventType
+import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.text.input.TextFieldValue
+import androidx.compose.ui.unit.DpOffset
 import androidx.compose.ui.unit.dp
 import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.framework.composable.DefaultFailed
 import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.freadPlaceholder
-import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_add_list_hide_in_timeline
@@ -67,8 +68,7 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 internal fun ListDetailPageContent(
-    name: String,
-    showSaveButton: Boolean,
+    name: TextFieldValue,
     repliesPolicy: ListRepliesPolicy,
     exclusive: Boolean,
     showLoadingCover: Boolean,
@@ -79,27 +79,25 @@ internal fun ListDetailPageContent(
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     onAddUserClick: () -> Unit,
-    onNameChangedRequest: (String) -> Unit,
     onExclusiveChangeRequest: (Boolean) -> Unit,
     onRemoveAccount: (ActivityPubAccountEntity) -> Unit,
     onRetryLoadAccountsClick: () -> Unit,
     onPolicySelect: (ListRepliesPolicy) -> Unit,
+    onNameChangedRequest: (TextFieldValue) -> Unit,
 ) {
     Scaffold(
         topBar = {
             Toolbar(
-                title = name.ifEmpty { stringResource(Res.string.activity_pub_add_list_title) },
+                title = stringResource(Res.string.activity_pub_add_list_title),
                 onBackClick = onBackClick,
                 actions = {
-                    if (showSaveButton) {
-                        IconButton(
-                            onClick = onSaveClick,
-                        ) {
-                            Icon(
-                                imageVector = Icons.Default.Save,
-                                contentDescription = "Save",
-                            )
-                        }
+                    IconButton(
+                        onClick = onSaveClick,
+                    ) {
+                        Icon(
+                            imageVector = Icons.Default.Save,
+                            contentDescription = "Save",
+                        )
                     }
                 }
             )
@@ -135,7 +133,6 @@ internal fun ListDetailPageContent(
                     )
                 }
                 if (accountList.isNotEmpty()) {
-
                     items(accountList) {
                         AccountItem(
                             account = it,
@@ -164,10 +161,12 @@ internal fun ListDetailPageContent(
             if (showLoadingCover) {
                 Box(
                     modifier = Modifier.fillMaxSize()
-                        .background(MaterialTheme.colorScheme.surfaceDim)
+                        .background(MaterialTheme.colorScheme.surface.copy(alpha = 0.6F))
                         .noRippleClick { }
                 ) {
-                    CircularProgressIndicator(modifier = Modifier.size(64.dp))
+                    CircularProgressIndicator(
+                        modifier = Modifier.align(Alignment.Center).size(64.dp)
+                    )
                 }
             }
         }
@@ -176,33 +175,20 @@ internal fun ListDetailPageContent(
 
 @Composable
 private fun ListDetailSetting(
-    name: String,
+    name: TextFieldValue,
     repliesPolicy: ListRepliesPolicy,
     exclusive: Boolean,
     onExclusiveChangeRequest: (Boolean) -> Unit,
-    onNameChangedRequest: (String) -> Unit,
     onPolicySelect: (ListRepliesPolicy) -> Unit,
+    onNameChangedRequest: (TextFieldValue) -> Unit,
 ) {
-    val focusManager = LocalFocusManager.current
-    val keyboardState by keyboardAsState()
-    LaunchedEffect(keyboardState) {
-        if (!keyboardState) {
-            focusManager.clearFocus()
-        }
-    }
     Column(modifier = Modifier.fillMaxSize()) {
-        var inputtedName by remember(name) { mutableStateOf(name) }
         OutlinedTextField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp)
-                .onFocusChanged {
-                    if (!it.hasFocus) {
-                        onNameChangedRequest(inputtedName)
-                    }
-                },
-            value = inputtedName,
-            onValueChange = { inputtedName = it },
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+            value = name,
+            onValueChange = { onNameChangedRequest(it) },
             label = {
                 Text(
                     text = stringResource(Res.string.activity_pub_add_list_name)
@@ -210,29 +196,47 @@ private fun ListDetailSetting(
             },
         )
         var showPolicySelector by remember { mutableStateOf(false) }
-        OutlinedTextField(
-            modifier = Modifier
-                .noRippleClick { showPolicySelector = true }
-                .focusable(false)
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp),
-            value = repliesPolicy.showName,
-            readOnly = true,
-            onValueChange = { },
-            label = {
-                Text(text = stringResource(Res.string.activity_pub_add_list_replies))
-            },
-        )
-        DropdownMenu(
-            modifier = Modifier.padding(start = 16.dp, end = 16.dp),
-            expanded = showPolicySelector,
-            onDismissRequest = { showPolicySelector = false },
+        Box(
+            modifier = Modifier.fillMaxWidth()
+                .pointerInput(Unit) {
+                    awaitEachGesture {
+                        while (true) {
+                            val event = awaitPointerEvent()
+                            event.changes.forEach { it.consume() }
+                            if (event.type == PointerEventType.Release) {
+                                showPolicySelector = true
+                            }
+                        }
+                    }
+                },
         ) {
-            ListRepliesPolicy.entries.forEach { policy ->
-                DropdownMenuItem(
-                    text = { Text(text = policy.showName) },
-                    onClick = { onPolicySelect(policy) },
-                )
+            OutlinedTextField(
+                modifier = Modifier
+                    .focusable(false)
+                    .fillMaxWidth()
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+                value = repliesPolicy.showName,
+                readOnly = true,
+                onValueChange = { },
+                label = {
+                    Text(text = stringResource(Res.string.activity_pub_add_list_replies))
+                },
+            )
+            DropdownMenu(
+                modifier = Modifier.align(Alignment.BottomStart),
+                expanded = showPolicySelector,
+                offset = DpOffset(16.dp, 0.dp),
+                onDismissRequest = { showPolicySelector = false },
+            ) {
+                ListRepliesPolicy.entries.forEach { policy ->
+                    DropdownMenuItem(
+                        text = { Text(text = policy.showName) },
+                        onClick = {
+                            showPolicySelector = false
+                            onPolicySelect(policy)
+                        },
+                    )
+                }
             }
         }
         Row(

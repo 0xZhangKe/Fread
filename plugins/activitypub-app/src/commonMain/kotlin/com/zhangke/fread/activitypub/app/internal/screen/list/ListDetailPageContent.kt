@@ -136,6 +136,7 @@ internal fun ListDetailPageContent(
                     items(accountList) {
                         AccountItem(
                             account = it,
+                            showRemoveIcon = true,
                             onRemoveAccount = onRemoveAccount,
                         )
                     }
@@ -272,12 +273,14 @@ private fun ListDetailSetting(
 }
 
 @Composable
-private fun AccountItem(
+internal fun AccountItem(
     account: ActivityPubAccountEntity,
-    onRemoveAccount: (ActivityPubAccountEntity) -> Unit,
+    showRemoveIcon: Boolean,
+    modifier: Modifier = Modifier,
+    onRemoveAccount: (ActivityPubAccountEntity) -> Unit = {},
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth()
+        modifier = modifier.fillMaxWidth()
             .padding(start = 16.dp, top = 8.dp, end = 8.dp, bottom = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -298,26 +301,28 @@ private fun AccountItem(
                 color = MaterialTheme.colorScheme.onSurfaceVariant,
             )
         }
-        var showRemoveConfirmDialog by remember { mutableStateOf(false) }
-        IconButton(
-            modifier = Modifier.padding(start = 8.dp),
-            onClick = { showRemoveConfirmDialog = true },
-        ) {
-            Icon(
-                imageVector = Icons.Default.Delete,
-                contentDescription = "Remove",
-            )
-        }
-        if (showRemoveConfirmDialog) {
-            FreadDialog(
-                onDismissRequest = { showRemoveConfirmDialog = false },
-                contentText = stringResource(Res.string.activity_pub_add_list_remove_user_message),
-                onNegativeClick = { showRemoveConfirmDialog = false },
-                onPositiveClick = {
-                    showRemoveConfirmDialog = false
-                    onRemoveAccount(account)
-                },
-            )
+        if (showRemoveIcon) {
+            var showRemoveConfirmDialog by remember { mutableStateOf(false) }
+            IconButton(
+                modifier = Modifier.padding(start = 8.dp),
+                onClick = { showRemoveConfirmDialog = true },
+            ) {
+                Icon(
+                    imageVector = Icons.Default.Delete,
+                    contentDescription = "Remove",
+                )
+            }
+            if (showRemoveConfirmDialog) {
+                FreadDialog(
+                    onDismissRequest = { showRemoveConfirmDialog = false },
+                    contentText = stringResource(Res.string.activity_pub_add_list_remove_user_message),
+                    onNegativeClick = { showRemoveConfirmDialog = false },
+                    onPositiveClick = {
+                        showRemoveConfirmDialog = false
+                        onRemoveAccount(account)
+                    },
+                )
+            }
         }
     }
 }

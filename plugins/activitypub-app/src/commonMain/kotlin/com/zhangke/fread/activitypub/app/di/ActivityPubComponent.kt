@@ -27,6 +27,7 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailContaine
 import com.zhangke.fread.activitypub.app.internal.screen.user.about.UserAboutContainerViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.list.UserListViewModel
+import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListType
 import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListViewModel
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListViewModel
@@ -206,6 +207,14 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
     fun provideCreatedListListViewModel(creator: (IdentityRole) -> CreatedListsViewModel): Pair<ViewModelKey, ViewModelFactory> {
         return CreatedListsViewModel::class to CreatedListsViewModel.Factory { role ->
             creator(role)
+        }
+    }
+
+    @IntoMap
+    @Provides
+    fun provideSearchUserViewModel(creator: (IdentityRole, Boolean) -> SearchUserViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return SearchUserViewModel::class to SearchUserViewModel.Factory { role, onlyFollowing ->
+            creator(role, onlyFollowing)
         }
     }
 

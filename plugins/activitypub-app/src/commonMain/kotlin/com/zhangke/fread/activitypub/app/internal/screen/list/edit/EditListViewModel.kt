@@ -117,6 +117,10 @@ class EditListViewModel @Inject constructor(
         }
     }
 
+    fun onAddUser(user: ActivityPubAccountEntity) {
+        _uiState.update { it.copy(accountList = it.accountList + user) }
+    }
+
     private suspend fun updateSettingPart(): Result<Unit> {
         if (!checkSettingHasChanged()) return Result.success(Unit)
         return clientManager.getClient(role).accountRepo

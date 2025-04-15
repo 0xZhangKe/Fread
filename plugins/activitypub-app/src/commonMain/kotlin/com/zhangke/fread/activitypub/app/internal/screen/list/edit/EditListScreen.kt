@@ -18,6 +18,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_add_list_back_reminder
 import com.zhangke.fread.activitypub.app.internal.screen.list.ListDetailPageContent
+import com.zhangke.fread.activitypub.app.internal.screen.user.search.SearchUserScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
 
@@ -64,7 +65,11 @@ class EditListScreen(
             onNameChangedRequest = viewModel::onNameChangeRequest,
             onExclusiveChangeRequest = viewModel::onExclusiveChanged,
             onRemoveAccount = viewModel::onRemoveAccount,
-            onAddUserClick = {},
+            onAddUserClick = {
+                val searchUserScreen = SearchUserScreen(role, true)
+                searchUserScreen.onAccountSelected = viewModel::onAddUser
+                navigator.push(searchUserScreen)
+            },
             onSaveClick = viewModel::onSaveClick,
             onBackClick = { onBack() },
             onRetryLoadAccountsClick = viewModel::onRetryLoadAccountsClick,

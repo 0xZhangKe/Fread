@@ -146,4 +146,6 @@
     <string name="activity_pub_add_list_hide_in_timeline">Hide members in Following</string>
     <string name="activity_pub_add_list_hide_in_timeline_desc">If someone is on this list, hide them in your Following timeline to avoid seeing their posts twice.</string>
     <string name="activity_pub_add_list_remove_user_message">Are you sure you want to remove this user?</string>
+    <string name="activity_pub_add_list_name_is_empty">Please enter your username</string>
+    <string name="activity_pub_add_list_back_reminder">You have unsaved changes. Are you sure you want to exit?</string>
 </resources>

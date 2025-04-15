@@ -145,4 +145,6 @@
     <string name="activity_pub_add_list_hide_in_timeline">在主页时间线中隐藏成员</string>
     <string name="activity_pub_add_list_hide_in_timeline_desc">列表成员的嘟文将不会在你的主页时间线中显示以免重复阅读。</string>
     <string name="activity_pub_add_list_remove_user_message">确定移除该用户？</string>
+    <string name="activity_pub_add_list_name_is_empty">请输入用户名</string>
+    <string name="activity_pub_add_list_back_reminder">当前还有更改尚未保存，确认退出吗？</string>
 </resources>

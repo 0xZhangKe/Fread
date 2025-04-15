@@ -1,18 +1,30 @@
 package com.zhangke.fread.activitypub.app.internal.screen.list.edit
 
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.zhangke.activitypub.entities.ActivityPubAccountEntity
 import com.zhangke.activitypub.entities.ActivityPubListEntity
 import com.zhangke.framework.architect.json.globalJson
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitInViewModel
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.exceptionOrThrow
+import com.zhangke.fread.activitypub.app.Res
+import com.zhangke.fread.activitypub.app.activity_pub_add_list_name_is_empty
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.model.IdentityRole
+import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.supervisorScope
 import me.tatarka.inject.annotations.Assisted
 import me.tatarka.inject.annotations.Inject
 
@@ -38,6 +50,11 @@ class EditListViewModel @Inject constructor(
     private val _snackBarFlow = MutableSharedFlow<TextString>()
     val snackBarFlow = _snackBarFlow.asSharedFlow()
 
+    private val _finishPageFlow = MutableSharedFlow<Unit>()
+    val finishPageFlow = _finishPageFlow.asSharedFlow()
+
+    private var originalAccountList: List<ActivityPubAccountEntity> = emptyList()
+
     init {
         launchInViewModel { getListDetail() }
     }
@@ -50,8 +67,105 @@ class EditListViewModel @Inject constructor(
         launchInViewModel { getAccountList() }
     }
 
-    fun onPolicySelect(policy: ListRepliesPolicy){
+    fun onPolicySelect(policy: ListRepliesPolicy) {
+        _uiState.update { it.copy(repliesPolicy = policy) }
+        checkContentHasChanged()
+    }
 
+    fun onNameChangeRequest(name: TextFieldValue) {
+        _uiState.update { state ->
+            state.copy(name = name)
+        }
+        checkContentHasChanged()
+    }
+
+    fun onExclusiveChanged(exclusive: Boolean) {
+        _uiState.update { state ->
+            state.copy(exclusive = exclusive)
+        }
+        checkContentHasChanged()
+    }
+
+    fun onRemoveAccount(accountEntity: ActivityPubAccountEntity) {
+        _uiState.update { state ->
+            state.copy(accountList = state.accountList - accountEntity)
+        }
+        checkContentHasChanged()
+    }
+
+    fun onSaveClick() {
+        if (_uiState.value.name.text.isEmpty()) {
+            _snackBarFlow.emitInViewModel(textOf(Res.string.activity_pub_add_list_name_is_empty))
+            return
+        }
+        _uiState.update { it.copy(showLoadingCover = true) }
+        viewModelScope.launch {
+            supervisorScope {
+                val settingDeferred = async { updateSettingPart() }
+                val accountDeferred = async { updateAccountList() }
+                val settingResult = settingDeferred.await()
+                val accountResult = accountDeferred.await()
+                _uiState.update { it.copy(showLoadingCover = false) }
+                if (settingResult.isFailure) {
+                    _snackBarFlow.emitTextMessageFromThrowable(settingResult.exceptionOrThrow())
+                } else if (accountResult.isFailure) {
+                    _snackBarFlow.emitTextMessageFromThrowable(accountResult.exceptionOrThrow())
+                } else {
+                    _finishPageFlow.emit(Unit)
+                }
+            }
+        }
+    }
+
+    private suspend fun updateSettingPart(): Result<Unit> {
+        if (!checkSettingHasChanged()) return Result.success(Unit)
+        return clientManager.getClient(role).accountRepo
+            .updateList(
+                listId = entity.id,
+                title = uiState.value.name.text,
+                repliesPolicy = uiState.value.repliesPolicy.apiName,
+                exclusive = uiState.value.exclusive,
+            ).map { }
+    }
+
+    private suspend fun updateAccountList(): Result<Unit> {
+        if (!checkAccountHasChanged()) return Result.success(Unit)
+        return clientManager.getClient(role).accountRepo
+            .postAccountInList(
+                listId = entity.id,
+                accountIds = uiState.value.accountList.map { it.id },
+            ).map { }
+    }
+
+    private fun checkContentHasChanged() {
+        val hasChanged = checkSettingHasChanged() || checkAccountHasChanged()
+        if (_uiState.value.contentHasChanged != hasChanged) {
+            _uiState.update { it.copy(contentHasChanged = hasChanged) }
+        }
+    }
+
+    private fun checkSettingHasChanged(): Boolean {
+        if (entity.title != uiState.value.name.text) {
+            return true
+        }
+        if (entity.repliesPolicy != uiState.value.repliesPolicy.apiName) {
+            return true
+        }
+        if (entity.exclusive != uiState.value.exclusive) {
+            return true
+        }
+        return false
+    }
+
+    private fun checkAccountHasChanged(): Boolean {
+        if (originalAccountList.size != _uiState.value.accountList.size) {
+            return true
+        }
+        val ids = originalAccountList.map { it.id }.toSet()
+        for (entity in _uiState.value.accountList) {
+            if (!ids.contains(entity.id)) return true
+        }
+        return false
     }
 
     private suspend fun getAccountList() {
@@ -60,6 +174,7 @@ class EditListViewModel @Inject constructor(
             .accountRepo
             .getAccountsInList(entity.id)
             .onSuccess { list ->
+                originalAccountList = list
                 _uiState.update { state ->
                     state.copy(
                         accountsLoading = false,

@@ -72,6 +72,19 @@ class EditListViewModel @Inject constructor(
         checkContentHasChanged()
     }
 
+    fun onDeleteClick() {
+        launchInViewModel {
+            clientManager.getClient(role)
+                .listsRepo
+                .deleteList(entity.id)
+                .onSuccess {
+                    _finishPageFlow.emit(Unit)
+                }.onFailure { t ->
+                    _snackBarFlow.emitTextMessageFromThrowable(t)
+                }
+        }
+    }
+
     fun onNameChangeRequest(name: TextFieldValue) {
         _uiState.update { state ->
             state.copy(name = name)
@@ -87,10 +100,32 @@ class EditListViewModel @Inject constructor(
     }
 
     fun onRemoveAccount(accountEntity: ActivityPubAccountEntity) {
-        _uiState.update { state ->
-            state.copy(accountList = state.accountList - accountEntity)
+        if (!originalAccountList.any { it.id == accountEntity.id }) {
+            _uiState.update { it.copy(accountList = it.accountList - accountEntity) }
+            return
         }
-        checkContentHasChanged()
+        _uiState.update { it.copy(showLoadingCover = true) }
+        launchInViewModel {
+            clientManager.getClient(role)
+                .listsRepo
+                .deleteAccountsInList(
+                    listId = entity.id,
+                    accounts = listOf(accountEntity.id),
+                ).onSuccess {
+                    _uiState.update { state ->
+                        state.copy(
+                            showLoadingCover = false,
+                            accountList = state.accountList - accountEntity,
+                        )
+                    }
+                    originalAccountList = originalAccountList - accountEntity
+                }.onFailure { t ->
+                    _uiState.update { state ->
+                        state.copy(showLoadingCover = false)
+                    }
+                    _snackBarFlow.emitTextMessageFromThrowable(t)
+                }
+        }
     }
 
     fun onSaveClick() {
@@ -118,12 +153,13 @@ class EditListViewModel @Inject constructor(
     }
 
     fun onAddUser(user: ActivityPubAccountEntity) {
+        if (_uiState.value.accountList.any { it.id == entity.id }) return
         _uiState.update { it.copy(accountList = it.accountList + user) }
     }
 
     private suspend fun updateSettingPart(): Result<Unit> {
         if (!checkSettingHasChanged()) return Result.success(Unit)
-        return clientManager.getClient(role).accountRepo
+        return clientManager.getClient(role).listsRepo
             .updateList(
                 listId = entity.id,
                 title = uiState.value.name.text,
@@ -134,10 +170,12 @@ class EditListViewModel @Inject constructor(
 
     private suspend fun updateAccountList(): Result<Unit> {
         if (!checkAccountHasChanged()) return Result.success(Unit)
-        return clientManager.getClient(role).accountRepo
+        val ids = originalAccountList.map { it.id }.toSet()
+        val newAccounts = _uiState.value.accountList.filter { !ids.contains(it.id) }
+        return clientManager.getClient(role).listsRepo
             .postAccountInList(
                 listId = entity.id,
-                accountIds = uiState.value.accountList.map { it.id },
+                accountIds = newAccounts.map { it.id },
             ).map { }
     }
 
@@ -175,7 +213,7 @@ class EditListViewModel @Inject constructor(
     private suspend fun getAccountList() {
         _uiState.update { it.copy(accountsLoading = true) }
         clientManager.getClient(role)
-            .accountRepo
+            .listsRepo
             .getAccountsInList(entity.id)
             .onSuccess { list ->
                 originalAccountList = list

@@ -50,7 +50,10 @@ class EditListScreen(
                 onDismissRequest = { showBackReminder = false },
                 contentText = org.jetbrains.compose.resources.stringResource(Res.string.activity_pub_add_list_back_reminder),
                 onNegativeClick = { showBackReminder = false },
-                onPositiveClick = { navigator.pop() },
+                onPositiveClick = {
+                    showBackReminder = false
+                    navigator.pop()
+                },
             )
         }
         ListDetailPageContent(
@@ -60,6 +63,7 @@ class EditListScreen(
             showLoadingCover = uiState.showLoadingCover,
             accountList = uiState.accountList,
             snackBarState = snackBarState,
+            showDeleteIcon = true,
             accountsLoading = uiState.accountsLoading,
             loadAccountsError = uiState.loadAccountsError,
             onNameChangedRequest = viewModel::onNameChangeRequest,
@@ -74,6 +78,7 @@ class EditListScreen(
             onBackClick = { onBack() },
             onRetryLoadAccountsClick = viewModel::onRetryLoadAccountsClick,
             onPolicySelect = viewModel::onPolicySelect,
+            onDeleteClick = viewModel::onDeleteClick,
         )
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarFlow)
         ConsumeFlow(viewModel.finishPageFlow) { navigator.pop() }

@@ -33,6 +33,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_created_list_title
+import com.zhangke.fread.activitypub.app.internal.screen.list.add.AddListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.EditListScreen
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.status.model.IdentityRole
@@ -60,7 +61,7 @@ class CreatedListsScreen(
                     EditListScreen(role = role, serializedList = globalJson.encodeToString(it))
                 )
             },
-            onAddListClick = {},
+            onAddListClick = { navigator.push(AddListScreen(role)) },
         )
         LaunchedEffect(Unit) { viewModel.onPageResume() }
         ConsumeSnackbarFlow(snackBarState, viewModel.snackBarFlow)

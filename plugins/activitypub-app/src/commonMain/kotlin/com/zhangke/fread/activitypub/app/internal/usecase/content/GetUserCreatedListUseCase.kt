@@ -11,7 +11,7 @@ class GetUserCreatedListUseCase @Inject constructor(
 
     suspend operator fun invoke(role: IdentityRole): Result<List<ActivityPubListEntity>> {
         return clientManager.getClient(role)
-            .accountRepo
+            .listsRepo
             .getAccountLists()
     }
 }

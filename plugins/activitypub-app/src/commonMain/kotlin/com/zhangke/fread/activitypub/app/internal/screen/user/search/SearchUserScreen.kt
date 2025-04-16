@@ -21,10 +21,15 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.hilt.getViewModel
@@ -86,8 +91,11 @@ class SearchUserScreen(
             topBar = {
                 TopAppBar(
                     title = {
+                        val focusRequester = remember { FocusRequester() }
+                        LaunchedEffect(Unit) { focusRequester.requestFocus() }
                         TextField(
-                            modifier = Modifier.fillMaxWidth(),
+                            modifier = Modifier.fillMaxWidth()
+                                .focusRequester(focusRequester),
                             value = uiState.query,
                             onValueChange = { onQueryChange(it) },
                             placeholder = {
@@ -98,10 +106,15 @@ class SearchUserScreen(
                             keyboardActions = KeyboardActions(
                                 onSearch = { onSearchClick() }
                             ),
+                            singleLine = true,
+                            maxLines = 1,
                             keyboardOptions = KeyboardOptions.Default.copy(
                                 imeAction = ImeAction.Search
                             ),
-                            colors = TextFieldDefaults.transparentColors,
+                            colors = TextFieldDefaults.transparentColors.copy(
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent,
+                            ),
                             textStyle = MaterialTheme.typography.titleMedium,
                         )
                     },

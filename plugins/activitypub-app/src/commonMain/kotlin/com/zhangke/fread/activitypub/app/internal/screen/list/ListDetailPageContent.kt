@@ -62,6 +62,7 @@ import com.zhangke.fread.activitypub.app.activity_pub_add_list_replies_followers
 import com.zhangke.fread.activitypub.app.activity_pub_add_list_replies_list
 import com.zhangke.fread.activitypub.app.activity_pub_add_list_replies_non
 import com.zhangke.fread.activitypub.app.activity_pub_add_list_title
+import com.zhangke.fread.activitypub.app.activity_pub_list_delete_confirm
 import com.zhangke.fread.activitypub.app.internal.screen.list.edit.ListRepliesPolicy
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import org.jetbrains.compose.resources.stringResource
@@ -76,6 +77,7 @@ internal fun ListDetailPageContent(
     snackBarState: SnackbarHostState,
     accountsLoading: Boolean,
     loadAccountsError: Throwable?,
+    showDeleteIcon: Boolean,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     onAddUserClick: () -> Unit,
@@ -84,6 +86,7 @@ internal fun ListDetailPageContent(
     onRetryLoadAccountsClick: () -> Unit,
     onPolicySelect: (ListRepliesPolicy) -> Unit,
     onNameChangedRequest: (TextFieldValue) -> Unit,
+    onDeleteClick: () -> Unit = {},
 ) {
     Scaffold(
         topBar = {
@@ -91,6 +94,23 @@ internal fun ListDetailPageContent(
                 title = stringResource(Res.string.activity_pub_add_list_title),
                 onBackClick = onBackClick,
                 actions = {
+                    if (showDeleteIcon) {
+                        var showDeleteDialog by remember { mutableStateOf(false) }
+                        if (showDeleteDialog) {
+                            FreadDialog(
+                                onDismissRequest = { showDeleteDialog = false },
+                                contentText = stringResource(Res.string.activity_pub_list_delete_confirm),
+                                onNegativeClick = { showDeleteDialog = false },
+                                onPositiveClick = {
+                                    onDeleteClick()
+                                    showDeleteDialog = false
+                                },
+                            )
+                        }
+                        Toolbar.DeleteButton(
+                            onDeleteClick = { showDeleteDialog = true },
+                        )
+                    }
                     IconButton(
                         onClick = onSaveClick,
                     ) {

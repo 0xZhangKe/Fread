@@ -35,10 +35,6 @@ class SearchUserViewModel @Inject constructor(
 
     private var searchJob: Job? = null
 
-    init {
-        //https://m.cmx.im/api/v1/accounts/search?q=w&resolve=false&limit=4&following=true
-    }
-
     fun onQueryChange(query: String) {
         _uiState.update { it.copy(query = query) }
     }
@@ -57,7 +53,7 @@ class SearchUserViewModel @Inject constructor(
                 ).onSuccess { accounts ->
                     _uiState.update {
                         it.copy(
-                            searching = true,
+                            searching = false,
                             accounts = accounts,
                         )
                     }

@@ -149,4 +149,5 @@
     <string name="activity_pub_add_list_name_is_empty">Please enter your username</string>
     <string name="activity_pub_add_list_back_reminder">You have unsaved changes. Are you sure you want to exit?</string>
     <string name="activity_pub_search_user_placeholder">Type to search</string>
+    <string name="activity_pub_list_delete_confirm">Are you sure you want to delete this list?</string>
 </resources>

@@ -44,8 +44,6 @@ import com.zhangke.framework.composable.LocalSnackbarHostState
 import com.zhangke.framework.composable.PagerTabOptions
 import com.zhangke.framework.composable.TopBarWithTabLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.fread.analytics.HomeTabElements
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
@@ -127,7 +125,6 @@ class BlueskyHomeTab(
                     ) {
                         FloatingActionButton(
                             onClick = {
-                                reportClick(HomeTabElements.POST_STATUS)
                                 uiState.account?.let(onPostBlogClick)
                             },
                             containerColor = MaterialTheme.colorScheme.surface,
@@ -177,30 +174,25 @@ class BlueskyHomeTab(
                                         title = uiState.content.name,
                                         showNextIcon = !isLatestContent,
                                         onMenuClick = {
-                                            reportClick(HomeTabElements.SHOW_DRAWER)
                                             coroutineScope.launch {
                                                 mainTabConnection.openDrawer()
                                             }
                                         },
                                         onNextClick = {
-                                            reportClick(HomeTabElements.NEXT)
                                             coroutineScope.launch {
                                                 mainTabConnection.switchToNextTab()
                                             }
                                         },
                                         onRefreshClick = {
-                                            reportClick(HomeTabElements.REFRESH)
                                             coroutineScope.launch {
                                                 mainTabConnection.scrollToTop()
                                                 mainTabConnection.refresh()
                                             }
                                         },
                                         onTitleClick = {
-                                            reportClick(HomeTabElements.TITLE)
                                             onTitleClick(uiState.content)
                                         },
                                         onDoubleClick = {
-                                            reportClick(HomeTabElements.TITLE_DOUBLE_CLICK)
                                             coroutineScope.launch {
                                                 mainTabConnection.scrollToTop()
                                             }

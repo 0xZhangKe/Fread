@@ -26,7 +26,7 @@ fun InputBlogTextField(
 ) {
     val focusRequester = remember { FocusRequester() }
     LaunchedEffect(Unit) {
-        delay(200)
+        delay(500)
         focusRequester.requestFocus()
     }
     TextField(

@@ -21,7 +21,6 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.StyledTextButton
 import com.zhangke.framework.composable.TextButtonStyle
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.status.author.BlogAuthor
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -67,7 +66,6 @@ fun StatusInfoLine(
             modifier = Modifier
                 .size(style.infoLineStyle.avatarSize),
             onClick = {
-                reportClick(StatusDataElements.USER_INFO)
                 onUserInfoClick?.invoke(blogAuthor)
             },
             reblogAvatar = reblogAuthor?.avatar,
@@ -82,7 +80,6 @@ fun StatusInfoLine(
                 modifier = Modifier
                     .fillMaxWidth()
                     .clickable(enabled = onUserInfoClick != null) {
-                        reportClick(StatusDataElements.USER_INFO)
                         onUserInfoClick?.invoke(blogAuthor)
                     },
                 maxLines = 1,

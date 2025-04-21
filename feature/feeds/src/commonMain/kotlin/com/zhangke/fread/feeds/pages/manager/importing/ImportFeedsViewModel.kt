@@ -8,7 +8,7 @@ import com.zhangke.framework.network.SimpleUri
 import com.zhangke.framework.opml.OpmlOutline
 import com.zhangke.framework.opml.OpmlParser
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.analytics.reportToFireBase
+import com.zhangke.fread.analytics.reportToLogger
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.status.StatusProvider
@@ -219,7 +219,7 @@ class ImportFeedsViewModel @Inject constructor(
             OpmlParser.parse(xmlDocument)
         } catch (e: Throwable) {
             _uiState.update { it.copy(errorMessage = e.message) }
-            reportToFireBase("OPML_IMPORT_ERROR") {
+            reportToLogger("OPML_IMPORT_ERROR") {
                 put("errorMessage", e.message.orEmpty())
                 put("trace", e.stackTraceToString())
                 put("document", xmlDocument.take(90000))

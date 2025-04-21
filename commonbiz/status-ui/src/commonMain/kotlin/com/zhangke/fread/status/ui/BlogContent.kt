@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.toPx
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.blog.BlogPoll
 import com.zhangke.fread.status.model.BlogTranslationUiState
@@ -42,7 +41,6 @@ import com.zhangke.fread.status.model.isRss
 import com.zhangke.fread.status.richtext.RichText
 import com.zhangke.fread.status.ui.common.BlogTranslateLabel
 import com.zhangke.fread.status.ui.embed.BlogEmbedsUi
-import com.zhangke.fread.status.ui.image.BlogMediaClickEvent
 import com.zhangke.fread.status.ui.image.OnBlogMediaClick
 import com.zhangke.fread.status.ui.label.StatusBottomEditedLabel
 import com.zhangke.fread.status.ui.label.StatusBottomInteractionLabel
@@ -95,15 +93,12 @@ fun BlogContent(
                         blogTranslationState = blogTranslationState,
                         style = style.contentStyle,
                         onHashtagInStatusClick = {
-                            reportClick(StatusDataElements.HASHTAG)
                             onHashtagInStatusClick(it)
                         },
                         onMentionClick = {
-                            reportClick(StatusDataElements.MENTION)
                             onMentionClick(it)
                         },
                         onMentionDidClick = {
-                            reportClick(StatusDataElements.MENTION)
                             onMentionDidClick(it)
                         },
                         onUrlClick = onUrlClick,
@@ -116,15 +111,12 @@ fun BlogContent(
                 blogTranslationState = blogTranslationState,
                 style = style.contentStyle,
                 onHashtagInStatusClick = {
-                    reportClick(StatusDataElements.HASHTAG)
                     onHashtagInStatusClick(it)
                 },
                 onMentionClick = {
-                    reportClick(StatusDataElements.MENTION)
                     onMentionClick(it)
                 },
                 onMentionDidClick = {
-                    reportClick(StatusDataElements.MENTION)
                     onMentionDidClick(it)
                 },
                 onUrlClick = onUrlClick,
@@ -140,7 +132,6 @@ fun BlogContent(
                 isSelf = isOwner,
                 blogTranslationState = blogTranslationState,
                 onVoted = {
-                    reportClick(StatusDataElements.VOTE)
                     onVoted(it)
                 },
             )
@@ -153,16 +144,7 @@ fun BlogContent(
                 blogTranslationState = blogTranslationState,
                 indexInList = indexOfFeeds,
                 sensitive = sensitive,
-                onMediaClick = {
-                    reportClick(StatusDataElements.MEDIA) {
-                        val mediaType = when (it) {
-                            is BlogMediaClickEvent.BlogImageClickEvent -> "image"
-                            is BlogMediaClickEvent.BlogVideoClickEvent -> "video"
-                        }
-                        put("mediaType", mediaType)
-                    }
-                    onMediaClick(it)
-                },
+                onMediaClick = onMediaClick,
             )
         } else if (blog.embeds.isNotEmpty()) {
             BlogEmbedsUi(

@@ -52,7 +52,6 @@ import com.zhangke.framework.composable.freadPlaceholder
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.voyager.LocalTransparentNavigator
 import com.zhangke.framework.voyager.TransparentNavigator
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.bluesky.Res
 import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user
 import com.zhangke.fread.bluesky.bsky_user_detail_action_block_user_dialog_message
@@ -66,7 +65,6 @@ import com.zhangke.fread.bluesky.internal.screen.feeds.home.HomeFeedsTab
 import com.zhangke.fread.bluesky.internal.screen.user.edit.EditProfileScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListScreen
 import com.zhangke.fread.bluesky.internal.screen.user.list.UserListType
-import com.zhangke.fread.bluesky.internal.tracking.BskyTrackingElements
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
@@ -438,12 +436,10 @@ private fun TopBarActions(
         onDismissRequest = { showMorePopup = false },
     ) {
         DropDownOpenInBrowserItem {
-            reportClick(BskyTrackingElements.USER_DETAIL_OPEN_IN_BROWSER)
             showMorePopup = false
             onOpenInBrowserClick()
         }
         DropDownCopyLinkItem {
-            reportClick(BskyTrackingElements.USER_DETAIL_COPY_LINK)
             showMorePopup = false
             onCopyLinkClick()
         }

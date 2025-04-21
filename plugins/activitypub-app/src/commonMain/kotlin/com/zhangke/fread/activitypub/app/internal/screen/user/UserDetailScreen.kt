@@ -96,7 +96,6 @@ import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unblock_d
 import com.zhangke.fread.activitypub.app.activity_pub_user_detail_menu_unmute_user
 import com.zhangke.fread.activitypub.app.activity_pub_user_menu_blocked_user_list
 import com.zhangke.fread.activitypub.app.activity_pub_user_menu_muted_user_list
-import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.screen.account.EditAccountInfoScreen
 import com.zhangke.fread.activitypub.app.internal.screen.filters.list.FiltersListScreen
 import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
@@ -108,7 +107,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.user.status.StatusListT
 import com.zhangke.fread.activitypub.app.internal.screen.user.tags.TagListScreenRoute
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTab
 import com.zhangke.fread.activitypub.app.internal.screen.user.timeline.UserTimelineTabType
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
@@ -535,17 +533,14 @@ data class UserDetailScreen(
             onDismissRequest = { showMorePopup = false },
         ) {
             DropDownOpenInBrowserItem {
-                reportClick(ActivityPubDataElements.USER_DETAIL_OPEN_IN_BROWSER)
                 showMorePopup = false
                 onOpenInBrowserClick()
             }
             DropDownCopyLinkItem {
-                reportClick(ActivityPubDataElements.USER_DETAIL_COPY_LINK)
                 showMorePopup = false
                 onCopyLinkClick()
             }
             DropDownOpenOriginalInstanceItem {
-                reportClick(ActivityPubDataElements.USER_DETAIL_OPEN_ORIGINAL_INSTANCE)
                 showMorePopup = false
                 onOpenOriginalInstanceClick()
             }

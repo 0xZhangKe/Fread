@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.createActivityPubProtocol
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubLoggedAccountEntity
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
-import com.zhangke.fread.analytics.reportToFireBase
+import com.zhangke.fread.analytics.reportToLogger
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import me.tatarka.inject.annotations.Inject
@@ -119,7 +119,7 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
             WebFinger.create(account.url)!!.let { return it }
         } catch (e: Throwable) {
             e.printStackTrace()
-            reportToFireBase("WebFingerCreateError") {
+            reportToLogger("WebFingerCreateError") {
                 put("acct", account.acct)
                 put("url", account.url)
             }

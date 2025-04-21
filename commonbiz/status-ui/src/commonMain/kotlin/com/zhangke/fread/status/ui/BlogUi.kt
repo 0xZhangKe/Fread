@@ -147,7 +147,6 @@ fun BlogUi(
             blog = blog,
             logged = logged,
             onInteractive = { type, blog ->
-                reportStatusInteractionClickEvent(type)
                 if (type == StatusActionType.SHARE) {
                     textHandler.shareUrl(blog.link, blog.content)
                     return@StatusBottomInteractionPanel

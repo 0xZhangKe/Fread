@@ -62,7 +62,7 @@ dependencies {
     add("kspAndroid", libs.androidx.room.compiler)
     add("kspAndroid", libs.kotlinInject.compiler)
     add("kspAndroid", libs.auto.service.ksp)
-    add("kspAndroid", libs.krouter.collecting.compiler)
+    kspCommonMainMetadata(libs.krouter.collecting.compiler)
 }
 
 compose {

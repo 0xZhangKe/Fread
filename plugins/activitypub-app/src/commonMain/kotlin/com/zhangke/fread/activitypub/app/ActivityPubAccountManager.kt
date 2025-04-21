@@ -7,7 +7,7 @@ import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
-import com.zhangke.fread.activitypub.app.internal.push.PushManager
+import com.zhangke.fread.activitypub.app.internal.push.ActivityPubPushManager
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
@@ -30,7 +30,7 @@ class ActivityPubAccountManager @Inject constructor(
     private val accountRepo: ActivityPubLoggedAccountRepo,
     private val userUriTransformer: UserUriTransformer,
     private val accountAdapter: ActivityPubLoggedAccountAdapter,
-    private val pushManager: PushManager,
+    private val activityPubPushManager: ActivityPubPushManager,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
 ) : IAccountManager {
 
@@ -90,7 +90,7 @@ class ActivityPubAccountManager @Inject constructor(
         val account = accountRepo.queryByUri(uri.toString())
         if (account != null) {
             val role = IdentityRole(accountUri = account.uri)
-            pushManager.unsubscribe(role, account.userId)
+            activityPubPushManager.unsubscribe(role, account.userId)
         }
         accountRepo.deleteByUri(uri)
         loggedAccountProvider.removeAccount(uri)
@@ -114,6 +114,6 @@ class ActivityPubAccountManager @Inject constructor(
 
     private suspend fun subscribeNotificationForAccount(account: ActivityPubLoggedAccount) {
         val role = IdentityRole(accountUri = account.uri)
-        pushManager.subscribe(role, account.userId)
+        activityPubPushManager.subscribe(role, account.userId)
     }
 }

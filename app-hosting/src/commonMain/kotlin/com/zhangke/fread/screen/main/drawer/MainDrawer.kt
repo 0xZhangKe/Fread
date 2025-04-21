@@ -44,8 +44,6 @@ import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.ConsumeOpenScreenFlow
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.fread.analytics.MainDrawerElements
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.commonbiz.shared.LocalModuleScreenVisitor
 import com.zhangke.fread.feeds.pages.home.EmptyContent
 import com.zhangke.fread.feeds.pages.manager.add.pre.PreAddFeedsScreen
@@ -81,30 +79,24 @@ fun Screen.MainDrawer(
         uiState = uiState,
         onContentConfigClick = {
             onDismissRequest()
-            reportClick(MainDrawerElements.CONTENT)
             coroutineScope.launch {
                 mainTabConnection.scrollToContentTab(it)
             }
         },
         onAddContentClick = {
             onDismissRequest()
-            reportClick(MainDrawerElements.ADD_CONTENT)
             navigator.push(PreAddFeedsScreen())
         },
         onMove = viewModel::onContentConfigMove,
         onEditClick = {
             onDismissRequest()
-            reportClick(MainDrawerElements.ITEM_EDIT)
             viewModel.onContentConfigEditClick(it)
         },
         onSettingClick = {
             onDismissRequest()
-            reportClick(MainDrawerElements.SETTING)
             navigator.push(SettingScreen())
         },
         onDonateClick = {
-//            onDismissRequest()
-            reportClick(MainDrawerElements.DONATE)
             bottomSheetNavigator.show(screenVisitor.profileScreenVisitor.getDonateScreen())
         },
     )

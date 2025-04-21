@@ -59,11 +59,11 @@ class ActivityPubLoggedAccountAdapter @Inject constructor(
     }
 
     suspend fun createFromAccount(
+        baseUrl: FormalBaseUrl,
         instance: ActivityPubInstanceEntity,
         account: ActivityPubAccountEntity,
         token: ActivityPubTokenEntity,
     ): ActivityPubLoggedAccount {
-        val baseUrl = FormalBaseUrl.parse(instance.domain)!!
         return createFromAccount(
             platform = instanceAdapter.toPlatform(baseUrl, instance),
             account = account,

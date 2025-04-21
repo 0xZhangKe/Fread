@@ -64,7 +64,7 @@ class ActivityPubOAuthor @Inject constructor(
             ).getOrThrow()
             val accountEntity =
                 client.accountRepo.verifyCredentials(token.accessToken).getOrThrow()
-            accountAdapter.createFromAccount(instance, accountEntity, token)
+            accountAdapter.createFromAccount(baseUrl, instance, accountEntity, token)
         } catch (e: Exception) {
             toast(e.message)
             return@launch

@@ -34,7 +34,7 @@ class PushNotificationManager @Inject constructor(
         private const val NOTIFICATION_GROUP_KEY = "fread.xyz.interaction"
     }
 
-    suspend fun onReceiveNewMessage(context: Context, message: FcmPushMessage) {
+    suspend fun onReceiveNewMessage(context: Context, message: ActivityPubPushMessage) {
         if (!checkSelfPushPermission(context)) return
         createNotificationChannel(context)
         val bitmap = downloadIcon(context, message.icon)
@@ -74,7 +74,7 @@ class PushNotificationManager @Inject constructor(
         return context.imageLoader.executeSafety(request).asBitmapOrNull()
     }
 
-    private fun buildNotificationIntent(context: Context, message: FcmPushMessage): PendingIntent {
+    private fun buildNotificationIntent(context: Context, message: ActivityPubPushMessage): PendingIntent {
         val openNavigationUri = OpenNotificationPageAction.buildOpenNotificationPageRoute()
         val intent = context.packageManager.getLaunchIntentForPackage(context.packageName)!!
         intent.data = openNavigationUri.toUri()

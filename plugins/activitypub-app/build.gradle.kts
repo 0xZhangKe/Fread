@@ -46,8 +46,6 @@ kotlin {
                 implementation(libs.leftright)
 
                 implementation(libs.krouter.runtime)
-
-                implementation(libs.firebase.kmp.messaging)
             }
         }
         commonTest {

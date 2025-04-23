@@ -39,3 +39,6 @@ include(":app")
 include(":thirds:halilibo-richtext-ui")
 include(":thirds:halilibo-richtext-material3")
 include(":plugins:bluesky")
+if (File("./plugins/fread-firebase").exists()) {
+    include(":plugins:fread-firebase")
+}

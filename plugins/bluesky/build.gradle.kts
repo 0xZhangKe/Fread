@@ -61,7 +61,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.androidx.browser)
-                implementation(libs.firebase.kmp.messaging)
             }
         }
     }
@@ -74,7 +73,6 @@ dependencies {
     kspAll(libs.auto.service.ksp)
     kspCommonMainMetadata(libs.krouter.collecting.compiler)
 }
-
 
 compose {
     resources {

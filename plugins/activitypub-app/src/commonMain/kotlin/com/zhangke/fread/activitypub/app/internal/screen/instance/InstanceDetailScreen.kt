@@ -48,11 +48,9 @@ import com.zhangke.framework.voyager.navigationResult
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_active_month_label
 import com.zhangke.fread.activitypub.app.activity_pub_instance_detail_language_label
-import com.zhangke.fread.activitypub.app.internal.ActivityPubDataElements
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailHeaderContent
 import com.zhangke.fread.activitypub.app.internal.screen.user.DetailTopBar
 import com.zhangke.fread.activitypub.app.internal.screen.user.UserDetailScreen
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.common.page.BaseScreen
@@ -311,13 +309,11 @@ class InstanceDetailScreen(
             onDismissRequest = { showMorePopup = false },
         ) {
             DropDownOpenInBrowserItem {
-                reportClick(ActivityPubDataElements.INSTANCE_DETAIL_OPEN_IN_BROWSER)
                 showMorePopup = false
                 browserLauncher.launchBySystemBrowser(baseUrl.toString())
             }
 
             DropDownCopyLinkItem {
-                reportClick(ActivityPubDataElements.INSTANCE_DETAIL_COPY_LINK)
                 showMorePopup = false
                 activityTextHandler.copyText(baseUrl.toString())
             }

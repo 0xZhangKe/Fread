@@ -52,8 +52,6 @@ import com.zhangke.fread.activitypub.app.internal.screen.instance.InstanceDetail
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreen
 import com.zhangke.fread.activitypub.app.internal.screen.trending.TrendingStatusTab
-import com.zhangke.fread.analytics.HomeTabElements
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.page.BasePagerTab
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.common.ContentToolbar
@@ -126,7 +124,6 @@ internal class ActivityPubContentScreen(
                     ) {
                         FloatingActionButton(
                             onClick = {
-                                reportClick(HomeTabElements.POST_STATUS)
                                 onPostBlogClick(account)
                             },
                             containerColor = MaterialTheme.colorScheme.surface,
@@ -163,30 +160,25 @@ internal class ActivityPubContentScreen(
                                     title = config.name,
                                     showNextIcon = !isLatestContent,
                                     onMenuClick = {
-                                        reportClick(HomeTabElements.SHOW_DRAWER)
                                         coroutineScope.launch {
                                             mainTabConnection.openDrawer()
                                         }
                                     },
                                     onNextClick = {
-                                        reportClick(HomeTabElements.NEXT)
                                         coroutineScope.launch {
                                             mainTabConnection.switchToNextTab()
                                         }
                                     },
                                     onRefreshClick = {
-                                        reportClick(HomeTabElements.REFRESH)
                                         coroutineScope.launch {
                                             mainTabConnection.scrollToTop()
                                             mainTabConnection.refresh()
                                         }
                                     },
                                     onTitleClick = {
-                                        reportClick(HomeTabElements.TITLE)
                                         onTitleClick(config)
                                     },
                                     onDoubleClick = {
-                                        reportClick(HomeTabElements.TITLE_DOUBLE_CLICK)
                                         coroutineScope.launch {
                                             mainTabConnection.scrollToTop()
                                         }

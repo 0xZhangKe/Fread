@@ -48,8 +48,6 @@ import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.bottomSheet.LocalBottomSheetNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.composable.Toolbar
-import com.zhangke.fread.analytics.SettingElements
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.config.StatusContentSize
 import com.zhangke.fread.common.daynight.DayNightMode
 import com.zhangke.fread.common.daynight.LocalActivityDayNightHelper
@@ -117,41 +115,27 @@ class SettingScreen : BaseScreen() {
             uiState = uiState,
             onBackClick = navigator::pop,
             onOpenSourceClick = {
-                reportClick(SettingElements.OPEN_SOURCE)
                 navigator.push(OpenSourceScreen())
             },
             onSwitchAutoPlayClick = {
-                reportClick(SettingElements.AUTO_PLAY_INLINE_VIDEO) {
-                    put("on", it.toString())
-                }
                 viewModel.onChangeAutoPlayInlineVideo(it)
             },
             onDayNightModeClick = {
-                reportClick(SettingElements.DARK_MODE) {
-                    put("mode", it.name)
-                }
                 activityDayNightHelper.setMode(it)
             },
             onLanguageClick = {
-                reportClick(SettingElements.LANGUAGE) {
-                    put("language", it.name)
-                }
                 activityLanguageHelper.setLanguage(it)
             },
             onRatingClick = {
-                reportClick(SettingElements.RATTING)
                 activityTextHandler.openAppMarket()
             },
             onAboutClick = {
-                reportClick(SettingElements.ABOUT)
                 navigator.push(AboutScreen())
             },
             onDonateClick = {
-                reportClick(SettingElements.DONATE)
                 bottomSheetNavigator.show(DonateScreen())
             },
             onContentSizeChanged = {
-                reportClick(SettingElements.CONTENT_SIZE)
                 viewModel.onContentSizeChanged(it)
             },
             onAlwaysShowSensitive = viewModel::onAlwaysShowSensitiveContentChanged,
@@ -331,7 +315,6 @@ class SettingScreen : BaseScreen() {
             title = stringResource(Res.string.profile_setting_open_source_feedback),
             subtitle = stringResource(Res.string.profile_setting_open_source_feedback_desc),
             onClick = {
-                reportClick(SettingElements.FEEDBACK)
                 showFeedbackBottomSheet = true
             },
         )

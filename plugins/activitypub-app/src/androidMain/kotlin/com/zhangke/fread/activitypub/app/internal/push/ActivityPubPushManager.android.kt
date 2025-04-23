@@ -6,34 +6,32 @@ import com.zhangke.activitypub.entities.SubscriptionAlertsEntity
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ApplicationScope
+import com.zhangke.fread.common.push.IPushManager
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.krouter.KRouter
 import me.tatarka.inject.annotations.Inject
 import kotlin.io.encoding.Base64
 import kotlin.io.encoding.ExperimentalEncodingApi
 
 @ApplicationScope
-actual class PushManager @Inject constructor(
+actual class ActivityPubPushManager @Inject constructor(
     private val freadConfigManager: FreadConfigManager,
     private val clientManager: ActivityPubClientManager,
     private val pushInfoRepo: PushInfoRepo,
-    private val pushRelayRepo: FreadPushRelayRepo,
 ) {
 
-    companion object {
-
-        private const val ENDPOINT_URL = "https://api.fread.xyz/push/relay/send"
-    }
-
-    private suspend fun getEndpointUrl(encodedAccountId: String): String {
-        val deviceId = freadConfigManager.getDeviceId()
-        return "$ENDPOINT_URL/$deviceId/$encodedAccountId"
+    private val pushManager: IPushManager? by lazy {
+        KRouter.getServices<IPushManager>().firstOrNull()
     }
 
     @OptIn(ExperimentalEncodingApi::class)
     actual suspend fun subscribe(role: IdentityRole, accountId: String) {
         Log.d("F_TEST", "subscribe for ${role.accountUri}, $accountId")
+        val pushManager = pushManager ?: return
+        val deviceId = freadConfigManager.getDeviceId()
         val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
-        val endpointUrl = getEndpointUrl(encodedAccountId)
+        val endpointUrl =
+            pushManager.getEndpointUrl(encodedAccountId, deviceId)
         val keys = CryptoUtil.generate()
         val subscribeRequest = SubscribePushRequestEntity(
             subscription = SubscribePushRequestEntity.Subscription(
@@ -64,7 +62,7 @@ actual class PushManager @Inject constructor(
             .subscribePush(subscribeRequest)
             .onSuccess {
                 Log.d("F_TEST", "subscribe success: $it")
-                registerRelay(accountId, encodedAccountId, keys)
+                registerRelay(pushManager, deviceId, accountId, encodedAccountId, keys)
             }.onFailure {
                 Log.d("F_TEST", "subscribe failed: $it")
             }
@@ -72,6 +70,7 @@ actual class PushManager @Inject constructor(
 
     actual suspend fun unsubscribe(role: IdentityRole, accountId: String) {
         Log.d("F_TEST", "unsubscribe for ${role.accountUri}, $accountId")
+        val pushManager = pushManager ?: return
         clientManager.getClient(role)
             .pushRepo
             .removeSubscription()
@@ -80,15 +79,17 @@ actual class PushManager @Inject constructor(
             }.onFailure {
                 Log.d("F_TEST", "unsubscribe failed: $it")
             }
-        unregisterRelay(accountId)
+        unregisterRelay(pushManager, freadConfigManager.getDeviceId(), accountId)
     }
 
     private suspend fun registerRelay(
+        pushManager: IPushManager,
+        deviceId: String,
         accountId: String,
         encodedAccountId: String,
         keys: CryptoKeys,
     ) {
-        pushRelayRepo.registerToRelay(encodedAccountId)
+        pushManager.registerToRelay(encodedAccountId, deviceId)
             .onSuccess {
                 Log.d(
                     "F_TEST",
@@ -107,10 +108,14 @@ actual class PushManager @Inject constructor(
     }
 
     @OptIn(ExperimentalEncodingApi::class)
-    private suspend fun unregisterRelay(accountId: String) {
+    private suspend fun unregisterRelay(
+        pushManager: IPushManager,
+        deviceId: String,
+        accountId: String,
+    ) {
         Log.d("F_TEST", "unregisterRelay: $accountId")
         val encodedAccountId = Base64.UrlSafe.encode(accountId.encodeToByteArray())
-        pushRelayRepo.unregisterToRelay(encodedAccountId)
+        pushManager.unregisterToRelay(encodedAccountId, deviceId)
             .onSuccess {
                 Log.d("F_TEST", "unregisterRelay success")
             }.onFailure {

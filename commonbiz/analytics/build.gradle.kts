@@ -6,6 +6,12 @@ plugins {
 
 android {
     namespace = "com.zhangke.fread.analytics"
+    sourceSets {
+        getByName("main") {
+            res.srcDirs("src/androidMain/res")
+            manifest.srcFile("src/androidMain/AndroidManifest.xml")
+        }
+    }
 }
 
 kotlin {
@@ -17,8 +23,7 @@ kotlin {
 
                 implementation(libs.bundles.voyager)
 
-                implementation(libs.firebase.kmp.analytics)
-                implementation(libs.firebase.kmp.crashlytics)
+                implementation(libs.krouter.runtime)
             }
         }
         commonTest {
@@ -33,8 +38,9 @@ kotlin {
             }
         }
     }
+    configureCommonMainKsp()
 }
 
 dependencies {
-    add("kspAndroid", libs.auto.service.ksp)
+    kspCommonMainMetadata(libs.krouter.collecting.compiler)
 }

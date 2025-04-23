@@ -1,24 +1,22 @@
 package com.zhangke.fread.analytics
 
-import dev.gitlive.firebase.Firebase
-import dev.gitlive.firebase.analytics.analytics
+import com.zhangke.krouter.KRouter
+
+interface LogReporter {
+
+    fun report(eventName: String, parameters: Map<String, String>)
+}
+
+private val loggerList: List<LogReporter> by lazy {
+    KRouter.getServices()
+}
 
 fun reportPageShow(
     pageName: String,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit),
 ) {
-    reportToFireBase(EventNames.PAGE_SHOW) {
+    reportToLogger(EventNames.PAGE_SHOW) {
         put(EventParamsName.PAGE_NAME, pageName)
-        paramsBuilder()
-    }
-}
-
-fun reportClick(
-    element: String,
-    paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {},
-) {
-    reportToFireBase(EventNames.CLICK) {
-        put(EventParamsName.ELEMENT, element)
         paramsBuilder()
     }
 }
@@ -26,12 +24,14 @@ fun reportClick(
 fun reportInfo(
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit),
 ) {
-    reportToFireBase(EventNames.INFO, paramsBuilder)
+    reportToLogger(EventNames.INFO, paramsBuilder)
 }
 
-fun reportToFireBase(
+fun reportToLogger(
     eventName: String,
     paramsBuilder: (TrackingEventDataBuilder.() -> Unit) = {},
 ) {
-//    Firebase.analytics.logEvent(eventName, TrackingEventDataBuilder().apply(paramsBuilder).build())
+    for (reporter in loggerList) {
+        reporter.report(eventName, TrackingEventDataBuilder().apply(paramsBuilder).build())
+    }
 }

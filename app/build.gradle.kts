@@ -4,8 +4,6 @@ import java.util.Properties
 plugins {
     id("fread.android.application")
     id("fread.compose.multiplatform")
-    id("com.google.gms.google-services")
-    id("com.google.firebase.crashlytics")
     id("com.google.devtools.ksp")
 }
 
@@ -89,6 +87,9 @@ dependencies {
     implementation(project(path = ":plugins:activitypub-app"))
     implementation(project(path = ":plugins:rss"))
     implementation(project(path = ":plugins:bluesky"))
+    if (File(project.rootDir, "plugins/fread-firebase").exists()) {
+        implementation(project(path = ":plugins:fread-firebase"))
+    }
     implementation(project(path = ":app-hosting"))
 
     implementation(compose.material3)
@@ -99,7 +100,6 @@ dependencies {
     implementation(libs.imageLoader)
 
     implementation(libs.krouter.runtime)
-    ksp(libs.krouter.reducing.compiler)
 
     implementation(libs.bundles.androidx.media3)
 }

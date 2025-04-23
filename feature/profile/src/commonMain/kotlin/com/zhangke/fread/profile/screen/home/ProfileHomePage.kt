@@ -49,8 +49,6 @@ import com.zhangke.framework.composable.FreadDialog
 import com.zhangke.framework.composable.SimpleIconButton
 import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.voyager.rootNavigator
-import com.zhangke.fread.analytics.ProfileElements
-import com.zhangke.fread.analytics.reportClick
 import com.zhangke.fread.common.browser.LocalActivityBrowserLauncher
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.resources.PlatformLogo
@@ -86,35 +84,27 @@ class ProfileHomePage : BaseScreen() {
             ProfileHomePageContent(
                 uiState = uiState,
                 onAddAccountClick = {
-                    reportClick(ProfileElements.ADD_ACCOUNT)
                     rootNavigator.push(moduleScreenVisitor.feedsScreenVisitor.getAddContentScreen())
                 },
                 onSettingClick = {
-                    reportClick(ProfileElements.SETTING)
                     navigator.push(SettingScreen())
                 },
                 onLogoutClick = {
-                    reportClick(ProfileElements.LOGOUT)
                     viewModel.onLogoutClick(it)
                 },
                 onAccountClick = {
-                    reportClick(ProfileElements.ACCOUNT)
                     viewModel.onAccountClick(it)
                 },
                 onFavouritedClick = {
-                    reportClick(ProfileElements.FAVOURITED)
                     viewModel.onFavouritedClick(it)
                 },
                 onBookmarkedClick = {
-                    reportClick(ProfileElements.BOOKMARKED)
                     viewModel.onBookmarkedClick(it)
                 },
                 onFollowedHashtagClick = {
-                    reportClick(ProfileElements.HASHTAG)
                     viewModel.onFollowedHashtagClick(it)
                 },
                 onPinnedFeedsClick = {
-                    reportClick(ProfileElements.PINNED_FEEDS)
                     viewModel.onPinnedFeedsClick(it)
                 },
                 onLoginClick = viewModel::onLoginClick,

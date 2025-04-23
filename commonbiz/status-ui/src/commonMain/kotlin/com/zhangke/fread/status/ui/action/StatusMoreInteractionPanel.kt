@@ -21,7 +21,6 @@ import com.zhangke.fread.common.handler.LocalActivityTextHandler
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.StatusActionType
-import com.zhangke.fread.status.ui.reportStatusInteractionClickEvent
 import com.zhangke.fread.status.ui.style.StatusStyle
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_more
@@ -116,7 +115,6 @@ private fun InteractionItem(
             )
         },
         onClick = {
-            reportStatusInteractionClickEvent(type)
             if (type == StatusActionType.DELETE) {
                 showDeleteConfirmDialog = true
             } else {

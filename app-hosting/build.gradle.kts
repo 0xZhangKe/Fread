@@ -35,6 +35,9 @@ kotlin {
                 implementation(project(path = ":plugins:activitypub-app"))
                 implementation(project(path = ":plugins:rss"))
                 implementation(project(path = ":plugins:bluesky"))
+                if (File(project.rootDir, "plugins/fread-firebase").exists()) {
+                    implementation(project(path = ":plugins:fread-firebase"))
+                }
 
                 implementation(compose.components.resources)
 

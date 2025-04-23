@@ -1,5 +1,6 @@
 package com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase
 
+import androidx.compose.ui.text.TextRange
 import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.date.DateParser
 import com.zhangke.framework.ktx.ifNullOrEmpty
@@ -76,7 +77,7 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            content = TextFieldValue(initialContent),
+            content = buildTextFieldValue(initialContent),
             visibility = replyParams.replyingToBlog.visibility,
             replyToAuthorInfo = replyParams,
         )
@@ -91,11 +92,11 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
         return PostStatusUiState.default(
             account = defaultAccount,
             allLoggedAccount = allLoggedAccount,
-            content = TextFieldValue(HtmlParser.parseToPlainText(blog.content)),
+            content = buildTextFieldValue(HtmlParser.parseToPlainText(blog.content)),
             visibility = blog.visibility,
             sensitive = editParams.blog.sensitive,
             language = editParams.blog.language?.let { initLocale(it) },
-            warningContent = TextFieldValue(HtmlParser.parseToPlainText(editParams.blog.spoilerText)),
+            warningContent = buildTextFieldValue(HtmlParser.parseToPlainText(editParams.blog.spoilerText)),
             replyToAuthorInfo = null,
             visibilityChangeable = false,
             accountChangeable = false,
@@ -136,6 +137,13 @@ class GenerateInitPostStatusUiStateUseCase @Inject constructor(
             alt = this.description,
             originalAlt = this.description,
             isVideo = this.type == BlogMediaType.VIDEO,
+        )
+    }
+
+    private fun buildTextFieldValue(text: String): TextFieldValue {
+        return TextFieldValue(
+            text = text,
+            selection = TextRange(text.length)
         )
     }
 }

@@ -14,6 +14,10 @@ Fread is a decentralized microblogging client that seamlessly integrates Mastodo
 - [Support Bluesky](https://medium.com/@kezhang404/fread-now-supports-bluesky-a-unified-gateway-to-the-decentralized-web-17f518ba877c)
 - [Fread Introduce](https://medium.com/@kezhang404/fread-the-next-generation-mastodon-client-30bc50e279fd)
 
+## Star History
+
+[![Star History Chart](https://api.star-history.com/svg?repos=0xZhangKe/Fread&type=Date)](https://www.star-history.com/#0xZhangKe/Fread&Date)
+
 ## Official Account
 - [Mastodon](https://mastodon.social/@fread)
 

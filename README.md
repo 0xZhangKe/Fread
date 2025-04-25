@@ -10,5 +10,8 @@ Fread is a decentralized microblogging client that seamlessly integrates Mastodo
   <img src="ic_download_apk.png" width="200" />
 </a>
 
+## Official Account
+- [Mastodon](https://mastodon.social/@fread)
+
 ## Donate
 [Ko-Fi](https://ko-fi.com/zhangke) or [Afdian](https://afdian.com/a/_0cdc1)

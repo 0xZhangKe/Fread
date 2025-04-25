@@ -85,3 +85,6 @@ lint/tmp/
 # lint/reports/
 
 /plugins/Fread-Firebase/
+/fread-keystore.jks
+/keystore.properties
+

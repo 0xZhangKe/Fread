@@ -65,6 +65,7 @@ goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
 bluesky = "0.3.2"
+activity-pub-client = "0.1.0"
 
 [bundles]
 androidx-fragment = ["androidx.fragment", "androidx.fragment.ktx"]
@@ -162,6 +163,8 @@ auto-service-ksp = { module = "dev.zacsweers.autoservice:auto-service-ksp", vers
 arrow-core= {group = "io.arrow-kt", name = "arrow-core", version.ref = "arrow"}
 
 mockk = { group = "io.mockk", name = "mockk", version.ref = "mockk" }
+
+activity-pub-client = { group = "io.github.0xzhangke", name = "activity-pub-client", version.ref = "activity-pub-client" }
 
 # Dependencies of the included build-logic
 android-gradlePlugin = { group = "com.android.tools.build", name = "gradle", version.ref = "androidGradlePlugin" }

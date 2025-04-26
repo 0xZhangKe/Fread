@@ -14,7 +14,7 @@ object AppCommonConfig {
 
     const val PRIVACY_POLICY = "https://fread.xyz/appprivacy.html"
 
-    const val FEEDBACK_URL = "https://github.com/0xZhangKe/FreadIssueTracker/issues/new"
+    const val FEEDBACK_URL = "https://github.com/0xZhangKe/Fread/issues/new"
 
     const val TELEGRAM_GROUP = "https://t.me/+-SlbKcNbJSphNWI1"
 

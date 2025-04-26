@@ -21,7 +21,6 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Fread"
-include(":ActivityPub-Kotlin")
 include(":framework")
 include(":bizframework:status-provider")
 include(":commonbiz")

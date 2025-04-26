@@ -98,6 +98,12 @@ class OpenSourceScreen : BaseScreen() {
     private fun buildOpenSourceInfoList(): List<OpenSourceInfo> {
         return listOf(
             OpenSourceInfo(
+                name = "Fread",
+                author = "ZhangKe",
+                license = "The Apache Software License, Version 2.0",
+                url = "https://github.com/0xZhangKe/Fread"
+            ),
+            OpenSourceInfo(
                 name = "KRouter",
                 author = "ZhangKe",
                 license = "The Apache Software License, Version 2.0",

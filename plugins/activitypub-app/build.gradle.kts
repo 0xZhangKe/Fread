@@ -26,11 +26,11 @@ kotlin {
                 implementation(project(path = ":commonbiz:status-ui"))
                 implementation(project(path = ":commonbiz:sharedscreen"))
                 implementation(project(path = ":commonbiz:analytics"))
-                implementation(project(path = ":ActivityPub-Kotlin"))
 
                 implementation(compose.components.resources)
 
                 implementation(libs.arrow.core)
+                implementation(libs.activity.pub.client)
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)

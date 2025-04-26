@@ -1,0 +1,1 @@
+同时支持 Mastodon、Bluesky、RSS 的联邦宇宙客户端

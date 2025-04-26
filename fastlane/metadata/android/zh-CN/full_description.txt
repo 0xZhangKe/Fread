@@ -1,0 +1,4 @@
+Fread 是一个联邦宇宙 Micro blogging 社交客户端，目前已经支持了 Mastodon、Bluesky、RSS 三种社交平台，这意味着你可以在同一个 App 中同时使用这三种社交平台。
+Fread 不仅提供了 Micro blogging 社交的一致性，也保持了不同平台的特色功能。
+更重要的是，Fread 支持创建一个同时包含了三种来自不同平台的 Feeds 流，这打破了协议之间的壁垒，进一步增强了去中心化的能力。
+另外 Fread 也专注于提供漂亮舒适的 UI/UX。

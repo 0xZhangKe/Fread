@@ -1,0 +1,1 @@
+A fediverse microblogging client supporting Mastodon, Bluesky, and RSS.

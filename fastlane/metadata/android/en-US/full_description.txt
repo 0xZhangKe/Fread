@@ -1,0 +1,5 @@
+Fread is a fediverse microblogging client that supports Mastodon, Bluesky, and RSS.
+With Fread, you can seamlessly access all three platforms within a single app.
+It delivers a consistent microblogging experience while preserving the unique features of each network.
+Most importantly, Fread allows you to create unified feeds that blend content across different protocols, breaking down barriers and strengthening decentralization.
+On top of that, Fread is designed with a focus on beautiful, comfortable UI/UX, offering a smooth and enjoyable experience.

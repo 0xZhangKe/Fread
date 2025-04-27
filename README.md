@@ -19,6 +19,9 @@ Fread is a decentralized microblogging client that seamlessly integrates Mastodo
 
 [![Star History Chart](https://api.star-history.com/svg?repos=0xZhangKe/Fread&type=Date)](https://www.star-history.com/#0xZhangKe/Fread&Date)
 
+## Discussion Group
+- [Telegram](https://t.me/+-SlbKcNbJSphNWI1)
+
 ## Official Account
 - [Mastodon](https://mastodon.social/@fread)
 

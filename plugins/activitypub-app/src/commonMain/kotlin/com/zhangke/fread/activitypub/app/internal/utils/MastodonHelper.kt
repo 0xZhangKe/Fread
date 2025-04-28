@@ -18,7 +18,7 @@ class MastodonHelper @Inject constructor(
     private val fileSystem = FileSystem.SYSTEM
 
     @OptIn(ExperimentalResourceApi::class)
-    suspend fun getLocalMastodonJson(): String {
+    suspend fun getLocalMastodonJson(): String? = runCatching {
         val cacheMastodonServersZipPath = storageHelper.cacheDir.resolve("mastodon-servers.zip")
 
         // Res.getUri is not available, so copy to cache dir
@@ -32,5 +32,5 @@ class MastodonHelper @Inject constructor(
         return zip.read("servers.json".toPath()) {
             readUtf8()
         }
-    }
+    }.getOrNull()
 }

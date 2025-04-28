@@ -20,14 +20,12 @@ class BlogPlatformResourceLoader @Inject constructor(
 
     suspend fun loadLocalPlatforms(): List<PlatformSnapshot> = withContext(Dispatchers.IO) {
         val json = mastodonHelper.getLocalMastodonJson()
-        if (json.isEmpty()) return@withContext emptyList()
+        if (json.isNullOrEmpty()) return@withContext emptyList()
         return@withContext globalJson.decodeFromString<JsonArray?>(json)
             ?.mapNotNull { it as? JsonObject }
             ?.mapNotNull { it.toPlatformSnapshot() }
             ?: emptyList()
     }
-
-
 
     private suspend fun JsonObject.toPlatformSnapshot(): PlatformSnapshot? {
         val domain = getAsString("domain") ?: return null

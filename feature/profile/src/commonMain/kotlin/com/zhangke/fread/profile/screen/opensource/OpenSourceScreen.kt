@@ -100,37 +100,37 @@ class OpenSourceScreen : BaseScreen() {
             OpenSourceInfo(
                 name = "Fread",
                 author = "ZhangKe",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/0xZhangKe/Fread"
             ),
             OpenSourceInfo(
                 name = "KRouter",
                 author = "ZhangKe",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/0xZhangKe/KRouter"
             ),
             OpenSourceInfo(
                 name = "Filt",
                 author = "ZhangKe",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/0xZhangKe/Filt"
             ),
             OpenSourceInfo(
                 name = "ActivityPub-Kotlin",
                 author = "ZhangKe",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/0xZhangKe/ActivityPub-Kotlin"
             ),
             OpenSourceInfo(
                 name = "Kotlin",
                 author = "Jetbrains",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://kotlinlang.org/"
             ),
             OpenSourceInfo(
                 name = "Jetpack Compose",
                 author = "Google",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://developer.android.com/jetpack/androidx/releases/compose"
             ),
             OpenSourceInfo(
@@ -142,56 +142,56 @@ class OpenSourceScreen : BaseScreen() {
             OpenSourceInfo(
                 name = "Jetpack",
                 author = "Google",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://developer.android.com/jetpack"
             ),
             OpenSourceInfo(
                 name = "AndroidX",
                 author = "Google",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://developer.android.com/jetpack/androidx/"
-            ),
-            OpenSourceInfo(
-                name = "RxJava",
-                author = "ReactiveX",
-                license = "The Apache Software License, Version 2.0",
-                url = "https://github.com/ReactiveX/RxJava"
             ),
             OpenSourceInfo(
                 name = "Gson",
                 author = "Google",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/google/gson/"
             ),
             OpenSourceInfo(
                 name = "OkHttp",
                 author = "Square",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://square.github.io/okhttp/"
             ),
             OpenSourceInfo(
                 name = "Retrofit",
                 author = "Square",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/square/retrofit"
             ),
             OpenSourceInfo(
                 name = "Accompanist",
                 author = "Google",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/google/accompanist"
             ),
             OpenSourceInfo(
                 name = "Material-Components",
                 author = "Google",
-                license = "The Apache Software License, Version 2.0",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/material-components/material-components-android"
             ),
             OpenSourceInfo(
-                name = "Coil",
-                author = "Coil",
-                license = "The Apache Software License, Version 2.0",
-                url = "https://github.com/coil-kt/coil"
+                name = "compose-richtext",
+                author = "halilozercan",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
+                url = "https://github.com/halilozercan/compose-richtext",
+            ),
+            OpenSourceInfo(
+                name = "ComposeReorderable",
+                author = "André Claßen",
+                license = OpenSourceInfo.LICENSE_APACHE_2,
+                url = "https://github.com/aclassen/ComposeReorderable",
             ),
         )
     }
@@ -201,5 +201,11 @@ class OpenSourceScreen : BaseScreen() {
         val author: String,
         val license: String,
         val url: String,
-    )
+    ){
+
+        companion object{
+
+            const val LICENSE_APACHE_2 = "The Apache Software License, Version 2.0"
+        }
+    }
 }

@@ -1,5 +1,7 @@
 package com.zhangke.fread.screen
 
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.ExperimentalMaterialApi
 import androidx.compose.runtime.Composable
@@ -21,6 +23,8 @@ import com.seiko.imageloader.ImageLoader
 import com.seiko.imageloader.LocalImageLoader
 import com.zhangke.framework.voyager.ROOT_NAVIGATOR_KEY
 import com.zhangke.framework.voyager.TransparentNavigator
+import com.zhangke.fread.common.bubble.BubbleManager
+import com.zhangke.fread.common.bubble.LocalBubbleManager
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.config.LocalFreadConfigManager
@@ -72,6 +76,7 @@ internal fun FreadApp(
     activityTextHandler: ActivityTextHandler,
     activityHelper: ActivityHelper,
     moduleScreenVisitor: ModuleScreenVisitor,
+    bubbleManager: BubbleManager,
 ) {
     val statusConfig by freadConfigManager.statusConfigFlow.collectAsState()
     CompositionLocalProvider(
@@ -90,6 +95,7 @@ internal fun FreadApp(
         LocalToastHelper provides toastHelper,
         LocalActivityHelper provides activityHelper,
         LocalModuleScreenVisitor provides moduleScreenVisitor,
+        LocalBubbleManager provides bubbleManager,
     ) {
         ProvideNavigatorLifecycleKMPSupport {
             TransparentNavigator {
@@ -112,6 +118,14 @@ internal fun FreadApp(
                                 .collect { screen ->
                                     navigator.push(screen)
                                 }
+                        }
+                        val bubbles by bubbleManager.bubbleListFlow.collectAsState()
+                        if (bubbles.isNotEmpty()) {
+                            Column(modifier = Modifier.fillMaxWidth()) {
+                                for (bubble in bubbles) {
+                                    with(bubble) { Content() }
+                                }
+                            }
                         }
                     }
                 }

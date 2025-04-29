@@ -193,6 +193,12 @@ class OpenSourceScreen : BaseScreen() {
                 license = OpenSourceInfo.LICENSE_APACHE_2,
                 url = "https://github.com/aclassen/ComposeReorderable",
             ),
+            OpenSourceInfo(
+                name = "compose-wheel-picker",
+                author = "zj565061763",
+                license = "MIT license",
+                url = "https://github.com/zj565061763/compose-wheel-picker",
+            ),
         )
     }
 
@@ -201,9 +207,9 @@ class OpenSourceScreen : BaseScreen() {
         val author: String,
         val license: String,
         val url: String,
-    ){
+    ) {
 
-        companion object{
+        companion object {
 
             const val LICENSE_APACHE_2 = "The Apache Software License, Version 2.0"
         }

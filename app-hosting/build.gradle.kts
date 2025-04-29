@@ -64,8 +64,6 @@ kotlin {
                 implementation(libs.androidx.core.ktx)
                 implementation(libs.bundles.androidx.activity)
                 implementation(libs.bundles.androidx.datastore)
-
-                implementation(libs.bundles.googlePlayReview)
             }
         }
     }

@@ -14,6 +14,8 @@ Fread is a decentralized microblogging client that seamlessly integrates Mastodo
 - [Why Open Source](https://medium.com/@kezhang404/after-two-years-of-development-the-fread-project-is-now-open-source-8adcf690bfac)
 - [Support Bluesky](https://medium.com/@kezhang404/fread-now-supports-bluesky-a-unified-gateway-to-the-decentralized-web-17f518ba877c)
 - [Fread Introduce](https://medium.com/@kezhang404/fread-the-next-generation-mastodon-client-30bc50e279fd)
+- [The Philosophy of Modular Division in a Large Android Project
+](https://medium.com/@kezhang404/the-philosophy-of-modular-division-in-a-large-android-project-e588a5dcdb78)
 
 ## Star History
 

@@ -5,8 +5,9 @@ import com.google.android.play.core.review.ReviewManagerFactory
 import com.zhangke.framework.activity.TopActivityManager
 import com.zhangke.framework.utils.Log
 
-internal actual fun showPlayReviewPopup(
-    freadReviewManager: FreadReviewManager,
+internal actual fun showAppStoreReviewPopup(
+    onReviewSuccess: () -> Unit,
+    onReviewCancel: () -> Unit,
 ) {
     val activity = TopActivityManager.topActiveActivity ?: return
     val manager = ReviewManagerFactory.create(activity)
@@ -15,9 +16,9 @@ internal actual fun showPlayReviewPopup(
             val flow = manager.launchReviewFlow(activity, task.result)
             flow.addOnCompleteListener { result ->
                 if (result.isSuccessful) {
-                    freadReviewManager.onReviewSuccess()
+                    onReviewSuccess()
                 } else {
-                    freadReviewManager.onReviewCancel()
+                    onReviewCancel()
                 }
             }
         } else {

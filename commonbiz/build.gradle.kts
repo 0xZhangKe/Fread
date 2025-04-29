@@ -75,8 +75,6 @@ kotlin {
 
                 implementation(libs.androidx.browser)
 
-                implementation(libs.bundles.googlePlayReview)
-
                 implementation(libs.multiplatformsettings.datastore)
             }
         }

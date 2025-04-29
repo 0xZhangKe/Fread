@@ -5,6 +5,7 @@ import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
+import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.launch
 import me.tatarka.inject.annotations.Inject
 import kotlin.time.Duration
@@ -15,7 +16,8 @@ import kotlin.time.Duration.Companion.milliseconds
 class FreadReviewManager @Inject constructor(
     private val localConfigManager: LocalConfigManager,
     private val applicationCoroutineScope: ApplicationCoroutineScope,
-) {
+
+    ) {
 
     companion object {
         private const val LOCAL_KEY_LATEST_SHOW_TIME = "latestShowPlayReviewTime"
@@ -26,7 +28,7 @@ class FreadReviewManager @Inject constructor(
 
     fun trigger(forceShow: Boolean = false) {
         if (forceShow) {
-            showPlayReviewPopup(this)
+            showPlayReviewPopup()
         } else {
             applicationCoroutineScope.launch {
                 maybeShowPlayReviewPopup()
@@ -46,8 +48,15 @@ class FreadReviewManager @Inject constructor(
         }
         val duration = getCurrentTimeMillis().milliseconds - latestShowTime.milliseconds
         if (isDurationOvertime(duration, count)) {
-            showPlayReviewPopup(this)
+            showPlayReviewPopup()
         }
+    }
+
+    private fun showPlayReviewPopup() {
+        KRouter.getServices<DefaultAppStoreReviewer>().firstOrNull()?.showAppStoreReviewPopup(
+            onReviewSuccess = ::onReviewSuccess,
+            onReviewCancel = ::onReviewCancel,
+        )
     }
 
     private fun isDurationOvertime(duration: Duration, count: Int): Boolean {
@@ -98,6 +107,10 @@ class FreadReviewManager @Inject constructor(
     }
 }
 
-internal expect fun showPlayReviewPopup(freadReviewManager: FreadReviewManager)
+internal expect fun showAppStoreReviewPopup(
+    onReviewSuccess: () -> Unit,
+    onReviewCancel: () -> Unit,
+)
 
-val LocalFreadReviewManager = staticCompositionLocalOf<FreadReviewManager> { error("No FreadReviewManager provided") }
+val LocalFreadReviewManager =
+    staticCompositionLocalOf<FreadReviewManager> { error("No FreadReviewManager provided") }

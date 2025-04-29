@@ -107,10 +107,5 @@ class FreadReviewManager @Inject constructor(
     }
 }
 
-internal expect fun showAppStoreReviewPopup(
-    onReviewSuccess: () -> Unit,
-    onReviewCancel: () -> Unit,
-)
-
 val LocalFreadReviewManager =
     staticCompositionLocalOf<FreadReviewManager> { error("No FreadReviewManager provided") }

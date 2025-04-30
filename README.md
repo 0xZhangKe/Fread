@@ -17,6 +17,8 @@ Fread is a decentralized microblogging client that seamlessly integrates Mastodo
 - [The Philosophy of Modular Division in a Large Android Project
 ](https://medium.com/@kezhang404/the-philosophy-of-modular-division-in-a-large-android-project-e588a5dcdb78)
 
+[**Deepwiki**](https://deepwiki.com/0xZhangKe/Fread)
+
 ## Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=0xZhangKe/Fread&type=Date)](https://www.star-history.com/#0xZhangKe/Fread&Date)

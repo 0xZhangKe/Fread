@@ -40,8 +40,6 @@ class AppUpdateManager @Inject constructor(
     }
 
     suspend fun updateApp(releaseInfo: AppReleaseInfo) {
-        // Android: 对于有 Google Play 的直接跳转到 Google Play，否则下载 apk
-        // iOS：跳转 app store
         platformUpdater.triggerUpdate(releaseInfo)
     }
 
@@ -56,8 +54,6 @@ class AppUpdateManager @Inject constructor(
                     takeFrom(API_RELEASE)
                     parameter(QUERY_PLATFORM, platformUpdater.platformName)
                 }
-//                url(API_RELEASE) {
-//                }
             }.body<AppReleaseInfo>()
         }
     }

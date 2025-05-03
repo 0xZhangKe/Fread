@@ -1,6 +1,3 @@
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     id("fread.android.application")
     id("fread.compose.multiplatform")

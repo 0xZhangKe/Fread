@@ -21,4 +21,6 @@ object AppCommonConfig {
     const val DONATE_KO_FI_LINK = "https://ko-fi.com/zhangke"
 
     const val DONATE_AF_DIAN_LINK = "https://afdian.com/a/_0cdc1"
+
+    const val F_DROID_URI = "https://f-droid.org/zh_Hans/packages/com.zhangke.fread"
 }

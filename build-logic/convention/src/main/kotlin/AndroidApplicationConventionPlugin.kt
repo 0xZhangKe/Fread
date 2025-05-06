@@ -20,7 +20,7 @@ import com.zhangke.fread.configureKotlinAndroid
 import com.zhangke.fread.configurePrintApksTask
 import org.gradle.api.Plugin
 import org.gradle.api.Project
-import java.io.File
+import org.gradle.kotlin.dsl.extra
 
 class AndroidApplicationConventionPlugin : Plugin<Project> {
     override fun apply(target: Project) {
@@ -29,7 +29,7 @@ class AndroidApplicationConventionPlugin : Plugin<Project> {
                 apply("com.android.application")
                 apply("org.jetbrains.kotlin.android")
                 apply("org.jetbrains.kotlin.plugin.serialization")
-                if (File(target.projectDir, "google-services.json").exists()) {
+                if (gradle.extra["enableFirebaseModule"] == true) {
                     println("Find the Firebase configuration file, add the Firebase plugin.")
                     apply("com.google.gms.google-services")
                     apply("com.google.firebase.crashlytics")

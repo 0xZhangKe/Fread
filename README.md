@@ -13,6 +13,9 @@ Fread is a decentralized microblogging client that seamlessly integrates Mastodo
 ## Screenshots
 ![screenshot](/screenshot/screenshot.jpg)
 
+## Build
+The signing key is required, or you can simply delete the signing configuration in app/build.gradle to complete the compilation.
+
 ## Blogs
 - [Why Open Source](https://medium.com/@kezhang404/after-two-years-of-development-the-fread-project-is-now-open-source-8adcf690bfac)
 - [Support Bluesky](https://medium.com/@kezhang404/fread-now-supports-bluesky-a-unified-gateway-to-the-decentralized-web-17f518ba877c)

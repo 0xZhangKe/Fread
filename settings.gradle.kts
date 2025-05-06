@@ -21,6 +21,13 @@ dependencyResolutionManagement {
     }
 }
 rootProject.name = "Fread"
+
+val moduleExists = File("./plugins/fread-firebase").exists()
+val disableFirebase = gradle.startParameter.projectProperties["disableFirebase"]
+val enableFirebaseModule = moduleExists && disableFirebase != "true"
+gradle.extra["enableFirebaseModule"] = enableFirebaseModule
+println("--------disableFirebase:$disableFirebase, moduleExists: $moduleExists------------- enableFirebaseModule: ${gradle.extra["enableFirebaseModule"]}")
+
 include(":framework")
 include(":bizframework:status-provider")
 include(":commonbiz")
@@ -38,6 +45,6 @@ include(":app")
 include(":thirds:halilibo-richtext-ui")
 include(":thirds:halilibo-richtext-material3")
 include(":plugins:bluesky")
-if (File("./plugins/fread-firebase").exists()) {
+if (enableFirebaseModule) {
     include(":plugins:fread-firebase")
 }

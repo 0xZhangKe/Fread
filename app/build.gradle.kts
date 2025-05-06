@@ -1,8 +1,15 @@
+import java.io.FileInputStream
+import java.util.Properties
+
 plugins {
     id("fread.android.application")
     id("fread.compose.multiplatform")
     id("com.google.devtools.ksp")
 }
+
+val keystorePropertiesFile: File = rootProject.file("keystore.properties")
+val keystoreProperties = Properties()
+keystoreProperties.load(FileInputStream(keystorePropertiesFile))
 
 android {
     namespace = "com.zhangke.fread"
@@ -11,10 +18,22 @@ android {
         buildConfig = true
     }
 
+    signingConfigs {
+        getByName("debug") {
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+        }
+        create("release") {
+            storeFile = file(keystoreProperties.getProperty("storeFile"))
+            keyPassword = keystoreProperties.getProperty("keyPassword")
+            storePassword = keystoreProperties.getProperty("storePassword")
+            keyAlias = keystoreProperties.getProperty("keyAlias")
+        }
+    }
+
     defaultConfig {
-//        configurations.all {
-//            resolutionStrategy { force support.'core-ktx' }
-//        }
         applicationId = "com.zhangke.fread"
         versionCode = 103010
         versionName = "1.3.1"
@@ -37,7 +56,14 @@ android {
                 "proguard-rules.pro"
             )
         }
+        getByName("release") {
+            signingConfig = signingConfigs.getByName("release")
+        }
+        getByName("debug") {
+            signingConfig = signingConfigs.getByName("debug")
+        }
     }
+
     bundle {
         language {
             enableSplit = false
@@ -59,7 +85,7 @@ dependencies {
     implementation(project(path = ":plugins:activitypub-app"))
     implementation(project(path = ":plugins:rss"))
     implementation(project(path = ":plugins:bluesky"))
-    if (File(project.rootDir, "plugins/fread-firebase").exists()) {
+    if (gradle.extra["enableFirebaseModule"] == true) {
         implementation(project(path = ":plugins:fread-firebase"))
     }
     implementation(project(path = ":app-hosting"))

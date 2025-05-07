@@ -122,12 +122,12 @@ fun PostInteractionSettingLabel(
                     ),
                 )
                 Text(
-                    modifier = Modifier.padding(top = 26.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     text = stringResource(Res.string.shared_publish_interaction_dialog_reply_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     InteractionOption(

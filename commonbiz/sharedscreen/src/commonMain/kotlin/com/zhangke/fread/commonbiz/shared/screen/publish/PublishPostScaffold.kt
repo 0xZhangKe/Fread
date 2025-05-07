@@ -10,12 +10,14 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Group
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
@@ -65,12 +67,14 @@ fun PublishPostScaffold(
     snackBarHostState: SnackbarHostState,
     content: TextFieldValue,
     showSwitchAccountIcon: Boolean,
+    showAddAccountIcon: Boolean,
     publishing: Boolean,
     replyingBlog: Blog? = null,
     onContentChanged: (TextFieldValue) -> Unit,
     onPublishClick: () -> Unit,
     onBackClick: () -> Unit,
-    onSwitchAccountClick: () -> Unit,
+    onSwitchAccountClick: () -> Unit = {},
+    onAddAccountClick: () -> Unit = {},
     contentWarning: @Composable () -> Unit = {},
     postSettingLabel: @Composable () -> Unit,
     bottomPanel: @Composable () -> Unit,
@@ -193,11 +197,23 @@ fun PublishPostScaffold(
                 }
                 if (showSwitchAccountIcon) {
                     SimpleIconButton(
-                        modifier = Modifier.padding(end = 8.dp),
+                        modifier = Modifier,
                         onClick = onSwitchAccountClick,
                         imageVector = Icons.Default.Group,
+                        iconSize = 36.dp,
                         contentDescription = "Switch Account",
                     )
+                }
+                if (showAddAccountIcon) {
+                    Spacer(modifier = Modifier.width(2.dp))
+                    SimpleIconButton(
+                        modifier = Modifier,
+                        onClick = onAddAccountClick,
+                        imageVector = Icons.Default.PersonAdd,
+                        iconSize = 36.dp,
+                        contentDescription = "Multi Account",
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
             contentWarning()

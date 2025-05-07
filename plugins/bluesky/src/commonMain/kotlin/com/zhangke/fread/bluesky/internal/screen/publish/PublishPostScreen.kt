@@ -79,12 +79,12 @@ class PublishPostScreen(
             snackBarHostState = snackBarHostState,
             content = uiState.content,
             showSwitchAccountIcon = false,
+            showAddAccountIcon = false,
             publishing = uiState.publishing,
             replyingBlog = uiState.replyBlog,
             onContentChanged = onContentChanged,
             onPublishClick = onPublishClick,
             onBackClick = onBackClick,
-            onSwitchAccountClick = {},
             postSettingLabel = {
                 PostInteractionSettingLabel(
                     modifier = Modifier.padding(top = 1.dp),

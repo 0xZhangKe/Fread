@@ -170,12 +170,14 @@ class PostStatusScreen(
             snackBarHostState = snackMessageState,
             content = uiState.content,
             showSwitchAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
+            showAddAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
             publishing = uiState.publishing,
             replyingBlog = uiState.replyToBlog,
             onContentChanged = onContentChanged,
             onPublishClick = onPostClick,
             onBackClick = onCloseClick,
             onSwitchAccountClick = { showAccountSwitchPopup = true },
+            onAddAccountClick = {},
             contentWarning = {
                 if (uiState.sensitive) {
                     PostStatusWarning(

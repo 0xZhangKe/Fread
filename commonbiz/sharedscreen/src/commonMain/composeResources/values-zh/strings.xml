@@ -68,4 +68,6 @@
 
     <string name="shared_feeds_not_login_title">登录信息已失效，请重新登陆</string>
     <string name="shared_feeds_go_to_login">登录</string>
+
+    <string name="shared_publish_select_account_title">请选择账号</string>
 </resources>

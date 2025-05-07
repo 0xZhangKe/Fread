@@ -1,4 +1,4 @@
-package com.zhangke.fread.commonbiz.shared.publish
+package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 
 import androidx.compose.runtime.Composable
 import com.zhangke.fread.common.page.BaseScreen

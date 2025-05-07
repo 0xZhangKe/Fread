@@ -69,4 +69,5 @@
 
     <string name="shared_feeds_not_login_title">Oops! Your login info has expired. Please log back in to continue.</string>
     <string name="shared_feeds_go_to_login">Sign in</string>
+    <string name="shared_publish_select_account_title">Please select account</string>
 </resources>

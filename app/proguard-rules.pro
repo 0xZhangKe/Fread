@@ -15,7 +15,6 @@
 # Uncomment this to preserve the line number information for
 # debugging stack traces.
 #-keepattributes SourceFile,LineNumberTable
--keep class ** { *; }
 
 -keepnames class * implements java.io.Serializable
 -keepclassmembers class * implements java.io.Serializable {

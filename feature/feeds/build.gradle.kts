@@ -13,7 +13,7 @@ kotlin {
             dependencies {
                 implementation(project(":framework"))
                 implementation(project(":bizframework:status-provider"))
-                implementation(project(":commonbiz"))
+                implementation(project(":commonbiz:common"))
                 implementation(project(":commonbiz:analytics"))
                 implementation(project(":commonbiz:sharedscreen"))
                 implementation(project(":commonbiz:status-ui"))

@@ -18,7 +18,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(path = ":framework"))
-                implementation(project(path = ":commonbiz"))
+                implementation(project(path = ":commonbiz:common"))
                 implementation(project(":commonbiz:analytics"))
                 implementation(project(path = ":bizframework:status-provider"))
 

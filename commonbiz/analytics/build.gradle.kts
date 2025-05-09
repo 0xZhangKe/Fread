@@ -19,7 +19,7 @@ kotlin {
         commonMain {
             dependencies {
                 implementation(project(path = ":framework"))
-                implementation(project(path = ":commonbiz"))
+                implementation(project(path = ":commonbiz:common"))
 
                 implementation(libs.bundles.voyager)
 

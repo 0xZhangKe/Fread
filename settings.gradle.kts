@@ -30,7 +30,7 @@ println("--------disableFirebase:$disableFirebase, moduleExists: $moduleExists--
 
 include(":framework")
 include(":bizframework:status-provider")
-include(":commonbiz")
+include(":commonbiz:common")
 include(":commonbiz:analytics")
 include(":commonbiz:status-ui")
 include(":commonbiz:sharedscreen")

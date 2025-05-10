@@ -18,6 +18,11 @@ android {
         buildConfig = true
     }
 
+    dependenciesInfo {
+        includeInApk = false
+        includeInBundle = false
+    }
+
     signingConfigs {
         getByName("debug") {
             storeFile = file(keystoreProperties.getProperty("storeFile"))

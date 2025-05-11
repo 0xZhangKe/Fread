@@ -19,6 +19,13 @@ actual class AppPlatformUpdater {
 
     actual val platformName: String = "android"
 
+    actual val signingForFDroid: Boolean
+        get() {
+            val apkSignatureSha1 = appContext.getApkSignatureSha1()
+            return apkSignatureSha1 == F_DROID_SIGN_PUB_KEY
+            return true
+        }
+
     actual fun getAppVersionCode(): Long {
         return appContext.packageManager
             .getPackageInfo(appContext.packageName, 0)
@@ -27,7 +34,7 @@ actual class AppPlatformUpdater {
     }
 
     actual fun triggerUpdate(releaseInfo: AppReleaseInfo) {
-        val builtForFDroid = signingForFDroid()
+        val builtForFDroid = signingForFDroid
         if (builtForFDroid) {
             if (!SystemPageUtils.openSystemViewPage(appContext, AppCommonConfig.F_DROID_URI)) {
                 Toast.makeText(appContext, "F-Droid not found", Toast.LENGTH_SHORT).show()
@@ -39,12 +46,5 @@ actual class AppPlatformUpdater {
         val customTabsIntent = CustomTabsIntent.Builder()
             .build()
         customTabsIntent.launchUrl(activity, AppCommonConfig.WEBSITE.toUri())
-    }
-
-    @OptIn(ExperimentalStdlibApi::class)
-    fun signingForFDroid(): Boolean {
-        val apkSignatureSha1 = appContext.getApkSignatureSha1()
-        return apkSignatureSha1 == F_DROID_SIGN_PUB_KEY
-        return true
     }
 }

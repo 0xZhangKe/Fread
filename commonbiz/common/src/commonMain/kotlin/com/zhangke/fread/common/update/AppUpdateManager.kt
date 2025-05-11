@@ -21,6 +21,8 @@ class AppUpdateManager @Inject constructor(
 
     private val platformUpdater = AppPlatformUpdater()
 
+    val enableAutoCheckUpdate: Boolean get() = !platformUpdater.signingForFDroid
+
     suspend fun checkForUpdate(checkIgnoreVersion: Boolean = true): Result<Pair<Boolean, AppReleaseInfo>> {
         val releaseInfoResult = getReleaseInfo()
         if (releaseInfoResult.isFailure) return Result.failure(releaseInfoResult.exceptionOrThrow())

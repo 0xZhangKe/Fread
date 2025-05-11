@@ -8,6 +8,8 @@ actual class AppPlatformUpdater {
 
     actual val platformName: String = "ios"
 
+    actual val signingForFDroid: Boolean = false
+
     actual fun getAppVersionCode(): Long {
         val versionCode =
             NSBundle.mainBundle().infoDictionary()?.get("CFBundleVersion") as? String ?: ""

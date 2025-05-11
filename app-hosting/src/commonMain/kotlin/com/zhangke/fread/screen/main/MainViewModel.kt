@@ -19,13 +19,15 @@ class MainViewModel @Inject constructor(
 
     init {
         launchInViewModel {
-            delay(5000)
-            updateManager.checkForUpdate()
-                .onSuccess { (needUpdate, info) ->
-                    if (needUpdate) {
-                        _uiState.update { it.copy(newAppReleaseInfo = info) }
+            if (updateManager.enableAutoCheckUpdate) {
+                delay(5000)
+                updateManager.checkForUpdate()
+                    .onSuccess { (needUpdate, info) ->
+                        if (needUpdate) {
+                            _uiState.update { it.copy(newAppReleaseInfo = info) }
+                        }
                     }
-                }
+            }
         }
     }
 

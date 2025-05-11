@@ -50,10 +50,12 @@ class SettingScreenModel @Inject constructor(
                 }
         }
         viewModelScope.launch {
-            updateManager.checkForUpdate(false)
-                .onSuccess { (needUpdate, _) ->
-                    _uiState.update { it.copy(haveNewAppVersion = needUpdate) }
-                }
+            if (updateManager.enableAutoCheckUpdate) {
+                updateManager.checkForUpdate(false)
+                    .onSuccess { (needUpdate, _) ->
+                        _uiState.update { it.copy(haveNewAppVersion = needUpdate) }
+                    }
+            }
         }
     }
 

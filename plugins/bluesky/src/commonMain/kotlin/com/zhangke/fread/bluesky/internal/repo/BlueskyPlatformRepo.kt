@@ -24,7 +24,7 @@ class BlueskyPlatformRepo @Inject constructor(
             uri = platformUriTransformer.build(baseUrl).toString(),
             name = "Bluesky",
             description = "Bluesky is social media as it should be. Find your community among millions of users, unleash your creativity, and have some fun again.",
-            thumbnail = "https://fread.xyz/resources/bsky_logo.svg",
+            thumbnail = "https://web-cdn.bsky.app/static/apple-touch-icon.png",
             protocol = createBlueskyProtocol(),
             baseUrl = baseUrl,
         )

@@ -1,6 +1,4 @@
-package com.zhangke.fread.bluesky.internal.model
-
-import app.bsky.graph.ListView
+package com.zhangke.fread.commonbiz.shared.model
 
 data class PostInteractionSetting(
     val allowQuote: Boolean,
@@ -43,6 +41,6 @@ sealed interface ReplySetting {
 
         data object Followers : CombineOption
 
-        data class UserInList(val listView: ListView) : CombineOption
+        data class UserInList(val listView: StatusList) : CombineOption
     }
 }

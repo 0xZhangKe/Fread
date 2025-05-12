@@ -55,10 +55,6 @@
     <string name="post_status_poll_multiple">多选</string>
     <string name="post_status_poll_style_select_dialog_title">请选择功能</string>
     <string name="post_status_content_warning">警告文本</string>
-    <string name="post_status_scope_public">公开</string>
-    <string name="post_status_scope_unlisted">公开，但不在探索功能出现</string>
-    <string name="post_status_scope_follower_only">仅关注者可见</string>
-    <string name="post_status_scope_mentioned_only">仅提及用户可见</string>
     <string name="post_status_success">发送成功</string>
     <string name="post_status_failed">发送失败：%1$s</string>
     <string name="post_status_exit_dialog_content">退出后已编辑的内容不会被保存，确定退出吗？</string>

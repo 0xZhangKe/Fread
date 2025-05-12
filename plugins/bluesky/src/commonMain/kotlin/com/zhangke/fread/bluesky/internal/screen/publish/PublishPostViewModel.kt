@@ -25,6 +25,7 @@ import app.bsky.feed.ThreadgateFollowerRule
 import app.bsky.feed.ThreadgateFollowingRule
 import app.bsky.feed.ThreadgateListRule
 import app.bsky.feed.ThreadgateMentionRule
+import app.bsky.graph.ListView
 import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
 import com.atproto.repo.ApplyWritesRequestWriteUnion
@@ -39,7 +40,6 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.bluesky.internal.client.BlueskyClientManager
 import com.zhangke.fread.bluesky.internal.client.BskyCollections
 import com.zhangke.fread.bluesky.internal.client.adjustToRkey
-import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.bluesky.internal.usecase.GetAllListsUseCase
 import com.zhangke.fread.bluesky.internal.usecase.UploadBlobUseCase
 import com.zhangke.fread.bluesky.internal.utils.Tid
@@ -47,6 +47,8 @@ import com.zhangke.fread.bluesky.internal.utils.bskyJson
 import com.zhangke.fread.common.config.FreadConfigManager
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.commonbiz.shared.model.ReplySetting
+import com.zhangke.fread.commonbiz.shared.model.StatusList
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.IdentityRole
@@ -373,7 +375,7 @@ class PublishPostViewModel @Inject constructor(
                     }
 
                     is ReplySetting.CombineOption.UserInList -> {
-                        add(ThreadgateAllowUnion.ListRule(ThreadgateListRule(option.listView.uri)))
+                        add(ThreadgateAllowUnion.ListRule(ThreadgateListRule(AtUri(option.listView.uri))))
                     }
                 }
             }
@@ -457,7 +459,16 @@ class PublishPostViewModel @Inject constructor(
             val client = clientManager.getClient(role)
             val account = client.loggedAccountProvider() ?: return@launchInViewModel
             getAllLists(role, Did(account.did))
+                .map { lists -> lists.map { listView -> listView.toStatusList() } }
                 .onSuccess { lists -> _uiState.update { it.copy(list = lists) } }
         }
+    }
+
+    private fun ListView.toStatusList(): StatusList {
+        return StatusList(
+            name = this.name,
+            uri = this.uri.atUri,
+            cid = this.cid.cid,
+        )
     }
 }

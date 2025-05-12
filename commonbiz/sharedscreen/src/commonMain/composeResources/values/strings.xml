@@ -70,4 +70,9 @@
     <string name="shared_feeds_not_login_title">Oops! Your login info has expired. Please log back in to continue.</string>
     <string name="shared_feeds_go_to_login">Sign in</string>
     <string name="shared_publish_select_account_title">Please select account</string>
+
+    <string name="post_status_scope_public">Public</string>
+    <string name="post_status_scope_unlisted">Public, but opted-out of discovery feature</string>
+    <string name="post_status_scope_follower_only">Followers only</string>
+    <string name="post_status_scope_mentioned_only">Only people mentioned</string>
 </resources>

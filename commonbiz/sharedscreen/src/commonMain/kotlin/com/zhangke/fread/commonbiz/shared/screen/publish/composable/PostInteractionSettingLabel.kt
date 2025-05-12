@@ -1,4 +1,4 @@
-package com.zhangke.fread.bluesky.internal.screen.publish
+package com.zhangke.fread.commonbiz.shared.screen.publish.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -32,10 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import app.bsky.graph.ListView
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
-import com.zhangke.fread.bluesky.internal.model.ReplySetting
+import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
+import com.zhangke.fread.commonbiz.shared.model.ReplySetting
+import com.zhangke.fread.commonbiz.shared.model.StatusList
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_follower
@@ -59,7 +59,7 @@ import org.jetbrains.compose.resources.stringResource
 fun PostInteractionSettingLabel(
     modifier: Modifier,
     setting: PostInteractionSetting,
-    lists: List<ListView>,
+    lists: List<StatusList>,
     onQuoteChange: (Boolean) -> Unit,
     onSettingSelected: (ReplySetting) -> Unit,
     onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
@@ -174,7 +174,7 @@ fun PostInteractionSettingLabel(
 
                     for (listView in lists) {
                         val selected = if (setting.replySetting is ReplySetting.Combined) {
-                            setting.replySetting.options
+                            (setting.replySetting as ReplySetting.Combined).options
                                 .filterIsInstance<ReplySetting.CombineOption.UserInList>()
                                 .any { it.listView.cid == listView.cid }
                         } else {

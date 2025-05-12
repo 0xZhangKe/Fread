@@ -16,11 +16,12 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.bluesky.internal.model.ReplySetting
+import com.zhangke.fread.commonbiz.shared.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostBottomPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteractionSettingLabel
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
 

@@ -33,7 +33,7 @@ import com.zhangke.framework.utils.TextFieldUtils
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusVisibilityUi
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content

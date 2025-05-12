@@ -4,8 +4,9 @@ import androidx.compose.ui.text.input.TextFieldValue
 import app.bsky.graph.ListView
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
-import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
-import com.zhangke.fread.bluesky.internal.model.ReplySetting
+import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
+import com.zhangke.fread.commonbiz.shared.model.ReplySetting
+import com.zhangke.fread.commonbiz.shared.model.StatusList
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
 
@@ -22,7 +23,7 @@ data class PublishPostUiState(
     val publishing: Boolean,
     val replyBlog: Blog?,
     val quoteBlog: Blog?,
-    val list: List<ListView>,
+    val list: List<StatusList>,
 ) {
 
     val remainingImageCount: Int

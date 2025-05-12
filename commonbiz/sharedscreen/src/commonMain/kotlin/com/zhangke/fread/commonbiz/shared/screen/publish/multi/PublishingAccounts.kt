@@ -4,10 +4,12 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Text
 import androidx.compose.material3.Card
 import androidx.compose.material3.MaterialTheme
@@ -25,6 +27,9 @@ import com.zhangke.fread.status.ui.richtext.FreadRichText
 @Composable
 fun PublishingAccounts(
     modifier: Modifier,
+    settingBlock: @Composable () -> Unit,
+    language: String,
+    currentContentLength: Int,
     accounts: List<LoggedAccount>,
     onRemoveAccountClick: (LoggedAccount) -> Unit,
 ) {
@@ -34,6 +39,9 @@ fun PublishingAccounts(
         for (account in accounts) {
             AccountItem(
                 modifier = Modifier.fillMaxWidth(),
+                settingBlock = settingBlock,
+                language = language,
+                currentContentLength = currentContentLength,
                 account = account,
                 onRemoveAccountClick = onRemoveAccountClick,
             )
@@ -44,11 +52,15 @@ fun PublishingAccounts(
 @Composable
 private fun AccountItem(
     modifier: Modifier,
+    settingBlock: @Composable () -> Unit,
+    language: String,
+    currentContentLength: Int,
     account: LoggedAccount,
     onRemoveAccountClick: (LoggedAccount) -> Unit,
 ) {
     Card(
         modifier = modifier,
+        shape = RoundedCornerShape(6.dp),
     ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             Row(
@@ -87,6 +99,15 @@ private fun AccountItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+            }
+
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                settingBlock()
+                Spacer(modifier = Modifier.weight(1F))
+
             }
         }
     }

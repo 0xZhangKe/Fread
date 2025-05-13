@@ -48,7 +48,7 @@ import com.zhangke.framework.utils.initLocale
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
-import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostBottomPanel
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.statusui.Res
 import com.zhangke.fread.statusui.ic_post_status_spoiler
@@ -67,7 +67,7 @@ internal fun PostStatusBottomBar(
     onDeleteEmojiClick: () -> Unit,
 ) {
     var showEmojiPicker by remember { mutableStateOf(false) }
-    PublishPostBottomPanel(
+    PublishPostFeaturesPanel(
         modifier = Modifier.fillMaxWidth(),
         contentLength = uiState.content.text.length,
         maxContentLimit = uiState.rules.maxCharacters,

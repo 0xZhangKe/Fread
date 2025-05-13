@@ -18,7 +18,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.commonbiz.shared.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostBottomPanel
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteractionSettingLabel
@@ -97,7 +97,7 @@ class PublishPostScreen(
                 )
             },
             bottomPanel = {
-                PublishPostBottomPanel(
+                PublishPostFeaturesPanel(
                     modifier = Modifier.fillMaxWidth(),
                     contentLength = uiState.content.text.length,
                     maxContentLimit = uiState.maxCharacters,

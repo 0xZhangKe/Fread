@@ -35,7 +35,7 @@ import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
 
 @Composable
-fun PublishPostBottomPanel(
+fun PublishPostFeaturesPanel(
     modifier: Modifier,
     contentLength: Int,
     maxContentLimit: Int,

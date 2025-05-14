@@ -6,24 +6,60 @@ import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_follower_only
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_mentioned_only
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_public
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_unlisted
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.StatusVisibility
 import org.jetbrains.compose.resources.StringResource
 
 data class MultiAccountPublishingUiState(
-    val accounts: List<LoggedAccount>,
+    val freezeLoading: Boolean,
+    val addedAccounts: List<MultiPublishingAccountUiState>,
+    val allAccounts: List<Pair<LoggedAccount, PublishBlogRules?>>,
     val publishing: Boolean,
     val content: TextFieldValue,
-)
+    val globalRules: PublishBlogRules,
+    val medias: List<PublishPostMedia>,
+    val selectedLanguages: List<String>,
+) {
+
+    val mediaAvailableCount: Int
+        get() = globalRules.maxMediaCount - medias.size
+
+    companion object {
+
+        fun default(freezeLoading: Boolean): MultiAccountPublishingUiState {
+            return MultiAccountPublishingUiState(
+                freezeLoading = freezeLoading,
+                addedAccounts = emptyList(),
+                allAccounts = emptyList(),
+                publishing = false,
+                content = TextFieldValue(""),
+                globalRules = defaultRules(),
+                medias = emptyList(),
+                selectedLanguages = emptyList(),
+            )
+        }
+
+        private fun defaultRules(): PublishBlogRules {
+            return PublishBlogRules(
+                maxCharacters = 200,
+                maxMediaCount = 4,
+                maxPollOptions = 0,
+                supportPoll = false,
+                supportSpoiler = true,
+                maxLanguageCount = 1,
+            )
+        }
+    }
+}
 
 data class MultiPublishingAccountUiState(
     val account: LoggedAccount,
     val rules: PublishBlogRules,
-
 )
 
-sealed interface PublishingPostSetting{
+sealed interface PublishingPostSetting {
 
     data class PostVisibility(
         val visibility: StatusVisibility,

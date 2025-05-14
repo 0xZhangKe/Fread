@@ -15,12 +15,22 @@ import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.navigator.Navigator
+import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishTopBar
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.AvatarsHorizontalStack
+import com.zhangke.fread.status.account.LoggedAccount
 
 class MultiAccountPublishingScreen : BaseScreen() {
+
+    companion object {
+
+        fun open(navigator: Navigator, accounts: List<LoggedAccount>) {
+            accounts.map { it.uri }
+        }
+    }
 
     @Composable
     override fun Content() {
@@ -33,6 +43,8 @@ class MultiAccountPublishingScreen : BaseScreen() {
         snackBarHostState: SnackbarHostState,
         onBackClick: () -> Unit,
         onPublishClick: () -> Unit,
+        onMediaSelected: (List<PlatformUri>) -> Unit,
+        onLanguageSelected: (List<String>) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -54,13 +66,18 @@ class MultiAccountPublishingScreen : BaseScreen() {
                 ) {
                     AvatarsHorizontalStack(
                         modifier = Modifier,
-                        avatars = uiState.accounts.map { it.avatar },
+                        avatars = uiState.addedAccounts.map { it.avatar },
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     PublishPostFeaturesPanel(
                         modifier = Modifier.weight(1F),
                         contentLength = uiState.content.text.length,
-
+                        maxContentLimit = uiState.globalRules.maxCharacters,
+                        mediaAvailableCount = uiState.mediaAvailableCount,
+                        onMediaSelected = onMediaSelected,
+                        selectedLanguages = uiState.selectedLanguages,
+                        maxLanguageCount = uiState.globalRules.maxLanguageCount,
+                        onLanguageSelected = onLanguageSelected,
                     )
                 }
             }

@@ -13,9 +13,8 @@ import com.zhangke.fread.status.model.StatusVisibility
 import org.jetbrains.compose.resources.StringResource
 
 data class MultiAccountPublishingUiState(
-    val freezeLoading: Boolean,
     val addedAccounts: List<MultiPublishingAccountUiState>,
-    val allAccounts: List<Pair<LoggedAccount, PublishBlogRules?>>,
+    val allAccounts: List<MultiPublishingAccountWithRules>,
     val publishing: Boolean,
     val content: TextFieldValue,
     val globalRules: PublishBlogRules,
@@ -28,9 +27,8 @@ data class MultiAccountPublishingUiState(
 
     companion object {
 
-        fun default(freezeLoading: Boolean): MultiAccountPublishingUiState {
+        fun default(): MultiAccountPublishingUiState {
             return MultiAccountPublishingUiState(
-                freezeLoading = freezeLoading,
                 addedAccounts = emptyList(),
                 allAccounts = emptyList(),
                 publishing = false,
@@ -41,13 +39,13 @@ data class MultiAccountPublishingUiState(
             )
         }
 
-        private fun defaultRules(): PublishBlogRules {
+        fun defaultRules(): PublishBlogRules {
             return PublishBlogRules(
-                maxCharacters = 200,
+                maxCharacters = 120,
                 maxMediaCount = 4,
                 maxPollOptions = 0,
                 supportPoll = false,
-                supportSpoiler = true,
+                supportSpoiler = false,
                 maxLanguageCount = 1,
             )
         }
@@ -57,6 +55,11 @@ data class MultiAccountPublishingUiState(
 data class MultiPublishingAccountUiState(
     val account: LoggedAccount,
     val rules: PublishBlogRules,
+)
+
+data class MultiPublishingAccountWithRules(
+    val account: LoggedAccount,
+    val rules: PublishBlogRules?,
 )
 
 sealed interface PublishingPostSetting {

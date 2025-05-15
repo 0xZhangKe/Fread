@@ -19,8 +19,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
     @Assisted private val defaultAddAccountList: List<String>,
 ) : ViewModel() {
 
-    private val _uiState =
-        MutableStateFlow(MultiAccountPublishingUiState.default(freezeLoading = true))
+    private val _uiState = MutableStateFlow(MultiAccountPublishingUiState.default())
     val uiState = _uiState.asStateFlow()
 
     private val _snackMessage = MutableSharedFlow<TextString>()
@@ -35,19 +34,77 @@ class MultiAccountPublishingViewModel @Inject constructor(
             val addedAccounts = allAccounts.filter { account ->
                 defaultAddAccountList.contains(account.uri.toString())
             }
-
             _uiState.update {
                 it.copy(
-                    allAccounts = allAccounts,
-                    addedAccounts = allAccounts.filter { account ->
-                        defaultAddAccountList.contains(account.uri.toString())
+                    addedAccounts = addedAccounts.map { it.toDefaultUiState() },
+                    allAccounts = allAccounts.map { MultiPublishingAccountWithRules(it, null) },
+                )
+            }
+            val addedAccountUiState = addedAccounts.map { account ->
+                val rules = loadRules(account) ?: MultiAccountPublishingUiState.defaultRules()
+                MultiPublishingAccountUiState(account, rules)
+            }
+            _uiState.update { state ->
+                state.copy(
+                    addedAccounts = addedAccountUiState,
+                    allAccounts = state.allAccounts.map { (account, _) ->
+                        val rules =
+                            addedAccountUiState.firstOrNull { it.account.uri == account.uri }?.rules
+                        MultiPublishingAccountWithRules(account, rules)
                     },
                 )
             }
         }
     }
 
-    private suspend fun loadRules(account: LoggedAccount): Result<PublishBlogRules> {
+    fun onAddAccount(account: MultiPublishingAccountWithRules) {
+        _uiState.update {
+            it.copy(addedAccounts = it.addedAccounts + account.toDefaultUiState())
+        }
+        if (account.rules == null) {
+            loadRuleForAccount(account.account)
+        }
+    }
 
+    private fun loadRuleForAccount(account: LoggedAccount) {
+        launchInViewModel {
+            val rules = loadRules(account) ?: return@launchInViewModel
+            _uiState.update { state ->
+                state.copy(
+                    allAccounts = state.allAccounts.map {
+                        if (it.account.uri == account.uri) {
+                            it.copy(rules = rules)
+                        } else {
+                            it
+                        }
+                    },
+                    addedAccounts = state.addedAccounts.map {
+                        if (it.account.uri == account.uri) {
+                            it.copy(rules = rules)
+                        } else {
+                            it
+                        }
+                    },
+                )
+            }
+        }
+    }
+
+    private fun LoggedAccount.toDefaultUiState(): MultiPublishingAccountUiState {
+        return MultiPublishingAccountUiState(
+            account = this,
+            rules = MultiAccountPublishingUiState.defaultRules(),
+        )
+    }
+
+    private fun MultiPublishingAccountWithRules.toDefaultUiState(): MultiPublishingAccountUiState {
+        return MultiPublishingAccountUiState(
+            account = this.account,
+            rules = this.rules ?: MultiAccountPublishingUiState.defaultRules(),
+        )
+    }
+
+    private suspend fun loadRules(account: LoggedAccount): PublishBlogRules? {
+        return statusProvider.publishManager.getPublishBlogRules(account).getOrNull()
     }
 }

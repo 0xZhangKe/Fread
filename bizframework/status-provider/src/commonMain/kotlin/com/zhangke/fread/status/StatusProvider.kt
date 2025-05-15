@@ -42,7 +42,7 @@ class StatusProvider constructor(
 
     val notificationResolver = NotificationResolver(providers.map { it.notificationResolver })
 
-//    val publishManager = PublishBlogManager(providers.map { it.publishManager })
+    val publishManager = PublishBlogManager(providers.map { it.publishManager })
 }
 
 interface IStatusProvider {
@@ -63,5 +63,5 @@ interface IStatusProvider {
 
     val notificationResolver: INotificationResolver
 
-//    val publishManager: IPublishBlogManager
+    val publishManager: IPublishBlogManager
 }

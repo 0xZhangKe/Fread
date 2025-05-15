@@ -148,10 +148,20 @@ class ActivityPubNotificationResolver @Inject constructor(
             }
 
             ActivityPubNotificationsEntity.Type.status -> {
-                StatusNotification.NewStatus(
-                    status = status!!,
-                    unread = unread,
-                )
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        role = role,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.NewStatus(
+                        status = status,
+                        unread = unread,
+                    )
+                }
             }
 
             ActivityPubNotificationsEntity.Type.followRequest -> {

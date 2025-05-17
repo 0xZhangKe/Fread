@@ -174,7 +174,7 @@ fun PostInteractionSettingLabel(
 
                     for (listView in lists) {
                         val selected = if (setting.replySetting is ReplySetting.Combined) {
-                            (setting.replySetting as ReplySetting.Combined).options
+                            setting.replySetting.options
                                 .filterIsInstance<ReplySetting.CombineOption.UserInList>()
                                 .any { it.listView.cid == listView.cid }
                         } else {
@@ -239,7 +239,7 @@ private fun InteractionOption(
     }
 }
 
-private val PostInteractionSetting.label: String
+internal val PostInteractionSetting.label: String
     @Composable get() {
         return if (this.replySetting is ReplySetting.Everybody) {
             stringResource(Res.string.shared_publish_interaction_no_limit)
@@ -248,7 +248,7 @@ private val PostInteractionSetting.label: String
         }
     }
 
-private val PostInteractionSetting.labelIcon: ImageVector
+internal val PostInteractionSetting.labelIcon: ImageVector
     @Composable get() {
         return if (this.replySetting is ReplySetting.Everybody) {
             Icons.Default.Public

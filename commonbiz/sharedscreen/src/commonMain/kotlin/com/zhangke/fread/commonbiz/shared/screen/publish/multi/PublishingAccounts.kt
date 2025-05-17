@@ -19,8 +19,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.fread.common.resources.logo
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.label
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.labelIcon
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.isActivityPub
+import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
 import com.zhangke.fread.status.ui.richtext.FreadRichText
 
@@ -52,12 +58,11 @@ fun PublishingAccounts(
 @Composable
 private fun AccountItem(
     modifier: Modifier,
-    settingBlock: @Composable () -> Unit,
-    language: String,
-    currentContentLength: Int,
-    account: LoggedAccount,
+    uiState: MultiAccountPublishingUiState,
+    accountUiState: MultiPublishingAccountUiState,
     onRemoveAccountClick: (LoggedAccount) -> Unit,
 ) {
+    val account = accountUiState.account
     Card(
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
@@ -102,10 +107,18 @@ private fun AccountItem(
             }
 
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
             ) {
-                settingBlock()
+                if (account.platform.protocol.isBluesky) {
+                    PublishSettingLabel(
+                        modifier = modifier,
+                        label = uiState.interactionSetting.label,
+                        icon = uiState.interactionSetting.labelIcon,
+                    )
+                }else if (account.platform.protocol.isActivityPub){
+
+                }
                 Spacer(modifier = Modifier.weight(1F))
 
             }

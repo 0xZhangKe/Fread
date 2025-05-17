@@ -1,6 +1,9 @@
 package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 
 import androidx.compose.ui.text.input.TextFieldValue
+import com.zhangke.framework.utils.Locale
+import com.zhangke.framework.utils.getDefaultLocale
+import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_follower_only
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_mentioned_only
@@ -19,7 +22,9 @@ data class MultiAccountPublishingUiState(
     val content: TextFieldValue,
     val globalRules: PublishBlogRules,
     val medias: List<PublishPostMedia>,
-    val selectedLanguages: List<String>,
+    val selectedLanguage: Locale,
+    val postVisibility: StatusVisibility,
+    val interactionSetting: PostInteractionSetting,
 ) {
 
     val mediaAvailableCount: Int
@@ -35,7 +40,9 @@ data class MultiAccountPublishingUiState(
                 content = TextFieldValue(""),
                 globalRules = defaultRules(),
                 medias = emptyList(),
-                selectedLanguages = emptyList(),
+                selectedLanguage = getDefaultLocale(),
+                postVisibility = StatusVisibility.PUBLIC,
+                interactionSetting = PostInteractionSetting.default(),
             )
         }
 
@@ -61,15 +68,6 @@ data class MultiPublishingAccountWithRules(
     val account: LoggedAccount,
     val rules: PublishBlogRules?,
 )
-
-sealed interface PublishingPostSetting {
-
-    data class PostVisibility(
-        val visibility: StatusVisibility,
-    )
-
-//    data class
-}
 
 internal val StatusVisibility.describeStringId: StringResource
     get() = when (this) {

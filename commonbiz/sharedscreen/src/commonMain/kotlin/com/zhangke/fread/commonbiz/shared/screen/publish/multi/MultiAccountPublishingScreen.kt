@@ -66,7 +66,7 @@ class MultiAccountPublishingScreen : BaseScreen() {
                 ) {
                     AvatarsHorizontalStack(
                         modifier = Modifier,
-                        avatars = uiState.addedAccounts.map { it.avatar },
+                        avatars = uiState.addedAccounts.map { it.account.avatar },
                     )
                     Spacer(modifier = Modifier.width(8.dp))
                     PublishPostFeaturesPanel(

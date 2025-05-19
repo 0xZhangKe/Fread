@@ -13,9 +13,16 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import cafe.adriel.voyager.hilt.getViewModel
+import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.Navigator
+import cafe.adriel.voyager.navigator.currentOrThrow
+import com.zhangke.framework.architect.json.globalJson
+import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
@@ -23,18 +30,40 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.PublishTopBar
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.AvatarsHorizontalStack
 import com.zhangke.fread.status.account.LoggedAccount
 
-class MultiAccountPublishingScreen : BaseScreen() {
+class MultiAccountPublishingScreen(
+    private val userUrisJson: String,
+) : BaseScreen() {
 
     companion object {
 
         fun open(navigator: Navigator, accounts: List<LoggedAccount>) {
-            accounts.map { it.uri }
+            navigator.push(
+                MultiAccountPublishingScreen(
+                    userUrisJson = globalJson.encodeToString(accounts.map { it.uri }),
+                )
+            )
         }
     }
 
     @Composable
     override fun Content() {
         super.Content()
+        val navigator = LocalNavigator.currentOrThrow
+        val snackBarHostState = rememberSnackbarHostState()
+        val viewModel =
+            getViewModel<MultiAccountPublishingViewModel, MultiAccountPublishingViewModel.Factory> {
+                it.create(globalJson.decodeFromString(userUrisJson))
+            }
+        val uiState by viewModel.uiState.collectAsState()
+        MultiAccountPublishingContent(
+            uiState = uiState,
+            snackBarHostState = snackBarHostState,
+            onBackClick = navigator::pop,
+            onPublishClick = viewModel::onPublishClick,
+            onMediaSelected = viewModel::onMediaSelected,
+            onLanguageSelected = viewModel::onLanguageSelected,
+            onRemoveAccountClick = viewModel::onRemoveAccountClick,
+        )
     }
 
     @Composable
@@ -44,7 +73,8 @@ class MultiAccountPublishingScreen : BaseScreen() {
         onBackClick: () -> Unit,
         onPublishClick: () -> Unit,
         onMediaSelected: (List<PlatformUri>) -> Unit,
-        onLanguageSelected: (List<String>) -> Unit,
+        onLanguageSelected: (String) -> Unit,
+        onRemoveAccountClick: (LoggedAccount) -> Unit,
     ) {
         Scaffold(
             topBar = {
@@ -61,6 +91,11 @@ class MultiAccountPublishingScreen : BaseScreen() {
                     .padding(innerPadding)
                     .verticalScroll(rememberScrollState()),
             ) {
+                PublishingAccounts(
+                    modifier = Modifier.fillMaxWidth(),
+                    uiState = uiState,
+                    onRemoveAccountClick = onRemoveAccountClick,
+                )
                 Row(
                     modifier = Modifier.fillMaxWidth().padding(start = 16.dp),
                 ) {
@@ -75,11 +110,14 @@ class MultiAccountPublishingScreen : BaseScreen() {
                         maxContentLimit = uiState.globalRules.maxCharacters,
                         mediaAvailableCount = uiState.mediaAvailableCount,
                         onMediaSelected = onMediaSelected,
-                        selectedLanguages = uiState.selectedLanguages,
+                        selectedLanguages = listOf(uiState.selectedLanguage),
                         maxLanguageCount = uiState.globalRules.maxLanguageCount,
-                        onLanguageSelected = onLanguageSelected,
+                        onLanguageSelected = {
+                            it.firstOrNull()?.let { lan -> onLanguageSelected(lan) }
+                        },
                     )
                 }
+
             }
         }
     }

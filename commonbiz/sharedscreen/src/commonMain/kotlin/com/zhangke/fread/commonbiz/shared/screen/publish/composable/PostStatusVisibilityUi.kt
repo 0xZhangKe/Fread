@@ -36,16 +36,6 @@ fun PostStatusVisibilityUi(
             modifier = modifier.noRippleClick(enabled = changeable) { showSelector = true },
             label = stringResource(visibility.describeStringId),
             icon = Icons.Default.Public,
-            tail = if (changeable) {
-                {
-                    Icon(
-                        imageVector = Icons.Default.ArrowDropDown,
-                        contentDescription = null,
-                    )
-                }
-            } else {
-                null
-            },
         )
         DropdownMenu(
             expanded = showSelector,

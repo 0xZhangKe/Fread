@@ -1,8 +1,8 @@
 package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 
 import androidx.compose.ui.text.input.TextFieldValue
-import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
+import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_follower_only
@@ -22,7 +22,7 @@ data class MultiAccountPublishingUiState(
     val content: TextFieldValue,
     val globalRules: PublishBlogRules,
     val medias: List<PublishPostMedia>,
-    val selectedLanguage: Locale,
+    val selectedLanguage: String,
     val postVisibility: StatusVisibility,
     val interactionSetting: PostInteractionSetting,
 ) {
@@ -33,6 +33,7 @@ data class MultiAccountPublishingUiState(
     companion object {
 
         fun default(): MultiAccountPublishingUiState {
+            val defaultLanguage = getDefaultLocale()
             return MultiAccountPublishingUiState(
                 addedAccounts = emptyList(),
                 allAccounts = emptyList(),
@@ -40,7 +41,7 @@ data class MultiAccountPublishingUiState(
                 content = TextFieldValue(""),
                 globalRules = defaultRules(),
                 medias = emptyList(),
-                selectedLanguage = getDefaultLocale(),
+                selectedLanguage = defaultLanguage.getDisplayName(defaultLanguage),
                 postVisibility = StatusVisibility.PUBLIC,
                 interactionSetting = PostInteractionSetting.default(),
             )

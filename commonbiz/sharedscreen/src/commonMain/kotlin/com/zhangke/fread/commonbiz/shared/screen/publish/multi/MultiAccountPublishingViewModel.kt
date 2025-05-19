@@ -3,6 +3,8 @@ package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.ktx.launchInViewModel
+import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PublishBlogRules
@@ -18,6 +20,11 @@ class MultiAccountPublishingViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     @Assisted private val defaultAddAccountList: List<String>,
 ) : ViewModel() {
+
+    fun interface Factory : ViewModelFactory {
+
+        fun create(defaultAddAccountList: List<String>): MultiAccountPublishingViewModel
+    }
 
     private val _uiState = MutableStateFlow(MultiAccountPublishingUiState.default())
     val uiState = _uiState.asStateFlow()
@@ -66,6 +73,12 @@ class MultiAccountPublishingViewModel @Inject constructor(
         }
     }
 
+    fun onRemoveAccountClick(account: LoggedAccount) {
+        _uiState.update {
+            it.copy(addedAccounts = it.addedAccounts.filter { it.account.uri != account.uri })
+        }
+    }
+
     private fun loadRuleForAccount(account: LoggedAccount) {
         launchInViewModel {
             val rules = loadRules(account) ?: return@launchInViewModel
@@ -88,6 +101,18 @@ class MultiAccountPublishingViewModel @Inject constructor(
                 )
             }
         }
+    }
+
+    fun onPublishClick(){
+
+    }
+
+    fun onMediaSelected(medias: List<PlatformUri>){
+
+    }
+
+    fun onLanguageSelected(lan: String){
+
     }
 
     private fun LoggedAccount.toDefaultUiState(): MultiPublishingAccountUiState {

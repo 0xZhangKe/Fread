@@ -10,16 +10,21 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.Text
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Delete
+import androidx.compose.material.icons.filled.Public
 import androidx.compose.material3.Card
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
-import com.zhangke.framework.composable.noRippleClick
+import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.fread.common.resources.logo
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.label
@@ -28,27 +33,24 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.isActivityPub
 import com.zhangke.fread.status.model.isBluesky
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
+import com.zhangke.fread.status.ui.common.RemainingTextStatus
 import com.zhangke.fread.status.ui.richtext.FreadRichText
+import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PublishingAccounts(
     modifier: Modifier,
-    settingBlock: @Composable () -> Unit,
-    language: String,
-    currentContentLength: Int,
-    accounts: List<LoggedAccount>,
+    uiState: MultiAccountPublishingUiState,
     onRemoveAccountClick: (LoggedAccount) -> Unit,
 ) {
     Column(
         modifier = modifier,
     ) {
-        for (account in accounts) {
+        for (account in uiState.addedAccounts) {
             AccountItem(
                 modifier = Modifier.fillMaxWidth(),
-                settingBlock = settingBlock,
-                language = language,
-                currentContentLength = currentContentLength,
-                account = account,
+                uiState = uiState,
+                accountUiState = account,
                 onRemoveAccountClick = onRemoveAccountClick,
             )
         }
@@ -67,13 +69,14 @@ private fun AccountItem(
         modifier = modifier,
         shape = RoundedCornerShape(6.dp),
     ) {
-        Column(modifier = Modifier.fillMaxWidth()) {
+        Column(
+            modifier = Modifier.fillMaxWidth().padding(vertical = 16.dp)
+        ) {
             Row(
                 modifier = Modifier.fillMaxWidth().padding(start = 16.dp, end = 16.dp),
-                verticalAlignment = Alignment.CenterVertically,
             ) {
                 Box(
-                    modifier = Modifier.size(42.dp),
+                    modifier = Modifier.size(42.dp).align(Alignment.CenterVertically),
                 ) {
                     BlogAuthorAvatar(
                         modifier = Modifier.fillMaxSize(),
@@ -85,7 +88,11 @@ private fun AccountItem(
                         contentDescription = null,
                     )
                 }
-                Column(modifier = Modifier.weight(1F).padding(start = 8.dp)) {
+                Column(
+                    modifier = Modifier.weight(1F)
+                        .padding(start = 8.dp)
+                        .align(Alignment.CenterVertically)
+                ) {
                     FreadRichText(
                         modifier = Modifier.fillMaxWidth(),
                         maxLines = 1,
@@ -104,8 +111,15 @@ private fun AccountItem(
                         color = MaterialTheme.colorScheme.onSurfaceVariant,
                     )
                 }
+                IconButton(
+                    onClick = { onRemoveAccountClick(account) },
+                ) {
+                    Icon(
+                        imageVector = Icons.Default.Delete,
+                        contentDescription = "Remove",
+                    )
+                }
             }
-
             Row(
                 modifier = Modifier.fillMaxWidth().padding(start = 16.dp, top = 8.dp, end = 16.dp),
                 verticalAlignment = Alignment.CenterVertically,
@@ -116,11 +130,24 @@ private fun AccountItem(
                         label = uiState.interactionSetting.label,
                         icon = uiState.interactionSetting.labelIcon,
                     )
-                }else if (account.platform.protocol.isActivityPub){
-
+                } else if (account.platform.protocol.isActivityPub) {
+                    PublishSettingLabel(
+                        modifier = modifier,
+                        label = stringResource(uiState.postVisibility.describeStringId),
+                        icon = Icons.Default.Public,
+                    )
                 }
                 Spacer(modifier = Modifier.weight(1F))
-
+                Text(
+                    text = uiState.selectedLanguage,
+                    style = MaterialTheme.typography.labelMedium,
+                    color = MaterialTheme.colorScheme.primary,
+                )
+                RemainingTextStatus(
+                    modifier = Modifier.padding(start = 8.dp),
+                    maxCount = uiState.globalRules.maxCharacters,
+                    contentLength = uiState.content.text.length,
+                )
             }
         }
     }

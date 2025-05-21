@@ -1,12 +1,11 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
 import androidx.compose.ui.text.input.TextFieldValue
-import app.bsky.graph.ListView
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
-import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
-import com.zhangke.fread.commonbiz.shared.model.ReplySetting
-import com.zhangke.fread.commonbiz.shared.model.StatusList
+import com.zhangke.fread.status.model.PostInteractionSetting
+import com.zhangke.fread.status.model.ReplySetting
+import com.zhangke.fread.status.model.StatusList
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
 

@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase
 
 import com.zhangke.activitypub.entities.ActivityPubEditStatusEntity
 import com.zhangke.activitypub.entities.ActivityPubStatusVisibilityEntity
+import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.isO3LanguageCode
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.PostStatusAttachmentAdapter
@@ -29,39 +30,42 @@ class PublishPostUseCase @Inject constructor(
 
     suspend operator fun invoke(
         account: ActivityPubLoggedAccount,
-        uiState: PostStatusUiState,
-        editingBlogId: String?,
+        content: String,
+        attachment: PostStatusAttachment?,
+        sensitive: Boolean,
+        warningContent: String?,
+        visibility: StatusVisibility,
+        language: Locale,
+        replyToBlogId: String? = null,
+        editingBlogId: String? = null,
     ): Result<Unit> {
         val role = IdentityRole(account.uri, null)
         val statusRepo = clientManager.getClient(role).statusRepo
-        val medias = handleMedias(role, uiState).let {
+        val medias = handleMedias(role, attachment).let {
             if (it.isFailure) return Result.failure(it.exceptionOrNull()!!)
             it.getOrThrow()
         }
-        val attachment = uiState.attachment
-        val sensitive = uiState.sensitive
-        val spoilerText = uiState.warningContent.text
         return if (!editingBlogId.isNullOrEmpty()) {
             statusRepo.editStatus(
                 id = editingBlogId,
-                status = uiState.content.text,
+                status = content,
                 mediaIds = medias,
                 mediaAttributes = buildMediaAttributes(attachment),
                 poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
                 sensitive = sensitive,
-                spoilerText = if (sensitive == true) spoilerText else null,
-                language = uiState.language.isO3LanguageCode,
+                spoilerText = if (sensitive == true) warningContent else null,
+                language = language.isO3LanguageCode,
             )
         } else {
             statusRepo.postStatus(
-                status = uiState.content.text,
+                status = content,
                 mediaIds = medias,
                 poll = attachment?.asPollAttachmentOrNull?.let(attachmentAdapter::toPollRequest),
                 sensitive = sensitive,
-                spoilerText = if (sensitive == true) spoilerText else null,
-                replyToId = uiState.replyToBlog?.id,
-                visibility = uiState.visibility.toEntityVisibility(),
-                language = uiState.language.isO3LanguageCode,
+                spoilerText = if (sensitive == true) warningContent else null,
+                replyToId = replyToBlogId,
+                visibility = visibility.toEntityVisibility(),
+                language = language.isO3LanguageCode,
             )
         }.map {
             statusUpdater.update(
@@ -75,11 +79,29 @@ class PublishPostUseCase @Inject constructor(
         }
     }
 
+    suspend operator fun invoke(
+        account: ActivityPubLoggedAccount,
+        uiState: PostStatusUiState,
+        editingBlogId: String?,
+    ): Result<Unit> {
+        return invoke(
+            account = account,
+            content = uiState.content.text,
+            attachment = uiState.attachment,
+            sensitive = uiState.sensitive,
+            warningContent = uiState.warningContent.text,
+            visibility = uiState.visibility,
+            language = uiState.language,
+            replyToBlogId = uiState.replyToBlog?.id,
+            editingBlogId = editingBlogId,
+        )
+    }
+
     private suspend fun handleMedias(
         role: IdentityRole,
-        uiState: PostStatusUiState,
+        attachment: PostStatusAttachment?,
     ): Result<List<String>> {
-        val attachment = uiState.attachment ?: return Result.success(emptyList())
+        if (attachment == null) return Result.success(emptyList())
         val mediaIdList = mutableListOf<String>()
         val localFiles = mutableListOf<PostStatusMediaAttachmentFile.LocalFile>()
         if (attachment is PostStatusAttachment.Image) {
@@ -93,7 +115,6 @@ class PublishPostUseCase @Inject constructor(
             when (val file = attachment.video) {
                 is PostStatusMediaAttachmentFile.LocalFile -> localFiles.add(file)
                 is PostStatusMediaAttachmentFile.RemoteFile -> mediaIdList.add(file.id)
-
             }
         }
         if (localFiles.isNotEmpty()) {

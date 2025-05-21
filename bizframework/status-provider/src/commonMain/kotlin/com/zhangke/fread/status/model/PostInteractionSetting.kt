@@ -1,4 +1,4 @@
-package com.zhangke.fread.commonbiz.shared.model
+package com.zhangke.fread.status.model
 
 data class PostInteractionSetting(
     val allowQuote: Boolean,

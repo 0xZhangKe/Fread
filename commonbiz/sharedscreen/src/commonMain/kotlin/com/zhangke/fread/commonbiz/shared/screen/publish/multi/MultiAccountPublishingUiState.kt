@@ -4,7 +4,7 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
-import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
+import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_follower_only
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_mentioned_only

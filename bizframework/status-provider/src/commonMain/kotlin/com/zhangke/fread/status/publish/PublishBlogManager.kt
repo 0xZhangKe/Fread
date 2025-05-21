@@ -10,10 +10,15 @@ class PublishBlogManager(
     suspend fun getPublishBlogRules(account: LoggedAccount): Result<PublishBlogRules> {
         return managerList.firstNotNullOf { it.getPublishBlogRules(account) }
     }
+
+    suspend fun publish(account: LoggedAccount, post: PublishingPost): Result<Unit> {
+        return managerList.firstNotNullOf { it.publish(account, post) }
+    }
 }
 
 interface IPublishBlogManager {
 
     suspend fun getPublishBlogRules(account: LoggedAccount): Result<PublishBlogRules>?
 
+    suspend fun publish(account: LoggedAccount, post: PublishingPost): Result<Unit>?
 }

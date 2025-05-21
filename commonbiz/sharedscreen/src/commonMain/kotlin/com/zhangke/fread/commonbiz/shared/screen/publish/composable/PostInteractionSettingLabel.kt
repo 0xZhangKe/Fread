@@ -33,9 +33,9 @@ import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
-import com.zhangke.fread.commonbiz.shared.model.ReplySetting
-import com.zhangke.fread.commonbiz.shared.model.StatusList
+import com.zhangke.fread.status.model.PostInteractionSetting
+import com.zhangke.fread.status.model.ReplySetting
+import com.zhangke.fread.status.model.StatusList
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_follower

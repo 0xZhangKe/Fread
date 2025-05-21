@@ -8,7 +8,7 @@ import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
-import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
+import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount

@@ -32,7 +32,7 @@ import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
+import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
@@ -122,6 +122,29 @@ class MultiAccountPublishingScreen(
                 )
             },
             snackbarHost = { SnackbarHost(snackBarHostState) },
+            bottomBar = {
+                PublishPostFeaturesPanel(
+                    modifier = Modifier.fillMaxWidth(),
+                    contentLength = uiState.content.text.length,
+                    maxContentLimit = uiState.globalRules.maxCharacters,
+                    mediaAvailableCount = uiState.mediaAvailableCount,
+                    onMediaSelected = onMediaSelected,
+                    containerColor = MaterialTheme.colorScheme.background,
+                    selectedLanguages = listOf(uiState.selectedLanguage.languageCode),
+                    maxLanguageCount = uiState.globalRules.maxLanguageCount,
+                    onLanguageSelected = {
+                        it.firstOrNull()?.let { lan -> onLanguageSelected(lan) }
+                    },
+                    actions = {
+                        SimpleIconButton(
+                            modifier = Modifier.padding(start = 4.dp),
+                            onClick = onSensitiveClick,
+                            painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_post_status_spoiler),
+                            contentDescription = "Sensitive content",
+                        )
+                    },
+                )
+            },
         ) { innerPadding ->
             Column(
                 modifier = Modifier.fillMaxSize()
@@ -142,27 +165,6 @@ class MultiAccountPublishingScreen(
                         avatars = uiState.addedAccounts.map { it.account.avatar },
                     )
                     Column(modifier = Modifier.weight(1F)) {
-                        PublishPostFeaturesPanel(
-                            modifier = Modifier.fillMaxWidth(),
-                            contentLength = uiState.content.text.length,
-                            maxContentLimit = uiState.globalRules.maxCharacters,
-                            mediaAvailableCount = uiState.mediaAvailableCount,
-                            onMediaSelected = onMediaSelected,
-                            containerColor = MaterialTheme.colorScheme.background,
-                            selectedLanguages = listOf(uiState.selectedLanguage.languageCode),
-                            maxLanguageCount = uiState.globalRules.maxLanguageCount,
-                            onLanguageSelected = {
-                                it.firstOrNull()?.let { lan -> onLanguageSelected(lan) }
-                            },
-                            actions = {
-                                SimpleIconButton(
-                                    modifier = Modifier.padding(start = 4.dp),
-                                    onClick = onSensitiveClick,
-                                    painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_post_status_spoiler),
-                                    contentDescription = "Sensitive content",
-                                )
-                            },
-                        )
                         if (uiState.showInteractionSetting || uiState.showPostVisibilitySetting) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().padding(start = 8.dp),

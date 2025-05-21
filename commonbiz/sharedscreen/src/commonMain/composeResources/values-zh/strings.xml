@@ -75,4 +75,5 @@
     <string name="post_status_scope_unlisted">公开，但不在探索功能出现</string>
     <string name="post_status_scope_follower_only">仅关注者可见</string>
     <string name="post_status_scope_mentioned_only">仅提及用户可见</string>
+    <string name="post_status_content_warning">警告文本</string>
 </resources>

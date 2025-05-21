@@ -1,4 +1,4 @@
-package com.zhangke.fread.activitypub.app.internal.screen.status.post.composable
+package com.zhangke.fread.commonbiz.shared.screen.publish.composable
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -13,8 +13,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.architect.theme.inverseOnSurfaceDark
-import com.zhangke.fread.activitypub.app.Res
-import com.zhangke.fread.activitypub.app.post_status_content_warning
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.post_status_content_warning
 import com.zhangke.fread.status.ui.drawSpoilerBackground
 import org.jetbrains.compose.resources.stringResource
 

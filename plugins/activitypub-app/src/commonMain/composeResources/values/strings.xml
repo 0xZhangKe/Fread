@@ -35,7 +35,6 @@
     <string name="post_status_poll_single">Single</string>
     <string name="post_status_poll_multiple">Multiple</string>
     <string name="post_status_poll_style_select_dialog_title">Please select style</string>
-    <string name="post_status_content_warning">Content Warning</string>
     <string name="post_status_success">Sent successfully</string>
     <string name="post_status_failed">Post failed: %1$s</string>
     <string name="post_status_exit_dialog_content">Unsaved changes will be lost. Are you sure you want to exit?</string>

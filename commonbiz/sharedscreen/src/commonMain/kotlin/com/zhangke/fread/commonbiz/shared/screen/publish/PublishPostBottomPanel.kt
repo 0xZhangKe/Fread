@@ -23,6 +23,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -35,6 +36,16 @@ import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
 
 @Composable
+fun Modifier.bottomPaddingAsBottomBar(): Modifier {
+    val bottomPaddingByIme = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    return if (bottomPaddingByIme > 0.dp) {
+        this.padding(bottom = bottomPaddingByIme)
+    } else {
+        this.navigationBarsPadding()
+    }
+}
+
+@Composable
 fun PublishPostFeaturesPanel(
     modifier: Modifier,
     contentLength: Int,
@@ -44,16 +55,14 @@ fun PublishPostFeaturesPanel(
     selectedLanguages: List<String>,
     maxLanguageCount: Int,
     onLanguageSelected: (List<String>) -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
     actions: @Composable RowScope.() -> Unit = {},
     floatingBar: @Composable () -> Unit = {},
 ) {
-    val bottomPaddingByIme = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
-    val finalModifier = if (bottomPaddingByIme > 0.dp) {
-        modifier.padding(bottom = bottomPaddingByIme)
-    } else {
-        modifier.navigationBarsPadding()
-    }
-    Surface(modifier = finalModifier.fillMaxWidth()) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = containerColor,
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             floatingBar.invoke()
             Row(

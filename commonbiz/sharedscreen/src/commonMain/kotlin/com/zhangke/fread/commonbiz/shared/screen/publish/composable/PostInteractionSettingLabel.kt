@@ -60,6 +60,35 @@ fun PostInteractionSettingLabel(
     modifier: Modifier,
     setting: PostInteractionSetting,
     lists: List<StatusList>,
+    onSettingSelected: (PostInteractionSetting) -> Unit,
+) {
+    PostInteractionSettingLabel(
+        modifier = modifier,
+        setting = setting,
+        lists = lists,
+        onQuoteChange = { onSettingSelected(setting.copy(allowQuote = it)) },
+        onSettingSelected = {
+            onSettingSelected(setting.copy(replySetting = it))
+        },
+        onSettingOptionsSelected = { option ->
+            val options = setting.replySetting.let { it as? ReplySetting.Combined }
+                ?.options?.toMutableList() ?: mutableListOf()
+            if (option in options) {
+                options.remove(option)
+            } else {
+                options.add(option)
+            }
+            onSettingSelected(setting.copy(replySetting = ReplySetting.Combined(options)))
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PostInteractionSettingLabel(
+    modifier: Modifier,
+    setting: PostInteractionSetting,
+    lists: List<StatusList>,
     onQuoteChange: (Boolean) -> Unit,
     onSettingSelected: (ReplySetting) -> Unit,
     onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,

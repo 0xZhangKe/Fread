@@ -10,7 +10,10 @@ import androidx.compose.ui.text.input.TransformedText
 import androidx.compose.ui.text.input.VisualTransformation
 import com.zhangke.fread.common.utils.MentionTextUtil
 
-class PostStatusTextVisualTransformation(private val highLightColor: Color) : VisualTransformation {
+class PostStatusTextVisualTransformation(
+    private val highLightColor: Color,
+    private val enableMentions: Boolean = true,
+) : VisualTransformation {
 
     companion object {
 
@@ -23,7 +26,8 @@ class PostStatusTextVisualTransformation(private val highLightColor: Color) : Vi
 
     override fun filter(text: AnnotatedString): TransformedText {
         val hashtags = findHashtags(text.text)
-        val mentions = MentionTextUtil.findMentionList(text.text)
+        val mentions =
+            if (enableMentions) MentionTextUtil.findMentionList(text.text) else emptyList()
         val highlightList = hashtags + mentions
         return TransformedText(
             text = buildAnnotatedString {

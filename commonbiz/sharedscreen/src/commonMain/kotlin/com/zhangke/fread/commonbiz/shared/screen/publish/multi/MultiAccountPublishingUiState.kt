@@ -1,8 +1,9 @@
 package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 
 import androidx.compose.ui.text.input.TextFieldValue
+import com.zhangke.framework.utils.ContentProviderFile
+import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
-import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_follower_only
@@ -13,6 +14,8 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.model.isActivityPub
+import com.zhangke.fread.status.model.isBluesky
 import org.jetbrains.compose.resources.StringResource
 
 data class MultiAccountPublishingUiState(
@@ -21,19 +24,26 @@ data class MultiAccountPublishingUiState(
     val publishing: Boolean,
     val content: TextFieldValue,
     val globalRules: PublishBlogRules,
-    val medias: List<PublishPostMedia>,
-    val selectedLanguage: String,
+    val medias: List<PublishPostMediaAttachmentFile>,
+    val selectedLanguage: Locale,
     val postVisibility: StatusVisibility,
     val interactionSetting: PostInteractionSetting,
+    val sensitive: Boolean,
+    val warningContent: TextFieldValue,
 ) {
 
     val mediaAvailableCount: Int
         get() = globalRules.maxMediaCount - medias.size
 
+    val showPostVisibilitySetting: Boolean
+        get() = allAccounts.any { it.account.platform.protocol.isActivityPub }
+
+    val showInteractionSetting: Boolean
+        get() = allAccounts.any { it.account.platform.protocol.isBluesky }
+
     companion object {
 
         fun default(): MultiAccountPublishingUiState {
-            val defaultLanguage = getDefaultLocale()
             return MultiAccountPublishingUiState(
                 addedAccounts = emptyList(),
                 allAccounts = emptyList(),
@@ -41,9 +51,11 @@ data class MultiAccountPublishingUiState(
                 content = TextFieldValue(""),
                 globalRules = defaultRules(),
                 medias = emptyList(),
-                selectedLanguage = defaultLanguage.getDisplayName(defaultLanguage),
+                selectedLanguage = getDefaultLocale(),
                 postVisibility = StatusVisibility.PUBLIC,
                 interactionSetting = PostInteractionSetting.default(),
+                sensitive = false,
+                warningContent = TextFieldValue(""),
             )
         }
 
@@ -77,3 +89,14 @@ internal val StatusVisibility.describeStringId: StringResource
         StatusVisibility.PRIVATE -> Res.string.post_status_scope_follower_only
         StatusVisibility.DIRECT -> Res.string.post_status_scope_mentioned_only
     }
+
+data class PublishPostMediaAttachmentFile(
+    val file: ContentProviderFile,
+    override val isVideo: Boolean,
+    override val alt: String?,
+) : PublishPostMedia {
+
+    override val uri: String
+        get() = file.uri.toString()
+
+}

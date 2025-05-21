@@ -4,8 +4,9 @@ import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.publish.IPublishBlogManager
+import me.tatarka.inject.annotations.Inject
 
-class BlueskyPublishManager: IPublishBlogManager {
+class BlueskyPublishManager @Inject constructor(): IPublishBlogManager {
 
     override suspend fun getPublishBlogRules(account: LoggedAccount): Result<PublishBlogRules>? {
         if (account.platform.protocol.notBluesky) return null

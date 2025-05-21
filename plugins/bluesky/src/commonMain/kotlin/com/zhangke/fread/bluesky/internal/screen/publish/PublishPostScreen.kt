@@ -21,6 +21,7 @@ import com.zhangke.fread.commonbiz.shared.model.ReplySetting
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
+import com.zhangke.fread.commonbiz.shared.screen.publish.bottomPaddingAsBottomBar
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteractionSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.status.model.IdentityRole
@@ -107,7 +108,7 @@ class PublishPostScreen(
             },
             bottomPanel = {
                 PublishPostFeaturesPanel(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().bottomPaddingAsBottomBar(),
                     contentLength = uiState.content.text.length,
                     maxContentLimit = uiState.maxCharacters,
                     mediaAvailableCount = uiState.remainingImageCount,

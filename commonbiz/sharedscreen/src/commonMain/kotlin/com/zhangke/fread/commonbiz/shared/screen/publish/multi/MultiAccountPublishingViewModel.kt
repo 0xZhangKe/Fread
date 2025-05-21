@@ -1,13 +1,21 @@
 package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 
+import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.PlatformUri
+import com.zhangke.framework.utils.initLocale
 import com.zhangke.fread.common.di.ViewModelFactory
+import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.commonbiz.shared.model.PostInteractionSetting
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.PublishBlogRules
+import com.zhangke.fread.status.model.StatusVisibility
+import kotlinx.coroutines.async
+import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,6 +26,7 @@ import me.tatarka.inject.annotations.Inject
 
 class MultiAccountPublishingViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
+    private val platformUriHelper: PlatformUriHelper,
     @Assisted private val defaultAddAccountList: List<String>,
 ) : ViewModel() {
 
@@ -65,6 +74,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
     }
 
     fun onAddAccount(account: MultiPublishingAccountWithRules) {
+        if (uiState.value.addedAccounts.any { it.account.uri == account.account.uri }) return
         _uiState.update {
             it.copy(addedAccounts = it.addedAccounts + account.toDefaultUiState())
         }
@@ -74,9 +84,50 @@ class MultiAccountPublishingViewModel @Inject constructor(
     }
 
     fun onRemoveAccountClick(account: LoggedAccount) {
+        if (uiState.value.addedAccounts.size <= 1) return
         _uiState.update {
             it.copy(addedAccounts = it.addedAccounts.filter { it.account.uri != account.uri })
         }
+    }
+
+    fun onContentChanged(content: TextFieldValue) {
+        _uiState.update {
+            it.copy(content = content)
+        }
+    }
+
+    fun onSensitiveClick() {
+        _uiState.update {
+            it.copy(sensitive = !it.sensitive)
+        }
+    }
+
+    fun onWarningContentChanged(content: TextFieldValue) {
+        _uiState.update { it.copy(warningContent = content) }
+    }
+
+    fun onMediaAltChanged(media: PublishPostMedia, alt: String) {
+        _uiState.update {
+            it.copy(
+                medias = it.medias.map { m ->
+                    if (m.uri == media.uri) m.copy(alt = alt) else m
+                },
+            )
+        }
+    }
+
+    fun onDeleteMediaClick(media: PublishPostMedia) {
+        _uiState.update {
+            it.copy(medias = it.medias.filter { m -> m.uri != media.uri })
+        }
+    }
+
+    fun onVisibilitySelect(visibility: StatusVisibility) {
+        _uiState.update { it.copy(postVisibility = visibility) }
+    }
+
+    fun onSettingSelected(setting: PostInteractionSetting) {
+        _uiState.update { it.copy(interactionSetting = setting) }
     }
 
     private fun loadRuleForAccount(account: LoggedAccount) {
@@ -103,16 +154,36 @@ class MultiAccountPublishingViewModel @Inject constructor(
         }
     }
 
-    fun onPublishClick(){
+    fun onPublishClick() {
 
     }
 
-    fun onMediaSelected(medias: List<PlatformUri>){
-
+    fun onMediaSelected(medias: List<PlatformUri>) {
+        if (medias.isEmpty()) return
+        launchInViewModel {
+            val fileList = medias.map { async { platformUriHelper.read(it) } }
+                .awaitAll().filterNotNull()
+            val newMedias = if (fileList.first().isVideo) {
+                PublishPostMediaAttachmentFile(
+                    file = fileList.first(),
+                    isVideo = true,
+                    alt = null,
+                ).let { listOf(it) }
+            } else {
+                uiState.value.medias + fileList.map {
+                    PublishPostMediaAttachmentFile(
+                        file = it,
+                        isVideo = false,
+                        alt = null,
+                    )
+                }
+            }
+            _uiState.update { it.copy(medias = newMedias) }
+        }
     }
 
-    fun onLanguageSelected(lan: String){
-
+    fun onLanguageSelected(lan: String) {
+        _uiState.update { it.copy(selectedLanguage = initLocale(lan)) }
     }
 
     private fun LoggedAccount.toDefaultUiState(): MultiPublishingAccountUiState {

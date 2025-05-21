@@ -107,14 +107,24 @@ class ActivityPubNotificationResolver @Inject constructor(
         }
         return when (entity.type) {
             ActivityPubNotificationsEntity.Type.favourite -> {
-                StatusNotification.Like(
-                    id = entity.id,
-                    author = author,
-                    role = role,
-                    blog = status!!.status.intrinsicBlog,
-                    createAt = createAt,
-                    unread = unread,
-                )
+                if (status == null) {
+                    StatusNotification.Unknown(
+                        id = entity.id,
+                        createAt = createAt,
+                        unread = unread,
+                        role = role,
+                        message = "Unknown notification type: ${entity.type}",
+                    )
+                } else {
+                    StatusNotification.Like(
+                        id = entity.id,
+                        author = author,
+                        role = role,
+                        blog = status!!.status.intrinsicBlog,
+                        createAt = createAt,
+                        unread = unread,
+                    )
+                }
             }
 
             ActivityPubNotificationsEntity.Type.mention -> {

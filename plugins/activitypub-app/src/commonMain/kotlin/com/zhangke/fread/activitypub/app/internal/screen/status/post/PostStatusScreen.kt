@@ -30,10 +30,8 @@ import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.TextFieldUtils
-import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
-import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
@@ -43,6 +41,7 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMediaAttachment
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusVisibilityUi
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWarning
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.StatusVisibility
@@ -115,11 +114,19 @@ class PostStatusScreen(
                 onVisibilityChanged = viewModel::onVisibilityChanged,
                 onDurationSelect = viewModel::onDurationSelect,
                 onAddAccountClick = {
-                    MultiAccountPublishingScreen.open(navigator, listOf(uiState.account))
+                    val multiAccPublishScreen = MultiAccountPublishingScreen.createInstance(
+                        listOf(uiState.account),
+                    )
+                    if (uiState.hasInputtedData()) {
+                        navigator.push(multiAccPublishScreen)
+                    } else {
+                        navigator.replace(multiAccPublishScreen)
+                    }
                 },
             )
         }
-        val successMessage = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_success)
+        val successMessage =
+            stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_success)
         ConsumeFlow(viewModel.publishSuccessFlow) {
             toast(successMessage)
             navigator.pop()
@@ -175,7 +182,7 @@ class PostStatusScreen(
             snackBarHostState = snackMessageState,
             content = uiState.content,
             showSwitchAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
-            showAddAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
+            showAddAccountIcon = uiState.accountChangeable,
             publishing = uiState.publishing,
             replyingBlog = uiState.replyToBlog,
             onContentChanged = onContentChanged,

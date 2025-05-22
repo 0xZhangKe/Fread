@@ -26,9 +26,9 @@ import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.core.annotation.InternalVoyagerApi
+import cafe.adriel.voyager.core.screen.Screen
 import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
-import cafe.adriel.voyager.navigator.Navigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import cafe.adriel.voyager.navigator.internal.BackHandler
 import com.zhangke.framework.architect.json.globalJson
@@ -65,11 +65,9 @@ class MultiAccountPublishingScreen(
 
     companion object {
 
-        fun open(navigator: Navigator, accounts: List<LoggedAccount>) {
-            navigator.push(
-                MultiAccountPublishingScreen(
-                    userUrisJson = globalJson.encodeToString(accounts.map { it.uri.toString() }),
-                )
+        fun createInstance(accounts: List<LoggedAccount>): Screen {
+            return MultiAccountPublishingScreen(
+                userUrisJson = globalJson.encodeToString(accounts.map { it.uri.toString() }),
             )
         }
     }

@@ -17,7 +17,6 @@ import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
@@ -25,6 +24,7 @@ import com.zhangke.fread.commonbiz.shared.screen.publish.bottomPaddingAsBottomBa
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteractionSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
 
 class PublishPostScreen(
@@ -56,10 +56,14 @@ class PublishPostScreen(
             onMediaDeleteClick = viewModel::onMediaDeleteClick,
             onPublishClick = viewModel::onPublishClick,
             onAddAccountClick = {
-                MultiAccountPublishingScreen.open(
-                    navigator,
+                val multiAccPublishScreen = MultiAccountPublishingScreen.createInstance(
                     uiState.account?.let { listOf(it) }.orEmpty(),
                 )
+                if (uiState.hasInputtedData) {
+                    navigator.push(multiAccPublishScreen)
+                } else {
+                    navigator.replace(multiAccPublishScreen)
+                }
             },
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
@@ -89,7 +93,7 @@ class PublishPostScreen(
             snackBarHostState = snackBarHostState,
             content = uiState.content,
             showSwitchAccountIcon = false,
-            showAddAccountIcon = false,
+            showAddAccountIcon = uiState.showAddAccountIcon,
             publishing = uiState.publishing,
             replyingBlog = uiState.replyBlog,
             onContentChanged = onContentChanged,

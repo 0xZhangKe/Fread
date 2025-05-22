@@ -4,8 +4,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitInViewModel
-import com.zhangke.framework.composable.emitTextMessageFromThrowable
 import com.zhangke.framework.composable.textOf
+import com.zhangke.framework.ktx.ifNullOrEmpty
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.initLocale
@@ -14,6 +14,7 @@ import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.post_status_content_is_empty
+import com.zhangke.fread.commonbiz.shared.screen.post_status_failed
 import com.zhangke.fread.commonbiz.shared.screen.post_status_part_failed
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.usecase.PublishPostOnMultiAccountUseCase
@@ -183,7 +184,12 @@ class MultiAccountPublishingViewModel @Inject constructor(
             ).onFailure { t ->
                 _uiState.update { it.copy(publishing = false) }
                 if (t is PublishingPartFailed) {
-                    _snackMessage.emit(textOf(Res.string.post_status_part_failed))
+                    _snackMessage.emit(
+                        textOf(
+                            Res.string.post_status_part_failed,
+                            t.message.orEmpty(),
+                        )
+                    )
                     _uiState.update { state ->
                         state.copy(
                             addedAccounts = state.addedAccounts.filter {
@@ -192,7 +198,11 @@ class MultiAccountPublishingViewModel @Inject constructor(
                         )
                     }
                 } else {
-                    _snackMessage.emitTextMessageFromThrowable(t)
+                    val errorMessage = textOf(
+                        Res.string.post_status_failed,
+                        t.message.ifNullOrEmpty { "unknown error" }.take(180),
+                    )
+                    _snackMessage.emit(errorMessage)
                 }
             }.onSuccess {
                 _uiState.update { it.copy(publishing = false) }

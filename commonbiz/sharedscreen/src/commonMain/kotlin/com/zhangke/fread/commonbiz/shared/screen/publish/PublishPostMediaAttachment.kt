@@ -95,7 +95,6 @@ private fun PublishPostMediaAttachmentImage(
     val fontColor = Color.White
     var showAltDialog by remember { mutableStateOf(false) }
     Box(modifier = modifier) {
-        HorizontalDivider()
         AutoSizeImage(
             url = image.uri.toString(),
             modifier = Modifier.fillMaxSize()

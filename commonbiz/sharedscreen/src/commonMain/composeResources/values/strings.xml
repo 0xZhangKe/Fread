@@ -69,4 +69,16 @@
 
     <string name="shared_feeds_not_login_title">Oops! Your login info has expired. Please log back in to continue.</string>
     <string name="shared_feeds_go_to_login">Sign in</string>
+    <string name="shared_publish_select_account_title">Please select account</string>
+
+    <string name="post_status_scope_public">Public</string>
+    <string name="post_status_scope_unlisted">Public, but opted-out of discovery feature</string>
+    <string name="post_status_scope_follower_only">Followers only</string>
+    <string name="post_status_scope_mentioned_only">Only people mentioned</string>
+    <string name="post_status_content_warning">Content Warning</string>
+    <string name="post_status_success">Sent successfully</string>
+    <string name="post_status_failed">Post failed: %1$s</string>
+    <string name="post_status_exit_dialog_content">Unsaved changes will be lost. Are you sure you want to exit?</string>
+    <string name="post_status_content_is_empty">Please enter content</string>
+    <string name="post_status_part_failed">Some accounts couldn’t be published. Successfully posted accounts have been removed. Please try again with the remaining ones：%1$s</string>
 </resources>

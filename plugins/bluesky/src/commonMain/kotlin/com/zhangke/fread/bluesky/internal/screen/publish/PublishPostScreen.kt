@@ -16,12 +16,15 @@ import com.zhangke.framework.composable.ConsumeFlow
 import com.zhangke.framework.composable.ConsumeSnackbarFlow
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.common.page.BaseScreen
-import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostBottomPanel
+import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
+import com.zhangke.fread.commonbiz.shared.screen.publish.bottomPaddingAsBottomBar
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostInteractionSettingLabel
+import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.status.model.IdentityRole
+import com.zhangke.fread.status.model.ReplySetting
 import com.zhangke.fread.status.ui.publish.BlogInQuoting
 
 class PublishPostScreen(
@@ -52,6 +55,16 @@ class PublishPostScreen(
             onMediaAltChanged = viewModel::onMediaAltChanged,
             onMediaDeleteClick = viewModel::onMediaDeleteClick,
             onPublishClick = viewModel::onPublishClick,
+            onAddAccountClick = {
+                val multiAccPublishScreen = MultiAccountPublishingScreen.createInstance(
+                    uiState.account?.let { listOf(it) }.orEmpty(),
+                )
+                if (uiState.hasInputtedData) {
+                    navigator.push(multiAccPublishScreen)
+                } else {
+                    navigator.replace(multiAccPublishScreen)
+                }
+            },
         )
         ConsumeSnackbarFlow(snackBarHostState, viewModel.snackBarMessageFlow)
         ConsumeFlow(viewModel.finishPageFlow) {
@@ -73,18 +86,20 @@ class PublishPostScreen(
         onMediaAltChanged: (PublishPostMedia, String) -> Unit,
         onMediaDeleteClick: (PublishPostMedia) -> Unit,
         onPublishClick: () -> Unit,
+        onAddAccountClick: () -> Unit,
     ) {
         PublishPostScaffold(
             account = uiState.account,
             snackBarHostState = snackBarHostState,
             content = uiState.content,
             showSwitchAccountIcon = false,
+            showAddAccountIcon = uiState.showAddAccountIcon,
             publishing = uiState.publishing,
             replyingBlog = uiState.replyBlog,
             onContentChanged = onContentChanged,
             onPublishClick = onPublishClick,
             onBackClick = onBackClick,
-            onSwitchAccountClick = {},
+            onAddAccountClick = onAddAccountClick,
             postSettingLabel = {
                 PostInteractionSettingLabel(
                     modifier = Modifier.padding(top = 1.dp),
@@ -96,8 +111,8 @@ class PublishPostScreen(
                 )
             },
             bottomPanel = {
-                PublishPostBottomPanel(
-                    modifier = Modifier.fillMaxWidth(),
+                PublishPostFeaturesPanel(
+                    modifier = Modifier.fillMaxWidth().bottomPaddingAsBottomBar(),
                     contentLength = uiState.content.text.length,
                     maxContentLimit = uiState.maxCharacters,
                     mediaAvailableCount = uiState.remainingImageCount,

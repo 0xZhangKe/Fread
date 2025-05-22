@@ -5,6 +5,7 @@ import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.content.IContentManager
 import com.zhangke.fread.status.notification.INotificationResolver
 import com.zhangke.fread.status.platform.IPlatformResolver
+import com.zhangke.fread.status.publish.IPublishBlogManager
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.search.ISearchEngine
 import com.zhangke.fread.status.source.IStatusSourceResolver
@@ -20,6 +21,7 @@ class RssStatusProvider @Inject constructor(
     rssStatusSourceResolver: RssStatusSourceResolver,
     rssPlatformResolver: RssPlatformResolver,
     rssNotificationResolver: RssNotificationResolver,
+    rssPublishManager: RssPublishManager,
 ) : IStatusProvider {
 
     override val contentManager: IContentManager = contentManager
@@ -37,4 +39,6 @@ class RssStatusProvider @Inject constructor(
     override val accountManager: IAccountManager = rssAccountManager
 
     override val notificationResolver: INotificationResolver = rssNotificationResolver
+
+    override val publishManager: IPublishBlogManager = rssPublishManager
 }

@@ -35,9 +35,9 @@ import org.jetbrains.compose.resources.stringResource
 @Composable
 fun SelectAccountDialog(
     accountList: List<LoggedAccount>,
-    selectedAccount: LoggedAccount?,
+    selectedAccounts: List<LoggedAccount>,
     onDismissRequest: () -> Unit,
-    onSwitchAccount: (LoggedAccount) -> Unit,
+    onAccountClicked: (LoggedAccount) -> Unit,
 ) {
     Dialog(onDismissRequest = onDismissRequest) {
         Surface(
@@ -59,10 +59,10 @@ fun SelectAccountDialog(
                     Spacer(modifier = Modifier.height(16.dp))
                     SelectableAccount(
                         account = account,
-                        selected = account.uri == selectedAccount?.uri,
+                        selected = selectedAccounts.any { account.uri == it.uri },
                         onClick = {
                             onDismissRequest()
-                            onSwitchAccount(account)
+                            onAccountClicked(account)
                         },
                     )
                 }

@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.SmartDisplay
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -23,6 +26,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
@@ -33,9 +37,21 @@ import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
+import com.zhangke.fread.statusui.ic_post_status_spoiler
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
-fun PublishPostBottomPanel(
+fun Modifier.bottomPaddingAsBottomBar(): Modifier {
+    val bottomPaddingByIme = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
+    return if (bottomPaddingByIme > 0.dp) {
+        this.padding(bottom = bottomPaddingByIme)
+    } else {
+        this.navigationBarsPadding()
+    }
+}
+
+@Composable
+fun PublishPostFeaturesPanel(
     modifier: Modifier,
     contentLength: Int,
     maxContentLimit: Int,
@@ -44,16 +60,14 @@ fun PublishPostBottomPanel(
     selectedLanguages: List<String>,
     maxLanguageCount: Int,
     onLanguageSelected: (List<String>) -> Unit,
+    containerColor: Color = MaterialTheme.colorScheme.surface,
     actions: @Composable RowScope.() -> Unit = {},
     floatingBar: @Composable () -> Unit = {},
 ) {
-    val bottomPaddingByIme = WindowInsets.ime.asPaddingValues().calculateBottomPadding()
-    val finalModifier = if (bottomPaddingByIme > 0.dp) {
-        modifier.padding(bottom = bottomPaddingByIme)
-    } else {
-        modifier.navigationBarsPadding()
-    }
-    Surface(modifier = finalModifier.fillMaxWidth()) {
+    Surface(
+        modifier = modifier.fillMaxWidth(),
+        color = containerColor,
+    ) {
         Column(modifier = Modifier.fillMaxWidth()) {
             floatingBar.invoke()
             Row(
@@ -68,6 +82,7 @@ fun PublishPostBottomPanel(
                     SimpleIconButton(
                         modifier = Modifier,
                         onClick = { launchImage() },
+                        enabled = mediaAvailableCount > 0,
                         imageVector = Icons.Default.Image,
                         contentDescription = "Add Image",
                     )
@@ -79,6 +94,7 @@ fun PublishPostBottomPanel(
                     SimpleIconButton(
                         modifier = Modifier.padding(start = 4.dp),
                         onClick = { launchVideo() },
+                        enabled = mediaAvailableCount > 0,
                         imageVector = Icons.Default.SmartDisplay,
                         contentDescription = "Add Video",
                     )
@@ -139,6 +155,22 @@ private fun SelectLanguageIconButton(
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SensitiveIconButton(onSensitiveClick: () -> Unit) {
+    IconButton(
+        onClick = onSensitiveClick,
+        modifier = Modifier.padding(start = 4.dp),
+    ) {
+        Box(modifier = Modifier.size(29.dp)) {
+            Icon(
+                modifier = Modifier.size(24.dp).align(Alignment.TopCenter),
+                painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_post_status_spoiler),
+                contentDescription = "Sensitive content",
+            )
         }
     }
 }

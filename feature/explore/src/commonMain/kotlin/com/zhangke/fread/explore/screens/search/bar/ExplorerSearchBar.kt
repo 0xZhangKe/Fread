@@ -225,9 +225,9 @@ private fun SearchBarTrailing(
             if (showSelectAccountPopup) {
                 SelectAccountDialog(
                     accountList = accountList,
-                    selectedAccount = selectedAccount,
+                    selectedAccounts = selectedAccount?.let { listOf(it) } ?: emptyList(),
                     onDismissRequest = { showSelectAccountPopup = false },
-                    onSwitchAccount = onAccountSelected,
+                    onAccountClicked = onAccountSelected,
                 )
             }
         }

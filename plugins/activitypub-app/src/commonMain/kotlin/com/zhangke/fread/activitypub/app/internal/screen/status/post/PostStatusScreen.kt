@@ -30,19 +30,19 @@ import com.zhangke.framework.toast.toast
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.TextFieldUtils
-import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusBottomBar
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusVisibilityUi
-import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
-import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content
-import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
+import com.zhangke.fread.commonbiz.shared.screen.post_status_exit_dialog_content
+import com.zhangke.fread.commonbiz.shared.screen.post_status_success
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMediaAttachment
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusVisibilityUi
+import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWarning
+import com.zhangke.fread.commonbiz.shared.screen.publish.multi.MultiAccountPublishingScreen
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.ui.common.SelectAccountDialog
@@ -113,9 +113,20 @@ class PostStatusScreen(
                 onWarningContentChanged = viewModel::onWarningContentChanged,
                 onVisibilityChanged = viewModel::onVisibilityChanged,
                 onDurationSelect = viewModel::onDurationSelect,
+                onAddAccountClick = {
+                    val multiAccPublishScreen = MultiAccountPublishingScreen.createInstance(
+                        listOf(uiState.account),
+                    )
+                    if (uiState.hasInputtedData()) {
+                        navigator.push(multiAccPublishScreen)
+                    } else {
+                        navigator.replace(multiAccPublishScreen)
+                    }
+                },
             )
         }
-        val successMessage = stringResource(Res.string.post_status_success)
+        val successMessage =
+            stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_success)
         ConsumeFlow(viewModel.publishSuccessFlow) {
             toast(successMessage)
             navigator.pop()
@@ -127,7 +138,7 @@ class PostStatusScreen(
             FreadDialog(
                 onDismissRequest = { showExitDialog = false },
                 content = {
-                    Text(text = stringResource(Res.string.post_status_exit_dialog_content))
+                    Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_exit_dialog_content))
                 },
                 onNegativeClick = {
                     showExitDialog = false
@@ -163,6 +174,7 @@ class PostStatusScreen(
         onWarningContentChanged: (TextFieldValue) -> Unit,
         onVisibilityChanged: (StatusVisibility) -> Unit,
         onDurationSelect: (Duration) -> Unit,
+        onAddAccountClick: () -> Unit,
     ) {
         var showAccountSwitchPopup by remember { mutableStateOf(false) }
         PublishPostScaffold(
@@ -170,12 +182,14 @@ class PostStatusScreen(
             snackBarHostState = snackMessageState,
             content = uiState.content,
             showSwitchAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
+            showAddAccountIcon = uiState.accountChangeable,
             publishing = uiState.publishing,
             replyingBlog = uiState.replyToBlog,
             onContentChanged = onContentChanged,
             onPublishClick = onPostClick,
             onBackClick = onCloseClick,
             onSwitchAccountClick = { showAccountSwitchPopup = true },
+            onAddAccountClick = onAddAccountClick,
             contentWarning = {
                 if (uiState.sensitive) {
                     PostStatusWarning(
@@ -244,8 +258,8 @@ class PostStatusScreen(
             SelectAccountDialog(
                 accountList = uiState.availableAccountList,
                 onDismissRequest = { showAccountSwitchPopup = false },
-                selectedAccount = uiState.account,
-                onSwitchAccount = { account ->
+                selectedAccounts = listOf(uiState.account),
+                onAccountClicked = { account ->
                     onSwitchAccount(account)
                 },
             )

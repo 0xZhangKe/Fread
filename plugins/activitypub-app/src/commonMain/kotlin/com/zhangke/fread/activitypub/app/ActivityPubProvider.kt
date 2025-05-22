@@ -17,6 +17,7 @@ class ActivityPubProvider @Inject constructor(
     internalSourceResolver: ActivityPubSourceResolver,
     internalAccountManager: ActivityPubAccountManager,
     notificationResolver: ActivityPubNotificationResolver,
+    activityPubPublishManager: ActivityPubPublishManager,
 ) : IStatusProvider {
 
     override val contentManager: IContentManager = internalContentManager
@@ -34,4 +35,6 @@ class ActivityPubProvider @Inject constructor(
     override val accountManager: IAccountManager = internalAccountManager
 
     override val notificationResolver: INotificationResolver = notificationResolver
+
+    override val publishManager = activityPubPublishManager
 }

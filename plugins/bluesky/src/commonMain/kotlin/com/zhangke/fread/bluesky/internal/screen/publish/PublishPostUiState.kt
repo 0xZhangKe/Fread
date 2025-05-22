@@ -1,13 +1,13 @@
 package com.zhangke.fread.bluesky.internal.screen.publish
 
 import androidx.compose.ui.text.input.TextFieldValue
-import app.bsky.graph.ListView
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccount
-import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
-import com.zhangke.fread.bluesky.internal.model.ReplySetting
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.blog.Blog
+import com.zhangke.fread.status.model.PostInteractionSetting
+import com.zhangke.fread.status.model.ReplySetting
+import com.zhangke.fread.status.model.StatusList
 
 data class PublishPostUiState(
     val content: TextFieldValue,
@@ -22,7 +22,7 @@ data class PublishPostUiState(
     val publishing: Boolean,
     val replyBlog: Blog?,
     val quoteBlog: Blog?,
-    val list: List<ListView>,
+    val list: List<StatusList>,
 ) {
 
     val remainingImageCount: Int
@@ -32,6 +32,16 @@ data class PublishPostUiState(
             } else {
                 maxMediaCount
             }
+        }
+
+    val showAddAccountIcon: Boolean
+        get() = replyBlog == null
+
+    val hasInputtedData: Boolean
+        get() {
+            if (content.text.isNotEmpty()) return true
+            if (attachment != null) return true
+            return false
         }
 
     companion object {

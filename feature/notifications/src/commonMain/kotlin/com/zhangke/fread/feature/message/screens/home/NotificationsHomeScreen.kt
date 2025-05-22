@@ -217,9 +217,9 @@ class NotificationsHomeScreen : BaseScreen() {
                 if (showSelectAccountPopup) {
                     SelectAccountDialog(
                         accountList = accountList,
-                        selectedAccount = account,
+                        selectedAccounts = listOf(account),
                         onDismissRequest = { showSelectAccountPopup = false },
-                        onSwitchAccount = onAccountSelected,
+                        onAccountClicked = onAccountSelected,
                     )
                 }
             }

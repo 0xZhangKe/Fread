@@ -215,7 +215,7 @@ object StatusStyles {
     @Composable
     private fun largeCardStyle(): StatusStyle.CardStyle {
         return StatusStyle.CardStyle(
-            titleStyle = MaterialTheme.typography.titleLarge,
+            titleStyle = MaterialTheme.typography.titleMedium.copy(fontWeight = FontWeight.SemiBold),
             descStyle = MaterialTheme.typography.bodyLarge,
             imageBottomPadding = 10.dp,
             contentVerticalPadding = 10.dp

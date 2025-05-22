@@ -10,13 +10,13 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.Send
 import androidx.compose.material.icons.filled.Group
-import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.SnackbarHost
@@ -37,14 +37,12 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import com.seiko.imageloader.ui.AutoSizeImage
 import com.zhangke.framework.composable.SimpleIconButton
-import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.keyboardAsState
 import com.zhangke.framework.utils.HighlightTextBuildUtil
 import com.zhangke.framework.utils.pxToDp
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.InputBlogTextField
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_text_hint
-import com.zhangke.fread.commonbiz.shared.screen.shared_publish_blog_title
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_reply_input_hint
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.blog.Blog
@@ -65,12 +63,14 @@ fun PublishPostScaffold(
     snackBarHostState: SnackbarHostState,
     content: TextFieldValue,
     showSwitchAccountIcon: Boolean,
+    showAddAccountIcon: Boolean,
     publishing: Boolean,
     replyingBlog: Blog? = null,
     onContentChanged: (TextFieldValue) -> Unit,
     onPublishClick: () -> Unit,
     onBackClick: () -> Unit,
-    onSwitchAccountClick: () -> Unit,
+    onSwitchAccountClick: () -> Unit = {},
+    onAddAccountClick: () -> Unit = {},
     contentWarning: @Composable () -> Unit = {},
     postSettingLabel: @Composable () -> Unit,
     bottomPanel: @Composable () -> Unit,
@@ -87,26 +87,10 @@ fun PublishPostScaffold(
     }
     Scaffold(
         topBar = {
-            Toolbar(
-                title = stringResource(Res.string.shared_publish_blog_title),
+            PublishTopBar(
+                publishing = publishing,
                 onBackClick = onBackClick,
-                actions = {
-                    if (publishing) {
-                        CircularProgressIndicator(
-                            modifier = Modifier
-                                .padding(end = 8.dp)
-                                .size(24.dp),
-                            color = MaterialTheme.colorScheme.primary,
-                        )
-                    } else {
-                        SimpleIconButton(
-                            onClick = onPublishClick,
-                            tint = MaterialTheme.colorScheme.primary,
-                            imageVector = Icons.AutoMirrored.Filled.Send,
-                            contentDescription = "Publish",
-                        )
-                    }
-                },
+                onPublishClick = onPublishClick,
             )
         },
         snackbarHost = { SnackbarHost(snackBarHostState) },
@@ -193,11 +177,23 @@ fun PublishPostScaffold(
                 }
                 if (showSwitchAccountIcon) {
                     SimpleIconButton(
-                        modifier = Modifier.padding(end = 8.dp),
+                        modifier = Modifier,
                         onClick = onSwitchAccountClick,
                         imageVector = Icons.Default.Group,
+                        iconSize = 36.dp,
                         contentDescription = "Switch Account",
                     )
+                }
+                if (showAddAccountIcon) {
+                    Spacer(modifier = Modifier.width(2.dp))
+                    SimpleIconButton(
+                        modifier = Modifier,
+                        onClick = onAddAccountClick,
+                        imageVector = Icons.Default.PersonAdd,
+                        iconSize = 36.dp,
+                        contentDescription = "Multi Account",
+                    )
+                    Spacer(modifier = Modifier.width(8.dp))
                 }
             }
             contentWarning()

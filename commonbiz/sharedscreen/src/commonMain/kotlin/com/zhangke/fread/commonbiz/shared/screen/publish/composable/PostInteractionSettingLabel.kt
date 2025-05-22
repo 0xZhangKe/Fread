@@ -1,4 +1,4 @@
-package com.zhangke.fread.bluesky.internal.screen.publish
+package com.zhangke.fread.commonbiz.shared.screen.publish.composable
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
@@ -32,10 +32,10 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
-import app.bsky.graph.ListView
 import com.zhangke.framework.composable.noRippleClick
-import com.zhangke.fread.bluesky.internal.model.PostInteractionSetting
-import com.zhangke.fread.bluesky.internal.model.ReplySetting
+import com.zhangke.fread.status.model.PostInteractionSetting
+import com.zhangke.fread.status.model.ReplySetting
+import com.zhangke.fread.status.model.StatusList
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishSettingLabel
 import com.zhangke.fread.commonbiz.shared.screen.shared_publish_interaction_dialog_follower
@@ -59,7 +59,36 @@ import org.jetbrains.compose.resources.stringResource
 fun PostInteractionSettingLabel(
     modifier: Modifier,
     setting: PostInteractionSetting,
-    lists: List<ListView>,
+    lists: List<StatusList>,
+    onSettingSelected: (PostInteractionSetting) -> Unit,
+) {
+    PostInteractionSettingLabel(
+        modifier = modifier,
+        setting = setting,
+        lists = lists,
+        onQuoteChange = { onSettingSelected(setting.copy(allowQuote = it)) },
+        onSettingSelected = {
+            onSettingSelected(setting.copy(replySetting = it))
+        },
+        onSettingOptionsSelected = { option ->
+            val options = setting.replySetting.let { it as? ReplySetting.Combined }
+                ?.options?.toMutableList() ?: mutableListOf()
+            if (option in options) {
+                options.remove(option)
+            } else {
+                options.add(option)
+            }
+            onSettingSelected(setting.copy(replySetting = ReplySetting.Combined(options)))
+        },
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun PostInteractionSettingLabel(
+    modifier: Modifier,
+    setting: PostInteractionSetting,
+    lists: List<StatusList>,
     onQuoteChange: (Boolean) -> Unit,
     onSettingSelected: (ReplySetting) -> Unit,
     onSettingOptionsSelected: (ReplySetting.CombineOption) -> Unit,
@@ -122,12 +151,12 @@ fun PostInteractionSettingLabel(
                     ),
                 )
                 Text(
-                    modifier = Modifier.padding(top = 26.dp),
+                    modifier = Modifier.padding(top = 16.dp),
                     text = stringResource(Res.string.shared_publish_interaction_dialog_reply_subtitle),
                     style = MaterialTheme.typography.bodySmall,
                 )
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(top = 16.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     InteractionOption(
@@ -174,7 +203,7 @@ fun PostInteractionSettingLabel(
 
                     for (listView in lists) {
                         val selected = if (setting.replySetting is ReplySetting.Combined) {
-                            setting.replySetting.options
+                            (setting.replySetting as ReplySetting.Combined).options
                                 .filterIsInstance<ReplySetting.CombineOption.UserInList>()
                                 .any { it.listView.cid == listView.cid }
                         } else {
@@ -239,7 +268,7 @@ private fun InteractionOption(
     }
 }
 
-private val PostInteractionSetting.label: String
+internal val PostInteractionSetting.label: String
     @Composable get() {
         return if (this.replySetting is ReplySetting.Everybody) {
             stringResource(Res.string.shared_publish_interaction_no_limit)
@@ -248,7 +277,7 @@ private val PostInteractionSetting.label: String
         }
     }
 
-private val PostInteractionSetting.labelIcon: ImageVector
+internal val PostInteractionSetting.labelIcon: ImageVector
     @Composable get() {
         return if (this.replySetting is ReplySetting.Everybody) {
             Icons.Default.Public

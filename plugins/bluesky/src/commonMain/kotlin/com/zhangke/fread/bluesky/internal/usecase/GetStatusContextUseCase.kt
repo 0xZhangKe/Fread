@@ -11,6 +11,7 @@ import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
 import com.zhangke.fread.status.platform.BlogPlatform
+import com.zhangke.fread.status.status.model.DescendantStatus
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import me.tatarka.inject.annotations.Inject
@@ -53,12 +54,13 @@ class GetStatusContextUseCase @Inject constructor(
                 )
                 val descendants = thread.value.replies.mapNotNull { reply ->
                     if (reply is ThreadViewPostReplieUnion.ThreadViewPost) {
-                        statusAdapter.convertToUiState(
+                        val statusUiState = statusAdapter.convertToUiState(
                             role = role,
                             postView = reply.value.post,
                             platform = platform,
                             loggedAccount = loggedAccount,
                         )
+                        DescendantStatus(statusUiState, null)
                     } else {
                         null
                     }

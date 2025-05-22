@@ -1,14 +1,11 @@
 package com.zhangke.fread.activitypub.app
 
 import com.zhangke.activitypub.api.AccountsRepo
-import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubAccountEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubStatusAdapter
-import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTagAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubTranslationEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
 import com.zhangke.fread.activitypub.app.internal.repo.WebFingerBaseUrlToUserIdRepo
-import com.zhangke.fread.activitypub.app.internal.repo.platform.ActivityPubPlatformRepo
 import com.zhangke.fread.activitypub.app.internal.uri.UserUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.status.GetStatusContextUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.status.GetUserStatusUseCase
@@ -38,9 +35,6 @@ class ActivityPubStatusResolver @Inject constructor(
     private val activityPubStatusAdapter: ActivityPubStatusAdapter,
     private val getStatusContextUseCase: GetStatusContextUseCase,
     private val votePollUseCase: VotePollUseCase,
-    private val hashtagAdapter: ActivityPubTagAdapter,
-    private val accountAdapter: ActivityPubAccountEntityAdapter,
-    private val platformRepo: ActivityPubPlatformRepo,
     private val webFingerBaseUrlToUserIdRepo: WebFingerBaseUrlToUserIdRepo,
     private val loggedAccountProvider: LoggedAccountProvider,
     private val translationAdapter: ActivityPubTranslationEntityAdapter,

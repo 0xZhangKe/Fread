@@ -11,10 +11,13 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.ime
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Image
 import androidx.compose.material.icons.filled.Language
 import androidx.compose.material.icons.filled.SmartDisplay
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,6 +37,8 @@ import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.fread.commonbiz.shared.screen.SelectLanguageScreen
 import com.zhangke.fread.status.ui.common.RemainingTextStatus
+import com.zhangke.fread.statusui.ic_post_status_spoiler
+import org.jetbrains.compose.resources.painterResource
 
 @Composable
 fun Modifier.bottomPaddingAsBottomBar(): Modifier {
@@ -77,6 +82,7 @@ fun PublishPostFeaturesPanel(
                     SimpleIconButton(
                         modifier = Modifier,
                         onClick = { launchImage() },
+                        enabled = mediaAvailableCount > 0,
                         imageVector = Icons.Default.Image,
                         contentDescription = "Add Image",
                     )
@@ -88,6 +94,7 @@ fun PublishPostFeaturesPanel(
                     SimpleIconButton(
                         modifier = Modifier.padding(start = 4.dp),
                         onClick = { launchVideo() },
+                        enabled = mediaAvailableCount > 0,
                         imageVector = Icons.Default.SmartDisplay,
                         contentDescription = "Add Video",
                     )
@@ -148,6 +155,22 @@ private fun SelectLanguageIconButton(
                     color = MaterialTheme.colorScheme.primary,
                 )
             }
+        }
+    }
+}
+
+@Composable
+fun SensitiveIconButton(onSensitiveClick: () -> Unit) {
+    IconButton(
+        onClick = onSensitiveClick,
+        modifier = Modifier.padding(start = 4.dp),
+    ) {
+        Box(modifier = Modifier.size(29.dp)) {
+            Icon(
+                modifier = Modifier.size(24.dp).align(Alignment.TopCenter),
+                painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_post_status_spoiler),
+                contentDescription = "Sensitive content",
+            )
         }
     }
 }

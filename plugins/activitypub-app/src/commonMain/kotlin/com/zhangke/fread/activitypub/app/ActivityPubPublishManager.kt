@@ -46,6 +46,7 @@ class ActivityPubPublishManager @Inject constructor(
             supportSpoiler = true,
             supportPoll = true,
             maxLanguageCount = 1,
+            mediaAltMaxCharacters = 1500,
         )
     }
 

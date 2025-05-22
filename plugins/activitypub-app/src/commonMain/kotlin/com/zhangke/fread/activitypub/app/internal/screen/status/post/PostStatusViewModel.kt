@@ -21,21 +21,20 @@ import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.PlatformUri
-import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.GenerateInitPostStatusUiStateUseCase
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.usecase.PublishPostUseCase
 import com.zhangke.fread.activitypub.app.internal.uri.PlatformUriTransformer
 import com.zhangke.fread.activitypub.app.internal.usecase.emoji.GetCustomEmojiUseCase
-import com.zhangke.fread.activitypub.app.internal.usecase.media.UploadMediaAttachmentUseCase
 import com.zhangke.fread.activitypub.app.internal.usecase.platform.GetInstancePostStatusRulesUseCase
-import com.zhangke.fread.activitypub.app.post_status_content_is_empty
-import com.zhangke.fread.activitypub.app.post_status_failed
 import com.zhangke.fread.activitypub.app.post_status_poll_is_empty
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.MentionTextUtil
 import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.post_status_content_is_empty
+import com.zhangke.fread.commonbiz.shared.screen.post_status_failed
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.account.LoggedAccount
 import com.zhangke.fread.status.model.IdentityRole
@@ -367,7 +366,7 @@ class PostStatusViewModel @Inject constructor(
             }
             for (option in attachment.optionList) {
                 if (option.isEmpty()) {
-                    _snackMessage.emitInViewModel(textOf(Res.string.post_status_poll_is_empty))
+                    _snackMessage.emitInViewModel(textOf(com.zhangke.fread.activitypub.app.Res.string.post_status_poll_is_empty))
                     return
                 }
             }

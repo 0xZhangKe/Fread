@@ -26,6 +26,7 @@ class BlueskyPublishManager @Inject constructor(
                 supportSpoiler = false,
                 supportPoll = false,
                 maxLanguageCount = 2,
+                mediaAltMaxCharacters = 2000,
             )
         )
     }

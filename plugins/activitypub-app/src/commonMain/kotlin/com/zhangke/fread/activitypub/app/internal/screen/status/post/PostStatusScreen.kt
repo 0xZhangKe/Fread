@@ -35,10 +35,10 @@ import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.composable.PostStatusPoll
 import com.zhangke.fread.commonbiz.shared.screen.publish.composable.PostStatusWarning
 import com.zhangke.fread.activitypub.app.internal.utils.DeleteTextUtil
-import com.zhangke.fread.activitypub.app.post_status_exit_dialog_content
-import com.zhangke.fread.activitypub.app.post_status_success
 import com.zhangke.fread.common.page.BaseScreen
 import com.zhangke.fread.common.utils.MentionTextUtil
+import com.zhangke.fread.commonbiz.shared.screen.post_status_exit_dialog_content
+import com.zhangke.fread.commonbiz.shared.screen.post_status_success
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMediaAttachment
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostScaffold
@@ -119,7 +119,7 @@ class PostStatusScreen(
                 },
             )
         }
-        val successMessage = stringResource(Res.string.post_status_success)
+        val successMessage = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_success)
         ConsumeFlow(viewModel.publishSuccessFlow) {
             toast(successMessage)
             navigator.pop()
@@ -131,7 +131,7 @@ class PostStatusScreen(
             FreadDialog(
                 onDismissRequest = { showExitDialog = false },
                 content = {
-                    Text(text = stringResource(Res.string.post_status_exit_dialog_content))
+                    Text(text = stringResource(com.zhangke.fread.commonbiz.shared.screen.Res.string.post_status_exit_dialog_content))
                 },
                 onNegativeClick = {
                     showExitDialog = false

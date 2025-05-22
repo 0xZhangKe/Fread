@@ -3,17 +3,28 @@ package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 import androidx.compose.ui.text.input.TextFieldValue
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
+import com.zhangke.framework.composable.emitInViewModel
+import com.zhangke.framework.composable.emitTextMessageFromThrowable
+import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.utils.PlatformUri
 import com.zhangke.framework.utils.initLocale
+import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
-import com.zhangke.fread.status.model.PostInteractionSetting
+import com.zhangke.fread.commonbiz.shared.screen.Res
+import com.zhangke.fread.commonbiz.shared.screen.post_status_content_is_empty
+import com.zhangke.fread.commonbiz.shared.screen.post_status_part_failed
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
+import com.zhangke.fread.commonbiz.shared.usecase.PublishPostOnMultiAccountUseCase
+import com.zhangke.fread.commonbiz.shared.usecase.PublishingPartFailed
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.StatusVisibility
+import com.zhangke.fread.status.publish.PublishingMedia
+import com.zhangke.fread.status.publish.PublishingPost
 import kotlinx.coroutines.async
 import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,6 +38,7 @@ import me.tatarka.inject.annotations.Inject
 class MultiAccountPublishingViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val platformUriHelper: PlatformUriHelper,
+    private val publishPostOnMultiAccount: PublishPostOnMultiAccountUseCase,
     @Assisted private val defaultAddAccountList: List<String>,
 ) : ViewModel() {
 
@@ -70,6 +82,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
                     },
                 )
             }
+            updateGlobalRules()
         }
     }
 
@@ -81,6 +94,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
         if (account.rules == null) {
             loadRuleForAccount(account.account)
         }
+        updateGlobalRules()
     }
 
     fun onRemoveAccountClick(account: LoggedAccount) {
@@ -88,6 +102,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
         _uiState.update {
             it.copy(addedAccounts = it.addedAccounts.filter { it.account.uri != account.uri })
         }
+        updateGlobalRules()
     }
 
     fun onContentChanged(content: TextFieldValue) {
@@ -155,7 +170,55 @@ class MultiAccountPublishingViewModel @Inject constructor(
     }
 
     fun onPublishClick() {
+        val uiState = _uiState.value
+        if (uiState.medias.isEmpty() && uiState.content.text.isEmpty()) {
+            _snackMessage.emitInViewModel(textOf(Res.string.post_status_content_is_empty))
+            return
+        }
+        launchInViewModel {
+            _uiState.update { it.copy(publishing = true) }
+            publishPostOnMultiAccount(
+                accounts = uiState.addedAccounts.map { it.account },
+                publishingPost = uiState.obtainPost(),
+            ).onFailure { t ->
+                _uiState.update { it.copy(publishing = false) }
+                if (t is PublishingPartFailed) {
+                    _snackMessage.emit(textOf(Res.string.post_status_part_failed))
+                    _uiState.update { state ->
+                        state.copy(
+                            addedAccounts = state.addedAccounts.filter {
+                                !t.successAccount.contains(it.account.uri.toString())
+                            },
+                        )
+                    }
+                } else {
+                    _snackMessage.emitTextMessageFromThrowable(t)
+                }
+            }.onSuccess {
+                _uiState.update { it.copy(publishing = false) }
+                _publishSuccessFlow.emit(Unit)
+            }
+        }
+    }
 
+    private fun MultiAccountPublishingUiState.obtainPost(): PublishingPost {
+        return PublishingPost(
+            content = this.content.text,
+            visibility = this.postVisibility,
+            interactionSetting = this.interactionSetting,
+            sensitive = this.sensitive,
+            warningText = this.warningContent.text,
+            languageCode = this.selectedLanguage.languageCode,
+            medias = this.medias.map { it.convert() }
+        )
+    }
+
+    private fun PublishPostMediaAttachmentFile.convert(): PublishingMedia {
+        return PublishingMedia(
+            file = this.file,
+            alt = this.alt.orEmpty(),
+            isVideo = isVideo,
+        )
     }
 
     fun onMediaSelected(medias: List<PlatformUri>) {
@@ -184,6 +247,20 @@ class MultiAccountPublishingViewModel @Inject constructor(
 
     fun onLanguageSelected(lan: String) {
         _uiState.update { it.copy(selectedLanguage = initLocale(lan)) }
+    }
+
+    private fun updateGlobalRules() {
+        val addedAccount = uiState.value.addedAccounts
+        val maxCharacters = addedAccount.minOf { it.rules.maxCharacters }
+        val maxMediaCount = addedAccount.minOf { it.rules.maxMediaCount }
+        _uiState.update {
+            it.copy(
+                globalRules = it.globalRules.copy(
+                    maxCharacters = maxCharacters,
+                    maxMediaCount = maxMediaCount,
+                )
+            )
+        }
     }
 
     private fun LoggedAccount.toDefaultUiState(): MultiPublishingAccountUiState {

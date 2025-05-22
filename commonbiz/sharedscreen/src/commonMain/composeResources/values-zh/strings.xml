@@ -76,4 +76,9 @@
     <string name="post_status_scope_follower_only">仅关注者可见</string>
     <string name="post_status_scope_mentioned_only">仅提及用户可见</string>
     <string name="post_status_content_warning">警告文本</string>
+    <string name="post_status_exit_dialog_content">退出后已编辑的内容不会被保存，确定退出吗？</string>
+    <string name="post_status_content_is_empty">请输入内容</string>
+    <string name="post_status_success">发送成功</string>
+    <string name="post_status_failed">发送失败：%1$s</string>
+    <string name="post_status_part_failed">部分账号发布失败，已从发布队列移除成功的账号，请重新尝试：%1$s</string>
 </resources>

@@ -203,7 +203,7 @@ fun PostInteractionSettingLabel(
 
                     for (listView in lists) {
                         val selected = if (setting.replySetting is ReplySetting.Combined) {
-                            setting.replySetting.options
+                            (setting.replySetting as ReplySetting.Combined).options
                                 .filterIsInstance<ReplySetting.CombineOption.UserInList>()
                                 .any { it.listView.cid == listView.cid }
                         } else {

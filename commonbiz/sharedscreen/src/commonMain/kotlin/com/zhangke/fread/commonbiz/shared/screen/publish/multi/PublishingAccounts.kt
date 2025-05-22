@@ -2,6 +2,7 @@ package com.zhangke.fread.commonbiz.shared.screen.publish.multi
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
+import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -10,6 +11,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -17,6 +20,7 @@ import androidx.compose.material.icons.filled.Delete
 import androidx.compose.material.icons.filled.Public
 import androidx.compose.material.icons.rounded.Add
 import androidx.compose.material3.Card
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -32,6 +36,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import com.zhangke.framework.composable.SimpleIconButton
+import com.zhangke.framework.composable.noRippleClick
 import com.zhangke.framework.utils.getDisplayName
 import com.zhangke.framework.utils.initLocale
 import com.zhangke.framework.utils.languageCode
@@ -50,6 +55,77 @@ import org.jetbrains.compose.resources.stringResource
 
 @Composable
 fun PublishingAccounts(
+    modifier: Modifier,
+    uiState: MultiAccountPublishingUiState,
+    onRemoveAccountClick: (LoggedAccount) -> Unit,
+    onAddAccountClick: (MultiPublishingAccountWithRules) -> Unit,
+) {
+    var showSelectAccountPopup by remember { mutableStateOf(false) }
+    Box(modifier = modifier) {
+        Row(
+            modifier = Modifier.fillMaxWidth()
+                .padding(vertical = 8.dp)
+                .horizontalScroll(rememberScrollState())
+                .padding(horizontal = 16.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            for (index in uiState.addedAccounts.indices) {
+                val account = uiState.addedAccounts[index]
+                Box(
+                    modifier = Modifier.size(46.dp)
+                        .noRippleClick { onRemoveAccountClick(account.account) },
+                ) {
+                    BlogAuthorAvatar(
+                        modifier = Modifier.fillMaxSize().padding(2.dp),
+                        imageUrl = account.account.avatar,
+                    )
+                    Image(
+                        imageVector = account.account.platform.protocol.logo,
+                        modifier = Modifier.align(Alignment.BottomEnd).size(16.dp),
+                        contentDescription = null,
+                    )
+                }
+                if (index < uiState.addedAccounts.lastIndex) {
+                    Spacer(modifier = Modifier.width(16.dp))
+                }
+            }
+            SimpleIconButton(
+                modifier = Modifier.padding(start = 8.dp),
+                iconModifier = Modifier.border(
+                    width = 1.dp,
+                    shape = CircleShape,
+                    color = MaterialTheme.colorScheme.tertiary,
+                ),
+                imageVector = Icons.Rounded.Add,
+                tint = MaterialTheme.colorScheme.tertiary,
+                onClick = { showSelectAccountPopup = true },
+                contentDescription = "Add Account",
+            )
+        }
+        HorizontalDivider(modifier = Modifier.fillMaxWidth().align(Alignment.BottomCenter))
+    }
+    if (showSelectAccountPopup) {
+        SelectAccountDialog(
+            accountList = uiState.allAccounts.map { it.account },
+            selectedAccounts = uiState.addedAccounts.map { it.account },
+            onDismissRequest = { showSelectAccountPopup = false },
+            onAccountClicked = { account ->
+                showSelectAccountPopup = false
+                val selected = uiState.addedAccounts.any { it.account.uri == account.uri }
+                if (selected) {
+                    onRemoveAccountClick(
+                        uiState.addedAccounts.first { it.account.uri == account.uri }.account
+                    )
+                } else {
+                    onAddAccountClick(uiState.allAccounts.first { it.account.uri == account.uri })
+                }
+            },
+        )
+    }
+}
+
+@Composable
+fun PublishingAccountsOld(
     modifier: Modifier,
     uiState: MultiAccountPublishingUiState,
     onRemoveAccountClick: (LoggedAccount) -> Unit,

@@ -81,7 +81,7 @@ fun SimpleIconButton(
     imageVector: ImageVector,
     contentDescription: String?,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
-    tint: Color = LocalContentColor.current,
+    tint: Color? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     IconButton(
@@ -91,11 +91,12 @@ fun SimpleIconButton(
         colors = colors,
         interactionSource = interactionSource,
     ) {
+        val icTint = tint ?: LocalContentColor.current
         Icon(
             modifier = iconModifier,
             imageVector = imageVector,
             contentDescription = contentDescription,
-            tint = tint,
+            tint = icTint,
         )
     }
 }
@@ -109,7 +110,7 @@ fun SimpleIconButton(
     painter: Painter,
     contentDescription: String?,
     colors: IconButtonColors = IconButtonDefaults.iconButtonColors(),
-    tint: Color = LocalContentColor.current,
+    tint: Color? = null,
     interactionSource: MutableInteractionSource = remember { MutableInteractionSource() },
 ) {
     IconButton(
@@ -119,11 +120,12 @@ fun SimpleIconButton(
         colors = colors,
         interactionSource = interactionSource,
     ) {
+        val icTint = tint ?: LocalContentColor.current
         Icon(
             modifier = iconModifier,
             painter = painter,
             contentDescription = contentDescription,
-            tint = tint,
+            tint = icTint,
         )
     }
 }

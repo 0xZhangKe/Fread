@@ -49,11 +49,9 @@ import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.activitypub.app.internal.model.CustomEmoji
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusUiState
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostFeaturesPanel
+import com.zhangke.fread.commonbiz.shared.screen.publish.SensitiveIconButton
 import com.zhangke.fread.commonbiz.shared.screen.publish.bottomPaddingAsBottomBar
 import com.zhangke.fread.status.ui.BlogAuthorAvatar
-import com.zhangke.fread.statusui.Res
-import com.zhangke.fread.statusui.ic_post_status_spoiler
-import org.jetbrains.compose.resources.painterResource
 
 @OptIn(InternalVoyagerApi::class)
 @Composable
@@ -96,14 +94,7 @@ internal fun PostStatusBottomBar(
                     contentDescription = "Pick Emoji",
                 )
             }
-            SimpleIconButton(
-                modifier = Modifier
-                    .align(Alignment.CenterVertically)
-                    .padding(start = 4.dp),
-                onClick = onSensitiveClick,
-                painter = painterResource(Res.drawable.ic_post_status_spoiler),
-                contentDescription = "Sensitive content",
-            )
+            SensitiveIconButton(onSensitiveClick = onSensitiveClick)
         },
         floatingBar = { BottomBarMentions(uiState, onMentionClick) },
     )

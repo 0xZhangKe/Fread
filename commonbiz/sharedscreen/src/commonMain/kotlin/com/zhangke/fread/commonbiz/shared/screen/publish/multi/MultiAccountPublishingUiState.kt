@@ -4,7 +4,6 @@ import androidx.compose.ui.text.input.TextFieldValue
 import com.zhangke.framework.utils.ContentProviderFile
 import com.zhangke.framework.utils.Locale
 import com.zhangke.framework.utils.getDefaultLocale
-import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_follower_only
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_mentioned_only
@@ -12,6 +11,7 @@ import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_public
 import com.zhangke.fread.commonbiz.shared.screen.post_status_scope_unlisted
 import com.zhangke.fread.commonbiz.shared.screen.publish.PublishPostMedia
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.PostInteractionSetting
 import com.zhangke.fread.status.model.PublishBlogRules
 import com.zhangke.fread.status.model.StatusVisibility
 import com.zhangke.fread.status.model.isActivityPub
@@ -41,6 +41,9 @@ data class MultiAccountPublishingUiState(
     val showInteractionSetting: Boolean
         get() = allAccounts.any { it.account.platform.protocol.isBluesky }
 
+    val hasInputtedData: Boolean
+        get() = content.text.isNotEmpty() || medias.isNotEmpty() || warningContent.text.isNotEmpty()
+
     companion object {
 
         fun default(): MultiAccountPublishingUiState {
@@ -67,6 +70,7 @@ data class MultiAccountPublishingUiState(
                 supportPoll = false,
                 supportSpoiler = false,
                 maxLanguageCount = 1,
+                mediaAltMaxCharacters = 1500,
             )
         }
     }

@@ -72,9 +72,9 @@ object HtmlParser {
             }
             if (node is Element) {
                 when (node.tagName()) {
-                    "br" -> {
-                        spanBuilder.append("\n")
-                    }
+                    "br" -> spanBuilder.append("\n")
+
+                    "p" -> spanBuilder.append("\n")
 
                     "a" -> {
                         val href = node.attr("href")

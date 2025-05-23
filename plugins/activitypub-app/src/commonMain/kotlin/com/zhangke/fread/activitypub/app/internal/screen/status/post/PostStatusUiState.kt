@@ -33,6 +33,9 @@ data class PostStatusUiState(
 
     val allowedInputCount: Int get() = rules.maxCharacters - content.text.length
 
+    val showAddAccountIcon: Boolean
+        get() = accountChangeable && replyToBlog == null
+
     fun hasInputtedData(): Boolean {
         if (content.text.isNotEmpty()) return true
         if (attachment != null) return true

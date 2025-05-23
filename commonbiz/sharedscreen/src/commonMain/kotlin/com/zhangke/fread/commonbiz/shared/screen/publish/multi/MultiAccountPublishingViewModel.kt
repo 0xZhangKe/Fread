@@ -12,6 +12,7 @@ import com.zhangke.framework.utils.initLocale
 import com.zhangke.framework.utils.languageCode
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.utils.PlatformUriHelper
+import com.zhangke.fread.commonbiz.shared.repo.SelectedAccountPublishingRepo
 import com.zhangke.fread.commonbiz.shared.screen.Res
 import com.zhangke.fread.commonbiz.shared.screen.post_status_content_is_empty
 import com.zhangke.fread.commonbiz.shared.screen.post_status_failed
@@ -40,6 +41,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
     private val platformUriHelper: PlatformUriHelper,
     private val publishPostOnMultiAccount: PublishPostOnMultiAccountUseCase,
+    private val selectedAccountPublishingRepo: SelectedAccountPublishingRepo,
     @Assisted private val defaultAddAccountList: List<String>,
 ) : ViewModel() {
 
@@ -60,9 +62,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
     init {
         launchInViewModel {
             val allAccounts = statusProvider.accountManager.getAllLoggedAccount()
-            val addedAccounts = allAccounts.filter { account ->
-                defaultAddAccountList.contains(account.uri.toString())
-            }
+            val addedAccounts = getInitialAccount(allAccounts)
             _uiState.update {
                 it.copy(
                     addedAccounts = addedAccounts.map { it.toDefaultUiState() },
@@ -87,6 +87,13 @@ class MultiAccountPublishingViewModel @Inject constructor(
         }
     }
 
+    private suspend fun getInitialAccount(allLoggedAccounts: List<LoggedAccount>): List<LoggedAccount> {
+        val pendingAddAccounts = selectedAccountPublishingRepo.getAll() + defaultAddAccountList
+        return allLoggedAccounts.filter { account ->
+            pendingAddAccounts.contains(account.uri.toString())
+        }
+    }
+
     fun onAddAccount(account: MultiPublishingAccountWithRules) {
         if (uiState.value.addedAccounts.any { it.account.uri == account.account.uri }) return
         _uiState.update {
@@ -96,6 +103,7 @@ class MultiAccountPublishingViewModel @Inject constructor(
             loadRuleForAccount(account.account)
         }
         updateGlobalRules()
+        updateLocalAccounts()
     }
 
     fun onRemoveAccountClick(account: LoggedAccount) {
@@ -104,6 +112,14 @@ class MultiAccountPublishingViewModel @Inject constructor(
             it.copy(addedAccounts = it.addedAccounts.filter { it.account.uri != account.uri })
         }
         updateGlobalRules()
+        updateLocalAccounts()
+    }
+
+    private fun updateLocalAccounts() {
+        launchInViewModel {
+            val addedAccounts = _uiState.value.addedAccounts
+            selectedAccountPublishingRepo.replace(addedAccounts.map { it.account.uri.toString() })
+        }
     }
 
     fun onContentChanged(content: TextFieldValue) {

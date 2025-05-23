@@ -10,7 +10,9 @@ import com.zhangke.fread.commonbiz.shared.screen.status.context.StatusContextVie
 import me.tatarka.inject.annotations.IntoMap
 import me.tatarka.inject.annotations.Provides
 
-interface SharedScreenModelModule {
+expect interface SharedScreenPlatformModule
+
+interface SharedScreenModelModule : SharedScreenPlatformModule {
 
     @IntoMap
     @Provides

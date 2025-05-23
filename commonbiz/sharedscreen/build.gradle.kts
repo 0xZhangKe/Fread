@@ -2,6 +2,7 @@ plugins {
     id("fread.project.framework.kmp")
     id("com.google.devtools.ksp")
     id("kotlin-parcelize")
+    alias(libs.plugins.room)
 }
 
 android {
@@ -19,6 +20,8 @@ kotlin {
                 implementation(project(":commonbiz:analytics"))
 
                 implementation(compose.components.resources)
+
+                implementation(libs.androidx.room)
 
                 implementation(libs.kotlinx.serialization.core)
                 implementation(libs.kotlinx.serialization.json)
@@ -59,7 +62,7 @@ kotlin {
 }
 
 dependencies {
-    add("kspAndroid", libs.androidx.room.compiler)
+    kspAll(libs.androidx.room.compiler)
     add("kspAndroid", libs.kotlinInject.compiler)
     add("kspAndroid", libs.auto.service.ksp)
     kspCommonMainMetadata(libs.krouter.collecting.compiler)
@@ -71,4 +74,8 @@ compose {
         packageOfResClass = "com.zhangke.fread.commonbiz.shared.screen"
         generateResClass = always
     }
+}
+
+room {
+    schemaDirectory("$projectDir/schemas")
 }

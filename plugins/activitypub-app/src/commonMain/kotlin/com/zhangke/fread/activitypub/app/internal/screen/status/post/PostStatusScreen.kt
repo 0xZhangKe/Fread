@@ -182,7 +182,7 @@ class PostStatusScreen(
             snackBarHostState = snackMessageState,
             content = uiState.content,
             showSwitchAccountIcon = uiState.accountChangeable && uiState.availableAccountList.size > 1,
-            showAddAccountIcon = uiState.accountChangeable,
+            showAddAccountIcon = uiState.showAddAccountIcon,
             publishing = uiState.publishing,
             replyingBlog = uiState.replyToBlog,
             onContentChanged = onContentChanged,

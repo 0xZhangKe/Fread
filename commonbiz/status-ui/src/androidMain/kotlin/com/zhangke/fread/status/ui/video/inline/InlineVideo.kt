@@ -125,7 +125,7 @@ private fun InlineVideoPlayer(
                     url = coverImage.orEmpty(),
                     modifier = Modifier
                         .fillMaxSize(),
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.Crop,
                     contentDescription = null,
                 )
                 PlayVideoIconButton(

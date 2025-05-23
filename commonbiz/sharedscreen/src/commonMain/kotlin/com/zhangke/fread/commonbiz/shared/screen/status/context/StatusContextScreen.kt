@@ -191,6 +191,39 @@ data class StatusContextScreen(
                 onMediaClick = onMediaClick,
                 composedStatusInteraction = composedStatusInteraction,
             )
+
+            StatusInContextType.DESCENDANT_ANCHOR -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                threadsType = ThreadsType.FIRST_ANCESTOR,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                composedStatusInteraction = composedStatusInteraction,
+            )
+
+            StatusInContextType.DESCENDANT_WITH_ANCESTOR_DESCENDANT -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                threadsType = ThreadsType.ANCESTOR,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                composedStatusInteraction = composedStatusInteraction,
+            )
+
+            StatusInContextType.DESCENDANT_WITH_ANCESTOR -> StatusUi(
+                modifier = modifier.clickable {
+                    composedStatusInteraction.onStatusClick(statusInContext.status)
+                },
+                threadsType = ThreadsType.ANCHOR,
+                status = statusInContext.status,
+                indexInList = indexInList,
+                onMediaClick = onMediaClick,
+                composedStatusInteraction = composedStatusInteraction,
+            )
         }
     }
 }

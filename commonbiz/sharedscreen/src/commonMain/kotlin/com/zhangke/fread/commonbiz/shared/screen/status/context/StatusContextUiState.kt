@@ -22,5 +22,8 @@ enum class StatusInContextType {
 
     ANCHOR,
     ANCESTOR,
-    DESCENDANT,
+    DESCENDANT,// no descendant
+    DESCENDANT_ANCHOR,
+    DESCENDANT_WITH_ANCESTOR_DESCENDANT,
+    DESCENDANT_WITH_ANCESTOR,
 }

@@ -15,6 +15,7 @@ import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.BlogTranslationUiState
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.StatusUiState
+import com.zhangke.fread.status.status.model.DescendantStatus
 import com.zhangke.fread.status.status.model.Status
 import com.zhangke.fread.status.status.model.StatusContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -163,9 +164,35 @@ class StatusContextSubViewModel(
             statusContext.status!!,
             StatusInContextType.ANCHOR,
         )
-        contextStatus += statusContext.descendants.sortedBy { it.status.createAt.epochMillis }
-            .map { StatusInContext(it, StatusInContextType.DESCENDANT) }
+        for (descendant in statusContext.descendants) {
+            contextStatus.addAll(descendant.expandToContextStatus(null))
+        }
         return contextStatus
+    }
+
+    private fun DescendantStatus.expandToContextStatus(
+        parentType: StatusInContextType?,
+    ): List<StatusInContext> {
+        val type = if (this.descendantStatus != null) {
+            if (parentType == null) {
+                StatusInContextType.DESCENDANT_ANCHOR
+            } else {
+                StatusInContextType.DESCENDANT_WITH_ANCESTOR_DESCENDANT
+            }
+        } else {
+            if (parentType == null) {
+                StatusInContextType.DESCENDANT
+            } else {
+                StatusInContextType.DESCENDANT_WITH_ANCESTOR
+            }
+        }
+        val list = mutableListOf<StatusInContext>()
+        val statusInContext = StatusInContext(status, type)
+        list.add(statusInContext)
+        if (this.descendantStatus != null) {
+            list.addAll(this.descendantStatus!!.expandToContextStatus(type))
+        }
+        return list
     }
 
     private suspend fun updateStatus(newStatus: StatusUiState) {

@@ -42,5 +42,5 @@ kotlin {
 }
 
 dependencies {
-    kspCommonMainMetadata(libs.krouter.collecting.compiler)
+    kspAll(libs.krouter.collecting.compiler)
 }

@@ -72,7 +72,7 @@ kotlin {
 
 dependencies {
     kspAll(libs.kotlinInject.compiler)
-    kspCommonMainMetadata(libs.krouter.reducing.compiler)
+    kspAll(libs.krouter.reducing.compiler)
 }
 
 ksp {

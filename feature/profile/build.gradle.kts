@@ -53,7 +53,7 @@ kotlin {
 dependencies {
     kspAll(libs.auto.service.ksp)
     kspAll(libs.kotlinInject.compiler)
-    kspCommonMainMetadata(libs.krouter.collecting.compiler)
+    kspAll(libs.krouter.collecting.compiler)
 }
 
 compose {

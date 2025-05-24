@@ -11,6 +11,5 @@ fun DependencyHandlerScope.kspAll(dependencyNotation: Any) {
 fun KotlinMultiplatformExtension.configureCommonMainKsp() {
     sourceSets.named("commonMain").configure {
         kotlin.srcDir("build/generated/ksp/metadata/commonMain/kotlin")
-
     }
 }

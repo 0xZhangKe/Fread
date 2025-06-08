@@ -3,17 +3,15 @@ package com.zhangke.fread.bluesky.internal.screen.add
 import androidx.lifecycle.ViewModel
 import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.emitTextMessageFromThrowable
-import com.zhangke.framework.composable.getString
 import com.zhangke.framework.composable.textOf
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.repo.BlueskyPlatformRepo
 import com.zhangke.fread.bluesky.internal.usecase.LoginToBskyUseCase
+import com.zhangke.fread.bluesky.internal.utils.AtRequestException
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.commonbiz.Res
-import com.zhangke.fread.commonbiz.content_exist_tips
 import com.zhangke.fread.status.platform.BlogPlatform
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -69,6 +67,10 @@ class AddBlueskyContentViewModel @Inject constructor(
         _uiState.update { it.copy(password = password) }
     }
 
+    fun onFactorTokenChange(factorToken: String) {
+        _uiState.update { it.copy(factorToken = factorToken) }
+    }
+
     fun onSkipClick() {
         launchInViewModel {
             checkAndSaveContent()
@@ -82,6 +84,7 @@ class AddBlueskyContentViewModel @Inject constructor(
         val hosting = uiState.value.hosting.trim()
         val username = uiState.value.username.trim()
         val password = uiState.value.password.trim()
+        val factorToken = uiState.value.factorToken.trim()
         loggingJob = launchInViewModel {
             _uiState.update { it.copy(logging = true) }
             checkAndSaveContent().onFailure { t ->
@@ -90,14 +93,23 @@ class AddBlueskyContentViewModel @Inject constructor(
                 return@launchInViewModel
             }
             val baseUrl = FormalBaseUrl.parse(hosting)!!
-            loginToBluesky(baseUrl, username, password)
+            loginToBluesky(baseUrl, username, password, factorToken)
                 .onSuccess {
                     _uiState.update { it.copy(logging = false) }
                     _finishPageFlow.emit(Unit)
                 }
                 .onFailure { t ->
                     _uiState.update { it.copy(logging = false) }
-                    _snackBarMessage.emit(textOf(t.message ?: "Login Failed!"))
+                    if (t is AtRequestException) {
+                        t.errorMessage?.let { _snackBarMessage.emit(textOf(it)) }
+                        if (t.needAuthFactorTokenRequired) {
+                            _uiState.update { it.copy(authFactorRequired = true) }
+                        }
+                    } else {
+                        _snackBarMessage.emit(
+                            textOf(t.message ?: "Login Failed! ${t::class.simpleName}")
+                        )
+                    }
                 }
         }
     }
@@ -114,9 +126,6 @@ class AddBlueskyContentViewModel @Inject constructor(
         if (loginMode) return Result.success(Unit)
         val platform = platformRepo.getPlatform(baseUrl)
         val id = platform.baseUrl.toString()
-        if (contentRepo.getContent(id) != null) {
-            return Result.failure(IllegalStateException(textOf(Res.string.content_exist_tips).getString()))
-        }
         saveBlueskyContent(platform, id)
         return Result.success(Unit)
     }

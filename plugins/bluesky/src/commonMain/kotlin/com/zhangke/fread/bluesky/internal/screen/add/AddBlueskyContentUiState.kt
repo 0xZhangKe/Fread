@@ -4,7 +4,9 @@ data class AddBlueskyContentUiState(
     val hosting: String,
     val username: String,
     val password: String,
+    val factorToken: String,
     val logging: Boolean,
+    val authFactorRequired: Boolean,
 ) {
 
     val canLogin: Boolean get() = hosting.isNotBlank() && username.isNotBlank() && password.isNotBlank() && !logging
@@ -22,6 +24,8 @@ data class AddBlueskyContentUiState(
                 username = username,
                 password = password,
                 logging = logging,
+                factorToken = "",
+                authFactorRequired = false,
             )
         }
     }

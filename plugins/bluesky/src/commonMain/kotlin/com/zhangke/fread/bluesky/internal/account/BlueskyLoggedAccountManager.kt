@@ -31,9 +31,16 @@ class BlueskyLoggedAccountManager @Inject constructor(
         client: BlueskyClient,
         username: String,
         password: String,
+        factorToken: String? = null,
     ): Result<BlueskyLoggedAccount> {
         val sessionResult =
-            client.createSessionCatching(CreateSessionRequest(username, password))
+            client.createSessionCatching(
+                CreateSessionRequest(
+                    identifier = username,
+                    password = password,
+                    authFactorToken = factorToken,
+                )
+            )
         if (sessionResult.isFailure) {
             return Result.failure(sessionResult.exceptionOrThrow())
         }

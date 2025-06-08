@@ -6,6 +6,7 @@
     <string name="bsky_add_content_hosting_provider">服务商地址</string>
     <string name="bsky_add_content_user_name">用户名或邮箱</string>
     <string name="bsky_add_content_password">密码</string>
+    <string name="bsky_add_content_factor_token">验证码</string>
 
     <string name="bsky_edit_content_title">编辑</string>
 

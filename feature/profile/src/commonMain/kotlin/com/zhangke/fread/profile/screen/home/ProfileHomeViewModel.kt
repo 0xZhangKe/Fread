@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import cafe.adriel.voyager.core.screen.Screen
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.analytics.reportInfo
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.account.AccountRefreshResult
@@ -25,6 +26,7 @@ import me.tatarka.inject.annotations.Inject
 
 class ProfileHomeViewModel @Inject constructor(
     private val statusProvider: StatusProvider,
+    private val contentRepo: FreadContentRepo,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ProfileHomeUiState(emptyList()))
@@ -78,6 +80,9 @@ class ProfileHomeViewModel @Inject constructor(
     fun onLogoutClick(account: LoggedAccount) {
         viewModelScope.launch {
             statusProvider.accountManager.logout(account.uri)
+            statusProvider.accountManager
+                .selectContentWithAccount(contentRepo.getAllContent(), account)
+                .forEach { contentRepo.delete(it.id) }
         }
     }
 

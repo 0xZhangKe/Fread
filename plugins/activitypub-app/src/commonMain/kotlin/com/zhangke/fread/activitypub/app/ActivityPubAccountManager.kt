@@ -6,6 +6,7 @@ import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccou
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubClientManager
 import com.zhangke.fread.activitypub.app.internal.auth.ActivityPubOAuthor
 import com.zhangke.fread.activitypub.app.internal.auth.LoggedAccountProvider
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.push.ActivityPubPushManager
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
@@ -14,6 +15,8 @@ import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.IAccountManager
+import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.notActivityPub
 import com.zhangke.fread.status.platform.BlogPlatform
@@ -115,5 +118,13 @@ class ActivityPubAccountManager @Inject constructor(
     private suspend fun subscribeNotificationForAccount(account: ActivityPubLoggedAccount) {
         val role = IdentityRole(accountUri = account.uri)
         activityPubPushManager.subscribe(role, account.userId)
+    }
+
+    override suspend fun selectContentWithAccount(
+        contentList: List<FreadContent>,
+        account: LoggedAccount,
+    ): List<FreadContent> {
+        return contentList.filterIsInstance<ActivityPubContent>()
+            .filter { it.baseUrl == account.platform.baseUrl }
     }
 }

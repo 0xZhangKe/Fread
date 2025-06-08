@@ -34,6 +34,7 @@ import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.rememberSnackbarHostState
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.bluesky.Res
+import com.zhangke.fread.bluesky.bsky_add_content_factor_token
 import com.zhangke.fread.bluesky.bsky_add_content_hosting_provider
 import com.zhangke.fread.bluesky.bsky_add_content_password
 import com.zhangke.fread.bluesky.bsky_add_content_title
@@ -67,6 +68,7 @@ class AddBlueskyContentScreen(
             onHostingChange = viewModel::onHostingChange,
             onUserNameChange = viewModel::onUserNameChange,
             onPasswordChange = viewModel::onPasswordChange,
+            onFactorTokenChange = viewModel::onFactorTokenChange,
             onBackClick = navigator::pop,
             onSkipClick = viewModel::onSkipClick,
             onLoginClick = viewModel::onLoginClick,
@@ -85,6 +87,7 @@ class AddBlueskyContentScreen(
         onHostingChange: (String) -> Unit,
         onUserNameChange: (String) -> Unit,
         onPasswordChange: (String) -> Unit,
+        onFactorTokenChange: (String) -> Unit,
         onBackClick: () -> Unit,
         onSkipClick: () -> Unit,
         onLoginClick: () -> Unit,
@@ -142,6 +145,19 @@ class AddBlueskyContentScreen(
                     },
                     singleLine = true,
                 )
+                if (uiState.authFactorRequired) {
+                    OutlinedTextField(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 16.dp),
+                        value = uiState.factorToken,
+                        onValueChange = onFactorTokenChange,
+                        label = {
+                            Text(stringResource(Res.string.bsky_add_content_factor_token))
+                        },
+                        singleLine = true,
+                    )
+                }
                 Box(modifier = Modifier.fillMaxWidth().padding(top = 16.dp)) {
                     if (!loginMode) {
                         Button(

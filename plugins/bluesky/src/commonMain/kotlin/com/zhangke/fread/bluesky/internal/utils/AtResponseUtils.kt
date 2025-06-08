@@ -23,7 +23,12 @@ data class AtRequestException(
     val headers: Map<String, String>,
 ) : Exception() {
 
+    val needAuthFactorTokenRequired: Boolean
+        get() = error == ERROR_FACTOR_REQUIRED
+
     companion object {
+
+        private const val ERROR_FACTOR_REQUIRED = "AuthFactorTokenRequired"
 
         fun fromResponse(response: AtpResponse.Failure<*>): Throwable {
             if (response.error?.expired == true) {

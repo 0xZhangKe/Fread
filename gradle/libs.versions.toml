@@ -64,7 +64,7 @@ firebaseKmp = "2.1.0"
 goolgePlayReview = "2.0.2"
 goolgePlayReviewKtx = "2.0.1"
 
-bluesky = "0.3.2"
+bluesky = "0.3.3"
 activity-pub-client = "0.1.0"
 
 [bundles]

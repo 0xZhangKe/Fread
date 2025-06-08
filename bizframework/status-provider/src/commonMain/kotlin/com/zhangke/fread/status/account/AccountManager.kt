@@ -1,5 +1,6 @@
 package com.zhangke.fread.status.account
 
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.coroutines.flow.Flow
@@ -40,6 +41,15 @@ class AccountManager(
         }
     }
 
+    suspend fun selectContentWithAccount(
+        contentList: List<FreadContent>,
+        account: LoggedAccount,
+    ): List<FreadContent> {
+        return accountManagerList.flatMap { manager ->
+            manager.selectContentWithAccount(contentList, account)
+        }
+    }
+
     fun subscribeNotification() {
         for (manager in accountManagerList) {
             manager.subscribeNotification()
@@ -58,6 +68,11 @@ interface IAccountManager {
     suspend fun refreshAllAccountInfo(): List<AccountRefreshResult>
 
     suspend fun logout(uri: FormalUri): Boolean
+
+    suspend fun selectContentWithAccount(
+        contentList: List<FreadContent>,
+        account: LoggedAccount,
+    ): List<FreadContent>
 
     fun subscribeNotification()
 }

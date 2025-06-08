@@ -16,9 +16,10 @@ class LoginToBskyUseCase @Inject constructor(
         baseUrl: FormalBaseUrl,
         username: String,
         password: String,
+        factorToken: String? = null,
     ): Result<BlueskyLoggedAccount> {
         val role = IdentityRole(baseUrl = baseUrl, accountUri = null)
         val client = clientManager.getClient(role)
-        return accountManager.login(client, username, password)
+        return accountManager.login(client, username, password, factorToken)
     }
 }

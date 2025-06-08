@@ -1,11 +1,13 @@
 package com.zhangke.fread.bluesky
 
 import com.zhangke.fread.bluesky.internal.account.BlueskyLoggedAccountManager
+import com.zhangke.fread.bluesky.internal.content.BlueskyContent
 import com.zhangke.fread.bluesky.internal.screen.add.AddBlueskyContentScreen
 import com.zhangke.fread.common.utils.GlobalScreenNavigation
 import com.zhangke.fread.status.account.AccountRefreshResult
 import com.zhangke.fread.status.account.IAccountManager
 import com.zhangke.fread.status.account.LoggedAccount
+import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.uri.FormalUri
@@ -45,5 +47,13 @@ class BlueskyAccountManager @Inject constructor(
 
     override fun subscribeNotification() {
 
+    }
+
+    override suspend fun selectContentWithAccount(
+        contentList: List<FreadContent>,
+        account: LoggedAccount
+    ): List<FreadContent> {
+        return contentList.filterIsInstance<BlueskyContent>()
+            .filter { it.baseUrl == account.platform.baseUrl }
     }
 }

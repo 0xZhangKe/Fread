@@ -41,6 +41,7 @@ class UserTimelineContainerViewModel @Inject constructor(
             role = params.role,
             webFinger = params.webFinger,
             loggedAccountProvider = loggedAccountProvider,
+            userId = params.userId,
         )
     }
 
@@ -48,9 +49,10 @@ class UserTimelineContainerViewModel @Inject constructor(
         tabType: UserTimelineTabType,
         role: IdentityRole,
         webFinger: WebFinger,
+        userId: String?,
     ): UserTimelineViewModel {
         return obtainSubViewModel(
-            Params(tabType, role, webFinger)
+            Params(tabType, role, webFinger, userId)
         )
     }
 
@@ -58,9 +60,10 @@ class UserTimelineContainerViewModel @Inject constructor(
         val tabType: UserTimelineTabType,
         val role: IdentityRole,
         val webFinger: WebFinger,
+        val userId: String?,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = tabType.toString() + role.toString() + webFinger
+            get() = tabType.toString() + role.toString() + webFinger + userId
     }
 }

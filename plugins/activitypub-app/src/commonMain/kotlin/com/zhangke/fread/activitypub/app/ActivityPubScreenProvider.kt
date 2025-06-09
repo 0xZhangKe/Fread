@@ -80,9 +80,13 @@ class ActivityPubScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
+    override fun getUserDetailScreen(
+        role: IdentityRole,
+        uri: FormalUri,
+        userId: String?,
+    ): Screen? {
         userUriTransformer.parse(uri) ?: return null
-        return UserDetailScreen(role = role, userUri = uri)
+        return UserDetailScreen(role = role, userUri = uri, userId = userId)
     }
 
     override fun getUserDetailScreen(
@@ -94,7 +98,7 @@ class ActivityPubScreenProvider @Inject constructor(
         return UserDetailScreen(role = role, webFinger = webFinger)
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         did: String,
         protocol: StatusProviderProtocol

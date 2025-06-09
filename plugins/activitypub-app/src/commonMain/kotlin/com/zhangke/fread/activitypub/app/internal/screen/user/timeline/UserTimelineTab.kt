@@ -25,6 +25,7 @@ internal class UserTimelineTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
     private val userWebFinger: WebFinger,
+    private val userId: String?,
 ) : BasePagerTab() {
 
     override val options: PagerTabOptions
@@ -44,6 +45,7 @@ internal class UserTimelineTab(
             tabType = tabType,
             role = role,
             webFinger = userWebFinger,
+            userId = userId,
         )
         val uiState by viewModel.uiState.collectAsState()
 

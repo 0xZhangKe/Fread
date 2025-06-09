@@ -26,6 +26,7 @@ class ActivityPubAccountEntityAdapter @Inject constructor(
             description = entity.note,
             avatar = entity.avatar,
             emojis = entity.emojis.map(emojiEntityAdapter::toEmoji),
+            userId = entity.id,
         )
     }
 

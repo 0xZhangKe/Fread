@@ -29,6 +29,7 @@ class UserDetailContainerViewModel @Inject constructor(
             role = params.role,
             userUri = params.userUri,
             webFinger = params.webFinger,
+            userId = params.userId,
         )
     }
 
@@ -36,17 +37,19 @@ class UserDetailContainerViewModel @Inject constructor(
         role: IdentityRole,
         userUri: FormalUri?,
         webFinger: WebFinger?,
+        userId: String?,
     ): UserDetailViewModel {
-        return obtainSubViewModel(Params(role, userUri, webFinger))
+        return obtainSubViewModel(Params(role, userUri, webFinger, userId))
     }
 
     class Params(
         val role: IdentityRole,
         val userUri: FormalUri?,
         val webFinger: WebFinger?,
+        val userId: String?,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + userUri + webFinger
+            get() = role.toString() + userUri + webFinger + userId
     }
 }

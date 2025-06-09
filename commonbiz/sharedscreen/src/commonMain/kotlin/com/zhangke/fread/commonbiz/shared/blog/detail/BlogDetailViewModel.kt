@@ -21,7 +21,7 @@ class BlogDetailViewModel @Inject constructor(
     fun onUserInfoClick(author: BlogAuthor) {
         viewModelScope.launch {
             statusProvider.screenProvider
-                .getUserDetailScreen(IdentityRole.nonIdentityRole, author.uri)
+                .getUserDetailScreen(IdentityRole.nonIdentityRole, author.uri, author.userId)
                 ?.let { _openScreenFlow.emit(it) }
         }
     }

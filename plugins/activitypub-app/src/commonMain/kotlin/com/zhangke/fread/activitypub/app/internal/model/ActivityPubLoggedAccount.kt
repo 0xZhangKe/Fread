@@ -22,6 +22,8 @@ data class ActivityPubLoggedAccount(
     override val emojis: List<Emoji>,
 ) : LoggedAccount {
 
+    override val id: String? get() = userId
+
     override val prettyHandle: String
         get() {
             val handle = webFinger.toString()

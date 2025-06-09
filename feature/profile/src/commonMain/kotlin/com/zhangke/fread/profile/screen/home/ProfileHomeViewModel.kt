@@ -92,6 +92,7 @@ class ProfileHomeViewModel @Inject constructor(
                 .getUserDetailScreen(
                     role = IdentityRole(account.uri, account.platform.baseUrl),
                     uri = account.uri,
+                    userId = account.id,
                 )?.let { _openPageFlow.emit(it) }
         }
     }

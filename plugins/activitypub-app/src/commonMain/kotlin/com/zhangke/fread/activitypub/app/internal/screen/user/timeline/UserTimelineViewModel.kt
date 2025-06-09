@@ -34,6 +34,7 @@ class UserTimelineViewModel(
     val tabType: UserTimelineTabType,
     val role: IdentityRole,
     val webFinger: WebFinger,
+    val userId: String?,
 ) : SubViewModel(), IFeedsViewModelController by FeedsViewModelController(
     statusProvider = statusProvider,
     statusUpdater = statusUpdater,
@@ -71,10 +72,15 @@ class UserTimelineViewModel(
 
     private suspend fun loadUserTimeline(maxId: String? = null): Result<List<StatusUiState>> {
         val loggedAccount = loggedAccountProvider.getAccount(role)
-        val accountIdResult =
-            webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
-        if (accountIdResult.isFailure) {
-            return Result.failure(accountIdResult.exceptionOrNull()!!)
+        val accountId = if (userId.isNullOrEmpty()) {
+            val accountIdResult =
+                webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
+            if (accountIdResult.isFailure) {
+                return Result.failure(accountIdResult.exceptionOrNull()!!)
+            }
+            accountIdResult.getOrThrow()
+        } else {
+            userId
         }
         val platformResult = platformRepo.getPlatform(role)
         if (platformResult.isFailure) {
@@ -82,7 +88,7 @@ class UserTimelineViewModel(
         }
         val platform = platformResult.getOrThrow()
         return fetchStatus(
-            accountId = accountIdResult.getOrThrow(),
+            accountId = accountId,
             maxId = maxId,
         ).map { data ->
             data.filter { it.id != maxId }.map { item ->

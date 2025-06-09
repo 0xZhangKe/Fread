@@ -133,9 +133,13 @@ class ActivityPubStatusResolver @Inject constructor(
         updater: suspend AccountsRepo.(userId: String) -> Result<*>,
     ): Result<Unit>? {
         userUriTransformer.parse(target.uri) ?: return null
-        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
-        if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
-        val userId = userIdResult.getOrThrow()
+        val userId = if (target.userId.isNullOrEmpty()) {
+            val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
+            if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
+            userIdResult.getOrThrow()
+        } else {
+            target.userId!!
+        }
         return clientManager.getClient(role)
             .accountRepo
             .updater(userId)
@@ -144,9 +148,13 @@ class ActivityPubStatusResolver @Inject constructor(
 
     override suspend fun isFollowing(role: IdentityRole, target: BlogAuthor): Result<Boolean>? {
         userUriTransformer.parse(target.uri) ?: return null
-        val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
-        if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
-        val userId = userIdResult.getOrThrow()
+        val userId = if (target.userId.isNullOrEmpty()) {
+            val userIdResult = webFingerBaseUrlToUserIdRepo.getUserId(target.webFinger, role)
+            if (userIdResult.isFailure) return Result.failure(userIdResult.exceptionOrNull()!!)
+            userIdResult.getOrThrow()
+        } else {
+            target.userId!!
+        }
         return clientManager.getClient(role)
             .accountRepo
             .getRelationships(listOf(userId))

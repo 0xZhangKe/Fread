@@ -50,8 +50,12 @@ class StatusScreenProvider(
         }
     }
 
-    fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
-        return providerList.firstNotNullOfOrNull { it.getUserDetailScreen(role, uri) }
+    fun getUserDetailScreen(
+        role: IdentityRole,
+        uri: FormalUri,
+        userId: String?,
+    ): Screen? {
+        return providerList.firstNotNullOfOrNull { it.getUserDetailScreen(role, uri, userId) }
     }
 
     fun getUserDetailScreen(
@@ -64,13 +68,13 @@ class StatusScreenProvider(
         }
     }
 
-    fun getUserDetailRoute(
+    fun getUserDetailScreen(
         role: IdentityRole,
         did: String,
         protocol: StatusProviderProtocol,
     ): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getUserDetailRoute(role, did, protocol)
+            it.getUserDetailScreen(role, did, protocol)
         }
     }
 
@@ -157,7 +161,7 @@ interface IStatusScreenProvider {
 
     suspend fun getEditContentConfigScreenScreen(account: LoggedAccount): Screen?
 
-    fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen?
+    fun getUserDetailScreen(role: IdentityRole, uri: FormalUri, userId: String?): Screen?
 
     fun getUserDetailScreen(
         role: IdentityRole,
@@ -165,7 +169,7 @@ interface IStatusScreenProvider {
         protocol: StatusProviderProtocol
     ): Screen?
 
-    fun getUserDetailRoute(
+    fun getUserDetailScreen(
         role: IdentityRole,
         did: String,
         protocol: StatusProviderProtocol

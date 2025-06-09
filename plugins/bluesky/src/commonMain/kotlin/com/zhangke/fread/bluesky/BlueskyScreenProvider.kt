@@ -25,7 +25,6 @@ import com.zhangke.fread.status.model.notBluesky
 import com.zhangke.fread.status.platform.BlogPlatform
 import com.zhangke.fread.status.screen.IStatusScreenProvider
 import com.zhangke.fread.status.uri.FormalUri
-import kotlinx.serialization.encodeToString
 import me.tatarka.inject.annotations.Inject
 
 class BlueskyScreenProvider @Inject constructor(
@@ -78,13 +77,14 @@ class BlueskyScreenProvider @Inject constructor(
 
     override fun getUserDetailScreen(
         role: IdentityRole,
-        uri: FormalUri
+        uri: FormalUri,
+        userId: String?,
     ): Screen? {
         val did = userUriTransformer.parse(uri)?.did ?: return null
         return BskyUserDetailScreen(role = role, did = did)
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         did: String,
         protocol: StatusProviderProtocol

@@ -137,10 +137,11 @@ data class UserDetailScreen(
     val role: IdentityRole,
     val userUri: FormalUri? = null,
     val webFinger: WebFinger? = null,
+    val userId: String? = null,
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = role.toString() + webFinger.toString() + userUri
+        get() = role.toString() + webFinger.toString() + userUri + userId
 
     @Composable
     override fun Content() {
@@ -150,7 +151,7 @@ data class UserDetailScreen(
         val browserLauncher = LocalActivityBrowserLauncher.current
         val activityTextHandler = LocalActivityTextHandler.current
         val viewModel = getViewModel<UserDetailContainerViewModel>()
-            .getViewModel(role, userUri, webFinger)
+            .getViewModel(role, userUri, webFinger, userId)
         val uiState by viewModel.uiState.collectAsState()
         UserDetailContent(
             uiState = uiState,
@@ -226,6 +227,7 @@ data class UserDetailScreen(
                         type = UserListType.FOLLOWERS,
                         role = uiState.role,
                         userUri = uiState.userInsight!!.uri,
+                        userId = uiState.accountUiState?.account?.id ?: userId,
                     )
                     navigator.push(screen)
                 }
@@ -236,6 +238,7 @@ data class UserDetailScreen(
                         type = UserListType.FOLLOWING,
                         role = uiState.role,
                         userUri = uiState.userInsight!!.uri,
+                        userId = uiState.accountUiState?.account?.id ?: userId,
                     )
                     navigator.push(screen)
                 }
@@ -256,6 +259,7 @@ data class UserDetailScreen(
                     UserListScreen(
                         role = role,
                         type = UserListType.MUTED,
+                        userId = uiState.accountUiState?.account?.id ?: userId,
                     )
                 )
             },
@@ -264,6 +268,7 @@ data class UserDetailScreen(
                     UserListScreen(
                         role = role,
                         type = UserListType.BLOCKED,
+                        userId = uiState.accountUiState?.account?.id ?: userId,
                     )
                 )
             },
@@ -444,23 +449,27 @@ data class UserDetailScreen(
                                 role = uiState.role,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 contentCanScrollBackward = contentCanScrollBackward,
+                                userId = userId,
                             ),
                             UserTimelineTab(
                                 tabType = UserTimelineTabType.REPLIES,
                                 role = uiState.role,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 contentCanScrollBackward = contentCanScrollBackward,
+                                userId = userId,
                             ),
                             UserTimelineTab(
                                 tabType = UserTimelineTabType.MEDIA,
                                 role = uiState.role,
                                 userWebFinger = uiState.userInsight.webFinger,
                                 contentCanScrollBackward = contentCanScrollBackward,
+                                userId = userId,
                             ),
                             UserAboutTab(
                                 contentCanScrollBackward = contentCanScrollBackward,
                                 role = uiState.role,
                                 userWebFinger = uiState.userInsight.webFinger,
+                                userId = userId,
                             ),
                         )
                     }

@@ -161,9 +161,9 @@ interface ActivityPubComponent : ActivityPubPlatformComponent {
 
     @IntoMap
     @Provides
-    fun provideUserListViewModel(creator: (IdentityRole, UserListType, String?, FormalUri?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
-        return UserListViewModel::class to UserListViewModel.Factory { role, type, statusId, userUri ->
-            creator(role, type, statusId, userUri)
+    fun provideUserListViewModel(creator: (IdentityRole, UserListType, String?, FormalUri?, String?) -> UserListViewModel): Pair<ViewModelKey, ViewModelFactory> {
+        return UserListViewModel::class to UserListViewModel.Factory { role, type, statusId, userUri, userId ->
+            creator(role, type, statusId, userUri, userId)
         }
     }
 

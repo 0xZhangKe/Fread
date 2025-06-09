@@ -36,6 +36,7 @@ internal class UserAboutTab(
     private val contentCanScrollBackward: MutableState<Boolean>,
     private val role: IdentityRole,
     private val userWebFinger: WebFinger,
+    private val userId: String?,
 ) : BasePagerTab() {
 
     override val options: PagerTabOptions
@@ -46,8 +47,8 @@ internal class UserAboutTab(
     @Composable
     override fun TabContent(screen: Screen, nestedScrollConnection: NestedScrollConnection?) {
         super.TabContent(screen, nestedScrollConnection)
-        val viewModel =
-            screen.getViewModel<UserAboutContainerViewModel>().getViewModel(role, userWebFinger)
+        val viewModel = screen.getViewModel<UserAboutContainerViewModel>()
+            .getViewModel(role, userWebFinger, userId)
         val uiState by viewModel.uiState.collectAsState()
         UserAboutContent(
             uiState = uiState,

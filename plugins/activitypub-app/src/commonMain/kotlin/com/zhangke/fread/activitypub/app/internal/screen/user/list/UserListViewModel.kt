@@ -37,6 +37,7 @@ class UserListViewModel @Inject constructor(
     @Assisted private val type: UserListType,
     @Assisted private val statusId: String?,
     @Assisted private val userUri: FormalUri?,
+    @Assisted private val userId: String?,
 ) : ViewModel() {
 
     fun interface Factory : ViewModelFactory {
@@ -46,6 +47,7 @@ class UserListViewModel @Inject constructor(
             type: UserListType,
             statusId: String?,
             userUri: FormalUri?,
+            userId: String?,
         ): UserListViewModel
     }
 
@@ -68,7 +70,7 @@ class UserListViewModel @Inject constructor(
 
     private var nextMaxId: String? = null
 
-    private var userId: String? = null
+    private var cachedUserId: String? = userId
 
     init {
         loadFirstPageUsers()
@@ -183,7 +185,7 @@ class UserListViewModel @Inject constructor(
 
     fun onUnblockClick(author: BlogAuthor) {
         launchInViewModel {
-            val id = getUserIdByUri(author.uri) ?: return@launchInViewModel
+            val id = author.userId ?: getUserIdByUri(author.uri) ?: return@launchInViewModel
             clientManager.getClient(role)
                 .accountRepo
                 .unblock(id)
@@ -204,7 +206,7 @@ class UserListViewModel @Inject constructor(
     fun onUnmuteClick(author: BlogAuthor) {
         launchInViewModel {
             val accountRepo = clientManager.getClient(role).accountRepo
-            val authorId = getUserIdByUri(author.uri) ?: return@launchInViewModel
+            val authorId = author.userId ?: getUserIdByUri(author.uri) ?: return@launchInViewModel
             accountRepo.unmute(authorId)
                 .onSuccess {
                     if (type == UserListType.MUTED) {
@@ -221,11 +223,12 @@ class UserListViewModel @Inject constructor(
     }
 
     private suspend fun getPageTargetUserId(): Result<String> {
+        if (!cachedUserId.isNullOrEmpty()) return Result.success(cachedUserId!!)
         if (userUri == null) {
             return Result.failure(IllegalStateException("User uri is null!"))
         }
-        val userId = userId ?: getUserIdByUri(userUri)?.also {
-            this.userId = it
+        val userId = cachedUserId ?: getUserIdByUri(userUri)?.also {
+            this.cachedUserId = it
         }
         if (userId == null) {
             return Result.failure(IllegalStateException("Invalid user uri: $userUri"))

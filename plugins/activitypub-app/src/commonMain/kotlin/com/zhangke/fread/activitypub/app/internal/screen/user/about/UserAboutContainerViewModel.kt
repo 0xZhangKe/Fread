@@ -21,24 +21,27 @@ class UserAboutContainerViewModel @Inject constructor(
             emojiEntityAdapter = emojiEntityAdapter,
             role = params.role,
             webFinger = params.webFinger,
+            userId = params.userId,
         )
     }
 
     fun getViewModel(
         role: IdentityRole,
         webFinger: WebFinger,
+        userId: String?,
     ): UserAboutViewModel {
         return obtainSubViewModel(
-            Params(role, webFinger)
+            Params(role, webFinger, userId)
         )
     }
 
     class Params(
         val role: IdentityRole,
         val webFinger: WebFinger,
+        val userId: String?,
     ) : SubViewModelParams() {
 
         override val key: String
-            get() = role.toString() + webFinger
+            get() = role.toString() + webFinger + userId
     }
 }

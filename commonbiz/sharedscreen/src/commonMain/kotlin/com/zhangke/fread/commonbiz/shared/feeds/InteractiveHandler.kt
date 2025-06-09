@@ -173,7 +173,7 @@ class InteractiveHandler(
 
     override fun onUserInfoClick(role: IdentityRole, blogAuthor: BlogAuthor) {
         coroutineScope.launch {
-            screenProvider.getUserDetailScreen(role, blogAuthor.uri)
+            screenProvider.getUserDetailScreen(role, blogAuthor.uri, blogAuthor.userId)
                 ?.let { mutableOpenScreenFlow.emit(it) }
         }
     }
@@ -274,7 +274,7 @@ class InteractiveHandler(
 
     override fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol) {
         coroutineScope.launch {
-            screenProvider.getUserDetailRoute(
+            screenProvider.getUserDetailScreen(
                 role = role,
                 did = did,
                 protocol = protocol,

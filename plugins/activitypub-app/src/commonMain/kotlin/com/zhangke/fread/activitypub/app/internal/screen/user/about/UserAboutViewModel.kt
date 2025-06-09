@@ -22,6 +22,7 @@ class UserAboutViewModel(
     private val emojiEntityAdapter: ActivityPubCustomEmojiEntityAdapter,
     val role: IdentityRole,
     val webFinger: WebFinger,
+    val userId: String?,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -38,17 +39,21 @@ class UserAboutViewModel(
 
     init {
         launchInViewModel {
-            val accountIdResult =
-                webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
-            if (accountIdResult.isFailure) {
-                accountIdResult.exceptionOrNull()?.message?.let {
-                    _messageFlow.emit(textOf(it))
+            val userId = if (this@UserAboutViewModel.userId.isNullOrEmpty()) {
+                val accountIdResult = webFingerBaseUrlToUserIdRepo.getUserId(webFinger, role)
+                if (accountIdResult.isFailure) {
+                    accountIdResult.exceptionOrNull()?.message?.let {
+                        _messageFlow.emit(textOf(it))
+                    }
+                    return@launchInViewModel
                 }
-                return@launchInViewModel
+                accountIdResult.getOrThrow()
+            } else {
+                this@UserAboutViewModel.userId
             }
             clientManager.getClient(role)
                 .accountRepo
-                .getAccount(accountIdResult.getOrThrow())
+                .getAccount(userId)
                 .onFailure { e ->
                     e.message?.let { _messageFlow.emit(textOf(it)) }
                 }.onSuccess { entity ->

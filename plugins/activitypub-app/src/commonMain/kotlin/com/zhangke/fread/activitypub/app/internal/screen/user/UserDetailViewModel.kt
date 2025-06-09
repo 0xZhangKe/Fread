@@ -33,6 +33,7 @@ class UserDetailViewModel(
     val role: IdentityRole,
     val userUri: FormalUri?,
     val webFinger: WebFinger?,
+    val userId: String?,
 ) : SubViewModel() {
 
     private val _uiState = MutableStateFlow(
@@ -60,7 +61,7 @@ class UserDetailViewModel(
             }
             _uiState.update { it.copy(loading = true) }
             val accountRepo = clientManager.getClient(role).accountRepo
-            val accountResult = lookupAccount(accountRepo, webFinger)
+            val accountResult = loadAccountInfo(accountRepo, webFinger)
             if (accountResult.isFailure) {
                 _uiState.update { it.copy(loading = false) }
                 _messageFlow.emit(textOf("Failed to lookup ${webFinger}, ${accountResult.exceptionOrNull()!!.message}"))
@@ -83,10 +84,13 @@ class UserDetailViewModel(
         }
     }
 
-    private suspend fun lookupAccount(
+    private suspend fun loadAccountInfo(
         accountRepo: AccountsRepo,
         webFinger: WebFinger,
     ): Result<ActivityPubAccountEntity?> {
+        if (!userId.isNullOrEmpty()) {
+            return accountRepo.getAccount(userId)
+        }
         val resultOfWebFinger = accountRepo.lookup(webFinger.toString())
         if (resultOfWebFinger.isSuccess) {
             return resultOfWebFinger

@@ -9,6 +9,7 @@ interface LoggedAccount {
     val uri: FormalUri
     val webFinger: WebFinger
     val platform: BlogPlatform
+    val id: String?
     val userName: String
     val description: String?
     val avatar: String?

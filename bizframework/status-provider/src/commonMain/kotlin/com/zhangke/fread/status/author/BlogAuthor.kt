@@ -19,6 +19,7 @@ data class BlogAuthor(
     val description: String,
     val avatar: String?,
     val emojis: List<Emoji>,
+    val userId: String? = null,
 ) : PlatformSerializable {
 
     val humanizedName: RichText by lazy {

@@ -55,6 +55,7 @@ class UserListScreen(
     private val type: UserListType,
     private val statusId: String? = null,
     private val userUri: FormalUri? = null,
+    private val userId: String? = null,
 ) : BaseScreen() {
 
     @Composable
@@ -62,7 +63,13 @@ class UserListScreen(
         super.Content()
         val navigator = LocalNavigator.currentOrThrow
         val viewModel = getViewModel<UserListViewModel, UserListViewModel.Factory> {
-            it.create(role = role, type = type, statusId = statusId, userUri = userUri)
+            it.create(
+                role = role,
+                type = type,
+                statusId = statusId,
+                userUri = userUri,
+                userId = userId,
+            )
         }
         val uiState by viewModel.uiState.collectAsState()
         val snackBarHostState = rememberSnackbarHostState()

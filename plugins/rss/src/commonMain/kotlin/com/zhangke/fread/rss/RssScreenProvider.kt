@@ -45,7 +45,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri): Screen? {
+    override fun getUserDetailScreen(role: IdentityRole, uri: FormalUri, userId: String?): Screen? {
         if (!uri.isRssUri) return null
         val uriInsight = uriTransformer.parse(uri) ?: return null
         val url = uriInsight.url
@@ -60,7 +60,7 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getUserDetailRoute(
+    override fun getUserDetailScreen(
         role: IdentityRole,
         did: String,
         protocol: StatusProviderProtocol

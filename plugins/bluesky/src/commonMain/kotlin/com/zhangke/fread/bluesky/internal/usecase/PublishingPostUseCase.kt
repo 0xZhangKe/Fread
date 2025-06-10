@@ -22,6 +22,10 @@ import app.bsky.feed.ThreadgateFollowerRule
 import app.bsky.feed.ThreadgateFollowingRule
 import app.bsky.feed.ThreadgateListRule
 import app.bsky.feed.ThreadgateMentionRule
+import app.bsky.richtext.Facet
+import app.bsky.richtext.FacetByteSlice
+import app.bsky.richtext.FacetFeatureUnion
+import app.bsky.richtext.FacetTag
 import com.atproto.repo.ApplyWritesCreate
 import com.atproto.repo.ApplyWritesRequest
 import com.atproto.repo.ApplyWritesRequestWriteUnion
@@ -34,6 +38,7 @@ import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostMediaAttachm
 import com.zhangke.fread.bluesky.internal.screen.publish.PublishPostMediaAttachmentFile
 import com.zhangke.fread.bluesky.internal.utils.Tid
 import com.zhangke.fread.bluesky.internal.utils.bskyJson
+import com.zhangke.fread.common.utils.HashtagTextUtils
 import com.zhangke.fread.status.blog.Blog
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.model.PostInteractionSetting
@@ -43,6 +48,7 @@ import kotlinx.coroutines.awaitAll
 import kotlinx.coroutines.supervisorScope
 import kotlinx.datetime.Clock
 import me.tatarka.inject.annotations.Inject
+import okio.utf8Size
 import sh.christian.ozone.api.AtUri
 import sh.christian.ozone.api.Cid
 import sh.christian.ozone.api.Did
@@ -77,6 +83,7 @@ class PublishingPostUseCase @Inject constructor(
             embed = embedResult.getOrNull(),
             createdAt = Clock.System.now(),
             reply = replyResult.getOrNull(),
+            facets = buildFacet(content),
         )
         val writes = mutableListOf<ApplyWritesRequestWriteUnion>()
         writes += ApplyWritesRequestWriteUnion.Create(
@@ -267,5 +274,34 @@ class PublishingPostUseCase @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun buildFacet(content: String): List<Facet> {
+        if (content.isEmpty()) return emptyList()
+        val facetList = mutableListOf<Facet>()
+        val hashtags = HashtagTextUtils.findHashtags(content)
+        for (hashtag in hashtags) {
+            val tag = content.substring(hashtag.start, hashtag.end)
+            val facet = Facet(
+                index = FacetByteSlice(
+                    byteStart = calculateUtf8Index(hashtag.start, content),
+                    byteEnd = calculateUtf8Index(hashtag.end, content),
+                ),
+                features = listOf(
+                    FacetFeatureUnion.Tag(
+                        value = FacetTag(tag = tag),
+                    )
+                ),
+            )
+            facetList += facet
+        }
+        return facetList
+    }
+
+    private fun calculateUtf8Index(
+        index: Int,
+        text: String,
+    ): Long {
+        return text.utf8Size(0, index.coerceAtMost(text.length))
     }
 }

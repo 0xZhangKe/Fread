@@ -101,10 +101,10 @@ class AddBlueskyContentViewModel @Inject constructor(
                 .onFailure { t ->
                     _uiState.update { it.copy(logging = false) }
                     if (t is AtRequestException) {
-                        t.errorMessage?.let { _snackBarMessage.emit(textOf(it)) }
                         if (t.needAuthFactorTokenRequired) {
                             _uiState.update { it.copy(authFactorRequired = true) }
                         }
+                        _snackBarMessage.emit(textOf("${t.error}:${t.errorMessage}"))
                     } else {
                         _snackBarMessage.emit(
                             textOf(t.message ?: "Login Failed! ${t::class.simpleName}")

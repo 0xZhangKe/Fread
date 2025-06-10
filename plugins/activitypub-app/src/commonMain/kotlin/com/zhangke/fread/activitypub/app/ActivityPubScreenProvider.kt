@@ -9,7 +9,7 @@ import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.screen.content.ActivityPubContentScreen
 import com.zhangke.fread.activitypub.app.internal.screen.content.edit.EditContentConfigScreen
 import com.zhangke.fread.activitypub.app.internal.screen.explorer.ExplorerContainerTab
-import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
+import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.activitypub.app.internal.screen.instance.PlatformDetailRoute
 import com.zhangke.fread.activitypub.app.internal.screen.list.CreatedListsScreen
 import com.zhangke.fread.activitypub.app.internal.screen.status.post.PostStatusScreenRoute
@@ -106,13 +106,16 @@ class ActivityPubScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getTagTimelineScreenRoute(
+    override fun getTagTimelineScreen(
         role: IdentityRole,
         tag: String,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         if (protocol.notActivityPub) return null
-        return HashtagTimelineRoute.buildRoute(role, tag)
+        return HashtagTimelineScreen(
+            role = role,
+            hashtag = tag.removePrefix("#"),
+        )
     }
 
     override fun getBlogFavouritedScreen(

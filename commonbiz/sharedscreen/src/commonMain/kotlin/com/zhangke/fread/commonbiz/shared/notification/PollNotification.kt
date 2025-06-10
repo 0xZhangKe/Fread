@@ -62,6 +62,13 @@ fun PollNotification(
             },
             onHashtagInStatusClick = { composedStatusInteraction.onHashtagInStatusClick(role, it) },
             onUrlClick = { browserLauncher.launchWebTabInApp(it, role) },
+            onMaybeHashtagClick = {
+                composedStatusInteraction.onMaybeHashtagClick(
+                    role = role,
+                    protocol = notification.blog.platform.protocol,
+                    hashtag = it,
+                )
+            },
         )
     }
 }

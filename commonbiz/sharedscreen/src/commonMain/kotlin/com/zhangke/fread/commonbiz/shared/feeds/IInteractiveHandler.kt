@@ -53,4 +53,6 @@ interface IInteractiveHandler {
     fun onHashtagClick(role: IdentityRole, tag: HashtagInStatus)
 
     fun onHashtagClick(role: IdentityRole, tag: Hashtag)
+
+    fun onMaybeHashtagClick(role: IdentityRole, protocol: StatusProviderProtocol, tag: String)
 }

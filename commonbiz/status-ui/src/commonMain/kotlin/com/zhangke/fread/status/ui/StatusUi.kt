@@ -84,6 +84,13 @@ fun StatusUi(
             onBlogClick = {
                 composedStatusInteraction.onBlockClick(status.role, it)
             },
+            onMaybeHashtagClick = {
+                composedStatusInteraction.onMaybeHashtagClick(
+                    role = status.role,
+                    protocol = status.status.platform.protocol,
+                    hashtag = it,
+                )
+            },
         )
     }
 }

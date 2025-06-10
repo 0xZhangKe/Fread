@@ -17,8 +17,7 @@ import cafe.adriel.voyager.hilt.getViewModel
 import cafe.adriel.voyager.navigator.LocalNavigator
 import cafe.adriel.voyager.navigator.currentOrThrow
 import com.zhangke.framework.network.FormalBaseUrl
-import com.zhangke.fread.common.tryPush
-import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineRoute
+import com.zhangke.fread.activitypub.app.internal.screen.hashtag.HashtagTimelineScreen
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.hashtag.HashtagUi
@@ -40,9 +39,12 @@ internal fun Screen.ServerTrendsTagsPage(
         contentCanScrollBackward = contentCanScrollBackward,
         onHashtagClick = { tag ->
             val role = IdentityRole(accountUri = null, baseUrl = baseUrl)
-            HashtagTimelineRoute.buildRoute(role, tag.name).let {
-                navigator.tryPush(it)
-            }
+            navigator.push(
+                HashtagTimelineScreen(
+                    role = role,
+                    hashtag = tag.name.removePrefix("#"),
+                )
+            )
         },
     )
 }

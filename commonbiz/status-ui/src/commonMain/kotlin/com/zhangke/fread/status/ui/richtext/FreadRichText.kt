@@ -76,7 +76,7 @@ fun FreadRichText(
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
-    onMaybeHashtagTarget: (RichLinkTarget.MaybeHashtagTarget) -> Unit = {},
+    onMaybeHashtagClick: (String) -> Unit = {},
     onUrlClick: (url: String) -> Unit = {},
     // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
@@ -90,7 +90,7 @@ fun FreadRichText(
                 is RichLinkTarget.MentionTarget -> onMentionClick(target.mention)
                 is RichLinkTarget.MentionDidTarget -> onMentionDidClick(target.did)
                 is RichLinkTarget.HashtagTarget -> onHashtagClick(target.hashtag)
-                is RichLinkTarget.MaybeHashtagTarget -> onMaybeHashtagTarget(target)
+                is RichLinkTarget.MaybeHashtagTarget -> onMaybeHashtagClick(target.hashtag)
             }
         }
         onDispose {
@@ -118,7 +118,7 @@ fun SelectableRichText(
     color: Color = Color.Unspecified,
     onMentionClick: (Mention) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
-    onMaybeHashtagTarget: (RichLinkTarget.MaybeHashtagTarget) -> Unit = {},
+    onMaybeHashtagClick: (String) -> Unit = {},
     onUrlClick: (url: String) -> Unit = {},
     // layoutDirection: LayoutDirection = LocalLayoutDirection.current,
     overflow: TextOverflow = TextOverflow.Ellipsis,
@@ -133,7 +133,7 @@ fun SelectableRichText(
                 color = color,
                 onMentionClick = onMentionClick,
                 onHashtagClick = onHashtagClick,
-                onMaybeHashtagTarget = onMaybeHashtagTarget,
+                onMaybeHashtagClick = onMaybeHashtagClick,
                 onUrlClick = onUrlClick,
                 overflow = overflow,
                 maxLines = maxLines,

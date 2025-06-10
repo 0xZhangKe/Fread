@@ -43,7 +43,6 @@ import com.zhangke.framework.composable.TextString
 import com.zhangke.framework.composable.Toolbar
 import com.zhangke.framework.composable.collapsable.ScrollUpTopBarLayout
 import com.zhangke.framework.composable.rememberSnackbarHostState
-import com.zhangke.framework.utils.UrlEncoder
 import com.zhangke.fread.activitypub.app.Res
 import com.zhangke.fread.activitypub.app.activity_pub_hashtag_unfollow_dialog_message
 import com.zhangke.fread.common.page.BaseScreen
@@ -53,22 +52,17 @@ import com.zhangke.fread.status.model.IdentityRole
 import com.zhangke.fread.status.ui.ComposedStatusInteraction
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_following
 import com.zhangke.fread.statusui.status_ui_user_detail_relationship_not_follow
-import com.zhangke.krouter.annotation.Destination
-import com.zhangke.krouter.annotation.RouteParam
 import kotlinx.coroutines.flow.SharedFlow
 import org.jetbrains.compose.resources.stringResource
 
-@Destination(HashtagTimelineRoute.ROUTE)
 data class HashtagTimelineScreen(
-    @RouteParam(HashtagTimelineRoute.PARAMS_ROLE) private val _role: String? = null,
-    @RouteParam(HashtagTimelineRoute.PARAM_HASHTAG) private val _hashtag: String? = null,
-    private val role: IdentityRole = IdentityRole.decodeFromString(_role!!)!!,
-    private val hashtag: String = UrlEncoder.decode(_hashtag!!)
+    private val role: IdentityRole,
+    private val hashtag: String
 ) : BaseScreen() {
 
     override val key: ScreenKey
-        get() = _role + _hashtag
-    
+        get() = role.toString() + hashtag
+
     @Composable
     override fun Content() {
         super.Content()

@@ -102,12 +102,16 @@ class BlueskyScreenProvider @Inject constructor(
         return BskyUserDetailScreen(role, webFinger.did ?: return null)
     }
 
-    override fun getTagTimelineScreenRoute(
+    override fun getTagTimelineScreen(
         role: IdentityRole,
         tag: String,
         protocol: StatusProviderProtocol
-    ): String? {
-        return null
+    ): Screen? {
+        if (protocol.notBluesky) return null
+        return HomeFeedsScreen.create(
+            feeds = BlueskyFeeds.Hashtags(tag),
+            role = role,
+        )
     }
 
     override fun getBlogFavouritedScreen(

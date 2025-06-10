@@ -70,6 +70,14 @@ class InteractiveHandler(
             this@InteractiveHandler.onHashtagClick(role, hashtagInStatus)
         }
 
+        override fun onMaybeHashtagClick(
+            role: IdentityRole,
+            protocol: StatusProviderProtocol,
+            hashtag: String,
+        ) {
+            this@InteractiveHandler.onMaybeHashtagClick(role, protocol, hashtag)
+        }
+
         override fun onMentionClick(role: IdentityRole, mention: Mention) {
             this@InteractiveHandler.onMentionClick(role, mention)
         }
@@ -298,16 +306,24 @@ class InteractiveHandler(
         )
     }
 
+    override fun onMaybeHashtagClick(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol,
+        tag: String,
+    ) {
+        openHashtagTimelineScreen(role = role, tag = tag, protocol = protocol)
+    }
+
     private fun openHashtagTimelineScreen(
         role: IdentityRole,
         tag: String,
         protocol: StatusProviderProtocol,
     ) {
-        screenProvider.getTagTimelineScreenRoute(
+        screenProvider.getTagTimelineScreen(
             role = role,
             tag = tag,
             protocol = protocol
-        )?.let(::tryOpenScreenByRoute)
+        )?.let(::openScreen)
     }
 
     private fun onBoostedClick(role: IdentityRole, status: StatusUiState) {

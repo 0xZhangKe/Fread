@@ -46,6 +46,7 @@ fun BlogUi(
     onUserInfoClick: (BlogAuthor) -> Unit,
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onMaybeHashtagClick: (String) -> Unit,
     onUrlClick: (url: String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
@@ -134,6 +135,7 @@ fun BlogUi(
             onMentionDidClick = onMentionDidClick,
             onShowOriginalClick = onShowOriginalClick,
             onBlogClick = onBlogClick,
+            onMaybeHashtagClick = onMaybeHashtagClick,
         )
         StatusBottomInteractionPanel(
             modifier = Modifier

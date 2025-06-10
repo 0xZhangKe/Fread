@@ -244,6 +244,14 @@ class FeedsViewModelController(
         interactiveHandler.onHashtagClick(role, tag)
     }
 
+    override fun onMaybeHashtagClick(
+        role: IdentityRole,
+        protocol: StatusProviderProtocol,
+        tag: String,
+    ) {
+        interactiveHandler.onMaybeHashtagClick(role, protocol, tag)
+    }
+
     override fun onRefresh() {
         val uiState = mutableUiState.value
         if (uiState.showPagingLoadingPlaceholder || uiState.refreshing || uiState.loadMoreState.loading) return

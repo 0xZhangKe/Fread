@@ -19,6 +19,7 @@ interface ComposedStatusInteraction {
     fun onVoted(status: StatusUiState, blogPollOptions: List<BlogPoll.Option>)
     fun onHashtagInStatusClick(role: IdentityRole, hashtagInStatus: HashtagInStatus)
     fun onHashtagClick(role: IdentityRole, tag: Hashtag)
+    fun onMaybeHashtagClick(role: IdentityRole, protocol: StatusProviderProtocol, hashtag: String)
     fun onMentionClick(role: IdentityRole, mention: Mention)
     fun onMentionClick(role: IdentityRole, did: String, protocol: StatusProviderProtocol)
     fun onStatusClick(status: StatusUiState)

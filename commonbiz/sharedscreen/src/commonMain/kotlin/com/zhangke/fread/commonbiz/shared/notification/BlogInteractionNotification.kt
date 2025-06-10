@@ -80,6 +80,13 @@ fun BlogInteractionNotification(
                     protocol = blog.platform.protocol,
                 )
             },
+            onMaybeHashtagClick = {
+                composedStatusInteraction.onMaybeHashtagClick(
+                    role = role,
+                    protocol = blog.platform.protocol,
+                    hashtag = it,
+                )
+            },
         )
     }
 }

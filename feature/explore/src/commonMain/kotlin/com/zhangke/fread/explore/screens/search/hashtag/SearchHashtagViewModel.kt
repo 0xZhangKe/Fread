@@ -8,11 +8,9 @@ import com.zhangke.framework.controller.CommonLoadableController
 import com.zhangke.framework.controller.CommonLoadableUiState
 import com.zhangke.framework.ktx.launchInViewModel
 import com.zhangke.fread.common.di.ViewModelFactory
-import com.zhangke.fread.common.routeScreen
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.Hashtag
 import com.zhangke.fread.status.model.IdentityRole
-import com.zhangke.krouter.KRouter
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -67,15 +65,12 @@ open class SearchHashtagViewModel @Inject constructor(
 
     fun onHashtagClick(hashtag: Hashtag) {
         launchInViewModel {
-            val route = statusProvider.screenProvider.getTagTimelineScreenRoute(
+            val screen = statusProvider.screenProvider.getTagTimelineScreen(
                 role,
                 hashtag.name,
                 hashtag.protocol
-            )
-                ?: return@launchInViewModel
-            KRouter.routeScreen(route)?.let {
-                _openScreenFlow.emit(it)
-            }
+            ) ?: return@launchInViewModel
+            _openScreenFlow.emit(screen)
         }
     }
 }

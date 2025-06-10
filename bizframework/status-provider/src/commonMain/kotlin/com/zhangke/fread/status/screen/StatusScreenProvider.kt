@@ -78,13 +78,13 @@ class StatusScreenProvider(
         }
     }
 
-    fun getTagTimelineScreenRoute(
+    fun getTagTimelineScreen(
         role: IdentityRole,
         tag: String,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return providerList.firstNotNullOfOrNull {
-            it.getTagTimelineScreenRoute(
+            it.getTagTimelineScreen(
                 role,
                 tag,
                 protocol
@@ -175,11 +175,11 @@ interface IStatusScreenProvider {
         protocol: StatusProviderProtocol
     ): Screen?
 
-    fun getTagTimelineScreenRoute(
+    fun getTagTimelineScreen(
         role: IdentityRole,
         tag: String,
         protocol: StatusProviderProtocol
-    ): String?
+    ): Screen?
 
     fun getBlogFavouritedScreen(
         role: IdentityRole,

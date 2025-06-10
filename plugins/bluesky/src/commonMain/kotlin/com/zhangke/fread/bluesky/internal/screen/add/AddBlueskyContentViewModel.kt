@@ -104,7 +104,13 @@ class AddBlueskyContentViewModel @Inject constructor(
                         if (t.needAuthFactorTokenRequired) {
                             _uiState.update { it.copy(authFactorRequired = true) }
                         }
-                        _snackBarMessage.emit(textOf("${t.error}:${t.errorMessage}"))
+                        if (!t.errorMessage.isNullOrEmpty()) {
+                            _snackBarMessage.emit(textOf(t.errorMessage))
+                        } else {
+                            _snackBarMessage.emit(
+                                textOf(t.error ?: t.message ?: "Login Failed! by Bsky Api.")
+                            )
+                        }
                     } else {
                         _snackBarMessage.emit(
                             textOf(t.message ?: "Login Failed! ${t::class.simpleName}")

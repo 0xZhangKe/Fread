@@ -68,11 +68,11 @@ class RssScreenProvider @Inject constructor(
         return null
     }
 
-    override fun getTagTimelineScreenRoute(
+    override fun getTagTimelineScreen(
         role: IdentityRole,
         tag: String,
         protocol: StatusProviderProtocol,
-    ): String? {
+    ): Screen? {
         return null
     }
 

@@ -67,6 +67,7 @@ fun BlogContent(
     blogTranslationState: BlogTranslationUiState = BlogTranslationUiState.DEFAULT,
     onVoted: (List<BlogPoll.Option>) -> Unit = {},
     onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
+    onMaybeHashtagClick: (String) -> Unit,
     onBoostedClick: ((String) -> Unit)? = null,
     onFavouritedClick: ((String) -> Unit)? = null,
     onUrlClick: (url: String) -> Unit = {},
@@ -92,15 +93,10 @@ fun BlogContent(
                         blog = blog,
                         blogTranslationState = blogTranslationState,
                         style = style.contentStyle,
-                        onHashtagInStatusClick = {
-                            onHashtagInStatusClick(it)
-                        },
-                        onMentionClick = {
-                            onMentionClick(it)
-                        },
-                        onMentionDidClick = {
-                            onMentionDidClick(it)
-                        },
+                        onHashtagInStatusClick = onHashtagInStatusClick,
+                        onMentionClick = onMentionClick,
+                        onMentionDidClick = onMentionDidClick,
+                        onMaybeHashtagClick = onMaybeHashtagClick,
                         onUrlClick = onUrlClick,
                     )
                 }
@@ -110,16 +106,11 @@ fun BlogContent(
                 blog = blog,
                 blogTranslationState = blogTranslationState,
                 style = style.contentStyle,
-                onHashtagInStatusClick = {
-                    onHashtagInStatusClick(it)
-                },
-                onMentionClick = {
-                    onMentionClick(it)
-                },
-                onMentionDidClick = {
-                    onMentionDidClick(it)
-                },
+                onHashtagInStatusClick = onHashtagInStatusClick,
+                onMentionClick = onMentionClick,
+                onMentionDidClick = onMentionDidClick,
                 onUrlClick = onUrlClick,
+                onMaybeHashtagClick = onMaybeHashtagClick,
             )
         }
         val sensitive = blog.sensitive
@@ -198,6 +189,7 @@ fun BlogTextContentSection(
     style: ContentStyle,
     blogTranslationState: BlogTranslationUiState? = null,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit = {},
+    onMaybeHashtagClick: (String) -> Unit = {},
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
     onUrlClick: (url: String) -> Unit = {},
@@ -251,6 +243,7 @@ fun BlogTextContentSection(
                     onMentionClick = onMentionClick,
                     onMentionDidClick = onMentionDidClick,
                     onHashtagClick = onHashtagInStatusClick,
+                    onMaybeHashtagClick = onMaybeHashtagClick,
                     onUrlClick = onUrlClick,
                     fontSizeSp = style.contentSize.value,
                 )
@@ -282,6 +275,7 @@ fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
+                onMaybeHashtagClick = onMaybeHashtagClick,
                 onUrlClick = onUrlClick,
                 fontSizeSp = style.contentSize.value,
             )
@@ -305,6 +299,7 @@ fun BlogTextContentSection(
                 onMentionClick = onMentionClick,
                 onMentionDidClick = onMentionDidClick,
                 onHashtagClick = onHashtagInStatusClick,
+                onMaybeHashtagClick = onMaybeHashtagClick,
                 fontSizeSp = style.contentSize.value,
                 onUrlClick = onUrlClick,
             )

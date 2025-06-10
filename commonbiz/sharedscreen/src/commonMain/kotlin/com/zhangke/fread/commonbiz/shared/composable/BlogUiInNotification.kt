@@ -27,6 +27,7 @@ fun OnlyBlogContentUi(
     style: StatusStyle,
     onVoted: (List<BlogPoll.Option>) -> Unit,
     onHashtagInStatusClick: (HashtagInStatus) -> Unit,
+    onMaybeHashtagClick: (String) -> Unit,
     onUrlClick: (String) -> Unit,
     onMentionClick: (Mention) -> Unit,
     onMentionDidClick: (String) -> Unit,
@@ -54,6 +55,7 @@ fun OnlyBlogContentUi(
             onUrlClick = onUrlClick,
             onShowOriginalClick = {},
             onBlogClick = {},
+            onMaybeHashtagClick = onMaybeHashtagClick,
         )
     }
 }
@@ -122,6 +124,13 @@ fun WholeBlogUi(
             },
             onBlogClick = {
                 composedStatusInteraction.onBlockClick(statusUiState.role, it)
+            },
+            onMaybeHashtagClick = {
+                composedStatusInteraction.onMaybeHashtagClick(
+                    role = statusUiState.role,
+                    protocol = statusUiState.status.platform.protocol,
+                    hashtag = it,
+                )
             },
         )
     }

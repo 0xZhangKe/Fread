@@ -39,7 +39,7 @@ fun DetailHeaderContent(
     onBannerClick: () -> Unit,
     onAvatarClick: () -> Unit,
     onUrlClick: (String) -> Unit,
-    onMaybeHashtagTargetClick: (RichLinkTarget.MaybeHashtagTarget) -> Unit,
+    onMaybeHashtagClick: (String) -> Unit,
     privateNote: String? = null,
     relationship: RelationshipUiState? = null,
     onUnblockClick: (() -> Unit)? = null,
@@ -182,7 +182,7 @@ fun DetailHeaderContent(
                 },
             richText = description ?: RichText.empty,
             onUrlClick = onUrlClick,
-            onMaybeHashtagTarget = onMaybeHashtagTargetClick,
+            onMaybeHashtagClick = onMaybeHashtagClick,
         )
 
         // follow info line

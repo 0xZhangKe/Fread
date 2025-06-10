@@ -46,6 +46,13 @@ class ActivityPubTagAdapter @Inject constructor() {
     private fun convertHistoryList(
         list: List<ActivityPubTagEntity.History>
     ): Hashtag.History {
+        if (list.isEmpty()) {
+            return Hashtag.History(
+                history = emptyList(),
+                max = 0F,
+                min = 0F,
+            )
+        }
         val history = list.map { it.uses.toFloat() }
         val min = history.min()
         val max = history.max()

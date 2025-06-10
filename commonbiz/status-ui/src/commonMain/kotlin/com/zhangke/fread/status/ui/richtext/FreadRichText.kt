@@ -16,6 +16,7 @@ import androidx.compose.ui.text.PlaceholderVerticalAlign
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.TextUnit
 import androidx.compose.ui.unit.em
 import androidx.compose.ui.unit.sp
 import com.seiko.imageloader.rememberImagePainter
@@ -73,6 +74,7 @@ fun FreadRichText(
     color: Color = Color.Unspecified,
     fontStyle: FontStyle? = null,
     fontWeight: FontWeight? = null,
+    lineHeight: TextUnit = 1.5.em,
     onMentionClick: (Mention) -> Unit = {},
     onMentionDidClick: (String) -> Unit = {},
     onHashtagClick: (HashtagInStatus) -> Unit = {},
@@ -105,6 +107,7 @@ fun FreadRichText(
         overflow = overflow,
         maxLines = maxLines,
         fontStyle = fontStyle,
+        lineHeight = lineHeight,
         fontWeight = fontWeight,
         fontSize = fontSizeSp.sp,
         inlineContent = rememberInlineContent(richText.emojis),

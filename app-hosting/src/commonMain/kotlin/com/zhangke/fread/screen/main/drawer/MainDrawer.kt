@@ -15,6 +15,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Add
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.outlined.Coffee
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.ExperimentalMaterial3Api
@@ -55,7 +56,6 @@ import com.zhangke.fread.profile.screen.setting.SettingScreen
 import com.zhangke.fread.status.model.FreadContent
 import com.zhangke.fread.status.ui.common.LocalNestedTabConnection
 import com.zhangke.fread.statusui.ic_drag_indicator
-import com.zhangke.fread.statusui.ic_mode_edit
 import kotlinx.coroutines.launch
 import org.burnoutcrew.reorderable.ReorderableItem
 import org.burnoutcrew.reorderable.detectReorderAfterLongPress
@@ -261,7 +261,7 @@ private fun ContentConfigItem(
                 .alpha(0.7F)
                 .padding(2.dp),
             onClick = { onEditClick(contentConfig) },
-            painter = painterResource(com.zhangke.fread.statusui.Res.drawable.ic_mode_edit),
+            imageVector = Icons.Default.Settings,
             contentDescription = "Edit Content Config",
         )
         Spacer(modifier = Modifier.width(16.dp))

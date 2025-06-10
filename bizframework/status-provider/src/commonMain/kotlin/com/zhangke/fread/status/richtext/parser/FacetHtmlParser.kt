@@ -10,6 +10,7 @@ import com.zhangke.fread.status.model.Facet
 import com.zhangke.fread.status.model.FacetFeatureUnion
 import com.zhangke.fread.status.richtext.OnLinkTargetClick
 import com.zhangke.fread.status.richtext.model.RichLinkTarget
+import okio.utf8Size
 
 class FacetHtmlParser {
 
@@ -20,11 +21,10 @@ class FacetHtmlParser {
     ): AnnotatedString {
         val annotatedStringBuilder = AnnotatedString.Builder()
         annotatedStringBuilder.append(document)
-        val chars = document.toCharArray()
-        val legalRange = chars.indices
+        val legalRange = 0..document.length
         for (facet in facets) {
-            val start = facet.byteStart
-            val end = facet.byteEnd
+            val start = calculateUtf8Index(facet.byteStart, document)
+            val end = calculateUtf8Index(facet.byteEnd, document)
             if (!legalRange.contains(start) || !legalRange.contains(end)) {
                 continue
             }
@@ -64,5 +64,21 @@ class FacetHtmlParser {
             }
         }
         return annotatedStringBuilder.toAnnotatedString()
+    }
+
+    private fun calculateUtf8Index(
+        index: Long,
+        text: String,
+    ): Long {
+        if (index > text.length) {
+            return text.length.toLong()
+        }
+        val utf8Index = text.utf8Size(0, index.toInt())
+        if (utf8Index == index) return index
+        val diff = utf8Index - index
+        if (diff > 0) {
+            return index - diff
+        }
+        return index
     }
 }

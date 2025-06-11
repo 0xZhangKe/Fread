@@ -14,6 +14,7 @@ import androidx.compose.ui.unit.dp
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.fread.commonbiz.mastodon_logo
 import com.zhangke.fread.status.model.FreadContent
+import com.zhangke.fread.status.uri.FormalUri
 import kotlinx.serialization.Serializable
 import org.jetbrains.compose.resources.painterResource
 
@@ -23,10 +24,11 @@ data class ActivityPubContent(
     override val order: Int,
     val baseUrl: FormalBaseUrl,
     val tabList: List<ContentTab>,
+    val accountUri: FormalUri?,
 ) : FreadContent {
 
     override val id: String
-        get() = baseUrl.toString()
+        get() = baseUrl.toString() + accountUri?.toString().orEmpty()
 
     override fun newOrder(newOrder: Int): FreadContent {
         return copy(order = newOrder)

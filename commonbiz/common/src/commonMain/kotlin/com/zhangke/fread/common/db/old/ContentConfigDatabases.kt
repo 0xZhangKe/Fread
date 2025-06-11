@@ -1,4 +1,4 @@
-package com.zhangke.fread.common.db
+package com.zhangke.fread.common.db.old
 
 import androidx.room.ConstructedBy
 import androidx.room.Dao

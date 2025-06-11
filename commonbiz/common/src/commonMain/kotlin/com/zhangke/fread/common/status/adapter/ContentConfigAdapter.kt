@@ -1,6 +1,6 @@
 package com.zhangke.fread.common.status.adapter
 
-import com.zhangke.fread.common.db.ContentConfigEntity
+import com.zhangke.fread.common.db.old.ContentConfigEntity
 import com.zhangke.fread.status.model.ContentConfig
 import com.zhangke.fread.status.model.ContentType
 import me.tatarka.inject.annotations.Inject

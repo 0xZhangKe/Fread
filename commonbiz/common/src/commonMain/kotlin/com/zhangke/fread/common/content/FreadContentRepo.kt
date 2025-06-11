@@ -1,9 +1,9 @@
 package com.zhangke.fread.common.content
 
 import com.zhangke.framework.architect.coroutines.ApplicationScope
-import com.zhangke.fread.common.db.ContentConfigDatabases
-import com.zhangke.fread.common.db.FreadContentDatabase
-import com.zhangke.fread.common.db.FreadContentEntity
+import com.zhangke.fread.common.db.old.ContentConfigDatabases
+import com.zhangke.fread.common.db.old.OldFreadContentDatabase
+import com.zhangke.fread.common.db.old.OldFreadContentEntity
 import com.zhangke.fread.common.status.adapter.ContentConfigAdapter
 import com.zhangke.fread.status.StatusProvider
 import com.zhangke.fread.status.model.ContentConfig
@@ -15,7 +15,7 @@ import me.tatarka.inject.annotations.Inject
 import kotlin.collections.map
 
 class FreadContentRepo @Inject constructor(
-    database: FreadContentDatabase,
+    database: OldFreadContentDatabase,
     private val contentConfigDatabases: ContentConfigDatabases,
     private val statusProvider: StatusProvider,
     private val contentConfigAdapter: ContentConfigAdapter,
@@ -79,8 +79,8 @@ class FreadContentRepo @Inject constructor(
         insertAll(pendingInsertList)
     }
 
-    private fun FreadContent.toEntity(): FreadContentEntity {
-        return FreadContentEntity(
+    private fun FreadContent.toEntity(): OldFreadContentEntity {
+        return OldFreadContentEntity(
             id = this.id,
             content = this,
         )

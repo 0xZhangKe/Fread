@@ -47,6 +47,7 @@ data class EditFilterUiState(
     @Serializable
     data class Keyword(
         val keyword: String,
+        val wholeWord: Boolean,
         val id: String? = null,
         val deleted: Boolean = false,
     ) : PlatformSerializable, PlatformParcelable

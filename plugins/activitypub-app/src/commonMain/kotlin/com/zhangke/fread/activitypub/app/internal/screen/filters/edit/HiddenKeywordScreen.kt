@@ -2,6 +2,7 @@ package com.zhangke.fread.activitypub.app.internal.screen.filters.edit
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -180,22 +181,27 @@ class HiddenKeywordScreen(
             title = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_title),
             onDismissRequest = onDismissRequest,
             content = {
-                OutlinedTextField(
+                Column(
                     modifier = Modifier
                         .padding(16.dp)
                         .fillMaxWidth(),
-                    value = inputtingKeyword,
-                    onValueChange = {
-                        inputtingKeyword = it
-                    },
-                    maxLines = 1,
-                    label = {
-                        Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
-                    },
-                    placeholder = {
-                        Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
-                    },
-                )
+                ) {
+                    OutlinedTextField(
+                        modifier = Modifier.fillMaxWidth(),
+                        value = inputtingKeyword,
+                        onValueChange = {
+                            inputtingKeyword = it
+                        },
+                        maxLines = 1,
+                        label = {
+                            Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
+                        },
+                        placeholder = {
+                            Text(text = stringResource(Res.string.activity_pub_filter_edit_keyword_dialog_hint))
+                        },
+                    )
+
+                }
             },
             onNegativeClick = onDismissRequest,
             onPositiveClick = {

@@ -121,6 +121,7 @@
     <string name="activity_pub_filter_edit_warning_desc">Still show posts that match this filter, but behind a content warning</string>
     <string name="activity_pub_filter_edit_delete_content">Are you sure you want to delete?</string>
     <string name="activity_pub_filter_edit_back_dialog">Are you sure you want to exit?</string>
+    <string name="activity_pub_filter_edit_word_whole">Whole word</string>
 
     <string name="activity_pub_explorer_tab_status_title">Posts</string>
     <string name="activity_pub_explorer_tab_users_title">Users</string>

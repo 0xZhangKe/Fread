@@ -120,6 +120,7 @@
     <string name="activity_pub_filter_edit_warning_desc">仍然显示符合该过滤器的嘟文，但会加上内容警告</string>
     <string name="activity_pub_filter_edit_delete_content">确定删除吗？</string>
     <string name="activity_pub_filter_edit_back_dialog">确定退出吗？</string>
+    <string name="activity_pub_filter_edit_word_whole">整个词条</string>
 
     <string name="activity_pub_explorer_tab_status_title">嘟文</string>
     <string name="activity_pub_explorer_tab_users_title">用户</string>

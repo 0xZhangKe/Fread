@@ -5,10 +5,13 @@ import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
+import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
 import com.zhangke.fread.activitypub.app.internal.db.ActivityPubDatabases
+import com.zhangke.fread.activitypub.app.internal.model.ActivityPubLoggedAccount
 import com.zhangke.fread.activitypub.app.internal.repo.account.ActivityPubLoggedAccountRepo
 import com.zhangke.fread.activitypub.app.internal.repo.application.ActivityPubApplicationRepo
 import com.zhangke.fread.common.browser.OAuthHandler
+import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.utils.getCurrentTimeMillis
@@ -29,6 +32,7 @@ class ActivityPubOAuthor @Inject constructor(
     private val activityPubDatabases: ActivityPubDatabases,
     private val applicationScope: ApplicationCoroutineScope,
     private val oAuthHandler: OAuthHandler,
+    private val freadContentRepo: FreadContentRepo,
 ) {
 
     internal fun startOauth(
@@ -69,6 +73,16 @@ class ActivityPubOAuthor @Inject constructor(
             toast(e.message)
             return@launch
         }
+        insertAccount(account, getCurrentTimeMillis())
+    }
+
+    private suspend fun insertAccount(
+        account: ActivityPubLoggedAccount,
+        addedTimestamp: Long,
+    ) {
         repo.insert(account, getCurrentTimeMillis())
+        val contentList = freadContentRepo.getAllContent()
+            .filterIsInstance<ActivityPubContent>()
+        val addedContent = contentList.firstOrNull { account.baseUrl == it.baseUrl }
     }
 }

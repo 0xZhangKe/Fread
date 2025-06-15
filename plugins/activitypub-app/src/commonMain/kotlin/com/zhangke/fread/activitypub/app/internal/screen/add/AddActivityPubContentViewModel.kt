@@ -34,8 +34,12 @@ class AddActivityPubContentViewModel @Inject constructor(
 
     init {
         launchInViewModel {
+            val content = contentAdapter.createContent(
+                platform = platform,
+                maxOrder = contentRepo.getMaxOrder(),
+            )
             val allContent = contentRepo.getAllContent().filterIsInstance<ActivityPubContent>()
-            if (allContent.container { it.baseUrl == platform.baseUrl }) {
+            if (allContent.container { it.id == content.id }) {
                 _uiState.updateToSuccess(
                     AddActivityPubContentUiState(
                         contentExist = true,
@@ -43,10 +47,6 @@ class AddActivityPubContentViewModel @Inject constructor(
                     )
                 )
             } else {
-                val content = contentAdapter.createContent(
-                    platform = platform,
-                    maxOrder = contentRepo.getMaxOrder(),
-                )
                 contentRepo.insertContent(content)
                 _uiState.updateToSuccess(
                     AddActivityPubContentUiState(

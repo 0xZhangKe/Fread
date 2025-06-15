@@ -15,6 +15,7 @@ class ActivityPubContentAdapter @Inject constructor() {
             baseUrl = platform.baseUrl,
             order = maxOrder + 1,
             tabList = buildInitialTabConfigList(),
+            accountUri = null,
         )
     }
 

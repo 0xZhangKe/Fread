@@ -4,20 +4,14 @@ import androidx.lifecycle.ViewModelProvider
 import cafe.adriel.voyager.hilt.KotlinInjectViewModelProviderFactory
 import com.zhangke.framework.architect.coroutines.ApplicationScope
 import com.zhangke.framework.module.ModuleStartup
-import com.zhangke.fread.common.config.FreadConfigManager
-import com.zhangke.fread.common.config.LocalConfigManager
 import com.zhangke.fread.common.daynight.DayNightHelper
 import com.zhangke.fread.common.di.ApplicationCoroutineScope
 import com.zhangke.fread.common.di.ApplicationScope
 import com.zhangke.fread.common.di.ViewModelCreator
 import com.zhangke.fread.common.di.ViewModelFactory
 import com.zhangke.fread.common.di.ViewModelKey
-import com.zhangke.fread.common.review.FreadReviewManager
 import com.zhangke.fread.common.startup.FreadConfigModuleStartup
 import com.zhangke.fread.common.startup.StartupManager
-import com.zhangke.fread.common.utils.MediaFileHelper
-import com.zhangke.fread.common.utils.PlatformUriHelper
-import com.zhangke.fread.common.utils.ThumbnailHelper
 import com.zhangke.fread.status.StatusProvider
 import me.tatarka.inject.annotations.IntoSet
 import me.tatarka.inject.annotations.Provides
@@ -31,6 +25,12 @@ interface CommonComponent : CommonPlatformComponent {
     val startupManager: StartupManager
 
     val statusProvider: StatusProvider
+
+    @IntoSet
+    @Provides
+    fun bindCommonStartup(module: CommonStartup): ModuleStartup {
+        return module
+    }
 
     @ApplicationScope
     @Provides

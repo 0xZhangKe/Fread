@@ -73,16 +73,18 @@ class ActivityPubOAuthor @Inject constructor(
             toast(e.message)
             return@launch
         }
-        insertAccount(account, getCurrentTimeMillis())
+        insertAccount(account)
     }
 
-    private suspend fun insertAccount(
-        account: ActivityPubLoggedAccount,
-        addedTimestamp: Long,
-    ) {
+    private suspend fun insertAccount(account: ActivityPubLoggedAccount) {
         repo.insert(account, getCurrentTimeMillis())
-        val contentList = freadContentRepo.getAllContent()
-            .filterIsInstance<ActivityPubContent>()
-        val addedContent = contentList.firstOrNull { account.baseUrl == it.baseUrl }
+        val contentList = freadContentRepo.getAllContent().filterIsInstance<ActivityPubContent>()
+        val addedContent = contentList.firstOrNull {
+            account.baseUrl == it.baseUrl && it.accountUri == null
+        }
+        if (addedContent != null) {
+            freadContentRepo.delete(addedContent.id)
+            freadContentRepo.insertContent(addedContent.copy(accountUri = account.uri))
+        }
     }
 }

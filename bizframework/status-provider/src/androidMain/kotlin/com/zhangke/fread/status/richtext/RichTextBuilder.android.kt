@@ -1,5 +1,7 @@
 package com.zhangke.fread.status.richtext
 
+import android.widget.TextView
+import com.zhangke.framework.utils.appContext
 import com.zhangke.fread.status.model.Mention
 import moe.tlaster.ktml.dom.Element
 import moe.tlaster.ktml.dom.Node
@@ -23,5 +25,6 @@ private fun buildMentionUrl(
     mention: Mention,
     host: String,
 ): String {
+    TextView(appContext)
     return "fread://${host}/user/${mention.id}"
 }

@@ -9,6 +9,7 @@ import com.zhangke.fread.bluesky.internal.usecase.UpdateHomeTabUseCase
 import com.zhangke.fread.common.content.FreadContentRepo
 import com.zhangke.fread.status.model.IdentityRole
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
@@ -22,7 +23,7 @@ class BlueskyHomeViewModel(
     private val accountManager: BlueskyLoggedAccountManager,
 ) : SubViewModel() {
 
-    private val _uiState = MutableStateFlow(BlueskyHomeUiState.default())
+    private val _uiState = MutableStateFlow(BlueskyHomeUiState.default(initializing = true))
     val uiState: StateFlow<BlueskyHomeUiState> = _uiState
 
     private var observeAccountJob: Job? = null
@@ -47,6 +48,10 @@ class BlueskyHomeViewModel(
                         }
                     }
                 }
+        }
+        launchInViewModel {
+            delay(200)
+            _uiState.update { it.copy(initializing = false) }
         }
     }
 

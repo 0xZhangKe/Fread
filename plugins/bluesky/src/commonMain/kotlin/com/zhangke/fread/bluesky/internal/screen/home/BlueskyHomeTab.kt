@@ -160,7 +160,7 @@ class BlueskyHomeTab(
                     if (uiState.content != null) {
                         val tabList =
                             remember(uiState) { createTabList(uiState.content, uiState.role) }
-                        if (tabList.isEmpty() && uiState.account == null) {
+                        if (!uiState.initializing && tabList.isEmpty() && uiState.account == null) {
                             NotLoginPageError(
                                 modifier = Modifier.padding(top = 64.dp),
                                 message = null,
@@ -239,7 +239,7 @@ class BlueskyHomeTab(
                                 textAlign = TextAlign.Center,
                             )
                         }
-                    } else if (uiState.account == null) {
+                    } else if (!uiState.initializing && uiState.account == null) {
                         // not login
                         NotLoginPageError(
                             modifier = Modifier.padding(top = 64.dp),

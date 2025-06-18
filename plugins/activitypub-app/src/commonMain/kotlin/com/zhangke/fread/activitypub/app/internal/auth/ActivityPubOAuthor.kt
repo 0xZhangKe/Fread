@@ -3,6 +3,7 @@ package com.zhangke.fread.activitypub.app.internal.auth
 import com.zhangke.activitypub.api.ActivityPubScope
 import com.zhangke.framework.network.FormalBaseUrl
 import com.zhangke.framework.toast.toast
+import com.zhangke.framework.utils.Log
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubLoggedAccountAdapter
 import com.zhangke.fread.activitypub.app.internal.adapter.ActivityPubPlatformEntityAdapter
 import com.zhangke.fread.activitypub.app.internal.content.ActivityPubContent
@@ -82,9 +83,12 @@ class ActivityPubOAuthor @Inject constructor(
         val addedContent = contentList.firstOrNull {
             account.baseUrl == it.baseUrl && it.accountUri == null
         }
+        Log.d("T_TEST") { "addedContent ${addedContent?.id}" }
         if (addedContent != null) {
             freadContentRepo.delete(addedContent.id)
-            freadContentRepo.insertContent(addedContent.copy(accountUri = account.uri))
+            freadContentRepo.insertContent(addedContent.copy(accountUri = account.uri).also {
+                Log.d("T_TEST") { "insert ${it.id}" }
+            })
         }
     }
 }
